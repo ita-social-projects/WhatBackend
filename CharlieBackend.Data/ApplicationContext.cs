@@ -1,10 +1,7 @@
-﻿using System;
-using System.Reflection;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace CharlieBackend.Data
+namespace CharlieBackend.Data.Repositories
 {
     public partial class ApplicationContext : DbContext
     {
@@ -12,8 +9,7 @@ namespace CharlieBackend.Data
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
@@ -27,13 +23,5 @@ namespace CharlieBackend.Data
         public virtual DbSet<StudentsOfGroups> Studentsofgroups { get; set; }
         public virtual DbSet<Theme> Themes { get; set; }
         public virtual DbSet<Visit> Visits { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            OnModelCreatingPartial(modelBuilder);
-        }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
