@@ -1,8 +1,12 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace CharlieBackend.Core.Entities
 {
     public interface IBaseEntity
     {
-        public string uuid { get; set; }
+        public long Id { get; set; }
     }
 }
