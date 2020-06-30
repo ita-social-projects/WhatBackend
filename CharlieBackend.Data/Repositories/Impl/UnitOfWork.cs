@@ -6,16 +6,36 @@ namespace CharlieBackend.Data.Repositories.Impl
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationContext _applicationContext;
-        private ISampleRepository _sampleRepository;
-        public UnitOfWork(ApplicationContext applicationContext, ISampleRepository sampleRepository)
+        private IAccountRepository _accountRepository;
+        private ILessonRepository _lessonRepository;
+        private IThemeRepository _themeRepository;
+        private ICourseRepository _courseRepository;
+
+        public UnitOfWork(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
-            _sampleRepository = sampleRepository;
         }
-        public ISampleRepository SampleRepository
+
+        public IAccountRepository AccountRepository
         {
-            get { return _sampleRepository = _sampleRepository ?? new SampleRepository(_applicationContext); }
+            get { return _accountRepository = _accountRepository ?? new AccountRepository(_applicationContext); }
         }
+
+        public ILessonRepository LessonRepository
+        {
+            get { return _lessonRepository = _lessonRepository ?? new LessonRepository(_applicationContext); }
+        }
+
+        public IThemeRepository ThemeRepository
+        {
+            get { return _themeRepository = _themeRepository ?? new ThemeRepository(_applicationContext); }
+        }
+
+        public ICourseRepository CourseRepository
+        {
+            get { return _courseRepository = _courseRepository ?? new CourseRepository(_applicationContext);  }
+        }
+
 
         public void Commit()
         {

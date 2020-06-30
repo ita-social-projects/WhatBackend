@@ -2,7 +2,11 @@
 {
     public interface IUnitOfWork
     {
-        ISampleRepository SampleRepository { get; }
+        public IAccountRepository AccountRepository { get; }
+        public ILessonRepository LessonRepository { get; }
+        public IThemeRepository ThemeRepository { get; }
+        public ICourseRepository CourseRepository { get;  }
+
         void Commit();
         void Rollback();
     }

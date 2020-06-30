@@ -1,13 +1,13 @@
 ﻿using CharlieBackend.Core.Entities;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
-    public interface ISampleService
+    public interface IThemeService
     {
-        Task<List<Sample>> GetAllAsync();
-        Task<Sample> InsertAsync(Sample sample);
-        void Delete(Sample sample);
+        Task<Theme> CreateThemeAsync(Theme theme);
     }
 }

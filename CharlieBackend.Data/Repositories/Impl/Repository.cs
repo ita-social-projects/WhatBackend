@@ -10,27 +10,34 @@ namespace CharlieBackend.Data.Repositories.Impl
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly ApplicationContext _applicationContext;
-        private DbSet<T> entities;
+        private DbSet<T> _entities;
         public Repository(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
+            _entities = applicationContext.Set<T>();
         }
 
         public Task<List<T>> GetAllAsync()
         {
-            return entities.AsNoTracking().ToListAsync();
+            return _entities.AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> InsertAsync(T entity)
+        public Task<T> GetByIdAsync(long id)
+        {
+            return _entities.FirstOrDefaultAsync(entity => entity.Id == id);
+        }
+
+        public async Task<T> PostAsync(T entity)
         {
             if (entity == null) throw new ArgumentNullException();
-            await entities.AddAsync(entity);
+            await _entities.AddAsync(entity);
             return entity;
         }
 
-        public void Delete(T entity)
+        public async Task Delete(long id)
         {
-            entities.Remove(entity);
+            var found = await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
+            if (found != null) _entities.Remove(found);
         }
     }
 }
