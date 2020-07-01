@@ -11,5 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface IAccountRepository : IRepository<Account>
     {
         public Task<Account> GetAccountCredentials(AuthenticationModel authenticationModel);
+
+        public Task<String> GetAccountSalt(string email);
+
     }
 }
