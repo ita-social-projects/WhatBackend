@@ -12,6 +12,11 @@ namespace CharlieBackend.Data.Repositories
             Database.Migrate();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>().HasIndex(account => (new { account.Email })).IsUnique();
+        }
+
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Lesson> Lessons { get; set; }
