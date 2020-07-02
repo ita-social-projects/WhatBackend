@@ -8,7 +8,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         Task<List<T>> GetAllAsync();
         Task<T> GetByIdAsync(long id);
-        Task<T> PostAsync(T entity);
-        Task Delete(long id);
+        void Add(T entity);
+        void Update(T entity);
+        Task DeleteAsync(long id);
     }
 }

@@ -22,11 +22,14 @@ namespace CharlieBackend.Root
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IMentorService, MentorService>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IThemeRepository, ThemeRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IMentorRepository, MentorRepository>();
+            services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
         }
     }
 }

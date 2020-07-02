@@ -19,11 +19,16 @@ namespace CharlieBackend.Data.Repositories.Impl
                                                                     account.Password == authenticationModel.password);
         }
 
-        public async Task<String> GetAccountSalt(string email)
+        public async Task<string> GetAccountSalt(string email)
         {         
             var account = await _applicationContext.Accounts.FirstOrDefaultAsync(account => account.Email == email);
             if (account == null) return "";
             return account.Salt;
         } 
+
+        public Task<bool> IsEmailTakenAsync(string email)
+        {
+           return _applicationContext.Accounts.AnyAsync(account => account.Email == email);
+        }
     }
 }

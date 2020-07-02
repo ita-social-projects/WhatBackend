@@ -17,30 +17,31 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
-        [HttpPost("account")]
-        public async Task<ActionResult<AccountModel>> PostAccount(AccountModel accountModel)
-        {
-            if (!ModelState.IsValid) return BadRequest();
+        //[HttpPost("account")]
+        //public async Task<ActionResult<AccountModel>> PostAccount(AccountModel accountModel)
+        //{
+        //    if (!ModelState.IsValid) return BadRequest();
 
-            var createdAccount = await _accountService.CreateAccountAsync(accountModel);
-            if (createdAccount == null) return StatusCode(500);
+        //    var authenticationModel = new AuthenticationModel { email = accountModel.Email, password = accountModel.Password };
+        //    var existingAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
+        //    if (existingAccount != null) return StatusCode(409, "Account already exists!");
 
-            return Ok();
-        }
+        //    var createdAccount = await _accountService.CreateAccountAsync(accountModel);
+        //    if (createdAccount == null) return StatusCode(500);
+
+        //    return Ok();
+        //}
 
         [HttpPost("auth")]
         public async Task<ActionResult<AccountModel>> GetAccountCredentials(AuthenticationModel authenticationModel)
         {
             if (!ModelState.IsValid) return BadRequest();
+   
+            var foundAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
 
-            try
-            {
-                // TODO: do not send unwanted properties
-                var foundAccount = await _accountService.GetAccountCredentials(authenticationModel);
-                if (foundAccount != null) return Ok(foundAccount);
-                else return Unauthorized();
-            }
-            catch { return StatusCode(500); }
+            // TODO: do not send anonymous type
+            if (foundAccount != null) return Ok(new { foundAccount.Id, foundAccount.FirstName, foundAccount.LastName, foundAccount.Role });
+            else return Unauthorized("Incorrect credentials, please try again.");
         }
     }
 }

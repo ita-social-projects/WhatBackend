@@ -27,14 +27,18 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _entities.FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
-        public async Task<T> PostAsync(T entity)
+        public void Add(T entity)
         {
             if (entity == null) throw new ArgumentNullException();
-            await _entities.AddAsync(entity);
-            return entity;
+            _entities.Add(entity);
         }
 
-        public async Task Delete(long id)
+        public void Update(T updatedEntity)
+        {
+            _entities.Update(updatedEntity);
+        }
+
+        public async Task DeleteAsync(long id)
         {
             var found = await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
             if (found != null) _entities.Remove(found);

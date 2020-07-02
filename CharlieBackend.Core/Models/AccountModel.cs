@@ -15,6 +15,7 @@ namespace CharlieBackend.Core.Models
         [Required]
         public string Password { get; set; }
 
-        public sbyte? Role { get; set; }
+        [RegularExpression(@"^(1|2|4)$", ErrorMessage = "Set value 1, 2 or 4 in Role property")]
+        public int Role { get; set; }
     }
 }

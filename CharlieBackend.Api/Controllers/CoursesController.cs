@@ -38,5 +38,18 @@ namespace CharlieBackend.Api.Controllers
             }
             catch { return StatusCode(500); }
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutCourse(long id, CourseModel courseModel)
+        {
+            if (id != courseModel.Id) return BadRequest();
+
+            try {
+                var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
+                if (updatedCourse != null) return NoContent();
+                else return StatusCode(422);
+
+            } catch { return StatusCode(500); }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
@@ -22,8 +23,8 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                var createdCourse = await _unitOfWork.CourseRepository.PostAsync(courseModel.ToCourse());
-                _unitOfWork.Commit();
+                _unitOfWork.CourseRepository.Add(courseModel.ToCourse());
+                await _unitOfWork.CommitAsync();
                 return courseModel;
             }
             catch { _unitOfWork.Rollback(); return null; }
@@ -37,6 +38,17 @@ namespace CharlieBackend.Business.Services
             foreach (var course in courses) { coursesModels.Add(course.ToCourseModel()); }
 
             return coursesModels;
+        }
+
+        public async Task<CourseModel> UpdateCourseAsync(CourseModel courseModel)
+        {
+            try
+            {
+                _unitOfWork.CourseRepository.Update(courseModel.ToCourse());
+                await _unitOfWork.CommitAsync(); 
+                return courseModel;
+            }
+            catch { _unitOfWork.Rollback(); return null; }
         }
     }
 }

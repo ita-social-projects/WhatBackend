@@ -30,14 +30,15 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
-        [HttpGet] 
+        [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {
             try
             {
                 var lessons = await _lessonService.GetAllLessonsAsync();
                 return Ok(lessons);
-            } catch { return StatusCode(500); }
+            }
+            catch { return StatusCode(500); }
         }
     }
 }

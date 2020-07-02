@@ -10,11 +10,12 @@ namespace CharlieBackend.Core
         {
             return new Account
             {
+                Id = accountModel.Id,
                 Email = accountModel.Email,
                 Password = accountModel.Password,
                 FirstName = accountModel.FirstName,
                 LastName = accountModel.LastName,
-                Role = accountModel.Role
+                Role = (sbyte)accountModel.Role
             };
         }
 
@@ -27,7 +28,7 @@ namespace CharlieBackend.Core
                 Password = account.Password,
                 FirstName = account.FirstName,
                 LastName = account.LastName,
-                Role = account.Role
+                Role = (sbyte)account.Role
             };
         }
 
@@ -35,7 +36,8 @@ namespace CharlieBackend.Core
         {
             return new Lesson
             {
-                IdStudentGroup = lessonModel.group_id,
+                Id = lessonModel.Id,
+                StudentGroupId = lessonModel.group_id,
                 LessonDate = DateTime.Parse(lessonModel.lesson_date),
             };
         }
@@ -45,7 +47,7 @@ namespace CharlieBackend.Core
             return new LessonModel
             {
                 Id = lesson.Id,
-                group_id = lesson.IdStudentGroup ?? 0, // TODO: remove
+                group_id = lesson.StudentGroupId ?? 0, // TODO: remove
                 lesson_date = lesson.LessonDate.ToString()
             };
         }
@@ -54,6 +56,7 @@ namespace CharlieBackend.Core
         {
             return new Course
             {
+                Id = courseModel.Id,
                 Name = courseModel.Name
             };
         }
@@ -64,6 +67,43 @@ namespace CharlieBackend.Core
             {
                 Id = course.Id,
                 Name = course.Name,
+            };
+        }
+
+        //public static StudentGroup ToStudentGroup(this StudentGroupModel studentGroupModel)
+        //{
+        //    return new StudentGroup
+        //    {
+        //        Name = studentGroupModel.name,
+        //        CourseId = studentGroupModel.course_id,
+        //        StartDate = DateTime.Parse(studentGroupModel.start_date),
+        //        FinishDate = DateTime.Parse(studentGroupModel.finish_date),
+        //    };
+        //}
+
+        public static Theme ToTheme(this ThemeModel themeModel)
+        {
+            return new Theme
+            {
+                Id = themeModel.Id,
+                Name = themeModel.Name
+            };
+        }
+
+        public static ThemeModel ToThemeModel(this Theme themeModel)
+        {
+            return new ThemeModel
+            {
+                Id = themeModel.Id,
+                Name = themeModel.Name
+            };
+        }
+
+        public static Mentor ToMentor(this MentorModel mentorModel)
+        {
+            return new Mentor
+            {
+               
             };
         }
     }

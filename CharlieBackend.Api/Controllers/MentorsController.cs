@@ -7,13 +7,42 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Models;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/mentor")]
     [ApiController]
     public class MentorsController : ControllerBase
     {
-        
+        private readonly IMentorService _mentorService;
+        private readonly IAccountService _accountService;
+
+        public MentorsController(IMentorService mentorService, IAccountService accountService)
+        {
+            _mentorService = mentorService;
+            _accountService = accountService;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PostMentor(MentorModel mentorModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var isEmailTaken = await _accountService.IsEmailTakenAsync(mentorModel.login);
+            if (isEmailTaken) return StatusCode(409, "Account already exists!");
+
+            var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
+            if (createdMentorModel == null) return StatusCode(404);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
+        {
+            return StatusCode(501);
+        }
     }
 }

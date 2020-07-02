@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System;
 using System.Text;
 using System.Security.Cryptography;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services
 {
@@ -25,29 +24,33 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                // TODO: hash password, add salt, add role
+                // TODO: add role
                 var account = accountModel.ToAccount();
                 account.Salt = GenerateSalt();
                 account.Password = HashPassword(account.Password + account.Salt);
 
-                await _unitOfWork.AccountRepository.PostAsync(account);
-                _unitOfWork.Commit();
-                return accountModel;
-
-            } catch { _unitOfWork.Rollback(); return null; }
+                _unitOfWork.AccountRepository.Add(account);
+                await _unitOfWork.CommitAsync();
+                return account.ToAccountModel();
+            }
+            catch { _unitOfWork.Rollback(); return null; }
         }
 
-        public async Task<AccountModel> GetAccountCredentials(AuthenticationModel authenticationModel)
+        public async Task<AccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSalt(authenticationModel.email);
-            Account foundAccount = null;
             if (salt != "")
             {
                 authenticationModel.password = HashPassword(authenticationModel.password + salt);
-                foundAccount  = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
-                return foundAccount.ToAccountModel();
+                var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
+                return foundAccount?.ToAccountModel();
             }
-            return foundAccount?.ToAccountModel();
+            return null;
+        }
+
+        public Task<bool> IsEmailTakenAsync(string email)
+        {
+            return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
         #region hash
@@ -78,21 +81,4 @@ namespace CharlieBackend.Business.Services
 
         #endregion
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

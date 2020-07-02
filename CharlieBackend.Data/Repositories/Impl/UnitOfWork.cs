@@ -10,6 +10,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         private ILessonRepository _lessonRepository;
         private IThemeRepository _themeRepository;
         private ICourseRepository _courseRepository;
+        private IMentorRepository _mentorRepository;
+        private IMentorOfCourseRepository _mentorOfCourseRepository;
 
         public UnitOfWork(ApplicationContext applicationContext)
         {
@@ -36,10 +38,20 @@ namespace CharlieBackend.Data.Repositories.Impl
             get { return _courseRepository = _courseRepository ?? new CourseRepository(_applicationContext);  }
         }
 
-
-        public void Commit()
+        public IMentorRepository MentorRepository
         {
-            _applicationContext.SaveChanges();
+            get { return _mentorRepository = _mentorRepository ?? new MentorRepository(_applicationContext); }
+        }
+
+        public IMentorOfCourseRepository MentorOfCourseRepository
+        {
+            get { return _mentorOfCourseRepository = _mentorOfCourseRepository ?? new MentorOfCourseRepository(_applicationContext); }
+        }
+
+
+        public Task CommitAsync()
+        {
+            return _applicationContext.SaveChangesAsync();
         }
 
         public void Rollback()

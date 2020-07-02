@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200702183348_test.cs" />
+    <Compile Remove="Migrations\20200702183348_test.Designer.cs" />
+    <Compile Remove="Migrations\20200702183627_AccountRoleNotNull.cs" />
+    <Compile Remove="Migrations\20200702183627_AccountRoleNotNull.Designer.cs" />
+    <Compile Remove="Migrations\20200702184807_ThemeNameUniqueness.cs" />
+    <Compile Remove="Migrations\20200702184807_ThemeNameUniqueness.Designer.cs" />
+    <Compile Remove="Migrations\20200702220718_test.cs" />
+    <Compile Remove="Migrations\20200702220718_test.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.5">

@@ -9,6 +9,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     public interface IAccountService
     {
         Task<AccountModel> CreateAccountAsync(AccountModel accountModel);
-        Task<AccountModel> GetAccountCredentials(AuthenticationModel authenticationModel);
+        Task<AccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel);
+        Task<bool> IsEmailTakenAsync(string email);
     }
 }

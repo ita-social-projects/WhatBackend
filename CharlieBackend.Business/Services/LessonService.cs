@@ -25,10 +25,9 @@ namespace CharlieBackend.Business.Services
             {
                 // TODO: add mentor id, theme id
                 //var createdTheme = await _themeService.CreateThemeAsync(new Theme { Name = lessonModel.name });
-                await _unitOfWork.LessonRepository.PostAsync(lessonModel.ToLesson());
-                _unitOfWork.Commit();
+                _unitOfWork.LessonRepository.Add(lessonModel.ToLesson());
+                await _unitOfWork.CommitAsync();
                 return lessonModel;
-
             }
             catch { _unitOfWork.Rollback(); return null; }
         }
