@@ -10,14 +10,14 @@ namespace CharlieBackend.Core.Entities
             Visits = new HashSet<Visit>();
         }
 
-        public long? IdMentor { get; set; }
-        public long? IdStudentGroup { get; set; }
-        public long? IdTheme { get; set; }
+        public long? MentorId { get; set; }
+        public long? StudentGroupId { get; set; }
+        public long? ThemeId { get; set; }
         public DateTime? LessonDate { get; set; }
 
-        public virtual Mentor IdMentorNavigation { get; set; }
-        public virtual StudentGroup IdStudentGroupNavigation { get; set; }
-        public virtual Theme IdThemeNavigation { get; set; }
+        public virtual Mentor Mentor { get; set; }
+        public virtual StudentGroup StudentGroup { get; set; }
+        public virtual Theme Theme { get; set; }
         public virtual ICollection<Visit> Visits { get; set; }
     }
 }

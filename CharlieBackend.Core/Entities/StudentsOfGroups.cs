@@ -5,10 +5,10 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class StudentsOfGroups : BaseEntity
     {
-        public long IdStudentGroup { get; set; }
-        public long IdStudent { get; set; }
+        public long StudentGroupId { get; set; }
+        public long StudentId { get; set; }
 
-        public virtual StudentGroup IdStudentGroupNavigation { get; set; }
-        public virtual Student IdStudentNavigation { get; set; }
+        public virtual StudentGroup StudentGroup{ get; set; }
+        public virtual Student Student { get; set; }
     }
 }

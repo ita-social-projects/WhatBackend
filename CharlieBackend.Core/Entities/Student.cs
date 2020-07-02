@@ -11,9 +11,9 @@ namespace CharlieBackend.Core.Entities
             Visits = new HashSet<Visit>();
         }
 
-        public long? IdAccount { get; set; }
+        public long? AccountId { get; set; }
 
-        public virtual Account IdAccountNavigation { get; set; }
+        public virtual Account Account { get; set; }
         public virtual ICollection<StudentsOfGroups> StudentsOfGroups { get; set; }
         public virtual ICollection<Visit> Visits { get; set; }
     }

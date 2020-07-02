@@ -12,9 +12,9 @@ namespace CharlieBackend.Core.Entities
             MentorsOfStudentGroups = new HashSet<MentorOfStudentGroup>();
         }
 
-        public long? IdAccount { get; set; }
+        public long? AccountId { get; set; }
 
-        public virtual Account IdAccountNavigation { get; set; }
+        public virtual Account Account { get; set; }
         public virtual ICollection<Lesson> Lessons { get; set; }
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }
         public virtual ICollection<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
