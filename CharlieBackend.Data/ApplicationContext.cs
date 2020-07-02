@@ -15,6 +15,7 @@ namespace CharlieBackend.Data.Repositories
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>().HasIndex(account => (new { account.Email })).IsUnique();
+            modelBuilder.Entity<Theme>().HasIndex(theme => (new { theme.Name })).IsUnique();
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
