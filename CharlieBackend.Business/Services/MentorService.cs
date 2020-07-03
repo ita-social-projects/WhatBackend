@@ -24,45 +24,57 @@ namespace CharlieBackend.Business.Services
 
         public async Task<MentorModel> CreateMentorAsync(MentorModel mentorModel)
         {
-            try
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                // How to set password?
-                var account = await _accountService.CreateAccountAsync(new Account
+                try
                 {
-                    Email = mentorModel.login,
-                    FirstName = mentorModel.FirstName,
-                    LastName = mentorModel.LastName,
-                    Password = "temp",
-                    Role = 2
-                }.ToAccountModel());
-
-                var mentor = new Mentor { AccountId = account.Id };
-                _unitOfWork.MentorRepository.Add(mentor);
-
-                await _unitOfWork.CommitAsync();
-
-                if (mentorModel.courses_id != null)
-                    // TODO: access via service, not uof
-                    for (int i = 0; i < mentorModel.courses_id.Length; i++)
+                    // How to set password?
+                    var account = await _accountService.CreateAccountAsync(new Account
                     {
-                        _unitOfWork.MentorOfCourseRepository.Add(new MentorOfCourse
+                        Email = mentorModel.login,
+                        FirstName = mentorModel.FirstName,
+                        LastName = mentorModel.LastName,
+                        Password = "temp",
+                        Role = 2
+                    }.ToAccountModel());
+
+                    var mentor = new Mentor { AccountId = account.Id };
+                    _unitOfWork.MentorRepository.Add(mentor);
+
+                    await _unitOfWork.CommitAsync();
+
+                    if (mentorModel.courses_id != null)
+                        // TODO: access via service, not uof
+                        for (int i = 0; i < mentorModel.courses_id.Length; i++)
                         {
-                            MentorId = mentor.Id,
-                            CourseId = mentorModel.courses_id[i]
-                        });
-                    }
+                            _unitOfWork.MentorOfCourseRepository.Add(new MentorOfCourse
+                            {
+                                MentorId = mentor.Id,
+                                CourseId = mentorModel.courses_id[i]
+                            });
+                        }
 
-                await _unitOfWork.CommitAsync();
+                    await _unitOfWork.CommitAsync();
 
-                return mentorModel;
+                    await transaction.CommitAsync();
+
+                    return mentor.ToMentorModel();
+                }
+                catch { transaction.Rollback(); return null; }
             }
-            catch { _unitOfWork.Rollback(); return null; }
         }
 
-        //public async Task<List<MentorModel>> GetAllMentorsAsync()
-        //{
-        //    var mentors = _unitOfWork.MentorRepository.GetAllAsync();
+        public async Task<List<MentorModel>> GetAllMentorsAsync()
+        {
+            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
 
-        //}
+            var mentorModels = new List<MentorModel>();
+
+            foreach (var mentor in mentors)
+            {
+                mentorModels.Add(mentor.ToMentorModel());
+            }
+            return mentorModels;
+        }
     }
 }

@@ -22,6 +22,9 @@ namespace CharlieBackend.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
+            var isCourseNameTaken = await _coursesService.IsCourseNameTakenAsync(courseModel.Name);
+            if (isCourseNameTaken) return StatusCode(409, "Course already exists!");
+
             var createdCourse = await _coursesService.CreateCourseAsync(courseModel);
             if (createdCourse == null) return StatusCode(500);
 
@@ -47,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
             try {
                 var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
                 if (updatedCourse != null) return NoContent();
-                else return StatusCode(422);
+                else return StatusCode(409, "Course already exists!");
 
             } catch { return StatusCode(500); }
         }

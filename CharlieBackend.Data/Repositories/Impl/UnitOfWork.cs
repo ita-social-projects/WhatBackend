@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
@@ -57,6 +58,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         public void Rollback()
         {
             _applicationContext.Dispose();
+        }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _applicationContext.Database.BeginTransaction();
         }
     }
 }

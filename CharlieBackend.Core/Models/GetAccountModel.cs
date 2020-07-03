@@ -5,14 +5,10 @@ using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models
 {
-    public class UserModel
+    public class GetAccountModel
     {
-        public int account_id { get; set; }
-        public string login { get; set; }
-
-        [JsonIgnore]
-        public string password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public int Role { get; set; }
     }
 }

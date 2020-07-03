@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using System;
+using System.Linq;
 
 namespace CharlieBackend.Core
 {
@@ -29,6 +30,16 @@ namespace CharlieBackend.Core
                 FirstName = account.FirstName,
                 LastName = account.LastName,
                 Role = (sbyte)account.Role
+            };
+        }
+
+        public static GetAccountModel ToGetAccountModel(this AccountModel accountModel)
+        {
+            return new GetAccountModel
+            {
+                FirstName = accountModel.FirstName,
+                LastName = accountModel.LastName,
+                Role = accountModel.Role
             };
         }
 
@@ -103,7 +114,20 @@ namespace CharlieBackend.Core
         {
             return new Mentor
             {
-               
+               AccountId = mentorModel.account_id
+            };
+        }
+
+        public static MentorModel ToMentorModel(this Mentor mentor)
+        {
+            return new MentorModel
+            {
+                account_id = (int)mentor.AccountId,
+                FirstName = mentor.Account.FirstName,
+                LastName = mentor.Account.LastName,
+                login = mentor.Account.Email,
+                password = mentor.Account.Password,
+                courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
             };
         }
     }

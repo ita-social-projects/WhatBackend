@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -33,14 +34,13 @@ namespace CharlieBackend.Api.Controllers
         //}
 
         [HttpPost("auth")]
-        public async Task<ActionResult<AccountModel>> GetAccountCredentials(AuthenticationModel authenticationModel)
+        public async Task<ActionResult<GetAccountModel>> GetAccountCredentials(AuthenticationModel authenticationModel)
         {
             if (!ModelState.IsValid) return BadRequest();
    
             var foundAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
 
-            // TODO: do not send anonymous type
-            if (foundAccount != null) return Ok(new { foundAccount.Id, foundAccount.FirstName, foundAccount.LastName, foundAccount.Role });
+            if (foundAccount != null) return Ok(foundAccount.ToGetAccountModel());
             else return Unauthorized("Incorrect credentials, please try again.");
         }
     }

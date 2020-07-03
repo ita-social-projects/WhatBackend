@@ -9,6 +9,6 @@ namespace CharlieBackend.Business.Services.Interfaces
     public interface IMentorService
     {
         public Task<MentorModel> CreateMentorAsync(MentorModel mentorModel);
-        //public Task<List<MentorModel>> GetAllMentorsAsync();
+        public Task<List<MentorModel>> GetAllMentorsAsync();
     }
 }

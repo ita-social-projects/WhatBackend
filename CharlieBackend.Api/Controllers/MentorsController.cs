@@ -34,7 +34,7 @@ namespace CharlieBackend.Api.Controllers
             if (isEmailTaken) return StatusCode(409, "Account already exists!");
 
             var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
-            if (createdMentorModel == null) return StatusCode(404);
+            if (createdMentorModel == null) return StatusCode(422, "Invalid courses.");
 
             return Ok();
         }
@@ -42,7 +42,11 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
         {
-            return StatusCode(501);
+            try
+            {
+                var mentosModels = await _mentorService.GetAllMentorsAsync();
+                return Ok(mentosModels);
+            } catch { return StatusCode(500); }
         }
     }
 }

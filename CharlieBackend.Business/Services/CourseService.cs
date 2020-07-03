@@ -50,5 +50,10 @@ namespace CharlieBackend.Business.Services
             }
             catch { _unitOfWork.Rollback(); return null; }
         }
+
+        public Task<bool> IsCourseNameTakenAsync(string courseName)
+        {
+            return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
+        }
     }
 }

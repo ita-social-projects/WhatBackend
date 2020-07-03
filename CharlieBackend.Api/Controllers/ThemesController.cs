@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ThemeModel>>> GetAllCourses()
+        public async Task<ActionResult<List<ThemeModel>>> GetAllThemes()
         {
             try
             {
