@@ -1,8 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
-using System;
+﻿using CharlieBackend.Core.Models.Theme;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces

@@ -1,6 +1,6 @@
 ﻿using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories;
+using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace CharlieBackend.Root
         public static void injectDependencies(IServiceCollection services, string connStr)
         {
             services.AddDbContext<ApplicationContext>(options =>
-            { options.UseMySql(connStr, b => b.MigrationsAssembly("CharlieBackend.Api"));});
+            { options.UseMySql(connStr, b => b.MigrationsAssembly("CharlieBackend.Api")); });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

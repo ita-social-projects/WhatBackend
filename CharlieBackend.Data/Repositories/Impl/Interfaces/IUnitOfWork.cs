@@ -10,7 +10,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public IThemeRepository ThemeRepository { get; }
         public ICourseRepository CourseRepository { get; }
         public IMentorRepository MentorRepository { get; }
-        public IMentorOfCourseRepository MentorOfCourseRepository { get;  }
+        public IMentorOfCourseRepository MentorOfCourseRepository { get; }
 
         Task CommitAsync();
         void Rollback();

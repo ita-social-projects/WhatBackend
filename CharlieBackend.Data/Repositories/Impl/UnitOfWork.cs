@@ -36,7 +36,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public ICourseRepository CourseRepository
         {
-            get { return _courseRepository = _courseRepository ?? new CourseRepository(_applicationContext);  }
+            get { return _courseRepository = _courseRepository ?? new CourseRepository(_applicationContext); }
         }
 
         public IMentorRepository MentorRepository

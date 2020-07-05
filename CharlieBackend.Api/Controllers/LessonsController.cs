@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Models.Lesson;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Business.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {

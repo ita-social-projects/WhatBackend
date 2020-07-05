@@ -1,11 +1,8 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -45,7 +42,7 @@ namespace CharlieBackend.Business.Services
             try
             {
                 _unitOfWork.CourseRepository.Update(courseModel.ToCourse());
-                await _unitOfWork.CommitAsync(); 
+                await _unitOfWork.CommitAsync();
                 return courseModel;
             }
             catch { _unitOfWork.Rollback(); return null; }

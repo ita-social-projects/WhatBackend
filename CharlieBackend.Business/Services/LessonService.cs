@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
