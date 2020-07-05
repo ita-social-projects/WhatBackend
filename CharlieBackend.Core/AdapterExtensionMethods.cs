@@ -1,5 +1,9 @@
 ﻿using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.Models.Course;
+using CharlieBackend.Core.Models.Lesson;
+using CharlieBackend.Core.Models.Theme;
 using System;
 using System.Linq;
 
@@ -7,7 +11,7 @@ namespace CharlieBackend.Core
 {
     public static class AdapterExtensionMethods
     {
-        public static Account ToAccount(this AccountModel accountModel)
+        public static Account ToAccount(this BaseAccountModel accountModel)
         {
             return new Account
             {
@@ -20,9 +24,9 @@ namespace CharlieBackend.Core
             };
         }
 
-        public static AccountModel ToAccountModel(this Account account)
+        public static BaseAccountModel ToAccountModel(this Account account)
         {
-            return new AccountModel
+            return new BaseAccountModel
             {
                 Id = account.Id,
                 Email = account.Email,
@@ -33,9 +37,9 @@ namespace CharlieBackend.Core
             };
         }
 
-        public static GetAccountModel ToGetAccountModel(this AccountModel accountModel)
+        public static AccountInfoModel ToUserModel(this BaseAccountModel accountModel)
         {
-            return new GetAccountModel
+            return new AccountInfoModel
             {
                 FirstName = accountModel.FirstName,
                 LastName = accountModel.LastName,
@@ -48,8 +52,8 @@ namespace CharlieBackend.Core
             return new Lesson
             {
                 Id = lessonModel.Id,
-                StudentGroupId = lessonModel.group_id,
-                LessonDate = DateTime.Parse(lessonModel.lesson_date),
+                StudentGroupId = lessonModel.GroupId,
+                LessonDate = DateTime.Parse(lessonModel.LessonDate),
             };
         }
 
@@ -58,8 +62,8 @@ namespace CharlieBackend.Core
             return new LessonModel
             {
                 Id = lesson.Id,
-                group_id = lesson.StudentGroupId ?? 0, // TODO: remove
-                lesson_date = lesson.LessonDate.ToString()
+                GroupId = lesson.StudentGroupId ?? 0, // TODO: remove
+                LessonDate = lesson.LessonDate.ToString()
             };
         }
 
@@ -113,21 +117,18 @@ namespace CharlieBackend.Core
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
-            {
-               AccountId = mentorModel.account_id
-            };
+            { };
         }
 
         public static MentorModel ToMentorModel(this Mentor mentor)
         {
             return new MentorModel
             {
-                account_id = (int)mentor.AccountId,
                 FirstName = mentor.Account.FirstName,
                 LastName = mentor.Account.LastName,
-                login = mentor.Account.Email,
-                password = mentor.Account.Password,
-                courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
+                Email = mentor.Account.Email,
+                Password = mentor.Account.Password,
+                Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
             };
         }
     }
