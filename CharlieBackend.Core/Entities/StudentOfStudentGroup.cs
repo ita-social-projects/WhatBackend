@@ -1,11 +1,11 @@
 ﻿namespace CharlieBackend.Core.Entities
 {
-    public partial class MentorOfStudentGroup : BaseEntity
+    public partial class StudentOfStudentGroup : BaseEntity
     {
-        public long? MentorId { get; set; }
         public long? StudentGroupId { get; set; }
+        public long? StudentId { get; set; }
 
-        public virtual Mentor Mentor { get; set; }
+        public virtual Student Student { get; set; }
         public virtual StudentGroup StudentGroup { get; set; }
     }
 }

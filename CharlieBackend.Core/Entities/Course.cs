@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -8,12 +7,12 @@ namespace CharlieBackend.Core.Entities
         public Course()
         {
             MentorsOfCourses = new HashSet<MentorOfCourse>();
-            StudentGroups = new HashSet<StudentGroup>();
+            StudentGroup = new HashSet<StudentGroup>();
         }
 
         public string Name { get; set; }
 
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }
-        public virtual ICollection<StudentGroup> StudentGroups { get; set; }
+        public virtual ICollection<StudentGroup> StudentGroup { get; set; }
     }
 }

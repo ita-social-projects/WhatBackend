@@ -7,9 +7,9 @@ namespace CharlieBackend.Core.Entities
     {
         public StudentGroup()
         {
-            Lessons = new HashSet<Lesson>();
+            Lesson = new HashSet<Lesson>();
             MentorsOfStudentGroups = new HashSet<MentorOfStudentGroup>();
-            StudentsOfGroups = new HashSet<StudentsOfGroups>();
+            StudentsOfStudentGroups = new HashSet<StudentOfStudentGroup>();
         }
 
         public long? CourseId { get; set; }
@@ -18,8 +18,8 @@ namespace CharlieBackend.Core.Entities
         public DateTime? FinishDate { get; set; }
 
         public virtual Course Course { get; set; }
-        public virtual ICollection<Lesson> Lessons { get; set; }
+        public virtual ICollection<Lesson> Lesson { get; set; }
         public virtual ICollection<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
-        public virtual ICollection<StudentsOfGroups> StudentsOfGroups { get; set; }
+        public virtual ICollection<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
     }
 }

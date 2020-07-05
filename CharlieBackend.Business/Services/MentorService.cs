@@ -3,10 +3,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -31,7 +28,7 @@ namespace CharlieBackend.Business.Services
                     // How to set password?
                     var account = await _accountService.CreateAccountAsync(new Account
                     {
-                        Email = mentorModel.login,
+                        Email = mentorModel.Email,
                         FirstName = mentorModel.FirstName,
                         LastName = mentorModel.LastName,
                         Password = "temp",
@@ -43,14 +40,14 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    if (mentorModel.courses_id != null)
+                    if (mentorModel.Courses_id != null)
                         // TODO: access via service, not uof
-                        for (int i = 0; i < mentorModel.courses_id.Length; i++)
+                        for (int i = 0; i < mentorModel.Courses_id.Length; i++)
                         {
                             _unitOfWork.MentorOfCourseRepository.Add(new MentorOfCourse
                             {
                                 MentorId = mentor.Id,
-                                CourseId = mentorModel.courses_id[i]
+                                CourseId = mentorModel.Courses_id[i]
                             });
                         }
 

@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Theme;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,7 +23,8 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.ThemeRepository.Add(theme.ToTheme());
                 await _unitOfWork.CommitAsync();
                 return theme;
-            } catch { _unitOfWork.Rollback(); return null; }
+            }
+            catch { _unitOfWork.Rollback(); return null; }
         }
 
         public async Task<List<ThemeModel>> GetAllThemesAsync()

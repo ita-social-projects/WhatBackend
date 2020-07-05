@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Models.Course;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -18,7 +18,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostCourse(CourseModel courseModel)
+        public async Task<ActionResult> PostCourse(CreateCourseModel courseModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -43,16 +43,18 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutCourse(long id, CourseModel courseModel)
+        public async Task<ActionResult> PutCourse(long id, UpdateCourseModel courseModel)
         {
-            if (id != courseModel.Id) return BadRequest();
+            //if (id != courseModel.Id) return BadRequest();
 
-            try {
+            try
+            {
                 var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
                 if (updatedCourse != null) return NoContent();
                 else return StatusCode(409, "Course already exists!");
 
-            } catch { return StatusCode(500); }
+            }
+            catch { return StatusCode(500); }
         }
     }
 }

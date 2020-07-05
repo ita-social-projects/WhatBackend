@@ -1,11 +1,12 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Threading.Tasks;
 using System;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
@@ -20,7 +21,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<AccountModel> CreateAccountAsync(AccountModel accountModel)
+        public async Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel)
         {
             try
             {
@@ -36,12 +37,12 @@ namespace CharlieBackend.Business.Services
             catch { _unitOfWork.Rollback(); return null; }
         }
 
-        public async Task<AccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
+        public async Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
         {
-            var salt = await _unitOfWork.AccountRepository.GetAccountSalt(authenticationModel.email);
+            var salt = await _unitOfWork.AccountRepository.GetAccountSalt(authenticationModel.Email);
             if (salt != "")
             {
-                authenticationModel.password = HashPassword(authenticationModel.password + salt);
+                authenticationModel.Password = HashPassword(authenticationModel.Password + salt);
                 var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
                 return foundAccount?.ToAccountModel();
             }

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Data;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -30,7 +24,7 @@ namespace CharlieBackend.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(mentorModel.login);
+            var isEmailTaken = await _accountService.IsEmailTakenAsync(mentorModel.Email);
             if (isEmailTaken) return StatusCode(409, "Account already exists!");
 
             var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
@@ -46,7 +40,8 @@ namespace CharlieBackend.Api.Controllers
             {
                 var mentosModels = await _mentorService.GetAllMentorsAsync();
                 return Ok(mentosModels);
-            } catch { return StatusCode(500); }
+            }
+            catch { return StatusCode(500); }
         }
     }
 }

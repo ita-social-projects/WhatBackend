@@ -1,15 +1,13 @@
 ﻿using CharlieBackend.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using CharlieBackend.Core.Models.Account;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<AccountModel> CreateAccountAsync(AccountModel accountModel);
-        Task<AccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel);
+        Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel);
+        Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel);
         Task<bool> IsEmailTakenAsync(string email);
     }
 }

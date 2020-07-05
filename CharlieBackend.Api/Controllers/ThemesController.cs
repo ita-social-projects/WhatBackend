@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Models.Theme;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -21,7 +18,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostTheme(ThemeModel themeModel)
+        public async Task<ActionResult> PostTheme(CreateThemeModel themeModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
