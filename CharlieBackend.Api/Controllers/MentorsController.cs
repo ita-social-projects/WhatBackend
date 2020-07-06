@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Mentor;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostMentor(MentorModel mentorModel)
+        public async Task<ActionResult> PostMentor(CreateMentorModel mentorModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
