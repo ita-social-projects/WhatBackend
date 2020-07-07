@@ -44,5 +44,23 @@ namespace CharlieBackend.Api.Controllers
             }
             catch { return StatusCode(500); }
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            try
+            {
+                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
+                if (!isEmailChangableTo) return StatusCode(409, "Email is already taken!");
+
+                mentorModel.Id = id;
+                var updatedCourse = await _mentorService.UpdateMentorAsync(mentorModel);
+                if (updatedCourse != null) return NoContent();
+                else return StatusCode(409, "Cannot update.");
+
+            }
+            catch { return StatusCode(500); }
+        }
     }
 }

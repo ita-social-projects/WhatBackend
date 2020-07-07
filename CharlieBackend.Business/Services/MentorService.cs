@@ -21,44 +21,36 @@ namespace CharlieBackend.Business.Services
 
         public async Task<MentorModel> CreateMentorAsync(MentorModel mentorModel)
         {
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
+                var account = new Account
                 {
-                    // How to set password?
-                    var account = await _accountService.CreateAccountAsync(new Account
-                    {
-                        Email = mentorModel.Email,
-                        FirstName = mentorModel.FirstName,
-                        LastName = mentorModel.LastName,
-                        Password = "temp",
-                        Role = 2
-                    }.ToAccountModel());
+                    Email = mentorModel.Email,
+                    FirstName = mentorModel.FirstName,
+                    LastName = mentorModel.LastName,
+                    Role = 2
+                };
+                account.Salt = _accountService.GenerateSalt();
+                account.Password = _accountService.HashPassword("temp", account.Salt);
 
-                    var mentor = new Mentor { AccountId = account.Id };
-                    _unitOfWork.MentorRepository.Add(mentor);
+                var mentor = new Mentor { Account = account };
+                _unitOfWork.MentorRepository.Add(mentor);
 
-                    await _unitOfWork.CommitAsync();
+                if (mentorModel.Courses_id.Count != 0)
+                {
+                    var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.Courses_id);
+                    mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
-                    if (mentorModel.Courses_id != null)
-                        // TODO: access via service, not uof
-                        for (int i = 0; i < mentorModel.Courses_id.Length; i++)
-                        {
-                            _unitOfWork.MentorOfCourseRepository.Add(new MentorOfCourse
-                            {
-                                MentorId = mentor.Id,
-                                CourseId = mentorModel.Courses_id[i]
-                            });
-                        }
-
-                    await _unitOfWork.CommitAsync();
-
-                    await transaction.CommitAsync();
-
-                    return mentor.ToMentorModel();
+                    for (int i = 0; i < courses.Count; i++)
+                        mentor.MentorsOfCourses.Add(new MentorOfCourse { Mentor = mentor, Course = courses[i] });
                 }
-                catch { transaction.Rollback(); return null; }
+
+                await _unitOfWork.CommitAsync();
+
+                return mentor.ToMentorModel();
             }
+            catch { _unitOfWork.Rollback(); return null; }
+
         }
 
         public async Task<List<MentorModel>> GetAllMentorsAsync()
@@ -69,9 +61,38 @@ namespace CharlieBackend.Business.Services
 
             foreach (var mentor in mentors)
             {
-                mentorModels.Add(mentor.ToMentorModel());
+                var mentorModel = mentor.ToMentorModel();
+                mentorModels.Add(mentorModel);
             }
+
             return mentorModels;
+        }
+
+        public async Task<MentorModel> UpdateMentorAsync(MentorModel mentorModel)
+        {
+            try
+            {
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+
+                foundMentor.Account.Email = mentorModel.Email;
+                foundMentor.Account.FirstName = mentorModel.FirstName;
+                foundMentor.Account.LastName = mentorModel.LastName;
+                foundMentor.Account.Salt = _accountService.GenerateSalt();
+                foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+
+                var currentMentorCourses = foundMentor.MentorsOfCourses;
+                var newMentorCourses = new List<MentorOfCourse>();
+
+                foreach (var newCourseId in mentorModel.Courses_id)
+                    newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
+
+                _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);
+
+                await _unitOfWork.CommitAsync();
+                return foundMentor.ToMentorModel();
+
+            }
+            catch { _unitOfWork.Rollback(); return null; }
         }
     }
 }

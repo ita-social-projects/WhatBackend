@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models
@@ -13,6 +14,6 @@ namespace CharlieBackend.Core.Models
 
         [JsonIgnore]
         public override int Role { get; set; }
-        public long[] Courses_id { get; set; }
+        public virtual List<long> Courses_id { get; set; }
     }
 }
