@@ -3,6 +3,7 @@ using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
+using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Theme;
 using System;
 using System.Linq;
@@ -130,6 +131,22 @@ namespace CharlieBackend.Core
                 Password = mentor.Account.Password,
                 Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
             };
+        }
+        public static StudentModel ToStudentModel(this Student student)
+        {
+            return new StudentModel
+            {
+                FirstName = student.Account.FirstName,
+                LastName = student.Account.LastName,
+                Email = student.Account.Email,
+                Password = student.Account.Password,
+
+            };
+        }
+        public static Student ToStudent(this StudentModel studentModel)
+        {
+            return new Student
+            { };
         }
     }
 }
