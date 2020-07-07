@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.Student
 {
@@ -11,7 +12,7 @@ namespace CharlieBackend.Core.Models.Student
 
 		[JsonIgnore]
 		public override int Role { get; set; }
-		public long groups_id { get; set; }
+		//public List<long> Groups_id { get; set; }
 
 	}
 }

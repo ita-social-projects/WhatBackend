@@ -136,11 +136,12 @@ namespace CharlieBackend.Core
         {
             return new StudentModel
             {
+                Id = student.Id,
                 FirstName = student.Account.FirstName,
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,
-                Password = student.Account.Password,
-
+                Password = student.Account.Password
+                //Groups_id = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
             };
         }
         public static Student ToStudent(this StudentModel studentModel)
