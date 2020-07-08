@@ -19,7 +19,7 @@ namespace CharlieBackend.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CompositionRoot.injectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
+            CompositionRoot.injectDependencies(services, Configuration);
 
             services.AddCors();
             services.AddControllers();

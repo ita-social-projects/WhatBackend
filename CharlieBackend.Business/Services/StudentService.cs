@@ -14,11 +14,13 @@ namespace CharlieBackend.Business.Services
 	{
 		private readonly IAccountService _accountService;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly ICredentialsSenderService _credentialSender;
 
-		public StudentService(IAccountService accountService, IUnitOfWork unitOfWork)
+		public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
 		{
 			_accountService = accountService;
 			_unitOfWork = unitOfWork;
+			_credentialSender = credentialsSender;
 		}
 
 		public async Task<StudentModel> CreateStudentAsync(StudentModel studentModel)
@@ -27,14 +29,14 @@ namespace CharlieBackend.Business.Services
 			{
 				try
 				{
-					var originalPassword = studentModel.Password;
+					var generatedPassword = _accountService.GenerateSalt();
 					// How to set password?
 					var account = await _accountService.CreateAccountAsync(new Account
 					{
 						Email = studentModel.Email,
 						FirstName = studentModel.FirstName,
 						LastName = studentModel.LastName,
-						Password = "temp",
+						Password = generatedPassword,
 						Role = 1
 					}.ToAccountModel());
 
@@ -45,7 +47,8 @@ namespace CharlieBackend.Business.Services
 
 
 					await _unitOfWork.CommitAsync();
-					MessageSender.SendMessage(account.Email, originalPassword);
+
+					await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword);
 					await transaction.CommitAsync();
 					
 					return student.ToStudentModel();
