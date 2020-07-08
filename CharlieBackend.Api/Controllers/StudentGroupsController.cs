@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services.Interfaces;
@@ -18,7 +19,9 @@ namespace CharlieBackend.Api.Controllers
 
         public StudentGroupsController(IStudentGroupService studentGroupService)
         {
+            Console.WriteLine("Test");
             _studentGroupService = studentGroupService;
+            
         }
 
 
