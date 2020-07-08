@@ -25,6 +25,7 @@ namespace CharlieBackend.Root
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IMentorService, MentorService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentGroupService, StudentGroupService>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
@@ -32,7 +33,8 @@ namespace CharlieBackend.Root
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IMentorRepository, MentorRepository>();
             services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
-            services.AddScoped<IStudentRepository, StudentRepository>(); 
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
         }
     }
 }
