@@ -13,7 +13,6 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
 
@@ -44,6 +43,24 @@ namespace CharlieBackend.Api.Controllers
             {
                 var studentsModels = await _studentService.GetAllStudentsAsync();
                 return Ok(studentsModels);
+            }
+            catch { return StatusCode(500); }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            try
+            {
+                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
+                if (!isEmailChangableTo) return StatusCode(409, "Email is already taken!");
+
+                mentorModel.Id = id;
+                var updatedCourse = await _studentService.UpdateStudentAsync(mentorModel);
+                if (updatedCourse != null) return NoContent();
+                else return StatusCode(409, "Cannot update.");
+
             }
             catch { return StatusCode(500); }
         }

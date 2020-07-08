@@ -19,7 +19,12 @@ namespace CharlieBackend.Data.Repositories.Impl
 				//.Include(student => student.StudentsOfStudentGroups)
 				.ToListAsync();
 		}
-
+		public new Task<Student> GetByIdAsync(long id)
+		{
+			return _applicationContext.Students
+				.Include(student => student.Account)
+				.FirstOrDefaultAsync(student => student.Id == id);
+		}
 
 	}
 }

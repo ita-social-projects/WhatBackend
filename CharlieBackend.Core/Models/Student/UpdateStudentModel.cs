@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.Student
 {
@@ -6,6 +7,14 @@ namespace CharlieBackend.Core.Models.Student
 	{
 		[JsonIgnore]
 		public override long Id { get; set; }
+
+		[Required]
 		public override string Password { get => base.Password; set => base.Password = value; }
+
+		[Required]
+		public override string FirstName { get; set; }
+
+		[Required]
+		public override string LastName { get; set; }
 	}
 }

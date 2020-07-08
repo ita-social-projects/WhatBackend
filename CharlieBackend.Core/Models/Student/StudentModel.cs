@@ -8,8 +8,6 @@ namespace CharlieBackend.Core.Models.Student
 		[JsonIgnore]
 		public override string Password { get; set; }
 
-		public override string Email { get; set; }
-
 		[JsonIgnore]
 		public override int Role { get; set; }
 		//public List<long> Groups_id { get; set; }

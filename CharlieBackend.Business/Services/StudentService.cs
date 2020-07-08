@@ -65,5 +65,24 @@ namespace CharlieBackend.Business.Services
 			}
 			return studentModels;
 		}
+
+		public async Task<StudentModel> UpdateStudentAsync(StudentModel studentModel)
+		{
+			try
+			{
+				var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
+
+				foundStudent.Account.Email = studentModel.Email;
+				foundStudent.Account.FirstName = studentModel.FirstName;
+				foundStudent.Account.LastName = studentModel.LastName;
+				foundStudent.Account.Salt = _accountService.GenerateSalt();
+				foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
+
+				await _unitOfWork.CommitAsync();
+				return foundStudent.ToStudentModel();
+
+			}
+			catch { _unitOfWork.Rollback(); return null; }
+		}
 	}
 }
