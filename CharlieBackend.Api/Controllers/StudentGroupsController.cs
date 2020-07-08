@@ -19,7 +19,6 @@ namespace CharlieBackend.Api.Controllers
 
         public StudentGroupsController(IStudentGroupService studentGroupService)
         {
-            Console.WriteLine("Test");
             _studentGroupService = studentGroupService;
             
         }
