@@ -4,9 +4,11 @@ using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace CharlieBackend.Core
 {
@@ -147,6 +149,17 @@ namespace CharlieBackend.Core
         {
             return new Student
             { };
+        }
+        public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
+        {
+            return new StudentGroupModel
+            {
+                name = group.Name,
+                start_date = group.StartDate.ToString(),
+                finish_date = group.FinishDate.ToString(),
+                students_id = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
+                course_id = (long)group.CourseId
+            };
         }
     }
 }
