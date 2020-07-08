@@ -118,18 +118,21 @@ namespace CharlieBackend.Core
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
-            { };
+            {
+                Id = mentorModel.Id
+            };
         }
 
         public static MentorModel ToMentorModel(this Mentor mentor)
         {
             return new MentorModel
             {
+                Id = mentor.Id,
                 FirstName = mentor.Account.FirstName,
                 LastName = mentor.Account.LastName,
                 Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
-                Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
+                Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
             };
         }
         public static StudentModel ToStudentModel(this Student student)
