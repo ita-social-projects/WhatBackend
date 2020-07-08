@@ -27,6 +27,7 @@ namespace CharlieBackend.Business.Services
 			{
 				try
 				{
+					var originalPassword = studentModel.Password;
 					// How to set password?
 					var account = await _accountService.CreateAccountAsync(new Account
 					{
@@ -44,9 +45,9 @@ namespace CharlieBackend.Business.Services
 
 
 					await _unitOfWork.CommitAsync();
-
+					MessageSender.SendMessage(account.Email, originalPassword);
 					await transaction.CommitAsync();
-
+					
 					return student.ToStudentModel();
 				}
 				catch { transaction.Rollback(); return null; }

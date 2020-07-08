@@ -23,6 +23,7 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                var originalPassword = mentorModel.Password;
                 var account = new Account
                 {
                     Email = mentorModel.Email,
@@ -46,7 +47,7 @@ namespace CharlieBackend.Business.Services
                 }
 
                 await _unitOfWork.CommitAsync();
-
+                MessageSender.SendMessage(account.Email, originalPassword);
                 return mentor.ToMentorModel();
             }
             catch { _unitOfWork.Rollback(); return null; }
