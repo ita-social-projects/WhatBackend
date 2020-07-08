@@ -34,7 +34,7 @@ namespace CharlieBackend.Business.Services
 						FirstName = studentModel.FirstName,
 						LastName = studentModel.LastName,
 						Password = "temp",
-						Role = 4
+						Role = 1
 					}.ToAccountModel());
 
 					var student = new Student { AccountId = account.Id };
