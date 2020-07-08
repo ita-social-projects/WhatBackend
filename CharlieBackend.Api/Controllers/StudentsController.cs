@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Student;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
+        [Authorize(Roles = "2")]
         [HttpPost]
         public async Task<ActionResult> PostStudent(CreateStudentModel studentModel)
         {
@@ -36,6 +38,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
         {
@@ -47,6 +50,7 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles = "2")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
         {

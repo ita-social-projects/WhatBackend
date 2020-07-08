@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Models.Mentor;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
+        [Authorize(Roles = "4")]
         [HttpPost]
         public async Task<ActionResult> PostMentor(CreateMentorModel mentorModel)
         {
@@ -34,6 +36,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
         {
@@ -45,6 +48,7 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
         {
