@@ -9,9 +9,11 @@ namespace CharlieBackend.Core.Models.Student
 		public override long Id { get; set; }
 
 		[Required]
+		[JsonPropertyName("first_name")]
 		public override string FirstName { get; set; }
 
 		[Required]
+		[JsonPropertyName("last_name")]
 		public override string LastName { get; set; }
 	}
 }

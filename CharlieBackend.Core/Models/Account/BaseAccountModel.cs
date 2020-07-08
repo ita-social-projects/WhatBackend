@@ -1,11 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models
 {
     public class BaseAccountModel
     {
         public virtual long Id { get; set; }
+
+        [JsonPropertyName("first_name")]
         public virtual string FirstName { get; set; }
+
+        [JsonPropertyName("last_name")]
         public virtual string LastName { get; set; }
 
         [Required]

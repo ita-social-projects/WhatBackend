@@ -1,13 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
     public class StudentGroupModel
     {
-        public string name { get; set; }
-        public int course_id { get; set; }
-        public string start_date { get; set; }
-        public string finish_date { get; set; }
-        public IEnumerable<int> students_id { get; set; }
+        public string Name { get; set; }
+
+        [JsonPropertyName("course_id")]
+        public int CourseId { get; set; }
+
+        [JsonPropertyName("start_date")]
+        public string StartDate { get; set; }
+
+        [JsonPropertyName("finish_date")]
+        public string FinishDate { get; set; }
+
+        [JsonPropertyName("student_ids")]
+        public IEnumerable<int> StudentIds { get; set; }
     }
 }

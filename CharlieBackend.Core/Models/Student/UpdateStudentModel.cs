@@ -12,9 +12,11 @@ namespace CharlieBackend.Core.Models.Student
 		public override string Password { get => base.Password; set => base.Password = value; }
 
 		[Required]
+		[JsonPropertyName("first_name")]
 		public override string FirstName { get; set; }
 
 		[Required]
+		[JsonPropertyName("last_name")]
 		public override string LastName { get; set; }
 	}
 }

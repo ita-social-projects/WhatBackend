@@ -36,9 +36,9 @@ namespace CharlieBackend.Business.Services
                 var mentor = new Mentor { Account = account };
                 _unitOfWork.MentorRepository.Add(mentor);
 
-                if (mentorModel.Courses_id.Count != 0)
+                if (mentorModel.CourseIds.Count != 0)
                 {
-                    var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.Courses_id);
+                    var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
                     mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
                     for (int i = 0; i < courses.Count; i++)
@@ -83,7 +83,7 @@ namespace CharlieBackend.Business.Services
                 var currentMentorCourses = foundMentor.MentorsOfCourses;
                 var newMentorCourses = new List<MentorOfCourse>();
 
-                foreach (var newCourseId in mentorModel.Courses_id)
+                foreach (var newCourseId in mentorModel.CourseIds)
                     newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
 
                 _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);

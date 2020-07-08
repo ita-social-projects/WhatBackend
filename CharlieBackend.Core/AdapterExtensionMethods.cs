@@ -132,7 +132,7 @@ namespace CharlieBackend.Core
                 LastName = mentor.Account.LastName,
                 Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
-                Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
+                CourseIds = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
             };
         }
         public static StudentModel ToStudentModel(this Student student)
