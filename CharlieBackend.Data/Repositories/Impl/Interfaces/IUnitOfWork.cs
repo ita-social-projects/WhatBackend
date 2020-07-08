@@ -12,6 +12,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public IMentorRepository MentorRepository { get; }
         public IMentorOfCourseRepository MentorOfCourseRepository { get; }
         public IStudentRepository StudentRepository { get; }
+        public IStudentGroupRepository StudentGroupRepository { get; }
 
         Task CommitAsync();
         void Rollback();
