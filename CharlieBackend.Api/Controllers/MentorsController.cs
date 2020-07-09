@@ -31,7 +31,7 @@ namespace CharlieBackend.Api.Controllers
             if (isEmailTaken) return StatusCode(409, "Account already exists!");
 
             var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
-            if (createdMentorModel == null) return StatusCode(422, "Invalid courses.");
+            if (createdMentorModel == null) return StatusCode(422, "Cannot create mentor.");
 
             return Ok();
         }
