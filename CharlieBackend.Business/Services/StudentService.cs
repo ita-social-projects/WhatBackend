@@ -28,23 +28,30 @@ namespace CharlieBackend.Business.Services
                 try
                 {
                     var generatedPassword = _accountService.GenerateSalt();
-                    // How to set password?
-                    var account = await _accountService.CreateAccountAsync(new Account
+                    var account = new Account
                     {
                         Email = studentModel.Email,
                         FirstName = studentModel.FirstName,
                         LastName = studentModel.LastName,
-                        Password = generatedPassword,
                         Role = 1
-                    }.ToAccountModel());
+                    };
+                    account.Salt = _accountService.GenerateSalt();
+                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
-                    var student = new Student { AccountId = account.Id };
+                    var student = new Student { Account = account };
                     _unitOfWork.StudentRepository.Add(student);
 
                     await _unitOfWork.CommitAsync();
 
+                    //var newAccount = await _accountService.CreateAccountAsync(account.ToAccountModel());
 
-                    await _unitOfWork.CommitAsync();
+                    //var student = new Student { AccountId = newAccount.Id };
+                    //_unitOfWork.StudentRepository.Add(student);
+
+                    //await _unitOfWork.CommitAsync();
+
+
+                    //await _unitOfWork.CommitAsync();
 
                     await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword);
                     await transaction.CommitAsync();
@@ -73,6 +80,7 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
+                if (foundStudent == null) return null;
 
                 foundStudent.Account.Email = studentModel.Email;
                 foundStudent.Account.FirstName = studentModel.FirstName;

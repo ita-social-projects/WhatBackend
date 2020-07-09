@@ -30,7 +30,7 @@ namespace CharlieBackend.Api.Controllers
             if (isEmailTaken) return StatusCode(409, "Account already exists!");
 
             var createdStudentModel = await _studentService.CreateStudentAsync(studentModel);
-            if (createdStudentModel == null) return StatusCode(422, "Invalid courses.");
+            if (createdStudentModel == null) return StatusCode(422, "Cannot create student.");
 
             return Ok();
         }

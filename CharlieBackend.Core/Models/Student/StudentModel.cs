@@ -9,6 +9,9 @@ namespace CharlieBackend.Core.Models.Student
 
         [JsonIgnore]
         public override int Role { get; set; }
+
+        [JsonIgnore]
+        public override bool IsActive { get; set; }
         //public List<long> Groups_id { get; set; }
 
     }
