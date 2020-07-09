@@ -14,5 +14,8 @@ namespace CharlieBackend.Core.Models
 
         [JsonPropertyName("course_ids")]
         public virtual List<long> CourseIds { get; set; }
+
+        [JsonIgnore]
+        public override bool IsActive { get; set; }
     }
 }

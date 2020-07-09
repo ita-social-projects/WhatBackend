@@ -12,6 +12,8 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<BaseAccountModel> UpdateAccountCredentialsAsync(Account account);
         Task<bool> IsEmailTakenAsync(string email);
         Task<bool> IsEmailChangableToAsync(string newEmail);
+        Task<bool> IsAccountActiveAsync(string email);
+        Task<bool> DisableAccountAsync(string email);
         public string GenerateSalt();
         public string HashPassword(string password, string salt);
     }

@@ -21,12 +21,14 @@ namespace CharlieBackend.Core
                 Password = accountModel.Password,
                 FirstName = accountModel.FirstName,
                 LastName = accountModel.LastName,
-                Role = (sbyte)accountModel.Role
+                Role = (sbyte)accountModel.Role,
+                IsActive = accountModel.IsActive
             };
         }
 
         public static BaseAccountModel ToAccountModel(this Account account)
         {
+            // TODO: fix ID error
             return new BaseAccountModel
             {
                 Id = account.Id,
@@ -34,7 +36,8 @@ namespace CharlieBackend.Core
                 Password = account.Password,
                 FirstName = account.FirstName,
                 LastName = account.LastName,
-                Role = (sbyte)account.Role
+                Role = (sbyte)account.Role,
+                IsActive = (bool)account.IsActive
             };
         }
 
@@ -132,6 +135,7 @@ namespace CharlieBackend.Core
                 LastName = mentor.Account.LastName,
                 Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
+                IsActive = (bool)mentor.Account.IsActive,
                 CourseIds = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
             };
         }
@@ -143,7 +147,8 @@ namespace CharlieBackend.Core
                 FirstName = student.Account.FirstName,
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,
-                Password = student.Account.Password
+                Password = student.Account.Password,
+                IsActive = (bool)student.Account.IsActive
                 //Groups_id = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
             };
         }

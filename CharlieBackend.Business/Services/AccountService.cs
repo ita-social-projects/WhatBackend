@@ -71,6 +71,22 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
         }
 
+        public Task<bool> IsAccountActiveAsync(string email)
+        {
+            return _unitOfWork.AccountRepository.IsAccountActiveAsync(email);
+        }
+
+        public async Task<bool> DisableAccountAsync(string email)
+        {
+            try
+            {
+                await _unitOfWork.AccountRepository.DisableAccountAsync(email);
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch { _unitOfWork.Rollback(); return false; }
+        }
+
         #region hash
         public string GenerateSalt()
         {

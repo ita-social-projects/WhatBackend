@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Lesson;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace CharlieBackend.Api.Controllers
             _lessonService = lessonService;
         }
 
+        [Authorize(Roles = "2")]
         [HttpPost]
         public async Task<ActionResult<LessonModel>> PostLesson(LessonModel lessonModel)
         {
@@ -30,6 +32,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {

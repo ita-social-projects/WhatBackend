@@ -82,6 +82,7 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+                if (foundMentor == null) return null;
 
                 foundMentor.Account.Email = mentorModel.Email;
                 foundMentor.Account.FirstName = mentorModel.FirstName;
