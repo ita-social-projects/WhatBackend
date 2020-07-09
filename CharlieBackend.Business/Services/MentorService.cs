@@ -41,10 +41,10 @@ namespace CharlieBackend.Business.Services
                     var mentor = new Mentor { Account = account };
                     _unitOfWork.MentorRepository.Add(mentor);
 
-                if (mentorModel.CourseIds.Count != 0)
-                {
-                    var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
-                    mentor.MentorsOfCourses = new List<MentorOfCourse>();
+                    if (mentorModel.CourseIds.Count != 0)
+                    {
+                        var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
+                        mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
                         for (int i = 0; i < courses.Count; i++)
                             mentor.MentorsOfCourses.Add(new MentorOfCourse { Mentor = mentor, Course = courses[i] });

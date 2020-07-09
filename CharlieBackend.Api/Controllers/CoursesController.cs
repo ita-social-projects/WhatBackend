@@ -51,7 +51,7 @@ namespace CharlieBackend.Api.Controllers
         {
             //if (id != courseModel.Id) return BadRequest();
             if (!ModelState.IsValid) return BadRequest();
-            
+
             try
             {
                 courseModel.Id = id;

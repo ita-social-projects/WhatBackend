@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.Api.Settings;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
 using CharlieBackend.Core.Models.Account;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
