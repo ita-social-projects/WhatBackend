@@ -150,6 +150,7 @@ namespace CharlieBackend.Core
             return new Student
             { };
         }
+        
         public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
         {
             return new StudentGroupModel
@@ -159,6 +160,19 @@ namespace CharlieBackend.Core
                 finish_date = group.FinishDate.ToString(),
                 students_id = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
                 course_id = (long)group.CourseId
+            };
+        }
+        public static StudentGroup ToStudentGroup(this StudentGroupModel group)
+        {
+            return new StudentGroup
+            {
+                Name = group.name,
+                
+                StartDate = Convert.ToDateTime(group.start_date.ToString()),
+                FinishDate = Convert.ToDateTime(group.finish_date.ToString()),
+                // добавить лист с группой
+                CourseId = group.course_id
+
             };
         }
     }

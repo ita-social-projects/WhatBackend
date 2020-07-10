@@ -6,6 +6,7 @@ using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +21,24 @@ namespace CharlieBackend.Business.Services
 			_unitOfWork = unitOfWork;
 		}
 
-		public Task<StudentGroupModel> CreateStudentGroupAsync(StudentGroupModel studentGroup)
+		public async Task<StudentGroupModel> CreateStudentGroupAsync(StudentGroupModel studentGroup)
 		{
-			throw new NotImplementedException();
+			
+				_unitOfWork.StudentGroupRepository.Add(new StudentGroup
+				{
+					Name = studentGroup.name,
+					StartDate = Convert.ToDateTime(studentGroup.start_date.ToString()),
+					FinishDate = Convert.ToDateTime(studentGroup.finish_date.ToString()),
+				});
+
+				await _unitOfWork.CommitAsync();
+				return studentGroup;
+			
+		}
+
+		public Task<bool> IsGroupNameTakenAsync(string name)
+		{
+			return _unitOfWork.StudentGroupRepository.IsGroupNameTakenAsync(name);
 		}
 
 		public async Task<List<StudentGroupModel>> GetAllStudentGroupsAsync()

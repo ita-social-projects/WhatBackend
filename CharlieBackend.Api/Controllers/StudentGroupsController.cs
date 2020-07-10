@@ -23,6 +23,17 @@ namespace CharlieBackend.Api.Controllers
             
         }
 
+        [HttpPost]
+        public async Task<ActionResult> PostStudentGroupController(StudentGroupModel studentGroup)
+        {
+            var isNameGroupTaken = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.name);
+            if(isNameGroupTaken) return StatusCode(409, "Account already exists!");
+
+            var createdStudentGrouprModel = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
+            if (createdStudentGrouprModel == null) return StatusCode(422, "Invalid StudentGroup.");
+
+            return Ok();
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupModel>>> GetAllStudentGroups()

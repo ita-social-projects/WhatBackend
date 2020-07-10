@@ -9,5 +9,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 	{
 		public Task<StudentGroupModel> CreateStudentGroupAsync(StudentGroupModel studentGroup);
 		public Task<List<StudentGroupModel>> GetAllStudentGroupsAsync();
+		public Task<bool> IsGroupNameTakenAsync(string email);
 	}
 }

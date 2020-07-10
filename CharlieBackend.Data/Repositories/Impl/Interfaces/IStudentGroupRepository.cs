@@ -9,5 +9,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 	public interface IStudentGroupRepository : IRepository<StudentGroup>
 	{
 		public new Task<List<StudentGroup>> GetAllAsync();
+		public Task<bool> IsGroupNameTakenAsync(string name);
 	}
 }
