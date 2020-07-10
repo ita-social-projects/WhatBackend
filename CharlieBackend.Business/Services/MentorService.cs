@@ -84,19 +84,26 @@ namespace CharlieBackend.Business.Services
                 var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
                 if (foundMentor == null) return null;
 
-                foundMentor.Account.Email = mentorModel.Email;
-                foundMentor.Account.FirstName = mentorModel.FirstName;
-                foundMentor.Account.LastName = mentorModel.LastName;
-                foundMentor.Account.Salt = _accountService.GenerateSalt();
-                foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+                foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
+                foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
+                foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
 
-                var currentMentorCourses = foundMentor.MentorsOfCourses;
-                var newMentorCourses = new List<MentorOfCourse>();
+                if (!string.IsNullOrEmpty(mentorModel.Password))
+                {
+                    foundMentor.Account.Salt = _accountService.GenerateSalt();
+                    foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+                }
 
-                foreach (var newCourseId in mentorModel.CourseIds)
-                    newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
+                if (mentorModel.CourseIds != null && mentorModel.CourseIds.Count != 0)
+                {
+                    var currentMentorCourses = foundMentor.MentorsOfCourses;
+                    var newMentorCourses = new List<MentorOfCourse>();
 
-                _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);
+                    foreach (var newCourseId in mentorModel.CourseIds)
+                        newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
+
+                    _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);
+                }
 
                 await _unitOfWork.CommitAsync();
                 return foundMentor.ToMentorModel();

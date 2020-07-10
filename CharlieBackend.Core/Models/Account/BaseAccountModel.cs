@@ -13,7 +13,6 @@ namespace CharlieBackend.Core.Models
         [JsonPropertyName("last_name")]
         public virtual string LastName { get; set; }
 
-        [Required]
         public virtual string Email { get; set; }
         public virtual string Password { get; set; }
 
