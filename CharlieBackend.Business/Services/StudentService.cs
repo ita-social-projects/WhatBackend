@@ -94,5 +94,17 @@ namespace CharlieBackend.Business.Services
             }
             catch { _unitOfWork.Rollback(); return null; }
         }
+
+        public async Task<StudentModel> GetStudentByAccountIdAsync(long accountId)
+        {
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);         
+            return student?.ToStudentModel();
+        }
+
+        public async Task<long?> GetAccountId(long studentId)
+        {
+            var mentor = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            return mentor?.AccountId;
+        }
     }
 }

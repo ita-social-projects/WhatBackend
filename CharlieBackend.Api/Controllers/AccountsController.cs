@@ -19,30 +19,18 @@ namespace CharlieBackend.Api.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IStudentService _studentService;
+        private readonly IMentorService _mentorService;
 
-        public AccountsController(IAccountService accountService)
+        public AccountsController(IAccountService accountService, IStudentService studentService, IMentorService mentorService)
         {
             _accountService = accountService;
+            _studentService = studentService;
+            _mentorService = mentorService;
         }
 
-
-        //[HttpPost("account")]
-        //public async Task<ActionResult<AccountModel>> PostAccount(AccountModel accountModel)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest();
-
-        //    var authenticationModel = new AuthenticationModel { email = accountModel.Email, password = accountModel.Password };
-        //    var existingAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
-        //    if (existingAccount != null) return StatusCode(409, "Account already exists!");
-
-        //    var createdAccount = await _accountService.CreateAccountAsync(accountModel);
-        //    if (createdAccount == null) return StatusCode(500);
-
-        //    return Ok();
-        //}
-
         [HttpPost]
-        public async Task<ActionResult<AccountInfoModel>> GetAccountCredentials(AuthenticationModel authenticationModel)
+        public async Task<ActionResult> GetAccountCredentials(AuthenticationModel authenticationModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -50,6 +38,19 @@ namespace CharlieBackend.Api.Controllers
             if (foundAccount == null) return Unauthorized("Incorrect credentials, please try again.");
 
             if (!foundAccount.IsActive) return StatusCode(401, "Account is not active!");
+
+            long studentOrMentorId = default;
+            if (foundAccount.Role == 1)
+            {
+                var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
+                if (foundStudent == null) return BadRequest(); 
+                studentOrMentorId = foundStudent.Id;
+            }  else if (foundAccount.Role == 2)
+            {
+                var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
+                if (foundMentor == null) return BadRequest();
+                studentOrMentorId = foundMentor.Id;
+            }
 
             var now = DateTime.UtcNow;
             // создаем JWT-токен
@@ -70,35 +71,11 @@ namespace CharlieBackend.Api.Controllers
             {
                 first_Name = foundAccount.FirstName,
                 last_Name = foundAccount.LastName,
-                role = foundAccount.Role
+                role = foundAccount.Role,
+                id = studentOrMentorId
             };
             Response.Headers.Add("Authorization", "Bearer " + encodedJwt);
             return Ok(response);
         }
-
-        [Authorize(Roles = "1, 2, 4")]
-        [HttpDelete]
-        public async Task<ActionResult> DisableAccount()
-        {
-            try
-            {
-                var handler = new JwtSecurityTokenHandler();
-
-                var authHeader = Request.Headers[HeaderNames.Authorization];
-                authHeader = authHeader.ToString().Replace("Bearer ", "");
-
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-
-                var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-                var email = tokenS.Claims.First(claim => claim.Type == "Email").Value;
-
-                var isDisabled = await _accountService.DisableAccountAsync(email);
-                if (isDisabled) return NoContent();
-                return StatusCode(500, "Error occurred while trying to disable accout");
-
-            } catch { return StatusCode(401, "Bad token."); }
-        }
-
     }
 }

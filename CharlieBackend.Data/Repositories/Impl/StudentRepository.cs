@@ -24,5 +24,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(student => student.Id == id);
         }
 
+        public Task<Student> GetStudentByAccountIdAsync(long accountId)
+        {
+            return _applicationContext.Students.FirstOrDefaultAsync(student => student.AccountId == accountId);
+        }
+
     }
 }

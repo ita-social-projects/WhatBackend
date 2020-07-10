@@ -65,5 +65,22 @@ namespace CharlieBackend.Api.Controllers
             }
             catch { return StatusCode(500); }
         }
+
+        [Authorize(Roles = "2")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DisableStudent(long id)
+        {
+            try
+            {
+                var accountId = await _studentService.GetAccountId(id);
+                if (accountId == null) return BadRequest("Unknown student id.");
+
+                var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+                if (isDisabled) return NoContent();
+                return StatusCode(500, "Error occurred while trying to disable student account.");
+
+            }
+            catch { return StatusCode(401, "Bad token."); }
+        }
     }
 }

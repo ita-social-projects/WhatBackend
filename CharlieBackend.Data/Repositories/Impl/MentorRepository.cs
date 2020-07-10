@@ -32,9 +32,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             _applicationContext.MentorsOfCourses.TryUpdateManyToMany(currentItems, newItems);
         }
 
-        //public Task<Mentor> GetMentorByAccountIdAsync(long mentorId)
-        //{
-        //    return _applicationContext.Mentors.FirstOrDefaultAsync(mentor => mentor.id == mentorId);
-        //}
+        public Task<Mentor> GetMentorByAccountIdAsync(long mentorId)
+        {
+            return _applicationContext.Mentors.FirstOrDefaultAsync(mentor => mentor.AccountId == mentorId);
+        }
     }
 }

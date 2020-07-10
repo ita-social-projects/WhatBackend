@@ -13,7 +13,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<bool> IsEmailTakenAsync(string email);
         Task<bool> IsEmailChangableToAsync(string newEmail);
         Task<bool> IsAccountActiveAsync(string email);
-        Task<bool> DisableAccountAsync(string email);
+        Task<bool> DisableAccountAsync(long id);
         public string GenerateSalt();
         public string HashPassword(string password, string salt);
     }

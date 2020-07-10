@@ -104,5 +104,17 @@ namespace CharlieBackend.Business.Services
             }
             catch { _unitOfWork.Rollback(); return null; }
         }
+
+        public async Task<MentorModel> GetMentorByAccountIdAsync(long accountId)
+        {
+            var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
+            return mentor?.ToMentorModel();
+        }
+
+        public async Task<long?> GetAccountId(long mentorId)
+        {
+            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
+            return mentor?.AccountId;
+        }
     }
 }

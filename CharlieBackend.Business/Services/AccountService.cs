@@ -76,11 +76,11 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsAccountActiveAsync(email);
         }
 
-        public async Task<bool> DisableAccountAsync(string email)
+        public async Task<bool> DisableAccountAsync(long id)
         {
             try
             {
-                await _unitOfWork.AccountRepository.DisableAccountAsync(email);
+                var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
                 await _unitOfWork.CommitAsync();
                 return true;
             }

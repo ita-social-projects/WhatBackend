@@ -8,6 +8,8 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         public Task<StudentModel> CreateStudentAsync(StudentModel studentModel);
         public Task<List<StudentModel>> GetAllStudentsAsync();
+        public Task<long?> GetAccountId(long studentId);
         public Task<StudentModel> UpdateStudentAsync(StudentModel mentorModel);
+        public Task<StudentModel> GetStudentByAccountIdAsync(long accountId);
     }
 }
