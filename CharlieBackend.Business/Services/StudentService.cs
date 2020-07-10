@@ -3,6 +3,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -82,11 +83,20 @@ namespace CharlieBackend.Business.Services
                 var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
                 if (foundStudent == null) return null;
 
-                foundStudent.Account.Email = studentModel.Email;
-                foundStudent.Account.FirstName = studentModel.FirstName;
-                foundStudent.Account.LastName = studentModel.LastName;
-                foundStudent.Account.Salt = _accountService.GenerateSalt();
-                foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
+                foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;
+                foundStudent.Account.FirstName = studentModel.FirstName ?? foundStudent.Account.FirstName;
+                foundStudent.Account.LastName = studentModel.LastName ?? foundStudent.Account.LastName;
+
+                if (!string.IsNullOrEmpty(studentModel.Password))
+                {
+                    foundStudent.Account.Salt = _accountService.GenerateSalt();
+                    foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
+                }
+
+                if (studentModel.StudentGroupIds != null && studentModel.StudentGroupIds.Count != 0)
+                {
+                    throw new NotImplementedException();
+                }
 
                 await _unitOfWork.CommitAsync();
                 return foundStudent.ToStudentModel();
@@ -97,7 +107,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<StudentModel> GetStudentByAccountIdAsync(long accountId)
         {
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);         
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             return student?.ToStudentModel();
         }
 

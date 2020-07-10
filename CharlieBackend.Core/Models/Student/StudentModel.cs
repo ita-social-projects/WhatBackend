@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.Student
 {
@@ -12,7 +13,10 @@ namespace CharlieBackend.Core.Models.Student
 
         [JsonIgnore]
         public override bool IsActive { get; set; }
-        //public List<long> Groups_id { get; set; }
+
+        [JsonIgnore]
+        [JsonPropertyName("student_group_ids")]
+        public virtual List<long> StudentGroupIds { get; set; }
 
     }
 }
