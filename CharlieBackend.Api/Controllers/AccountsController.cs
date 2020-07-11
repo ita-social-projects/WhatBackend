@@ -1,14 +1,11 @@
 ﻿using CharlieBackend.Api.Settings;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Account;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -43,9 +40,10 @@ namespace CharlieBackend.Api.Controllers
             if (foundAccount.Role == 1)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
-                if (foundStudent == null) return BadRequest(); 
+                if (foundStudent == null) return BadRequest();
                 studentOrMentorId = foundStudent.Id;
-            }  else if (foundAccount.Role == 2)
+            }
+            else if (foundAccount.Role == 2)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
                 if (foundMentor == null) return BadRequest();
