@@ -23,17 +23,15 @@ namespace CharlieBackend.Business.Services
 
 		public async Task<StudentGroupModel> CreateStudentGroupAsync(StudentGroupModel studentGroup)
 		{
-			
-				_unitOfWork.StudentGroupRepository.Add(new StudentGroup
-				{
-					Name = studentGroup.name,
-					StartDate = Convert.ToDateTime(studentGroup.start_date.ToString()),
-					FinishDate = Convert.ToDateTime(studentGroup.finish_date.ToString()),
-				});
+			_unitOfWork.StudentGroupRepository.Add(new StudentGroup
+			{
+				Name = studentGroup.name,
+				StartDate = Convert.ToDateTime(studentGroup.start_date.ToString()),
+				FinishDate = Convert.ToDateTime(studentGroup.finish_date.ToString()),
+			});
 
-				await _unitOfWork.CommitAsync();
-				return studentGroup;
-			
+			await _unitOfWork.CommitAsync();
+			return studentGroup;
 		}
 
 		public Task<bool> IsGroupNameTakenAsync(string name)
@@ -53,5 +51,31 @@ namespace CharlieBackend.Business.Services
 			}
 			return studentGroupModels;
 		}
+
+		public bool DeleteStudentGrop(long StudentGroupId)
+		{
+			return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
+		}
+
+		public bool UpdateStudentGroup(StudentGroupModel studentGroupModel)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<StudentGroupModel> SearchStudentGroup(long studenGroupId)
+		{
+			var x = _unitOfWork.StudentGroupRepository.SearchStudentGroup(studenGroupId);
+			if (x != null)
+			{
+				return x.ToStudentGroupModel();
+			}
+			else
+			{
+				return null;
+			}
+
+		}
+
+		
 	}
 }

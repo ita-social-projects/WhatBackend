@@ -155,6 +155,7 @@ namespace CharlieBackend.Core
         {
             return new StudentGroupModel
             {
+                id = group.Id,
                 name = group.Name,
                 start_date = group.StartDate.ToString(),
                 finish_date = group.FinishDate.ToString(),
@@ -166,10 +167,11 @@ namespace CharlieBackend.Core
         {
             return new StudentGroup
             {
+                Id = group.id,
                 Name = group.name,
-                
                 StartDate = Convert.ToDateTime(group.start_date.ToString()),
                 FinishDate = Convert.ToDateTime(group.finish_date.ToString()),
+                
                 // добавить лист с группой
                 CourseId = group.course_id
 
