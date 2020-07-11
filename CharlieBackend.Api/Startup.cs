@@ -1,3 +1,4 @@
+using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Api.Settings;
 using CharlieBackend.Root;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -68,6 +69,7 @@ namespace CharlieBackend.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
