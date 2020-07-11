@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(500, "Error occurred while trying to disable student account.");
 
             }
-            catch { return StatusCode(401, "Bad token."); }
+            catch { return StatusCode(400, "Bad token."); }
         }
     }
 }
