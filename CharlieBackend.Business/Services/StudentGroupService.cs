@@ -26,9 +26,11 @@ namespace CharlieBackend.Business.Services
 			_unitOfWork.StudentGroupRepository.Add(new StudentGroup
 			{
 				Name = studentGroup.name,
+				CourseId = studentGroup.course_id,
+				
 				StartDate = Convert.ToDateTime(studentGroup.start_date.ToString()),
 				FinishDate = Convert.ToDateTime(studentGroup.finish_date.ToString()),
-			});
+			}) ;
 
 			await _unitOfWork.CommitAsync();
 			return studentGroup;
