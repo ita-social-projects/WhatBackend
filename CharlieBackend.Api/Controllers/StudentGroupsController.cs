@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Student;
@@ -23,11 +24,30 @@ namespace CharlieBackend.Api.Controllers
             
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteStudentGroup(long id)
+        {
+            var x = await _studentGroupService.SearchStudentGroup(id);
+            if (x == null)
+                return Ok("Not Found");
+            else
+            {
+                _studentGroupService.DeleteStudentGrop(id);
+                return Ok("Done");
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> PutStudentGroup(StudentGroupModel studentGroup)
+        {
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<ActionResult> PostStudentGroupController(StudentGroupModel studentGroup)
         {
             var isNameGroupTaken = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.name);
-            if(isNameGroupTaken) return StatusCode(409, "Account already exists!");
+            if(isNameGroupTaken) return StatusCode(409, "Student Group already exists!");
 
             var createdStudentGrouprModel = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
             if (createdStudentGrouprModel == null) return StatusCode(422, "Invalid StudentGroup.");
@@ -45,5 +65,6 @@ namespace CharlieBackend.Api.Controllers
             }
             catch { return StatusCode(500); }
         }
+
     }
 }
