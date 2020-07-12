@@ -1,9 +1,5 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Lesson;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {

@@ -6,7 +6,6 @@ using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
-using Microsoft.VisualBasic;
 using System;
 using System.Linq;
 

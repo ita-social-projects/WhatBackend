@@ -43,7 +43,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var mentorsModels = await _mentorService.GetAllMentorsAsync();
-                return Ok(new { mentors = mentorsModels } );
+                return Ok(new { mentors = mentorsModels });
             }
             catch { return StatusCode(500); }
         }
