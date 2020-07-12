@@ -1,56 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Student;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.StudentGroup;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/student_groups")]
     [ApiController]
     public class StudentGroupsController : ControllerBase
     {
-
         private readonly IStudentGroupService _studentGroupService;
 
         public StudentGroupsController(IStudentGroupService studentGroupService)
         {
             _studentGroupService = studentGroupService;
-            
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteStudentGroup(long id)
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> DeleteStudentGroup(long id)
+        //{
+        //    var x = await _studentGroupService.SearchStudentGroup(id);
+        //    if (x == null)
+        //        return Ok("Not Found");
+        //    else
+        //    {
+        //        _studentGroupService.DeleteStudentGrop(id);
+        //        return Ok("Done");
+        //    }
+        //}
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutStudentGroup(long id, UpdateStudentGroupModel studentGroup)
         {
-            var x = await _studentGroupService.SearchStudentGroup(id);
-            if (x == null)
-                return Ok("Not Found");
-            else
+            if (!ModelState.IsValid) return BadRequest();
+            try
             {
-                _studentGroupService.DeleteStudentGrop(id);
-                return Ok("Done");
-            }
-        }
+                var isStudentGroupNameChangable = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.Name);
+                if (!isStudentGroupNameChangable) return StatusCode(409, "Student group name is already taken!");
 
-        [HttpPut]
-        public async Task<ActionResult> PutStudentGroup(StudentGroupModel studentGroup)
-        {
-            return Ok();
+                studentGroup.Id = id;
+                var updatedStudentGroup = await _studentGroupService.UpdateStudentGroupAsync(studentGroup);
+                if (updatedStudentGroup != null) return NoContent();
+                else return StatusCode(409, "Cannot update.");
+            }
+            catch { return StatusCode(500); }
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostStudentGroupController(StudentGroupModel studentGroup)
+        public async Task<ActionResult> PostStudentGroupController(CreateStudentGroupModel studentGroup)
         {
-            var isNameGroupTaken = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.name);
-            if(isNameGroupTaken) return StatusCode(409, "Student Group already exists!");
+            if (!ModelState.IsValid) return BadRequest();
+
+            var isNameGroupTaken = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.Name);
+            if (isNameGroupTaken) return StatusCode(409, "Student Group already exists!");
 
             var createdStudentGrouprModel = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
-            if (createdStudentGrouprModel == null) return StatusCode(422, "Invalid StudentGroup.");
+            if (createdStudentGrouprModel == null) return StatusCode(422, "Cannot create student group.");
 
             return Ok();
         }

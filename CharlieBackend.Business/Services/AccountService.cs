@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -28,7 +29,7 @@ namespace CharlieBackend.Business.Services
                 // TODO: add role
                 var account = accountModel.ToAccount();
                 account.Salt = GenerateSalt();
-                account.Password = HashPassword(account.Password + account.Salt);
+                account.Password = HashPassword(account.Password, account.Salt);
 
                 _unitOfWork.AccountRepository.Add(account);
                 await _unitOfWork.CommitAsync();
@@ -39,10 +40,10 @@ namespace CharlieBackend.Business.Services
 
         public async Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
         {
-            var salt = await _unitOfWork.AccountRepository.GetAccountSalt(authenticationModel.Email);
+            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
             if (salt != "")
             {
-                authenticationModel.Password = HashPassword(authenticationModel.Password + salt);
+                authenticationModel.Password = HashPassword(authenticationModel.Password, salt);
                 var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
                 return foundAccount?.ToAccountModel();
             }
@@ -54,8 +55,40 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
+        public async Task<BaseAccountModel> UpdateAccountCredentialsAsync(Account account)
+        {
+            account.Salt = GenerateSalt();
+            account.Password = HashPassword(account.Password, account.Salt);
+
+            _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
+            await _unitOfWork.CommitAsync();
+
+            return account.ToAccountModel();
+        }
+
+        public Task<bool> IsEmailChangableToAsync(string newEmail)
+        {
+            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
+        }
+
+        public Task<bool> IsAccountActiveAsync(string email)
+        {
+            return _unitOfWork.AccountRepository.IsAccountActiveAsync(email);
+        }
+
+        public async Task<bool> DisableAccountAsync(long id)
+        {
+            try
+            {
+                var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch { _unitOfWork.Rollback(); return false; }
+        }
+
         #region hash
-        private string GenerateSalt()
+        public string GenerateSalt()
         {
             //create a random object that generates random numbers
             Random rand = new Random();
@@ -73,9 +106,9 @@ namespace CharlieBackend.Business.Services
 
             return sb.ToString();
         }
-        private string HashPassword(string text)
+        public string HashPassword(string password, string salt)
         {
-            byte[] data = Encoding.Default.GetBytes(text);
+            byte[] data = Encoding.Default.GetBytes(password + salt);
             var result = new SHA256Managed().ComputeHash(data);
             return BitConverter.ToString(result).Replace("-", "").ToLower();
         }

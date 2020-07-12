@@ -1,14 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
     public class StudentGroupModel
     {
-        public virtual long id { get; set; }
-        public virtual string name { get; set; }
-        public virtual long course_id { get; set; }
-        public virtual string start_date { get; set; }
-        public virtual string finish_date { get; set; }
-        public virtual List<long> students_id { get; set; }
+        public virtual long Id { get; set; }
+        public virtual string Name { get; set; }
+
+        [JsonIgnore]
+        [JsonPropertyName("course_id")]
+        public virtual long CourseId { get; set; }
+
+        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
+        [JsonPropertyName("start_date")]
+        public virtual string StartDate { get; set; }
+
+        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
+        [JsonPropertyName("finish_date")]
+        public virtual string FinishDate { get; set; }
+
+        [JsonIgnore]
+        [JsonPropertyName("student_ids")]
+        public virtual List<long> StudentIds { get; set; }
     }
 }

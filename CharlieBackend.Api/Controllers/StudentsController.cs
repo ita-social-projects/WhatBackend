@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Student;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -13,7 +11,6 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
 
@@ -23,6 +20,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
+        [Authorize(Roles = "2")]
         [HttpPost]
         public async Task<ActionResult> PostStudent(CreateStudentModel studentModel)
         {
@@ -32,11 +30,12 @@ namespace CharlieBackend.Api.Controllers
             if (isEmailTaken) return StatusCode(409, "Account already exists!");
 
             var createdStudentModel = await _studentService.CreateStudentAsync(studentModel);
-            if (createdStudentModel == null) return StatusCode(422, "Invalid courses.");
+            if (createdStudentModel == null) return StatusCode(422, "Cannot create student.");
 
-            return Ok();
+            return Ok(new { Id = createdStudentModel.Id });
         }
 
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
         {
@@ -46,6 +45,42 @@ namespace CharlieBackend.Api.Controllers
                 return Ok(studentsModels);
             }
             catch { return StatusCode(500); }
+        }
+
+        [Authorize(Roles = "2")]
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            try
+            {
+                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
+                if (!isEmailChangableTo) return StatusCode(409, "Email is already taken!");
+
+                mentorModel.Id = id;
+                var updatedCourse = await _studentService.UpdateStudentAsync(mentorModel);
+                if (updatedCourse != null) return NoContent();
+                else return StatusCode(409, "Cannot update.");
+
+            }
+            catch { return StatusCode(500); }
+        }
+
+        [Authorize(Roles = "2")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DisableStudent(long id)
+        {
+            try
+            {
+                var accountId = await _studentService.GetAccountId(id);
+                if (accountId == null) return BadRequest("Unknown student id.");
+
+                var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+                if (isDisabled) return NoContent();
+                return StatusCode(500, "Error occurred while trying to disable student account.");
+
+            }
+            catch { return StatusCode(400, "Bad token."); }
         }
     }
 }

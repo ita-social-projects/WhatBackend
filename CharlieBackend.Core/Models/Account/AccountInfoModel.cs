@@ -4,7 +4,6 @@ namespace CharlieBackend.Core.Models.Account
 {
     public class AccountInfoModel : BaseAccountModel
     {
-        [JsonIgnore]
         public override long Id { get; set; }
 
         [JsonIgnore]

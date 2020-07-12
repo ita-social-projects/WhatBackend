@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Course;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace CharlieBackend.Api.Controllers
             _coursesService = coursesService;
         }
 
+        [Authorize(Roles = "4")]
         [HttpPost]
         public async Task<ActionResult> PostCourse(CreateCourseModel courseModel)
         {
@@ -31,6 +33,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<CourseModel>>> GetAllCourses()
         {
@@ -42,12 +45,13 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles = "4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutCourse(long id, UpdateCourseModel courseModel)
         {
             //if (id != courseModel.Id) return BadRequest();
             if (!ModelState.IsValid) return BadRequest();
-            
+
             try
             {
                 courseModel.Id = id;

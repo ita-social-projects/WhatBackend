@@ -8,7 +8,6 @@ using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace CharlieBackend.Core
 {
@@ -23,12 +22,14 @@ namespace CharlieBackend.Core
                 Password = accountModel.Password,
                 FirstName = accountModel.FirstName,
                 LastName = accountModel.LastName,
-                Role = (sbyte)accountModel.Role
+                Role = (sbyte)accountModel.Role,
+                IsActive = accountModel.IsActive
             };
         }
 
         public static BaseAccountModel ToAccountModel(this Account account)
         {
+            // TODO: fix ID error
             return new BaseAccountModel
             {
                 Id = account.Id,
@@ -36,7 +37,8 @@ namespace CharlieBackend.Core
                 Password = account.Password,
                 FirstName = account.FirstName,
                 LastName = account.LastName,
-                Role = (sbyte)account.Role
+                Role = (sbyte)account.Role,
+                IsActive = (bool)account.IsActive
             };
         }
 
@@ -120,29 +122,35 @@ namespace CharlieBackend.Core
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
-            { };
+            {
+                Id = mentorModel.Id
+            };
         }
 
         public static MentorModel ToMentorModel(this Mentor mentor)
         {
             return new MentorModel
             {
+                Id = mentor.Id,
                 FirstName = mentor.Account.FirstName,
                 LastName = mentor.Account.LastName,
                 Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
-                Courses_id = mentor.MentorsOfCourses.Select(mentorOfCourse => mentorOfCourse.Id).ToArray()
+                IsActive = (bool)mentor.Account.IsActive,
+                CourseIds = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
             };
         }
         public static StudentModel ToStudentModel(this Student student)
         {
             return new StudentModel
             {
+                Id = student.Id,
                 FirstName = student.Account.FirstName,
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,
                 Password = student.Account.Password,
-
+                IsActive = (bool)student.Account.IsActive
+                //Groups_id = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
             };
         }
         public static Student ToStudent(this StudentModel studentModel)
@@ -150,30 +158,30 @@ namespace CharlieBackend.Core
             return new Student
             { };
         }
-        
+
         public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
         {
             return new StudentGroupModel
             {
-                id = group.Id,
-                name = group.Name,
-                start_date = group.StartDate.ToString(),
-                finish_date = group.FinishDate.ToString(),
-                students_id = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
-                course_id = (long)group.CourseId
+                Id = group.Id,
+                Name = group.Name,
+                StartDate = group.StartDate.ToString(),
+                FinishDate = group.FinishDate.ToString(),
+                StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
+                CourseId = (long)group.CourseId
             };
         }
         public static StudentGroup ToStudentGroup(this StudentGroupModel group)
         {
             return new StudentGroup
             {
-                Id = group.id,
-                Name = group.name,
-                StartDate = Convert.ToDateTime(group.start_date.ToString()),
-                FinishDate = Convert.ToDateTime(group.finish_date.ToString()),
-                
+                Id = group.Id,
+                Name = group.Name,
+                StartDate = Convert.ToDateTime(group.StartDate.ToString()),
+                FinishDate = Convert.ToDateTime(group.FinishDate.ToString()),
+
                 // добавить лист с группой
-                CourseId = group.course_id
+                CourseId = group.CourseId
 
             };
         }

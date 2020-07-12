@@ -1,0 +1,50 @@
+﻿using CharlieBackend.Business.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CharlieBackend.Api.Middlewares
+{
+    public class IsAccountActiveMiddleware
+    {
+        private readonly RequestDelegate _next;
+
+        public IsAccountActiveMiddleware(RequestDelegate next)
+        {
+            this._next = next;
+        }
+
+        public async Task InvokeAsync(HttpContext context, IAccountService accountService)
+        {
+            if (context.Request.Path.Value.Contains("auth")) await _next.Invoke(context);
+            else
+            {
+                string authHeader = context.Request.Headers["Authorization"];
+                if (authHeader != null)
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    authHeader = authHeader.ToString().Replace("Bearer ", "");
+
+                    var jsonToken = handler.ReadToken(authHeader);
+                    var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+
+                    var email = tokenS.Claims.First(claim => claim.Type == "Email").Value;
+
+                    var isActive = await accountService.IsAccountActiveAsync(email);
+                    if (!isActive)
+                    {
+                        context.Response.StatusCode = 401;
+                        await context.Response.WriteAsync("Account is not active!");
+                    }
+                    else await _next.Invoke(context);
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Bad token.");
+                }
+            }
+        }
+    }
+}

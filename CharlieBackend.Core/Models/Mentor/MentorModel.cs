@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models
@@ -8,11 +9,13 @@ namespace CharlieBackend.Core.Models
         [JsonIgnore]
         public override string Password { get; set; }
 
-        [JsonPropertyName("login")]
-        public override string Email { get; set; }
-
         [JsonIgnore]
         public override int Role { get; set; }
-        public long[] Courses_id { get; set; }
+
+        [JsonPropertyName("course_ids")]
+        public virtual List<long> CourseIds { get; set; }
+
+        [JsonIgnore]
+        public override bool IsActive { get; set; }
     }
 }

@@ -12,11 +12,13 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICredentialsSenderService _credentialsSender;
 
-        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork)
+        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
+            _credentialsSender = credentialsSender;
         }
 
         public async Task<MentorModel> CreateMentorAsync(MentorModel mentorModel)
@@ -25,40 +27,39 @@ namespace CharlieBackend.Business.Services
             {
                 try
                 {
-                    // How to set password?
-                    var account = await _accountService.CreateAccountAsync(new Account
+                    var generatedPassword = _accountService.GenerateSalt();
+                    var account = new Account
                     {
                         Email = mentorModel.Email,
                         FirstName = mentorModel.FirstName,
                         LastName = mentorModel.LastName,
-                        Password = "temp",
                         Role = 2
-                    }.ToAccountModel());
+                    };
+                    account.Salt = _accountService.GenerateSalt();
+                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
-                    var mentor = new Mentor { AccountId = account.Id };
+                    var mentor = new Mentor { Account = account };
                     _unitOfWork.MentorRepository.Add(mentor);
 
-                    await _unitOfWork.CommitAsync();
+                    if (mentorModel.CourseIds.Count != 0)
+                    {
+                        var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
+                        mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
-                    if (mentorModel.Courses_id != null)
-                        // TODO: access via service, not uof
-                        for (int i = 0; i < mentorModel.Courses_id.Length; i++)
-                        {
-                            _unitOfWork.MentorOfCourseRepository.Add(new MentorOfCourse
-                            {
-                                MentorId = mentor.Id,
-                                CourseId = mentorModel.Courses_id[i]
-                            });
-                        }
+                        for (int i = 0; i < courses.Count; i++)
+                            mentor.MentorsOfCourses.Add(new MentorOfCourse { Mentor = mentor, Course = courses[i] });
+                    }
 
                     await _unitOfWork.CommitAsync();
+                    await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword);
 
-                    await transaction.CommitAsync();
-
+                    transaction.Commit();
                     return mentor.ToMentorModel();
+
                 }
                 catch { transaction.Rollback(); return null; }
             }
+
         }
 
         public async Task<List<MentorModel>> GetAllMentorsAsync()
@@ -69,9 +70,58 @@ namespace CharlieBackend.Business.Services
 
             foreach (var mentor in mentors)
             {
-                mentorModels.Add(mentor.ToMentorModel());
+                var mentorModel = mentor.ToMentorModel();
+                mentorModels.Add(mentorModel);
             }
+
             return mentorModels;
+        }
+
+        public async Task<MentorModel> UpdateMentorAsync(MentorModel mentorModel)
+        {
+            try
+            {
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+                if (foundMentor == null) return null;
+
+                foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
+                foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
+                foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
+
+                if (!string.IsNullOrEmpty(mentorModel.Password))
+                {
+                    foundMentor.Account.Salt = _accountService.GenerateSalt();
+                    foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+                }
+
+                if (mentorModel.CourseIds != null)
+                {
+                    var currentMentorCourses = foundMentor.MentorsOfCourses;
+                    var newMentorCourses = new List<MentorOfCourse>();
+
+                    foreach (var newCourseId in mentorModel.CourseIds)
+                        newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
+
+                    _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);
+                }
+
+                await _unitOfWork.CommitAsync();
+                return foundMentor.ToMentorModel();
+
+            }
+            catch { _unitOfWork.Rollback(); return null; }
+        }
+
+        public async Task<MentorModel> GetMentorByAccountIdAsync(long accountId)
+        {
+            var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
+            return mentor?.ToMentorModel();
+        }
+
+        public async Task<long?> GetAccountId(long mentorId)
+        {
+            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
+            return mentor?.AccountId;
         }
     }
 }
