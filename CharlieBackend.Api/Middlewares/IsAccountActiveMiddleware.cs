@@ -17,7 +17,8 @@ namespace CharlieBackend.Api.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IAccountService accountService)
         {
-            if (context.Request.Path.Value.Contains("auth")) await _next.Invoke(context);
+            if (context.Request.Path.Value.Contains("auth") ||
+                context.Request.Path.Value.Contains("swagger")) await _next.Invoke(context);
             else
             {
                 string authHeader = context.Request.Headers["Authorization"];
@@ -32,7 +33,12 @@ namespace CharlieBackend.Api.Middlewares
                     var email = tokenS.Claims.First(claim => claim.Type == "Email").Value;
 
                     var isActive = await accountService.IsAccountActiveAsync(email);
-                    if (!isActive)
+                    if (isActive == null)
+                    {
+                        context.Response.StatusCode = 401;
+                        await context.Response.WriteAsync("Need to sign in.");
+                    }
+                    if ((bool)!isActive)
                     {
                         context.Response.StatusCode = 401;
                         await context.Response.WriteAsync("Account is not active!");
