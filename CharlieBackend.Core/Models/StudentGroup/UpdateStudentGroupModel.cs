@@ -11,9 +11,9 @@ namespace CharlieBackend.Core.Models.StudentGroup
         public override long Id { get; set; }
 
         [JsonPropertyName("student_ids")]
-        public override List<long> StudentIds { get; set; }
+        public new List<long> StudentIds { get; set; }
 
         [JsonPropertyName("course_id")]
-        public override long CourseId { get; set; }
+        public new long CourseId { get; set; }
     }
 }

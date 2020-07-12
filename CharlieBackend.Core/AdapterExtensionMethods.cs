@@ -6,6 +6,7 @@ using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
+using Microsoft.VisualBasic;
 using System;
 using System.Linq;
 
@@ -161,12 +162,15 @@ namespace CharlieBackend.Core
 
         public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
         {
+            var startDate = (DateTime)group.StartDate;
+            var finishDate = (DateTime)group.FinishDate;
+
             return new StudentGroupModel
             {
                 Id = group.Id,
                 Name = group.Name,
-                StartDate = group.StartDate.ToString(),
-                FinishDate = group.FinishDate.ToString(),
+                StartDate = startDate.ToShortDateString(),
+                FinishDate = finishDate.ToShortDateString(),
                 StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
                 CourseId = (long)group.CourseId
             };

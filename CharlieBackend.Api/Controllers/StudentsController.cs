@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
             var createdStudentModel = await _studentService.CreateStudentAsync(studentModel);
             if (createdStudentModel == null) return StatusCode(422, "Cannot create student.");
 
-            return Ok(new { Id = createdStudentModel.Id });
+            return Ok(new { createdStudentModel.Id });
         }
 
         [Authorize(Roles = "2")]
@@ -42,7 +42,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var studentsModels = await _studentService.GetAllStudentsAsync();
-                return Ok(studentsModels);
+                return Ok(new { students = studentsModels });
             }
             catch { return StatusCode(500); }
         }

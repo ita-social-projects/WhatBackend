@@ -8,7 +8,7 @@ namespace CharlieBackend.Core.Models.Mentor
         [JsonIgnore]
         public override long Id { get; set; }
 
-        public override string Password { get => base.Password; set => base.Password = value; }
+        public new string Password { get => base.Password; set => base.Password = value; }
 
         [JsonPropertyName("first_name")]
         public override string FirstName { get; set; }
@@ -17,6 +17,6 @@ namespace CharlieBackend.Core.Models.Mentor
         public override string LastName { get; set; }
 
         [JsonPropertyName("course_ids")]
-        public override List<long> CourseIds { get; set; }
+        public new List<long> CourseIds { get; set; }
     }
 }

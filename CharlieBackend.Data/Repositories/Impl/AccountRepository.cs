@@ -53,10 +53,10 @@ namespace CharlieBackend.Data.Repositories.Impl
             return true;
         }
 
-        public async Task<bool> IsAccountActiveAsync(string email)
+        public async Task<bool?> IsAccountActiveAsync(string email)
         {
             var foundAccount = await _applicationContext.Accounts.FirstOrDefaultAsync(account => account.Email == email);
-            return (bool)foundAccount.IsActive;
+            return foundAccount?.IsActive;
         }
 
         public async Task<bool> DisableAccountAsync(long id)

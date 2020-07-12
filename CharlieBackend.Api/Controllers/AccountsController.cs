@@ -27,7 +27,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetAccountCredentials(AuthenticationModel authenticationModel)
+        public async Task<ActionResult> SignIn(AuthenticationModel authenticationModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 

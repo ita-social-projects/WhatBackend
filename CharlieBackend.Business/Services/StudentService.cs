@@ -22,7 +22,7 @@ namespace CharlieBackend.Business.Services
             _credentialSender = credentialsSender;
         }
 
-        public async Task<StudentModel> CreateStudentAsync(StudentModel studentModel)
+        public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -76,7 +76,7 @@ namespace CharlieBackend.Business.Services
             return studentModels;
         }
 
-        public async Task<StudentModel> UpdateStudentAsync(StudentModel studentModel)
+        public async Task<StudentModel> UpdateStudentAsync(UpdateStudentModel studentModel)
         {
             try
             {
@@ -93,9 +93,22 @@ namespace CharlieBackend.Business.Services
                     foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
                 }
 
-                if (studentModel.StudentGroupIds != null && studentModel.StudentGroupIds.Count != 0)
+                if (studentModel.StudentGroupIds != null)
                 {
-                    throw new NotImplementedException();
+                    var currentStudentGroupsOfStudent = foundStudent.StudentsOfStudentGroups;
+                    var newStudentsOfStudentGroup = new List<StudentOfStudentGroup>();
+
+                    //for (int i = 0; i < studentGroupModel.StudentIds.Count; i++)
+                    //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
+
+                    foreach (var newStudentGroupId in studentModel.StudentGroupIds)
+                        newStudentsOfStudentGroup.Add(new StudentOfStudentGroup
+                        {
+                            StudentGroupId = newStudentGroupId,
+                            StudentId = foundStudent.Id
+                        });
+
+                    _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentGroupsOfStudent, newStudentsOfStudentGroup);
                 }
 
                 await _unitOfWork.CommitAsync();

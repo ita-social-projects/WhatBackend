@@ -18,7 +18,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<StudentGroupModel> CreateStudentGroupAsync(StudentGroupModel studentGroupModel)
+        public async Task<StudentGroupModel> CreateStudentGroupAsync(CreateStudentGroupModel studentGroupModel)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
         }
 
-        public async Task<StudentGroupModel> UpdateStudentGroupAsync(StudentGroupModel studentGroupModel)
+        public async Task<StudentGroupModel> UpdateStudentGroupAsync(UpdateStudentGroupModel studentGroupModel)
         {
             try
             {

@@ -22,12 +22,14 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return _applicationContext.Students
                 .Include(student => student.Account)
+                .Include(student => student.StudentsOfStudentGroups)
                 .FirstOrDefaultAsync(student => student.Id == id);
         }
 
         public Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
-            return _applicationContext.Students.FirstOrDefaultAsync(student => student.AccountId == accountId);
+            return _applicationContext.Students
+                .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 
         public Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds)

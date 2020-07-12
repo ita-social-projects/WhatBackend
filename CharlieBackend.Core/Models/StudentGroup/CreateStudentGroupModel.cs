@@ -16,7 +16,7 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [Required]
         [JsonPropertyName("course_id")]
-        public override long CourseId { get; set; }
+        public new long CourseId { get; set; }
 
         [Required]
         [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
@@ -30,6 +30,6 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [Required]
         [JsonPropertyName("student_ids")]
-        public override List<long> StudentIds { get; set; }
+        public new List<long> StudentIds { get; set; }
     }
 }

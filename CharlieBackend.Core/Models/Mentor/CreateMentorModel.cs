@@ -22,6 +22,6 @@ namespace CharlieBackend.Core.Models.Mentor
 
         [Required]
         [JsonPropertyName("course_ids")]
-        public override List<long> CourseIds { get; set; }
+        public new List<long> CourseIds { get; set; }
     }
 }

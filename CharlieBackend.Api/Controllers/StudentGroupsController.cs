@@ -30,6 +30,20 @@ namespace CharlieBackend.Api.Controllers
         //    }
         //}
 
+        [HttpPost]
+        public async Task<ActionResult> PostStudentGroupController(CreateStudentGroupModel studentGroup)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var isStudentGroupNameChangable = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.Name);
+            if (!isStudentGroupNameChangable) return StatusCode(409, "Student Group already exists!");
+
+            var createdStudentGrouprModel = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
+            if (createdStudentGrouprModel == null) return StatusCode(422, "Cannot create student group.");
+
+            return Ok();
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> PutStudentGroup(long id, UpdateStudentGroupModel studentGroup)
         {
@@ -45,20 +59,6 @@ namespace CharlieBackend.Api.Controllers
                 else return StatusCode(409, "Cannot update.");
             }
             catch { return StatusCode(500); }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> PostStudentGroupController(CreateStudentGroupModel studentGroup)
-        {
-            if (!ModelState.IsValid) return BadRequest();
-
-            var isNameGroupTaken = await _studentGroupService.IsGroupNameTakenAsync(studentGroup.Name);
-            if (isNameGroupTaken) return StatusCode(409, "Student Group already exists!");
-
-            var createdStudentGrouprModel = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
-            if (createdStudentGrouprModel == null) return StatusCode(422, "Cannot create student group.");
-
-            return Ok();
         }
 
         [HttpGet]

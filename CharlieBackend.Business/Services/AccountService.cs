@@ -71,7 +71,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
         }
 
-        public Task<bool> IsAccountActiveAsync(string email)
+        public Task<bool?> IsAccountActiveAsync(string email)
         {
             return _unitOfWork.AccountRepository.IsAccountActiveAsync(email);
         }

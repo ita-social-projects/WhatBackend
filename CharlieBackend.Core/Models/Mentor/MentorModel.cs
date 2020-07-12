@@ -12,6 +12,7 @@ namespace CharlieBackend.Core.Models
         [JsonIgnore]
         public override int Role { get; set; }
 
+        [JsonIgnore]
         [JsonPropertyName("course_ids")]
         public virtual List<long> CourseIds { get; set; }
 

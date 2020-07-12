@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
             var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
             if (createdMentorModel == null) return StatusCode(422, "Cannot create mentor.");
 
-            return Ok(new { Id = createdMentorModel.Id });
+            return Ok(new { createdMentorModel.Id });
         }
 
         [Authorize(Roles = "2, 4")]
@@ -42,8 +42,8 @@ namespace CharlieBackend.Api.Controllers
         {
             try
             {
-                var mentosModels = await _mentorService.GetAllMentorsAsync();
-                return Ok(mentosModels);
+                var mentorsModels = await _mentorService.GetAllMentorsAsync();
+                return Ok(new { mentors = mentorsModels } );
             }
             catch { return StatusCode(500); }
         }

@@ -3,6 +3,7 @@ using CharlieBackend.Core.Models.Theme;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
@@ -18,17 +19,6 @@ namespace CharlieBackend.Api.Controllers
             _themeService = themeService;
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> PostTheme(CreateThemeModel themeModel)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest();
-
-        //    var createdTheme = await _themeService.CreateThemeAsync(themeModel);
-        //    if (themeModel == null) return StatusCode(500);
-
-        //    return Ok();
-        //}
-
         [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<ThemeModel>>> GetAllThemes()
@@ -36,7 +26,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var themes = await _themeService.GetAllThemesAsync();
-                return Ok(themes);
+                return Ok(new { theme_names = themes.Select(theme => theme.Name) });
             }
             catch { return StatusCode(500); }
         }
