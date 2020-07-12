@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CharlieBackend.Api\CharlieBackend.Api.csproj" />
+    <ProjectReference Include="..\CharlieBackend.Business\CharlieBackend.Business.csproj" />
+    <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
+    <ProjectReference Include="..\CharlieBackend.Data\CharlieBackend.Data.csproj" />
+    <ProjectReference Include="..\CharlieBackend.Root\CharlieBackend.Root.csproj" />
+  </ItemGroup>
+
+</Project>
