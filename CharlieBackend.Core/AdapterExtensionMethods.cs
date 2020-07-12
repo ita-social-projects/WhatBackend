@@ -149,8 +149,8 @@ namespace CharlieBackend.Core
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,
                 Password = student.Account.Password,
-                IsActive = (bool)student.Account.IsActive
-                //Groups_id = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
+                IsActive = (bool)student.Account.IsActive,
+                StudentGroupIds = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
             };
         }
         public static Student ToStudent(this StudentModel studentModel)

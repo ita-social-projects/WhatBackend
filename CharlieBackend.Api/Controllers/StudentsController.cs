@@ -36,6 +36,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "2")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
+        {
+            try
+            {
+                var studentModel = await _studentService.GetStudentByIdAsync(id);
+                if (studentModel != null) return Ok( new { studentModel.FirstName, studentModel.LastName, studentModel.StudentGroupIds, studentModel.Email});
+                else return StatusCode(409, "Cannot find student with such id.");
+            }
+            catch { return StatusCode(500); }
+        }
+
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
         {

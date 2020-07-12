@@ -128,5 +128,11 @@ namespace CharlieBackend.Business.Services
             var mentor = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
             return mentor?.AccountId;
         }
+
+        public async Task<StudentModel> GetStudentByIdAsync(long studentId)
+        {
+            var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            return student?.ToStudentModel();
+        }
     }
 }
