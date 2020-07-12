@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/lesson")]
+    [Route("api/lessons")]
     [ApiController]
     public class LessonsController : ControllerBase
     {
