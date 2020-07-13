@@ -2,6 +2,7 @@
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
@@ -21,12 +22,19 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return _applicationContext.Students
                 .Include(student => student.Account)
+                .Include(student => student.StudentsOfStudentGroups)
                 .FirstOrDefaultAsync(student => student.Id == id);
         }
 
         public Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
-            return _applicationContext.Students.FirstOrDefaultAsync(student => student.AccountId == accountId);
+            return _applicationContext.Students
+                .FirstOrDefaultAsync(student => student.AccountId == accountId);
+        }
+
+        public Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds)
+        {
+            return _applicationContext.Students.Where(student => studentIds.Contains(student.Id)).ToListAsync();
         }
 
     }

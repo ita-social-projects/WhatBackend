@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/mentor")]
+    [Route("api/mentors")]
     [ApiController]
     public class MentorsController : ControllerBase
     {
@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
             var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
             if (createdMentorModel == null) return StatusCode(422, "Cannot create mentor.");
 
-            return Ok();
+            return Ok(new { createdMentorModel.Id });
         }
 
         [Authorize(Roles = "2, 4")]
@@ -42,8 +42,8 @@ namespace CharlieBackend.Api.Controllers
         {
             try
             {
-                var mentosModels = await _mentorService.GetAllMentorsAsync();
-                return Ok(mentosModels);
+                var mentorsModels = await _mentorService.GetAllMentorsAsync();
+                return Ok(new { mentors = mentorsModels });
             }
             catch { return StatusCode(500); }
         }
@@ -81,7 +81,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(500, "Error occurred while trying to disable mentor account.");
 
             }
-            catch { return StatusCode(401, "Bad token."); }
+            catch { return StatusCode(400, "Bad token."); }
         }
     }
 }

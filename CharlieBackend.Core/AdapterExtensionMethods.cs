@@ -4,6 +4,7 @@ using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
 using System;
 using System.Linq;
@@ -148,14 +149,44 @@ namespace CharlieBackend.Core
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,
                 Password = student.Account.Password,
-                IsActive = (bool)student.Account.IsActive
-                //Groups_id = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
+                IsActive = (bool)student.Account.IsActive,
+                StudentGroupIds = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
             };
         }
         public static Student ToStudent(this StudentModel studentModel)
         {
             return new Student
             { };
+        }
+
+        public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
+        {
+            var startDate = (DateTime)group.StartDate;
+            var finishDate = (DateTime)group.FinishDate;
+
+            return new StudentGroupModel
+            {
+                Id = group.Id,
+                Name = group.Name,
+                StartDate = startDate.ToShortDateString(),
+                FinishDate = finishDate.ToShortDateString(),
+                StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
+                CourseId = (long)group.CourseId
+            };
+        }
+        public static StudentGroup ToStudentGroup(this StudentGroupModel group)
+        {
+            return new StudentGroup
+            {
+                Id = group.Id,
+                Name = group.Name,
+                StartDate = Convert.ToDateTime(group.StartDate.ToString()),
+                FinishDate = Convert.ToDateTime(group.FinishDate.ToString()),
+
+                // добавить лист с группой
+                CourseId = group.CourseId
+
+            };
         }
     }
 }

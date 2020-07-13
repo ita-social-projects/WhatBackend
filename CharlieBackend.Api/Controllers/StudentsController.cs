@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/students")]
     [ApiController]
     public class StudentsController : ControllerBase
     {
@@ -32,7 +32,20 @@ namespace CharlieBackend.Api.Controllers
             var createdStudentModel = await _studentService.CreateStudentAsync(studentModel);
             if (createdStudentModel == null) return StatusCode(422, "Cannot create student.");
 
-            return Ok();
+            return Ok(new { createdStudentModel.Id });
+        }
+
+        [Authorize(Roles = "2")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
+        {
+            try
+            {
+                var studentModel = await _studentService.GetStudentByIdAsync(id);
+                if (studentModel != null) return Ok( new { studentModel.FirstName, studentModel.LastName, studentModel.StudentGroupIds, studentModel.Email});
+                else return StatusCode(409, "Cannot find student with such id.");
+            }
+            catch { return StatusCode(500); }
         }
 
         [Authorize(Roles = "2")]
@@ -42,7 +55,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var studentsModels = await _studentService.GetAllStudentsAsync();
-                return Ok(studentsModels);
+                return Ok(new { students = studentsModels });
             }
             catch { return StatusCode(500); }
         }
@@ -80,7 +93,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(500, "Error occurred while trying to disable student account.");
 
             }
-            catch { return StatusCode(401, "Bad token."); }
+            catch { return StatusCode(400, "Bad token."); }
         }
     }
 }

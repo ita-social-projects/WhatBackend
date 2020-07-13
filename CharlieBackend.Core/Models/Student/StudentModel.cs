@@ -6,6 +6,9 @@ namespace CharlieBackend.Core.Models.Student
     public class StudentModel : BaseAccountModel
     {
         [JsonIgnore]
+        public override string Email { get; set; }
+
+        [JsonIgnore]
         public override string Password { get; set; }
 
         [JsonIgnore]

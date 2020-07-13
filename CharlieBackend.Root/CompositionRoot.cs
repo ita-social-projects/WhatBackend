@@ -29,6 +29,7 @@ namespace CharlieBackend.Root
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IMentorService, MentorService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentGroupService, StudentGroupService>();
             services.AddSingleton<ICredentialsSenderService>(x => new EmailCredentialsSenderService(
                configuration.GetSection("CredentialsSendersSettings").GetSection("email").Value,
                configuration.GetSection("CredentialsSendersSettings").GetSection("password").Value));
@@ -40,6 +41,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IMentorRepository, MentorRepository>();
             services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
         }
     }
 }

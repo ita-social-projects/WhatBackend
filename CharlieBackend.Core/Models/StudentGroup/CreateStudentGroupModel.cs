@@ -4,25 +4,30 @@ using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
-    public class StudentGroupModel
+    public class CreateStudentGroupModel : StudentGroupModel
     {
-        public virtual long Id { get; set; }
-        public virtual string Name { get; set; }
-
         [JsonIgnore]
-        [JsonPropertyName("course_id")]
-        public virtual long CourseId { get; set; }
+        public override long Id { get; set; }
 
+        [Required]
+        public override string Name { get => base.Name; set => base.Name = value; }
+
+        [Required]
+        [JsonPropertyName("course_id")]
+        public new long CourseId { get; set; }
+
+        [Required]
         [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
         [JsonPropertyName("start_date")]
-        public virtual string StartDate { get; set; }
+        public override string StartDate { get; set; }
 
+        [Required]
         [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
         [JsonPropertyName("finish_date")]
-        public virtual string FinishDate { get; set; }
+        public override string FinishDate { get; set; }
 
-        [JsonIgnore]
+        [Required]
         [JsonPropertyName("student_ids")]
-        public virtual List<long> StudentIds { get; set; }
+        public new List<long> StudentIds { get; set; }
     }
 }

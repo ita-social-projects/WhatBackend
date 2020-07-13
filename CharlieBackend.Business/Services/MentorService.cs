@@ -2,6 +2,7 @@
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
+using CharlieBackend.Core.Models.Mentor;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace CharlieBackend.Business.Services
             _credentialsSender = credentialsSender;
         }
 
-        public async Task<MentorModel> CreateMentorAsync(MentorModel mentorModel)
+        public async Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel)
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -77,7 +78,7 @@ namespace CharlieBackend.Business.Services
             return mentorModels;
         }
 
-        public async Task<MentorModel> UpdateMentorAsync(MentorModel mentorModel)
+        public async Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel)
         {
             try
             {
@@ -94,7 +95,7 @@ namespace CharlieBackend.Business.Services
                     foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
                 }
 
-                if (mentorModel.CourseIds != null && mentorModel.CourseIds.Count != 0)
+                if (mentorModel.CourseIds != null)
                 {
                     var currentMentorCourses = foundMentor.MentorsOfCourses;
                     var newMentorCourses = new List<MentorOfCourse>();
