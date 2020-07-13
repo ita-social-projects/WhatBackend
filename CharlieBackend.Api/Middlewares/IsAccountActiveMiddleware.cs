@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Middlewares
@@ -43,7 +44,16 @@ namespace CharlieBackend.Api.Middlewares
                         context.Response.StatusCode = 401;
                         await context.Response.WriteAsync("Account is not active!");
                     }
-                    else await _next.Invoke(context);
+
+                    if (context.Request.Path.Value.Contains("lessons")) {
+                        var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+                        if (role == "2")
+                        {
+                            var id = tokenS.Claims.First(claim => claim.Type == "Id").Value;
+                            context.Items["mentorId"] = id;
+                        }
+                    }
+                    await _next.Invoke(context);
                 }
                 else
                 {

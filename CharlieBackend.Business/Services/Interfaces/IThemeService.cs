@@ -8,5 +8,6 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<ThemeModel> CreateThemeAsync(ThemeModel theme);
         public Task<List<ThemeModel>> GetAllThemesAsync();
+        public Task<ThemeModel> GetThemeByNameAsync(string name);
     }
 }

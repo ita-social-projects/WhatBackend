@@ -15,6 +15,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IMentorOfCourseRepository _mentorOfCourseRepository;
         private IStudentRepository _studentRepository;
         private IStudentGroupRepository _studentGroupRepository;
+        private IVisitRepository _visitRepository;
 
         public UnitOfWork(ApplicationContext applicationContext)
         {
@@ -54,6 +55,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         public IStudentRepository StudentRepository
         {
             get { return _studentRepository = _studentRepository ?? new StudentRepository(_applicationContext); }
+        }
+
+        public IVisitRepository VisitRepository
+        {
+            get { return _visitRepository = _visitRepository ?? new VisitRepository(_applicationContext); }
         }
 
         public Task CommitAsync()

@@ -6,6 +6,7 @@ using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Core.Models.Theme;
+using CharlieBackend.Core.Models.Visit;
 using System;
 using System.Linq;
 
@@ -57,7 +58,6 @@ namespace CharlieBackend.Core
             return new Lesson
             {
                 Id = lessonModel.Id,
-                StudentGroupId = lessonModel.GroupId,
                 LessonDate = DateTime.Parse(lessonModel.LessonDate),
             };
         }
@@ -67,8 +67,20 @@ namespace CharlieBackend.Core
             return new LessonModel
             {
                 Id = lesson.Id,
-                GroupId = lesson.StudentGroupId ?? 0, // TODO: remove
-                LessonDate = lesson.LessonDate.ToString()
+                LessonDate = lesson.LessonDate.ToString(),
+                ThemeName = lesson.Theme.Name,
+            };
+        }
+
+        public static VisitModel ToVisitModel(this Visit visit)
+        {
+            return new VisitModel
+            {
+                StudentId = (long)visit.StudentId,
+                Comment = visit.Comment,
+                StudentMark = visit.StudentMark,
+                Presence = visit.Presence
+
             };
         }
 

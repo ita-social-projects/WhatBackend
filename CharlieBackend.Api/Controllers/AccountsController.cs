@@ -59,6 +59,7 @@ namespace CharlieBackend.Api.Controllers
                     claims: new List<Claim> {
                       //  new Claim("Email", foundAccount.Email),
                         new Claim(ClaimsIdentity.DefaultRoleClaimType, foundAccount.Role.ToString()),
+                        new Claim("Id", studentOrMentorId.ToString()),
                         new Claim("Email", foundAccount.Email)
                     },
                     expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
