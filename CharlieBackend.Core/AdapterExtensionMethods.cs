@@ -183,7 +183,7 @@ namespace CharlieBackend.Core
                 StartDate = startDate.ToShortDateString(),
                 FinishDate = finishDate.ToShortDateString(),
                 StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
-                CourseId = (long)group.CourseId
+                CourseId = group.CourseId
             };
         }
         public static StudentGroup ToStudentGroup(this StudentGroupModel group)

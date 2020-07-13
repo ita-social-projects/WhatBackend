@@ -11,7 +11,7 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [JsonIgnore]
         [JsonPropertyName("course_id")]
-        public virtual long CourseId { get; set; }
+        public virtual long? CourseId { get; set; }
 
         [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
         [JsonPropertyName("start_date")]
