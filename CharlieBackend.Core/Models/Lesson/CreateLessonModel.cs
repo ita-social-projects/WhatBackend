@@ -17,7 +17,7 @@ namespace CharlieBackend.Core.Models.Lesson
         [Required]
         [JsonPropertyName("group_id")]
         public virtual long StudentGroupId { get; set; }
-        
+
         [Required]
         [JsonPropertyName("lesson_visits")]
         public virtual List<VisitModel> LessonVisits { get; set; }

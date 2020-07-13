@@ -45,7 +45,8 @@ namespace CharlieBackend.Api.Middlewares
                         await context.Response.WriteAsync("Account is not active!");
                     }
 
-                    if (context.Request.Path.Value.Contains("lessons")) {
+                    if (context.Request.Path.Value.Contains("lessons"))
+                    {
                         var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
                         if (role == "2")
                         {

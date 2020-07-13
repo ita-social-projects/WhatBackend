@@ -42,7 +42,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var studentModel = await _studentService.GetStudentByIdAsync(id);
-                if (studentModel != null) return Ok( new { studentModel.FirstName, studentModel.LastName, studentModel.StudentGroupIds, studentModel.Email});
+                if (studentModel != null) return Ok(new { studentModel.FirstName, studentModel.LastName, studentModel.StudentGroupIds, studentModel.Email });
                 else return StatusCode(409, "Cannot find student with such id.");
             }
             catch { return StatusCode(500); }

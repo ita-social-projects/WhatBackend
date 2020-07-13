@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Core.Models.Visit;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.Lesson

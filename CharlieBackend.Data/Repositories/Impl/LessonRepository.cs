@@ -46,7 +46,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                     studentLessonModels.Add(studentLessonModel);
                 }
                 return studentLessonModels;
-            } catch { return null; }
+            }
+            catch { return null; }
         }
     }
 }
