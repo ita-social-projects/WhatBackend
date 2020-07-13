@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.StudentGroup;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace CharlieBackend.Api.Controllers
         //    }
         //}
 
+        [Authorize(Roles = "2")]
         [HttpPost]
         public async Task<ActionResult> PostStudentGroupController(CreateStudentGroupModel studentGroup)
         {
@@ -44,6 +46,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "2")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutStudentGroup(long id, UpdateStudentGroupModel studentGroup)
         {
@@ -61,6 +64,7 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupModel>>> GetAllStudentGroups()
         {
