@@ -72,7 +72,7 @@ namespace CharlieBackend.Business.Services
             return lessonsModels;
         }
 
-        public async Task<LessonModel> UpdateMentorAsync(UpdateLessonModel lessonModel)
+        public async Task<LessonModel> UpdateLessonAsync(UpdateLessonModel lessonModel)
         {
             try
             {
@@ -116,6 +116,12 @@ namespace CharlieBackend.Business.Services
 
             }
             catch { _unitOfWork.Rollback(); return null; }
+        }
+
+        public async Task<List<StudentLessonModel>> GetStudentLessonsAsync(long studentId)
+        {
+            var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
+            return studentLessonModels ?? null;
         }
     }
 }

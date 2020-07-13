@@ -43,6 +43,17 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles = "2")]
+        [HttpGet("students/{id}")]
+        public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
+        {
+            try
+            {
+                var lessons = await _lessonService.GetStudentLessonsAsync(id);
+                return Ok(new { lessons });
+            }
+            catch { return StatusCode(500); }
+        }
 
         [Authorize(Roles = "2")]
         [HttpPut("{id}")]
@@ -52,7 +63,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 lessonModel.Id = id;
-                var updatedLesson = await _lessonService.UpdateMentorAsync(lessonModel);
+                var updatedLesson = await _lessonService.UpdateLessonAsync(lessonModel);
                 if (updatedLesson != null) return NoContent();
                 else return StatusCode(409, "Cannot update.");
             }
