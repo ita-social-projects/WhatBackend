@@ -43,7 +43,7 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "1, 2")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
         {
