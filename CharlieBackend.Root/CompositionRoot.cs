@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services;
+﻿using CharlieBackend.Business.Options;
+using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
@@ -21,7 +22,7 @@ namespace CharlieBackend.Root
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ILessonService, LessonService>();

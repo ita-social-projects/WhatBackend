@@ -1,7 +1,8 @@
-﻿using CharlieBackend.Api.Settings;
+﻿using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.Account;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,14 @@ namespace CharlieBackend.Api.Controllers
         private readonly IAccountService _accountService;
         private readonly IStudentService _studentService;
         private readonly IMentorService _mentorService;
+        private readonly AuthOptions _authOptions;
 
-        public AccountsController(IAccountService accountService, IStudentService studentService, IMentorService mentorService)
+        public AccountsController(IAccountService accountService, IStudentService studentService, IMentorService mentorService, IOptions<AuthOptions> authOptions)
         {
             _accountService = accountService;
             _studentService = studentService;
             _mentorService = mentorService;
+            _authOptions = authOptions.Value;
         }
 
         [HttpPost]
@@ -51,19 +54,18 @@ namespace CharlieBackend.Api.Controllers
             }
 
             var now = DateTime.UtcNow;
-            // создаем JWT-токен
+
             var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
+                    issuer: _authOptions.ISSUER,
+                    audience: _authOptions.AUDIENCE,
                     notBefore: now,
                     claims: new List<Claim> {
-                      //  new Claim("Email", foundAccount.Email),
                         new Claim(ClaimsIdentity.DefaultRoleClaimType, foundAccount.Role.ToString()),
                         new Claim("Id", studentOrMentorId.ToString()),
                         new Claim("Email", foundAccount.Email)
                     },
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                    expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(_authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             var response = new

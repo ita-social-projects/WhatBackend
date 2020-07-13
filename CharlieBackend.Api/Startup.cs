@@ -1,5 +1,5 @@
 using CharlieBackend.Api.Middlewares;
-using CharlieBackend.Api.Settings;
+using CharlieBackend.Business.Options;
 using CharlieBackend.Root;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -27,31 +27,24 @@ namespace CharlieBackend.Api
         {
             CompositionRoot.injectDependencies(services, Configuration);
 
+            var authOptions = new AuthOptions();
+            Configuration.GetSection("AuthOptions").Bind(authOptions);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // укзывает, будет ли валидироваться издатель при валидации токена
                         ValidateIssuer = true,
-                        // строка, представляющая издателя
-                        ValidIssuer = AuthOptions.ISSUER,
-
-                        // будет ли валидироваться потребитель токена
+                        ValidIssuer = authOptions.ISSUER,
                         ValidateAudience = true,
-                        // установка потребителя токена
-                        ValidAudience = AuthOptions.AUDIENCE,
-                        // будет ли валидироваться время существования
+                        ValidAudience = authOptions.AUDIENCE,
                         ValidateLifetime = true,
-
-                        // установка ключа безопасности
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        // валидация ключа безопасности
+                        IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
                     };
                 });
-
 
             services.AddCors();
             services.AddControllers();
