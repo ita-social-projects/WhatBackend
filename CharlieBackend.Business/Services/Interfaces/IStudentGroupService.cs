@@ -11,6 +11,6 @@ namespace CharlieBackend.Business.Services.Interfaces
         public Task<bool> IsGroupNameTakenAsync(string groupName);
         public bool DeleteStudentGrop(long StudentGroupId);
         public Task<StudentGroupModel> UpdateStudentGroupAsync(UpdateStudentGroupModel studentGroupModel);
-        public Task<StudentGroupModel> SearchStudentGroup(long studentGroupId);
+        public Task<StudentGroupById> GetStudentGroupByIdAsync(long id);
     }
 }

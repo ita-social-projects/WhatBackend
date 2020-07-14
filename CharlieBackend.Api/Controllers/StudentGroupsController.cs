@@ -76,5 +76,14 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
+        [Authorize(Roles ="2")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<StudentGroupById>> GetStudentGroupById(long id)
+        {
+            var foundStudentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
+            if (foundStudentGroup == null) return BadRequest("No such student group.");
+
+            return foundStudentGroup;
+        }
     }
 }

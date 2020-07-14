@@ -5,6 +5,7 @@ using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -111,26 +112,26 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
                 return studentGroupModel;
-
-
             }
             catch { _unitOfWork.Rollback(); return null; }
         }
 
-        public async Task<StudentGroupModel> SearchStudentGroup(long studenGroupId)
+        public async Task<StudentGroupById> GetStudentGroupByIdAsync(long id)
         {
-            var x = _unitOfWork.StudentGroupRepository.SearchStudentGroup(studenGroupId);
-            if (x != null)
-            {
-                return x.ToStudentGroupModel();
-            }
-            else
-            {
-                return null;
-            }
+            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            if (foundStudentGroup == null) return null;
 
+            var startDate = (DateTime)foundStudentGroup.StartDate;
+            var finishDate = (DateTime)foundStudentGroup.FinishDate;
+
+            return new StudentGroupById
+            {
+                FinishDate = startDate.ToShortDateString(),
+                StartDate = startDate.ToShortDateString(),
+                StudentIds = foundStudentGroup.StudentsOfStudentGroups.Select(student => student.Id).ToList(),
+                GroupName = foundStudentGroup.Name,
+                MentorIds = foundStudentGroup.MentorsOfStudentGroups.Select(mentor => mentor.Id).ToList()
+            };
         }
-
-
     }
 }
