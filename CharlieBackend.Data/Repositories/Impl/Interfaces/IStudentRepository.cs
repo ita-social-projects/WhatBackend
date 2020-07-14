@@ -9,5 +9,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public new Task<List<Student>> GetAllAsync();
         Task<Student> GetStudentByAccountIdAsync(long accountId);
         Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds);
+        Task<Student> GetStudentByEmailAsync(string email);
     }
 }

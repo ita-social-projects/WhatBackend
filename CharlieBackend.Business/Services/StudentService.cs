@@ -134,5 +134,11 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
             return student?.ToStudentModel();
         }
+
+        public async Task<StudentModel> GetStudentByEmailAsync(string email)
+        {
+            var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
+            return student?.ToStudentModel();
+        }
     }
 }

@@ -26,8 +26,10 @@ namespace CharlieBackend.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
-            if (isEmailTaken) return StatusCode(409, "Account already exists!");
+            //var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
+            //if (isEmailTaken) return StatusCode(409, "Account already exists!");
+            var foundStudent = await _studentService.GetStudentByEmailAsync(studentModel.Email);
+            if (foundStudent != null) return Ok(foundStudent.Id);
 
             var createdStudentModel = await _studentService.CreateStudentAsync(studentModel);
             if (createdStudentModel == null) return StatusCode(422, "Cannot create student.");
@@ -42,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var studentModel = await _studentService.GetStudentByIdAsync(id);
-                if (studentModel != null) return Ok(new { studentModel.FirstName, studentModel.LastName, studentModel.StudentGroupIds, studentModel.Email });
+                if (studentModel != null) return Ok(new { first_name = studentModel.FirstName, last_name = studentModel.LastName, student_group_ids = studentModel.StudentGroupIds, email = studentModel.Email });
                 else return StatusCode(409, "Cannot find student with such id.");
             }
             catch { return StatusCode(500); }
