@@ -70,12 +70,13 @@ namespace CharlieBackend.Api.Controllers
 
             var response = new
             {
-                first_Name = foundAccount.FirstName,
-                last_Name = foundAccount.LastName,
+                first_name = foundAccount.FirstName,
+                last_name = foundAccount.LastName,
                 role = foundAccount.Role,
                 id = studentOrMentorId
             };
             Response.Headers.Add("Authorization", "Bearer " + encodedJwt);
+            Response.Headers.Add("Access-Control-Expose-Headers", "x-token, Authorization");
             return Ok(response);
         }
     }
