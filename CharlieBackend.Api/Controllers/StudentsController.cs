@@ -55,7 +55,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var studentsModels = await _studentService.GetAllStudentsAsync();
-                return Ok(new { students = studentsModels });
+                return Ok(studentsModels);
             }
             catch { return StatusCode(500); }
         }

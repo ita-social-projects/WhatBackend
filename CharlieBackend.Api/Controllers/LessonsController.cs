@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var lessons = await _lessonService.GetAllLessonsAsync();
-                return Ok(new { lessons });
+                return Ok(lessons);
             }
             catch { return StatusCode(500); }
         }
@@ -50,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var lessons = await _lessonService.GetStudentLessonsAsync(id);
-                return Ok(new { lessons });
+                return Ok(lessons);
             }
             catch { return StatusCode(500); }
         }
