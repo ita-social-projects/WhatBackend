@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
     <ProjectReference Include="..\CharlieBackend.Data\CharlieBackend.Data.csproj" />
   </ItemGroup>

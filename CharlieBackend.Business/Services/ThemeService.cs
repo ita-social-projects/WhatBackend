@@ -36,5 +36,11 @@ namespace CharlieBackend.Business.Services
 
             return themeModels;
         }
+
+        public async Task<ThemeModel> GetThemeByNameAsync(string name)
+        {
+            var theme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(name);
+            return theme?.ToThemeModel();
+        }
     }
 }

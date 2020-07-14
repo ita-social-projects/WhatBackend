@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
-    public interface IThemeRepository : IRepository<Theme>
+    public interface IVisitRepository : IRepository<Visit>
     {
-        public Task<Theme> GetThemeByNameAsync(string name);
+        public Task DeleteWhereLessonIdAsync(long id);
     }
 }

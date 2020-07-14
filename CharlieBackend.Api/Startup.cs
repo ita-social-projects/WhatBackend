@@ -1,5 +1,5 @@
 using CharlieBackend.Api.Middlewares;
-using CharlieBackend.Api.Settings;
+using CharlieBackend.Business.Options;
 using CharlieBackend.Root;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Api
 {
@@ -25,35 +27,56 @@ namespace CharlieBackend.Api
         {
             CompositionRoot.injectDependencies(services, Configuration);
 
+            var authOptions = new AuthOptions();
+            Configuration.GetSection("AuthOptions").Bind(authOptions);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // укзывает, будет ли валидироваться издатель при валидации токена
                         ValidateIssuer = true,
-                        // строка, представляющая издателя
-                        ValidIssuer = AuthOptions.ISSUER,
-
-                        // будет ли валидироваться потребитель токена
+                        ValidIssuer = authOptions.ISSUER,
                         ValidateAudience = true,
-                        // установка потребителя токена
-                        ValidAudience = AuthOptions.AUDIENCE,
-                        // будет ли валидироваться время существования
+                        ValidAudience = authOptions.AUDIENCE,
                         ValidateLifetime = true,
-
-                        // установка ключа безопасности
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        // валидация ключа безопасности
+                        IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
                     };
                 });
 
-
             services.AddCors();
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "13.07.2020" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Specify a Bearer token. \nExample: Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,7 +92,8 @@ namespace CharlieBackend.Api
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = "";
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CharlieBackend");
             });
 
             if (env.IsDevelopment())

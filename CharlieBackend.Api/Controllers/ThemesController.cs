@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var themes = await _themeService.GetAllThemesAsync();
-                return Ok(new { theme_names = themes.Select(theme => theme.Name) });
+                return Ok(themes.Select(theme => theme.Name));
             }
             catch { return StatusCode(500); }
         }

@@ -43,7 +43,7 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var mentorsModels = await _mentorService.GetAllMentorsAsync();
-                return Ok(new { mentors = mentorsModels });
+                return Ok(mentorsModels);
             }
             catch { return StatusCode(500); }
         }
@@ -67,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
             catch { return StatusCode(500); }
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "4")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {
