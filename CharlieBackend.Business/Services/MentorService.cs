@@ -103,7 +103,18 @@ namespace CharlieBackend.Business.Services
                     foreach (var newCourseId in mentorModel.CourseIds)
                         newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
 
-                    _unitOfWork.MentorRepository.UpdateManyToMany(currentMentorCourses, newMentorCourses);
+                    _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
+                }
+
+                if (mentorModel.StudentGroupIds != null)
+                {
+                    var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
+                    var newMentorGroups = new List<MentorOfStudentGroup>();
+
+                    foreach (var newGroupId in mentorModel.StudentGroupIds)
+                        newMentorGroups.Add(new MentorOfStudentGroup { StudentGroupId = newGroupId, MentorId = foundMentor.Id });
+
+                    _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
                 }
 
                 await _unitOfWork.CommitAsync();

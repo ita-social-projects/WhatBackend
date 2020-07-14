@@ -24,12 +24,18 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _applicationContext.Mentors
                 .Include(mentor => mentor.Account)
                 .Include(mentor => mentor.MentorsOfCourses)
+                .Include(mentor => mentor.MentorsOfStudentGroups)
                 .FirstOrDefaultAsync(mentor => mentor.Id == id);
         }
 
-        public void UpdateManyToMany(IEnumerable<MentorOfCourse> currentItems, IEnumerable<MentorOfCourse> newItems)
+        public void UpdateMentorCourses(IEnumerable<MentorOfCourse> currentItems, IEnumerable<MentorOfCourse> newItems)
         {
             _applicationContext.MentorsOfCourses.TryUpdateManyToMany(currentItems, newItems);
+        }
+
+        public void UpdateMentorGroups(IEnumerable<MentorOfStudentGroup> currentItems, IEnumerable<MentorOfStudentGroup> newItems)
+        {
+            _applicationContext.MentorsOfStudentGroups.TryUpdateManyToMany(currentItems, newItems);
         }
 
         public Task<Mentor> GetMentorByAccountIdAsync(long mentorId)

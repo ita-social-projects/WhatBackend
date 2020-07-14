@@ -12,11 +12,14 @@ namespace CharlieBackend.Core.Models.Mentor
 
         [JsonPropertyName("first_name")]
         public override string FirstName { get; set; }
-
+         
         [JsonPropertyName("last_name")]
         public override string LastName { get; set; }
 
         [JsonPropertyName("course_ids")]
         public new List<long> CourseIds { get; set; }
+
+        [JsonPropertyName("student_group_ids")]
+        public List<long> StudentGroupIds { get; set; }
     }
 }
