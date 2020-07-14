@@ -128,9 +128,9 @@ namespace CharlieBackend.Business.Services
             {
                 FinishDate = startDate.ToShortDateString(),
                 StartDate = startDate.ToShortDateString(),
-                StudentIds = foundStudentGroup.StudentsOfStudentGroups.Select(student => student.Id).ToList(),
+                StudentIds = foundStudentGroup.StudentsOfStudentGroups.Select(studentOfStudentGroup => studentOfStudentGroup.StudentId).ToList(),
                 GroupName = foundStudentGroup.Name,
-                MentorIds = foundStudentGroup.MentorsOfStudentGroups.Select(mentor => mentor.Id).ToList()
+                MentorIds = foundStudentGroup.MentorsOfStudentGroups.Select(mentorOfStudentGroup => mentorOfStudentGroup.MentorId).ToList()
             };
         }
     }
