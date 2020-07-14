@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Api", "CharlieBackend.Api\CharlieBackend.Api.csproj", "{C3196AF5-5076-47D4-9109-F02FEB0194AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api", "CharlieBackend.Api\CharlieBackend.Api.csproj", "{C3196AF5-5076-47D4-9109-F02FEB0194AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Root", "CharlieBackend.Root\CharlieBackend.Root.csproj", "{9746A8A7-E967-4F50-AB43-329A179C51C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Root", "CharlieBackend.Root\CharlieBackend.Root.csproj", "{9746A8A7-E967-4F50-AB43-329A179C51C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Business", "CharlieBackend.Business\CharlieBackend.Business.csproj", "{86858A98-8989-4632-8EE1-4C19680D9E5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Business", "CharlieBackend.Business\CharlieBackend.Business.csproj", "{86858A98-8989-4632-8EE1-4C19680D9E5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Data", "CharlieBackend.Data\CharlieBackend.Data.csproj", "{F7E97B01-E607-47B4-961A-60559C9D46F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Data", "CharlieBackend.Data\CharlieBackend.Data.csproj", "{F7E97B01-E607-47B4-961A-60559C9D46F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Core", "CharlieBackend.Core\CharlieBackend.Core.csproj", "{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Core", "CharlieBackend.Core\CharlieBackend.Core.csproj", "{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest", "CharlieBackend.Api.UnitTes\CharlieBackend.Api.UnitTest.csproj", "{FCAE2322-45AE-4604-9D3A-D417805FB7F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCAE2322-45AE-4604-9D3A-D417805FB7F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCAE2322-45AE-4604-9D3A-D417805FB7F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCAE2322-45AE-4604-9D3A-D417805FB7F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCAE2322-45AE-4604-9D3A-D417805FB7F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
