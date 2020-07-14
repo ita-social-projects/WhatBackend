@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Data", "Char
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Core", "CharlieBackend.Core\CharlieBackend.Core.csproj", "{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharlieBackend.Api.UnitTes", "CharlieBackend.Api.UnitTes\CharlieBackend.Api.UnitTes.csproj", "{FCAE2322-45AE-4604-9D3A-D417805FB7F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest", "CharlieBackend.Api.UnitTes\CharlieBackend.Api.UnitTest.csproj", "{FCAE2322-45AE-4604-9D3A-D417805FB7F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
