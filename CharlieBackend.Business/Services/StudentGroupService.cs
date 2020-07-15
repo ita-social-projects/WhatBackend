@@ -126,8 +126,8 @@ namespace CharlieBackend.Business.Services
 
             return new StudentGroupById
             {
-                FinishDate = startDate.ToShortDateString(),
-                StartDate = startDate.ToShortDateString(),
+                FinishDate = finishDate.ToString("yyyy-MM-dd"),
+                StartDate = startDate.ToString("yyyy-MM-dd"),
                 StudentIds = foundStudentGroup.StudentsOfStudentGroups.Select(studentOfStudentGroup => studentOfStudentGroup.StudentId).ToList(),
                 GroupName = foundStudentGroup.Name,
                 MentorIds = foundStudentGroup.MentorsOfStudentGroups.Select(mentorOfStudentGroup => mentorOfStudentGroup.MentorId).ToList()

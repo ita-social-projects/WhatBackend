@@ -67,8 +67,8 @@ namespace CharlieBackend.Core
             return new LessonModel
             {
                 Id = lesson.Id,
-                LessonDate = lesson.LessonDate.ToString(),
-                ThemeName = lesson.Theme.Name,
+                LessonDate = lesson.LessonDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                ThemeName = lesson.Theme?.Name,
             };
         }
 
@@ -180,8 +180,8 @@ namespace CharlieBackend.Core
             {
                 Id = group.Id,
                 Name = group.Name,
-                StartDate = startDate.ToShortDateString(),
-                FinishDate = finishDate.ToShortDateString(),
+                StartDate = startDate.ToString("yyyy-MM-dd"),
+                FinishDate = finishDate.ToString("yyyy-MM-dd"),
                 StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
                 CourseId = group.CourseId
             };
