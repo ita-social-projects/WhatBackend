@@ -4,6 +4,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Models.Mentor;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -82,6 +83,12 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                if (!Validate(mentorModel))
+                {
+                    //TODO: 
+                    return null;
+                }
+
                 var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
                 if (foundMentor == null) return null;
 
@@ -94,6 +101,11 @@ namespace CharlieBackend.Business.Services
 
             }
             catch { _unitOfWork.Rollback(); return null; }
+        }
+
+        private bool Validate(UpdateMentorModel mentorModel)
+        {
+            return mentorModel != null && !string.IsNullOrWhiteSpace(mentorModel.Email) && !string.IsNullOrWhiteSpace(mentorModel.FirstName) && !string.IsNullOrWhiteSpace(mentorModel.Id);
         }
 
         private void UpdateStudentGroupIds(UpdateMentorModel mentorModel, Mentor foundMentor)
