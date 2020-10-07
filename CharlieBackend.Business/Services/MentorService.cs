@@ -140,7 +140,7 @@ namespace CharlieBackend.Business.Services
         {
             foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
             foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
-            foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
+            foundMentor.Account.LastName = foundMentor.Account.LastName;
 
             if (!string.IsNullOrEmpty(mentorModel.Password))
             {
