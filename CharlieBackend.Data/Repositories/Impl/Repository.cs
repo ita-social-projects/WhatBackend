@@ -9,13 +9,13 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private DbSet<T> _entities;
         protected readonly ApplicationContext _applicationContext;
+        private DbSet<T> _entities;
 
         public Repository(ApplicationContext applicationContext)
         {
-            _entities = applicationContext.Set<T>();
             _applicationContext = applicationContext;
+            _entities = applicationContext.Set<T>();
         }
 
         public Task<List<T>> GetAllAsync()
@@ -30,7 +30,11 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public void Add(T entity)
         {
-            if (entity == null) throw new ArgumentNullException();
+            if (entity == null) 
+            {
+                throw new ArgumentNullException();
+            }
+
             _entities.Add(entity);
         }
 
@@ -42,7 +46,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task DeleteAsync(long id)
         {
             var found = await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
-            if (found != null) _entities.Remove(found);
+
+            if (found != null) 
+            {
+                _entities.Remove(found);
+            }
         }
     }
 }

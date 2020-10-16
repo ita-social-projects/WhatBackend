@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
@@ -10,7 +10,11 @@ namespace CharlieBackend.Core.Models.StudentGroup
         public override long Id { get; set; }
 
         [Required]
-        public override string Name { get => base.Name; set => base.Name = value; }
+        public override string Name 
+        { 
+            get => base.Name; 
+            set => base.Name = value; 
+        }
 
         [Required]
         [JsonPropertyName("course_id")]

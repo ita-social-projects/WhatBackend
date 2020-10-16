@@ -1,7 +1,7 @@
-﻿using CharlieBackend.Core.Models.Visit;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using CharlieBackend.Core.Models.Visit;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.Lesson
 {

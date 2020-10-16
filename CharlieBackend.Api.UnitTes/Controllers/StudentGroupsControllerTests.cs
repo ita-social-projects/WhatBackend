@@ -19,21 +19,22 @@ namespace CharlieBackend.Api.Controllers.Tests
         public async Task GetAllStudentGroupsTestAsync()
         {
             var mock = new Mock<IStudentGroupService>();
-           
-            mock.Setup(repo => repo.GetAllStudentGroupsAsync()).Returns(studentGroups);
+            mock.Setup(repo => repo.GetAllStudentGroupsAsync()).Returns(getStudentGroups);
             StudentGroupsController controller = new StudentGroupsController(mock.Object);
             var GetResult = controller.GetAllStudentGroups();
-            var a = GetResult.Result.Result as ObjectResult;
-            var temp = a.Value as List<StudentGroupModel>;
-            var e = await studentGroups();
-            Assert.Equal(e.Count, temp.Count);
+            var taskResult = GetResult.Result.Result as ObjectResult;
+            var toCompare = taskResult.Value as List<StudentGroupModel>;
+            var actualResult = await getStudentGroups();
+            Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<List<StudentGroupModel>> studentGroups()
+        public async Task<List<StudentGroupModel>> getStudentGroups()
         {
-            List<StudentGroupModel> studentG = new List<StudentGroupModel>();
-            studentG.Add(new StudentGroupModel { Id = 12, Name="Testst1", StartDate="26.06.2020", FinishDate="20.10.2020" });
-            studentG.Add(new StudentGroupModel { Id = 13, Name= "Testst2", StartDate = "20.05.2020", FinishDate="13.08.2020" });
-            studentG.Add(new StudentGroupModel { Id = 14, Name = "Testst3", StartDate = "14.04.2020",FinishDate="18.09.2020" });
+            List<StudentGroupModel> studentG = new List<StudentGroupModel>()
+            {
+                new StudentGroupModel { Id = 12, Name="Testst1", StartDate="26.06.2020", FinishDate="20.10.2020" },
+                new StudentGroupModel { Id = 13, Name = "Testst2", StartDate = "20.05.2020", FinishDate = "13.08.2020" },
+                new StudentGroupModel { Id = 14, Name = "Testst3", StartDate = "14.04.2020", FinishDate = "18.09.2020" }
+            };
             return studentG;
         }
     }

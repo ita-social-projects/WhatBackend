@@ -24,7 +24,11 @@ namespace CharlieBackend.Business.Services
                 await _unitOfWork.CommitAsync();
                 return theme;
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public async Task<List<ThemeModel>> GetAllThemesAsync()
@@ -32,7 +36,11 @@ namespace CharlieBackend.Business.Services
             var themes = await _unitOfWork.ThemeRepository.GetAllAsync();
 
             var themeModels = new List<ThemeModel>();
-            foreach (var theme in themes) { themeModels.Add(theme.ToThemeModel()); }
+
+            foreach (var theme in themes)
+            {
+                themeModels.Add(theme.ToThemeModel());
+            }
 
             return themeModels;
         }
@@ -40,6 +48,7 @@ namespace CharlieBackend.Business.Services
         public async Task<ThemeModel> GetThemeByNameAsync(string name)
         {
             var theme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(name);
+
             return theme?.ToThemeModel();
         }
     }

@@ -1,11 +1,14 @@
-﻿using CharlieBackend.Data.Repositories.Impl.Interfaces;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Threading.Tasks;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class UnitOfWork : IUnitOfWork
     {
+        #region private
+
         private readonly ApplicationContext _applicationContext;
         private IAccountRepository _accountRepository;
         private ILessonRepository _lessonRepository;
@@ -17,6 +20,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IStudentGroupRepository _studentGroupRepository;
         private IVisitRepository _visitRepository;
 
+        #endregion 
+
         public UnitOfWork(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
@@ -24,43 +29,76 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public IAccountRepository AccountRepository
         {
-            get { return _accountRepository = _accountRepository ?? new AccountRepository(_applicationContext); }
+            get
+            { 
+                return _accountRepository = _accountRepository 
+                        ?? new AccountRepository(_applicationContext);
+            }
         }
 
         public ILessonRepository LessonRepository
         {
-            get { return _lessonRepository = _lessonRepository ?? new LessonRepository(_applicationContext); }
+            get 
+            { 
+                return _lessonRepository = _lessonRepository 
+                        ?? new LessonRepository(_applicationContext);
+            }
         }
 
         public IThemeRepository ThemeRepository
         {
-            get { return _themeRepository = _themeRepository ?? new ThemeRepository(_applicationContext); }
+            get
+            {
+                return _themeRepository = _themeRepository 
+                        ?? new ThemeRepository(_applicationContext);
+            }
         }
 
         public ICourseRepository CourseRepository
         {
-            get { return _courseRepository = _courseRepository ?? new CourseRepository(_applicationContext); }
+            get 
+            {
+                return _courseRepository = _courseRepository 
+                        ?? new CourseRepository(_applicationContext);
+            }
         }
 
         public IMentorRepository MentorRepository
         {
-            get { return _mentorRepository = _mentorRepository ?? new MentorRepository(_applicationContext); }
+            get
+            { 
+                return _mentorRepository = _mentorRepository 
+                        ?? new MentorRepository(_applicationContext);
+            }
         }
 
         public IMentorOfCourseRepository MentorOfCourseRepository
         {
-            get { return _mentorOfCourseRepository = _mentorOfCourseRepository ?? new MentorOfCourseRepository(_applicationContext); }
+            get
+            { 
+                return _mentorOfCourseRepository = _mentorOfCourseRepository 
+                        ?? new MentorOfCourseRepository(_applicationContext);
+            }
         }
 
         public IStudentRepository StudentRepository
         {
-            get { return _studentRepository = _studentRepository ?? new StudentRepository(_applicationContext); }
+            get 
+            { 
+                return _studentRepository = _studentRepository 
+                        ?? new StudentRepository(_applicationContext); 
+            }
         }
 
         public IVisitRepository VisitRepository
         {
-            get { return _visitRepository = _visitRepository ?? new VisitRepository(_applicationContext); }
+            get 
+            { 
+                return _visitRepository = _visitRepository 
+                        ?? new VisitRepository(_applicationContext); 
+            }
         }
+
 
         public Task CommitAsync()
         {
@@ -79,7 +117,11 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public IStudentGroupRepository StudentGroupRepository
         {
-            get { return _studentGroupRepository = _studentGroupRepository ?? new StudentGroupRepository(_applicationContext); }
+            get
+            {
+                return _studentGroupRepository = _studentGroupRepository 
+                        ?? new StudentGroupRepository(_applicationContext);
+            }
         }
 
     }

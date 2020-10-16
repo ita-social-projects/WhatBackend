@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.Lesson
 {
@@ -7,9 +7,13 @@ namespace CharlieBackend.Core.Models.Lesson
     {
         [JsonPropertyName("theme_name")]
         public virtual string ThemeName { get; set; }
+
         public virtual long Id { get; set; }
+
         public virtual bool Presence { get; set; }
+
         public virtual sbyte? Mark { get; set; }
+
         public virtual string Comment { get; set; }
 
         [JsonPropertyName("student_group_id")]

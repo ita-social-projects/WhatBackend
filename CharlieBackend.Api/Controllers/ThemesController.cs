@@ -1,10 +1,10 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Theme;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using CharlieBackend.Core.Models.Theme;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -12,7 +12,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
+        #region
         private readonly IThemeService _themeService;
+        #endregion
 
         public ThemesController(IThemeService themeService)
         {
@@ -26,9 +28,13 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var themes = await _themeService.GetAllThemesAsync();
+
                 return Ok(themes.Select(theme => theme.Name));
             }
-            catch { return StatusCode(500); }
+            catch 
+            { 
+                return StatusCode(500); 
+            }
         }
     }
 }

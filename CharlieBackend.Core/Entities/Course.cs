@@ -13,6 +13,7 @@ namespace CharlieBackend.Core.Entities
         public string Name { get; set; }
 
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }
+        
         public virtual ICollection<StudentGroup> StudentGroup { get; set; }
     }
 }

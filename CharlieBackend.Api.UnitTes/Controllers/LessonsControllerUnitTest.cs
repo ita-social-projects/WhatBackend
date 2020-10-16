@@ -14,20 +14,24 @@ namespace CharlieBackend.Api.UnitTest.Controllers
         [Fact]
         public async Task GetAllLessons()
         {
-            var mock = new Mock<ILessonService>();
-            mock.Setup(repo => repo.GetAllLessonsAsync()).Returns(lessons);
-            LessonsController controller = new LessonsController(mock.Object);
+            var lessonServiceMock = new Mock<ILessonService>();
+            lessonServiceMock.Setup(repo => repo.GetAllLessonsAsync()).Returns(getLessons);
+            LessonsController controller = new LessonsController(lessonServiceMock.Object);
             var GetResult = controller.GetAllLessons();
-            var a = GetResult.Result.Result as ObjectResult;
-            var temp = a.Value as List<LessonModel>;
-            var e = await lessons();
-            Assert.Equal(e.Count, temp.Count);
+            var objectResult = GetResult.Result.Result as ObjectResult;
+            var toCompare = objectResult.Value as List<LessonModel>;
+            var actualResult = await getLessons();
+            Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<List<LessonModel>> lessons() { 
-            List<LessonModel> less = new List<LessonModel>();
-            less.Add(new LessonModel { Id = 1, ThemeName = "Testst1", LessonDate = "TestSt1" });
-            less.Add(new LessonModel { Id = 13, ThemeName = "Testst2", LessonDate = "TestSt2" });
-            less.Add(new LessonModel { Id = 14, ThemeName = "Testst3", LessonDate = "TestSt3" });
+
+        public async Task<List<LessonModel>> getLessons() 
+        {
+            List<LessonModel> less = new List<LessonModel>()
+            {
+                new LessonModel { Id = 1, ThemeName = "Testst1", LessonDate = "TestSt1" },
+                new LessonModel { Id = 13, ThemeName = "Testst2", LessonDate = "TestSt2" },
+                new LessonModel { Id = 14, ThemeName = "Testst3", LessonDate = "TestSt3" }
+            };
             return less;
         }
     }

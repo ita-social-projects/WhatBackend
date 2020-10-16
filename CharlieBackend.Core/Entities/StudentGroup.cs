@@ -13,13 +13,19 @@ namespace CharlieBackend.Core.Entities
         }
 
         public long? CourseId { get; set; }
+
         public string Name { get; set; }
+
         public DateTime? StartDate { get; set; }
+
         public DateTime? FinishDate { get; set; }
 
         public virtual Course Course { get; set; }
+
         public virtual ICollection<Lesson> Lesson { get; set; }
+
         public virtual ICollection<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
+        
         public virtual ICollection<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
     }
 }

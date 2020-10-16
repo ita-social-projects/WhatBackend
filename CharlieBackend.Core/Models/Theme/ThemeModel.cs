@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.Theme
 {
@@ -7,6 +7,7 @@ namespace CharlieBackend.Core.Models.Theme
     {
         [JsonIgnore]
         public virtual long Id { get; set; }
+
         [Required]
         public virtual string Name { get; set; }
     }

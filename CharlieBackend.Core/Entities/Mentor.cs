@@ -14,8 +14,11 @@ namespace CharlieBackend.Core.Entities
         public long? AccountId { get; set; }
 
         public virtual Account Account { get; set; }
+
         public virtual ICollection<Lesson> Lesson { get; set; }
+
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }
+
         public virtual ICollection<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
     }
 }

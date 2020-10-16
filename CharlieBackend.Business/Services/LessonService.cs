@@ -24,7 +24,11 @@ namespace CharlieBackend.Business.Services
             {
                 Theme theme;
                 var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(lessonModel.ThemeName);
-                if (foundTheme != null) theme = foundTheme;
+
+                if (foundTheme != null)
+                {
+                    theme = foundTheme;
+                }
                 else
                 {
                     theme = new Theme { Name = lessonModel.ThemeName };
@@ -38,6 +42,7 @@ namespace CharlieBackend.Business.Services
                     LessonDate = Convert.ToDateTime(lessonModel.LessonDate),
                     Theme = theme
                 };
+
                 _unitOfWork.LessonRepository.Add(lesson);
 
                 if (lessonModel.LessonVisits != null)
@@ -57,17 +62,25 @@ namespace CharlieBackend.Business.Services
 
                 }
                 await _unitOfWork.CommitAsync();
+
                 return lessonModel;
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public async Task<List<LessonModel>> GetAllLessonsAsync()
         {
             var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
-
             var lessonsModels = new List<LessonModel>();
-            foreach (var lesson in lessons) { lessonsModels.Add(lesson.ToLessonModel()); }
+
+            foreach (var lesson in lessons)
+            {
+                lessonsModels.Add(lesson.ToLessonModel());
+            }
 
             return lessonsModels;
         }
@@ -77,12 +90,20 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonModel.Id);
-                if (foundLesson == null) return null;
+
+                if (foundLesson == null)
+                {
+                    return null;
+                }
 
                 if (!String.IsNullOrEmpty(lessonModel.ThemeName))
                 {
                     var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(lessonModel.ThemeName);
-                    if (foundTheme != null) foundLesson.Theme = foundTheme;
+
+                    if (foundTheme != null)
+                    {
+                        foundLesson.Theme = foundTheme;
+                    }
                     else
                     {
                         var theme = new Theme { Name = lessonModel.ThemeName };
@@ -92,7 +113,9 @@ namespace CharlieBackend.Business.Services
                 }
 
                 if (!String.IsNullOrEmpty(lessonModel.LessonDate))
+                {
                     foundLesson.LessonDate = Convert.ToDateTime(lessonModel.LessonDate);
+                }
 
                 if (lessonModel.LessonVisits != null)
                 {
@@ -112,15 +135,21 @@ namespace CharlieBackend.Business.Services
                     }
                 }
                 await _unitOfWork.CommitAsync();
+
                 return lessonModel;
 
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public async Task<List<StudentLessonModel>> GetStudentLessonsAsync(long studentId)
         {
             var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
+
             return studentLessonModels ?? null;
         }
     }

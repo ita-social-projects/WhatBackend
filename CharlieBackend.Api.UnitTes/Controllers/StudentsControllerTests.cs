@@ -15,17 +15,22 @@ namespace CharlieBackend.Api.Controllers.Tests
         [Fact]
         public async Task GetAllStudentsTestAsync()
         {
-            var mock = new Mock<IStudentService>();
-            var mock2 = new Mock<IAccountService>();
-            mock.Setup(repo => repo.GetAllStudentsAsync()).Returns(students);
-            StudentsController controller = new StudentsController(mock.Object, mock2.Object);
+            var studentServiceMock = new Mock<IStudentService>();
+            var accountServiceMock = new Mock<IAccountService>();
+            studentServiceMock.Setup(repo => repo.GetAllStudentsAsync()).Returns(getStudents);
+            StudentsController controller = new StudentsController
+            (
+                studentServiceMock.Object, 
+                accountServiceMock.Object
+            );
             var GetResult = controller.GetAllStudents();
-            var a = GetResult.Result.Result as ObjectResult;
-            var temp = a.Value as List<StudentModel>;
-            var e = await students();
-            Assert.Equal(e.Count, temp.Count);
+            var taskResult = GetResult.Result.Result as ObjectResult;
+            var toCompare = taskResult.Value as List<StudentModel>;
+            var actualResult = await getStudents();
+            Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<List<StudentModel>> students()
+
+        public async Task<List<StudentModel>> getStudents()
         {
             List<StudentModel> coursesL = new List<StudentModel>();
             coursesL.Add(new StudentModel { Id = 12, FirstName = "Testst1", LastName = "TestSt1" });

@@ -4,7 +4,6 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Models.Mentor;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -30,6 +29,7 @@ namespace CharlieBackend.Business.Services
                 try
                 {
                     var generatedPassword = _accountService.GenerateSalt();
+
                     var account = new Account
                     {
                         Email = mentorModel.Email,
@@ -41,6 +41,7 @@ namespace CharlieBackend.Business.Services
                     account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
                     var mentor = new Mentor { Account = account };
+
                     _unitOfWork.MentorRepository.Add(mentor);
 
                     if (mentorModel.CourseIds.Count != 0)
@@ -49,17 +50,28 @@ namespace CharlieBackend.Business.Services
                         mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
                         for (int i = 0; i < courses.Count; i++)
-                            mentor.MentorsOfCourses.Add(new MentorOfCourse { Mentor = mentor, Course = courses[i] });
+                        {
+                            mentor.MentorsOfCourses.Add(new MentorOfCourse
+                            {
+                                Mentor = mentor,
+                                Course = courses[i]
+                            });
+                        }
                     }
 
                     await _unitOfWork.CommitAsync();
                     await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword);
 
                     transaction.Commit();
+
                     return mentor.ToMentorModel();
 
                 }
-                catch { transaction.Rollback(); return null; }
+                catch
+                {
+                    transaction.Rollback();
+                    return null;
+                }
             }
 
         }
@@ -83,84 +95,79 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                if (!Validate(mentorModel))
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+
+                if (foundMentor == null)
                 {
-                    //TODO: 
                     return null;
                 }
 
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
-                if (foundMentor == null) return null;
+                foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
+                foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
+                foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
 
-                UpdateMentorProperties(mentorModel, foundMentor);
-                UpdateMentorCourses(mentorModel, foundMentor);
-                UpdateStudentGroupIds(mentorModel, foundMentor);
+                if (!string.IsNullOrEmpty(mentorModel.Password))
+                {
+                    foundMentor.Account.Salt = _accountService.GenerateSalt();
+                    foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+                }
+
+                if (mentorModel.CourseIds != null)
+                {
+                    var currentMentorCourses = foundMentor.MentorsOfCourses;
+                    var newMentorCourses = new List<MentorOfCourse>();
+
+                    foreach (var newCourseId in mentorModel.CourseIds)
+                    {
+                        newMentorCourses.Add(new MentorOfCourse
+                        {
+                            CourseId = newCourseId,
+                            MentorId = foundMentor.Id
+                        });
+                    }
+
+                    _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
+                }
+
+                if (mentorModel.StudentGroupIds != null)
+                {
+                    var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
+                    var newMentorGroups = new List<MentorOfStudentGroup>();
+
+                    foreach (var newGroupId in mentorModel.StudentGroupIds)
+                    {
+                        newMentorGroups.Add(new MentorOfStudentGroup 
+                        { 
+                            StudentGroupId = newGroupId, 
+                            MentorId = foundMentor.Id 
+                        });
+                    }
+                    _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
+                }
 
                 await _unitOfWork.CommitAsync();
+
                 return foundMentor.ToMentorModel();
 
             }
-            catch { _unitOfWork.Rollback(); return null; }
-        }
-
-        private bool Validate(UpdateMentorModel mentorModel)
-        {
-            return mentorModel != null
-                && mentorModel.Id > 0
-                && !string.IsNullOrWhiteSpace(mentorModel.Email) 
-                && !string.IsNullOrWhiteSpace(mentorModel.FirstName);
-        }
-
-        private void UpdateStudentGroupIds(UpdateMentorModel mentorModel, Mentor foundMentor)
-        {
-            if (mentorModel.StudentGroupIds != null)
+            catch 
             {
-                var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
-                var newMentorGroups = new List<MentorOfStudentGroup>();
-
-                foreach (var newGroupId in mentorModel.StudentGroupIds)
-                    newMentorGroups.Add(new MentorOfStudentGroup { StudentGroupId = newGroupId, MentorId = foundMentor.Id });
-
-                _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
-            }
-        }
-
-        private void UpdateMentorCourses(UpdateMentorModel mentorModel, Mentor foundMentor)
-        {
-            if (mentorModel.CourseIds != null)
-            {
-                var currentMentorCourses = foundMentor.MentorsOfCourses;
-                var newMentorCourses = new List<MentorOfCourse>();
-
-                foreach (var newCourseId in mentorModel.CourseIds)
-                    newMentorCourses.Add(new MentorOfCourse { CourseId = newCourseId, MentorId = foundMentor.Id });
-
-                _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
-            }
-        }
-
-        private void UpdateMentorProperties(UpdateMentorModel mentorModel, Mentor foundMentor)
-        {
-            foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
-            foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
-            foundMentor.Account.LastName = foundMentor.Account.LastName;
-
-            if (!string.IsNullOrEmpty(mentorModel.Password))
-            {
-                foundMentor.Account.Salt = _accountService.GenerateSalt();
-                foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
+                _unitOfWork.Rollback();
+                return null;
             }
         }
 
         public async Task<MentorModel> GetMentorByAccountIdAsync(long accountId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
+
             return mentor?.ToMentorModel();
         }
 
         public async Task<long?> GetAccountId(long mentorId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
+
             return mentor?.AccountId;
         }
     }

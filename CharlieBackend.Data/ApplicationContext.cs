@@ -8,26 +8,39 @@ namespace CharlieBackend.Data
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
+
         public virtual DbSet<Course> Courses { get; set; }
+
         public virtual DbSet<Lesson> Lessons { get; set; }
+
         public virtual DbSet<Mentor> Mentors { get; set; }
+
         public virtual DbSet<MentorOfCourse> MentorsOfCourses { get; set; }
+
         public virtual DbSet<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
+
         public virtual DbSet<Student> Students { get; set; }
+
         public virtual DbSet<StudentGroup> StudentGroups { get; set; }
+
         public virtual DbSet<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
+
         public virtual DbSet<Theme> Themes { get; set; }
+
         public virtual DbSet<Visit> Visits { get; set; }
 
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
         //            if (!optionsBuilder.IsConfigured)
         //            {
-        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-        //                optionsBuilder.UseMySql("server=localhost;port=3306;database=soft;uid=root;pwd=charlieback", x => x.ServerVersion("8.0.20-mysql"));
+        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. 
+        //         See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+        //                optionsBuilder.UseMySql("server=localhost;port=3306;database=soft;uid=root;
+        //                pwd=charlieback", x => x.ServerVersion("8.0.20-mysql"));
         //            }
         //        }
 

@@ -1,9 +1,10 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Course;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using CharlieBackend.Core.Models.Course;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
+
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -11,7 +12,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
+        #region
         private readonly ICourseService _coursesService;
+        #endregion
 
         public CoursesController(ICourseService coursesService)
         {
@@ -25,10 +28,18 @@ namespace CharlieBackend.Api.Controllers
             if (!ModelState.IsValid) return BadRequest();
 
             var isCourseNameTaken = await _coursesService.IsCourseNameTakenAsync(courseModel.Name);
-            if (isCourseNameTaken) return StatusCode(409, "Course already exists!");
+
+            if (isCourseNameTaken)
+            {
+                return StatusCode(409, "Course already exists!");
+            }
 
             var createdCourse = await _coursesService.CreateCourseAsync(courseModel);
-            if (createdCourse == null) return StatusCode(500);
+
+            if (createdCourse == null)
+            {
+                return StatusCode(500);
+            }
 
             return Ok();
         }
@@ -40,9 +51,13 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var courses = await _coursesService.GetAllCoursesAsync();
+
                 return Ok(courses);
             }
-            catch { return StatusCode(500); }
+            catch 
+            { 
+                return StatusCode(500); 
+            }
         }
 
         [Authorize(Roles = "4")]
@@ -50,17 +65,30 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> PutCourse(long id, UpdateCourseModel courseModel)
         {
             //if (id != courseModel.Id) return BadRequest();
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
             try
             {
                 courseModel.Id = id;
-                var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
-                if (updatedCourse != null) return NoContent();
-                else return StatusCode(409, "Course already exists!");
 
+                var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
+
+                if (updatedCourse != null)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(409, "Course already exists!");
+                }
             }
-            catch { return StatusCode(500); }
+            catch 
+            { 
+                return StatusCode(500);
+            }
         }
     }
 }
