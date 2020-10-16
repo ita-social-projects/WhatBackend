@@ -105,7 +105,10 @@ namespace CharlieBackend.Business.Services
 
         private bool Validate(UpdateMentorModel mentorModel)
         {
-            return mentorModel != null && !string.IsNullOrWhiteSpace(mentorModel.Email) && !string.IsNullOrWhiteSpace(mentorModel.FirstName) && !string.IsNullOrWhiteSpace(mentorModel.Id);
+            return mentorModel != null
+                && mentorModel.Id > 0
+                && !string.IsNullOrWhiteSpace(mentorModel.Email) 
+                && !string.IsNullOrWhiteSpace(mentorModel.FirstName);
         }
 
         private void UpdateStudentGroupIds(UpdateMentorModel mentorModel, Mentor foundMentor)

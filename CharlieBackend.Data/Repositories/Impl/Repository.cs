@@ -9,12 +9,13 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        protected readonly ApplicationContext _applicationContext;
         private DbSet<T> _entities;
+        protected readonly ApplicationContext _applicationContext;
+
         public Repository(ApplicationContext applicationContext)
         {
-            _applicationContext = applicationContext;
             _entities = applicationContext.Set<T>();
+            _applicationContext = applicationContext;
         }
 
         public Task<List<T>> GetAllAsync()
