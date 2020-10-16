@@ -10,39 +10,45 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class StudentRepository : Repository<Student>, IStudentRepository
     {
-        public StudentRepository(ApplicationContext applicationContext) : base(applicationContext) { }
+        public StudentRepository(ApplicationContext applicationContext) 
+            : base(applicationContext) 
+        {
+        }
 
         public new Task<List<Student>> GetAllAsync()
         {
             return _applicationContext.Students
-                .Include(student => student.Account)
-                //.Include(student => student.StudentsOfStudentGroups)
-                .ToListAsync();
+                    .Include(student => student.Account)
+                    //.Include(student => student.StudentsOfStudentGroups)
+                    .ToListAsync();
         }
         public new Task<Student> GetByIdAsync(long id)
         {
             return _applicationContext.Students
-                .Include(student => student.Account)
-                .Include(student => student.StudentsOfStudentGroups)
-                .FirstOrDefaultAsync(student => student.Id == id);
+                    .Include(student => student.Account)
+                    .Include(student => student.StudentsOfStudentGroups)
+                    .FirstOrDefaultAsync(student => student.Id == id);
         }
 
         public Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
             return _applicationContext.Students
-                .FirstOrDefaultAsync(student => student.AccountId == accountId);
+                    .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 
         public Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds)
         {
-            return _applicationContext.Students.Where(student => studentIds.Contains(student.Id)).ToListAsync();
+            return _applicationContext.Students
+                    .Where(student => studentIds.Contains(student.Id))
+                    .ToListAsync();
         }
 
         public async Task<Student> GetStudentByEmailAsync(string email)
         {
             return await _applicationContext.Students
-                .Include(student => student.Account)
-                .FirstOrDefaultAsync(student => student.Account.Email == email && student.Account.Role == 1);
+                    .Include(student => student.Account)
+                    .FirstOrDefaultAsync(student => 
+                    student.Account.Email == email && student.Account.Role == 1);
         }
     }
 }

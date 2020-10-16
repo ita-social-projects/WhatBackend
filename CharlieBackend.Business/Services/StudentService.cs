@@ -35,6 +35,7 @@ namespace CharlieBackend.Business.Services
                         LastName = studentModel.LastName,
                         Role = 1
                     };
+
                     account.Salt = _accountService.GenerateSalt();
                     account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
@@ -58,7 +59,11 @@ namespace CharlieBackend.Business.Services
 
                     return student.ToStudentModel();
                 }
-                catch { transaction.Rollback(); return null; }
+                catch
+                {
+                    transaction.Rollback();
+                    return null;
+                }
             }
         }
 
@@ -72,6 +77,7 @@ namespace CharlieBackend.Business.Services
             {
                 studentModels.Add(student.ToStudentModel());
             }
+
             return studentModels;
         }
 
@@ -80,7 +86,11 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
-                if (foundStudent == null) return null;
+
+                if (foundStudent == null)
+                {
+                    return null;
+                }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;
                 foundStudent.Account.FirstName = studentModel.FirstName ?? foundStudent.Account.FirstName;
@@ -101,43 +111,54 @@ namespace CharlieBackend.Business.Services
                     //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
 
                     foreach (var newStudentGroupId in studentModel.StudentGroupIds)
+                    {
                         newStudentsOfStudentGroup.Add(new StudentOfStudentGroup
                         {
                             StudentGroupId = newStudentGroupId,
                             StudentId = foundStudent.Id
                         });
+                    }
 
                     _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentGroupsOfStudent, newStudentsOfStudentGroup);
                 }
 
                 await _unitOfWork.CommitAsync();
+
                 return foundStudent.ToStudentModel();
 
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public async Task<StudentModel> GetStudentByAccountIdAsync(long accountId)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+
             return student?.ToStudentModel();
         }
 
         public async Task<long?> GetAccountId(long studentId)
         {
             var mentor = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+
             return mentor?.AccountId;
         }
 
         public async Task<StudentModel> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+
             return student?.ToStudentModel();
         }
 
         public async Task<StudentModel> GetStudentByEmailAsync(string email)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
+
             return student?.ToStudentModel();
         }
     }

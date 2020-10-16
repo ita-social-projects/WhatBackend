@@ -1,15 +1,19 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Data.Helpers;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using CharlieBackend.Data.Helpers;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class MentorRepository : Repository<Mentor>, IMentorRepository
     {
-        public MentorRepository(ApplicationContext applicationContext) : base(applicationContext) { }
+        public MentorRepository(ApplicationContext applicationContext) 
+                : base(applicationContext)
+        {
+        }
 
         public new Task<List<Mentor>> GetAllAsync()
         {
@@ -28,19 +32,25 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(mentor => mentor.Id == id);
         }
 
-        public void UpdateMentorCourses(IEnumerable<MentorOfCourse> currentItems, IEnumerable<MentorOfCourse> newItems)
+        public void UpdateMentorCourses(IEnumerable<MentorOfCourse> currentItems,
+                                        IEnumerable<MentorOfCourse> newItems)
         {
-            _applicationContext.MentorsOfCourses.TryUpdateManyToMany(currentItems, newItems);
+            _applicationContext.MentorsOfCourses
+                    .TryUpdateManyToMany(currentItems, newItems);
         }
 
-        public void UpdateMentorGroups(IEnumerable<MentorOfStudentGroup> currentItems, IEnumerable<MentorOfStudentGroup> newItems)
+        public void UpdateMentorGroups(IEnumerable<MentorOfStudentGroup> currentItems,
+                                       IEnumerable<MentorOfStudentGroup> newItems)
         {
-            _applicationContext.MentorsOfStudentGroups.TryUpdateManyToMany(currentItems, newItems);
+            _applicationContext.MentorsOfStudentGroups.
+                    TryUpdateManyToMany(currentItems, newItems);
         }
 
         public Task<Mentor> GetMentorByAccountIdAsync(long mentorId)
         {
-            return _applicationContext.Mentors.FirstOrDefaultAsync(mentor => mentor.AccountId == mentorId);
+            return _applicationContext.Mentors
+                    .FirstOrDefaultAsync(mentor
+                            => mentor.AccountId == mentorId);
         }
     }
 }

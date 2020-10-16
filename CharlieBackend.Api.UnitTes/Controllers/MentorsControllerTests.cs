@@ -8,38 +8,34 @@ using CharlieBackend.Core.Models;
 
 namespace CharlieBackend.Api.Controllers.Tests
 {
-
     public class MentorsControllerTests
     {
 		[Fact]
 		public async Task GetAllMentorsTestAsync()
 		{
-			var mock = new Mock<IMentorService>();
-			var mock2 = new Mock<IAccountService>();
-
-			mock.Setup(repo => repo.GetAllMentorsAsync()).Returns(mentors);
-
-			MentorsController controller = new MentorsController(mock.Object,mock2.Object);
-
+			var mentorServiceMock = new Mock<IMentorService>();
+			var accountServiceMock = new Mock<IAccountService>();
+			mentorServiceMock.Setup(repo => repo.GetAllMentorsAsync()).Returns(getMentors);
+			MentorsController controller = new MentorsController
+			(
+				mentorServiceMock.Object, 
+				accountServiceMock.Object
+			);
 			var GetResult = controller.GetAllMentors();
-
-			var a = GetResult.Result.Result as ObjectResult;
-			var z = a.Value as MentorModel;
-			
-			var temp = a.Value as List<MentorModel>;
-
-			var e = await mentors();
-
-           Assert.Equal(e.Count, temp.Count);
+			var taskResult = GetResult.Result.Result as ObjectResult;
+			var toCompare = taskResult.Value as List<MentorModel>;
+			var actualResult = await getMentors();
+            Assert.Equal(toCompare.Count, actualResult.Count);
 		}
 
-		public async Task<List<MentorModel>> mentors()
+		public async Task<List<MentorModel>> getMentors()
 		{
-			List<MentorModel> mentorsM = new List<MentorModel>();
-			mentorsM.Add(new MentorModel { Id = 10, FirstName="Hagrid", LastName="Rub", Email="hagrub@gmail.com"});
-			mentorsM.Add(new MentorModel { Id = 9,FirstName="Test1",LastName="LastTest1",Email="test1@gmail.com" });
-			mentorsM.Add(new MentorModel { Id = 7, FirstName="Test2", LastName = "LastTest2", Email = "test2@gmail.com" });
-
+			List<MentorModel> mentorsM = new List<MentorModel>() 
+			{
+				new MentorModel { Id = 10, FirstName="Hagrid", LastName="Rub", Email="hagrub@gmail.com"},
+				new MentorModel { Id = 9, FirstName = "Test1", LastName = "LastTest1", Email = "test1@gmail.com" },
+				new MentorModel { Id = 7, FirstName = "Test2", LastName = "LastTest2", Email = "test2@gmail.com" }
+			};
 			return mentorsM;
 		}
 	}

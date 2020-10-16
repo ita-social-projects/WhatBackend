@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

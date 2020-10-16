@@ -12,7 +12,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class LessonsController : ControllerBase
     {
+        #region
         private readonly ILessonService _lessonService;
+        #endregion
 
         public LessonsController(ILessonService lessonService)
         {
@@ -23,10 +25,23 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
-            if (HttpContext.Items["mentorId"] == null) return BadRequest("Need to sign in.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (HttpContext.Items["mentorId"] == null)
+            {
+                return BadRequest("Need to sign in.");
+            }
+
+//            long.TryParse
             var createdLesson = await _lessonService.CreateLessonAsync(lessonModel, Convert.ToInt64(HttpContext.Items["mentorId"].ToString()));
-            if (createdLesson == null) return StatusCode(422, "Cannot create lesson");
+
+            if (createdLesson == null)
+            {
+                return StatusCode(422, "Cannot create lesson");
+            }
 
             return Ok();
         }
@@ -38,9 +53,13 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var lessons = await _lessonService.GetAllLessonsAsync();
+
                 return Ok(lessons);
             }
-            catch { return StatusCode(500); }
+            catch 
+            { 
+                return StatusCode(500); 
+            }
         }
 
         [Authorize(Roles = "1, 2")]
@@ -50,9 +69,13 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 var lessons = await _lessonService.GetStudentLessonsAsync(id);
+
                 return Ok(lessons);
             }
-            catch { return StatusCode(500); }
+            catch
+            { 
+                return StatusCode(500); 
+            }
         }
 
         [Authorize(Roles = "2")]
@@ -63,11 +86,22 @@ namespace CharlieBackend.Api.Controllers
             try
             {
                 lessonModel.Id = id;
+
                 var updatedLesson = await _lessonService.UpdateLessonAsync(lessonModel);
-                if (updatedLesson != null) return NoContent();
-                else return StatusCode(409, "Cannot update.");
+
+                if (updatedLesson != null)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(409, "Cannot update.");
+                }
             }
-            catch { return StatusCode(500); }
+            catch 
+            { 
+                return StatusCode(500); 
+            }
         }
     }
 }

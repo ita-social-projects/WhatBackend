@@ -39,14 +39,24 @@ namespace CharlieBackend.Business.Services
                     studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
 
                     for (int i = 0; i < students.Count; i++)
-                        studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { Student = students[i] });
+                    {
+                        studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
+                        {
+                            Student = students[i]
+                        });
+                    }
                 }
 
                 await _unitOfWork.CommitAsync();
+
                 return studentGroupModel;
 
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public Task<bool> IsGroupNameTakenAsync(string name)
@@ -64,6 +74,7 @@ namespace CharlieBackend.Business.Services
             {
                 studentGroupModels.Add(Group.ToStudentGroupModel());
             }
+
             return studentGroupModels;
         }
 
@@ -77,13 +88,21 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(studentGroupModel.Id);
-                if (foundStudentGroup == null) return null;
+                if (foundStudentGroup == null)
+                {
+                    return null;
+                }
 
                 foundStudentGroup.Name = studentGroupModel.Name ?? foundStudentGroup.Name;
+
                 if (studentGroupModel.StartDate != null)
+                {
                     foundStudentGroup.StartDate = (DateTime?)DateTime.Parse(studentGroupModel.StartDate) ?? foundStudentGroup.StartDate;
+                }
                 if (studentGroupModel.FinishDate != null)
+                {
                     foundStudentGroup.FinishDate = (DateTime?)DateTime.Parse(studentGroupModel.FinishDate) ?? foundStudentGroup.FinishDate;
+                }
 
                 if (studentGroupModel.CourseId != 0)
                 {
@@ -101,25 +120,36 @@ namespace CharlieBackend.Business.Services
                     //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
 
                     foreach (var newStudentId in studentGroupModel.StudentIds)
+                    {
                         newStudentsOfStudentGroup.Add(new StudentOfStudentGroup
                         {
                             StudentGroupId = foundStudentGroup.Id,
                             StudentId = newStudentId
                         });
 
-                    _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
+                        _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
+                    }
                 }
 
                 await _unitOfWork.CommitAsync();
+
                 return studentGroupModel;
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return null;
+            }
         }
 
         public async Task<StudentGroupById> GetStudentGroupByIdAsync(long id)
         {
             var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
-            if (foundStudentGroup == null) return null;
+
+            if (foundStudentGroup == null)
+            {
+                return null;
+            }
 
             var startDate = (DateTime)foundStudentGroup.StartDate;
             var finishDate = (DateTime)foundStudentGroup.FinishDate;

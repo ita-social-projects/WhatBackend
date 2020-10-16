@@ -1,6 +1,6 @@
-﻿using CharlieBackend.Core.Models.Visit;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using CharlieBackend.Core.Models.Visit;
 
 namespace CharlieBackend.Core.Models.Lesson
 {

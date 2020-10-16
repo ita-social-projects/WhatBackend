@@ -7,11 +7,15 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class ThemeRepository : Repository<Theme>, IThemeRepository
     {
-        public ThemeRepository(ApplicationContext applicationContext) : base(applicationContext) { }
+        public ThemeRepository(ApplicationContext applicationContext) 
+            : base(applicationContext) 
+        {
+        }
 
         public Task<Theme> GetThemeByNameAsync(string name)
         {
-            return _applicationContext.Themes.FirstOrDefaultAsync(theme => theme.Name == name);
+            return _applicationContext.Themes
+                    .FirstOrDefaultAsync(theme => theme.Name == name);
         }
     }
 }

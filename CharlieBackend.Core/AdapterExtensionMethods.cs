@@ -1,14 +1,14 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using System;
+using System.Linq;
 using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.Theme;
+using CharlieBackend.Core.Models.Visit;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Core.Models.StudentGroup;
-using CharlieBackend.Core.Models.Theme;
-using CharlieBackend.Core.Models.Visit;
-using System;
-using System.Linq;
 
 namespace CharlieBackend.Core
 {
@@ -149,7 +149,9 @@ namespace CharlieBackend.Core
                 Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
                 IsActive = (bool)mentor.Account.IsActive,
-                CourseIds = mentor.MentorsOfCourses.Select(mentorOfCourse => (long)mentorOfCourse.CourseId).ToList()
+                CourseIds = mentor.MentorsOfCourses
+                    .Select(mentorOfCourse => (long)mentorOfCourse.CourseId)
+                    .ToList()
             };
         }
         public static StudentModel ToStudentModel(this Student student)
@@ -162,13 +164,16 @@ namespace CharlieBackend.Core
                 Email = student.Account.Email,
                 Password = student.Account.Password,
                 IsActive = (bool)student.Account.IsActive,
-                StudentGroupIds = student.StudentsOfStudentGroups.Select(studentOfStudentGroup => (long)studentOfStudentGroup.StudentGroupId).ToList()
+                StudentGroupIds = student.StudentsOfStudentGroups
+                    .Select(studentOfStudentGroup => (long)studentOfStudentGroup
+                    .StudentGroupId).ToList()
             };
         }
         public static Student ToStudent(this StudentModel studentModel)
         {
             return new Student
-            { };
+            {     
+            };
         }
 
         public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
@@ -182,7 +187,8 @@ namespace CharlieBackend.Core
                 Name = group.Name,
                 StartDate = startDate.ToString("yyyy-MM-dd"),
                 FinishDate = finishDate.ToString("yyyy-MM-dd"),
-                StudentIds = group.StudentsOfStudentGroups.Select(groupSt => (long)groupSt.StudentId).ToList(),
+                StudentIds = group.StudentsOfStudentGroups
+                    .Select(groupSt => (long)groupSt.StudentId).ToList(),
                 CourseId = group.CourseId
             };
         }
@@ -197,7 +203,6 @@ namespace CharlieBackend.Core
 
                 // добавить лист с группой
                 CourseId = group.CourseId
-
             };
         }
     }

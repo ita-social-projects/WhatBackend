@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 
 namespace CharlieBackend.Api
@@ -25,11 +26,10 @@ namespace CharlieBackend.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CompositionRoot.injectDependencies(services, Configuration);
+            CompositionRoot.InjectDependencies(services, Configuration);
 
             var authOptions = new AuthOptions();
             Configuration.GetSection("AuthOptions").Bind(authOptions);
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -43,9 +43,9 @@ namespace CharlieBackend.Api
                         ValidateLifetime = true,
                         IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
-
             services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>

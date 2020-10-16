@@ -17,6 +17,7 @@ namespace CharlieBackend.Business.Services
         private const int _saltLen = 15;
 
         private readonly IUnitOfWork _unitOfWork;
+
         public AccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -33,18 +34,28 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.AccountRepository.Add(account);
                 await _unitOfWork.CommitAsync();
+
                 return account.ToAccountModel();
             }
-            catch { _unitOfWork.Rollback(); return null; }
+            catch
+            {
+                _unitOfWork.Rollback();
+
+                return null;
+            }
         }
 
         public async Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
+
             if (salt != "")
             {
+
                 authenticationModel.Password = HashPassword(authenticationModel.Password, salt);
+
                 var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
+
                 return foundAccount?.ToAccountModel();
             }
             return null;
@@ -84,7 +95,11 @@ namespace CharlieBackend.Business.Services
                 await _unitOfWork.CommitAsync();
                 return true;
             }
-            catch { _unitOfWork.Rollback(); return false; }
+            catch
+            {
+                _unitOfWork.Rollback();
+                return false;
+            }
         }
 
         #region hash
@@ -110,6 +125,7 @@ namespace CharlieBackend.Business.Services
         {
             byte[] data = Encoding.Default.GetBytes(password + salt);
             var result = new SHA256Managed().ComputeHash(data);
+
             return BitConverter.ToString(result).Replace("-", "").ToLower();
         }
 

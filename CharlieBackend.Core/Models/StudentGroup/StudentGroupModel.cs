@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
     public class StudentGroupModel
     {
         public virtual long Id { get; set; }
+        
         public virtual string Name { get; set; }
 
         [JsonIgnore]
