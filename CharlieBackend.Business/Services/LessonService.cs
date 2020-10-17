@@ -32,6 +32,7 @@ namespace CharlieBackend.Business.Services
                 else
                 {
                     theme = new Theme { Name = lessonModel.ThemeName };
+
                     _unitOfWork.ThemeRepository.Add(theme);
                 }
 
@@ -57,10 +58,12 @@ namespace CharlieBackend.Business.Services
                             Presence = lessonModel.LessonVisits[i].Presence,
                             StudentMark = lessonModel.LessonVisits[i].StudentMark
                         };
+
                         _unitOfWork.VisitRepository.Add(visit);
                     }
 
                 }
+
                 await _unitOfWork.CommitAsync();
 
                 return lessonModel;
@@ -68,6 +71,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
@@ -106,7 +110,11 @@ namespace CharlieBackend.Business.Services
                     }
                     else
                     {
-                        var theme = new Theme { Name = lessonModel.ThemeName };
+                        var theme = new Theme 
+                        {
+                            Name = lessonModel.ThemeName
+                        };
+
                         _unitOfWork.ThemeRepository.Add(theme);
                         foundLesson.Theme = theme;
                     }
@@ -131,6 +139,7 @@ namespace CharlieBackend.Business.Services
                             Presence = lessonModel.LessonVisits[i].Presence,
                             StudentMark = lessonModel.LessonVisits[i].StudentMark
                         };
+
                         _unitOfWork.VisitRepository.Add(visit);
                     }
                 }
@@ -142,6 +151,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
