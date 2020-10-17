@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -32,14 +33,19 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            //var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
-            //if (isEmailTaken) return StatusCode(409, "Account already exists!");
             var foundStudent = await _studentService
                     .GetStudentByEmailAsync(studentModel.Email);
 
             if (foundStudent != null)
             {
                 return Ok(foundStudent.Id);
+            }
+
+            var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
+
+            if (isEmailTaken)
+            {
+                return StatusCode(409, "Account with this email already exists!");
             }
 
             var createdStudentModel = await _studentService
@@ -91,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
 
                 return Ok(studentsModels);
             }
-            catch 
+            catch
             { 
                 return StatusCode(500); 
             }
