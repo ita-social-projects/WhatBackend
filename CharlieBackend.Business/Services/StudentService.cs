@@ -28,6 +28,7 @@ namespace CharlieBackend.Business.Services
                 try
                 {
                     var generatedPassword = _accountService.GenerateSalt();
+
                     var account = new Account
                     {
                         Email = studentModel.Email,
@@ -62,6 +63,7 @@ namespace CharlieBackend.Business.Services
                 catch
                 {
                     transaction.Rollback();
+
                     return null;
                 }
             }
@@ -130,6 +132,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
