@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -14,22 +15,10 @@ namespace CharlieBackend.Business.Services
             _googleEmail = googleEmail;
             _googlePassword = googlePassword;
         }
-        public Task SendCredentialsAsync(string email, string password)
+        public async Task<bool> SendCredentialsAsync(string email, string password)
         {
+            string nameFrom = "SoftServe";
             string header = "CharlieBackend credentials";
-
-            // sender - set the address and name displayed in the letter
-            MailAddress From = new MailAddress(_googleEmail, "SoftServe");
-
-            // to whom we send
-            MailAddress To = new MailAddress(email);
-
-            // create a message object
-            MailMessage msg = new MailMessage(From, To);
-
-            // letter subject           
-            msg.Subject = header;
-
             // text of the letter
             string maintext =
                 "<table style='width: 100% !important;border-collapse: collapse; width: 100% !important;height: 100%;background: #efefef;-webkit-font-smoothing: antialiased;-webkit-text-size-adjust: none;'>" +
@@ -75,17 +64,42 @@ namespace CharlieBackend.Business.Services
             "</tr>" +
         "</table>";
 
+            // sender - set the address and name displayed in the letter
+            MailAddress From = new MailAddress(_googleEmail, nameFrom);
+
+            // to whom we send
+            MailAddress To = new MailAddress(email);
+
+            // create a message object
+            MailMessage msg = new MailMessage(From, To);
+
+            msg.Subject = header;
             msg.Body = maintext;
             msg.IsBodyHtml = true;
 
             // SMTP server address and port from which we will send the letter
+            if (!String.IsNullOrEmpty(_googleEmail)
+                    && !String.IsNullOrEmpty(nameFrom)
+                    && !String.IsNullOrEmpty(email)
+                    && !String.IsNullOrEmpty(header)
+                    && !String.IsNullOrEmpty(maintext)
+                    && !String.IsNullOrEmpty(_googlePassword)
+                )
+            {
+                using (var smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential(_googleEmail, _googlePassword);
+                    smtp.EnableSsl = true;
+                    await smtp.SendMailAsync(msg);
+                }
 
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(_googleEmail, _googlePassword);
-            smtp.EnableSsl = true;
-
-            return smtp.SendMailAsync(msg);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

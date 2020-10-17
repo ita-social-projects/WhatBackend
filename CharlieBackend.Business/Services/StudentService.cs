@@ -3,6 +3,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -44,23 +45,32 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    //var newAccount = await _accountService.CreateAccountAsync(account.ToAccountModel());
+                    var credentialMessageSent = false;
 
-                    //var student = new Student { AccountId = newAccount.Id };
-                    //_unitOfWork.StudentRepository.Add(student);
+                    if (await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword))
+                    {
+                        await transaction.CommitAsync();
 
-                    //await _unitOfWork.CommitAsync();
+                        credentialMessageSent = true;
 
+                        return student.ToStudentModel();
+                    }
+                    else
+                    {
+                        //Have to implement here sending error message or details to calling method/controller
+                        //throw new Exception("Email has not been sent");
 
-                    //await _unitOfWork.CommitAsync();
+                        await transaction.CommitAsync();
 
-                    await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword);
-                    await transaction.CommitAsync();
+                        credentialMessageSent = false;
 
-                    return student.ToStudentModel();
+                        return student.ToStudentModel();
+                    }
+
                 }
                 catch
                 {
+                    //Have to implement here sending error message or details to calling method/controller
                     transaction.Rollback();
                     return null;
                 }
