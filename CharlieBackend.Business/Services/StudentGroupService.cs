@@ -138,6 +138,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }

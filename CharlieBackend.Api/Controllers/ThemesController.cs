@@ -12,18 +12,16 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
-        #region
         private readonly IThemeService _themeService;
-        #endregion
 
         public ThemesController(IThemeService themeService)
         {
             _themeService = themeService;
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
-        public async Task<ActionResult<List<ThemeModel>>> GetAllThemes()
+        public async Task<ActionResult<IList<ThemeModel>>> GetAllThemes()
         {
             try
             {
@@ -36,5 +34,24 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(500); 
             }
         }
+
+        [Authorize(Roles = "2, 4")]
+        [HttpPost]
+        public async Task<ActionResult<IList<ThemeModel>>> PostThemes([FromBody] ThemeModel addThemeModel)
+        {
+            try
+            {
+                await _themeService.CreateThemeAsync(addThemeModel);
+
+                return Ok(addThemeModel);
+
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+
+        }
+
     }
 }

@@ -21,12 +21,15 @@ namespace CharlieBackend.Business.Services
             try
             {
                 _unitOfWork.ThemeRepository.Add(theme.ToTheme());
+
                 await _unitOfWork.CommitAsync();
+
                 return theme;
             }
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
