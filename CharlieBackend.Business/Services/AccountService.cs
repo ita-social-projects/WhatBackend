@@ -33,6 +33,7 @@ namespace CharlieBackend.Business.Services
                 account.Password = HashPassword(account.Password, account.Salt);
 
                 _unitOfWork.AccountRepository.Add(account);
+
                 await _unitOfWork.CommitAsync();
 
                 return account.ToAccountModel();
@@ -58,6 +59,7 @@ namespace CharlieBackend.Business.Services
 
                 return foundAccount?.ToAccountModel();
             }
+
             return null;
         }
 
@@ -72,6 +74,7 @@ namespace CharlieBackend.Business.Services
             account.Password = HashPassword(account.Password, account.Salt);
 
             _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
+
             await _unitOfWork.CommitAsync();
 
             return account.ToAccountModel();
@@ -92,12 +95,15 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
+
                 await _unitOfWork.CommitAsync();
+
                 return true;
             }
             catch
             {
                 _unitOfWork.Rollback();
+
                 return false;
             }
         }
@@ -107,14 +113,17 @@ namespace CharlieBackend.Business.Services
         {
             //create a random object that generates random numbers
             Random rand = new Random();
+
             //StringBuilder object with a predefined buffer size for the resulting string
             StringBuilder sb = new StringBuilder(_saltLen - 1);
+
             //a variable for storing a random character position from the string Str
             int Position = 0;
 
             for (int i = 0; i < _saltLen; i++)
             {
                 Position = rand.Next(0, _saltAlphabet.Length - 1);
+
                 //add the selected character to the object StringBuilder
                 sb.Append(_saltAlphabet[Position]);
             }

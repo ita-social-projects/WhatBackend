@@ -55,6 +55,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
@@ -88,6 +89,7 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(studentGroupModel.Id);
+
                 if (foundStudentGroup == null)
                 {
                     return null;
@@ -99,6 +101,7 @@ namespace CharlieBackend.Business.Services
                 {
                     foundStudentGroup.StartDate = (DateTime?)DateTime.Parse(studentGroupModel.StartDate) ?? foundStudentGroup.StartDate;
                 }
+
                 if (studentGroupModel.FinishDate != null)
                 {
                     foundStudentGroup.FinishDate = (DateTime?)DateTime.Parse(studentGroupModel.FinishDate) ?? foundStudentGroup.FinishDate;
@@ -107,6 +110,7 @@ namespace CharlieBackend.Business.Services
                 if (studentGroupModel.CourseId != 0)
                 {
                     var foundCourse = await _unitOfWork.CourseRepository.GetByIdAsync(studentGroupModel.CourseId);
+
                     foundStudentGroup.Course = foundCourse;
                 }
 

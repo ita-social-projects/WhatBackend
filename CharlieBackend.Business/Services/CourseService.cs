@@ -21,6 +21,7 @@ namespace CharlieBackend.Business.Services
             try
             {
                 _unitOfWork.CourseRepository.Add(courseModel.ToCourse());
+
                 await _unitOfWork.CommitAsync();
 
                 return courseModel;
@@ -28,6 +29,7 @@ namespace CharlieBackend.Business.Services
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
@@ -50,12 +52,15 @@ namespace CharlieBackend.Business.Services
             try
             {
                 _unitOfWork.CourseRepository.Update(courseModel.ToCourse());
+
                 await _unitOfWork.CommitAsync();
+
                 return courseModel;
             }
             catch
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }

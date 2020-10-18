@@ -37,16 +37,21 @@ namespace CharlieBackend.Business.Services
                         LastName = mentorModel.LastName,
                         Role = 2
                     };
+
                     account.Salt = _accountService.GenerateSalt();
                     account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
-                    var mentor = new Mentor { Account = account };
+                    var mentor = new Mentor 
+                    {
+                        Account = account 
+                    };
 
                     _unitOfWork.MentorRepository.Add(mentor);
 
                     if (mentorModel.CourseIds.Count != 0)
                     {
                         var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
+
                         mentor.MentorsOfCourses = new List<MentorOfCourse>();
 
                         for (int i = 0; i < courses.Count; i++)
@@ -70,6 +75,7 @@ namespace CharlieBackend.Business.Services
                 catch
                 {
                     transaction.Rollback();
+
                     return null;
                 }
             }
@@ -85,6 +91,7 @@ namespace CharlieBackend.Business.Services
             foreach (var mentor in mentors)
             {
                 var mentorModel = mentor.ToMentorModel();
+
                 mentorModels.Add(mentorModel);
             }
 
@@ -142,6 +149,7 @@ namespace CharlieBackend.Business.Services
                             MentorId = foundMentor.Id 
                         });
                     }
+
                     _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
                 }
 
@@ -153,6 +161,7 @@ namespace CharlieBackend.Business.Services
             catch 
             {
                 _unitOfWork.Rollback();
+
                 return null;
             }
         }
