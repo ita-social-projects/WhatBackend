@@ -23,33 +23,21 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IList<ThemeModel>>> GetAllThemes()
         {
-            try
-            {
-                var themes = await _themeService.GetAllThemesAsync();
 
-                return Ok(themes.Select(theme => theme.Name));
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var themes = await _themeService.GetAllThemesAsync();
+
+            return Ok(themes.Select(theme => theme.Name));
+
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpPost]
         public async Task<ActionResult<IList<ThemeModel>>> PostThemes([FromBody] ThemeModel addThemeModel)
         {
-            try
-            {
-                await _themeService.CreateThemeAsync(addThemeModel);
 
-                return Ok(addThemeModel);
+            await _themeService.CreateThemeAsync(addThemeModel);
 
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            return Ok(addThemeModel);
 
         }
 
