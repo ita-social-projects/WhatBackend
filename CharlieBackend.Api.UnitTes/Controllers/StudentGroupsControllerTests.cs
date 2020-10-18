@@ -18,16 +18,24 @@ namespace CharlieBackend.Api.Controllers.Tests
         [Fact]
         public async Task GetAllStudentGroupsTestAsync()
         {
+            //Arrange
+
             var mock = new Mock<IStudentGroupService>();
             mock.Setup(repo => repo.GetAllStudentGroupsAsync()).Returns(getStudentGroups);
             StudentGroupsController controller = new StudentGroupsController(mock.Object);
+
+            //Act
+
             var GetResult = controller.GetAllStudentGroups();
             var taskResult = GetResult.Result.Result as ObjectResult;
             var toCompare = taskResult.Value as List<StudentGroupModel>;
             var actualResult = await getStudentGroups();
+
+            //Assert
+
             Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<List<StudentGroupModel>> getStudentGroups()
+        public async Task<IList<StudentGroupModel>> getStudentGroups()
         {
             List<StudentGroupModel> studentG = new List<StudentGroupModel>()
             {

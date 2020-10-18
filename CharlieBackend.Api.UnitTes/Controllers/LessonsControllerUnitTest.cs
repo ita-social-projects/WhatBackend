@@ -14,17 +14,25 @@ namespace CharlieBackend.Api.UnitTest.Controllers
         [Fact]
         public async Task GetAllLessons()
         {
+            //Arrange
+
             var lessonServiceMock = new Mock<ILessonService>();
             lessonServiceMock.Setup(repo => repo.GetAllLessonsAsync()).Returns(getLessons);
             LessonsController controller = new LessonsController(lessonServiceMock.Object);
+
+            //Act
+
             var GetResult = controller.GetAllLessons();
             var objectResult = GetResult.Result.Result as ObjectResult;
             var toCompare = objectResult.Value as List<LessonModel>;
             var actualResult = await getLessons();
+
+            //Assert
+
             Assert.Equal(toCompare.Count, actualResult.Count);
         }
 
-        public async Task<List<LessonModel>> getLessons() 
+        public async Task<IList<LessonModel>> getLessons() 
         {
             List<LessonModel> less = new List<LessonModel>()
             {

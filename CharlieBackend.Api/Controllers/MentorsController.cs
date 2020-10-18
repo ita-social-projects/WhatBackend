@@ -53,16 +53,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
         {
-            try
-            {
-                var mentorsModels = await _mentorService.GetAllMentorsAsync();
 
-                return Ok(mentorsModels);
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var mentorsModels = await _mentorService.GetAllMentorsAsync();
+
+            return Ok(mentorsModels);
         }
 
         [Authorize(Roles = "2, 4")]
@@ -74,62 +68,47 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            try
+
+            var isEmailChangableTo = await _accountService
+                    .IsEmailChangableToAsync(mentorModel.Email);
+
+            if (!isEmailChangableTo)
             {
-                var isEmailChangableTo = await _accountService
-                        .IsEmailChangableToAsync(mentorModel.Email);
-
-                if (!isEmailChangableTo)
-                {
-                    return StatusCode(409, "Email is already taken!");
-                }
-
-                mentorModel.Id = id;
-                var updatedCourse = await _mentorService.UpdateMentorAsync(mentorModel);
-
-                if (updatedCourse != null)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    return StatusCode(409, "Cannot update.");
-                }
-
+                return StatusCode(409, "Email is already taken!");
             }
-            catch 
-            { 
-                return StatusCode(500); 
+
+            mentorModel.Id = id;
+            var updatedCourse = await _mentorService.UpdateMentorAsync(mentorModel);
+
+            if (updatedCourse != null)
+            {
+                return NoContent();
             }
+
+            return StatusCode(409, "Cannot update.");
+
         }
 
         [Authorize(Roles = "4")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {
-            try
+
+            var accountId = await _mentorService.GetAccountId(id);
+
+            if (accountId == null)
             {
-                var accountId = await _mentorService.GetAccountId(id);
-
-                if (accountId == null)
-                {
-                    return BadRequest("Unknown mentor id.");
-                }
-
-                var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-                if (isDisabled)
-                {
-                    return NoContent();
-                }
-
-                return StatusCode(500, "Error occurred while trying to disable mentor account.");
-
+                return BadRequest("Unknown mentor id.");
             }
-            catch 
-            { 
-                return StatusCode(400, "Bad token."); 
+
+            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+
+            if (isDisabled)
+            {
+                return NoContent();
             }
+
+            return StatusCode(500, "Error occurred while trying to disable mentor account.");
         }
     }
 }

@@ -57,44 +57,32 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
         {
-            try
-            {
-                var studentModel = await _studentService.GetStudentByIdAsync(id);
 
-                if (studentModel != null)
+            var studentModel = await _studentService.GetStudentByIdAsync(id);
+
+            if (studentModel != null)
+            {
+                return Ok(new
                 {
-                    return Ok(new { 
-                            first_name = studentModel.FirstName, 
-                            last_name = studentModel.LastName, 
-                            student_group_ids = studentModel.StudentGroupIds, 
-                            email = studentModel.Email 
-                    });
-                }
-                else
-                {
-                    return StatusCode(409, "Cannot find student with such id.");
-                }
+                    first_name = studentModel.FirstName,
+                    last_name = studentModel.LastName,
+                    student_group_ids = studentModel.StudentGroupIds,
+                    email = studentModel.Email
+                });
             }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+
+            return StatusCode(409, "Cannot find student with such id.");
         }
+
 
         [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
         {
-            try
-            {
-                var studentsModels = await _studentService.GetAllStudentsAsync();
 
-                return Ok(studentsModels);
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var studentsModels = await _studentService.GetAllStudentsAsync();
+
+            return Ok(studentsModels);
         }
 
         [Authorize(Roles = "2")]
@@ -106,64 +94,50 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            try
+
+            var isEmailChangableTo = await _accountService
+                    .IsEmailChangableToAsync(mentorModel.Email);
+
+            if (!isEmailChangableTo)
             {
-                var isEmailChangableTo = await _accountService
-                        .IsEmailChangableToAsync(mentorModel.Email);
-
-                if (!isEmailChangableTo)
-                {
-                    return StatusCode(409, "Email is already taken!");
-                }
-
-                mentorModel.Id = id;
-
-                var updatedCourse = await _studentService.UpdateStudentAsync(mentorModel);
-
-                if (updatedCourse != null)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    return StatusCode(409, "Cannot update.");
-                }
-
+                return StatusCode(409, "Email is already taken!");
             }
-            catch 
-            { 
-                return StatusCode(500); 
+
+            mentorModel.Id = id;
+
+            var updatedCourse = await _studentService.UpdateStudentAsync(mentorModel);
+
+            if (updatedCourse != null)
+            {
+                return NoContent();
             }
+
+            return StatusCode(409, "Cannot update.");
         }
 
         [Authorize(Roles = "2")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {
-            try
+
+            var accountId = await _studentService.GetAccountId(id);
+
+            if (accountId == null)
             {
-                var accountId = await _studentService.GetAccountId(id);
-
-                if (accountId == null)
-                {
-                    return BadRequest("Unknown student id.");
-                }
-
-                var isDisabled = await _accountService
-                        .DisableAccountAsync((long)accountId);
-
-                if (isDisabled)
-                {
-                    return NoContent();
-                }
-
-                return StatusCode(500, "Error occurred while trying to disable student account.");
-
+                return BadRequest("Unknown student id.");
             }
-            catch 
-            { 
-                return StatusCode(400, "Bad token."); 
+
+            var isDisabled = await _accountService
+                    .DisableAccountAsync((long)accountId);
+
+            if (isDisabled)
+            {
+                return NoContent();
             }
+
+            return StatusCode(500, "Error occurred while trying to disable student account.");
+
+
         }
     }
 }

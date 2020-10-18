@@ -65,7 +65,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.IsGroupNameChangableAsync(name);
         }
 
-        public async Task<List<StudentGroupModel>> GetAllStudentGroupsAsync()
+        public async Task<IList<StudentGroupModel>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
 

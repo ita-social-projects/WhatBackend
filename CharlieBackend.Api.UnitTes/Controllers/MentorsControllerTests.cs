@@ -13,6 +13,8 @@ namespace CharlieBackend.Api.Controllers.Tests
 		[Fact]
 		public async Task GetAllMentorsTestAsync()
 		{
+			//Arrange
+
 			var mentorServiceMock = new Mock<IMentorService>();
 			var accountServiceMock = new Mock<IAccountService>();
 			mentorServiceMock.Setup(repo => repo.GetAllMentorsAsync()).Returns(getMentors);
@@ -21,14 +23,20 @@ namespace CharlieBackend.Api.Controllers.Tests
 				mentorServiceMock.Object, 
 				accountServiceMock.Object
 			);
+
+			//Act
+
 			var GetResult = controller.GetAllMentors();
 			var taskResult = GetResult.Result.Result as ObjectResult;
 			var toCompare = taskResult.Value as List<MentorModel>;
 			var actualResult = await getMentors();
-            Assert.Equal(toCompare.Count, actualResult.Count);
+
+			//Assert
+
+			Assert.Equal(toCompare.Count, actualResult.Count);
 		}
 
-		public async Task<List<MentorModel>> getMentors()
+		public async Task<IList<MentorModel>> getMentors()
 		{
 			List<MentorModel> mentorsM = new List<MentorModel>() 
 			{

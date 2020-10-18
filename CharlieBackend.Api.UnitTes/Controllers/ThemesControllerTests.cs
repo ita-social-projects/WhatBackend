@@ -14,15 +14,23 @@ namespace CharlieBackend.Api.UnitTest.Controllers
 		[Fact]
 		public void GetAllThemesTestAsync()
 		{
+			//Arrange
+
 			var themeServiceMock = new Mock<IThemeService>();
 			themeServiceMock.Setup(repo => repo.GetAllThemesAsync()).Returns(getThemes);
 			ThemesController controller = new ThemesController(themeServiceMock.Object);
+
+			//Act
+
 			var GetResult = controller.GetAllThemes();
 			var themesObjectResult = GetResult.Result.Result as ObjectResult;
+
+			//Assert
+
 			Assert.NotNull(themesObjectResult);
 		}
 
-		public async Task<List<ThemeModel>> getThemes()
+		public async Task<IList<ThemeModel>> getThemes()
 		{
 			List<ThemeModel> ThemesL = new List<ThemeModel>
 			{

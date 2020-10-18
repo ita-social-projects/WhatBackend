@@ -25,16 +25,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ThemeModel>>> GetAllThemes()
         {
-            try
-            {
-                var themes = await _themeService.GetAllThemesAsync();
 
-                return Ok(themes.Select(theme => theme.Name));
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var themes = await _themeService.GetAllThemesAsync();
+
+            return Ok(themes.Select(theme => theme.Name));
         }
     }
 }

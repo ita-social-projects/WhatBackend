@@ -82,7 +82,7 @@ namespace CharlieBackend.Business.Services
 
         }
 
-        public async Task<List<MentorModel>> GetAllMentorsAsync()
+        public async Task<IList<MentorModel>> GetAllMentorsAsync()
         {
             var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
 

@@ -23,7 +23,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
-        public async Task<List<StudentLessonModel>> GetStudentInfoAsync(long studentId)
+        public async Task<IList<StudentLessonModel>> GetStudentInfoAsync(long studentId)
         {
             try
             {

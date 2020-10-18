@@ -76,7 +76,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<List<LessonModel>> GetAllLessonsAsync()
+        public async Task<IList<LessonModel>> GetAllLessonsAsync()
         {
             var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
             var lessonsModels = new List<LessonModel>();
@@ -156,7 +156,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<List<StudentLessonModel>> GetStudentLessonsAsync(long studentId)
+        public async Task<IList<StudentLessonModel>> GetStudentLessonsAsync(long studentId)
         {
             var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
 

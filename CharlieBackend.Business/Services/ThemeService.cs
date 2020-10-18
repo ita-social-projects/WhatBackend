@@ -34,7 +34,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<List<ThemeModel>> GetAllThemesAsync()
+        public async Task<IList<ThemeModel>> GetAllThemesAsync()
         {
             var themes = await _unitOfWork.ThemeRepository.GetAllAsync();
 

@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         public Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel);
 
-        public Task<List<MentorModel>> GetAllMentorsAsync();
+        public Task<IList<MentorModel>> GetAllMentorsAsync();
 
         public Task<long?> GetAccountId(long mentorId);
 

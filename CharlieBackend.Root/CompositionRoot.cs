@@ -29,7 +29,9 @@ namespace CharlieBackend.Root
             );
 
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
+
             #region
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ILessonService, LessonService>();
@@ -46,6 +48,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
+
             #endregion
         }
     }
