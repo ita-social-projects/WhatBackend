@@ -47,6 +47,20 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
+                if(studentGroupModel.MentorIds.Count != 0)
+                {
+                    var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupModel.MentorIds);
+                    studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
+
+                    for (int i = 0; i < mentors.Count; i++)
+                    {
+                        studentGroup.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
+                        {
+                            Mentor = mentors[i]
+                        }); ;
+                    }
+                }
+
                 await _unitOfWork.CommitAsync();
 
                 return studentGroupModel;

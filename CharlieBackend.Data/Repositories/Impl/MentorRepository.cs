@@ -4,7 +4,7 @@ using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-
+using System.Linq;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -21,6 +21,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(mentor => mentor.Account)
                 .Include(mentor => mentor.MentorsOfCourses)
                 .ToListAsync();
+        }
+
+        public Task<List<Mentor>> GetMentorsByIdsAsync(List<long> mentorIds)
+        {
+            return _applicationContext.Mentors
+                    .Where(mentor => mentorIds.Contains(mentor.Id))
+                    .ToListAsync();
         }
 
         public new Task<Mentor> GetByIdAsync(long id)
