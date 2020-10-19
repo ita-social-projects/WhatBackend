@@ -12,9 +12,7 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class LessonsController : ControllerBase
     {
-        #region
         private readonly ILessonService _lessonService;
-        #endregion
 
         public LessonsController(ILessonService lessonService)
         {
