@@ -28,6 +28,7 @@ namespace CharlieBackend.Business.Services
             {
                 try
                 {
+                    bool credsSent = false;
                     var generatedPassword = _accountService.GenerateSalt();
 
                     var account = new Account
@@ -65,12 +66,23 @@ namespace CharlieBackend.Business.Services
                     }
 
                     await _unitOfWork.CommitAsync();
-                    await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword);
 
-                    transaction.Commit();
+                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
+                    {
+                        credsSent = true;
+                        transaction.Commit();
 
-                    return mentor.ToMentorModel();
-
+                        return mentor.ToMentorModel();
+                    }
+                    else 
+                    {
+                        //TODO implementation for resending email or sent a status msg
+                        transaction.Commit();
+                        credsSent = false;
+                        return mentor.ToMentorModel();
+                        //need to handle the exception with a right logic to sent it for contorller if fails
+                        //throw new System.Exception("Faild to send credentials");
+                    }
                 }
                 catch
                 {
