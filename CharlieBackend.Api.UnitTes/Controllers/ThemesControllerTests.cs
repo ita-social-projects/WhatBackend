@@ -17,7 +17,7 @@ namespace CharlieBackend.Api.UnitTest.Controllers
 			//Arrange
 
 			var themeServiceMock = new Mock<IThemeService>();
-			themeServiceMock.Setup(repo => repo.GetAllThemesAsync()).Returns(getThemes);
+			themeServiceMock.Setup(repo => repo.GetAllThemesAsync()).Returns(GetThemes);
 			ThemesController controller = new ThemesController(themeServiceMock.Object);
 
 			//Act
@@ -30,7 +30,7 @@ namespace CharlieBackend.Api.UnitTest.Controllers
 			Assert.NotNull(themesObjectResult);
 		}
 
-		public async Task<IList<ThemeModel>> getThemes()
+		public async Task<IList<ThemeModel>> GetThemes()
 		{
 			List<ThemeModel> ThemesL = new List<ThemeModel>
 			{

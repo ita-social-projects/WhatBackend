@@ -21,7 +21,7 @@ namespace CharlieBackend.Api.Controllers.Tests
             //Arrange
 
             var mock = new Mock<IStudentGroupService>();
-            mock.Setup(repo => repo.GetAllStudentGroupsAsync()).Returns(getStudentGroups);
+            mock.Setup(repo => repo.GetAllStudentGroupsAsync()).Returns(GetStudentGroups);
             StudentGroupsController controller = new StudentGroupsController(mock.Object);
 
             //Act
@@ -29,13 +29,13 @@ namespace CharlieBackend.Api.Controllers.Tests
             var GetResult = controller.GetAllStudentGroups();
             var taskResult = GetResult.Result.Result as ObjectResult;
             var toCompare = taskResult.Value as List<StudentGroupModel>;
-            var actualResult = await getStudentGroups();
+            var actualResult = await GetStudentGroups();
 
             //Assert
 
             Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<IList<StudentGroupModel>> getStudentGroups()
+        public async Task<IList<StudentGroupModel>> GetStudentGroups()
         {
             List<StudentGroupModel> studentG = new List<StudentGroupModel>()
             {
