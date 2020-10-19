@@ -33,5 +33,9 @@ namespace CharlieBackend.Core.Models.StudentGroup
         [Required]
         [JsonPropertyName("student_ids")]
         public new List<long> StudentIds { get; set; }
+
+        [Required]
+        [JsonPropertyName("mentor_ids")]
+        public List<long> MentorIds { get; set; }
     }
 }

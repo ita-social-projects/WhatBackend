@@ -33,7 +33,7 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.StudentGroupRepository.Add(studentGroup);
 
-                if (studentGroupModel.StudentIds.Count != 0)
+                if (studentGroupModel?.StudentIds.Count != 0)
                 {
                     var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupModel.StudentIds);
                     studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
@@ -44,6 +44,20 @@ namespace CharlieBackend.Business.Services
                         {
                             Student = students[i]
                         });
+                    }
+                }
+
+                if(studentGroupModel?.MentorIds.Count != 0)
+                {
+                    var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupModel.MentorIds);
+                    studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
+
+                    for (int i = 0; i < mentors.Count; i++)
+                    {
+                        studentGroup.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
+                        {
+                            Mentor = mentors[i]
+                        }); ;
                     }
                 }
 
