@@ -79,7 +79,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<List<StudentModel>> GetAllStudentsAsync()
+        public async Task<IList<StudentModel>> GetAllStudentsAsync()
         {
             var students = await _unitOfWork.StudentRepository.GetAllAsync();
 

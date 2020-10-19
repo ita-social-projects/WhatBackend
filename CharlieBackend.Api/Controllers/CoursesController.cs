@@ -48,16 +48,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CourseModel>>> GetAllCourses()
         {
-            try
-            {
-                var courses = await _coursesService.GetAllCoursesAsync();
 
-                return Ok(courses);
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var courses = await _coursesService.GetAllCoursesAsync();
+
+            return Ok(courses);
         }
 
         [Authorize(Roles = "4")]
@@ -70,25 +64,16 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            try
+            courseModel.Id = id;
+
+            var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
+
+            if (updatedCourse != null)
             {
-                courseModel.Id = id;
-
-                var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
-
-                if (updatedCourse != null)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    return StatusCode(409, "Course already exists!");
-                }
+                return NoContent();
             }
-            catch 
-            { 
-                return StatusCode(500);
-            }
+
+            return StatusCode(409, "Course already exists!");
         }
     }
 }

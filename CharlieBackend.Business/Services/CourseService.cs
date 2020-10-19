@@ -34,7 +34,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<List<CourseModel>> GetAllCoursesAsync()
+        public async Task<IList<CourseModel>> GetAllCoursesAsync()
         {
             var courses = await _unitOfWork.CourseRepository.GetAllAsync();
             var coursesModels = new List<CourseModel>();

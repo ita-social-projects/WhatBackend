@@ -27,7 +27,6 @@ namespace CharlieBackend.Api.Controllers
             var themes = await _themeService.GetAllThemesAsync();
 
             return Ok(themes.Select(theme => theme.Name));
-
         }
 
         [Authorize(Roles = "2, 4")]

@@ -48,58 +48,41 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {
-            try
-            {
-                var lessons = await _lessonService.GetAllLessonsAsync();
+            var lessons = await _lessonService.GetAllLessonsAsync();
 
-                return Ok(lessons);
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            return Ok(lessons);
         }
 
         [Authorize(Roles = "1, 2")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
         {
-            try
-            {
-                var lessons = await _lessonService.GetStudentLessonsAsync(id);
 
-                return Ok(lessons);
-            }
-            catch
-            { 
-                return StatusCode(500); 
-            }
+            var lessons = await _lessonService.GetStudentLessonsAsync(id);
+
+            return Ok(lessons);
         }
 
         [Authorize(Roles = "2")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonModel lessonModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
-            try
+            if (!ModelState.IsValid)
             {
-                lessonModel.Id = id;
-
-                var updatedLesson = await _lessonService.UpdateLessonAsync(lessonModel);
-
-                if (updatedLesson != null)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    return StatusCode(409, "Cannot update.");
-                }
+                return BadRequest();
             }
-            catch 
-            { 
-                return StatusCode(500); 
+
+            lessonModel.Id = id;
+
+            var updatedLesson = await _lessonService.UpdateLessonAsync(lessonModel);
+
+            if (updatedLesson != null)
+            {
+                return NoContent();
             }
+
+            return StatusCode(409, "Cannot update.");
+
         }
     }
 }

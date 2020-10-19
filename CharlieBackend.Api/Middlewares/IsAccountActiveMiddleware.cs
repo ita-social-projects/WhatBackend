@@ -47,6 +47,7 @@ namespace CharlieBackend.Api.Middlewares
 
                         await context.Response.WriteAsync("Need to sign in.");
                     }
+
                     if ((bool)!isActive)
                     {
                         context.Response.StatusCode = 401;

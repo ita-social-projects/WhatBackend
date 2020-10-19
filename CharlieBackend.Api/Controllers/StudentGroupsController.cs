@@ -70,50 +70,35 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            try
+            var isStudentGroupNameChangable = await _studentGroupService
+                       .IsGroupNameTakenAsync(studentGroup.Name);
+
+            if (!isStudentGroupNameChangable)
             {
-                var isStudentGroupNameChangable = await _studentGroupService
-                        .IsGroupNameTakenAsync(studentGroup.Name);
-
-                if (!isStudentGroupNameChangable)
-                {
-                    return StatusCode(409, "Student group name is already taken!");
-                }
-
-                studentGroup.Id = id;
-                var updatedStudentGroup = await _studentGroupService
-                        .UpdateStudentGroupAsync(studentGroup);
-
-                if (updatedStudentGroup != null)
-                {
-                    return NoContent();
-                }
-                else
-                {
-                    return StatusCode(409, "Cannot update.");
-                }
+                return StatusCode(409, "Student group name is already taken!");
             }
-            catch 
-            { 
-                return StatusCode(500); 
+
+            studentGroup.Id = id;
+            var updatedStudentGroup = await _studentGroupService
+                    .UpdateStudentGroupAsync(studentGroup);
+
+            if (updatedStudentGroup != null)
+            {
+                return NoContent();
             }
+
+            return StatusCode(409, "Cannot update.");
         }
 
         [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupModel>>> GetAllStudentGroups()
         {
-            try
-            {
-                var studentGroupsModels = await _studentGroupService
-                    .GetAllStudentGroupsAsync();
 
-                return Ok(studentGroupsModels);
-            }
-            catch 
-            { 
-                return StatusCode(500); 
-            }
+            var studentGroupsModels = await _studentGroupService
+                .GetAllStudentGroupsAsync();
+
+            return Ok(studentGroupsModels);
         }
 
         [Authorize(Roles ="2")]
