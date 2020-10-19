@@ -65,12 +65,15 @@ namespace CharlieBackend.Business.Services
                     }
 
                     await _unitOfWork.CommitAsync();
-                    await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword);
 
-                    transaction.Commit();
+                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
+                    {
+                        transaction.Commit();
 
-                    return mentor.ToMentorModel();
+                        return mentor.ToMentorModel();
+                    }
 
+                    else throw new System.Exception("Faild to send credentials");
                 }
                 catch
                 {
