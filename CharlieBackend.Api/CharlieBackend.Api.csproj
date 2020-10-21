@@ -20,6 +20,9 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    
+    <PackageReference Include="DotNetEnv" Version="1.4.0" />
+    
   </ItemGroup>
 
   <ItemGroup>
