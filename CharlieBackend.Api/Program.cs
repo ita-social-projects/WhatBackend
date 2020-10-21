@@ -15,14 +15,14 @@ namespace CharlieBackend.Api
     {
         public static void Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    .Build();
+            //var configuration = new ConfigurationBuilder()
+            //        .SetBasePath(Directory.GetCurrentDirectory())
+            //        .AddJsonFile("appsettings.json")
+            //        .Build();
 
             //Configuration for Serilog
             Log.Logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration, sectionName: "Logging")
+                    .ReadFrom.Configuration(HostConfigurationBuilder(args), sectionName: "Logging") // TODO
                     .Enrich.FromLogContext()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day, 
                                    retainedFileCountLimit: null, fileSizeLimitBytes: null)
@@ -31,7 +31,10 @@ namespace CharlieBackend.Api
             try
             {
                 Log.Information("Application has started...");
-                CreateHostBuilder(args).Build().Run();
+
+                var host = CreateHostBuilder(args).Build();
+                       
+                host.Run();
             }
             catch (System.Exception ex)
             {
@@ -43,12 +46,47 @@ namespace CharlieBackend.Api
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog() //Serilog added
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+
+            if (File.Exists(envFilePath))
+            {
+                DotNetEnv.Env.Load(envFilePath);
+            }
+
+            var builder = Host.CreateDefaultBuilder(args)
+                .ConfigureHostConfiguration( x => HostConfigurationBuilder(args))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+
+            return builder;
+        }
+
+        public static IConfigurationBuilder  HostConfigurationBuilder(string[] args)
+        {
+            var configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .AddEnvironmentVariables()
+                     .AddCommandLine(args);
+
+
+            return configuration;
+        }
+
+        //public static IHostBuilder CreateHostBuilder(string[] args) =>
+        //    Host.CreateDefaultBuilder(args)
+        //        .UseSerilog() //Serilog added
+        //        .ConfigureWebHostDefaults(webBuilder =>
+        //        {
+        //            webBuilder.UseStartup<Startup>();
+        //        });
     }
+
+
+   
 }
