@@ -22,7 +22,7 @@ namespace CharlieBackend.Api
 
             //Configuration for Serilog
             Log.Logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(HostConfigurationBuilder(args), sectionName: "Logging") // TODO
+                    .ReadFrom.Configuration(HostConfigurationBuilder(args).Build(), sectionName: "Logging")
                     .Enrich.FromLogContext()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day, 
                                    retainedFileCountLimit: null, fileSizeLimitBytes: null)
@@ -56,7 +56,8 @@ namespace CharlieBackend.Api
             }
 
             var builder = Host.CreateDefaultBuilder(args)
-                .ConfigureHostConfiguration( x => HostConfigurationBuilder(args))
+                .ConfigureHostConfiguration(x => HostConfigurationBuilder(args))
+                .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -72,8 +73,7 @@ namespace CharlieBackend.Api
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
                     .AddEnvironmentVariables()
-                     .AddCommandLine(args);
-
+                    .AddCommandLine(args);
 
             return configuration;
         }
