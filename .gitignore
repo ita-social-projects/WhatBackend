@@ -596,3 +596,5 @@ dist
 .pnp.*
 /CharlieBackend.Api/Properties/serviceDependencies.json
 /CharlieBackend.Api/Properties/serviceDependencies.local.json
+/CharlieBackend.Api/log20201022.txt
+/CharlieBackend.Api/env
