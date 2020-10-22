@@ -24,7 +24,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPost]
         public async Task<ActionResult> PostStudent(CreateStudentModel studentModel)
         {
@@ -59,7 +59,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(new { createdStudentModel.Id });
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet("{id}")]
         public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
         {
@@ -81,7 +81,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
         {
@@ -92,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
 
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
         {
@@ -122,7 +122,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot update.");
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {
