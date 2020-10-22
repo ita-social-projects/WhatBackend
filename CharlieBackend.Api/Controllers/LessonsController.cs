@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Controllers
             _lessonService = lessonService;
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
         {
@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {
@@ -53,7 +53,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "1, 2")]
+        [Authorize(Roles = "1, 2, 4")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
         {
@@ -63,7 +63,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonModel lessonModel)
         {
