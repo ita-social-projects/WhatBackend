@@ -1,6 +1,7 @@
 using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Root;
+using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -109,6 +110,9 @@ namespace CharlieBackend.Api
             }
 
             app.UseHttpsRedirection();
+
+            //Added Serilog to the app’s middleware pipeline
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 
