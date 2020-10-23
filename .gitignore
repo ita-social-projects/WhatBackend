@@ -4,6 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 
+# ingore log files
+log*.txt
+
 # .env files
 .env
 .env_*
