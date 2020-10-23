@@ -15,7 +15,9 @@ namespace CharlieBackend.Api
                     .ReadFrom.Configuration(HostConfigurationBuilder(args).Build(), sectionName: "Logging")
                     .Enrich.FromLogContext()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day, 
-                                   retainedFileCountLimit: null, fileSizeLimitBytes: null)
+                                   retainedFileCountLimit: 2, fileSizeLimitBytes: null)
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
                     .CreateLogger();
 
             try
@@ -46,12 +48,12 @@ namespace CharlieBackend.Api
             }
 
             var builder = Host.CreateDefaultBuilder(args)
-                .ConfigureHostConfiguration(x => HostConfigurationBuilder(args))
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    .ConfigureHostConfiguration(x => HostConfigurationBuilder(args))
+                    .UseSerilog()
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    });
 
             return builder;
         }
