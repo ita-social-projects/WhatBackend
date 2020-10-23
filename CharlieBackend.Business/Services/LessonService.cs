@@ -18,7 +18,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel, long mentorId)
+        public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace CharlieBackend.Business.Services
 
                 var lesson = new Lesson
                 {
-                    MentorId = mentorId,
+                    MentorId = lessonModel.MentorId,
                     StudentGroupId = lessonModel.StudentGroupId,
                     LessonDate = Convert.ToDateTime(lessonModel.LessonDate),
                     Theme = theme
@@ -88,6 +88,19 @@ namespace CharlieBackend.Business.Services
 
             return lessonsModels;
         }
+
+
+        public async Task<Lesson> AssignMentorToLessonAsync(long mentorId, long lessonId)
+        {
+            var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonId);
+
+            foundLesson.MentorId = mentorId;
+            await _unitOfWork.CommitAsync();
+
+            return foundLesson;
+        }
+
+
 
         public async Task<LessonModel> UpdateLessonAsync(UpdateLessonModel lessonModel)
         {
@@ -162,5 +175,6 @@ namespace CharlieBackend.Business.Services
 
             return studentLessonModels ?? null;
         }
+
     }
 }

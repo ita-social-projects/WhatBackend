@@ -9,6 +9,8 @@ namespace CharlieBackend.Core.Models.Lesson
 
         [JsonPropertyName("theme_name")]
         public virtual string ThemeName { get; set; }
+        [JsonPropertyName("mentor_id")]
+        public virtual long MentorId { get; set; }
 
         [JsonPropertyName("lesson_date")]
         [DataType(DataType.DateTime)]

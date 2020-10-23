@@ -14,6 +14,9 @@ namespace CharlieBackend.Core.Models.Lesson
         [JsonPropertyName("theme_name")]
         public override string ThemeName { get; set; }
 
+        [JsonPropertyName("mentor_id")]
+        public override long MentorId { get; set; }
+
         [Required]
         [JsonPropertyName("group_id")]
         public virtual long StudentGroupId { get; set; }
