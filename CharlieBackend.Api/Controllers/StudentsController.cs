@@ -112,11 +112,11 @@ namespace CharlieBackend.Api.Controllers
 
             mentorModel.Id = id;
 
-            var updatedCourse = await _studentService.UpdateStudentAsync(mentorModel);
+            var updatedStudent = await _studentService.UpdateStudentAsync(mentorModel);
 
-            if (updatedCourse != null)
+            if (updatedStudent != null)
             {
-                return NoContent();
+                return Ok(updatedStudent);
             }
 
             return StatusCode(409, "Cannot update.");
