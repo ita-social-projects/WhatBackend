@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;

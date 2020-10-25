@@ -8,34 +8,39 @@ namespace CharlieBackend.Core.Models.ResultModel
     public class Result<T>
     {
 
-        public T TransferredData { get; set; }
+        public Task<T> TransferredData { get; set; }
 
         public Error Error { get; set; }
 
-        public static Result<T> ReturnData(T transferredData)
+        public static Task<Result<T>> ReturnData(Task<T> transferredData)
         {
             if (transferredData == null)
             {
-                return new Result<T>
-                {
-                    Error = new Error
-                    {
-                        ErrorCode = ErrorCode.BadRequest,
-                        ErrorMessage = "Data is not given"
-                    }
+                var noTransferredData = new Result<T>() 
+                { 
+                    TransferredData = default, 
+                    Error = new Error() 
+                    { 
+                        ErrorCode = ErrorCode.BadRequest, 
+                        ErrorMessage = "Data is not given" 
+                    } 
                 };
+
+                return Task.FromResult(noTransferredData);
             }
             else
             {
-                return new Result<T>
+                var transferredDataToReturn = new Result<T>()
                 {
+                    Error = default,
                     TransferredData = transferredData,
-                    Error = null
                 };
+
+                return Task.FromResult(transferredDataToReturn);
             }
         }
 
-        public static Result<T> ReturnError(ErrorCode errorCode, string errorMessage)
+        public static Task<Result<T>> ReturnError(ErrorCode errorCode, string errorMessage)
         {
             if (errorCode == 0)
             {
@@ -44,12 +49,12 @@ namespace CharlieBackend.Core.Models.ResultModel
                     Error = new Error
                     {
                         ErrorCode = ErrorCode.InternalError,
-                        ErrorMessage = "Wrong error model"
+                        ErrorMessage = "Wrong error information model"
                     },
-                    TransferredData = default(T)
+                    TransferredData = default
                 };
 
-                return newResult;
+                return Task.FromResult(newResult);
             }
             else
             {
@@ -60,10 +65,10 @@ namespace CharlieBackend.Core.Models.ResultModel
                         ErrorCode = errorCode,
                         ErrorMessage = errorMessage
                     },
-                    TransferredData = default(T)
+                    TransferredData = default
                 };
 
-                return newResult;
+                return Task.FromResult(newResult);
             }
         }
     }
