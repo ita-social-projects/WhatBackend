@@ -71,19 +71,7 @@ namespace CharlieBackend.Core
                 ThemeName = lesson.Theme?.Name,
             };
         }
-
-        public static VisitModel ToVisitModel(this Visit visit)
-        {
-            return new VisitModel
-            {
-                StudentId = (long)visit.StudentId,
-                Comment = visit.Comment,
-                StudentMark = visit.StudentMark,
-                Presence = visit.Presence
-
-            };
-        }
-
+    
         public static Course ToCourse(this CourseModel courseModel)
         {
             return new Course

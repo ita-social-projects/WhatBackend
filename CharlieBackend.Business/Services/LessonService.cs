@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Lesson;
@@ -12,10 +13,12 @@ namespace CharlieBackend.Business.Services
     public class LessonService : ILessonService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public LessonService(IUnitOfWork unitOfWork)
+        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel, long mentorId)
@@ -31,7 +34,10 @@ namespace CharlieBackend.Business.Services
                 }
                 else
                 {
-                    theme = new Theme { Name = lessonModel.ThemeName };
+                    theme = new Theme
+                    { 
+                        Name = lessonModel.ThemeName 
+                    };
 
                     _unitOfWork.ThemeRepository.Add(theme);
                 }
@@ -83,7 +89,7 @@ namespace CharlieBackend.Business.Services
 
             foreach (var lesson in lessons)
             {
-                lessonsModels.Add(lesson.ToLessonModel());
+                lessonsModels.Add(_mapper.Map<LessonModel>(lesson));
             }
 
             return lessonsModels;

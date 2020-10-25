@@ -1,5 +1,7 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
@@ -10,17 +12,19 @@ namespace CharlieBackend.Business.Services
     public class CourseService : ICourseService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CourseService(IUnitOfWork unitOfWork)
+        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<CourseModel> CreateCourseAsync(CourseModel courseModel)
         {
             try
             {
-                _unitOfWork.CourseRepository.Add(courseModel.ToCourse());
+                _unitOfWork.CourseRepository.Add(_mapper.Map<Course>(courseModel));
 
                 await _unitOfWork.CommitAsync();
 
@@ -37,11 +41,12 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<CourseModel>> GetAllCoursesAsync()
         {
             var courses = await _unitOfWork.CourseRepository.GetAllAsync();
+
             var coursesModels = new List<CourseModel>();
 
             foreach (var course in courses)
             {
-                coursesModels.Add(course.ToCourseModel());
+                coursesModels.Add(_mapper.Map<CourseModel>(course));
             }
 
             return coursesModels;
@@ -51,7 +56,7 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                _unitOfWork.CourseRepository.Update(courseModel.ToCourse());
+                _unitOfWork.CourseRepository.Update(_mapper.Map<Course>(courseModel));
 
                 await _unitOfWork.CommitAsync();
 

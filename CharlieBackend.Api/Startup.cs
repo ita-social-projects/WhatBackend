@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using AutoMapper;
+using CharlieBackend.Core.Mapping;
 
 namespace CharlieBackend.Api
 {
@@ -47,8 +49,19 @@ namespace CharlieBackend.Api
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
             services.AddCors();
+
             services.AddControllers();
+
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            services.AddSingleton(mappingConfig.CreateMapper());
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "13.07.2020" });

@@ -30,7 +30,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (HttpContext.Items["mentorId"] == null)
             {
-                return BadRequest("Need to sign in.");
+                return BadRequest("Need to sign in as a mentor.");
             }
 
 //            long.TryParse

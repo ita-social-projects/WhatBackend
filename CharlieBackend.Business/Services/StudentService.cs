@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Student;
@@ -14,12 +15,17 @@ namespace CharlieBackend.Business.Services
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialSender;
+        private readonly IMapper _mapper;
 
-        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
+        public StudentService(IAccountService accountService, 
+                              IUnitOfWork unitOfWork,
+                              ICredentialsSenderService credentialsSender,
+                              IMapper mapper)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialSender = credentialsSender;
+            _mapper = mapper;
         }
 
         public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
@@ -30,31 +36,38 @@ namespace CharlieBackend.Business.Services
                 {
                     var generatedPassword = _accountService.GenerateSalt();
 
-                    var account = new Account
+                    var accountEntity = _mapper.Map<Account>(studentModel);
+
+                    //var account = new Account
+                    //{
+                    //    Email = studentModel.Email,
+                    //    FirstName = studentModel.FirstName,
+                    //    LastName = studentModel.LastName,
+                    //    Role = 1
+                    //};
+
+                    accountEntity.Role = 1;
+                    accountEntity.Salt = _accountService.GenerateSalt();
+                    accountEntity.Password = _accountService.HashPassword(generatedPassword, accountEntity.Salt);
+
+                    var newStudent = new Student 
                     {
-                        Email = studentModel.Email,
-                        FirstName = studentModel.FirstName,
-                        LastName = studentModel.LastName,
-                        Role = 1
+                        Account = accountEntity
                     };
 
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
-
-                    var student = new Student { Account = account };
-                    _unitOfWork.StudentRepository.Add(student);
+                    _unitOfWork.StudentRepository.Add(newStudent);
 
                     await _unitOfWork.CommitAsync();
 
                     var credentialMessageSent = false;
 
-                    if (await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword))
+                    if (await _credentialSender.SendCredentialsAsync(accountEntity.Email, generatedPassword))
                     {
                         await transaction.CommitAsync();
 
                         credentialMessageSent = true;
 
-                        return student.ToStudentModel();
+                        return _mapper.Map<StudentModel>(newStudent);
                     }
                     else
                     {
@@ -65,7 +78,7 @@ namespace CharlieBackend.Business.Services
 
                         credentialMessageSent = false;
 
-                        return student.ToStudentModel();
+                        return _mapper.Map<StudentModel>(newStudent);
                     }
 
                 }
@@ -79,7 +92,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<StudentModel>> GetAllStudentsAsync()
+        public async Task<IList<StudentModel>> GetAllStudentsAsync() // feature or bug?
         {
             var students = await _unitOfWork.StudentRepository.GetAllAsync();
 
@@ -87,7 +100,7 @@ namespace CharlieBackend.Business.Services
 
             foreach (var student in students)
             {
-                studentModels.Add(student.ToStudentModel());
+                studentModels.Add(_mapper.Map<StudentModel>(student));
             }
 
             return studentModels;
@@ -136,7 +149,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return foundStudent.ToStudentModel();
+                return _mapper.Map<StudentModel>(foundStudent);
 
             }
             catch
@@ -151,7 +164,7 @@ namespace CharlieBackend.Business.Services
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentModel>(student);
         }
 
         public async Task<long?> GetAccountId(long studentId)
@@ -165,14 +178,14 @@ namespace CharlieBackend.Business.Services
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentModel>(student);
         }
 
         public async Task<StudentModel> GetStudentByEmailAsync(string email)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentModel>(student);
         }
     }
 }
