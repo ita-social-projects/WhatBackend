@@ -8,9 +8,9 @@ namespace CharlieBackend.Core.Models.ResultModel
     public class Result<T>
     {
 
-        public Task<T> TransferredData { get; set; }
+        public Task<T> TransferredData { get; private set; }
 
-        public Error Error { get; set; }
+        public Error Error { get; private set; }
 
         public static Task<Result<T>> ReturnData(Task<T> transferredData)
         {

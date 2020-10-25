@@ -9,7 +9,7 @@ namespace CharlieBackend.Core
 {
     public static class ResultExtensionMethods
     {
-        public static IActionResult ResultToActionResult<T>(this Result<T> result)
+        public static ActionResult ResultToActionResult<T>(this Result<T> result)
         {
             if (Equals(result, default(T)))
             {
