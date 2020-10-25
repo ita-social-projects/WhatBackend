@@ -16,7 +16,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         {
             if (transferredData == null)
             {
-                var noTransferredData = new Result<T>() 
+                var nullDataToTransfer = new Result<T>() 
                 { 
                     TransferredData = default, 
                     Error = new Error() 
@@ -26,7 +26,7 @@ namespace CharlieBackend.Core.Models.ResultModel
                     } 
                 };
 
-                return Task.FromResult(noTransferredData);
+                return Task.FromResult(nullDataToTransfer);
             }
             else
             {
@@ -42,7 +42,7 @@ namespace CharlieBackend.Core.Models.ResultModel
 
         public static Task<Result<T>> ReturnError(ErrorCode errorCode, string errorMessage)
         {
-            if (errorCode == 0)
+            if (errorCode == ErrorCode.None)
             {
                 var newResult = new Result<T>
                 {
