@@ -58,7 +58,7 @@ namespace CharlieBackend.Core
             return new Lesson
             {
                 Id = lessonModel.Id,
-                LessonDate = DateTime.Parse(lessonModel.LessonDate),
+                LessonDate = lessonModel.LessonDate,
             };
         }
 
@@ -67,7 +67,7 @@ namespace CharlieBackend.Core
             return new LessonModel
             {
                 Id = lesson.Id,
-                LessonDate = lesson.LessonDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                LessonDate = lesson.LessonDate,
                 ThemeName = lesson.Theme?.Name,
             };
         }

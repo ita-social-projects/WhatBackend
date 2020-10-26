@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using CharlieBackend.Core.Models.Visit;
 using System.ComponentModel.DataAnnotations;
@@ -25,6 +26,6 @@ namespace CharlieBackend.Core.Models.Lesson
         [Required]
         [JsonPropertyName("lesson_date")]
         [DataType(DataType.DateTime)]
-        public override string LessonDate { get; set; }
+        public override DateTime LessonDate { get; set; }
     }
 }
