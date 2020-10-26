@@ -185,8 +185,8 @@ namespace CharlieBackend.Core
             {
                 Id = group.Id,
                 Name = group.Name,
-                StartDate = startDate.ToString("yyyy-MM-dd"),
-                FinishDate = finishDate.ToString("yyyy-MM-dd"),
+                StartDate = startDate,
+                FinishDate = finishDate,
                 StudentIds = group.StudentsOfStudentGroups
                     .Select(groupSt => (long)groupSt.StudentId).ToList(),
                 CourseId = group.CourseId
@@ -198,8 +198,8 @@ namespace CharlieBackend.Core
             {
                 Id = group.Id,
                 Name = group.Name,
-                StartDate = Convert.ToDateTime(group.StartDate.ToString()),
-                FinishDate = Convert.ToDateTime(group.FinishDate.ToString()),
+                StartDate = group.StartDate,
+                FinishDate = group.FinishDate,
 
                 // добавить лист с группой
                 CourseId = group.CourseId
