@@ -35,15 +35,15 @@ namespace CharlieBackend.Api.Controllers.Tests
 
             Assert.Equal(toCompare.Count, actualResult.Count);
         }
-        public async Task<IList<StudentGroupModel>> GetStudentGroups()
-        {
-            List<StudentGroupModel> studentG = new List<StudentGroupModel>()
-            {
-                new StudentGroupModel { Id = 12, Name="Testst1", StartDate="26.06.2020", FinishDate="20.10.2020" },
-                new StudentGroupModel { Id = 13, Name = "Testst2", StartDate = "20.05.2020", FinishDate = "13.08.2020" },
-                new StudentGroupModel { Id = 14, Name = "Testst3", StartDate = "14.04.2020", FinishDate = "18.09.2020" }
-            };
-            return studentG;
-        }
+   //     public async Task<IList<StudentGroupModel>> GetStudentGroups()
+   //    {
+   //        List<StudentGroupModel> studentG = new List<StudentGroupModel>()
+   //         {
+   //             new StudentGroupModel { Id = 12, Name="Testst1", StartDate="26.06.2020", FinishDate="20.10.2020" },
+   //             new StudentGroupModel { Id = 13, Name = "Testst2", StartDate = "20.05.2020", FinishDate = "13.08.2020" },
+   //             new StudentGroupModel { Id = 14, Name = "Testst3", StartDate = "14.04.2020", FinishDate = "18.09.2020" }
+   //         };
+   //         return studentG;
+   //     }
     }
 }

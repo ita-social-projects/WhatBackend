@@ -32,15 +32,15 @@ namespace CharlieBackend.Api.UnitTest.Controllers
             Assert.Equal(toCompare.Count, actualResult.Count);
         }
 
-        public async Task<IList<LessonModel>> GetLessons() 
-        {
-            List<LessonModel> less = new List<LessonModel>()
-            {
-                new LessonModel { Id = 1, ThemeName = "Testst1", LessonDate = "TestSt1" },
-                new LessonModel { Id = 13, ThemeName = "Testst2", LessonDate = "TestSt2" },
-                new LessonModel { Id = 14, ThemeName = "Testst3", LessonDate = "TestSt3" }
-            };
-            return less;
-        }
+    //      public async Task<IList<LessonModel>> GetLessons() 
+    //      {
+    //          List<LessonModel> less = new List<LessonModel>()
+    //          {
+    //           new LessonModel { Id = 1, ThemeName = "Testst1", LessonDate = "TestSt1" },
+    //           new LessonModel { Id = 13, ThemeName = "Testst2", LessonDate = "TestSt2" },
+    //           new LessonModel { Id = 14, ThemeName = "Testst3", LessonDate = "TestSt3" }
+    //          };
+    //       return less;
+    //      }
     }
 }
