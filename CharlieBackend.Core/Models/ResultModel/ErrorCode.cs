@@ -8,16 +8,7 @@ namespace CharlieBackend.Core.Models.ResultModel
     public enum ErrorCode
     {
         None = 0,
-        NullReference,
-        InternalError,
-        DataNotFound,
-        Unauthorised,
-        NotEnoughtRights,
-        BadRequest,
-        Conflict,
-        Forbidden,
-        UnprocessableEntity,
-        ValidationProblem,
-        ManualError,
+        ValidationError,
+        Unauthorized,
     }
 }

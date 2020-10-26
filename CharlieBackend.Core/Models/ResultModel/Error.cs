@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace CharlieBackend.Core.Models.ResultModel
 {
 
-    public class Error
+    public class ErrorData
     {
-        public ErrorCode ErrorCode { get; set; } = 0;
+        public ErrorCode ErrorCode { get; set; }
 
         public string ErrorMessage { get; set; }
     }

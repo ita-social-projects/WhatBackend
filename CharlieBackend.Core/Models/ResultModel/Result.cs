@@ -5,62 +5,48 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Core.Models.ResultModel
 {
+    /// <summary>
+    /// Class is used to transfer data or errors information. Methods has to return Result<T> data type
+    /// </summary>
+    /// <typeparam name="T">type of data transferred thrue Result class</typeparam>
     public class Result<T>
     {
+        public T TransferredData { get; set; }
 
-        public Task<T> TransferredData { get; private set; }
+        public ErrorData ErrorData { get; set; }
 
-        public Error Error { get; private set; }
-
-        public static Task<Result<T>> ReturnData(Task<T> transferredData)
+        /// <summary>
+        /// In case if followed code assume returning data without errors, use Success method. It will convert data into Return<T> data type.
+        /// </summary>
+        /// <param name="transferredData">any data type to return in calling method, which will be converted into Return type</param>
+        /// <returns></returns>
+        public static Result<T> Success(T transferredData)
         {
-            if (transferredData == null)
+            ///<exception cref="System.ArgumentNullException">Exception thrown if transferred data is empty/null</exception>
+            if (transferredData == default)
             {
-                var nullDataToTransfer = new Result<T>() 
-                { 
-                    TransferredData = default, 
-                    Error = new Error() 
-                    { 
-                        ErrorCode = ErrorCode.BadRequest, 
-                        ErrorMessage = "Data is not given" 
-                    } 
-                };
-
-                return Task.FromResult(nullDataToTransfer);
+                throw new ArgumentNullException();
             }
             else
             {
                 var transferredDataToReturn = new Result<T>()
                 {
-                    Error = default,
+                    ErrorData = default,
                     TransferredData = transferredData,
                 };
 
-                return Task.FromResult(transferredDataToReturn);
+                return transferredDataToReturn;
             }
         }
 
-        public static Task<Result<T>> ReturnError(ErrorCode errorCode, string errorMessage)
+        /// <summary>
+        /// In case if followed code assume returning error, use Error method to return Error. It will convert data into Return<T> data type.
+        /// </summary>
+        public static Result<T> Error(ErrorCode errorCode, string errorMessage)
         {
-            if (errorCode == ErrorCode.None)
-            {
                 var newResult = new Result<T>
                 {
-                    Error = new Error
-                    {
-                        ErrorCode = ErrorCode.InternalError,
-                        ErrorMessage = "Wrong error information model"
-                    },
-                    TransferredData = default
-                };
-
-                return Task.FromResult(newResult);
-            }
-            else
-            {
-                var newResult = new Result<T>
-                {
-                    Error = new Error
+                    ErrorData = new ErrorData
                     {
                         ErrorCode = errorCode,
                         ErrorMessage = errorMessage
@@ -68,8 +54,7 @@ namespace CharlieBackend.Core.Models.ResultModel
                     TransferredData = default
                 };
 
-                return Task.FromResult(newResult);
-            }
+                return newResult;
         }
     }
 }

@@ -11,37 +11,31 @@ namespace CharlieBackend.Core
     {
         public static ActionResult ResultToActionResult<T>(this Result<T> result)
         {
-            if (Equals(result, default(T)))
+            if (Equals(result, null))
             {
-                return new ObjectResult("No error data received while processing error") { StatusCode = 500 };
+                return new ObjectResult("No data received while processing data model") { StatusCode = 500 };
             }
-            else
+            else if (result.ErrorData != null)
             {
-                switch (result.Error.ErrorCode)
+                switch (result.ErrorData.ErrorCode)
                 {
-                    case ErrorCode.NullReference: //500
-                        return new ObjectResult(result.Error.ErrorMessage) { StatusCode = 500 };
-                    case ErrorCode.InternalError: //500
-                        return new ObjectResult(result.Error.ErrorMessage) { StatusCode = 500 };
-                    case ErrorCode.DataNotFound: //400
-                        return new ObjectResult(result.Error.ErrorMessage) { StatusCode = 400 };
-                    case ErrorCode.Unauthorised: //401
-                        return new UnauthorizedObjectResult(result.Error.ErrorMessage);
-                    case ErrorCode.NotEnoughtRights: //401
-                        return new UnauthorizedObjectResult(result.Error.ErrorMessage);
-                    case ErrorCode.BadRequest: //400
-                        return new BadRequestObjectResult(result.Error.ErrorMessage);
-                    case ErrorCode.Conflict: //409
-                        return new ConflictObjectResult(result.Error.ErrorMessage);
-                    case ErrorCode.Forbidden: //409
-                        return new ForbidResult(result.Error.ErrorMessage);
-                    case ErrorCode.UnprocessableEntity: //422
-                        return new UnprocessableEntityObjectResult(result.Error.ErrorMessage);
-                    case ErrorCode.ValidationProblem: //400
-                        return new BadRequestObjectResult(result.Error.ErrorMessage);
+                    case ErrorCode.Unauthorized: //401
+                        return new UnauthorizedObjectResult(result.ErrorData.ErrorMessage);
+                    case ErrorCode.ValidationError: //400
+                        return new BadRequestObjectResult(result.ErrorData.ErrorMessage);
+                    case ErrorCode.None: //500
+                        return new StatusCodeResult(500);
                     default:
                         return new StatusCodeResult(500);
                 }
+            }
+            else if (result.TransferredData != default)
+            {
+                return new OkObjectResult(result.TransferredData);
+            }
+            else
+            {
+                return new OkResult();
             }
 
         }
