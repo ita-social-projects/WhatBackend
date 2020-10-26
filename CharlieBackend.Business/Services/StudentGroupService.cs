@@ -27,8 +27,8 @@ namespace CharlieBackend.Business.Services
                 {
                     Name = studentGroupModel.Name,
                     CourseId = studentGroupModel.CourseId,
-                    StartDate = Convert.ToDateTime(studentGroupModel.StartDate),
-                    FinishDate = Convert.ToDateTime(studentGroupModel.FinishDate),
+                    StartDate = studentGroupModel.StartDate,
+                    FinishDate = studentGroupModel.FinishDate,
                 };
 
                 _unitOfWork.StudentGroupRepository.Add(studentGroup);
@@ -113,12 +113,12 @@ namespace CharlieBackend.Business.Services
 
                 if (studentGroupModel.StartDate != null)
                 {
-                    foundStudentGroup.StartDate = (DateTime?)DateTime.Parse(studentGroupModel.StartDate) ?? foundStudentGroup.StartDate;
+                    foundStudentGroup.StartDate = (DateTime?)(studentGroupModel.StartDate) ?? foundStudentGroup.StartDate;
                 }
 
                 if (studentGroupModel.FinishDate != null)
                 {
-                    foundStudentGroup.FinishDate = (DateTime?)DateTime.Parse(studentGroupModel.FinishDate) ?? foundStudentGroup.FinishDate;
+                    foundStudentGroup.FinishDate = (DateTime?)(studentGroupModel.FinishDate) ?? foundStudentGroup.FinishDate;
                 }
 
                 if (studentGroupModel.CourseId != 0)
