@@ -15,7 +15,7 @@ namespace CharlieBackend.Api.Controllers.Tests
     public class StudentGroupsControllerTests
     {
         
-        [Fact]
+       /* [Fact]
         public async Task GetAllStudentGroupsTestAsync()
         {
             //Arrange
@@ -34,7 +34,7 @@ namespace CharlieBackend.Api.Controllers.Tests
             //Assert
 
             Assert.Equal(toCompare.Count, actualResult.Count);
-        }
+        } */
    //     public async Task<IList<StudentGroupModel>> GetStudentGroups()
    //    {
    //        List<StudentGroupModel> studentG = new List<StudentGroupModel>()

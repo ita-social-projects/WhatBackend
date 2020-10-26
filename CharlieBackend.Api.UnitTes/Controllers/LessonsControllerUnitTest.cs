@@ -11,7 +11,7 @@ namespace CharlieBackend.Api.UnitTest.Controllers
 {
     public class LessonsControllerUnitTest
     {
-        [Fact]
+      /*  [Fact]
         public async Task GetAllLessons()
         {
             //Arrange
@@ -30,7 +30,7 @@ namespace CharlieBackend.Api.UnitTest.Controllers
             //Assert
 
             Assert.Equal(toCompare.Count, actualResult.Count);
-        }
+        }*/
 
     //      public async Task<IList<LessonModel>> GetLessons() 
     //      {
