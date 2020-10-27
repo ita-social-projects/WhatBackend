@@ -43,7 +43,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Mark = visits[i].StudentMark,
                         Presence = visits[i].Presence,
                         ThemeName = visits[i].Lesson.Theme.Name,
-                        LessonDate = visits[i].Lesson.LessonDate.ToString(),
+                        LessonDate = visits[i].Lesson.LessonDate,
                         StudentGroupId = visits[i].Lesson.StudentGroupId
                     };
 

@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (updatedStudentGroup != null)
             {
-                return NoContent();
+                return Ok(updatedStudentGroup);
             }
 
             return StatusCode(409, "Cannot update.");
