@@ -40,7 +40,7 @@ namespace CharlieBackend.Business.Services
                 {
                     MentorId = mentorId,
                     StudentGroupId = lessonModel.StudentGroupId,
-                    LessonDate = Convert.ToDateTime(lessonModel.LessonDate),
+                    LessonDate = lessonModel.LessonDate,
                     Theme = theme
                 };
 
@@ -120,9 +120,9 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
-                if (!String.IsNullOrEmpty(lessonModel.LessonDate))
+                if (lessonModel.LessonDate != null)
                 {
-                    foundLesson.LessonDate = Convert.ToDateTime(lessonModel.LessonDate);
+                    foundLesson.LessonDate = lessonModel.LessonDate;
                 }
 
                 if (lessonModel.LessonVisits != null)

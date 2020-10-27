@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
@@ -20,16 +21,16 @@ namespace CharlieBackend.Core.Models.StudentGroup
         [Required]
         [JsonPropertyName("course_id")]
         public new long CourseId { get; set; }
-        
-        [Required] //can be null in bd
-        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")] //TODO
-        [JsonPropertyName("start_date")]
-        public override string StartDate { get; set; }
 
-        [Required] //can be null in bd
-        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")] //TODO
+        [Required]
+        [DataType(DataType.Date)]
+        [JsonPropertyName("start_date")]
+        public override DateTime StartDate { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
         [JsonPropertyName("finish_date")]
-        public override string FinishDate { get; set; }
+        public override DateTime FinishDate { get; set; }
 
         [Required]
         [JsonPropertyName("student_ids")]
