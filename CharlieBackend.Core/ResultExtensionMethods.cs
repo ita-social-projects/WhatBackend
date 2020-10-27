@@ -29,7 +29,7 @@ namespace CharlieBackend.Core
                         return new StatusCodeResult(500);
                 }
             }
-            else if (result.TransferredData != default)
+            else if (object.Equals(result.TransferredData, default(T)))
             {
                 return new OkObjectResult(result.TransferredData);
             }
