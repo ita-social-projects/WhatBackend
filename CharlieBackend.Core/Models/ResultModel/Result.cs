@@ -23,7 +23,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         public static Result<T> Success(T transferredData)
         {
             ///<exception cref="System.ArgumentNullException">Exception thrown if transferred data is empty/null</exception>
-            if (transferredData == default)
+            if (object.Equals(transferredData, default(T)))
             {
                 throw new ArgumentNullException();
             }
