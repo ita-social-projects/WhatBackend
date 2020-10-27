@@ -9,9 +9,7 @@ using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.Models.Account;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.Models.Student;
-using CharlieBackend.Core;
+
 
 namespace CharlieBackend.Api.Controllers
 {

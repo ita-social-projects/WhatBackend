@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.Models.Student;
+﻿using CharlieBackend.Core.Models.Student;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
