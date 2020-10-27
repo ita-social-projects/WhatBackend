@@ -7,6 +7,7 @@ namespace CharlieBackend.Core.Models.StudentGroup
 {
     public class CreateStudentGroupModel : StudentGroupModel
     {
+        [Required]
         [JsonIgnore]
         public override long Id { get; set; }
 
@@ -23,13 +24,11 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [Required]
         [DataType(DataType.Date)]
-        // [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
         [JsonPropertyName("start_date")]
         public override DateTime StartDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        // [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
         [JsonPropertyName("finish_date")]
         public override DateTime FinishDate { get; set; }
 
@@ -39,6 +38,6 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [Required]
         [JsonPropertyName("mentor_ids")]
-        public List<long> MentorIds { get; set; }
+        public new List<long> MentorIds { get; set; }
     }
 }

@@ -8,11 +8,13 @@ namespace CharlieBackend.Core.Models.Lesson
 {
     public class CreateLessonModel : LessonModel
     {
+        [Required]
         [JsonIgnore]
         public override long Id { get; set; }
 
         [Required]
         [JsonPropertyName("theme_name")]
+        [StringLength(100)]
         public override string ThemeName { get; set; }
 
         [Required]

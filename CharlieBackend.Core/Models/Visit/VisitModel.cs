@@ -9,7 +9,7 @@ namespace CharlieBackend.Core.Models.Visit
         [JsonPropertyName("student_id")]
         public virtual long StudentId { get; set; }
 
-        [Required]
+        //[Required] //can be null in bd 
         [JsonPropertyName("student_mark")]
         public virtual sbyte? StudentMark { get; set; }
 
@@ -17,8 +17,9 @@ namespace CharlieBackend.Core.Models.Visit
         [JsonPropertyName("presence")]
         public virtual bool Presence { get; set; }
 
-        [Required]
+       //[Required] //can be null in bd
         [JsonPropertyName("comment")]
+        [StringLength(1024)]
         public virtual string Comment { get; set; }
 
     }
