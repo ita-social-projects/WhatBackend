@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
@@ -18,12 +17,10 @@ namespace CharlieBackend.Business.Services
         private const int _saltLen = 15;
 
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel)
@@ -31,18 +28,15 @@ namespace CharlieBackend.Business.Services
             try
             {
                 // TODO: add role
-                //var account = accountModel.ToAccount();
+                var account = accountModel.ToAccount();
+                account.Salt = GenerateSalt();
+                account.Password = HashPassword(account.Password, account.Salt);
 
-                var accountEntity = _mapper.Map<Account>(accountModel);
-
-                accountEntity.Salt = GenerateSalt();
-                accountEntity.Password = HashPassword(accountEntity.Password, accountEntity.Salt);
-
-                _unitOfWork.AccountRepository.Add(accountEntity);
+                _unitOfWork.AccountRepository.Add(account);
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<BaseAccountModel>(accountEntity);
+                return account.ToAccountModel();
             }
             catch
             {
@@ -63,7 +57,7 @@ namespace CharlieBackend.Business.Services
 
                 var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
 
-                return _mapper.Map<BaseAccountModel>(foundAccount);
+                return foundAccount?.ToAccountModel();
             }
 
             return null;
@@ -83,7 +77,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return _mapper.Map<BaseAccountModel>(account);
+            return account.ToAccountModel();
         }
 
         public Task<bool> IsEmailChangableToAsync(string newEmail)

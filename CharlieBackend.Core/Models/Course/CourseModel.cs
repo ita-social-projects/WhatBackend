@@ -4,9 +4,8 @@ namespace CharlieBackend.Core.Models.Course
 {
     public class CourseModel
     {
-        public virtual long Id { get; set; }
-
-        [Required]
-        public virtual string Name { get; set; }
+        public long Id { get; set; }
+       
+        public string Name { get; set; }
     }
 }

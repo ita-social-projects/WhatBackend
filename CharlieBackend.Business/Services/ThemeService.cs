@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Theme;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,26 +10,23 @@ namespace CharlieBackend.Business.Services
     public class ThemeService : IThemeService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public ThemeService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ThemeService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<ThemeModel> CreateThemeAsync(ThemeModel theme)
         {
             try
             {
-
-                _unitOfWork.ThemeRepository.Add(_mapper.Map<Theme>(theme));
+                _unitOfWork.ThemeRepository.Add(theme.ToTheme());
 
                 await _unitOfWork.CommitAsync();
 
                 return theme;
             }
-            catch 
+            catch
             {
                 _unitOfWork.Rollback();
 
@@ -48,7 +42,7 @@ namespace CharlieBackend.Business.Services
 
             foreach (var theme in themes)
             {
-                themeModels.Add(_mapper.Map<ThemeModel>(theme));
+                themeModels.Add(theme.ToThemeModel());
             }
 
             return themeModels;
@@ -58,7 +52,7 @@ namespace CharlieBackend.Business.Services
         {
             var theme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(name);
 
-            return _mapper.Map<ThemeModel>(theme);
+            return theme?.ToThemeModel();
         }
     }
 }

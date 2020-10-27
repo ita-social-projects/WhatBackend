@@ -2,10 +2,11 @@
 
 namespace CharlieBackend.Core.Models.Course
 {
-    public class UpdateCourseModel : CourseModel
+    public class UpdateCourseModel
     {
-        [JsonIgnore]
-        public override long Id { get; set; }
+        public long Id { get; set; }
+
+        public string Name { get; set; }
 
     }
 }

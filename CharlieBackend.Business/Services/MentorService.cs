@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
@@ -15,18 +14,12 @@ namespace CharlieBackend.Business.Services
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialsSender;
-        private readonly IMapper _mapper;
 
-        public MentorService(IAccountService accountService, 
-                             IUnitOfWork unitOfWork, 
-                             ICredentialsSenderService credentialsSender,
-                             IMapper mapper
-)
+        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialsSender = credentialsSender;
-            _mapper = mapper;
         }
 
         public async Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel)
@@ -38,23 +31,20 @@ namespace CharlieBackend.Business.Services
                     bool credsSent = false;
                     var generatedPassword = _accountService.GenerateSalt();
 
-                    var accountEntity = _mapper.Map<Account>(mentorModel);
-
-                    //var account = new Account
-                    //{
-                    //    Email = mentorModel.Email,
-                    //    FirstName = mentorModel.FirstName,
-                    //    LastName = mentorModel.LastName,
-                    //    Role = 2
-                    //};
-
-                    accountEntity.Role = 2;
-                    accountEntity.Salt = _accountService.GenerateSalt();
-                    accountEntity.Password = _accountService.HashPassword(generatedPassword, accountEntity.Salt);
-
-                    var mentor = new Mentor 
+                    var account = new Account
                     {
-                        Account = accountEntity
+                        Email = mentorModel.Email,
+                        FirstName = mentorModel.FirstName,
+                        LastName = mentorModel.LastName,
+                        Role = 2
+                    };
+
+                    account.Salt = _accountService.GenerateSalt();
+                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
+
+                    var mentor = new Mentor
+                    {
+                        Account = account
                     };
 
                     _unitOfWork.MentorRepository.Add(mentor);
@@ -77,19 +67,19 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(accountEntity.Email, generatedPassword))
+                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
                     {
                         credsSent = true;
                         transaction.Commit();
 
-                        return _mapper.Map<MentorModel>(mentor);
+                        return mentor.ToMentorModel();
                     }
-                    else 
+                    else
                     {
                         //TODO implementation for resending email or sent a status msg
                         transaction.Commit();
                         credsSent = false;
-                        return _mapper.Map<MentorModel>(mentor);
+                        return mentor.ToMentorModel();
                         //need to handle the exception with a right logic to sent it for contorller if fails
                         //throw new System.Exception("Faild to send credentials");
                     }
@@ -112,7 +102,9 @@ namespace CharlieBackend.Business.Services
 
             foreach (var mentor in mentors)
             {
-                mentorModels.Add(_mapper.Map<MentorModel>(mentor));
+                var mentorModel = mentor.ToMentorModel();
+
+                mentorModels.Add(mentorModel);
             }
 
             return mentorModels;
@@ -163,10 +155,10 @@ namespace CharlieBackend.Business.Services
 
                     foreach (var newGroupId in mentorModel.StudentGroupIds)
                     {
-                        newMentorGroups.Add(new MentorOfStudentGroup 
-                        { 
-                            StudentGroupId = newGroupId, 
-                            MentorId = foundMentor.Id 
+                        newMentorGroups.Add(new MentorOfStudentGroup
+                        {
+                            StudentGroupId = newGroupId,
+                            MentorId = foundMentor.Id
                         });
                     }
 
@@ -175,10 +167,10 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<MentorModel>(foundMentor);
+                return foundMentor.ToMentorModel();
 
             }
-            catch 
+            catch
             {
                 _unitOfWork.Rollback();
 
@@ -190,7 +182,7 @@ namespace CharlieBackend.Business.Services
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
 
-            return _mapper.Map<MentorModel>(mentor);
+            return mentor?.ToMentorModel();
         }
 
         public async Task<long?> GetAccountId(long mentorId)

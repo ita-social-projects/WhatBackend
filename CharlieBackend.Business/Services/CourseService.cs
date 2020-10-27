@@ -4,6 +4,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<CourseModel> CreateCourseAsync(CourseModel courseModel)
+        public async Task<CreateCourseModel> CreateCourseAsync(CreateCourseModel courseModel)
         {
             try
             {
@@ -30,8 +31,9 @@ namespace CharlieBackend.Business.Services
 
                 return courseModel;
             }
-            catch
+            catch 
             {
+
                 _unitOfWork.Rollback();
 
                 return null;
@@ -52,10 +54,12 @@ namespace CharlieBackend.Business.Services
             return coursesModels;
         }
 
-        public async Task<CourseModel> UpdateCourseAsync(CourseModel courseModel)
+        public async Task<UpdateCourseModel> UpdateCourseAsync(long id, UpdateCourseModel courseModel)
         {
             try
             {
+                courseModel.Id = id;
+
                 _unitOfWork.CourseRepository.Update(_mapper.Map<Course>(courseModel));
 
                 await _unitOfWork.CommitAsync();

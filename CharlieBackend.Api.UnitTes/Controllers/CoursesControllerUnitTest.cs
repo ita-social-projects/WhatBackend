@@ -18,7 +18,7 @@ namespace CharlieBackend.Api.Controllers.Tests
 
 			var courceServiceMock = new Mock<ICourseService>();
 			courceServiceMock.Setup(repo => repo.GetAllCoursesAsync()).Returns(GetCourses);
-			CoursesController controller = new CoursesController(courceServiceMock.Object);
+			CoursesController controller = new CoursesController(courceServiceMock.Object, null);
 
 			//Act
 

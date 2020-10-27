@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.StudentGroup;
@@ -15,44 +14,47 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        private readonly IMapper _mapper;
-
-        public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentGroupService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<StudentGroupModel> CreateStudentGroupAsync(CreateStudentGroupModel studentGroupModel)
         {
             try
             {
-                var studentGroupEntity = _mapper.Map<StudentGroup>(studentGroupModel);
+                var studentGroup = new StudentGroup
+                {
+                    Name = studentGroupModel.Name,
+                    CourseId = studentGroupModel.CourseId,
+                    StartDate = Convert.ToDateTime(studentGroupModel.StartDate),
+                    FinishDate = Convert.ToDateTime(studentGroupModel.FinishDate),
+                };
 
-                _unitOfWork.StudentGroupRepository.Add(studentGroupEntity);
+                _unitOfWork.StudentGroupRepository.Add(studentGroup);
 
                 if (studentGroupModel?.StudentIds.Count != 0)
                 {
                     var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupModel.StudentIds);
-                    studentGroupEntity.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
+                    studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
 
                     for (int i = 0; i < students.Count; i++)
                     {
-                        studentGroupEntity.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
+                        studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
                         {
                             Student = students[i]
                         });
                     }
                 }
 
-                if(studentGroupModel?.MentorIds.Count != 0)
+                if (studentGroupModel?.MentorIds.Count != 0)
                 {
                     var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupModel.MentorIds);
-                    studentGroupEntity.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
+                    studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
 
                     for (int i = 0; i < mentors.Count; i++)
                     {
-                        studentGroupEntity.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
+                        studentGroup.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
                         {
                             Mentor = mentors[i]
                         }); ;
@@ -77,7 +79,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.IsGroupNameChangableAsync(name);
         }
 
-        public async Task<IList<StudentGroupModel>> GetAllStudentGroupsAsync()// TODO
+        public async Task<IList<StudentGroupModel>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
 
@@ -85,7 +87,7 @@ namespace CharlieBackend.Business.Services
 
             foreach (var Group in studentGroup)
             {
-                studentGroupModels.Add(_mapper.Map<StudentGroupModel>(Group));
+                studentGroupModels.Add(Group.ToStudentGroupModel());
             }
 
             return studentGroupModels;

@@ -54,10 +54,10 @@ namespace CharlieBackend.Api
 
             services.AddControllers();
 
-            // Auto Mapper Configurations
+            // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new ModelMappingProfile());
             });
 
             services.AddSingleton(mappingConfig.CreateMapper());
