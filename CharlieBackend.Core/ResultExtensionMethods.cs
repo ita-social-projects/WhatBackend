@@ -28,6 +28,8 @@ namespace CharlieBackend.Core
                         return new BadRequestObjectResult(result.ErrorData.ErrorMessage);
                     case ErrorCode.InternalServerError: //500
                         return new StatusCodeResult(500);
+                    case ErrorCode.NotFound:
+                        return new NotFoundObjectResult(result.ErrorData.ErrorMessage);
                     default:
                         return new StatusCodeResult(500);
                 }
