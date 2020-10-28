@@ -13,7 +13,6 @@ namespace CharlieBackend.Core.Models.ResultModel
 
         public ErrorData ErrorData { get; set; }
 
-
         /// <summary>
         /// If followed code assume returning data without errors, use Success method. 
         /// It will pack your data into Return data type.

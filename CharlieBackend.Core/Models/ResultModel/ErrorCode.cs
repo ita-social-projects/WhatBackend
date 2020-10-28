@@ -7,7 +7,7 @@ namespace CharlieBackend.Core.Models.ResultModel
 {
     public enum ErrorCode
     {
-        None = 0,
+        None,
         ValidationError,
         Unauthorized,
         InternalServerError

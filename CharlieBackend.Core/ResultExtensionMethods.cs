@@ -5,7 +5,6 @@ namespace CharlieBackend.Core
 {
     public static class ResultExtensionMethods
     {
-
         /// <summary>
         /// Used to return data or error ActionResult (status code) format in controller
         /// </summary>
