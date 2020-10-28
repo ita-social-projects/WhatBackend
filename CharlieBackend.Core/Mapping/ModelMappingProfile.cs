@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Core.Mapping
@@ -21,6 +22,16 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<UpdateCourseDto, CourseDto>();
             CreateMap<CourseDto, UpdateCourseDto>();
+
+            #endregion
+
+            #region Courses mapping
+
+            CreateMap<ThemeDto, Theme>();
+            CreateMap<Theme, ThemeDto>();
+
+            CreateMap<CreateThemeDto, Theme>();
+            CreateMap<Theme, CreateThemeDto>();
 
             #endregion
 

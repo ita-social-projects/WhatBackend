@@ -2,7 +2,6 @@
 using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Theme;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
@@ -71,24 +70,6 @@ namespace CharlieBackend.Core
         }
     
  
-        public static Theme ToTheme(this ThemeModel themeModel)
-        {
-            return new Theme
-            {
-                Id = themeModel.Id,
-                Name = themeModel.Name
-            };
-        }
-
-        public static ThemeModel ToThemeModel(this Theme themeModel)
-        {
-            return new ThemeModel
-            {
-                Id = themeModel.Id,
-                Name = themeModel.Name
-            };
-        }
-
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
