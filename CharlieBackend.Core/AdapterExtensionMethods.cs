@@ -70,35 +70,7 @@ namespace CharlieBackend.Core
             };
         }
     
-        //public static Course ToCourse(this CourseModel courseModel)
-        //{
-        //    return new Course
-        //    {
-        //        Id = courseModel.Id,
-        //        Name = courseModel.Name
-        //    };
-        //}
-
-        //public static CourseModel ToCourseModel(this Course course)
-        //{
-        //    return new CourseModel
-        //    {
-        //        Id = course.Id,
-        //        Name = course.Name,
-        //    };
-        //}
-
-        //public static StudentGroup ToStudentGroup(this StudentGroupModel studentGroupModel)
-        //{
-        //    return new StudentGroup
-        //    {
-        //        Name = studentGroupModel.name,
-        //        CourseId = studentGroupModel.course_id,
-        //        StartDate = DateTime.Parse(studentGroupModel.start_date),
-        //        FinishDate = DateTime.Parse(studentGroupModel.finish_date),
-        //    };
-        //}
-
+ 
         public static Theme ToTheme(this ThemeModel themeModel)
         {
             return new Theme

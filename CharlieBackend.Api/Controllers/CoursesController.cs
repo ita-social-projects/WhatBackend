@@ -54,7 +54,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutCourse(long id, UpdateCourseDto courseDto)
+        public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)
         {
             //if (id != courseModel.Id) return BadRequest();
             if (!ModelState.IsValid)

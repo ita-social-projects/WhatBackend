@@ -19,15 +19,15 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<CreateCourseDto> CreateCourseAsync(CreateCourseDto courseModel)
+        public async Task<CourseDto> CreateCourseAsync(CreateCourseDto courseModel)
         {
             try
             {
-                _unitOfWork.CourseRepository.Add(_mapper.Map<Course>(courseModel));
+                _unitOfWork.CourseRepository.Add(_mapper.Map<Course>(courseModel)); // add should return added Entitty?
 
                 await _unitOfWork.CommitAsync();
 
-                return courseModel;
+                return _mapper.Map<CourseDto>(courseModel);
             }
             catch 
             {
@@ -45,7 +45,7 @@ namespace CharlieBackend.Business.Services
             return courses;
         }
 
-        public async Task<UpdateCourseDto> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
+        public async Task<CourseDto> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<UpdateCourseDto>(updatedEntity);
+                return _mapper.Map<CourseDto>(updatedEntity);
             }
             catch
             {
