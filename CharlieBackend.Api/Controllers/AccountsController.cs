@@ -24,9 +24,9 @@ namespace CharlieBackend.Api.Controllers
         private readonly AuthOptions _authOptions;
         #endregion
 
-        public AccountsController(IAccountService accountService, 
-                IStudentService studentService, 
-                IMentorService mentorService, 
+        public AccountsController(IAccountService accountService,
+                IStudentService studentService,
+                IMentorService mentorService,
                 IOptions<AuthOptions> authOptions)
         {
             _accountService = accountService;
@@ -39,14 +39,14 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> SignIn(AuthenticationModel authenticationModel)
         {
             if (!ModelState.IsValid)
-            { 
+            {
                 return BadRequest();
             }
 
             var foundAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
 
             if (foundAccount == null)
-            { 
+            {
                 return Unauthorized("Incorrect credentials, please try again.");
             }
 
@@ -86,15 +86,15 @@ namespace CharlieBackend.Api.Controllers
                     issuer: _authOptions.ISSUER,
                     audience: _authOptions.AUDIENCE,
                     notBefore: now,
-                    claims: new List<Claim> 
+                    claims: new List<Claim>
                     {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType, 
+                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     foundAccount.Role.ToString()),
                             new Claim("Id", studentOrMentorId.ToString()),
                             new Claim("Email", foundAccount.Email)
                     },
                     expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                    signingCredentials: 
+                    signingCredentials:
                             new SigningCredentials(
                                     _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
                     );
@@ -110,7 +110,7 @@ namespace CharlieBackend.Api.Controllers
             };
 
             Response.Headers.Add("Authorization", "Bearer " + encodedJwt);
-            Response.Headers.Add("Access-Control-Expose-Headers", 
+            Response.Headers.Add("Access-Control-Expose-Headers",
                     "x-token, Authorization"
                     );
 
