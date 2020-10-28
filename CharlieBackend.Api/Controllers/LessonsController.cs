@@ -67,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "1, 2")]
+        [Authorize(Roles = "1, 2, 4")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
         {
@@ -77,7 +77,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonModel lessonModel)
         {
@@ -92,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (updatedLesson != null)
             {
-                return NoContent();
+                return Ok(updatedLesson);
             }
 
             return StatusCode(409, "Cannot update.");
