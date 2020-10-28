@@ -3,8 +3,6 @@ using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Theme;
-using CharlieBackend.Core.Models.Visit;
-using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
@@ -72,23 +70,23 @@ namespace CharlieBackend.Core
             };
         }
     
-        public static Course ToCourse(this CourseModel courseModel)
-        {
-            return new Course
-            {
-                Id = courseModel.Id,
-                Name = courseModel.Name
-            };
-        }
+        //public static Course ToCourse(this CourseModel courseModel)
+        //{
+        //    return new Course
+        //    {
+        //        Id = courseModel.Id,
+        //        Name = courseModel.Name
+        //    };
+        //}
 
-        public static CourseModel ToCourseModel(this Course course)
-        {
-            return new CourseModel
-            {
-                Id = course.Id,
-                Name = course.Name,
-            };
-        }
+        //public static CourseModel ToCourseModel(this Course course)
+        //{
+        //    return new CourseModel
+        //    {
+        //        Id = course.Id,
+        //        Name = course.Name,
+        //    };
+        //}
 
         //public static StudentGroup ToStudentGroup(this StudentGroupModel studentGroupModel)
         //{

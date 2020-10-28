@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.Models.Course;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
-using AutoMapper;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -15,17 +13,15 @@ namespace CharlieBackend.Api.Controllers
     {
       
         private readonly ICourseService _coursesService;
-        private readonly IMapper _mapper;
 
-        public CoursesController(ICourseService coursesService, IMapper mapper)
+        public CoursesController(ICourseService coursesService)
         {
             _coursesService = coursesService;
-            _mapper = mapper;
         }
 
         [Authorize(Roles = "4")]
         [HttpPost]
-        public async Task<ActionResult> PostCourse(CreateCourseDto courseDto)
+        public async Task<ActionResult<CreateCourseDto>> PostCourse(CreateCourseDto courseDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -36,14 +32,14 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(409, "Course already exists!");
             }
 
-            var createdCourse = await _coursesService.CreateCourseAsync(_mapper.Map<CreateCourseModel>(courseDto));
+            var createdCourse = await _coursesService.CreateCourseAsync(courseDto);
 
             if (createdCourse == null)
             {
                 return StatusCode(500);
             }
 
-            return Ok();
+            return Ok(createdCourse);
         }
 
         [Authorize(Roles = "2, 4")]
@@ -53,14 +49,7 @@ namespace CharlieBackend.Api.Controllers
 
             var courses =  await _coursesService.GetAllCoursesAsync();
 
-            var dtoResult = new List<CourseDto>();
-
-            foreach (var item in courses)
-            {
-                dtoResult.Add(_mapper.Map<CourseDto>(item));
-            }
-
-            return Ok(dtoResult);
+            return Ok(courses);
         }
 
         [Authorize(Roles = "4")]
@@ -73,7 +62,7 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            var updatedCourse = await _coursesService.UpdateCourseAsync(id, _mapper.Map<UpdateCourseModel>(courseDto));
+            var updatedCourse = await _coursesService.UpdateCourseAsync(id, courseDto);
 
             if (updatedCourse != null)
             {

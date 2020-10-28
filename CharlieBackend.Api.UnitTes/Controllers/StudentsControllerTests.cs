@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Moq;
 using CharlieBackend.Business.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Student;
 
 namespace CharlieBackend.Api.Controllers.Tests
 {
-    
+
     public class StudentsControllerTests
     {
         [Fact]
