@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.Student
 {
     public class UpdateStudentModel : StudentModel
     {
+        [Required]
         [JsonIgnore]
         public override long Id { get; set; }
 
@@ -21,9 +23,11 @@ namespace CharlieBackend.Core.Models.Student
         }
 
         [JsonPropertyName("first_name")]
+        [StringLength(30)]
         public override string FirstName { get; set; }
 
         [JsonPropertyName("last_name")]
+        [StringLength(30)]
         public override string LastName { get; set; }
 
         [JsonPropertyName("student_group_ids")]

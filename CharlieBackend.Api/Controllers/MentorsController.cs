@@ -68,7 +68,6 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-
             var isEmailChangableTo = await _accountService
                     .IsEmailChangableToAsync(mentorModel.Email);
 
@@ -78,15 +77,14 @@ namespace CharlieBackend.Api.Controllers
             }
 
             mentorModel.Id = id;
-            var updatedCourse = await _mentorService.UpdateMentorAsync(mentorModel);
+            var updatedMentor = await _mentorService.UpdateMentorAsync(mentorModel);
 
-            if (updatedCourse != null)
+            if (updatedMentor != null)
             {
-                return NoContent();
+                return Ok(updatedMentor);
             }
 
             return StatusCode(409, "Cannot update.");
-
         }
 
         [Authorize(Roles = "4")]

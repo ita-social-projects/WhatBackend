@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
     public class CreateStudentGroupModel : StudentGroupModel
     {
+        [Required]
         [JsonIgnore]
         public override long Id { get; set; }
 
@@ -21,14 +23,14 @@ namespace CharlieBackend.Core.Models.StudentGroup
         public new long CourseId { get; set; }
 
         [Required]
-        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
+        [DataType(DataType.Date)]
         [JsonPropertyName("start_date")]
-        public override string StartDate { get; set; }
+        public override DateTime StartDate { get; set; }
 
         [Required]
-        [RegularExpression(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$")]
+        [DataType(DataType.Date)]
         [JsonPropertyName("finish_date")]
-        public override string FinishDate { get; set; }
+        public override DateTime FinishDate { get; set; }
 
         [Required]
         [JsonPropertyName("student_ids")]
@@ -36,6 +38,6 @@ namespace CharlieBackend.Core.Models.StudentGroup
 
         [Required]
         [JsonPropertyName("mentor_ids")]
-        public List<long> MentorIds { get; set; }
+        public new List<long> MentorIds { get; set; }
     }
 }

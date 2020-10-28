@@ -70,7 +70,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (updatedCourse != null)
             {
-                return NoContent();
+                return Ok(updatedCourse);
             }
 
             return StatusCode(409, "Course already exists!");

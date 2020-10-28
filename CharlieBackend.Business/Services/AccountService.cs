@@ -111,9 +111,6 @@ namespace CharlieBackend.Business.Services
         #region hash
         public string GenerateSalt()
         {
-            //create a random object that generates random numbers
-            Random rand = new Random();
-
             //StringBuilder object with a predefined buffer size for the resulting string
             StringBuilder sb = new StringBuilder(_saltLen - 1);
 
@@ -122,13 +119,32 @@ namespace CharlieBackend.Business.Services
 
             for (int i = 0; i < _saltLen; i++)
             {
-                Position = rand.Next(0, _saltAlphabet.Length - 1);
+                Position = this.Next(0, _saltAlphabet.Length - 1);
 
                 //add the selected character to the object StringBuilder
                 sb.Append(_saltAlphabet[Position]);
             }
 
             return sb.ToString();
+        }
+        public Int32 Next(Int32 minValue, Int32 maxValue)
+        {
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] uint32Buffer = new byte[4];
+                Int64 diff = maxValue - minValue;
+                while (true)
+                {
+                    rng.GetBytes(uint32Buffer);
+                    UInt32 rand = BitConverter.ToUInt32(uint32Buffer, 0);
+                    Int64 max = (1 + (Int64)UInt32.MaxValue);
+                    Int64 remainder = max % diff;
+                    if (rand < max - remainder)
+                    {
+                        return (Int32)(minValue + (rand % diff));
+                    }
+                }
+            }
         }
         public string HashPassword(string password, string salt)
         {
