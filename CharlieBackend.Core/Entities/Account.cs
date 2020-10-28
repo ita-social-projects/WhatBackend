@@ -20,6 +20,7 @@ namespace CharlieBackend.Core.Entities
         public bool? IsActive { get; set; }
         public virtual ICollection<Mentor> Mentors { get; set; }
         public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<Secretary> Secretaries { get; set; }
 
     }
 }
