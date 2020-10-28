@@ -2,24 +2,29 @@
 
 namespace CharlieBackend.Core.Models.ResultModel
 {
+
     /// <summary>
-    /// Class is used to transfer data or errors information. Methods has to return Result<T> data type
+    /// Used to transfer data or errors information thrue app layers. Methods has to return Result T data type
     /// </summary>
-    /// <typeparam name="T">type of data transferred thrue Result class</typeparam>
+    /// <typeparam name="T">Generic type of data type transferred</typeparam>
     public class Result<T>
     {
-        public T TransferredData { get; set; }
+        public T Data { get; set; }
 
         public ErrorData ErrorData { get; set; }
 
+
         /// <summary>
-        /// In case if followed code assume returning data without errors, use Success method. It will convert data into Return<T> data type.
+        /// If followed code assume returning data without errors, use Success method. 
+        /// It will pack your data into Return data type.
         /// </summary>
-        /// <param name="transferredData">any data type to return in calling method, which will be converted into Return type</param>
+        /// <param name="transferredData">Any data type to return in calling method, 
+        /// which will be converted into Return type</param>
         /// <returns></returns>
+        ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
         public static Result<T> Success(T transferredData)
         {
-            ///<exception cref="System.ArgumentNullException">Exception thrown if transferred data is empty/null</exception>
+            
             if (object.Equals(transferredData, default(T)))
             {
                 throw new ArgumentNullException();
@@ -28,8 +33,7 @@ namespace CharlieBackend.Core.Models.ResultModel
             {
                 var transferredDataToReturn = new Result<T>()
                 {
-                    ErrorData = default,
-                    TransferredData = transferredData,
+                    Data = transferredData,
                 };
 
                 return transferredDataToReturn;
@@ -37,21 +41,21 @@ namespace CharlieBackend.Core.Models.ResultModel
         }
 
         /// <summary>
-        /// In case if followed code assume returning error, use Error method to return Error. It will convert data into Return<T> data type.
+        /// If followed code assume returning error, use Error method to return Error. 
+        /// It will convert data into Return T data type.
         /// </summary>
         public static Result<T> Error(ErrorCode errorCode, string errorMessage)
         {
-                var newResult = new Result<T>
+            var newResult = new Result<T> 
+            { 
+                ErrorData = new ErrorData
                 {
-                    ErrorData = new ErrorData
-                    {
-                        ErrorCode = errorCode,
-                        ErrorMessage = errorMessage
-                    },
-                    TransferredData = default
-                };
+                    ErrorCode = errorCode,
+                    ErrorMessage = errorMessage
+                },
+            };
 
-                return newResult;
+            return newResult;
         }
     }
 }
