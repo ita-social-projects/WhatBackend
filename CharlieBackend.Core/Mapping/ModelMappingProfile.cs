@@ -13,9 +13,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CreateCourseDto, Course>();
             CreateMap<Course, CreateCourseDto>();
 
-            CreateMap<CreateCourseDto, Course>();
-            CreateMap<Course, CreateCourseDto>();
-
             CreateMap<CourseDto, Course>();
             CreateMap<Course, CourseDto>();
 

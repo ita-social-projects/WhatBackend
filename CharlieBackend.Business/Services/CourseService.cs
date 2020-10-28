@@ -23,11 +23,13 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                _unitOfWork.CourseRepository.Add(_mapper.Map<Course>(courseModel)); // add should return added Entitty?
+                var createdCourseEntity = _mapper.Map<Course>(courseModel);
+
+                _unitOfWork.CourseRepository.Add(createdCourseEntity);
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<CourseDto>(courseModel);
+                return _mapper.Map<CourseDto>(createdCourseEntity);
             }
             catch 
             {
