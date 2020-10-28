@@ -11,7 +11,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<IList<LessonModel>> GetAllLessonsAsync();
 
-        public Task<Lesson> AssignMentorToLessonAsync(long mentorId, long lessonId);
+        public Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonModel ids);
 
         public Task<LessonModel> UpdateLessonAsync(UpdateLessonModel lessonModel);
 

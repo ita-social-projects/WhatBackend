@@ -3,6 +3,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.AspNetCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -90,11 +91,16 @@ namespace CharlieBackend.Business.Services
         }
 
 
-        public async Task<Lesson> AssignMentorToLessonAsync(long mentorId, long lessonId)
+        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonModel ids)
         {
-            var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonId);
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            if (mentorToAssign == null)
+            {
+                throw new NullReferenceException();
+            }
+            var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(ids.LessonId);
 
-            foundLesson.MentorId = mentorId;
+            foundLesson.MentorId = ids.MentorId;
             await _unitOfWork.CommitAsync();
 
             return foundLesson;

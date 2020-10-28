@@ -44,22 +44,12 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [Route("assign")]
         [HttpPost]
-        public async Task<ActionResult> AssignMentorToLesson(long mentorId, long lessonId)
+        public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonModel ids)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            if (HttpContext.Items["mentorId"] == null)
-            {
-                return BadRequest("Need to sign in.");
-            }
-
-            var changedLesson = await _lessonService.AssignMentorToLessonAsync(mentorId, lessonId);
+            var changedLesson = await _lessonService.AssignMentorToLessonAsync(ids);
 
             if (changedLesson == null)
             {
