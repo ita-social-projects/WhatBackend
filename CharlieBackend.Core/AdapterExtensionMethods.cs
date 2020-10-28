@@ -3,8 +3,6 @@ using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Theme;
-using CharlieBackend.Core.Models.Visit;
-using CharlieBackend.Core.Models.Course;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
@@ -71,48 +69,8 @@ namespace CharlieBackend.Core
                 ThemeName = lesson.Theme?.Name,
             };
         }
-
-        public static VisitModel ToVisitModel(this Visit visit)
-        {
-            return new VisitModel
-            {
-                StudentId = (long)visit.StudentId,
-                Comment = visit.Comment,
-                StudentMark = visit.StudentMark,
-                Presence = visit.Presence
-
-            };
-        }
-
-        public static Course ToCourse(this CourseModel courseModel)
-        {
-            return new Course
-            {
-                Id = courseModel.Id,
-                Name = courseModel.Name
-            };
-        }
-
-        public static CourseModel ToCourseModel(this Course course)
-        {
-            return new CourseModel
-            {
-                Id = course.Id,
-                Name = course.Name,
-            };
-        }
-
-        //public static StudentGroup ToStudentGroup(this StudentGroupModel studentGroupModel)
-        //{
-        //    return new StudentGroup
-        //    {
-        //        Name = studentGroupModel.name,
-        //        CourseId = studentGroupModel.course_id,
-        //        StartDate = DateTime.Parse(studentGroupModel.start_date),
-        //        FinishDate = DateTime.Parse(studentGroupModel.finish_date),
-        //    };
-        //}
-
+    
+ 
         public static Theme ToTheme(this ThemeModel themeModel)
         {
             return new Theme

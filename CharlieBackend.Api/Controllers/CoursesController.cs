@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.Models.Course;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
-
+using CharlieBackend.Core.DTO.Course;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -12,9 +11,8 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-        #region
+      
         private readonly ICourseService _coursesService;
-        #endregion
 
         public CoursesController(ICourseService coursesService)
         {
@@ -23,40 +21,40 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "4")]
         [HttpPost]
-        public async Task<ActionResult> PostCourse(CreateCourseModel courseModel)
+        public async Task<ActionResult<CreateCourseDto>> PostCourse(CreateCourseDto courseDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            var isCourseNameTaken = await _coursesService.IsCourseNameTakenAsync(courseModel.Name);
+            var isCourseNameTaken = await _coursesService.IsCourseNameTakenAsync(courseDto.Name);
 
             if (isCourseNameTaken)
             {
                 return StatusCode(409, "Course already exists!");
             }
 
-            var createdCourse = await _coursesService.CreateCourseAsync(courseModel);
+            var createdCourse = await _coursesService.CreateCourseAsync(courseDto);
 
             if (createdCourse == null)
             {
                 return StatusCode(500);
             }
 
-            return Ok();
+            return Ok(createdCourse);
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
-        public async Task<ActionResult<List<CourseModel>>> GetAllCourses()
+        public async Task<ActionResult<IList<CourseDto>>> GetAllCourses()
         {
 
-            var courses = await _coursesService.GetAllCoursesAsync();
+            var courses =  await _coursesService.GetAllCoursesAsync();
 
             return Ok(courses);
         }
 
         [Authorize(Roles = "4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutCourse(long id, UpdateCourseModel courseModel)
+        public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)
         {
             //if (id != courseModel.Id) return BadRequest();
             if (!ModelState.IsValid)
@@ -64,9 +62,7 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            courseModel.Id = id;
-
-            var updatedCourse = await _coursesService.UpdateCourseAsync(courseModel);
+            var updatedCourse = await _coursesService.UpdateCourseAsync(id, courseDto);
 
             if (updatedCourse != null)
             {

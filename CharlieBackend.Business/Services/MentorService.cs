@@ -42,9 +42,9 @@ namespace CharlieBackend.Business.Services
                     account.Salt = _accountService.GenerateSalt();
                     account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
-                    var mentor = new Mentor 
+                    var mentor = new Mentor
                     {
-                        Account = account 
+                        Account = account
                     };
 
                     _unitOfWork.MentorRepository.Add(mentor);
@@ -74,7 +74,7 @@ namespace CharlieBackend.Business.Services
 
                         return mentor.ToMentorModel();
                     }
-                    else 
+                    else
                     {
                         //TODO implementation for resending email or sent a status msg
                         transaction.Commit();
@@ -155,10 +155,10 @@ namespace CharlieBackend.Business.Services
 
                     foreach (var newGroupId in mentorModel.StudentGroupIds)
                     {
-                        newMentorGroups.Add(new MentorOfStudentGroup 
-                        { 
-                            StudentGroupId = newGroupId, 
-                            MentorId = foundMentor.Id 
+                        newMentorGroups.Add(new MentorOfStudentGroup
+                        {
+                            StudentGroupId = newGroupId,
+                            MentorId = foundMentor.Id
                         });
                     }
 
@@ -170,7 +170,7 @@ namespace CharlieBackend.Business.Services
                 return foundMentor.ToMentorModel();
 
             }
-            catch 
+            catch
             {
                 _unitOfWork.Rollback();
 

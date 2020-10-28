@@ -31,7 +31,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpPost]
-        public async Task<ActionResult<IList<ThemeModel>>> PostThemes([FromBody] ThemeModel addThemeModel)
+        public async Task<ActionResult<IList<ThemeModel>>> PostThemes( ThemeModel addThemeModel)
         {
 
             await _themeService.CreateThemeAsync(addThemeModel);

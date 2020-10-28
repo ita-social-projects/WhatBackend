@@ -110,7 +110,7 @@ namespace CharlieBackend.Business.Services
                     }
                     else
                     {
-                        var theme = new Theme 
+                        var theme = new Theme
                         {
                             Name = lessonModel.ThemeName
                         };

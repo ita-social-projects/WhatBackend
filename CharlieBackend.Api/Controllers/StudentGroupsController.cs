@@ -35,7 +35,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpPost]
-        public async Task<ActionResult> PostStudentGroupController(CreateStudentGroupModel studentGroup)
+        public async Task<ActionResult> PostStudentGroup(CreateStudentGroupModel studentGroup)
         {
             if (!ModelState.IsValid)
             {
