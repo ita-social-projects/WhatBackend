@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.StudentGroup;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,8 +15,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public bool DeleteStudentGrop(long StudentGroupId);
 
-        public Task<StudentGroup> UpdateStudentGroupAsync(UpdateStudentGroupModel studentGroupModel);
+        public Task<StudentGroupDto> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel);
 
-        public Task<StudentGroupById> GetStudentGroupByIdAsync(long id);
+        public Task<StudentGroupDto> GetStudentGroupByIdAsync(long id);
     }
 }
