@@ -19,7 +19,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<Mentor> GetMentorByAccountIdAsync(long accountId);
 
         Task<Mentor> GetMentorByIdAsync(long mentorId);
-        Task<List<Mentor>> GetMentorsByIdsAsync(List<long> mentorIds);
+
+        Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds);
 
     }
 }
