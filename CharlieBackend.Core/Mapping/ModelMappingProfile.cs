@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Theme;
+
 using CharlieBackend.Core.Entities;
 using System.Linq;
 
@@ -26,14 +28,25 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-            #region StudentGroups mapping
 
+            #region StudentGroups mapping
 
             CreateMap<StudentGroup, StudentGroupDto>()
                   .ForMember(source => source.MentorIds, conf => conf.MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.MentorId).ToList()))
                    .ForMember(source => source.StudentIds, conf => conf.MapFrom(x => x.StudentsOfStudentGroups.Select(y => y.StudentId).ToList()));
 
             CreateMap<UpdateStudentGroupDto, StudentGroup>();
+            
+            #endregion
+            
+
+            #region Theme mapping
+
+            CreateMap<ThemeDto, Theme>();
+            CreateMap<Theme, ThemeDto>();
+
+            CreateMap<CreateThemeDto, Theme>();
+            CreateMap<Theme, CreateThemeDto>();
 
             #endregion
 

@@ -3,6 +3,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.AspNetCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel, long mentorId)
+        public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel)
         {
             try
             {
@@ -38,7 +39,7 @@ namespace CharlieBackend.Business.Services
 
                 var lesson = new Lesson
                 {
-                    MentorId = mentorId,
+                    MentorId = lessonModel.MentorId,
                     StudentGroupId = lessonModel.StudentGroupId,
                     LessonDate = lessonModel.LessonDate,
                     Theme = theme
@@ -88,6 +89,24 @@ namespace CharlieBackend.Business.Services
 
             return lessonsModels;
         }
+
+
+        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonModel ids)
+        {
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            if (mentorToAssign == null)
+            {
+                throw new NullReferenceException();
+            }
+            var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(ids.LessonId);
+
+            foundLesson.MentorId = ids.MentorId;
+            await _unitOfWork.CommitAsync();
+
+            return foundLesson;
+        }
+
+
 
         public async Task<LessonModel> UpdateLessonAsync(UpdateLessonModel lessonModel)
         {
@@ -162,5 +181,6 @@ namespace CharlieBackend.Business.Services
 
             return studentLessonModels ?? null;
         }
+
     }
 }

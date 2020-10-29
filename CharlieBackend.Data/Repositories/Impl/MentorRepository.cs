@@ -59,5 +59,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(mentor
                             => mentor.AccountId == mentorId);
         }
+        public Task<Mentor> GetMentorByIdAsync(long mentorId)
+        {
+            return _applicationContext.Mentors
+                    .FirstOrDefaultAsync(mentor
+                            => mentor.Id == mentorId);
+        }
     }
 }
