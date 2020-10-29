@@ -17,5 +17,6 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
         
         public virtual ICollection<Visit> Visits { get; set; }
+        public virtual ICollection<Schedule> Schedule { get; set; }
     }
 }

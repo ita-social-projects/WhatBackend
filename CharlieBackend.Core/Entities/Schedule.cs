@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CharlieBackend.Core.Entities
 {
-    class Schedule : BaseEntity
+    public partial class Schedule : BaseEntity
     {
         public DateTime LessonStart { get; set; }
         public DateTime LessonEnd { get; set; }
