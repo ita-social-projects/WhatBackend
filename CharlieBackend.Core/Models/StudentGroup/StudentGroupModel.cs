@@ -5,7 +5,7 @@ using System;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
-    public class StudentGroupModel
+    public class StudenGroupDto
     {
         [Required]
         public virtual long Id { get; set; }
@@ -29,11 +29,11 @@ namespace CharlieBackend.Core.Models.StudentGroup
         [Required]
         [JsonIgnore]
         [JsonPropertyName("student_ids")]
-        public virtual List<long> StudentIds { get; set; }
+        public virtual IList<long> StudentIds { get; set; }
 
         [Required]
         [JsonIgnore]
         [JsonPropertyName("mentor_ids")]
-        public virtual List<long> MentorIds { get; set; }
+        public virtual IList<long> MentorIds { get; set; }
     }
 }

@@ -1,41 +1,45 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.StudentGroup;
+using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using CharlieBackend.Core.Models.StudentGroup;
 
 namespace CharlieBackend.Business.Services
 {
     public class StudentGroupService : IStudentGroupService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public StudentGroupService(IUnitOfWork unitOfWork)
+        public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<StudentGroupModel> CreateStudentGroupAsync(CreateStudentGroupModel studentGroupModel)
+        public async Task<StudentGroupDto> CreateStudentGroupAsync(CreateStudentGroupDto studentGroupDto)
         {
             try
             {
                 var studentGroup = new StudentGroup
                 {
-                    Name = studentGroupModel.Name,
-                    CourseId = studentGroupModel.CourseId,
-                    StartDate = studentGroupModel.StartDate,
-                    FinishDate = studentGroupModel.FinishDate,
+                    Name = studentGroupDto.Name,
+                    CourseId = studentGroupDto.CourseId,
+                    StartDate = studentGroupDto.StartDate,
+                    FinishDate = studentGroupDto.FinishDate,
                 };
 
                 _unitOfWork.StudentGroupRepository.Add(studentGroup);
 
-                if (studentGroupModel?.StudentIds.Count != 0)
+                if (studentGroupDto?.StudentIds.Count != 0)
                 {
-                    var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupModel.StudentIds);
+                    var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupDto.StudentIds);
                     studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
 
                     for (int i = 0; i < students.Count; i++)
@@ -47,9 +51,9 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
-                if (studentGroupModel?.MentorIds.Count != 0)
+                if (studentGroupDto?.MentorIds.Count != 0)
                 {
-                    var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupModel.MentorIds);
+                    var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupDto.MentorIds);
                     studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
 
                     for (int i = 0; i < mentors.Count; i++)
@@ -63,7 +67,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return studentGroupModel;
+                return _mapper.Map<StudentGroupDto>(studentGroup);
 
             }
             catch
@@ -79,18 +83,11 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.IsGroupNameChangableAsync(name);
         }
 
-        public async Task<IList<StudentGroupModel>> GetAllStudentGroupsAsync()
+        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
 
-            var studentGroupModels = new List<StudentGroupModel>();
-
-            foreach (var Group in studentGroup)
-            {
-                studentGroupModels.Add(Group.ToStudentGroupModel());
-            }
-
-            return studentGroupModels;
+            return _mapper.Map<IList<StudentGroupDto>>(studentGroup);
         }
 
         public bool DeleteStudentGrop(long StudentGroupId)
@@ -98,7 +95,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
         }
 
-        public async Task<StudentGroupModel> UpdateStudentGroupAsync(UpdateStudentGroupModel studentGroupModel)
+        public async Task<StudentGroup> UpdateStudentGroupAsync(UpdateStudentGroupModel studentGroupModel)
         {
             try
             {
@@ -151,7 +148,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return studentGroupModel;
+                return null; //------------------
             }
             catch
             {

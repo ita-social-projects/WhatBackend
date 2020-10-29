@@ -5,7 +5,7 @@ using System;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
-    public class CreateStudentGroupModel : StudentGroupModel
+    public class CreateStudentGroupModel : StudenGroupDto
     {
         [Required]
         [JsonIgnore]

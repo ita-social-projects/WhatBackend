@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.StudentGroup
 {
-    public class UpdateStudentGroupModel : StudentGroupModel
+    public class UpdateStudentGroupModel : StudenGroupDto
     {
         [Required]
         [JsonIgnore]

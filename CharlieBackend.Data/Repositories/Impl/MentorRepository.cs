@@ -23,7 +23,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public Task<List<Mentor>> GetMentorsByIdsAsync(List<long> mentorIds)
+        public Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds)
         {
             return _applicationContext.Mentors
                     .Where(mentor => mentorIds.Contains(mentor.Id))

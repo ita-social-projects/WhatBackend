@@ -134,12 +134,12 @@ namespace CharlieBackend.Core
             };
         }
 
-        public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
+        public static StudenGroupDto ToStudentGroupModel(this StudentGroup group)
         {
             var startDate = (DateTime)group.StartDate;
             var finishDate = (DateTime)group.FinishDate;
 
-            return new StudentGroupModel
+            return new StudenGroupDto
             {
                 Id = group.Id,
                 Name = group.Name,
@@ -150,7 +150,7 @@ namespace CharlieBackend.Core
                 CourseId = group.CourseId
             };
         }
-        public static StudentGroup ToStudentGroup(this StudentGroupModel group)
+        public static StudentGroup ToStudentGroup(this StudenGroupDto group)
         {
             return new StudentGroup
             {
