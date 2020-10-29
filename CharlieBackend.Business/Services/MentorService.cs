@@ -184,6 +184,12 @@ namespace CharlieBackend.Business.Services
 
             return mentor?.ToMentorModel();
         }
+        public async Task<MentorModel> GetMentorByIdAsync(long mentorId)
+        {
+            var mentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(mentorId);
+
+            return mentor?.ToMentorModel();
+        }
 
         public async Task<long?> GetAccountId(long mentorId)
         {

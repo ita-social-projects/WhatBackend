@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Controllers
             _lessonService = lessonService;
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "2")]
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
         {
@@ -33,8 +33,7 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest("Need to sign in as a mentor.");
             }
 
-//            long.TryParse
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonModel, Convert.ToInt64(HttpContext.Items["mentorId"].ToString()));
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonModel);
 
             if (createdLesson == null)
             {
@@ -44,7 +43,22 @@ namespace CharlieBackend.Api.Controllers
             return Ok();
         }
 
+
         [Authorize(Roles = "2, 4")]
+        [Route("assign")]
+        [HttpPost]
+        public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonModel ids)
+        {
+            var changedLesson = await _lessonService.AssignMentorToLessonAsync(ids);
+
+            if (changedLesson == null)
+            {
+                return StatusCode(422, "Lesson doesn't exist");
+            }
+            return Ok(changedLesson);
+        }
+
+        [Authorize(Roles = "2")]
         [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {
