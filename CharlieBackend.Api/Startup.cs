@@ -131,6 +131,8 @@ namespace CharlieBackend.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseMiddleware<ExceptionHandleMiddleware>();
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>
