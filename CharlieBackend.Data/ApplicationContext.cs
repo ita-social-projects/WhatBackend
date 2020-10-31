@@ -32,6 +32,7 @@ namespace CharlieBackend.Data
         public virtual DbSet<Theme> Themes { get; set; }
 
         public virtual DbSet<Visit> Visits { get; set; }
+        public virtual DbSet<Schedule> Schedules { get; set; }
 
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
@@ -375,6 +376,21 @@ namespace CharlieBackend.Data
                     .WithMany(p => p.Visits)
                     .HasForeignKey(d => d.StudentId)
                     .HasConstraintName("FK_student_of_visit");
+            });
+
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.HasIndex(e => e.StudentGroupId)
+                    .HasName("FK_student_group_of_schedule");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+
+                entity.HasOne(d => d.StudentGroup)
+                    .WithMany(p => p.Schedule)
+                    .HasForeignKey(d => d.StudentGroupId)
+                    .HasConstraintName("FK_student_group_of_schedule");
             });
 
             OnModelCreatingPartial(modelBuilder);
