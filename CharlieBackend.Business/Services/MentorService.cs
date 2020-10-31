@@ -1,28 +1,32 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Mentor;
+using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Mentor;
+using AutoMapper;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
-{/*
+{
     public class MentorService : IMentorService
     {
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialsSender;
+        private readonly IMapper _mapper;
 
-        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
+        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender,
+                             IMapper mapper)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialsSender = credentialsSender;
+            _mapper = mapper;
         }
 
-        public async Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel)
+        /*public async Task<MentorDto> CreateMentorAsync(CreateMentorDto mentorModel)
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -92,25 +96,16 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-        }
+        }*/
 
-        public async Task<IList<MentorModel>> GetAllMentorsAsync()
+        public async Task<IList<MentorDto>> GetAllMentorsAsync()
         {
-            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
+            var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
 
-            var mentorModels = new List<MentorModel>();
-
-            foreach (var mentor in mentors)
-            {
-                var mentorModel = mentor.ToMentorModel();
-
-                mentorModels.Add(mentorModel);
-            }
-
-            return mentorModels;
+            return mentors;
         }
 
-        public async Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel)
+        /*public async Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel)
         {
             try
             {
@@ -176,19 +171,19 @@ namespace CharlieBackend.Business.Services
 
                 return null;
             }
-        }
+        }*/
 
-        public async Task<MentorModel> GetMentorByAccountIdAsync(long accountId)
+        public async Task<MentorDto> GetMentorByAccountIdAsync(long accountId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
 
-            return mentor?.ToMentorModel();
+            return _mapper.Map<MentorDto>(mentor);
         }
-        public async Task<MentorModel> GetMentorByIdAsync(long mentorId)
+        public async Task<MentorDto> GetMentorByIdAsync(long mentorId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(mentorId);
 
-            return mentor?.ToMentorModel();
+            return _mapper.Map<MentorDto>(mentor);
         }
 
         public async Task<long?> GetAccountId(long mentorId)
@@ -197,5 +192,5 @@ namespace CharlieBackend.Business.Services
 
             return mentor?.AccountId;
         }
-    }*/
+    }
 }

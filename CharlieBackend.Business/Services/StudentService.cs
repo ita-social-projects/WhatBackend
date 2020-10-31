@@ -1,28 +1,32 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
-{/*
+{
     public class StudentService : IStudentService
     {
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialSender;
+        private readonly IMapper _mapper;
 
-        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
+        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, 
+                              ICredentialsSenderService credentialsSender,
+                              IMapper mapper)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialSender = credentialsSender;
+            _mapper = mapper;
         }
 
-        public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
+        /*public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
@@ -77,23 +81,16 @@ namespace CharlieBackend.Business.Services
                     return null;
                 }
             }
-        }
+        }*/
 
-        public async Task<IList<StudentModel>> GetAllStudentsAsync()
+        public async Task<IList<StudentDto>> GetAllStudentsAsync()
         {
-            var students = await _unitOfWork.StudentRepository.GetAllAsync();
+            var students = _mapper.Map<List<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
 
-            var studentModels = new List<StudentModel>();
-
-            foreach (var student in students)
-            {
-                studentModels.Add(student.ToStudentModel());
-            }
-
-            return studentModels;
+            return students;
         }
 
-        public async Task<StudentModel> UpdateStudentAsync(UpdateStudentModel studentModel)
+        /*public async Task<StudentModel> UpdateStudentAsync(UpdateStudentModel studentModel)
         {
             try
             {
@@ -145,34 +142,34 @@ namespace CharlieBackend.Business.Services
 
                 return null;
             }
-        }
+        }*/
 
-        public async Task<StudentModel> GetStudentByAccountIdAsync(long accountId)
+        public async Task<StudentDto> GetStudentByAccountIdAsync(long accountId)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
 
         public async Task<long?> GetAccountId(long studentId)
         {
-            var mentor = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
-            return mentor?.AccountId;
+            return student?.AccountId;
         }
 
-        public async Task<StudentModel> GetStudentByIdAsync(long studentId)
+        public async Task<StudentDto> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<StudentModel> GetStudentByEmailAsync(string email)
+        public async Task<StudentDto> GetStudentByEmailAsync(string email)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
-    } */
+    }
 }
