@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Mentor;
+using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 
@@ -51,7 +51,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
-        public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
+        public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
 
             var mentorsModels = await _mentorService.GetAllMentorsAsync();

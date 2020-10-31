@@ -5,6 +5,8 @@ using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using System.Linq;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -37,6 +39,38 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<UpdateCourseDto, CourseDto>();
             CreateMap<CourseDto, UpdateCourseDto>();
 
+            #endregion
+
+
+            #region Mentors mapping
+
+            CreateMap<CreateMentorDto, Mentor>();
+            CreateMap<Mentor, CreateMentorDto>();
+
+            CreateMap<MentorDto, Mentor>();
+            CreateMap<Mentor, MentorDto>();
+
+            CreateMap<UpdateMentorDto, Mentor>();
+            CreateMap<Mentor, UpdateMentorDto>();
+
+            CreateMap<UpdateMentorDto, MentorDto>();
+            CreateMap<MentorDto, UpdateMentorDto>();
+
+            #endregion
+
+
+            #region Students mapping
+            CreateMap<CreateStudentDto, Student>();
+            CreateMap<Student, CreateStudentDto>();
+
+            CreateMap<StudentDto, Student>();
+            CreateMap<Student, StudentDto>();
+
+            CreateMap<UpdateStudentDto, Student>();
+            CreateMap<Student, UpdateStudentDto>();
+
+            CreateMap<UpdateStudentDto, StudentDto>();
+            CreateMap<StudentDto, UpdateStudentDto>();
             #endregion
 
 

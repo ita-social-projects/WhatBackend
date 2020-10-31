@@ -1,5 +1,5 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +82,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
+        public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
         {
 
             var studentsModels = await _studentService.GetAllStudentsAsync();
@@ -91,7 +91,7 @@ namespace CharlieBackend.Api.Controllers
 
         }
 
-        [Authorize(Roles = "2, 4")]
+        /*[Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
         {
@@ -119,7 +119,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(409, "Cannot update.");
-        }
+        }*/
 
         [Authorize(Roles = "2, 4")]
         [HttpDelete("{id}")]
@@ -142,8 +142,6 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(500, "Error occurred while trying to disable student account.");
-
-
         }
     }
 }

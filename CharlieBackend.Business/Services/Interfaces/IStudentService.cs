@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Core.Models.Student;
+﻿using CharlieBackend.Core.DTO.Student;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,18 +6,18 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IStudentService
     {
-        public Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel);
+        //public Task<StudentDto> CreateStudentAsync(CreateStudentDto studentModel);
 
-        public Task<IList<StudentModel>> GetAllStudentsAsync();
+        public Task<IList<StudentDto>> GetAllStudentsAsync();
 
         public Task<long?> GetAccountId(long studentId);
 
-        public Task<StudentModel> UpdateStudentAsync(UpdateStudentModel mentorModel);
+        //public Task<StudentDto> UpdateStudentAsync(UpdateStudentDto mentorModel);
 
-        public Task<StudentModel> GetStudentByAccountIdAsync(long accountId);
+        public Task<StudentDto> GetStudentByAccountIdAsync(long accountId);
 
-        public Task<StudentModel> GetStudentByIdAsync(long studentId);
+        public Task<StudentDto> GetStudentByIdAsync(long studentId);
 
-        public Task<StudentModel> GetStudentByEmailAsync(string email);
+        public Task<StudentDto> GetStudentByEmailAsync(string email);
     }
 }
