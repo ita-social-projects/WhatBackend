@@ -8,8 +8,6 @@ namespace CharlieBackend.Core.Entities
     {
         public DateTime LessonStart { get; set; }
         public DateTime LessonEnd { get; set; }
-        public virtual ICollection<StudentGroup> StudentGroups { get; set; }
-        public virtual ICollection<Mentor> Mentors { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
+        public virtual StudentGroup StudentGroup { get; set; }
     }
 }

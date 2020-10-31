@@ -14,6 +14,8 @@ namespace CharlieBackend.Core.Entities
 
         public long? CourseId { get; set; }
 
+        public long? ScheduleId { get; set; }
+        
         public string Name { get; set; }
 
         public DateTime? StartDate { get; set; }
