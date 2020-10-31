@@ -35,7 +35,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public new Task<List<StudentGroup>> GetAllAsync()
         {
-            return _applicationContext.StudentGroups.ToListAsync();
+            return _applicationContext.StudentGroups
+                    .Include(group => group.StudentsOfStudentGroups)
+                    .Include(group => group.MentorsOfStudentGroups).ToListAsync();
         }
 
         public async Task<bool> IsGroupNameChangableAsync(string name)
