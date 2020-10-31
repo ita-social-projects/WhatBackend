@@ -2,52 +2,16 @@
 using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.Visit;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
-using CharlieBackend.Core.Models.Account;
+
 
 namespace CharlieBackend.Core
 {
     public static class AdapterExtensionMethods
     {
-        public static Account ToAccount(this BaseAccountModel accountModel)
-        {
-            return new Account
-            {
-                Id = accountModel.Id,
-                Email = accountModel.Email,
-                Password = accountModel.Password,
-                FirstName = accountModel.FirstName,
-                LastName = accountModel.LastName,
-                Role = (sbyte)accountModel.Role,
-                IsActive = accountModel.IsActive
-            };
-        }
-
-        public static BaseAccountModel ToAccountModel(this Account account)
-        {
-            // TODO: fix ID error
-            return new BaseAccountModel
-            {
-                Id = account.Id,
-                Email = account.Email,
-                Password = account.Password,
-                FirstName = account.FirstName,
-                LastName = account.LastName,
-                Role = (sbyte)account.Role,
-                IsActive = (bool)account.IsActive
-            };
-        }
-
-        public static AccountInfoModel ToUserModel(this BaseAccountModel accountModel)
-        {
-            return new AccountInfoModel
-            {
-                FirstName = accountModel.FirstName,
-                LastName = accountModel.LastName,
-                Role = accountModel.Role
-            };
-        }
+        
 
         public static Lesson ToLesson(this LessonModel lessonModel)
         {
@@ -67,13 +31,25 @@ namespace CharlieBackend.Core
                 ThemeName = lesson.Theme?.Name,
             };
         }
-    
+
+        public static VisitModel ToVisitModel(this Visit visit)
+        {
+            return new VisitModel
+            {
+                StudentId = (long)visit.StudentId,
+                Comment = visit.Comment,
+                StudentMark = visit.StudentMark,
+                Presence = visit.Presence
+
+            };
+        }
+
  
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
             {
-                Id = mentorModel.Id
+                //Id = mentorModel.Id
             };
         }
 
@@ -81,10 +57,10 @@ namespace CharlieBackend.Core
         {
             return new MentorModel
             {
-                Id = mentor.Id,
-                FirstName = mentor.Account.FirstName,
-                LastName = mentor.Account.LastName,
-                Email = mentor.Account.Email,
+               // Id = mentor.Id,
+               // FirstName = mentor.Account.FirstName,
+               // LastName = mentor.Account.LastName,
+               // Email = mentor.Account.Email,
                 Password = mentor.Account.Password,
                 IsActive = (bool)mentor.Account.IsActive,
                 CourseIds = mentor.MentorsOfCourses
@@ -96,9 +72,9 @@ namespace CharlieBackend.Core
         {
             return new StudentModel
             {
-                Id = student.Id,
-                FirstName = student.Account.FirstName,
-                LastName = student.Account.LastName,
+               // Id = student.Id,
+               // FirstName = student.Account.FirstName,
+               // LastName = student.Account.LastName,
                 Email = student.Account.Email,
                 Password = student.Account.Password,
                 IsActive = (bool)student.Account.IsActive,
@@ -107,6 +83,13 @@ namespace CharlieBackend.Core
                     .StudentGroupId).ToList()
             };
         }
-       
+        public static Student ToStudent(this StudentModel studentModel)
+        {
+            return new Student
+            {     
+            };
+        }
+
+        
     }
 }

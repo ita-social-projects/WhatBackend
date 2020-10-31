@@ -5,7 +5,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Account : BaseEntity
     {
-        public sbyte? Role { get; set; }
+        public Roles Role { get; set; }
 
         public string FirstName { get; set; }
 

@@ -1,8 +1,8 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
+using AutoMapper;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Security.Cryptography;
@@ -17,26 +17,28 @@ namespace CharlieBackend.Business.Services
         private const int _saltLen = 15;
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public AccountService(IUnitOfWork unitOfWork)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel)
+        public async Task<AccountDto> CreateAccountAsync(AccountDto accountModel) //fix model
         {
             try
             {
                 // TODO: add role
-                var account = accountModel.ToAccount();
-                account.Salt = GenerateSalt();
-                account.Password = HashPassword(account.Password, account.Salt);
+                var createdAccountEntity = _mapper.Map<Account>(accountModel);
+                createdAccountEntity.Salt = GenerateSalt();
+                createdAccountEntity.Password = HashPassword(createdAccountEntity.Password, createdAccountEntity.Salt);
 
-                _unitOfWork.AccountRepository.Add(account);
+                _unitOfWork.AccountRepository.Add(createdAccountEntity);
 
                 await _unitOfWork.CommitAsync();
 
-                return account.ToAccountModel();
+                return _mapper.Map<AccountDto>(createdAccountEntity);
             }
             catch
             {
@@ -46,7 +48,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel)
+        public async Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
 
@@ -55,9 +57,9 @@ namespace CharlieBackend.Business.Services
 
                 authenticationModel.Password = HashPassword(authenticationModel.Password, salt);
 
-                var foundAccount = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
+                var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
-                return foundAccount?.ToAccountModel();
+                return foundAccount;
             }
 
             return null;
@@ -68,8 +70,9 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
-        public async Task<BaseAccountModel> UpdateAccountCredentialsAsync(Account account)
+        public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
         {
+            
             account.Salt = GenerateSalt();
             account.Password = HashPassword(account.Password, account.Salt);
 
@@ -77,7 +80,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return account.ToAccountModel();
+            return _mapper.Map<AccountDto>(account);
         }
 
         public Task<bool> IsEmailChangableToAsync(string newEmail)

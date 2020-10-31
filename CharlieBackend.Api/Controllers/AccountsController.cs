@@ -7,8 +7,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
 
 
 namespace CharlieBackend.Api.Controllers
@@ -25,18 +26,18 @@ namespace CharlieBackend.Api.Controllers
         #endregion
 
         public AccountsController(IAccountService accountService,
-                IStudentService studentService,
-                IMentorService mentorService,
+               // IStudentService studentService,
+               // IMentorService mentorService,
                 IOptions<AuthOptions> authOptions)
         {
             _accountService = accountService;
-            _studentService = studentService;
-            _mentorService = mentorService;
+          //  _studentService = studentService;
+         //   _mentorService = mentorService;
             _authOptions = authOptions.Value;
         }
 
         [HttpPost]
-        public async Task<ActionResult> SignIn(AuthenticationModel authenticationModel)
+        public async Task<ActionResult> SignIn(AuthenticationDto authenticationModel)
         {
             if (!ModelState.IsValid)
             {
@@ -55,9 +56,9 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            long studentOrMentorId = default;
+            long studentOrMentorId = foundAccount.Id;
 
-            if (foundAccount.Role == 1)
+            /*if (foundAccount.Role == Roles.Student)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
 
@@ -68,7 +69,7 @@ namespace CharlieBackend.Api.Controllers
 
                 studentOrMentorId = foundStudent.Id;
             }
-            else if (foundAccount.Role == 2)
+            else if (foundAccount.Role == Roles.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
 
@@ -78,7 +79,7 @@ namespace CharlieBackend.Api.Controllers
                 }
 
                 studentOrMentorId = foundMentor.Id;
-            }
+            }*/
 
             var now = DateTime.UtcNow;
 

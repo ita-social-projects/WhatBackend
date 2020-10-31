@@ -4,25 +4,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models.Student
 {
-    public class StudentModel : BaseAccountModel
+    public class StudentModel
     {
         
         [Required]
         [JsonIgnore]
         [EmailAddress]
         [StringLength(50)]
-        public override string Email { get; set; }
+        public string Email { get; set; }
 
         [JsonIgnore]
         [StringLength(65)]
-        public override string Password { get; set; }
+        public string Password { get; set; }
 
         [JsonIgnore]
-        public override int Role { get; set; }
+        public int Role { get; set; }
 
         [Required]
         [JsonIgnore]
-        public override bool IsActive { get; set; }
+        public bool IsActive { get; set; }
 
         [JsonIgnore]
         [JsonPropertyName("student_group_ids")]

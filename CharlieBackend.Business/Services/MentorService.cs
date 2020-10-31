@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
-{
+{/*
     public class MentorService : IMentorService
     {
         private readonly IAccountService _accountService;
@@ -197,5 +197,5 @@ namespace CharlieBackend.Business.Services
 
             return mentor?.AccountId;
         }
-    }
+    }*/
 }

@@ -2,7 +2,7 @@
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
-
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using System.Linq;
 
@@ -12,6 +12,17 @@ namespace CharlieBackend.Core.Mapping
     {
         public ModelMappingProfile()
         {
+            #region Accounts mapping
+
+            CreateMap<Account, AccountDto>();
+            CreateMap<AccountDto, Account>();
+
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            #endregion
+
+
             #region Courses mapping
 
             CreateMap<CreateCourseDto, Course>();

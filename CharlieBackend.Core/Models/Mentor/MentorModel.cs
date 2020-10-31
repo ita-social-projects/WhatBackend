@@ -4,16 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Models
 {
-    public class MentorModel : BaseAccountModel
+    public class MentorModel 
     {
         
         [JsonIgnore]
         [StringLength(65)]
-        public override string Password { get; set; }
+        public string Password { get; set; }
 
 
         [JsonIgnore]
-        public override int Role { get; set; }
+        public int Role { get; set; }
 
         [Required]
         [JsonIgnore]
@@ -22,6 +22,6 @@ namespace CharlieBackend.Core.Models
 
         [Required]
         [JsonIgnore]
-        public override bool IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }

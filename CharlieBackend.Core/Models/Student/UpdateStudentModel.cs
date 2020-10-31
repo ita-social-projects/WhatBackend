@@ -8,7 +8,7 @@ namespace CharlieBackend.Core.Models.Student
     {
         [Required]
         [JsonIgnore]
-        public override long Id { get; set; }
+        public long Id { get; set; }
 
         public new string Email 
         { 
@@ -16,7 +16,7 @@ namespace CharlieBackend.Core.Models.Student
             set => base.Email = value; 
         }
 
-        public override string Password 
+        public string Password 
         { 
             get => base.Password; 
             set => base.Password = value; 
@@ -24,11 +24,11 @@ namespace CharlieBackend.Core.Models.Student
 
         [JsonPropertyName("first_name")]
         [StringLength(30)]
-        public override string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [JsonPropertyName("last_name")]
         [StringLength(30)]
-        public override string LastName { get; set; }
+        public string LastName { get; set; }
 
         [JsonPropertyName("student_group_ids")]
         public new List<long> StudentGroupIds { get; set; }

@@ -22,7 +22,7 @@ namespace CharlieBackend.Api.Controllers
             _mentorService = mentorService;
             _accountService = accountService;
         }
-
+/*
         [Authorize(Roles = "4")]
         [HttpPost]
         public async Task<ActionResult> PostMentor(CreateMentorModel mentorModel)
@@ -47,7 +47,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return Ok(new { createdMentorModel.Id });
-        }
+        }*/
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
@@ -58,7 +58,7 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(mentorsModels);
         }
-
+        /*
         [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
@@ -85,7 +85,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(409, "Cannot update.");
-        }
+        } */
 
         [Authorize(Roles = "4")]
         [HttpDelete("{id}")]

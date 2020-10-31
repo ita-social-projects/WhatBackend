@@ -7,7 +7,7 @@ namespace CharlieBackend.Core.Models.Student
     {
         [Required]
         [JsonIgnore]
-        public override long Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [EmailAddress]
@@ -17,11 +17,11 @@ namespace CharlieBackend.Core.Models.Student
         [JsonIgnore]
         [JsonPropertyName("first_name")]
         [StringLength(30)]
-        public override string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [JsonIgnore]
         [JsonPropertyName("last_name")]
         [StringLength(30)]
-        public override string LastName { get; set; }
+        public string LastName { get; set; }
     }
 }

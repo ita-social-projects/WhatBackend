@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
-{
+{/*
     public class StudentService : IStudentService
     {
         private readonly IAccountService _accountService;
@@ -174,5 +174,5 @@ namespace CharlieBackend.Business.Services
 
             return student?.ToStudentModel();
         }
-    }
+    } */
 }
