@@ -11,7 +11,7 @@ namespace CharlieBackend.Core.Entities
 
         public TimeSpan LessonEnd { get; set; }
 
-        public long? StudentGroupId { get; set; }
+        public long StudentGroupId { get; set; }
 
         public virtual StudentGroup StudentGroup { get; set; }
 
