@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -9,10 +9,10 @@ namespace CharlieBackend.Api.Middlewares
     {
         #region
         private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
+        private readonly ILogger<ExceptionHandleMiddleware> _logger = null;
         #endregion
 
-        public ExceptionHandleMiddleware(RequestDelegate next, ILogger logger)
+        public ExceptionHandleMiddleware(RequestDelegate next, ILogger<ExceptionHandleMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong: {ex}");
+                _logger.LogError($"Something went wrong: {ex}");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -35,6 +35,7 @@ namespace CharlieBackend.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 500;
+            
             return context.Response.WriteAsync(new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
