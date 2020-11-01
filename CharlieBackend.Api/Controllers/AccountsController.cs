@@ -26,12 +26,12 @@ namespace CharlieBackend.Api.Controllers
         #endregion
 
         public AccountsController(IAccountService accountService,
-               // IStudentService studentService,
+                IStudentService studentService,
                 IMentorService mentorService,
                 IOptions<AuthOptions> authOptions)
         {
             _accountService = accountService;
-          //  _studentService = studentService;
+            _studentService = studentService;
             _mentorService = mentorService;
             _authOptions = authOptions.Value;
         }
@@ -58,7 +58,7 @@ namespace CharlieBackend.Api.Controllers
 
             long studentOrMentorId = foundAccount.Id;
 
-            /*if (foundAccount.Role == Roles.Student)
+            if (foundAccount.Role == Roles.Student)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
 
@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
                 }
 
                 studentOrMentorId = foundStudent.Id;
-            }*/
+            }
              if (foundAccount.Role == Roles.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);

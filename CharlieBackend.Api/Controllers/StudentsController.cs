@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot find student with such id.");
         }*/
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
         public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
         {
@@ -121,7 +121,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot update.");
         }*/
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {

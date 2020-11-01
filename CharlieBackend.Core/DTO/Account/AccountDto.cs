@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using CharlieBackend.Core.Entities;
-using Newtonsoft.Json.Converters;
+
 
 namespace CharlieBackend.Core.DTO.Account
 {
@@ -28,7 +28,6 @@ namespace CharlieBackend.Core.DTO.Account
         public string Password { get; set; }
 
         [EnumDataType(typeof(Roles))]
-        [JsonConverter(typeof(StringEnumConverter))]
         public Roles Role { get; set; }
 
         [Required]

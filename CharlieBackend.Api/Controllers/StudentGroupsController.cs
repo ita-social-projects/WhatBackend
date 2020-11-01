@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         //    }
         //}
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpPost]
         public async Task<ActionResult<StudentGroupDto>> PostStudentGroup(CreateStudentGroupDto studentGroup)
         {
@@ -59,7 +59,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(resStudentGroup);
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
@@ -87,7 +87,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot update.");
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
         {
@@ -97,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(studentGroupsres);
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentGroupDto>> GetStudentGroupById(long id)
         {
