@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,6 +7,9 @@ namespace CharlieBackend.Core.DTO.Student
 {
     public class StudentDto
     {
+        [Required]
+        public long Id { get; set; }
+
         [Required]
         [JsonIgnore]
         [EmailAddress]
@@ -17,7 +21,8 @@ namespace CharlieBackend.Core.DTO.Student
         public string Password { get; set; }
 
         [JsonIgnore]
-        public int Role { get; set; }
+        [EnumDataType(typeof(Roles))]
+        public Roles Role { get; set; }
 
         [Required]
         [JsonIgnore]
