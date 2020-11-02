@@ -17,7 +17,6 @@ namespace CharlieBackend.Core.Entities
 
         public virtual RepeatRate RepeatRate { get; set; }
 
-        [Range(1, 31)]   
         public uint? DayNumber { get; set; }
     }
 
