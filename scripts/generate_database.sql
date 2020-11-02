@@ -195,6 +195,23 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
+-- Table `soft`.`schedule`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`schedule` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `student_group_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_student_group_of_schedule` (`student_group_id` ASC),
+  CONSTRAINT `FK_student_group_of_schedule`
+    FOREIGN KEY (`student_group_id`)
+    REFERENCES `soft`.`student_group` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
 -- Table `soft`.`student`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`student` (
