@@ -19,8 +19,6 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Mentor> Mentors { get; set; }
 
-        public virtual DbSet<Secretary> Secretaries { get; set; }
-
         public virtual DbSet<MentorOfCourse> MentorsOfCourses { get; set; }
 
         public virtual DbSet<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
