@@ -93,7 +93,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonModel ids)
         {
-            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByIdAsync(ids.MentorId);
             if (mentorToAssign == null)
             {
                 throw new NullReferenceException();
