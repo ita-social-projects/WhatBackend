@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
+
+namespace CharlieBackend.Core.DTO.StudentGroups
+{
+    public class CreateStudentGroupDto
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        [JsonPropertyName("course_id")]
+        public long CourseId { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        [JsonPropertyName("start_date")]
+        public DateTime StartDate { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        [JsonPropertyName("finish_date")]
+        public DateTime FinishDate { get; set; }
+
+        [Required]
+        [JsonPropertyName("student_ids")]
+        public IList<long> StudentIds { get; set; }
+
+        [Required]
+        [JsonPropertyName("mentor_ids")]
+        public IList<long> MentorIds { get; set; }
+    }
+}

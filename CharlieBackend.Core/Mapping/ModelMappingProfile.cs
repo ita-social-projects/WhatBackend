@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Secretary;
+using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.Entities;
+using System.Linq;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -43,6 +45,16 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<CreateSecretaryDto, Secretary>();
             CreateMap<Secretary, CreateSecretaryDto>();
+
+            #endregion
+
+            #region StudentGroups mapping
+
+            CreateMap<StudentGroup, StudentGroupDto>()
+                  .ForMember(source => source.MentorIds, conf => conf.MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.MentorId).ToList()))
+                   .ForMember(source => source.StudentIds, conf => conf.MapFrom(x => x.StudentsOfStudentGroups.Select(y => y.StudentId).ToList()));
+
+            CreateMap<UpdateStudentGroupDto, StudentGroup>();
 
             #endregion
 
