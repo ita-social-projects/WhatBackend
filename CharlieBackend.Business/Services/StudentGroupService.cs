@@ -82,7 +82,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.IsGroupNameChangableAsync(name);
         }
 
-        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync() // TODO include mentors and students table
+        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
 
@@ -94,15 +94,14 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
         }
 
-        public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel)
+        public async Task<UpdateStudentGroupDto> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto studentGroupDto) 
         {
             try
             {
-                var updatedEntity = _mapper.Map<StudentGroup>(studentGroupModel);
+                var updatedEntity = _mapper.Map<StudentGroup>(studentGroupDto);
 
-                updatedEntity.Id = id;
 
-                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(updatedEntity.Id);
+                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(groupId);
 
                 if (foundStudentGroup == null)
                 {
@@ -123,37 +122,46 @@ namespace CharlieBackend.Business.Services
 
                 if (updatedEntity.CourseId != 0)
                 {
-                    var foundCourse = await _unitOfWork.CourseRepository.GetByIdAsync(updatedEntity.CourseId);
-
-                    foundStudentGroup.Course = foundCourse;
-                }
-
-                if (updatedEntity.StudentsOfStudentGroups != null)
-                {
-                    //var foundStudents = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(updatedEntity.StudentIds);
-                    var currentStudentsOfStudentGroup = foundStudentGroup.StudentsOfStudentGroups;
-                    var newStudentsOfStudentGroup = new List<StudentOfStudentGroup>();
-
-                    //for (int i = 0; i < updatedEntity.StudentIds.Count; i++)
-                    //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
-
-                    foreach (var newStudentId in updatedEntity.StudentsOfStudentGroups)
-                    {
-                        newStudentsOfStudentGroup.Add(new StudentOfStudentGroup
-                        {
-                            StudentGroupId = foundStudentGroup.Id,
-                            StudentId = newStudentId.Id
-                        });
-
-
-                        _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
-                    }
-
+                    foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedEntity.CourseId);
                 }
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<StudentGroupDto>(updatedEntity); 
+                return _mapper.Map<UpdateStudentGroupDto>(updatedEntity);
+            }
+            catch 
+            {
+               
+                _unitOfWork.Rollback();
+
+                return null;
+            }
+        }
+
+        public async Task<UpdateStudentsForStudentGroup> UpdateStudentsForStudentGroupAsync(long id, UpdateStudentsForStudentGroup studentGroupModel) 
+        {
+            try
+            {
+                var updatedEntity = _mapper.Map<StudentGroup>(studentGroupModel); 
+
+                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+
+                if (foundStudentGroup == null)
+                {
+                    return null;
+                }
+
+                var newStudentsOfStudentGroup = updatedEntity.StudentsOfStudentGroups.Select(x => new StudentOfStudentGroup
+                {
+                    StudentGroupId = foundStudentGroup.Id,
+                    StudentId = x.StudentId
+                }).ToList();
+
+                _unitOfWork.StudentGroupRepository.UpdateManyToMany(foundStudentGroup.StudentsOfStudentGroups, newStudentsOfStudentGroup);
+
+                await _unitOfWork.CommitAsync();
+
+                return _mapper.Map<UpdateStudentsForStudentGroup>(updatedEntity);
             }
             catch
             {
@@ -177,5 +185,7 @@ namespace CharlieBackend.Business.Services
 
             return _mapper.Map<StudentGroupDto>(foundStudentGroup);
         }
+
+       
     }
 }

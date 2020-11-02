@@ -12,7 +12,7 @@ namespace CharlieBackend.Core.DTO.StudentGroups
 
         [Required]
         [JsonPropertyName("course_id")]
-        public virtual long? CourseId { get; set; }
+        public long? CourseId { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; }
@@ -26,10 +26,10 @@ namespace CharlieBackend.Core.DTO.StudentGroups
         public DateTime FinishDate { get; set; }
 
         [JsonPropertyName("student_ids")]
-        public virtual IList<long> StudentIds { get; set; }
+        public IList<long> StudentIds { get; set; }
 
         [JsonPropertyName("mentor_ids")]
-        public virtual IList<long> MentorIds { get; set; }
+        public IList<long> MentorIds { get; set; }
 
     }
 }

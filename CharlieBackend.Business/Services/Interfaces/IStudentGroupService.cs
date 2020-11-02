@@ -15,7 +15,9 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public bool DeleteStudentGrop(long StudentGroupId);
 
-        public Task<StudentGroupDto> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel);
+        public Task<UpdateStudentGroupDto> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel);
+
+        public Task<UpdateStudentsForStudentGroup> UpdateStudentsForStudentGroupAsync(long id, UpdateStudentsForStudentGroup studentGroupModel);
 
         public Task<StudentGroupDto> GetStudentGroupByIdAsync(long id);
     }

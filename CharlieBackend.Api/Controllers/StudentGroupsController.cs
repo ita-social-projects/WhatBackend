@@ -61,12 +61,8 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
+        public async Task<ActionResult<UpdateStudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
 
             var isStudentGroupNameChangable = await _studentGroupService
                        .IsGroupNameTakenAsync(studentGroupDto.Name);
@@ -78,6 +74,22 @@ namespace CharlieBackend.Api.Controllers
 
             var updatedStudentGroup = await _studentGroupService
                     .UpdateStudentGroupAsync(id, studentGroupDto);
+
+            if (updatedStudentGroup != null)
+            {
+                return Ok(updatedStudentGroup);
+            }
+
+            return StatusCode(409, "Cannot update.");
+        }
+
+        [Authorize(Roles = "2, 4")]
+        [HttpPut("{id}/students")]
+        public async Task<ActionResult<UpdateStudentsForStudentGroup>> PutStudentsOfStudentGroup(long id, UpdateStudentsForStudentGroup studentGroupDto) 
+        {
+
+            var updatedStudentGroup = await _studentGroupService
+                    .UpdateStudentsForStudentGroupAsync(id, studentGroupDto);
 
             if (updatedStudentGroup != null)
             {
