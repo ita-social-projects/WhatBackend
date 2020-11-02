@@ -32,10 +32,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(secretary => secretary.Account)
                 .FirstOrDefaultAsync(secretary => secretary.Id == id);
         }
-
-
     }
 }
-
-
-

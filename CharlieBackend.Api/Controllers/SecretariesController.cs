@@ -41,7 +41,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(422, "Cannot create secretary.");
             }
 
-            return Ok(new { createdSecretaryDto.Id });
+            return Ok(createdSecretaryDto);
         }
 
         [Authorize(Roles = "4")]
@@ -56,7 +56,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> updateSecretary(long id, UpdateSecretaryDto secretaryDto)
+        public async Task<ActionResult> UpdateSecretary(long id, UpdateSecretaryDto secretaryDto)
         {
 
             var isEmailChangableTo = await _accountService
