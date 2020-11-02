@@ -1,19 +1,19 @@
-using CharlieBackend.Api.Middlewares;
-using CharlieBackend.Business.Options;
-using CharlieBackend.Root;
+using System;
 using Serilog;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+using AutoMapper;
+using CharlieBackend.Root;
+using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
+using CharlieBackend.Core.Mapping;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using AutoMapper;
-using CharlieBackend.Core.Mapping;
+using CharlieBackend.Api.Middlewares;
+using CharlieBackend.Business.Options;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CharlieBackend.Api
 {
@@ -131,6 +131,8 @@ namespace CharlieBackend.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseMiddleware<ExceptionHandleMiddleware>();
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>
