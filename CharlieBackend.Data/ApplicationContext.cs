@@ -34,6 +34,7 @@ namespace CharlieBackend.Data
         public virtual DbSet<Theme> Themes { get; set; }
 
         public virtual DbSet<Visit> Visits { get; set; }
+        
         public virtual DbSet<Schedule> Schedules { get; set; }
 
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
