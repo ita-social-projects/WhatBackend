@@ -49,7 +49,6 @@ namespace CharlieBackend.Business.Services
                         createdLessonEntity.Visits[i].Lesson = createdLessonEntity;
 
                         _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
-
                     }
                 }
 
@@ -57,11 +56,9 @@ namespace CharlieBackend.Business.Services
 
                 return _mapper.Map<LessonDto>(createdLessonEntity);
             }
-            catch (Exception ex)
+            catch
             {
                 _unitOfWork.Rollback();
-
-                Console.WriteLine("Debug info exception details: " + ex.Message);
 
                 return null;
             }
