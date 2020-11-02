@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Linq;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -27,6 +25,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(secretary
                             => secretary.AccountId == accountId);
         }
+
+        public new Task<Secretary> GetByIdAsync(long id)
+        {
+            return _applicationContext.Secretaries
+                .Include(secretary => secretary.Account)
+                .FirstOrDefaultAsync(secretary => secretary.Id == id);
+        }
+
 
     }
 }

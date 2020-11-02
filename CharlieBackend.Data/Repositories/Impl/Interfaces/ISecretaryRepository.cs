@@ -1,8 +1,6 @@
-﻿using CharlieBackend.Core.Entities;
-using System;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -10,5 +8,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         public new Task<List<Secretary>> GetAllAsync();
         Task<Secretary> GetSecretaryByAccountIdAsync(long accountId);
+        public new Task<Secretary> GetByIdAsync(long id);
     }
 }
