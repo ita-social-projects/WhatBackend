@@ -36,7 +36,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(422, "Cannot create lesson");
             }
 
-            return Ok();
+            return Ok(createdLesson);
         }
 
 

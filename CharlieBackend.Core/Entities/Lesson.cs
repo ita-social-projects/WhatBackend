@@ -6,7 +6,6 @@ namespace CharlieBackend.Core.Entities
     public partial class Lesson : BaseEntity
     {
 
-
         public long? MentorId { get; set; }
 
         public long? StudentGroupId { get; set; }

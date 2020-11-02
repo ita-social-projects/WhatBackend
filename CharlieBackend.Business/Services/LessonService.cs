@@ -27,56 +27,42 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                Theme theme;
-                var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(lessonDto.ThemeName);
+                var createdLessonEntity = _mapper.Map<Lesson>(lessonDto);
 
-                if (foundTheme != null)
+                var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdLessonEntity.Theme?.Name);
+
+                if (foundTheme == null)
                 {
-                    theme = foundTheme;
+                    _unitOfWork.ThemeRepository.Add(createdLessonEntity.Theme);
                 }
                 else
                 {
-                    theme = new Theme { Name = lessonDto.ThemeName };
-
-                    _unitOfWork.ThemeRepository.Add(theme);
+                    createdLessonEntity.Theme = foundTheme;
                 }
 
-                var lesson = new Lesson
-                {
-                    MentorId = lessonDto.MentorId,
-                    StudentGroupId = lessonDto.StudentGroupId,
-                    LessonDate = lessonDto.LessonDate,
-                    Theme = theme
-                };
-
-                _unitOfWork.LessonRepository.Add(lesson);
+                _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
                 if (lessonDto.LessonVisits != null)
                 {
-                    for (int i = 0; i < lessonDto.LessonVisits.Count; i++)
+                    for (int i = 0; i < createdLessonEntity.Visits.Count; i++)
                     {
-                        var visit = new Visit
-                        {
-                            Lesson = lesson,
-                            StudentId = lessonDto.LessonVisits[i].StudentId,
-                            Comment = lessonDto.LessonVisits[i].Comment,
-                            Presence = lessonDto.LessonVisits[i].Presence,
-                            StudentMark = lessonDto.LessonVisits[i].StudentMark
-                        };
+                        createdLessonEntity.Visits[i].Lesson = createdLessonEntity;
 
-                        _unitOfWork.VisitRepository.Add(visit);
+                        _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
+
                     }
-
                 }
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<LessonDto>(lessonDto);
+                return _mapper.Map<LessonDto>(createdLessonEntity);
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                Console.WriteLine("Debug info exception details: " + ex);
+
+                Console.WriteLine("Debug info exception details: " + ex.Message);
+
                 return null;
             }
         }
@@ -85,7 +71,7 @@ namespace CharlieBackend.Business.Services
         {
             var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
 
-            return _mapper.Map<List<LessonDto>>(lessons);
+            return _mapper.Map<IList<LessonDto>>(lessons);
         }
 
         public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)

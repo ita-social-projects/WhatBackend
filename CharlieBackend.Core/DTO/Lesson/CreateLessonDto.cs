@@ -10,9 +10,6 @@ namespace CharlieBackend.Core.DTO.Lesson
 {
     public class CreateLessonDto
     {
-        [Required]
-        [JsonIgnore]
-        public long Id { get; set; }
 
         [Required]
         [JsonPropertyName("theme_name")]

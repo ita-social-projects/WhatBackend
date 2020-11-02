@@ -8,9 +8,11 @@ namespace CharlieBackend.Core.DTO.Visit
 {
     public class VisitDto
     {
+        public long Id { get; set; }
+
         [Required]
         [JsonPropertyName("student_id")]
-        public long StudentId { get; set; }
+        public long? StudentId { get; set; }
 
         [JsonPropertyName("student_mark")]
         public sbyte? StudentMark { get; set; }
