@@ -7,7 +7,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<AccountDto> CreateAccountAsync(AccountDto accountModel);
+        Task<AccountDto> CreateAccountAsync(CreateAccountDto accountModel);
 
         Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 

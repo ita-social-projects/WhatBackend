@@ -22,6 +22,12 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Account, AuthenticationDto>();
             CreateMap<AuthenticationDto, Account>();
 
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            CreateMap<AccountDto, CreateAccountDto>();
+            CreateMap<CreateAccountDto, AccountDto>();
+
             #endregion
 
 

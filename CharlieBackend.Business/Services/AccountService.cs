@@ -25,20 +25,26 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<AccountDto> CreateAccountAsync(AccountDto accountModel) //fix model
+        public async Task<AccountDto> CreateAccountAsync(CreateAccountDto accountModel)
         {
             try
             {
-                // TODO: add role
-                var createdAccountEntity = _mapper.Map<Account>(accountModel);
-                createdAccountEntity.Salt = GenerateSalt();
-                createdAccountEntity.Password = HashPassword(createdAccountEntity.Password, createdAccountEntity.Salt);
+                var account = new Account
+                {
+                    Email = accountModel.Email,
+                    FirstName = accountModel.FirstName,
+                    LastName = accountModel.LastName,
+                    Role = 0
+                };
 
-                _unitOfWork.AccountRepository.Add(createdAccountEntity);
+                account.Salt = GenerateSalt();
+                account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
+
+                _unitOfWork.AccountRepository.Add(account);
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<AccountDto>(createdAccountEntity);
+                return _mapper.Map<AccountDto>(account);
             }
             catch
             {

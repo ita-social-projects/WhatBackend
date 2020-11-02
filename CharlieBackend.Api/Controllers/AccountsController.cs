@@ -14,7 +14,7 @@ using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/accounts")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -36,6 +36,7 @@ namespace CharlieBackend.Api.Controllers
             _authOptions = authOptions.Value;
         }
 
+        [Route("auth")]
         [HttpPost]
         public async Task<ActionResult> SignIn(AuthenticationDto authenticationModel)
         {
@@ -69,7 +70,7 @@ namespace CharlieBackend.Api.Controllers
 
                 studentOrMentorId = foundStudent.Id;
             }
-             if (foundAccount.Role == Roles.Mentor)
+            if (foundAccount.Role == Roles.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
 
@@ -79,6 +80,11 @@ namespace CharlieBackend.Api.Controllers
                 }
 
                 studentOrMentorId = foundMentor.Id;
+            }
+
+            if (foundAccount.Role == Roles.NotAssigned)
+			{
+                return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
             var now = DateTime.UtcNow;
@@ -117,5 +123,33 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(response);
         }
+
+        [Route("reg")]
+        [HttpPost]
+        public async Task<ActionResult> PostAccount(CreateAccountDto accountModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var isEmailTaken = await _accountService.IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return StatusCode(409, "Account already exists!");
+            }
+
+            var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);
+
+            if (createdAccountModel == null)
+            {
+                return StatusCode(422, "Cannot create account.");
+            }
+
+            return Ok(createdAccountModel);
+        }
+  
     }
 }
