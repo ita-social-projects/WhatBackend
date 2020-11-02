@@ -19,6 +19,8 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Mentor> Mentors { get; set; }
 
+        public virtual DbSet<Secretary> Secretaries { get; set; }
+
         public virtual DbSet<MentorOfCourse> MentorsOfCourses { get; set; }
 
         public virtual DbSet<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
@@ -48,6 +50,23 @@ namespace CharlieBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Secretary>(entity =>
+            {
+                entity.ToTable("secretary");
+
+                entity.HasIndex(e => e.AccountId)
+                    .HasName("FK_account_of_secretary");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Secretaries)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_account_of_secretary");
+            });
+
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("account");

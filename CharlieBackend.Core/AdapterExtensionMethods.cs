@@ -2,11 +2,9 @@
 using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Theme;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
-using CharlieBackend.Core.Models.StudentGroup;
 
 namespace CharlieBackend.Core
 {
@@ -71,24 +69,6 @@ namespace CharlieBackend.Core
         }
     
  
-        public static Theme ToTheme(this ThemeModel themeModel)
-        {
-            return new Theme
-            {
-                Id = themeModel.Id,
-                Name = themeModel.Name
-            };
-        }
-
-        public static ThemeModel ToThemeModel(this Theme themeModel)
-        {
-            return new ThemeModel
-            {
-                Id = themeModel.Id,
-                Name = themeModel.Name
-            };
-        }
-
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
             return new Mentor
@@ -127,41 +107,6 @@ namespace CharlieBackend.Core
                     .StudentGroupId).ToList()
             };
         }
-        public static Student ToStudent(this StudentModel studentModel)
-        {
-            return new Student
-            {     
-            };
-        }
-
-        public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
-        {
-            var startDate = (DateTime)group.StartDate;
-            var finishDate = (DateTime)group.FinishDate;
-
-            return new StudentGroupModel
-            {
-                Id = group.Id,
-                Name = group.Name,
-                StartDate = startDate,
-                FinishDate = finishDate,
-                StudentIds = group.StudentsOfStudentGroups
-                    .Select(groupSt => (long)groupSt.StudentId).ToList(),
-                CourseId = group.CourseId
-            };
-        }
-        public static StudentGroup ToStudentGroup(this StudentGroupModel group)
-        {
-            return new StudentGroup
-            {
-                Id = group.Id,
-                Name = group.Name,
-                StartDate = group.StartDate,
-                FinishDate = group.FinishDate,
-
-                // добавить лист с группой
-                CourseId = group.CourseId
-            };
-        }
+       
     }
 }

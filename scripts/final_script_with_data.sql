@@ -2,6 +2,8 @@ use soft;
 insert  account(role, first_name, last_name, email, password, salt, is_active)
 VALUES 
 (4,'admin','admin','admin.@gmail.com','8977ac989dc476f2c02431358834c00dda1128923339659f143fbc758dba47d2','ruPUCpyh1mDvutrQoiUk',true),
+(3,'Жанна','Дарк','Janna.@gmail.com','eacbdc5e75850e7d07ac8504883c3de9a7225e93310417d079d53681d8a75eaa','AP4zYvi5JyR1t6NWbk1a',true),
+(3,'Клара','Цеткин','Tsetkina.@gmail.com','59ab6d0386bf6d4c41cb54561abf1b3b35a512e4f749d714fc11eb33613fd00b','AP4zYvi5JyR1t6NWbk1b',true),
 (2,'Фродо','Бэггинс','Frodo.@gmail.com','a7fb1ad7840034a97564c1a834a0f95cbf376912e9e5ee48c1142ce8ef62676e','AP4zYvi5JyR1t6NWbk1R',true),
 (2,'Леголас','Зелёный Лист','Lego.@gmail.com','19ba92491c216c84693a0a0f3309ec2785e8cb010c45a1c513b7608332a11a97','xgqjh8yPx6QvGjRRdhyQ',true),
 (2,'Торин','Дубощит','Thorin.@gmail.com','265c8d045e4debf7dc52586d8dcf33609825693bdffa7362102d49d7828b28cf','N0CLFg7Ts8CUFqN3wkvd',true),

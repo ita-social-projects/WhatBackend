@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Moq;
 using CharlieBackend.Business.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.Models.StudentGroup;
 
 namespace CharlieBackend.Api.Controllers.Tests
 {
