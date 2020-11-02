@@ -32,6 +32,9 @@ insert into student(account_id)
 insert into mentor(account_id)
 (select account.id from account where  account.role = 2 );
 
+insert into secretary(account_id)
+(select account.id from account where  account.role = 3 );
+
 insert into course(name)
 value ('Веб дизайн'), ('разработка на Java'),('создание игр на Unity'), ('создание веб приложений');
 
