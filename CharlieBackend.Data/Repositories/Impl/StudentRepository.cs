@@ -34,7 +34,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 
-        public Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds)
+        public Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds)
         {
             return _applicationContext.Students
                     .Where(student => studentIds.Contains(student.Id))

@@ -5,7 +5,6 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
-using CharlieBackend.Core.Models.StudentGroup;
 
 namespace CharlieBackend.Core
 {
@@ -108,41 +107,6 @@ namespace CharlieBackend.Core
                     .StudentGroupId).ToList()
             };
         }
-        public static Student ToStudent(this StudentModel studentModel)
-        {
-            return new Student
-            {     
-            };
-        }
-
-        public static StudentGroupModel ToStudentGroupModel(this StudentGroup group)
-        {
-            var startDate = (DateTime)group.StartDate;
-            var finishDate = (DateTime)group.FinishDate;
-
-            return new StudentGroupModel
-            {
-                Id = group.Id,
-                Name = group.Name,
-                StartDate = startDate,
-                FinishDate = finishDate,
-                StudentIds = group.StudentsOfStudentGroups
-                    .Select(groupSt => (long)groupSt.StudentId).ToList(),
-                CourseId = group.CourseId
-            };
-        }
-        public static StudentGroup ToStudentGroup(this StudentGroupModel group)
-        {
-            return new StudentGroup
-            {
-                Id = group.Id,
-                Name = group.Name,
-                StartDate = group.StartDate,
-                FinishDate = group.FinishDate,
-
-                // добавить лист с группой
-                CourseId = group.CourseId
-            };
-        }
+       
     }
 }

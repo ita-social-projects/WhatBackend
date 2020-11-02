@@ -11,7 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<Student> GetStudentByAccountIdAsync(long accountId);
 
-        Task<List<Student>> GetStudentsByIdsAsync(List<long> studentIds);
+        Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds);
 
         Task<Student> GetStudentByEmailAsync(string email);
     }

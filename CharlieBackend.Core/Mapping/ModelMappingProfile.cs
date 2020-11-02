@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+
 using CharlieBackend.Core.Entities;
 using System.Linq;
 
@@ -28,7 +29,9 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
             #region Themes mapping
+
 
             CreateMap<ThemeDto, Theme>();
             CreateMap<Theme, ThemeDto>();
