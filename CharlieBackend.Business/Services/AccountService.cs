@@ -8,6 +8,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -25,7 +26,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<AccountDto> CreateAccountAsync(CreateAccountDto accountModel)
+        public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
             try
             {
@@ -44,13 +45,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<AccountDto>(account);
+                return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<AccountDto>.Error(ErrorCode.InternalServerError, "Cannot create account.");
             }
         }
 

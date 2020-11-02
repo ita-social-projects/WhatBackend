@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
-
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -143,12 +143,7 @@ namespace CharlieBackend.Api.Controllers
 
             var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);
 
-            if (createdAccountModel == null)
-            {
-                return StatusCode(422, "Cannot create account.");
-            }
-
-            return Ok(createdAccountModel);
+            return createdAccountModel.ToActionResult();
         }
   
     }
