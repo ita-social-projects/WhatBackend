@@ -5,10 +5,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Lesson : BaseEntity
     {
-        public Lesson()
-        {
-            Visits = new HashSet<Visit>();
-        }
+
 
         public long? MentorId { get; set; }
 
@@ -24,6 +21,6 @@ namespace CharlieBackend.Core.Entities
 
         public virtual Theme Theme { get; set; }
         
-        public virtual ICollection<Visit> Visits { get; set; }
+        public virtual IList<Visit> Visits { get; set; }
     }
 }
