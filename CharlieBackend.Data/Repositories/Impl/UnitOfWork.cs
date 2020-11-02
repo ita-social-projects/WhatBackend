@@ -11,6 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         private readonly ApplicationContext _applicationContext;
         private IAccountRepository _accountRepository;
+        private ISecretaryRepository _secretaryRepository;
         private ILessonRepository _lessonRepository;
         private IThemeRepository _themeRepository;
         private ICourseRepository _courseRepository;
@@ -18,7 +19,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IMentorOfCourseRepository _mentorOfCourseRepository;
         private IStudentRepository _studentRepository;
         private IStudentGroupRepository _studentGroupRepository;
-        private IVisitRepository _visitRepository;
+        private IVisitRepository _visitRepository; 
 
         #endregion 
 
@@ -30,9 +31,17 @@ namespace CharlieBackend.Data.Repositories.Impl
         public IAccountRepository AccountRepository
         {
             get
-            { 
-                return _accountRepository = _accountRepository 
+            {
+                return _accountRepository = _accountRepository
                         ?? new AccountRepository(_applicationContext);
+            }
+        }
+        public ISecretaryRepository SecretaryRepository
+        {
+            get
+            {
+                return _secretaryRepository = _secretaryRepository
+                        ?? new SecretaryRepository(_applicationContext);
             }
         }
 

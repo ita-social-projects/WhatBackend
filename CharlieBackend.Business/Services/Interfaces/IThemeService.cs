@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Core.Models.Theme;
+﻿using CharlieBackend.Core.DTO.Theme;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,10 +6,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IThemeService
     {
-        Task<ThemeModel> CreateThemeAsync(ThemeModel theme);
+        Task<ThemeDto> CreateThemeAsync(CreateThemeDto theme);
 
-        public Task<IList<ThemeModel>> GetAllThemesAsync();
+        public Task<IList<ThemeDto>> GetAllThemesAsync();
 
-        public Task<ThemeModel> GetThemeByNameAsync(string name);
+        public Task<ThemeDto> GetThemeByNameAsync(string name);
     }
 }

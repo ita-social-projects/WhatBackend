@@ -5,11 +5,11 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.Models.Theme;
+using CharlieBackend.Core.DTO.Theme;
 
 namespace CharlieBackend.Api.UnitTest.Controllers
 {
-	public class ThemesControllerTests
+    public class ThemesControllerTests
 	{
 		[Fact]
 		public void GetAllThemesTestAsync()
@@ -30,11 +30,11 @@ namespace CharlieBackend.Api.UnitTest.Controllers
 			Assert.NotNull(themesObjectResult);
 		}
 
-		public async Task<IList<ThemeModel>> GetThemes()
+		public async Task<IList<ThemeDto>> GetThemes()
 		{
-			List<ThemeModel> ThemesL = new List<ThemeModel>
+			List<ThemeDto> ThemesL = new List<ThemeDto>
 			{
-				new ThemeModel { Id = 12, Name = "Tema1" }
+				new ThemeDto { Id = 12, Name = "Tema1" }
 			};
 			return ThemesL;
 		}

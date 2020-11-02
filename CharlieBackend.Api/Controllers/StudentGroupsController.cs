@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Core.Models.StudentGroup;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.StudentGroups;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -11,9 +11,8 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class StudentGroupsController : ControllerBase
     {
-        #region
+
         private readonly IStudentGroupService _studentGroupService;
-        #endregion
 
         public StudentGroupsController(IStudentGroupService studentGroupService)
         {
@@ -35,7 +34,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpPost]
-        public async Task<ActionResult> PostStudentGroup(CreateStudentGroupModel studentGroup)
+        public async Task<ActionResult<StudentGroupDto>> PostStudentGroup(CreateStudentGroupDto studentGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -50,20 +49,19 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(409, "Student Group already exists!");
             }
 
-            var createdStudentGrouprModel = await _studentGroupService
-                    .CreateStudentGroupAsync(studentGroup);
+            var resStudentGroup = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
 
-            if (createdStudentGrouprModel == null)
+            if (resStudentGroup == null)
             {
                 return StatusCode(422, "Cannot create student group.");
             }
 
-            return Ok();
+            return Ok(resStudentGroup);
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutStudentGroup(long id, UpdateStudentGroupModel studentGroup)
+        public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
             if (!ModelState.IsValid)
             {
@@ -71,16 +69,15 @@ namespace CharlieBackend.Api.Controllers
             }
 
             var isStudentGroupNameChangable = await _studentGroupService
-                       .IsGroupNameTakenAsync(studentGroup.Name);
+                       .IsGroupNameTakenAsync(studentGroupDto.Name);
 
             if (!isStudentGroupNameChangable)
             {
                 return StatusCode(409, "Student group name is already taken!");
             }
 
-            studentGroup.Id = id;
             var updatedStudentGroup = await _studentGroupService
-                    .UpdateStudentGroupAsync(studentGroup);
+                    .UpdateStudentGroupAsync(id, studentGroupDto);
 
             if (updatedStudentGroup != null)
             {
@@ -92,18 +89,17 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentGroupModel>>> GetAllStudentGroups()
+        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
         {
 
-            var studentGroupsModels = await _studentGroupService
-                .GetAllStudentGroupsAsync();
+            var studentGroupsres = await _studentGroupService.GetAllStudentGroupsAsync();
 
-            return Ok(studentGroupsModels);
+            return Ok(studentGroupsres);
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<StudentGroupById>> GetStudentGroupById(long id)
+        public async Task<ActionResult<StudentGroupDto>> GetStudentGroupById(long id)
         {
             var foundStudentGroup = await _studentGroupService
                     .GetStudentGroupByIdAsync(id);
