@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using CharlieBackend.AdminPanel.Models;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.Core.Models.Account;
+using CharlieBackend.AdminPanel.Utils.Interfaces;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -16,11 +17,10 @@ namespace CharlieBackend.AdminPanel.Controllers
     {
         private readonly ILogger<AdminController> _logger;
 
-        private readonly HttpUtil _httpUtil;
+        private readonly IHttpUtil _httpUtil;
 
-        private string _token { get; set; }
-
-        public AdminController(ILogger<AdminController> logger, HttpUtil httpUtil)
+       
+        public AdminController(ILogger<AdminController> logger, IHttpUtil httpUtil)
         {
             _logger = logger;
             _httpUtil = httpUtil;

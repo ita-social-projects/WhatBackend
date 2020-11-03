@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
-    public class HttpUtil
+    public class HttpUtil: IHttpUtil
     {
         private readonly HttpClient _client;
 

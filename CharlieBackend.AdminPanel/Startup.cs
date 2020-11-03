@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using CharlieBackend.AdminPanel.Utils;
+using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,7 +30,7 @@ namespace CharlieBackend.AdminPanel
 
             services.Configure<ApplicationSettings>(Configuration);
 
-            services.AddTransient<HttpUtil>();
+            services.AddTransient<IHttpUtil,HttpUtil>();
 
             services.AddCors(options =>
             {
