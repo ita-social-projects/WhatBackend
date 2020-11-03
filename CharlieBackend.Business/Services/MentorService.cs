@@ -26,77 +26,45 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        /*public async Task<MentorDto> CreateMentorAsync(CreateMentorDto mentorModel)
+        public async Task<MentorDto> CreateMentorAsync(long accountId)
         {
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
+                var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
+                
+                if (account.Role == Roles.NotAssigned)
                 {
-                    bool credsSent = false;
-                    var generatedPassword = _accountService.GenerateSalt();
+                    account.Role = Roles.Mentor;
 
-                    var account = new Account
-                    {
-                        Email = mentorModel.Email,
-                        FirstName = mentorModel.FirstName,
-                        LastName = mentorModel.LastName,
-                        Role = 2
-                    };
-
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
                     var mentor = new Mentor
                     {
-                        Account = account
+                        Account = account,
+                        AccountId = accountId
                     };
 
                     _unitOfWork.MentorRepository.Add(mentor);
 
-                    if (mentorModel.CourseIds.Count != 0)
-                    {
-                        var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
-
-                        mentor.MentorsOfCourses = new List<MentorOfCourse>();
-
-                        for (int i = 0; i < courses.Count; i++)
-                        {
-                            mentor.MentorsOfCourses.Add(new MentorOfCourse
-                            {
-                                Mentor = mentor,
-                                Course = courses[i]
-                            });
-                        }
-                    }
-
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
-                    {
-                        credsSent = true;
-                        transaction.Commit();
-
-                        return mentor.ToMentorModel();
-                    }
-                    else
-                    {
-                        //TODO implementation for resending email or sent a status msg
-                        transaction.Commit();
-                        credsSent = false;
-                        return mentor.ToMentorModel();
-                        //need to handle the exception with a right logic to sent it for contorller if fails
-                        //throw new System.Exception("Faild to send credentials");
-                    }
+                    return _mapper.Map<MentorDto>(mentor);
                 }
-                catch
-                {
-                    transaction.Rollback();
+                else
+				{
+                    _unitOfWork.Rollback();
 
                     return null;
                 }
-            }
 
-        }*/
+                }
+                catch
+                {
+                    _unitOfWork.Rollback();
+
+                    return null;
+                }
+
+        }
 
         public async Task<IList<MentorDto>> GetAllMentorsAsync()
         {

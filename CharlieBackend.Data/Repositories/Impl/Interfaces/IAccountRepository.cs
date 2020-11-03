@@ -8,6 +8,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel);
 
+        public Task<Account> GetAccountCredentialsById(long id);
+
         public Task<string> GetAccountSaltByEmail(string email);
 
         public Task<string> GetAccountSaltById(long id);

@@ -72,6 +72,20 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
+        public async Task<Account> GetAccountCredentialsByIdAsync(long id)
+        {
+            var account = await _unitOfWork.AccountRepository.GetAccountCredentialsById(id);
+
+            if (account != null)
+            {
+              var foundAccount = account;
+
+                return foundAccount;
+            }
+
+            return null;
+        }
+
         public Task<bool> IsEmailTakenAsync(string email)
         {
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);

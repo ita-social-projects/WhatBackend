@@ -23,32 +23,25 @@ namespace CharlieBackend.Api.Controllers
             _mentorService = mentorService;
             _accountService = accountService;
         }
-/*
-        [Authorize(Roles = "4")]
-        [HttpPost]
-        public async Task<ActionResult> PostMentor(CreateMentorModel mentorModel)
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{id}")]
+        public async Task<ActionResult> PostMentor(long id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(mentorModel.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account already exists!");
-            }
-
-            var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
+            var createdMentorModel = await _mentorService.CreateMentorAsync(id);
 
             if (createdMentorModel == null)
             {
                 return StatusCode(422, "Cannot create mentor.");
             }
 
-            return Ok(new { createdMentorModel.Id });
-        }*/
+            return Ok(createdMentorModel);
+        }
 
         [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]

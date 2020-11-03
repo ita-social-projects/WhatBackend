@@ -12,6 +12,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
+        Task<Account> GetAccountCredentialsByIdAsync(long id);
+
         Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
