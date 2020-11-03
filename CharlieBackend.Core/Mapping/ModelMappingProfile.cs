@@ -29,8 +29,38 @@ namespace CharlieBackend.Core.Mapping
             #endregion
 
 
-            #region Themes mapping
+            #region StudentGroups mapping
 
+            CreateMap<StudentGroup, StudentGroupDto>()
+                  .ForMember(source => source.MentorIds, 
+                             conf => conf.MapFrom(x => x.MentorsOfStudentGroups.
+                                          Select(y => y.MentorId).ToList()))
+                   .ForMember(source => source.StudentIds,
+                              conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
+                                          Select(y => y.StudentId).ToList()));
+
+            CreateMap<UpdateStudentGroupDto, StudentGroup>();
+            CreateMap<StudentGroup, UpdateStudentGroupDto>();
+
+            CreateMap<UpdateStudentsForStudentGroup, StudentGroup>()
+               .ForMember(source => source.StudentsOfStudentGroups, 
+                          conf => conf.MapFrom(x => x.StudentIds.
+                                       Select(x => new StudentOfStudentGroup() 
+                                       { 
+                                           StudentId = x 
+
+                                       }).ToList()));
+
+            CreateMap<StudentGroup, UpdateStudentsForStudentGroup>()
+              .ForMember(source => source.StudentIds, 
+                        conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
+                                     Select(y => y.StudentId).ToList()));
+
+
+            #endregion
+
+
+            #region Themes mapping
 
             CreateMap<ThemeDto, Theme>();
             CreateMap<Theme, ThemeDto>();
@@ -50,15 +80,6 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-            #region StudentGroups mapping
-
-            CreateMap<StudentGroup, StudentGroupDto>()
-                  .ForMember(source => source.MentorIds, conf => conf.MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.MentorId).ToList()))
-                   .ForMember(source => source.StudentIds, conf => conf.MapFrom(x => x.StudentsOfStudentGroups.Select(y => y.StudentId).ToList()));
-
-            CreateMap<UpdateStudentGroupDto, StudentGroup>();
-
-            #endregion
 
         }
     }

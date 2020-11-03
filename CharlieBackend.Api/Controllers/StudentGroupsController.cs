@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -36,65 +38,53 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<StudentGroupDto>> PostStudentGroup(CreateStudentGroupDto studentGroup)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            
+            var isStudentGroupNameExist = await _studentGroupService
+                    .IsGroupNameExistAsync(studentGroup.Name);
 
-            var isStudentGroupNameChangable = await _studentGroupService
-                    .IsGroupNameTakenAsync(studentGroup.Name);
-
-            if (!isStudentGroupNameChangable)
+            if (isStudentGroupNameExist.Data)
             {
-                return StatusCode(409, "Student Group already exists!");
+                return Result<StudentGroupDto>.Error(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
             }
 
             var resStudentGroup = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
-
-            if (resStudentGroup == null)
-            {
-                return StatusCode(422, "Cannot create student group.");
-            }
-
-            return Ok(resStudentGroup);
+          
+            return resStudentGroup.ToActionResult();
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
+        public async Task<ActionResult<UpdateStudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            var isStudentGroupNameExist = await _studentGroupService
+                   .IsGroupNameExistAsync(studentGroupDto.Name);
 
-            var isStudentGroupNameChangable = await _studentGroupService
-                       .IsGroupNameTakenAsync(studentGroupDto.Name);
-
-            if (!isStudentGroupNameChangable)
+            if (isStudentGroupNameExist.Data)
             {
-                return StatusCode(409, "Student group name is already taken!");
+                return Result<StudentGroupDto>.Error(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
             }
 
             var updatedStudentGroup = await _studentGroupService
                     .UpdateStudentGroupAsync(id, studentGroupDto);
 
-            if (updatedStudentGroup != null)
-            {
-                return Ok(updatedStudentGroup);
-            }
+            return updatedStudentGroup.ToActionResult();
+        }
 
-            return StatusCode(409, "Cannot update.");
+        [Authorize(Roles = "2, 4")]
+        [HttpPut("{id}/students")]
+        public async Task<ActionResult<UpdateStudentsForStudentGroup>> PutStudentsOfStudentGroup(long id, UpdateStudentsForStudentGroup studentGroupDto) 
+        {
+            var updatedStudentGroup = await _studentGroupService
+                    .UpdateStudentsForStudentGroupAsync(id, studentGroupDto);
+
+            return updatedStudentGroup.ToActionResult();
         }
 
         [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
         {
-
-            var studentGroupsres = await _studentGroupService.GetAllStudentGroupsAsync();
-
-            return Ok(studentGroupsres);
+            return Ok(await _studentGroupService.GetAllStudentGroupsAsync());
         }
 
         [Authorize(Roles = "2, 4")]
@@ -104,12 +94,7 @@ namespace CharlieBackend.Api.Controllers
             var foundStudentGroup = await _studentGroupService
                     .GetStudentGroupByIdAsync(id);
 
-            if (foundStudentGroup == null)
-            { 
-                return BadRequest("No such student group.");
-            }
-
-            return foundStudentGroup;
+            return foundStudentGroup.ToActionResult();
         }
     }
 }

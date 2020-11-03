@@ -40,17 +40,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Include(group => group.MentorsOfStudentGroups).ToListAsync();
         }
 
-        public async Task<bool> IsGroupNameChangableAsync(string name)
+        public async Task<bool> IsGroupNameExistAsync(string name)
         {
-            var groups = await _applicationContext.StudentGroups
-                    .Where(grName => grName.Name == name).ToListAsync();
-
-            if (groups.Count > 1)
-            {
-                return false;
-            }
-           
-            return true;
+            return await _applicationContext.StudentGroups.AnyAsync(x => x.Name == name);
         }
 
         public StudentGroup SearchStudentGroup(long studentGroupId)
