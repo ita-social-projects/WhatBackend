@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
+using CharlieBackend.AdminPanel.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -22,6 +24,10 @@ namespace CharlieBackend.AdminPanel
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<HttpUtil>();
+
+            services.AddCors();
+
             services.AddControllersWithViews();
         }
 
@@ -36,6 +42,15 @@ namespace CharlieBackend.AdminPanel
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

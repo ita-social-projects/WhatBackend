@@ -6,23 +6,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.AdminPanel.Models;
+using CharlieBackend.AdminPanel.Utils;
+using CharlieBackend.Core.Models.Account;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
+    [Route("api/admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(ILogger<AdminController> logger)
+        private readonly HttpUtil _httpUtil;
+
+        public AdminController(ILogger<AdminController> logger, HttpUtil httpUtil)
         {
             _logger = logger;
+            _httpUtil = httpUtil;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<object>> Test()
+        {
+            var x = await _httpUtil.PostJsonAsync("http://localhost:5000/api/auth", new AuthenticationModel
+            {
+                                                 Email = "Frodo.@gmail.com",
+                                                 Password ="123456"
+                                               });
+
+            return x.Content;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<object>> Test2()
+        {
+            var x = await _httpUtil.GetAsync("https://localhost:5001/api/themes");
+
+            return x.Content;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-
+               
         public IActionResult Privacy()
         {
             return View();
