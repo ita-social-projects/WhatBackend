@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupDto == null)
                 {
-                    return Result<StudentGroupDto>.Error(ErrorCode.NullReference, "StudentGroupDto is null");
+                    return Result<StudentGroupDto>.Error(ErrorCode.ValidationError, "StudentGroupDto is null");
                 }
 
                 var studentGroup = new StudentGroup
@@ -88,7 +88,7 @@ namespace CharlieBackend.Business.Services
         {
             if(name == null)
             {
-                return Result<bool>.Error(ErrorCode.NullReference, "Name is null");
+                return Result<bool>.Error(ErrorCode.ValidationError, "Name is null");
             }
 
             var res = await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(name);
@@ -114,7 +114,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupDto == null)
                 {
-                    return Result<UpdateStudentGroupDto>.Error(ErrorCode.NullReference, "UpdateStudentGroupDto is null");
+                    return Result<UpdateStudentGroupDto>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
                 }
 
                 var updatedEntity = _mapper.Map<StudentGroup>(studentGroupDto);
@@ -162,7 +162,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupModel == null)
                 {
-                    return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.NullReference, "UpdateStudentGroupDto is null");
+                    return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
                 }
 
                 var updatedEntity = _mapper.Map<StudentGroup>(studentGroupModel); 

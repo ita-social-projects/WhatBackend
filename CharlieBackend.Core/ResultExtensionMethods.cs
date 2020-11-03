@@ -29,8 +29,6 @@ namespace CharlieBackend.Core
                     case ErrorCode.InternalServerError: //500
                         return new StatusCodeResult(500);
 
-                    case ErrorCode.NullReference:
-                        return new NotFoundObjectResult(result.ErrorData.ErrorMessage);//404
                     case ErrorCode.NotFound:
                         return new NotFoundObjectResult(result.ErrorData.ErrorMessage);//404
 
