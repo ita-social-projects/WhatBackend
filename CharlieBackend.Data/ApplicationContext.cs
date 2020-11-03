@@ -417,6 +417,8 @@ namespace CharlieBackend.Data
 
             modelBuilder.Entity<Schedule>(entity =>
             {
+                entity.ToTable("schedule");
+                
                 entity.HasIndex(e => e.StudentGroupId)
                     .HasName("FK_student_group_of_schedule");
 
