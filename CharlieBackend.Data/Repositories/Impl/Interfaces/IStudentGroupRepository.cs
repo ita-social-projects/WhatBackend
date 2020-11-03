@@ -8,7 +8,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         public new Task<List<StudentGroup>> GetAllAsync();
 
-        public Task<bool> IsGroupNameChangableAsync(string name);
+        public Task<bool> IsGroupNameExistAsync(string name);
 
         public StudentGroup SearchStudentGroup(long studentGroupId);
 

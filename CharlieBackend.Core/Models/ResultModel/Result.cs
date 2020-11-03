@@ -24,7 +24,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         public static Result<T> Success(T transferredData)
         {
             
-            if (object.Equals(transferredData, default(T)))
+            if (object.Equals(transferredData, default(T) ) && typeof(T) != typeof(bool)) // default(bool) is false
             {
                 throw new ArgumentNullException();
             }
