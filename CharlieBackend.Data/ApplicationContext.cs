@@ -422,7 +422,15 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.LessonStart).HasColumnName("lesson_start");
+
+                entity.Property(e => e.LessonStart).HasColumnName("lesson_end");
+
                 entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+
+                entity.Property(e => e.RepeatRate).HasColumnName("repeat_rate");
+
+                entity.Property(e => e.DayNumber).HasColumnName("day_number");
 
                 entity.HasOne(d => d.StudentGroup)
                     .WithMany(p => p.Schedule)
