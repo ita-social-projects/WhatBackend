@@ -12,7 +12,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-   // [Route("api/admin")]
+   [Route("api/admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -26,7 +26,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             _httpUtil = httpUtil;
         }
 
-        [HttpGet]
+        [HttpGet("Test")]
         public async Task<ActionResult<object>> Test()
         {
             var httpRespone = await _httpUtil.PostJsonAsync("http://localhost:5000/api/auth", new AuthenticationModel
@@ -39,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             //return httpRespone.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
         }
 
-        [HttpGet]
+        [HttpGet("Test2")]
         public async Task<ActionResult<object>> Test2()
         {
             var x = await _httpUtil.GetAsync("https://localhost:5001/api/themes");
@@ -47,16 +47,19 @@ namespace CharlieBackend.AdminPanel.Controllers
             return x.Content;
         }
 
+        [HttpGet("Index")]
         public IActionResult Index()
         {
             return View();
         }
-               
+
+        [HttpGet("Privacy")]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [HttpGet("Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
