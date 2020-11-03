@@ -24,9 +24,25 @@ namespace CharlieBackend.AdminPanel
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var config = Configuration.Get<ApplicationSettings>();
+            services.AddHttpClient();
+
+            services.Configure<ApplicationSettings>(Configuration);
+
             services.AddTransient<HttpUtil>();
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                if (config.Cors != null && config.Cors.AllowedOrigins != null)
+                {
+                    options.AddPolicy("default", policy =>
+                    {
+                        policy.WithOrigins(config.Cors.AllowedOrigins.ToArray())
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+                    });
+                }
+            });
 
             services.AddControllersWithViews();
         }
@@ -43,13 +59,7 @@ namespace CharlieBackend.AdminPanel
                 app.UseHsts();
             }
 
-            app.UseCors(builder =>
-            {
-                builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
+            app.UseCors("default");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

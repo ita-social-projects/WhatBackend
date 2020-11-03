@@ -11,12 +11,14 @@ using CharlieBackend.Core.Models.Account;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("api/admin")]
+   // [Route("api/admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
 
         private readonly HttpUtil _httpUtil;
+
+        private string _token { get; set; }
 
         public AdminController(ILogger<AdminController> logger, HttpUtil httpUtil)
         {
@@ -27,13 +29,14 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet]
         public async Task<ActionResult<object>> Test()
         {
-            var x = await _httpUtil.PostJsonAsync("http://localhost:5000/api/auth", new AuthenticationModel
+            var httpRespone = await _httpUtil.PostJsonAsync("http://localhost:5000/api/auth", new AuthenticationModel
             {
                                                  Email = "Frodo.@gmail.com",
                                                  Password ="123456"
                                                });
 
-            return x.Content;
+            return await httpRespone.Content.ReadAsStringAsync(); //get response body
+            //return httpRespone.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
         }
 
         [HttpGet]
