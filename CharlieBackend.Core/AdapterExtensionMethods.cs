@@ -2,7 +2,6 @@
 using System.Linq;
 using CharlieBackend.Core.Models;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Core.Models.Student;
 using CharlieBackend.Core.Models.Account;
 
@@ -48,26 +47,6 @@ namespace CharlieBackend.Core
                 Role = accountModel.Role
             };
         }
-
-        public static Lesson ToLesson(this LessonModel lessonModel)
-        {
-            return new Lesson
-            {
-                Id = lessonModel.Id,
-                LessonDate = lessonModel.LessonDate,
-            };
-        }
-
-        public static LessonModel ToLessonModel(this Lesson lesson)
-        {
-            return new LessonModel
-            {
-                Id = lesson.Id,
-                LessonDate = lesson.LessonDate,
-                ThemeName = lesson.Theme?.Name,
-            };
-        }
-    
  
         public static Mentor ToMentor(this MentorModel mentorModel)
         {
