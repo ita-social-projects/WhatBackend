@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Lesson;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
