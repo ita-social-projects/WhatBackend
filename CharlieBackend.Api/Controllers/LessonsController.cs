@@ -23,15 +23,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            if (HttpContext.Items["mentorId"] == null)
-            {
-                return BadRequest("Need to sign in as a mentor.");
-            }
 
             var createdLesson = await _lessonService.CreateLessonAsync(lessonModel);
 
@@ -42,7 +33,6 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok();
         }
-
 
         [Authorize(Roles = "4")]
         [Route("assign")]
