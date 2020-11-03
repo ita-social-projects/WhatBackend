@@ -1,11 +1,10 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.Models.Lesson;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Lesson;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -24,11 +23,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
 
             if (createdLesson == null)

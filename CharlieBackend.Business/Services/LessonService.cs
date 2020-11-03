@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.AspNetCore.Diagnostics;
-using CharlieBackend.Core.Models.Lesson;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
