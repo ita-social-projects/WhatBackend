@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Controllers
             _lessonService = lessonService;
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
         {
@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "4")]
         [Route("assign")]
         [HttpPost]
         public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonModel ids)
@@ -58,7 +58,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(changedLesson);
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
         {
