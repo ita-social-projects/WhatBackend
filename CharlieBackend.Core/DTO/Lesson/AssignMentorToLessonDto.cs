@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using CharlieBackend.Core.Models.Visit;
 using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.Models.Lesson
-{
-    public class AssignMentorToLessonModel
-    {
 
+
+namespace CharlieBackend.Core.DTO.Lesson
+{
+    public class AssignMentorToLessonDto
+    {
         [Required]
         [JsonPropertyName("mentor_id")]
         public long MentorId { get; set; }
@@ -15,7 +17,6 @@ namespace CharlieBackend.Core.Models.Lesson
         [Required]
         [JsonPropertyName("lesson_id")]
         public long LessonId { get; set; }
-
 
     }
 }

@@ -1,10 +1,10 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Lesson;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Lesson;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -21,33 +21,23 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2")]
         [HttpPost]
-        public async Task<ActionResult> PostLesson(CreateLessonModel lessonModel)
+        public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            if (HttpContext.Items["mentorId"] == null)
-            {
-                return BadRequest("Need to sign in as a mentor.");
-            }
-
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonModel);
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
 
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
             }
 
-            return Ok();
+            return Ok(createdLesson);
         }
 
 
         [Authorize(Roles = "2, 4")]
         [Route("assign")]
         [HttpPost]
-        public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonModel ids)
+        public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonDto ids)
         {
             var changedLesson = await _lessonService.AssignMentorToLessonAsync(ids);
 
@@ -60,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2")]
         [HttpGet]
-        public async Task<ActionResult<List<LessonModel>>> GetAllLessons()
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
         {
             var lessons = await _lessonService.GetAllLessonsAsync();
 
@@ -69,7 +59,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "1, 2, 4")]
         [HttpGet("students/{id}")]
-        public async Task<ActionResult<List<StudentLessonModel>>> GetStudentLessons(long id)
+        public async Task<ActionResult<List<StudentLessonDto>>> GetStudentLessons(long id)
         {
 
             var lessons = await _lessonService.GetStudentLessonsAsync(id);
@@ -79,16 +69,16 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "2, 4")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutLesson(long id, UpdateLessonModel lessonModel)
+        public async Task<ActionResult> PutLesson(long id, UpdateLessonDto lessonDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            lessonModel.Id = id;
+            lessonDto.Id = id;
 
-            var updatedLesson = await _lessonService.UpdateLessonAsync(lessonModel);
+            var updatedLesson = await _lessonService.UpdateLessonAsync(lessonDto);
 
             if (updatedLesson != null)
             {

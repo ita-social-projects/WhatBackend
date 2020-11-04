@@ -5,7 +5,6 @@ using Moq;
 using CharlieBackend.Business.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Api.Controllers;
-using CharlieBackend.Core.Models.Lesson;
 
 namespace CharlieBackend.Api.UnitTest.Controllers
 {
