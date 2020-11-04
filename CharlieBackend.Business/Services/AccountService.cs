@@ -19,39 +19,56 @@ namespace CharlieBackend.Business.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICredentialsSenderService _credentialsSender;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ICredentialsSenderService credentialsSender)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _credentialsSender = credentialsSender;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
-            try
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                var account = new Account
+                try
                 {
-                    Email = accountModel.Email,
-                    FirstName = accountModel.FirstName,
-                    LastName = accountModel.LastName,
-                    Role = 0
-                };
+                    var account = new Account
+                    {
+                        Email = accountModel.Email,
+                        FirstName = accountModel.FirstName,
+                        LastName = accountModel.LastName,
+                        Role = 0
+                    };
 
-                account.Salt = GenerateSalt();
-                account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
+                    account.Salt = GenerateSalt();
+                    account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
 
-                _unitOfWork.AccountRepository.Add(account);
+                    _unitOfWork.AccountRepository.Add(account);
 
-                await _unitOfWork.CommitAsync();
+                    await _unitOfWork.CommitAsync();
 
-                return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-            }
-            catch
-            {
-                _unitOfWork.Rollback();
+                    if (await _credentialsSender.SendCredentialsAsync(account.Email, accountModel.ConfirmPassword))
+                    {
+                        transaction.Commit();
+                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                    }
+                    else
+                    {
+                        //TODO implementation for resending email or sent a status msg
+                        transaction.Commit();
+                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                        //need to handle the exception with a right logic to sent it for contorller if fails
+                        //throw new System.Exception("Faild to send credentials");
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
 
-                return Result<AccountDto>.Error(ErrorCode.InternalServerError, "Cannot create account.");
+                    return Result<AccountDto>.Error(ErrorCode.InternalServerError, "Cannot create account.");
+                }
             }
         }
 
