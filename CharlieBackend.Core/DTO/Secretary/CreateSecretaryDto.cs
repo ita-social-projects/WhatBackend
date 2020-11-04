@@ -5,7 +5,6 @@ namespace CharlieBackend.Core.DTO.Secretary
 {
     public class CreateSecretaryDto
     {
-        [Required]
         public long Id { get; set; }
 
         [Required]

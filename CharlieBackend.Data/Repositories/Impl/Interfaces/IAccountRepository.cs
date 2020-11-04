@@ -14,7 +14,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public Task<bool> IsEmailTakenAsync(string email);
 
-        public Task<bool> IsEmailChangableToAsync(string newEmail);
+        public Task<bool> IsEmailChangableToAsync(long? id, string newEmail);
 
         public Task<bool?> IsAccountActiveAsync(string email);
 

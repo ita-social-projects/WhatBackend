@@ -6,11 +6,12 @@ namespace CharlieBackend.Core.Models
 {
     public class MentorModel : BaseAccountModel
     {
-        
+        [JsonIgnore]
+        public virtual long? AccountId { get; set; }
+
         [JsonIgnore]
         [StringLength(65)]
         public override string Password { get; set; }
-
 
         [JsonIgnore]
         public override int Role { get; set; }

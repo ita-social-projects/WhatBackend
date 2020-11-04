@@ -60,13 +60,34 @@ namespace CharlieBackend.Data.Repositories.Impl
             _applicationContext.Entry(account).Property(a => a.Salt).IsModified = true;
         }
 
-        public async Task<bool> IsEmailChangableToAsync(string newEmail)
+        public async Task<bool> IsEmailChangableToAsync(long? id, string newEmail)
         {
             var count = await _applicationContext.Accounts
                     .Where(account => account.Email == newEmail)
                     .CountAsync();
-            if (count > 1) return false;
-            return true;
+
+            if (count == 1)
+            {
+                var foundAccountOfEmail = await _applicationContext.Accounts
+                    .FirstOrDefaultAsync(account => account.Email == newEmail);
+
+                if (foundAccountOfEmail.Id == id)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (count > 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public async Task<bool?> IsAccountActiveAsync(string email)

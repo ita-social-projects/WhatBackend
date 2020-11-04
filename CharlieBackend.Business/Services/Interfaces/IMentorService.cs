@@ -16,5 +16,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         public Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel);
 
         public Task<MentorModel> GetMentorByAccountIdAsync(long accountId);
+
+        public Task<MentorModel> GetMentorByIdAsync(long mentorId);
     }
 }

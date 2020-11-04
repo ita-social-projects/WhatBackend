@@ -6,7 +6,9 @@ namespace CharlieBackend.Core.Models.Student
 {
     public class StudentModel : BaseAccountModel
     {
-        
+        [JsonIgnore]
+        public virtual long? AccountId { get; set; }
+
         [Required]
         [JsonIgnore]
         [EmailAddress]

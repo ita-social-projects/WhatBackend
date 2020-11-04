@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
+
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -26,56 +28,29 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateSecretary(CreateSecretaryDto secretaryDto)
         {
-
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(secretaryDto.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account already exists!");
-            }
-
             var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(secretaryDto);
 
-            if (createdSecretaryDto == null)
-            {
-                return StatusCode(422, "Cannot create secretary.");
-            }
-
-            return Ok(createdSecretaryDto);
+            return createdSecretaryDto.ToActionResult();
         }
 
         [Authorize(Roles = "4")]
         [HttpGet]
-        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
+        public async Task<ActionResult> GetAllSecretaries()
         {
 
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
-            return Ok(secretariesDtos);
+            return secretariesDtos.ToActionResult();
         }
 
         [Authorize(Roles = "4")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateSecretary(long id, UpdateSecretaryDto secretaryDto)
         {
-
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(secretaryDto.Email);
-
-            if (!isEmailChangableTo)
-            {
-                return StatusCode(409, "Email is already taken!");
-            }
-
             secretaryDto.Id = id;
             var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryDto);
 
-            if (updatedSecretary != null)
-            {
-                return Ok(updatedSecretary);
-            }
-
-            return StatusCode(409, "Cannot update.");
+            return updatedSecretary.ToActionResult();
         }
 
         [Authorize(Roles = "4")]

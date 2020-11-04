@@ -80,9 +80,9 @@ namespace CharlieBackend.Business.Services
             return account.ToAccountModel();
         }
 
-        public Task<bool> IsEmailChangableToAsync(string newEmail)
+        public Task<bool> IsEmailChangableToAsync(long? id, string newEmail)
         {
-            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
+            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(id, newEmail);
         }
 
         public Task<bool?> IsAccountActiveAsync(string email)

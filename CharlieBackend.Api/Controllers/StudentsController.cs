@@ -101,9 +101,10 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
+            var student = await _studentService.GetStudentByIdAsync(id);
 
             var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
+                    .IsEmailChangableToAsync(student.AccountId, mentorModel.Email);
 
             if (!isEmailChangableTo)
             {

@@ -82,6 +82,7 @@ namespace CharlieBackend.Core
             return new MentorModel
             {
                 Id = mentor.Id,
+                AccountId = mentor.AccountId,
                 FirstName = mentor.Account.FirstName,
                 LastName = mentor.Account.LastName,
                 Email = mentor.Account.Email,
@@ -97,6 +98,7 @@ namespace CharlieBackend.Core
             return new StudentModel
             {
                 Id = student.Id,
+                AccountId = student.AccountId,
                 FirstName = student.Account.FirstName,
                 LastName = student.Account.LastName,
                 Email = student.Account.Email,

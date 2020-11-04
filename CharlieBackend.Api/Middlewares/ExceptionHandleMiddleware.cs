@@ -35,7 +35,7 @@ namespace CharlieBackend.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 500;
-            
+
             return context.Response.WriteAsync(new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,

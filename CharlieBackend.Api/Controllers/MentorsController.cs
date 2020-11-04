@@ -63,15 +63,21 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
         {
-            if (!ModelState.IsValid)
+
+            var mentor = await _mentorService.GetMentorByIdAsync(id);
+
+            if (mentor == null)
             {
-                return BadRequest();
+                return BadRequest("Can not find mentor!");
             }
 
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
+            var isEmailChangable = await _accountService
+                .IsEmailChangableToAsync(mentor.AccountId, mentorModel.Email);
 
-            if (!isEmailChangableTo)
+            var IsEmailTaken = await _accountService
+                    .IsEmailTakenAsync(mentorModel.Email);
+
+            if (!isEmailChangable)
             {
                 return StatusCode(409, "Email is already taken!");
             }
