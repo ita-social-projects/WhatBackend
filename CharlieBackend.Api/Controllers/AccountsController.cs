@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -138,7 +139,8 @@ namespace CharlieBackend.Api.Controllers
 
             if (isEmailTaken)
             {
-                return StatusCode(409, "Account already exists!");
+                return Result<CreateAccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!").ToActionResult();
             }
 
             var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);

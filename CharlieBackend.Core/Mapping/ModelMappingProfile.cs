@@ -25,9 +25,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Account, AuthenticationDto>();
             CreateMap<AuthenticationDto, Account>();
 
-            CreateMap<AccountDto, CreateAccountDto>();
-            CreateMap<CreateAccountDto, AccountDto>();
-
             #endregion
 
 
@@ -50,15 +47,15 @@ namespace CharlieBackend.Core.Mapping
 
             #region Mentors mapping
 
-            CreateMap<CreateMentorDto, Mentor>();
-            CreateMap<Mentor, CreateMentorDto>();
-
             CreateMap<MentorDto, Mentor>();
             CreateMap<Mentor, MentorDto>()
                 .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
                 .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
                 .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName))
-                .ForMember(source => source.CourseIds, conf => conf.MapFrom(x => x.MentorsOfCourses.Select(y => y.CourseId).ToList()));
+                .ForMember(source => source.CourseIds, conf => conf.
+                    MapFrom(x => x.MentorsOfCourses.Select(y => y.CourseId).ToList()))
+                .ForMember(source => source.StudentGroupIds, conf => conf.
+                    MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.StudentGroupId).ToList()));
 
             CreateMap<UpdateMentorDto, Mentor>();
             CreateMap<Mentor, UpdateMentorDto>();
@@ -70,11 +67,12 @@ namespace CharlieBackend.Core.Mapping
 
 
             #region Students mapping
-            CreateMap<CreateStudentDto, Student>();
-            CreateMap<Student, CreateStudentDto>();
 
             CreateMap<StudentDto, Student>();
-            CreateMap<Student, StudentDto>();
+            CreateMap<Student, StudentDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
             CreateMap<UpdateStudentDto, Student>();
             CreateMap<Student, UpdateStudentDto>();

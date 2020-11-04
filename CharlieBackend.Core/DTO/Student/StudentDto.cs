@@ -11,25 +11,17 @@ namespace CharlieBackend.Core.DTO.Student
         public long Id { get; set; }
 
         [Required]
-        [JsonIgnore]
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
 
-        [JsonIgnore]
-        [StringLength(65)]
-        public string Password { get; set; }
-
-        [JsonIgnore]
-        [EnumDataType(typeof(Roles))]
-        public Roles Role { get; set; }
+        [Required]
+        [StringLength(30)]
+        public string FirstName { get; set; }
 
         [Required]
-        [JsonIgnore]
-        public bool IsActive { get; set; }
+        [StringLength(30)]
+        public string LastName { get; set; }
 
-        [JsonIgnore]
-        [JsonPropertyName("student_group_ids")]
-        public virtual List<long> StudentGroupIds { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,41 +25,27 @@ namespace CharlieBackend.Api.Controllers
             _studentService = studentService;
             _accountService = accountService;
         }
-        /*
-        [Authorize(Roles = "2, 4")]
-        [HttpPost]
-        public async Task<ActionResult> PostStudent(CreateStudentModel studentModel)
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{id}")]
+        public async Task<ActionResult> PostStudent(long id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var foundStudent = await _studentService
-                    .GetStudentByEmailAsync(studentModel.Email);
-
-            if (foundStudent != null)
-            {
-                return Ok(foundStudent.Id);
-            }
-
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account with this email already exists!");
-            }
-
             var createdStudentModel = await _studentService
-                    .CreateStudentAsync(studentModel);
+                    .CreateStudentAsync(id);
 
             if (createdStudentModel == null)
             {
-                return StatusCode(422, "Cannot create student.");
+                return Result<StudentDto>.Error(ErrorCode.UnprocessableEntity,
+                    "Cannot create student.").ToActionResult();
             }
 
-            return Ok(new { createdStudentModel.Id });
-        }*/
+            return createdStudentModel.ToActionResult();
+        }
         /*
         [Authorize(Roles = "2, 4")]
         [HttpGet("{id}")]

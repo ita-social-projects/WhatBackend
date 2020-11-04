@@ -7,6 +7,7 @@ using AutoMapper;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -26,7 +27,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<MentorDto> CreateMentorAsync(long accountId)
+        public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
         {
             try
             {
@@ -47,22 +48,24 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    return _mapper.Map<MentorDto>(mentor);
+                    return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
                 else
 				{
                     _unitOfWork.Rollback();
 
-                    return null;
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "This account already assigned.");
                 }
 
                 }
-                catch
-                {
-                    _unitOfWork.Rollback();
+            catch
+            {
+                 _unitOfWork.Rollback();
 
-                    return null;
-                }
+                 return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot create mentor.");
+            }
 
         }
 
@@ -73,65 +76,57 @@ namespace CharlieBackend.Business.Services
             return mentors;
         }
 
-        /*public async Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel)
+        public async Task<MentorDto> UpdateMentorAsync(long id, UpdateMentorDto mentorModel)
         {
             try
             {
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(id);
 
                 if (foundMentor == null)
                 {
                     return null;
                 }
 
-                foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
-                foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
-                foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
+                    foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
+                    foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
+                    foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
 
-                if (!string.IsNullOrEmpty(mentorModel.Password))
-                {
-                    foundMentor.Account.Salt = _accountService.GenerateSalt();
-                    foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
-                }
-
-                if (mentorModel.CourseIds != null)
-                {
-                    var currentMentorCourses = foundMentor.MentorsOfCourses;
-                    var newMentorCourses = new List<MentorOfCourse>();
-
-                    foreach (var newCourseId in mentorModel.CourseIds)
+                    if (mentorModel.CourseIds != null)
                     {
-                        newMentorCourses.Add(new MentorOfCourse
+                        var currentMentorCourses = foundMentor.MentorsOfCourses;
+                        var newMentorCourses = new List<MentorOfCourse>();
+
+                        foreach (var newCourseId in mentorModel.CourseIds)
                         {
-                            CourseId = newCourseId,
-                            MentorId = foundMentor.Id
-                        });
+                            newMentorCourses.Add(new MentorOfCourse
+                            {
+                                CourseId = newCourseId,
+                                MentorId = foundMentor.Id
+                            });
+                        }
+
+                        _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
                     }
 
-                    _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
-                }
-
-                if (mentorModel.StudentGroupIds != null)
-                {
-                    var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
-                    var newMentorGroups = new List<MentorOfStudentGroup>();
-
-                    foreach (var newGroupId in mentorModel.StudentGroupIds)
+                    if (mentorModel.StudentGroupIds != null)
                     {
-                        newMentorGroups.Add(new MentorOfStudentGroup
+                        var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
+                        var newMentorGroups = new List<MentorOfStudentGroup>();
+
+                        foreach (var newGroupId in mentorModel.StudentGroupIds)
                         {
-                            StudentGroupId = newGroupId,
-                            MentorId = foundMentor.Id
-                        });
+                            newMentorGroups.Add(new MentorOfStudentGroup
+                            {
+                                StudentGroupId = newGroupId,
+                                MentorId = foundMentor.Id
+                            });
+                        }
+
+                         _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
                     }
 
-                    _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
-                }
-
-                await _unitOfWork.CommitAsync();
-
-                return foundMentor.ToMentorModel();
-
+                    await _unitOfWork.CommitAsync();
+                    return _mapper.Map<MentorDto>(foundMentor);
             }
             catch
             {
@@ -139,7 +134,7 @@ namespace CharlieBackend.Business.Services
 
                 return null;
             }
-        }*/
+        }
 
         public async Task<MentorDto> GetMentorByAccountIdAsync(long accountId)
         {

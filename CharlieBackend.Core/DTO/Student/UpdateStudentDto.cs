@@ -7,30 +7,26 @@ namespace CharlieBackend.Core.DTO.Student
     public class UpdateStudentDto
     {
         [Required]
-        [JsonIgnore]
-        public long Id { get; set; }
+        [StringLength(65)]
+        public string Password { get; set; }
 
-        //public new string Email
-        //{
-        //    get => base.Email;
-        //    set => base.Email = value;
-        //}
+        [StringLength(65)]
+        public string? NewPassword { get; set; }
 
-        //public string Password
-        //{
-        //    get => base.Password;
-        //    set => base.Password = value;
-        //}
+        [StringLength(65)]
+        [Compare(nameof(NewPassword), ErrorMessage = "Passwords don't match.")]
+        public string? ConfirmNewPassword { get; set; }
 
-        [JsonPropertyName("first_name")]
+        [EmailAddress]
+        [StringLength(50)]
+        public string? Email { get; set; }
+
         [StringLength(30)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
-        [JsonPropertyName("last_name")]
         [StringLength(30)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        [JsonPropertyName("student_group_ids")]
-        public List<long> StudentGroupIds { get; set; }
+        public List<long>? StudentGroupIds { get; set; }
     }
 }

@@ -9,11 +9,11 @@ namespace CharlieBackend.Core.DTO.Account
         [Required]
         public long Id { get; set; }
 
-        [JsonPropertyName("first_name")]
+        [Required]
         [StringLength(30)]
         public string FirstName { get; set; }
 
-        [JsonPropertyName("last_name")]
+        [Required]
         [StringLength(30)]
         public string LastName { get; set; }
 

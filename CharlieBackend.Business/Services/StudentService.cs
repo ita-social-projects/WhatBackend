@@ -6,6 +6,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -26,62 +27,45 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        /*public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
+        public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
         {
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
-                {
-                    var generatedPassword = _accountService.GenerateSalt();
+                var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
-                    var account = new Account
+                if (account.Role == Roles.NotAssigned)
+                {
+                    account.Role = Roles.Student;
+
+
+                    var student = new Student
                     {
-                        Email = studentModel.Email,
-                        FirstName = studentModel.FirstName,
-                        LastName = studentModel.LastName,
-                        Role = 1
+                        Account = account,
+                        AccountId = accountId
                     };
 
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
-
-                    var student = new Student { Account = account };
                     _unitOfWork.StudentRepository.Add(student);
 
                     await _unitOfWork.CommitAsync();
 
-                    var credentialMessageSent = false;
-
-                    if (await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword))
-                    {
-                        await transaction.CommitAsync();
-
-                        credentialMessageSent = true;
-
-                        return student.ToStudentModel();
-                    }
-                    else
-                    {
-                        //Have to implement here sending error message or details to calling method/controller
-                        //throw new Exception("Email has not been sent");
-
-                        await transaction.CommitAsync();
-
-                        credentialMessageSent = false;
-
-                        return student.ToStudentModel();
-                    }
-
+                    return Result<StudentDto>.Success(_mapper.Map<StudentDto>(student));
                 }
-                catch
+                else
                 {
-                    //Have to implement here sending error message or details to calling method/controller
-                    transaction.Rollback();
+                    _unitOfWork.Rollback();
 
-                    return null;
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "This account already assigned.");
                 }
             }
-        }*/
+            catch
+            {
+                _unitOfWork.Rollback();
+
+                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                    "Cannot create student.");
+            }
+        }
 
         public async Task<IList<StudentDto>> GetAllStudentsAsync()
         {

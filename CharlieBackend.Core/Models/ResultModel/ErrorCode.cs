@@ -11,6 +11,10 @@ namespace CharlieBackend.Core.Models.ResultModel
         ValidationError,
         Unauthorized,
         InternalServerError,
-        NotFound
+        NotFound,
+        NullReference,
+        UnprocessableEntity,
+        Conflict
     }
 }
+

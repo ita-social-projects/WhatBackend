@@ -6,6 +6,8 @@ using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -37,10 +39,11 @@ namespace CharlieBackend.Api.Controllers
 
             if (createdMentorModel == null)
             {
-                return StatusCode(422, "Cannot create mentor.");
+                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
+                    "Cannot create mentor.").ToActionResult();
             }
 
-            return Ok(createdMentorModel);
+            return createdMentorModel.ToActionResult(); ;
         }
 
         [Authorize(Roles = "Mentor, Admin")]
@@ -52,26 +55,24 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(mentorsModels);
         }
-        /*
-        [Authorize(Roles = "2, 4")]
+        
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
+        public async Task<ActionResult> PutMentor(long id, UpdateMentorDto mentorModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
+            var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
 
             if (!isEmailChangableTo)
             {
                 return StatusCode(409, "Email is already taken!");
             }
 
-            mentorModel.Id = id;
-            var updatedMentor = await _mentorService.UpdateMentorAsync(mentorModel);
+            var updatedMentor = await _mentorService.UpdateMentorAsync(id, mentorModel);
 
             if (updatedMentor != null)
             {
@@ -79,7 +80,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(409, "Cannot update.");
-        } */
+        } 
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
