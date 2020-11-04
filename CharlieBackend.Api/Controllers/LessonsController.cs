@@ -19,12 +19,12 @@ namespace CharlieBackend.Api.Controllers
             _lessonService = lessonService;
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
             var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
-
+            
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -33,8 +33,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdLesson);
         }
 
-
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "4")]
         [Route("assign")]
         [HttpPost]
         public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonDto ids)
@@ -48,7 +47,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(changedLesson);
         }
 
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "2, 4")]
         [HttpGet]
         public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
         {
