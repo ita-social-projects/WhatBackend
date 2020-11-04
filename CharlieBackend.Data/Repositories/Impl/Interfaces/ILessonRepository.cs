@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Lesson;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface ILessonRepository : IRepository<Lesson>
     {
-        public Task<IList<StudentLessonModel>> GetStudentInfoAsync(long studentId);
+        public Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
     }
 }

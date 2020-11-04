@@ -1,10 +1,10 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Lesson;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -23,11 +23,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
-        public async Task<IList<StudentLessonModel>> GetStudentInfoAsync(long studentId)
+        public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)
         {
             try
             {
-                var studentLessonModels = new List<StudentLessonModel>();
+                var studentLessonDtos = new List<StudentLessonDto>();
 
                 var visits = await _applicationContext.Visits
                         .Include(visit => visit.Lesson)
@@ -36,7 +36,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
                 for (int i = 0; i < visits.Count; i++)
                 {
-                    var studentLessonModel = new StudentLessonModel
+                    var studentLessonDto = new StudentLessonDto
                     {
                         Id = visits[i].Lesson.Id,
                         Comment = visits[i].Comment,
@@ -47,10 +47,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentGroupId = visits[i].Lesson.StudentGroupId
                     };
 
-                    studentLessonModels.Add(studentLessonModel);
+                    studentLessonDtos.Add(studentLessonDto);
                 }
 
-                return studentLessonModels;
+                return studentLessonDtos;
             }
             catch 
             {
