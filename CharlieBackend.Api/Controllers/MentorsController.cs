@@ -46,7 +46,8 @@ namespace CharlieBackend.Api.Controllers
             return createdMentorModel.ToActionResult(); ;
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
@@ -55,8 +56,8 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(mentorsModels);
         }
-        
-        [Authorize(Roles = "Mentor, Admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutMentor(long id, UpdateMentorDto mentorModel)
         {

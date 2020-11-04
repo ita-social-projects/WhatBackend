@@ -24,7 +24,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
             var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
-
+            
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -33,8 +33,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdLesson);
         }
 
-
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("assign")]
         [HttpPost]
         public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonDto ids)
