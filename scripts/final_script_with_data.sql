@@ -48,6 +48,11 @@ values
 ((select id from course where course.name = 'создание игр на Unity'),'122_18_ck1', '2018-09-01',  '2021-09-01'),
 ((select id from course where course.name = 'создание веб приложений'),'121_18_ck1', '2018-09-01',  '2021-09-01');
 
+insert  schedule (student_group_id, lesson_start, lesson_end, repeat_rate, day_number)
+values
+( (select id from student_group where student_group.name = '121_18_1'),  '11:12', '12:30', 2, null),
+( (select id from student_group where student_group.name = '121_18_1'),  '17:30', '18:12', 3, null);
+
 insert student_of_student_group (student_group_id, student_id)
 values
 ((SELECT student_group.id FROM student_group where student_group.name = "121_18_1" ),
