@@ -25,12 +25,5 @@ namespace CharlieBackend.Core.DTO.StudentGroups
         [JsonPropertyName("finish_date")]
         public DateTime FinishDate { get; set; }
 
-        [Required]
-        [JsonPropertyName("student_ids")]
-        public IList<long> StudentIds { get; set; }
-
-        [Required]
-        [JsonPropertyName("mentor_ids")]
-        public IList<long> MentorIds { get; set; }
     }
 }

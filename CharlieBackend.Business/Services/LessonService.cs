@@ -1,73 +1,59 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using System;
+using AutoMapper;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Lesson;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.AspNetCore.Diagnostics;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using Microsoft.AspNetCore.Diagnostics;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Business.Services
 {
     public class LessonService : ILessonService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public LessonService(IUnitOfWork unitOfWork)
+        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<LessonModel> CreateLessonAsync(CreateLessonModel lessonModel)
+        public async Task<LessonDto> CreateLessonAsync(CreateLessonDto lessonDto)
         {
             try
             {
-                Theme theme;
-                var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(lessonModel.ThemeName);
+                var createdLessonEntity = _mapper.Map<Lesson>(lessonDto);
 
-                if (foundTheme != null)
+                var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdLessonEntity.Theme?.Name);
+
+                if (foundTheme == null)
                 {
-                    theme = foundTheme;
+                    _unitOfWork.ThemeRepository.Add(createdLessonEntity.Theme);
                 }
                 else
                 {
-                    theme = new Theme { Name = lessonModel.ThemeName };
-
-                    _unitOfWork.ThemeRepository.Add(theme);
+                    createdLessonEntity.Theme = foundTheme;
                 }
 
-                var lesson = new Lesson
-                {
-                    MentorId = lessonModel.MentorId,
-                    StudentGroupId = lessonModel.StudentGroupId,
-                    LessonDate = lessonModel.LessonDate,
-                    Theme = theme
-                };
+                _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
-                _unitOfWork.LessonRepository.Add(lesson);
-
-                if (lessonModel.LessonVisits != null)
+                if (lessonDto.LessonVisits != null)
                 {
-                    for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
+                    for (int i = 0; i < createdLessonEntity.Visits.Count; i++)
                     {
-                        var visit = new Visit
-                        {
-                            Lesson = lesson,
-                            StudentId = lessonModel.LessonVisits[i].StudentId,
-                            Comment = lessonModel.LessonVisits[i].Comment,
-                            Presence = lessonModel.LessonVisits[i].Presence,
-                            StudentMark = lessonModel.LessonVisits[i].StudentMark
-                        };
+                        createdLessonEntity.Visits[i].Lesson = createdLessonEntity;
 
-                        _unitOfWork.VisitRepository.Add(visit);
+                        _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
                     }
-
                 }
 
                 await _unitOfWork.CommitAsync();
 
-                return lessonModel;
+                return _mapper.Map<LessonDto>(createdLessonEntity);
             }
             catch
             {
@@ -77,23 +63,17 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<LessonModel>> GetAllLessonsAsync()
+        public async Task<IList<LessonDto>> GetAllLessonsAsync()
         {
             var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
-            var lessonsModels = new List<LessonModel>();
 
-            foreach (var lesson in lessons)
-            {
-                lessonsModels.Add(lesson.ToLessonModel());
-            }
-
-            return lessonsModels;
+            return _mapper.Map<IList<LessonDto>>(lessons);
         }
 
-
-        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonModel ids)
+        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
             var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+
             if (mentorToAssign == null)
             {
                 throw new NullReferenceException();
@@ -101,14 +81,13 @@ namespace CharlieBackend.Business.Services
             var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(ids.LessonId);
 
             foundLesson.MentorId = ids.MentorId;
+
             await _unitOfWork.CommitAsync();
 
             return foundLesson;
         }
 
-
-
-        public async Task<LessonModel> UpdateLessonAsync(UpdateLessonModel lessonModel)
+        public async Task<LessonDto> UpdateLessonAsync(UpdateLessonDto lessonModel)
         {
             try
             {
@@ -139,7 +118,7 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
-                if (lessonModel.LessonDate != null)
+                if (lessonModel.LessonDate != default(DateTime))
                 {
                     foundLesson.LessonDate = lessonModel.LessonDate;
                 }
@@ -164,7 +143,7 @@ namespace CharlieBackend.Business.Services
                 }
                 await _unitOfWork.CommitAsync();
 
-                return lessonModel;
+                return _mapper.Map<LessonDto>(lessonModel);
 
             }
             catch
@@ -175,11 +154,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<StudentLessonModel>> GetStudentLessonsAsync(long studentId)
+        public async Task<IList<StudentLessonDto>> GetStudentLessonsAsync(long studentId)
         {
             var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
 
-            return studentLessonModels ?? null;
+            return _mapper.Map<IList<StudentLessonDto>>(studentLessonModels) ?? null;
         }
 
     }

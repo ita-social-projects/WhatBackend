@@ -1,36 +1,35 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Visit;
 using System.Text.Json.Serialization;
 using CharlieBackend.Core.Models.Visit;
 using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.Models.Lesson
+namespace CharlieBackend.Core.DTO.Lesson
 {
-    public class CreateLessonModel : LessonModel
+    public class CreateLessonDto
     {
-        [Required]
-        [JsonIgnore]
-        public override long Id { get; set; }
 
         [Required]
         [JsonPropertyName("theme_name")]
         [StringLength(100)]
-        public override string ThemeName { get; set; }
+        public string ThemeName { get; set; }
 
         [JsonPropertyName("mentor_id")]
-        public override long MentorId { get; set; }
+        public long MentorId { get; set; }
 
         [Required]
         [JsonPropertyName("group_id")]
-        public virtual long StudentGroupId { get; set; }
+        public long StudentGroupId { get; set; }
 
         [Required]
         [JsonPropertyName("lesson_visits")]
-        public virtual List<VisitModel> LessonVisits { get; set; }
+        public IList<VisitDto> LessonVisits { get; set; }
 
         [Required]
         [JsonPropertyName("lesson_date")]
         [DataType(DataType.DateTime)]
-        public override DateTime LessonDate { get; set; }
+        public DateTime LessonDate { get; set; }
     }
 }

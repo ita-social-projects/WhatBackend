@@ -16,8 +16,8 @@ namespace CharlieBackend.Core.DTO.Mentor
         [StringLength(30)]
         public string? LastName { get; set; }
 
-        public List<long>? CourseIds { get; set; }
+        public IList<long>? CourseIds { get; set; }
 
-        public List<long>? StudentGroupIds { get; set; }
+        public IList<long>? StudentGroupIds { get; set; }
     }
 }

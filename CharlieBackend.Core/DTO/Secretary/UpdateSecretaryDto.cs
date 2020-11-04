@@ -1,27 +1,28 @@
-﻿using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.DTO.Mentor
+namespace CharlieBackend.Core.DTO.Secretary
 {
-    public class MentorDto
+    public class UpdateSecretaryDto
     {
-        [Required]
+
+        [JsonIgnore]
         public long Id { get; set; }
 
-        [Required]
+        [JsonIgnore]
+        [StringLength(65)]
+        public string Password { get; set; }
+
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
 
-        [Required]
+        [JsonPropertyName("first_name")]
         [StringLength(30)]
         public string FirstName { get; set; }
 
-        [Required]
+        [JsonPropertyName("last_name")]
         [StringLength(30)]
         public string LastName { get; set; }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -18,8 +17,11 @@ namespace CharlieBackend.Core.Entities
         public string Salt { get; set; }
 
         public bool? IsActive { get; set; }
-        public virtual ICollection<Mentor> Mentors { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
 
+        public virtual ICollection<Mentor> Mentors { get; set; }
+        
+        public virtual ICollection<Student> Students { get; set; }
+        
+        public virtual ICollection<Secretary> Secretaries { get; set; }
     }
 }

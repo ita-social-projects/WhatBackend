@@ -48,6 +48,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
+            services.AddScoped<ISecretaryService, SecretaryService>();
 
             #endregion
         }

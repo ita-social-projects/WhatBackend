@@ -23,6 +23,8 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
 
+        public virtual DbSet<Secretary> Secretaries { get; set; }
+
         public virtual DbSet<Student> Students { get; set; }
 
         public virtual DbSet<StudentGroup> StudentGroups { get; set; }
@@ -32,6 +34,8 @@ namespace CharlieBackend.Data
         public virtual DbSet<Theme> Themes { get; set; }
 
         public virtual DbSet<Visit> Visits { get; set; }
+        
+        public virtual DbSet<Schedule> Schedules { get; set; }
 
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
@@ -46,6 +50,23 @@ namespace CharlieBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Secretary>(entity =>
+            {
+                entity.ToTable("secretary");
+
+                entity.HasIndex(e => e.AccountId)
+                    .HasName("FK_account_of_secretary");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Secretaries)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_account_of_secretary");
+            });
+
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("account");
@@ -237,6 +258,23 @@ namespace CharlieBackend.Data
                     .HasConstraintName("FK_student_group_of_mentor");
             });
 
+            modelBuilder.Entity<Secretary>(entity =>
+            {
+                entity.ToTable("secretary");
+
+                entity.HasIndex(e => e.AccountId)
+                    .HasName("FK_account_of_secretary");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Secretaries)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_account_of_secretary");
+            });
+
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.ToTable("student");
@@ -375,6 +413,31 @@ namespace CharlieBackend.Data
                     .WithMany(p => p.Visits)
                     .HasForeignKey(d => d.StudentId)
                     .HasConstraintName("FK_student_of_visit");
+            });
+
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.ToTable("schedule");
+                
+                entity.HasIndex(e => e.StudentGroupId)
+                    .HasName("FK_student_group_of_schedule");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.LessonStart).HasColumnName("lesson_start");
+
+                entity.Property(e => e.LessonStart).HasColumnName("lesson_end");
+
+                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+
+                entity.Property(e => e.RepeatRate).HasColumnName("repeat_rate");
+
+                entity.Property(e => e.DayNumber).HasColumnName("day_number");
+
+                entity.HasOne(d => d.StudentGroup)
+                    .WithMany(p => p.Schedule)
+                    .HasForeignKey(d => d.StudentGroupId)
+                    .HasConstraintName("FK_student_group_of_schedule");
             });
 
             OnModelCreatingPartial(modelBuilder);
