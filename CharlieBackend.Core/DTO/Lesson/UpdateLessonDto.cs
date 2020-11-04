@@ -10,7 +10,6 @@ namespace CharlieBackend.Core.DTO.Lesson
     public class UpdateLessonDto
     {
         [Required]
-        [JsonIgnore]
         public long Id { get; set; }
 
         [Required]

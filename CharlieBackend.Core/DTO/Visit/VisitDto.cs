@@ -8,6 +8,7 @@ namespace CharlieBackend.Core.DTO.Visit
 {
     public class VisitDto
     {
+        [Required]
         public long Id { get; set; }
 
         [Required]
