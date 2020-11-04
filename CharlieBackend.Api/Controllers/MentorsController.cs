@@ -74,9 +74,6 @@ namespace CharlieBackend.Api.Controllers
             var isEmailChangable = await _accountService
                 .IsEmailChangableToAsync(mentor.AccountId, mentorModel.Email);
 
-            var IsEmailTaken = await _accountService
-                    .IsEmailTakenAsync(mentorModel.Email);
-
             if (!isEmailChangable)
             {
                 return StatusCode(409, "Email is already taken!");
