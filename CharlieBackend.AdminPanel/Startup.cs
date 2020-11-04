@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,11 +23,13 @@ namespace CharlieBackend.AdminPanel
         public void ConfigureServices(IServiceCollection services)
         {
             var config = Configuration.Get<ApplicationSettings>();
-            services.AddHttpClient();
-
+          
             services.Configure<ApplicationSettings>(Configuration);
 
-            services.AddTransient<IHttpUtil,HttpUtil>();
+
+            services.AddTransient<IHttpUtil, HttpUtil>();
+            services.AddTransient<IApiUtil, ApiUtil>(); 
+
 
             services.AddCors(options =>
             {
@@ -99,7 +96,7 @@ namespace CharlieBackend.AdminPanel
 
             app.UseRouting();
 
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.UseSwagger(c =>
             {

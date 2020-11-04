@@ -15,8 +15,17 @@ namespace CharlieBackend.AdminPanel
 
     public class UrlsSettings
     {
-        public string Api { get; set; }
+        public ApiSettings Api { get; set; }
     }
+
+    public class ApiSettings
+    {
+        public string Http { get; set; }
+
+        public string Https { get; set; }
+    }
+
+  
 
     public class CorsSettings
     {

@@ -1,14 +1,12 @@
-﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using CharlieBackend.AdminPanel.Exceptions;
+using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Newtonsoft.Json;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
@@ -79,6 +77,14 @@ namespace CharlieBackend.AdminPanel.Utils
             var responseMessage = await _client.SendAsync(requestMessage);
 
             return responseMessage;
+        }
+
+        public void EnsureSuccessStatusCode(HttpResponseMessage httpResponse)// checks that http response is OK
+        {
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new HttpStatusException(httpResponse);
+            }
         }
 
     }

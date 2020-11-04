@@ -1,35 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.AdminPanel.Models;
-using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.Core.Models.Account;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-   [Route("api/admin")]
+    [Route("api/admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
 
+        private readonly IOptions<ApplicationSettings> _config;
+
         private readonly IHttpUtil _httpUtil;
 
        
-        public AdminController(ILogger<AdminController> logger, IHttpUtil httpUtil)
+        public AdminController(ILogger<AdminController> logger, IOptions<ApplicationSettings> config, IHttpUtil httpUtil)
         {
             _logger = logger;
             _httpUtil = httpUtil;
+            _config = config;
         }
 
         [HttpGet("Test")]
         public async Task<ActionResult<object>> Test()
         {
-            var httpRespone = await _httpUtil.PostJsonAsync("http://localhost:5000/api/auth", new AuthenticationModel
+            var httpRespone = await _httpUtil.PostJsonAsync( $"{_config.Value.Urls.Api.Https}/api/auth", new AuthenticationModel 
             {
                                                  Email = "Frodo.@gmail.com",
                                                  Password ="123456"
@@ -42,7 +42,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("Test2")]
         public async Task<ActionResult<object>> Test2()
         {
-            var x = await _httpUtil.GetAsync("https://localhost:5001/api/themes");
+            var x = await _httpUtil.GetAsync($"{_config.Value.Urls.Api.Https}/api/themes");
 
             return x.Content;
         }
