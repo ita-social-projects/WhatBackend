@@ -62,27 +62,12 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<bool> IsEmailChangableToAsync(long? id, string newEmail)
         {
-            var count = await _applicationContext.Accounts
-                    .Where(account => account.Email == newEmail)
-                    .CountAsync();
+            var foundAccountOfEmail = await _applicationContext.Accounts
+                     .FirstOrDefaultAsync(account => account.Email == newEmail);
 
-            if (count == 1)
+            if (foundAccountOfEmail != null)
             {
-                var foundAccountOfEmail = await _applicationContext.Accounts
-                    .FirstOrDefaultAsync(account => account.Email == newEmail);
-
-                if (foundAccountOfEmail.Id == id)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (count > 1)
-            {
-                return false;
+                return foundAccountOfEmail.Id == id;
             }
             else
             {
