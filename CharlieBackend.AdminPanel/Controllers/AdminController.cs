@@ -6,6 +6,8 @@ using CharlieBackend.AdminPanel.Models;
 using CharlieBackend.Core.Models.Account;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
+using CharlieBackend.Core.DTO.Theme;
+using System.Collections.Generic;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -16,35 +18,39 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         private readonly IOptions<ApplicationSettings> _config;
 
-        private readonly IHttpUtil _httpUtil;
+        private readonly IApiUtil _apiUtil;
 
-       
-        public AdminController(ILogger<AdminController> logger, IOptions<ApplicationSettings> config, IHttpUtil httpUtil)
+
+        public AdminController(ILogger<AdminController> logger, IOptions<ApplicationSettings> config, IApiUtil apiUtil)
         {
             _logger = logger;
-            _httpUtil = httpUtil;
+            _apiUtil = apiUtil;
+
             _config = config;
         }
 
-        [HttpGet("Test")]
-        public async Task<ActionResult<object>> Test()
+        [HttpGet("signin")]
+        public async Task<ActionResult<AuthenticationModel>> SignIn()
         {
-            var httpRespone = await _httpUtil.PostJsonAsync( $"{_config.Value.Urls.Api.Https}/api/auth", new AuthenticationModel 
+            var httpResponse = await _apiUtil.SignInAsync<AuthenticationModel>($"{_config.Value.Urls.Api.Https}/api/auth", new AuthenticationModel
             {
-                                                 Email = "Frodo.@gmail.com",
-                                                 Password ="123456"
-                                               });
+                Email = "Frodo.@gmail.com",
+                Password = "123456"
+            });
 
-            return await httpRespone.Content.ReadAsStringAsync(); //get response body
-            //return httpRespone.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
+
+            return httpResponse;
+            //return await httpResponse.Content.ReadAsStringAsync(); //get response body
+            //return httpResponse.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
         }
 
-        [HttpGet("Test2")]
-        public async Task<ActionResult<object>> Test2()
-        {
-            var x = await _httpUtil.GetAsync($"{_config.Value.Urls.Api.Https}/api/themes");
 
-            return x.Content;
+        [HttpGet("Test2")]
+        public async Task<ActionResult<IList<ThemeDto>>> Test2()
+        {
+            var x = await _apiUtil.GetAsync<IList<ThemeDto>>($"{_config.Value.Urls.Api.Https}/api/themes", null);
+
+            return Ok(x);
         }
 
         [HttpGet("Index")]

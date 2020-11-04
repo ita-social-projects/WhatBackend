@@ -25,7 +25,6 @@ namespace CharlieBackend.AdminPanel
         public string Https { get; set; }
     }
 
-  
 
     public class CorsSettings
     {
