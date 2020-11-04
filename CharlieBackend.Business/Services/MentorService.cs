@@ -76,63 +76,74 @@ namespace CharlieBackend.Business.Services
             return mentors;
         }
 
-        public async Task<MentorDto> UpdateMentorAsync(long id, UpdateMentorDto mentorModel)
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel)
         {
             try
             {
+                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
+                }
+
                 var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(id);
 
                 if (foundMentor == null)
                 {
-                    return null;
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "Mentor not found");
                 }
 
-                    foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
-                    foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
-                    foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
+                foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
+                foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
+                foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
 
-                    if (mentorModel.CourseIds != null)
+                if (mentorModel.CourseIds != null)
+                {
+                    var currentMentorCourses = foundMentor.MentorsOfCourses;
+                    var newMentorCourses = new List<MentorOfCourse>();
+
+                    foreach (var newCourseId in mentorModel.CourseIds)
                     {
-                        var currentMentorCourses = foundMentor.MentorsOfCourses;
-                        var newMentorCourses = new List<MentorOfCourse>();
-
-                        foreach (var newCourseId in mentorModel.CourseIds)
-                        {
-                            newMentorCourses.Add(new MentorOfCourse
-                            {
-                                CourseId = newCourseId,
-                                MentorId = foundMentor.Id
-                            });
-                        }
-
-                        _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
+                       newMentorCourses.Add(new MentorOfCourse
+                       {
+                           CourseId = newCourseId,
+                           MentorId = foundMentor.Id
+                       });
                     }
 
-                    if (mentorModel.StudentGroupIds != null)
+                    _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
+                }
+
+                if (mentorModel.StudentGroupIds != null)
+                {
+                    var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
+                    var newMentorGroups = new List<MentorOfStudentGroup>();
+
+                    foreach (var newGroupId in mentorModel.StudentGroupIds)
                     {
-                        var currentMentorGroups = foundMentor.MentorsOfStudentGroups;
-                        var newMentorGroups = new List<MentorOfStudentGroup>();
-
-                        foreach (var newGroupId in mentorModel.StudentGroupIds)
+                        newMentorGroups.Add(new MentorOfStudentGroup
                         {
-                            newMentorGroups.Add(new MentorOfStudentGroup
-                            {
-                                StudentGroupId = newGroupId,
-                                MentorId = foundMentor.Id
-                            });
-                        }
-
-                         _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
+                            StudentGroupId = newGroupId,
+                            MentorId = foundMentor.Id
+                        });
                     }
 
-                    await _unitOfWork.CommitAsync();
-                    return _mapper.Map<MentorDto>(foundMentor);
+                    _unitOfWork.MentorRepository.UpdateMentorGroups(currentMentorGroups, newMentorGroups);
+                }
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<MentorDto>.Success(_mapper.Map<MentorDto>(foundMentor));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot update mentor.");
             }
         }
 

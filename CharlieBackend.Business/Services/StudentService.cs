@@ -74,34 +74,35 @@ namespace CharlieBackend.Business.Services
             return students;
         }
 
-        /*public async Task<StudentModel> UpdateStudentAsync(UpdateStudentModel studentModel)
+        public async Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel)
         {
             try
             {
-                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
+                var isEmailChangableTo = await _accountService
+                    .IsEmailChangableToAsync(studentModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
+                }
+
+                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(id);
 
                 if (foundStudent == null)
                 {
-                    return null;
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "Student not found");
                 }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;
                 foundStudent.Account.FirstName = studentModel.FirstName ?? foundStudent.Account.FirstName;
                 foundStudent.Account.LastName = studentModel.LastName ?? foundStudent.Account.LastName;
 
-                if (!string.IsNullOrEmpty(studentModel.Password))
-                {
-                    foundStudent.Account.Salt = _accountService.GenerateSalt();
-                    foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
-                }
-
                 if (studentModel.StudentGroupIds != null)
                 {
                     var currentStudentGroupsOfStudent = foundStudent.StudentsOfStudentGroups;
                     var newStudentsOfStudentGroup = new List<StudentOfStudentGroup>();
-
-                    //for (int i = 0; i < studentGroupModel.StudentIds.Count; i++)
-                    //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
 
                     foreach (var newStudentGroupId in studentModel.StudentGroupIds)
                     {
@@ -117,16 +118,17 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return foundStudent.ToStudentModel();
+                return Result<StudentDto>.Success(_mapper.Map<StudentDto>(foundStudent));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot update student.");
             }
-        }*/
+        }
 
         public async Task<StudentDto> GetStudentByAccountIdAsync(long accountId)
         {

@@ -89,11 +89,7 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Mentor, MentorDto>()
                 .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
                 .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
-                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName))
-                .ForMember(source => source.CourseIds, conf => conf.
-                    MapFrom(x => x.MentorsOfCourses.Select(y => y.CourseId).ToList()))
-                .ForMember(source => source.StudentGroupIds, conf => conf.
-                    MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.StudentGroupId).ToList()));
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
             CreateMap<UpdateMentorDto, Mentor>();
             CreateMap<Mentor, UpdateMentorDto>();

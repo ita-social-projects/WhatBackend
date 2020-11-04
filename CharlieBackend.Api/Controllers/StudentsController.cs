@@ -79,35 +79,25 @@ namespace CharlieBackend.Api.Controllers
 
         }
 
-        /*[Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
+        public async Task<ActionResult> PutStudent(long id, UpdateStudentDto mentorModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
-            }
+            }           
 
+            var updatedStudent = await _studentService.UpdateStudentAsync(id, mentorModel);
 
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
-
-            if (!isEmailChangableTo)
+            if (updatedStudent == null)
             {
-                return StatusCode(409, "Email is already taken!");
+                return Result<StudentDto>.Error(ErrorCode.UnprocessableEntity,
+                    "Cannot update student.").ToActionResult();
             }
 
-            mentorModel.Id = id;
-
-            var updatedStudent = await _studentService.UpdateStudentAsync(mentorModel);
-
-            if (updatedStudent != null)
-            {
-                return Ok(updatedStudent);
-            }
-
-            return StatusCode(409, "Cannot update.");
-        }*/
+            return updatedStudent.ToActionResult();
+        }
 
         [Authorize(Roles = "Mentor, Admin")]
         [HttpDelete("{id}")]

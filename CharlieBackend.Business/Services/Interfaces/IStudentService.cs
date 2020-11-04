@@ -13,7 +13,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<long?> GetAccountId(long studentId);
 
-        //public Task<StudentDto> UpdateStudentAsync(UpdateStudentDto mentorModel);
+        public Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel);
 
         public Task<StudentDto> GetStudentByAccountIdAsync(long accountId);
 

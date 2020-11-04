@@ -66,21 +66,16 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
-
-            if (!isEmailChangableTo)
-            {
-                return StatusCode(409, "Email is already taken!");
-            }
-
             var updatedMentor = await _mentorService.UpdateMentorAsync(id, mentorModel);
 
-            if (updatedMentor != null)
+            if (updatedMentor == null)
             {
-                return Ok(updatedMentor);
+                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
+                    "Cannot update mentor.").ToActionResult();
             }
 
-            return StatusCode(409, "Cannot update.");
+            
+            return updatedMentor.ToActionResult();
         } 
 
         [Authorize(Roles = "Admin")]
