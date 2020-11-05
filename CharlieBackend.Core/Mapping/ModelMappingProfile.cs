@@ -4,11 +4,10 @@ using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Schedule;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -117,6 +116,12 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+            #region Schedules mapping
+
+            CreateMap<CreateScheduleDto, Schedule>();
+            CreateMap<Schedule, ScheduleDto>();
+
+            #endregion
 
         }
     }
