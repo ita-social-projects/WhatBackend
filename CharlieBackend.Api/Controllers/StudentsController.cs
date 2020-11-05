@@ -28,7 +28,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("{id}")]
-        public async Task<ActionResult> PostStudent(long id)
+        public async Task<ActionResult> PostStudent(long accountId)
         {
             if (!ModelState.IsValid)
             {
@@ -36,7 +36,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             var createdStudentModel = await _studentService
-                    .CreateStudentAsync(id);
+                    .CreateStudentAsync(accountId);
 
             if (createdStudentModel == null)
             {
@@ -46,10 +46,10 @@ namespace CharlieBackend.Api.Controllers
 
             return createdStudentModel.ToActionResult();
         }
-        /*
-        [Authorize(Roles = "2, 4")]
+        
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
+        public async Task<ActionResult<List<StudentDto>>> GetStudentById(long id)
         {
 
             var studentModel = await _studentService.GetStudentByIdAsync(id);
@@ -60,13 +60,13 @@ namespace CharlieBackend.Api.Controllers
                 {
                     first_name = studentModel.FirstName,
                     last_name = studentModel.LastName,
-                    student_group_ids = studentModel.StudentGroupIds,
+                    //student_group_ids = studentModel.StudentGroupIds, // TODO fix
                     email = studentModel.Email
                 });
             }
 
             return StatusCode(409, "Cannot find student with such id.");
-        }*/
+        }
 
         [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
@@ -81,14 +81,14 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Mentor, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutStudent(long id, UpdateStudentDto mentorModel)
+        public async Task<ActionResult> PutStudent(long accountId, UpdateStudentDto studentModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }           
 
-            var updatedStudent = await _studentService.UpdateStudentAsync(id, mentorModel);
+            var updatedStudent = await _studentService.UpdateStudentAsync(accountId, studentModel);
 
             if (updatedStudent == null)
             {

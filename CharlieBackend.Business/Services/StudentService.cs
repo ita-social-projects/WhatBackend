@@ -74,7 +74,7 @@ namespace CharlieBackend.Business.Services
             return students;
         }
 
-        public async Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel)
+        public async Task<Result<StudentDto>> UpdateStudentAsync(long accountId, UpdateStudentDto studentModel)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace CharlieBackend.Business.Services
                         "Email is already taken!");
                 }
 
-                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(id);
+                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(accountId);
 
                 if (foundStudent == null)
                 {

@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
             if (foundAccount.Role == Roles.NotAssigned)
-			{
+            {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 

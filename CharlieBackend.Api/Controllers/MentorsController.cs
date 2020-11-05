@@ -28,14 +28,14 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("{id}")]
-        public async Task<ActionResult> PostMentor(long id)
+        public async Task<ActionResult> PostMentor(long accountId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var createdMentorModel = await _mentorService.CreateMentorAsync(id);
+            var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             if (createdMentorModel == null)
             {
@@ -59,14 +59,14 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutMentor(long id, UpdateMentorDto mentorModel)
+        public async Task<ActionResult> PutMentor(long accountId, UpdateMentorDto mentorModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var updatedMentor = await _mentorService.UpdateMentorAsync(id, mentorModel);
+            var updatedMentor = await _mentorService.UpdateMentorAsync(accountId, mentorModel);
 
             if (updatedMentor == null)
             {

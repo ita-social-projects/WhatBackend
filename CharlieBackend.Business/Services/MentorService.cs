@@ -51,14 +51,13 @@ namespace CharlieBackend.Business.Services
                     return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
                 else
-				{
+                {
                     _unitOfWork.Rollback();
 
                     return Result<MentorDto>.Error(ErrorCode.ValidationError,
                         "This account already assigned.");
                 }
-
-                }
+            }
             catch
             {
                  _unitOfWork.Rollback();
@@ -76,7 +75,7 @@ namespace CharlieBackend.Business.Services
             return mentors;
         }
 
-        public async Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel)
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long accountId, UpdateMentorDto mentorModel)
         {
             try
             {
@@ -88,7 +87,7 @@ namespace CharlieBackend.Business.Services
                         "Email is already taken!");
                 }
 
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(id);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(accountId);
 
                 if (foundMentor == null)
                 {

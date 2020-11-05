@@ -52,15 +52,14 @@ namespace CharlieBackend.Business.Services
                     if (await _credentialsSender.SendCredentialsAsync(account.Email, accountModel.ConfirmPassword))
                     {
                         transaction.Commit();
+
                         return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
                     }
                     else
                     {
-                        //TODO implementation for resending email or sent a status msg
                         transaction.Commit();
+
                         return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-                        //need to handle the exception with a right logic to sent it for contorller if fails
-                        //throw new System.Exception("Faild to send credentials");
                     }
                 }
                 catch
@@ -95,9 +94,7 @@ namespace CharlieBackend.Business.Services
 
             if (account != null)
             {
-              var foundAccount = account;
-
-                return foundAccount;
+                return account;
             }
 
             return null;
