@@ -25,7 +25,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ScheduleDto>> PostSchedule(CreateScheduleDto scheduleDTO)
         {
-            Console.WriteLine("SSSSSS");
             var resSchedule = await _scheduleService
                 .CreateScheduleAsync(scheduleDTO);
 
