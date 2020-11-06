@@ -31,11 +31,22 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<ScheduleDto>.Error(ErrorCode.ValidationError, "ScheduleDto is null");
                 }
-                var scheduleEntity = _mapper.Map<Schedule>(scheduleModel);
-                scheduleEntity.StudentGroup = _unitOfWork.StudentGroupRepository
-                    .GetByIdAsync(scheduleEntity.Id).Result;
-                _unitOfWork.ScheduleRepository.Add(scheduleEntity);
+                if(scheduleModel.RepeatRate != RepeatRate.Daily && scheduleModel.RepeatRate != RepeatRate.Never && 
+                    scheduleModel.DayNumber == null)
+                {
+                    Result<ScheduleDto>.Error(ErrorCode.ValidationError, "DayNumber can`t be null"); 
+                }
 
+                var scheduleEntity = _mapper.Map<Schedule>(scheduleModel);
+                scheduleEntity.StudentGroup = await _unitOfWork.StudentGroupRepository
+                    .GetByIdAsync(scheduleEntity.Id);
+
+                if(scheduleEntity.StudentGroup == null)
+                {
+                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, "StudentGroupId is not valid");         
+                }
+
+                _unitOfWork.ScheduleRepository.Add(scheduleEntity);
              
                 await _unitOfWork.CommitAsync();
 
@@ -49,27 +60,32 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public bool DeleteSchedule(long id)
+        public async Task<IList<ScheduleDto>> GetAllSchedulesAsync()
         {
-            throw new NotImplementedException();
+            var scheduleEntities = await _unitOfWork.ScheduleRepository.GetAllAsync();
+            return _mapper.Map<IList<Schedule>, IList<ScheduleDto>>(scheduleEntities);
         }
 
-        public Task<IList<ScheduleDto>> GetAllSchedulesAsync()
+        public async Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
+            return scheduleEntity == null ? 
+                Result<ScheduleDto>.Error(ErrorCode.NotFound, "Schedule id is not valid") :
+                Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
         }
 
-        public Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
+        public async Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            if(groupEntity == null)
+            {
+               return null;
+            }
+            var schedulesOfGroup = await _unitOfWork.ScheduleRepository.GetSchedulesByStudentGroupIdAsync(id);
+            return _mapper.Map<IList<Schedule>, IList<ScheduleDto>>(schedulesOfGroup);
         }
 
-        public Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<UpdateScheduleDto>> UpdateStudentGroupAsync(UpdateScheduleDto scheduleModel)
+        public async Task<Result<UpdateScheduleDto>> UpdateStudentGroupAsync(UpdateScheduleDto scheduleModel)
         {
             throw new NotImplementedException();
         }
