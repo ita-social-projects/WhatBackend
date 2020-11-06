@@ -1,11 +1,12 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Student;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -14,113 +15,94 @@ namespace CharlieBackend.Business.Services
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialSender;
+        private readonly IMapper _mapper;
 
-        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
+        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, 
+                              ICredentialsSenderService credentialsSender,
+                              IMapper mapper)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialSender = credentialsSender;
+            _mapper = mapper;
         }
 
-        public async Task<StudentModel> CreateStudentAsync(CreateStudentModel studentModel)
+        public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
         {
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
-                {
-                    var generatedPassword = _accountService.GenerateSalt();
+                var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
-                    var account = new Account
+                if (account.Role == Roles.NotAssigned)
+                {
+                    account.Role = Roles.Student;
+
+
+                    var student = new Student
                     {
-                        Email = studentModel.Email,
-                        FirstName = studentModel.FirstName,
-                        LastName = studentModel.LastName,
-                        Role = 1
+                        Account = account,
+                        AccountId = accountId
                     };
 
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
-
-                    var student = new Student { Account = account };
                     _unitOfWork.StudentRepository.Add(student);
 
                     await _unitOfWork.CommitAsync();
 
-                    var credentialMessageSent = false;
-
-                    if (await _credentialSender.SendCredentialsAsync(account.Email, generatedPassword))
-                    {
-                        await transaction.CommitAsync();
-
-                        credentialMessageSent = true;
-
-                        return student.ToStudentModel();
-                    }
-                    else
-                    {
-                        //Have to implement here sending error message or details to calling method/controller
-                        //throw new Exception("Email has not been sent");
-
-                        await transaction.CommitAsync();
-
-                        credentialMessageSent = false;
-
-                        return student.ToStudentModel();
-                    }
-
+                    return Result<StudentDto>.Success(_mapper.Map<StudentDto>(student));
                 }
-                catch
+                else
                 {
-                    //Have to implement here sending error message or details to calling method/controller
-                    transaction.Rollback();
+                    _unitOfWork.Rollback();
 
-                    return null;
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "This account already assigned.");
                 }
             }
-        }
-
-        public async Task<IList<StudentModel>> GetAllStudentsAsync()
-        {
-            var students = await _unitOfWork.StudentRepository.GetAllAsync();
-
-            var studentModels = new List<StudentModel>();
-
-            foreach (var student in students)
+            catch
             {
-                studentModels.Add(student.ToStudentModel());
-            }
+                _unitOfWork.Rollback();
 
-            return studentModels;
+                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                    "Cannot create student.");
+            }
         }
 
-        public async Task<StudentModel> UpdateStudentAsync(UpdateStudentModel studentModel)
+        public async Task<IList<StudentDto>> GetAllStudentsAsync()
+        {
+            var students = _mapper.Map<List<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+
+            return students;
+        }
+
+        public async Task<Result<StudentDto>> UpdateStudentAsync(long accountId, UpdateStudentDto studentModel)
         {
             try
             {
-                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentModel.Id);
+                var isEmailChangableTo = await _accountService
+                    .IsEmailChangableToAsync(studentModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
+                }
+
+                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(accountId);
 
                 if (foundStudent == null)
                 {
-                    return null;
+                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "Student not found");
                 }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;
                 foundStudent.Account.FirstName = studentModel.FirstName ?? foundStudent.Account.FirstName;
                 foundStudent.Account.LastName = studentModel.LastName ?? foundStudent.Account.LastName;
 
-                if (!string.IsNullOrEmpty(studentModel.Password))
-                {
-                    foundStudent.Account.Salt = _accountService.GenerateSalt();
-                    foundStudent.Account.Password = _accountService.HashPassword(studentModel.Password, foundStudent.Account.Salt);
-                }
-
                 if (studentModel.StudentGroupIds != null)
                 {
                     var currentStudentGroupsOfStudent = foundStudent.StudentsOfStudentGroups;
                     var newStudentsOfStudentGroup = new List<StudentOfStudentGroup>();
-
-                    //for (int i = 0; i < studentGroupModel.StudentIds.Count; i++)
-                    //    foundStudentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup { StudentId = foundStudents[i] });
 
                     foreach (var newStudentGroupId in studentModel.StudentGroupIds)
                     {
@@ -136,43 +118,44 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return foundStudent.ToStudentModel();
+                return Result<StudentDto>.Success(_mapper.Map<StudentDto>(foundStudent));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot update student.");
             }
         }
 
-        public async Task<StudentModel> GetStudentByAccountIdAsync(long accountId)
+        public async Task<StudentDto> GetStudentByAccountIdAsync(long accountId)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
 
         public async Task<long?> GetAccountId(long studentId)
         {
-            var mentor = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
-            return mentor?.AccountId;
+            return student?.AccountId;
         }
 
-        public async Task<StudentModel> GetStudentByIdAsync(long studentId)
+        public async Task<StudentDto> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
 
-        public async Task<StudentModel> GetStudentByEmailAsync(string email)
+        public async Task<StudentDto> GetStudentByEmailAsync(string email)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
 
-            return student?.ToStudentModel();
+            return _mapper.Map<StudentDto>(student);
         }
     }
 }

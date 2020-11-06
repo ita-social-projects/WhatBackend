@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Controllers
             _themeService = themeService;
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
         public async Task<ActionResult<IList<ThemeDto>>> GetAllThemes()
         {
@@ -29,7 +29,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(themes);
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpPost]
         public async Task<ActionResult<IList<ThemeDto>>> PostThemes(CreateThemeDto addThemeModel)
         {
