@@ -31,15 +31,16 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<ScheduleDto>.Error(ErrorCode.ValidationError, "ScheduleDto is null");
                 }
-                if(scheduleModel.RepeatRate != RepeatRate.Daily && scheduleModel.RepeatRate != RepeatRate.Never && 
-                    scheduleModel.DayNumber == null)
-                {
-                    Result<ScheduleDto>.Error(ErrorCode.ValidationError, "DayNumber can`t be null"); 
-                }
 
                 var scheduleEntity = _mapper.Map<Schedule>(scheduleModel);
+
+                if (IsNotValidRepeating(scheduleEntity))
+                {
+                    return Result<ScheduleDto>.Error(ErrorCode.ValidationError, "DayNumber can`t be null");
+                }
+
                 scheduleEntity.StudentGroup = await _unitOfWork.StudentGroupRepository
-                    .GetByIdAsync(scheduleEntity.Id);
+                    .GetByIdAsync(scheduleEntity.StudentGroupId);
 
                 if(scheduleEntity.StudentGroup == null)
                 {
@@ -85,9 +86,62 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<Schedule>, IList<ScheduleDto>>(schedulesOfGroup);
         }
 
-        public async Task<Result<UpdateScheduleDto>> UpdateStudentGroupAsync(UpdateScheduleDto scheduleModel)
+        public async Task<Result<ScheduleDto>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if(scheduleDTO == null)
+                {
+                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, "UpdateScheduleDto is null");
+                }
+                var foundSchedule = await _unitOfWork.ScheduleRepository.GetByIdAsync(scheduleId);
+                if(foundSchedule == null)
+                {
+                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, "Schedule id is not valid");
+                }
+                var updatedEntity = _mapper.Map<UpdateScheduleDto, Schedule>(scheduleDTO);
+                if (IsNotValidRepeating(updatedEntity))
+                {
+                    Result<ScheduleDto>.Error(ErrorCode.ValidationError, "DayNumber can`t be null");
+                }
+
+
+                if(updatedEntity.LessonStart != default(TimeSpan))
+                {
+                    foundSchedule.LessonStart = updatedEntity.LessonStart;
+                }
+
+                if (updatedEntity.LessonEnd != default(TimeSpan))
+                {
+                    foundSchedule.LessonEnd = updatedEntity.LessonEnd;
+                }
+
+                foundSchedule.RepeatRate = updatedEntity.RepeatRate;
+
+                if(updatedEntity.DayNumber != null)
+                {
+                    foundSchedule.DayNumber = updatedEntity.DayNumber;
+                }
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(foundSchedule));
+
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+
+                return Result<ScheduleDto>.Error(ErrorCode.InternalServerError, "Internal error");
+            }
         }
+
+        private bool IsNotValidRepeating(Schedule entity)
+        {
+            return entity.RepeatRate != RepeatRate.Daily &&
+                entity.RepeatRate != RepeatRate.Never &&
+                      entity.DayNumber == null;
+        }
+
     }
 }

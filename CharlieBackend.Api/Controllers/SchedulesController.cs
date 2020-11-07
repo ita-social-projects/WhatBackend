@@ -39,21 +39,29 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "3,4")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ScheduleDto>> GetScheduleById(long id)
+        [HttpGet("{scheduleId}")]
+        public async Task<ActionResult<ScheduleDto>> GetScheduleById(long scheduleId)
         {
-            var foundSchedule = await _scheduleService.GetScheduleByIdAsync(id);
+            var foundSchedule = await _scheduleService.GetScheduleByIdAsync(scheduleId);
             return foundSchedule.ToActionResult();
         }
 
         [Authorize(Roles = "3,4")]
-        [HttpGet("{studentGroupId}")]
+        [HttpGet("{studentGroupId}/groupSchedule")]
         public async Task<ActionResult<List<ScheduleDto>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
             var foundSchedules = await _scheduleService.GetSchedulesByStudentGroupIdAsync(studentGroupId);
             return foundSchedules == null ? 
-                Result<ScheduleDto>.Error(ErrorCode.NotFound, "Schedule id is not valid").ToActionResult() :
+                Result<ScheduleDto>.Error(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
                 Ok(foundSchedules);
+        }
+
+        [Authorize(Roles = "3,4")]
+        [HttpPut("{scheduleId}")]
+        public async Task<ActionResult<ScheduleDto>> PutSchedule(long scheduleId, UpdateScheduleDto updateScheduleDto)
+        {
+            var foundSchedules = await _scheduleService.UpdateStudentGroupAsync(scheduleId, updateScheduleDto);
+            return foundSchedules.ToActionResult();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<IList<ScheduleDto>> GetAllSchedulesAsync();
 
-        public Task<Result<UpdateScheduleDto>> UpdateStudentGroupAsync(UpdateScheduleDto scheduleModel);
+        public Task<Result<ScheduleDto>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleModel);
 
         public Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id);
 

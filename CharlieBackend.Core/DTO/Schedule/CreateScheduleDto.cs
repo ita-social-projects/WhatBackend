@@ -13,14 +13,12 @@ namespace CharlieBackend.Core.DTO.Schedule
         public long StudentGroupId { get; set; }
 
         [Required]
-        [RegularExpression(@"((([0-1][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9])?)", 
-            ErrorMessage = "Time must be between 00:00 to 23:59")]
-        public TimeSpan LessonStart { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime LessonStart { get; set; }
 
         [Required]
-        [RegularExpression(@"((([0-1][0-9])|(2[0-3]))(:[0-5][0-9])(:[0-5][0-9])?)", 
-            ErrorMessage = "Time must be between 00:00 to 23:59")]
-        public TimeSpan LessonEnd { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime LessonEnd { get; set; }
 
         [Required]
         [EnumDataType(typeof(RepeatRate))]
