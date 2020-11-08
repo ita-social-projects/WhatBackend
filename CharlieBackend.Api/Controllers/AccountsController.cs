@@ -147,6 +147,5 @@ namespace CharlieBackend.Api.Controllers
 
             return createdAccountModel.ToActionResult();
         }
-  
     }
 }
