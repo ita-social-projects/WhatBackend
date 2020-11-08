@@ -12,6 +12,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -146,6 +147,17 @@ namespace CharlieBackend.Api.Controllers
             var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);
 
             return createdAccountModel.ToActionResult();
+        }
+
+        [Route("NotAssigned")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult<List<AccountDto>>> GetAllNotAssignedAccounts()
+        {
+
+            var accountsModels = await _accountService.GetAllNotAssignedAccountsAsync();
+
+            return Ok(accountsModels);
         }
     }
 }

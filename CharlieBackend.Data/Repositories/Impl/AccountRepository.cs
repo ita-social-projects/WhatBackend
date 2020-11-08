@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -26,6 +28,12 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return _applicationContext.Accounts
                 .FirstOrDefaultAsync(account => account.Id == id);
+        }
+
+        public Task<List<Account>> GetAllNotAssignedAsync()
+        {
+            return _applicationContext.Accounts.Where(account => account.
+                Role == Roles.NotAssigned).ToListAsync();
         }
 
         public async Task<string> GetAccountSaltByEmail(string email)
