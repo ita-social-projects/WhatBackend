@@ -7,6 +7,8 @@ using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Models.ResultModel;
+using EasyNetQ;
+using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace CharlieBackend.Business.Services
 {
@@ -16,15 +18,17 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialSender;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, 
                               ICredentialsSenderService credentialsSender,
-                              IMapper mapper)
+                              IMapper mapper, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialSender = credentialsSender;
             _mapper = mapper;
+            _bus = bus;
         }
 
         public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
@@ -47,6 +51,9 @@ namespace CharlieBackend.Business.Services
                     _unitOfWork.StudentRepository.Add(student);
 
                     await _unitOfWork.CommitAsync();
+
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
 
                     return Result<StudentDto>.Success(_mapper.Map<StudentDto>(student));
                 }

@@ -1,5 +1,6 @@
 using System;
 using Serilog;
+using EasyNetQ;
 using AutoMapper;
 using CharlieBackend.Root;
 using Microsoft.OpenApi.Models;
@@ -54,6 +55,9 @@ namespace CharlieBackend.Api
             services.AddCors();
 
             services.AddControllers();
+
+            // EasyNetQ Congiguration through extension
+            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
