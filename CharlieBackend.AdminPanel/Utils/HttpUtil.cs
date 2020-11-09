@@ -3,7 +3,6 @@ using System.Text;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using CharlieBackend.AdminPanel.Exceptions;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -104,7 +104,8 @@ namespace CharlieBackend.AdminPanel
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication(); 
+            app.UseAuthorization();     
 
             app.UseSwagger(c =>
             {
