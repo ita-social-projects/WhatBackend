@@ -27,7 +27,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("{id}")]
+        [HttpPost("{accountId}")]
         public async Task<ActionResult> PostStudent(long accountId)
         {
             if (!ModelState.IsValid)
