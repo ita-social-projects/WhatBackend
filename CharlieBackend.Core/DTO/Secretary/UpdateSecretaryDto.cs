@@ -17,11 +17,9 @@ namespace CharlieBackend.Core.DTO.Secretary
         [StringLength(50)]
         public string Email { get; set; }
 
-        [JsonPropertyName("first_name")]
         [StringLength(30)]
         public string FirstName { get; set; }
 
-        [JsonPropertyName("last_name")]
         [StringLength(30)]
         public string LastName { get; set; }
     }

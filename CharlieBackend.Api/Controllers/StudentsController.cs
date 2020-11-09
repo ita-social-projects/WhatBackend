@@ -80,15 +80,15 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Mentor, Admin")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> PutStudent(long accountId, UpdateStudentDto studentModel)
+        [HttpPut("{studentId}")]
+        public async Task<ActionResult> PutStudent(long studentId, UpdateStudentDto studentModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }           
 
-            var updatedStudent = await _studentService.UpdateStudentAsync(accountId, studentModel);
+            var updatedStudent = await _studentService.UpdateStudentAsync(studentId, studentModel);
 
             if (updatedStudent == null)
             {

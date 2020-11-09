@@ -74,12 +74,19 @@ namespace CharlieBackend.Business.Services
             return students;
         }
 
-        public async Task<Result<StudentDto>> UpdateStudentAsync(long accountId, UpdateStudentDto studentModel)
+        public async Task<Result<StudentDto>> UpdateStudentAsync(long studentId, UpdateStudentDto studentModel)
         {
             try
             {
+                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+
+                if (foundStudent == null)
+                {
+                    return Result<StudentDto>.Error(ErrorCode.NotFound, "Student not found");
+                }
+
                 var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(studentModel.Email);
+                    .IsEmailChangableToAsync(foundStudent.AccountId, studentModel.Email);
 
                 if (!isEmailChangableTo)
                 {
@@ -87,8 +94,7 @@ namespace CharlieBackend.Business.Services
                         "Email is already taken!");
                 }
 
-                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(accountId);
-
+                
                 if (foundStudent == null)
                 {
                     return Result<StudentDto>.Error(ErrorCode.ValidationError,

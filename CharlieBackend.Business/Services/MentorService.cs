@@ -75,24 +75,25 @@ namespace CharlieBackend.Business.Services
             return mentors;
         }
 
-        public async Task<Result<MentorDto>> UpdateMentorAsync(long accountId, UpdateMentorDto mentorModel)
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
         {
             try
             {
-                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
-
-                if (!isEmailChangableTo)
-                {
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
-                        "Email is already taken!");
-                }
-
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(accountId);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
 
                 if (foundMentor == null)
                 {
                     return Result<MentorDto>.Error(ErrorCode.ValidationError,
                         "Mentor not found");
+                }
+
+                var isEmailChangableTo = await _accountService
+                        .IsEmailChangableToAsync(foundMentor.AccountId, mentorModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
                 }
 
                 foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
