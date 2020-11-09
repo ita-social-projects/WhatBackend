@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
@@ -23,12 +24,12 @@ namespace CharlieBackend.AdminPanel
         public void ConfigureServices(IServiceCollection services)
         {
             var config = Configuration.Get<ApplicationSettings>();
-          
+
             services.Configure<ApplicationSettings>(Configuration);
 
 
             services.AddTransient<IHttpUtil, HttpUtil>();
-            services.AddTransient<IApiUtil, ApiUtil>(); 
+            services.AddTransient<IApiUtil, ApiUtil>();
 
 
             services.AddCors(options =>
@@ -42,6 +43,13 @@ namespace CharlieBackend.AdminPanel
                        .AllowAnyMethod();
                     });
                 }
+            });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "CharlieBackend.AdminPanel";
+                options.IdleTimeout = TimeSpan.FromSeconds(3600);
             });
 
             services.AddControllersWithViews();
@@ -102,6 +110,8 @@ namespace CharlieBackend.AdminPanel
             {
                 c.SerializeAsV2 = true;
             });
+
+            app.UseSession();
 
             app.UseSwaggerUI(c =>
             {

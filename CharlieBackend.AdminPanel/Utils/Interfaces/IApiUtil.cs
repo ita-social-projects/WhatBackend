@@ -5,7 +5,7 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
 {
     public interface IApiUtil
     {
-        public Task<T> SignInAsync<T>(string url, AuthenticationDto authModel);
+        public Task<string> SignInAsync(string url, AuthenticationDto authModel);
 
         public Task<T> GetAsync<T>(string url, string accessToken);
 
