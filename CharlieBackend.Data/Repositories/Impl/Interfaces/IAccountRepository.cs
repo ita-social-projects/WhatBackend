@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Account;
+
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -9,6 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel);
 
         public Task<Account> GetAccountCredentialsById(long id);
+
+        public Task<List<Account>> GetAllNotAssignedAsync();
 
         public Task<string> GetAccountSaltByEmail(string email);
 

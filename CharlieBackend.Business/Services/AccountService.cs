@@ -1,14 +1,16 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using System;
 using AutoMapper;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using System.Security.Cryptography;
 using System.Text;
+using CharlieBackend.Core;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using System.Security.Cryptography;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Business.Services
 {
@@ -98,6 +100,13 @@ namespace CharlieBackend.Business.Services
             }
 
             return null;
+        }
+
+        public async Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync()
+        {
+            var accounts = _mapper.Map<List<AccountDto>>(await _unitOfWork.AccountRepository.GetAllNotAssignedAsync());
+
+            return accounts;
         }
 
         public Task<bool> IsEmailTakenAsync(string email)
