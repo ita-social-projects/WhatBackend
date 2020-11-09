@@ -32,8 +32,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public Task<List<Account>> GetAllNotAssignedAsync()
         {
-            return _applicationContext.Accounts.Where(account => account.
-                Role == Roles.NotAssigned).ToListAsync();
+            return _applicationContext.Accounts
+                .Where(account => account.Role == Roles.NotAssigned)
+                .ToListAsync();
         }
 
         public async Task<string> GetAccountSaltByEmail(string email)
