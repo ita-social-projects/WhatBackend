@@ -33,6 +33,7 @@ namespace CharlieBackend.Api
 
             var authOptions = new AuthOptions();
             Configuration.GetSection("AuthOptions").Bind(authOptions);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

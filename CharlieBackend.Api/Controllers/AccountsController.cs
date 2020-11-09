@@ -7,13 +7,15 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Services.Interfaces;
-
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/accounts")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -35,8 +37,9 @@ namespace CharlieBackend.Api.Controllers
             _authOptions = authOptions.Value;
         }
 
+        [Route("auth")]
         [HttpPost]
-        public async Task<ActionResult> SignIn(AuthenticationModel authenticationModel)
+        public async Task<ActionResult> SignIn(AuthenticationDto authenticationModel)
         {
             if (!ModelState.IsValid)
             {
@@ -55,9 +58,9 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            long studentOrMentorId = default;
+            long studentOrMentorId = foundAccount.Id;
 
-            if (foundAccount.Role == 1)
+            if (foundAccount.Role == Roles.Student)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
 
@@ -68,7 +71,7 @@ namespace CharlieBackend.Api.Controllers
 
                 studentOrMentorId = foundStudent.Id;
             }
-            else if (foundAccount.Role == 2)
+            if (foundAccount.Role == Roles.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
 
@@ -78,6 +81,11 @@ namespace CharlieBackend.Api.Controllers
                 }
 
                 studentOrMentorId = foundMentor.Id;
+            }
+
+            if (foundAccount.Role == Roles.NotAssigned)
+            {
+                return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
             var now = DateTime.UtcNow;
@@ -116,5 +124,29 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(response);
         }
+
+        [Route("reg")]
+        [HttpPost]
+        public async Task<ActionResult> PostAccount(CreateAccountDto accountModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var isEmailTaken = await _accountService.IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return Result<CreateAccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!").ToActionResult();
+            }
+
+            var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);
+
+            return createdAccountModel.ToActionResult();
+        }
+  
     }
 }

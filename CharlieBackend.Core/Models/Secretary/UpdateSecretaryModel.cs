@@ -10,15 +10,11 @@ namespace CharlieBackend.Core.Models.Secretary
     {
         [Required]
         [JsonIgnore]
-        public override long Id { get; set; }
+        public long Id { get; set; }
 
-        public new string Email
-        {
-            get => base.Email;
-            set => base.Email = value;
-        }
+        public new string Email { get; set; }
 
-        public override string Password
+        public string Password
         {
             get => base.Password;
             set => base.Password = value;
@@ -26,10 +22,10 @@ namespace CharlieBackend.Core.Models.Secretary
 
         [JsonPropertyName("first_name")]
         [StringLength(30)]
-        public override string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [JsonPropertyName("last_name")]
         [StringLength(30)]
-        public override string LastName { get; set; }
+        public string LastName { get; set; }
     }
 }

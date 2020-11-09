@@ -22,7 +22,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateSecretary(CreateSecretaryDto secretaryDto)
         {
@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdSecretaryDto);
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
         {
@@ -54,7 +54,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(secretariesDtos);
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateSecretary(long id, UpdateSecretaryDto secretaryDto)
         {
@@ -78,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot update.");
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableSecretary(long id)
         {

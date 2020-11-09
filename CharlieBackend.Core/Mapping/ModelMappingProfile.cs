@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using System.Linq;
-using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
@@ -15,6 +17,20 @@ namespace CharlieBackend.Core.Mapping
     {
         public ModelMappingProfile()
         {
+            #region Accounts mapping
+
+            CreateMap<Account, AccountDto>();
+            CreateMap<AccountDto, Account>();
+
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            #endregion
+
+
             #region Courses mapping
 
             CreateMap<CreateCourseDto, Course>();
@@ -30,6 +46,7 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CourseDto, UpdateCourseDto>();
 
             #endregion
+            
 
             #region Lessons mapping
 
@@ -64,6 +81,40 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, Lesson>();
             #endregion
+
+
+            #region Mentors mapping
+
+            CreateMap<MentorDto, Mentor>();
+            CreateMap<Mentor, MentorDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+
+            CreateMap<UpdateMentorDto, Mentor>();
+            CreateMap<Mentor, UpdateMentorDto>();
+
+            CreateMap<UpdateMentorDto, MentorDto>();
+            CreateMap<MentorDto, UpdateMentorDto>();
+
+            #endregion
+
+
+            #region Students mapping
+
+            CreateMap<StudentDto, Student>();
+            CreateMap<Student, StudentDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+
+            CreateMap<UpdateStudentDto, Student>();
+            CreateMap<Student, UpdateStudentDto>();
+
+            CreateMap<UpdateStudentDto, StudentDto>();
+            CreateMap<StudentDto, UpdateStudentDto>();
+            #endregion
+
 
             #region StudentGroups mapping
 

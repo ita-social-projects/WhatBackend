@@ -10,21 +10,21 @@ namespace CharlieBackend.Core.Models.Secretary
     {
         [Required]
         [JsonIgnore]
-        public override long Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [EmailAddress]
         [StringLength(50)]
-        public override string Email { get; set; }
+        public string Email { get; set; }
 
         [Required] //can be null in bd
         [JsonPropertyName("first_name")]
         [StringLength(30)]
-        public override string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [Required] //can be null in bd
         [JsonPropertyName("last_name")]
         [StringLength(30)]
-        public override string LastName { get; set; }
+        public string LastName { get; set; }
     }
 }

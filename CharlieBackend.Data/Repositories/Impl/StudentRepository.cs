@@ -46,7 +46,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Students
                     .Include(student => student.Account)
                     .FirstOrDefaultAsync(student => 
-                    student.Account.Email == email && student.Account.Role == 1);
+                    student.Account.Email == email && student.Account.Role == Roles.Student);
         }
     }
 }

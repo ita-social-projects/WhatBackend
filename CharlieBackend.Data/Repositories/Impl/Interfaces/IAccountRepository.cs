@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IAccountRepository : IRepository<Account>
     {
-        public Task<Account> GetAccountCredentials(AuthenticationModel authenticationModel);
+        public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel);
+
+        public Task<Account> GetAccountCredentialsById(long id);
 
         public Task<string> GetAccountSaltByEmail(string email);
 
