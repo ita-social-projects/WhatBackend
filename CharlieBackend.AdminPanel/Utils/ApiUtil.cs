@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Account;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils
@@ -20,7 +21,10 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, authModel);
 
-            httpResponse.EnsureSuccessStatusCode(); 
+          if(httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+          {
+                return null;
+          }
 
             return httpResponse.Headers?.FirstOrDefault(x => x.Key == "Authorization").Value?.FirstOrDefault();
         }

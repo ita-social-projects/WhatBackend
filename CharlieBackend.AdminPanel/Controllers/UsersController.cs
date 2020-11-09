@@ -32,7 +32,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
         [HttpGet("Test2")]
-        public async Task<ActionResult<IList<ThemeDto>>> Test2()
+        public async Task<ActionResult<IList<ThemeDto>>> GetAll()
         {
             Console.WriteLine("____________________ 2 : " + HttpContext.Session.GetString("accessToken"));
 

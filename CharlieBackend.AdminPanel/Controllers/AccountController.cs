@@ -32,24 +32,28 @@ namespace CharlieBackend.AdminPanel.Controllers
             _config = config;
         }
 
-        [HttpGet("LogIn")]
-        public async Task<IActionResult> LogIn()
+        [HttpGet("Login")]
+        public ViewResult Login()
         {
-            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", new AuthenticationDto
+            return View();
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(AuthenticationDto authDto)
+        {
+            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
+
+            if(httpResponseToken == null)
             {
-                Email = "admin.@gmail.com",
-                Password = "admin"
-            });
+                return RedirectToAction("Login", "Account");
+            }
 
             await Authenticate(httpResponseToken);
 
             HttpContext.Session.SetString("accessToken", httpResponseToken);
 
-            Console.WriteLine("____________________ 1 : " + HttpContext.Session.GetString("accessToken"));
 
-            return Ok(httpResponseToken);
-            //return await httpResponse.Content.ReadAsStringAsync(); //get response body
-            //return httpResponse.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
+            return RedirectToAction("GetAll", "Users");
         }
 
 
