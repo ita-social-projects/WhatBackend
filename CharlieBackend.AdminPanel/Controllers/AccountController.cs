@@ -57,11 +57,12 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
 
-        [HttpPost("LogOut")]
-        public async Task<IActionResult> LogOut()
+        [HttpGet("LogOut")]
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return NoContent();
+            return RedirectToAction("Login", "Account");
         }
 
         private async Task Authenticate(string token)
