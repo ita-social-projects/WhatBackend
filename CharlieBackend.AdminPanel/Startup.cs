@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -51,6 +52,13 @@ namespace CharlieBackend.AdminPanel
                 options.Cookie.Name = "CharlieBackend.AdminPanel";
                 options.IdleTimeout = TimeSpan.FromSeconds(3600);
             });
+
+            services.AddAuthorization();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                 .AddCookie(options =>
+                {
+                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/admin/account/LogIn");
+                 });
 
             services.AddControllersWithViews();
 

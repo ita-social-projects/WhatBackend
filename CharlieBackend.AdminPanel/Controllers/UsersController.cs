@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Theme;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace CharlieBackend.AdminPanel.Controllers
 {
 
+    [Authorize(Roles = "Admin")]
     [Route("api/admin/users")]
     public class UsersController : Controller
     {

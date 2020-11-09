@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using CharlieBackend.AdminPanel.Models;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.DTO.Account;
-using System.Net;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -35,18 +35,19 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("LogIn")]
         public async Task<IActionResult> LogIn()
         {
-            var httpResponse = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", new AuthenticationDto
+            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", new AuthenticationDto
             {
                 Email = "admin.@gmail.com",
                 Password = "admin"
             });
 
+            await Authenticate(httpResponseToken);
 
-            HttpContext.Session.SetString("accessToken", httpResponse);
+            HttpContext.Session.SetString("accessToken", httpResponseToken);
 
             Console.WriteLine("____________________ 1 : " + HttpContext.Session.GetString("accessToken"));
 
-            return Ok(httpResponse);
+            return Ok(httpResponseToken);
             //return await httpResponse.Content.ReadAsStringAsync(); //get response body
             //return httpResponse.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
         }
@@ -59,6 +60,26 @@ namespace CharlieBackend.AdminPanel.Controllers
             return NoContent();
         }
 
+        private async Task Authenticate(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            token = token.ToString().Replace("Bearer ", "");
+
+            var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+
+            var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+
+            var claims = new List<Claim>
+            {
+                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+            };
+           
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+            // set authentication cookies
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
 
     }
 }
