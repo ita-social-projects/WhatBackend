@@ -61,6 +61,23 @@ namespace CharlieBackend.Business.Services
             }
         }
 
+        public async Task<Result<ScheduleDto>> DeleteScheduleByIdAsync(long id)
+        {
+            var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
+
+            if(scheduleEntity != null)
+            {
+                var mappedSchedule = _mapper.Map<ScheduleDto>(scheduleEntity);
+                await _unitOfWork.ScheduleRepository.DeleteAsync(id);
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<ScheduleDto>.Success(mappedSchedule);
+            }
+
+            return Result<ScheduleDto>.Error(ErrorCode.InternalServerError, "scheduleId is not valid");
+        }
+
         public async Task<IList<ScheduleDto>> GetAllSchedulesAsync()
         {
             var scheduleEntities = await _unitOfWork.ScheduleRepository.GetAllAsync();

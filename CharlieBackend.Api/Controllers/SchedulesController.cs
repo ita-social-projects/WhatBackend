@@ -68,5 +68,14 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
+
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpDelete("{scheduleId}")]
+        public async Task<ActionResult<ScheduleDto>> DeleteSchedule(long scheduleId)
+        {
+            var foundSchedules = await _scheduleService.DeleteScheduleByIdAsync(scheduleId);
+
+            return foundSchedules.ToActionResult();
+        }
     }
 }

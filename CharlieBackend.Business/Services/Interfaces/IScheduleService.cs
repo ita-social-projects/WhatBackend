@@ -18,5 +18,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         public Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id);
 
         public Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long studentGroupId);
+
+        public Task<Result<ScheduleDto>> DeleteScheduleByIdAsync(long studentGroupId);
     }
 }
