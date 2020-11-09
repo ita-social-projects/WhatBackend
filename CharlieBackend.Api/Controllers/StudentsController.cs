@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using System;
+using CharlieBackend.Core;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {

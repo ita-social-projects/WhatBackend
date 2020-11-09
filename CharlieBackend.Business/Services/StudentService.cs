@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
 using CharlieBackend.Core;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Student;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -82,7 +82,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundStudent == null)
                 {
-                    return Result<StudentDto>.Error(ErrorCode.NotFound, "Student not found");
+                        return Result<StudentDto>.Error(ErrorCode.NotFound, "Student not found");
                 }
 
                 var isEmailChangableTo = await _accountService
@@ -90,14 +90,14 @@ namespace CharlieBackend.Business.Services
 
                 if (!isEmailChangableTo)
                 {
-                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        return Result<StudentDto>.Error(ErrorCode.ValidationError,
                         "Email is already taken!");
                 }
 
                 
                 if (foundStudent == null)
                 {
-                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        return Result<StudentDto>.Error(ErrorCode.ValidationError,
                         "Student not found");
                 }
 

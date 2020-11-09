@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Secretary;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -161,6 +161,26 @@ namespace CharlieBackend.Business.Services
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
             return Result<IList<SecretaryDto>>.Success(_mapper.Map<IList<SecretaryDto>>(secretaries));
+        }
+
+        public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
+        {
+            var accountId = await GetAccountId(secretaryId);
+
+            if (accountId == null)
+            {
+                return Result<SecretaryDto>.Error(ErrorCode.NotFound, "Unknown secretary id.");
+            }
+
+            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+
+            if (isDisabled)
+            {
+                return Result<SecretaryDto>.Success(null);
+            }
+
+            return Result<SecretaryDto>.Error(ErrorCode.InternalServerError,
+                "Error occurred while trying to disable secretary account.");
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -27,7 +28,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateSecretary(CreateSecretaryDto secretaryDto)
         {
-
             var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(secretaryDto);
 
             return createdSecretaryDto.ToActionResult();
@@ -37,7 +37,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAllSecretaries()
         {
-
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
             return secretariesDtos.ToActionResult();
@@ -47,7 +46,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{secretaryId}")]
         public async Task<ActionResult> UpdateSecretary(long secretaryId, UpdateSecretaryDto secretaryDto)
         {
-
             secretaryDto.Id = secretaryId;
             var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryDto);
 
@@ -55,25 +53,12 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableSecretary(long id)
+        [HttpDelete("{secretaryId}")]
+        public async Task<ActionResult> DisableSecretary(long secretaryId)
         {
+            var isDisabled = await _secretaryService.DisableSecretaryAsync(secretaryId);
 
-            var accountId = await _secretaryService.GetAccountId(id);
-
-            if (accountId == null)
-            {
-                return BadRequest("Unknown secretary id.");
-            }
-
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return NoContent();
-            }
-
-            return StatusCode(500, "Error occurred while trying to disable secretary account.");
+            return isDisabled.ToActionResult();
         }
 
     }

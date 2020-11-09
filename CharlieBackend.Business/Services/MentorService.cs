@@ -1,13 +1,13 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO;
-using CharlieBackend.Core.DTO.Mentor;
-using AutoMapper;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using CharlieBackend.Core.DTO;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
