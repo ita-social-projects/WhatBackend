@@ -1,9 +1,6 @@
 ﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils
@@ -17,7 +14,7 @@ namespace CharlieBackend.AdminPanel.Utils
             _httpUtil = httpUtil;
         }
 
-        public async Task<T> SignInAsync<T>(string url, AuthenticationModel authModel)
+        public async Task<T> SignInAsync<T>(string url, AuthenticationDto authModel)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, authModel);
 

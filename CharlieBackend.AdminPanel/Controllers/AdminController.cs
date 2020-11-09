@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.AdminPanel.Models;
-using CharlieBackend.Core.Models.Account;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
 using CharlieBackend.Core.DTO.Theme;
 using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Account;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -30,9 +30,9 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
         [HttpGet("signin")]
-        public async Task<ActionResult<AuthenticationModel>> SignIn()
+        public async Task<ActionResult<AuthenticationDto>> SignIn()
         {
-            var httpResponse = await _apiUtil.SignInAsync<AuthenticationModel>($"{_config.Value.Urls.Api.Https}/api/auth", new AuthenticationModel
+            var httpResponse = await _apiUtil.SignInAsync<AuthenticationDto>($"{_config.Value.Urls.Api.Https}/api/auth", new AuthenticationDto
             {
                 Email = "Frodo.@gmail.com",
                 Password = "123456"
