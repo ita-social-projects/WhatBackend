@@ -64,12 +64,14 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<ScheduleDto>> GetAllSchedulesAsync()
         {
             var scheduleEntities = await _unitOfWork.ScheduleRepository.GetAllAsync();
+
             return _mapper.Map<IList<Schedule>, IList<ScheduleDto>>(scheduleEntities);
         }
 
         public async Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
+
             return scheduleEntity == null ? 
                 Result<ScheduleDto>.Error(ErrorCode.NotFound, "Schedule id is not valid") :
                 Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
@@ -78,11 +80,13 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long id)
         {
             var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+
             if(groupEntity == null)
             {
                return null;
             }
             var schedulesOfGroup = await _unitOfWork.ScheduleRepository.GetSchedulesByStudentGroupIdAsync(id);
+
             return _mapper.Map<IList<Schedule>, IList<ScheduleDto>>(schedulesOfGroup);
         }
 
@@ -90,21 +94,23 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                
                 if(scheduleDTO == null)
                 {
                     return Result<ScheduleDto>.Error(ErrorCode.NotFound, "UpdateScheduleDto is null");
                 }
                 var foundSchedule = await _unitOfWork.ScheduleRepository.GetByIdAsync(scheduleId);
+
                 if(foundSchedule == null)
                 {
                     return Result<ScheduleDto>.Error(ErrorCode.NotFound, "Schedule id is not valid");
                 }
                 var updatedEntity = _mapper.Map<UpdateScheduleDto, Schedule>(scheduleDTO);
+
                 if (IsNotValidRepeating(updatedEntity))
                 {
                     Result<ScheduleDto>.Error(ErrorCode.ValidationError, "DayNumber can`t be null");
                 }
-
 
                 if(updatedEntity.LessonStart != default(TimeSpan))
                 {
@@ -122,7 +128,6 @@ namespace CharlieBackend.Business.Services
                 {
                     foundSchedule.DayNumber = updatedEntity.DayNumber;
                 }
-
                 await _unitOfWork.CommitAsync();
 
                 return Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(foundSchedule));
