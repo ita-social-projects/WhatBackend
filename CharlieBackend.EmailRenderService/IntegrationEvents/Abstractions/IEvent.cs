@@ -1,4 +1,4 @@
-﻿namespace CharlieBackend.Core.IntegrationEvents.Abstractions
+﻿namespace CharlieBackend.EmailRenderService.IntegrationEvents.Abstractions
 {
     public interface IEvent
     {
