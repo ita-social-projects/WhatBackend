@@ -11,11 +11,11 @@ namespace CharlieBackend.Core.DTO.Schedule
     {
         [Required]
         [DataType(DataType.Time)]
-        public DateTime LessonStart { get; set; }
+        public TimeSpan LessonStart { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
-        public DateTime LessonEnd { get; set; }
+        public TimeSpan LessonEnd { get; set; }
 
         [Required]  
         [EnumDataType(typeof(RepeatRate))]

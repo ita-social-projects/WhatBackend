@@ -10,6 +10,7 @@ using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.DTO.Course;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -169,16 +170,8 @@ namespace CharlieBackend.Core.Mapping
 
             #region Schedules mapping
 
-            CreateMap<CreateScheduleDto, Schedule>()
-                .ForMember(dest => dest.LessonStart,
-                opt => opt.MapFrom(src => src.LessonStart.TimeOfDay))
-                .ForMember(dest => dest.LessonEnd,
-                opt => opt.MapFrom(src => src.LessonEnd.TimeOfDay));
-            CreateMap<UpdateScheduleDto, Schedule>()
-                .ForMember(dest => dest.LessonStart,
-                    opt => opt.MapFrom(src => src.LessonStart.TimeOfDay))
-                .ForMember(dest => dest.LessonEnd,
-                    opt => opt.MapFrom(src => src.LessonEnd.TimeOfDay));
+            CreateMap<CreateScheduleDto, Schedule>();
+            CreateMap<UpdateScheduleDto, Schedule>();
             CreateMap<Schedule, ScheduleDto>();
 
             #endregion

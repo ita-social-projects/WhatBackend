@@ -14,6 +14,7 @@ using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api
 {
@@ -53,7 +54,9 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter()));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -125,7 +128,7 @@ namespace CharlieBackend.Api
 
             app.UseHttpsRedirection();
 
-            //Added Serilog to the app’s middleware pipeline
+            //Added Serilog to the appï¿½s middleware pipeline
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
