@@ -75,7 +75,7 @@ namespace CharlieBackend.Business.Services
                 return Result<ScheduleDto>.Success(mappedSchedule);
             }
 
-            return Result<ScheduleDto>.Error(ErrorCode.InternalServerError, "scheduleId is not valid");
+            return Result<ScheduleDto>.Error(ErrorCode.NotFound, "scheduleId is not valid");
         }
 
         public async Task<IList<ScheduleDto>> GetAllSchedulesAsync()
