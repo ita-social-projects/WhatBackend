@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CharlieBackend.Api
+namespace CharlieBackend.Api.Extensions
 {
-    public static class AddEasyNetQExtension
+    public static class EasyNetQExtension
     {
         public static void AddEasyNetQ(this IServiceCollection service, string rabbitmqConnectionString)
         {

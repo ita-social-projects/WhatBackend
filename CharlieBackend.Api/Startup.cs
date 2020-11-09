@@ -9,6 +9,7 @@ using CharlieBackend.Core.Mapping;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Business.Options;
