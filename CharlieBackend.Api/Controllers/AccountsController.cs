@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
 
             long studentOrMentorId = foundAccount.Id;
 
-            if (foundAccount.Role == Roles.Student)
+            if (foundAccount.Role == UserRole.Student)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
 
@@ -72,7 +72,7 @@ namespace CharlieBackend.Api.Controllers
 
                 studentOrMentorId = foundStudent.Id;
             }
-            if (foundAccount.Role == Roles.Mentor)
+            if (foundAccount.Role == UserRole.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
 
@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
                 studentOrMentorId = foundMentor.Id;
             }
 
-            if (foundAccount.Role == Roles.NotAssigned)
+            if (foundAccount.Role == UserRole.NotAssigned)
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }

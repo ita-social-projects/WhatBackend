@@ -33,7 +33,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public Task<List<Account>> GetAllNotAssignedAsync()
         {
             return _applicationContext.Accounts
-                .Where(account => account.Role == Roles.NotAssigned)
+                .Where(account => account.Role == UserRole.NotAssigned)
                 .ToListAsync();
         }
 

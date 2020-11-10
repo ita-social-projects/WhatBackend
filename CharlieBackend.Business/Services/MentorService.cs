@@ -37,9 +37,9 @@ namespace CharlieBackend.Business.Services
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
                 
-                if (account.Role == Roles.NotAssigned)
+                if (account.Role == UserRole.NotAssigned)
                 {
-                    account.Role = Roles.Mentor;
+                    account.Role = UserRole.Mentor;
 
 
                     var mentor = new Mentor

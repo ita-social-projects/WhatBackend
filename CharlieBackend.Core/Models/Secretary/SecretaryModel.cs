@@ -14,7 +14,7 @@ namespace CharlieBackend.Core.Models.Secretary
         public string Password { get; set; }
         
         [JsonIgnore]
-        public Roles Role { get; set; }
+        public UserRole Role { get; set; }
 
         [Required]
         [JsonIgnore]

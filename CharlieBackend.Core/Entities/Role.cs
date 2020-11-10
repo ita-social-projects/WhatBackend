@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CharlieBackend.Core.Entities
 {
-    public enum Roles
+    public enum UserRole
     {
         NotAssigned = 0,
         Student = 1,

@@ -32,6 +32,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
+            var isEmailTaken = await IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!");
+            }
+
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 try
