@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using EasyNetQ;
+using AutoMapper;
 using CharlieBackend.Core;
 using System.Threading.Tasks;
 using CharlieBackend.Core.DTO;
@@ -7,6 +8,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
@@ -17,14 +19,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialsSender;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender,
-                             IMapper mapper)
+                             IMapper mapper, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialsSender = credentialsSender;
             _mapper = mapper;
+            _bus = bus;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -48,6 +52,9 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
+
                     return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
                 else
@@ -70,6 +77,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<MentorDto>> GetAllMentorsAsync()
         {
+
             var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
 
             return mentors;
