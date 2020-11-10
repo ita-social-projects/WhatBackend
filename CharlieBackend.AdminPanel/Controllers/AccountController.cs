@@ -69,6 +69,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
         private async Task<bool> AuthenticateAdmin(string token)
+       
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -94,6 +95,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
             return true;
+
         }
 
     }

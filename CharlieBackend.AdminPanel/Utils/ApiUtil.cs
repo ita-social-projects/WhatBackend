@@ -26,6 +26,9 @@ namespace CharlieBackend.AdminPanel.Utils
                 return null;
           }
 
+            httpResponse.EnsureSuccessStatusCode(); 
+
+
             return httpResponse.Headers?.FirstOrDefault(x => x.Key == "Authorization").Value?.FirstOrDefault();
         }
 
