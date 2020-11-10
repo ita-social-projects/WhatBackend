@@ -40,8 +40,8 @@ namespace CharlieBackend.Business.Services
                     {
                         Email = accountModel.Email,
                         FirstName = accountModel.FirstName,
-                        LastName = accountModel.LastName,
-                        Role = 0
+                        LastName = accountModel.LastName 
+                        //Role = 0;
                     };
 
                     account.Salt = GenerateSalt();
