@@ -1,7 +1,4 @@
 ﻿using EasyNetQ;
-using EasyNetQ.AutoSubscribe;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CharlieBackend.Api.Extensions
