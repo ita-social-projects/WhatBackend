@@ -53,7 +53,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             HttpContext.Session.SetString("accessToken", httpResponseToken);
 
 
-            return RedirectToAction("GetAll", "Users");
+            return RedirectToAction("Index", "Home");
         }
 
 

@@ -1,39 +1,36 @@
 ﻿@model CharlieBackend.Core.DTO.Account.AuthenticationDto
 
+@{
+    Layout = "_LoginLayout";
+}
 
-<h2>Login to the Admin panel</h2>
+<div class="card o-hidden border-0 shadow-lg my-5">
+    <div class="card-body p-0">
 
-<form asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
-    <div class="validation container " asp-validation-summary="ModelOnly"></div>
-    <div class="col mt-5">
-        <div class="form-group col-4">
-            <input type="email" class="form-control" id="InputEmail" asp-for="Email" placeholder="Enter email">
-            <span asp-validation-for="Email" />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Welcome to Admin Panel!</h1>
+                    </div>
+                    <form class="user" asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
+                        <div class="form-group">
+                            <input type="email" class="form-control form-control-user"
+                                   id="InputEmail" asp-for="Email"
+                                   placeholder="Enter Email Address...">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control form-control-user"
+                                   asp-for="Password" placeholder="Password">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+
+
+                    </form>
+
+                </div>
+            </div>
         </div>
-        <div class="form-group col-4">
-            <input type="password" class="form-control" asp-for="Password" placeholder="Password">
-            <span asp-validation-for="Password" />
-        </div>
-
-        <button type="submit" class="btn btn-outline-dark ml-3">Submit</button>
     </div>
-</form>
-
-@*<form asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
-        <div class="validation" asp-validation-summary="ModelOnly"></div>
-        <div>
-            <div class="form-group">
-                <label asp-for="Email">Enter Email</label>
-                <input type="text" asp-for="Email" />
-                <span asp-validation-for="Email" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Password">Enter Password</label>
-                <input asp-for="Password" />
-                <span asp-validation-for="Password" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Войти" class="btn btn-outline-dark" />
-            </div>
-        </div>
-    </form>*@
+</div>
