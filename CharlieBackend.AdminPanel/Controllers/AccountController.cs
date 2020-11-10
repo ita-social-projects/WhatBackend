@@ -48,7 +48,10 @@ namespace CharlieBackend.AdminPanel.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            await Authenticate(httpResponseToken);
+            if(!await AuthenticateAdmin(httpResponseToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             HttpContext.Session.SetString("accessToken", httpResponseToken);
 
@@ -65,7 +68,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        private async Task Authenticate(string token)
+        private async Task<bool> AuthenticateAdmin(string token)
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -74,6 +77,11 @@ namespace CharlieBackend.AdminPanel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+
+            if(role != "Admin")
+            {
+                return false;
+            }
 
             var claims = new List<Claim>
             {
@@ -84,6 +92,8 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             // set authentication cookies
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+
+            return true;
         }
 
     }
