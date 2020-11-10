@@ -45,11 +45,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             HttpContext.Session.SetString("accessToken", httpResponseToken);
 
-            Console.WriteLine("____________________ 1 : " + HttpContext.Session.GetString("accessToken"));
-
             return Ok(httpResponseToken);
-            //return await httpResponse.Content.ReadAsStringAsync(); //get response body
-            //return httpResponse.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token
         }
 
 

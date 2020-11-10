@@ -34,7 +34,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("Test2")]
         public async Task<ActionResult<IList<ThemeDto>>> Test2()
         {
-            Console.WriteLine("____________________ 2 : " + HttpContext.Session.GetString("accessToken"));
 
             var x = await _apiUtil.GetAsync<IList<ThemeDto>>($"{_config.Value.Urls.Api.Https}/api/themes", HttpContext.Session.GetString("accessToken"));
 
