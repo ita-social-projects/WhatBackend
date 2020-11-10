@@ -16,7 +16,8 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ICredentialsSenderService _credentialsSender;
 
-        public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork, IMapper mapper, ICredentialsSenderService credentialsSender)
+        public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
+                                IMapper mapper, ICredentialsSenderService credentialsSender)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
