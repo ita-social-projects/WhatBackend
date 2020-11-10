@@ -86,7 +86,7 @@ namespace CharlieBackend.Business.Services
                 }
 
                 var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(foundStudent.AccountId, studentModel.Email);
+                    .IsEmailChangableToAsync((long)foundStudent.AccountId, studentModel.Email);
 
                 if (!isEmailChangableTo)
                 {

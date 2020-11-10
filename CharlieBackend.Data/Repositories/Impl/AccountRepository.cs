@@ -75,7 +75,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             _applicationContext.Entry(account).Property(a => a.Salt).IsModified = true;
         }
 
-        public async Task<bool> IsEmailChangableToAsync(long? id, string newEmail)
+        public async Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
             var foundAccountOfEmail = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Email == newEmail);

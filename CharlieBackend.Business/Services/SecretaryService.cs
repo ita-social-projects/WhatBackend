@@ -104,7 +104,7 @@ namespace CharlieBackend.Business.Services
                 }
 
                 var isEmailChangableTo = await _accountService
-                        .IsEmailChangableToAsync(foundSecretary.AccountId, secretaryDto.Email);
+                        .IsEmailChangableToAsync((long)foundSecretary.AccountId, secretaryDto.Email);
 
                 if (!isEmailChangableTo)
                 {
