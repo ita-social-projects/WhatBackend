@@ -21,7 +21,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<bool> IsEmailTakenAsync(string email);
 
-        Task<bool> IsEmailChangableToAsync(string newEmail);
+        Task<bool> IsEmailChangableToAsync(long id, string newEmail);
 
         Task<bool?> IsAccountActiveAsync(string email);
 
