@@ -150,11 +150,23 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> GetAllAccount()
         {
             return Ok(await _accountService.GetAllAccountsAsync());
+        }
+        
+        [Route("NotAssigned")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult<List<AccountDto>>> GetAllNotAssignedAccounts()
+        {
+
+            var accountsModels = await _accountService.GetAllNotAssignedAccountsAsync();
+
+            return Ok(accountsModels);
         }
     }
 }
