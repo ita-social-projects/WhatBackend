@@ -37,6 +37,8 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
+            //var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
 
             return responseModel;

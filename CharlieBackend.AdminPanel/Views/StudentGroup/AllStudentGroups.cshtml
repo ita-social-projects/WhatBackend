@@ -1,0 +1,101 @@
+﻿
+@model IList<CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto>
+
+@{
+    Layout = "_Layout";
+}
+
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+        <div class="container-fluid">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Students list</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="overflow-x:unset">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Course id</th>
+                                    <th>Name</th>
+                                    <th>Start date</th>
+                                    <th>Finish date</th>
+                                    <th>Students id</th>
+                                    <th>Mentors id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                               @foreach (var item in Model)
+                               {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.CourseId</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.StartDate</td>
+                                    <td>@item.FinishDate</td>
+
+                                 
+
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                Show student IDs
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @if (@item.StudentIds.Any())
+                                                {
+                                                    @foreach (var student in @item.StudentIds.ToList())
+                                                    {
+                                                        <label class="dropdown-item" href="#">@student</label>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label class="dropdown-item" href="#">null</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                Show mentor IDs
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @if (@item.MentorIds.Any())
+                                                {
+                                                    @foreach (var mentor in @item.MentorIds.ToList())
+                                                    {
+                                                        <label class="dropdown-item" href="#">@mentor</label>
+                                                    }
+                                                } else
+                                                {
+                                                <label class="dropdown-item" href="#">null</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    @*<td>@item.StudentIds</td>*@
+                                    @*<td>@item.MentorIds</td>*@
+                                </tr>
+                               }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

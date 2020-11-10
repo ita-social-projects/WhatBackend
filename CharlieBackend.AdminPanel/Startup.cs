@@ -4,6 +4,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,7 +56,7 @@ namespace CharlieBackend.AdminPanel
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
                 {
-                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/admin/account/LogIn");
+                     options.LoginPath = new PathString("/admin/account/LogIn");
                  });
 
             services.AddControllersWithViews();
@@ -69,7 +70,7 @@ namespace CharlieBackend.AdminPanel
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
