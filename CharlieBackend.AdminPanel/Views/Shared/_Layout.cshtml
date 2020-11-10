@@ -29,17 +29,15 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gray-900 sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-
-
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" asp-action="Index" asp-controller="Home">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -55,7 +53,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="StudentsList.html">
+                <a class="nav-link collapsed" asp-action="AllStudents" asp-controller="Students">
                     <i class="far fa-address-book"></i>
                     <span>Students</span>
                 </a>
@@ -104,7 +102,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <img class="img-profile rounded-circle"
                                      src="~/img/undraw_profile.svg">
                             </a>
@@ -177,9 +175,15 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-    
+   <!-- Page level plugins -->
+   <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+   <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
+   <!-- Page level custom scripts -->
+   <script src="~/js/demo/datatables-demo.js"></script>
+
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 

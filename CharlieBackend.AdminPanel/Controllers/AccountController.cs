@@ -43,18 +43,12 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
 
-            if(httpResponseToken == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            if(!await AuthenticateAdmin(httpResponseToken))
+            if(httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
             {
                 return RedirectToAction("Login", "Account");
             }
 
             HttpContext.Session.SetString("accessToken", httpResponseToken);
-
 
             return RedirectToAction("Index", "Home");
         }
