@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using CharlieBackend.Core.DTO.Account;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils.Interfaces
@@ -13,6 +14,5 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
 
         public Task<HttpResponseMessage> DeleteAsync(string url, string accessToken = null);
 
-        public void EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
     }
 }

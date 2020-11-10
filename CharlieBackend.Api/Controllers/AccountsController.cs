@@ -149,6 +149,14 @@ namespace CharlieBackend.Api.Controllers
             return createdAccountModel.ToActionResult();
         }
 
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult> GetAllAccount()
+        {
+            return Ok(await _accountService.GetAllAccountsAsync());
+        }
+        
         [Route("NotAssigned")]
         [Authorize(Roles = "Admin")]
         [HttpGet]

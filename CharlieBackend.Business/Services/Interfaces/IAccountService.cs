@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
+using System.Collections.Generic;
 
 
 namespace CharlieBackend.Business.Services.Interfaces
@@ -14,6 +15,8 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
         Task<Account> GetAccountCredentialsByIdAsync(long id);
+
+        Task<IList<AccountDto>> GetAllAccountsAsync();
 
         Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
 

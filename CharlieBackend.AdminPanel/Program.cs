@@ -13,6 +13,8 @@ namespace CharlieBackend.AdminPanel
     {
         public static void Main(string[] args)
         {
+            Console.Title = "CharlieBackend.AdminPanel";
+
             CreateHostBuilder(args).Build().Run();
         }
 

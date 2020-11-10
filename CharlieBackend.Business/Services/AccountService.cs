@@ -8,9 +8,9 @@ using CharlieBackend.Core.Entities;
 using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
+using System.Collections.Generic;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-
 
 namespace CharlieBackend.Business.Services
 {
@@ -88,6 +88,13 @@ namespace CharlieBackend.Business.Services
             }
 
             return null;
+        }
+
+        public async Task<IList<AccountDto>> GetAllAccountsAsync()
+        {
+            var foundAccount = _mapper.Map<IList<AccountDto>>(await _unitOfWork.AccountRepository.GetAllAsync());
+
+            return foundAccount;
         }
 
         public async Task<Account> GetAccountCredentialsByIdAsync(long id)

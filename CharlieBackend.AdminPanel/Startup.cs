@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +25,12 @@ namespace CharlieBackend.AdminPanel
         public void ConfigureServices(IServiceCollection services)
         {
             var config = Configuration.Get<ApplicationSettings>();
-          
+
             services.Configure<ApplicationSettings>(Configuration);
 
 
             services.AddTransient<IHttpUtil, HttpUtil>();
-            services.AddTransient<IApiUtil, ApiUtil>(); 
+            services.AddTransient<IApiUtil, ApiUtil>();
 
 
             services.AddCors(options =>
@@ -43,6 +45,20 @@ namespace CharlieBackend.AdminPanel
                     });
                 }
             });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "CharlieBackend.AdminPanel";
+                options.IdleTimeout = TimeSpan.FromSeconds(3600);
+            });
+
+            services.AddAuthorization();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                 .AddCookie(options =>
+                {
+                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/admin/account/LogIn");
+                 });
 
             services.AddControllersWithViews();
 
@@ -96,12 +112,15 @@ namespace CharlieBackend.AdminPanel
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication(); 
+            app.UseAuthorization();     
 
             app.UseSwagger(c =>
             {
                 c.SerializeAsV2 = true;
             });
+
+            app.UseSession();
 
             app.UseSwaggerUI(c =>
             {

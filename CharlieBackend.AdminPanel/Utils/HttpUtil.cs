@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Text;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using CharlieBackend.AdminPanel.Exceptions;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
-    public class HttpUtil: IHttpUtil
+    public class HttpUtil : IHttpUtil
     {
         private readonly HttpClient _client;
 
@@ -19,15 +19,15 @@ namespace CharlieBackend.AdminPanel.Utils
             _client = new HttpClient();
         }
 
-
         public async Task<HttpResponseMessage> GetAsync(string url, string accessToken = null)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
 
             if (!String.IsNullOrEmpty(accessToken))
             {
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+                requestMessage.Headers.Add("Authorization", accessToken);
             }
+
             HttpResponseMessage httpResponse = await _client.SendAsync(requestMessage);
 
             return httpResponse;
@@ -77,14 +77,6 @@ namespace CharlieBackend.AdminPanel.Utils
             var responseMessage = await _client.SendAsync(requestMessage);
 
             return responseMessage;
-        }
-
-        public void EnsureSuccessStatusCode(HttpResponseMessage httpResponse)// checks that http response is OK
-        {
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                throw new HttpStatusException(httpResponse);
-            }
         }
 
     }

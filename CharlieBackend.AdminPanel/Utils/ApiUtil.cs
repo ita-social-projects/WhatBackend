@@ -1,14 +1,13 @@
 ﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
-    public class ApiUtil: IApiUtil
+    public class ApiUtil : IApiUtil
     {
         private IHttpUtil _httpUtil;
 
@@ -17,27 +16,20 @@ namespace CharlieBackend.AdminPanel.Utils
             _httpUtil = httpUtil;
         }
 
-        public async Task<T> SignInAsync<T>(string url, AuthenticationModel authModel)
+        public async Task<string> SignInAsync(string url, AuthenticationDto authModel)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, authModel);
 
+            httpResponse.EnsureSuccessStatusCode(); 
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
-
-            // return httpResponse.Headers.FirstOrDefault(x => x.Key == "Authorization").Value.FirstOrDefault(); // get auth token;
-
-            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
-
-            return responseModel;
+            return httpResponse.Headers?.FirstOrDefault(x => x.Key == "Authorization").Value?.FirstOrDefault();
         }
 
         public async Task<T> GetAsync<T>(string url, string accessToken)
         {
             var httpResponse = await _httpUtil.GetAsync(url, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            httpResponse.EnsureSuccessStatusCode();
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
@@ -50,9 +42,9 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            httpResponse.EnsureSuccessStatusCode();
 
-            string stringResponse = await httpResponse.Content.ReadAsStringAsync(); 
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
 
@@ -63,9 +55,9 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PutJsonAsync(url, data, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            httpResponse.EnsureSuccessStatusCode();
 
-            string stringResponse = await httpResponse.Content.ReadAsStringAsync(); 
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
 
@@ -77,15 +69,15 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.DeleteAsync(url, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            httpResponse.EnsureSuccessStatusCode();
 
-            string stringResponse = await httpResponse.Content.ReadAsStringAsync(); 
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
 
             return responseModel;
         }
 
-      
+
     }
 }
