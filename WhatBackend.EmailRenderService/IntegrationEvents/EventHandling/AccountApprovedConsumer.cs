@@ -1,12 +1,12 @@
-﻿using CharlieBackend.EmailRenderService.IntegrationEvents.Events;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 using EasyNetQ;
 using EasyNetQ.AutoSubscribe;
 using System.Threading;
+using CharlieBackend.Core.IntegrationEvents.Events;
 
-namespace CharlieBackend.EmailRenderService.IntegrationEvents.EventHandling
+namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 {
     public class AccountApprovedConsumer : IConsumeAsync<AccountApprovedEvent>
     {
