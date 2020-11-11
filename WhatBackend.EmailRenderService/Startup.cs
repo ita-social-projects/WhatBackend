@@ -17,7 +17,7 @@ using CharlieBackend.EmailRenderService.IntegrationEvents.Events;
 using CharlieBackend.EmailRenderService.IntegrationEvents.EventHandling;
 using CharlieBackend.EmailRenderService.IntegrationEvents.Abstractions;
 
-namespace CharlieBackend.EmailRenderService
+namespace WhatBackend.EmailRenderService
 {
     public class Startup
     {
@@ -31,12 +31,13 @@ namespace CharlieBackend.EmailRenderService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-          //  services.AddControllers();
+            //  services.AddControllers();
             services.AddCors();
 
-            
-            services.AddSingleton(services => {
-                
+
+            services.AddSingleton(services =>
+            {
+
                 var bus = RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ"));
                 var emailRender = services.GetService<AccountApprovedHandler>();
                 bus.PubSub.Subscribe<AccountApprovedEvent>("EmailRenderService", emailRender.HandleAsync);
@@ -63,7 +64,7 @@ namespace CharlieBackend.EmailRenderService
             app.UseSerilogRequestLogging();
             //app.UseHttpsRedirection();
 
-            //app.UseRouting();
+            app.UseRouting();
 
             //app.UseAuthorization();
 

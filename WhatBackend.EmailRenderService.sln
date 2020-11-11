@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhatBackend.EmailRenderService", "WhatBackend.EmailRenderService\WhatBackend.EmailRenderService.csproj", "{E9F4B86D-87F3-4414-827E-ACF75E7CA7DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Core", "CharlieBackend.Core\CharlieBackend.Core.csproj", "{9B3E322A-B1A5-4984-9CCD-A9E3FCF071F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9F4B86D-87F3-4414-827E-ACF75E7CA7DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9F4B86D-87F3-4414-827E-ACF75E7CA7DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9F4B86D-87F3-4414-827E-ACF75E7CA7DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9F4B86D-87F3-4414-827E-ACF75E7CA7DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B3E322A-B1A5-4984-9CCD-A9E3FCF071F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B3E322A-B1A5-4984-9CCD-A9E3FCF071F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B3E322A-B1A5-4984-9CCD-A9E3FCF071F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B3E322A-B1A5-4984-9CCD-A9E3FCF071F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C313C666-51BC-4962-9F76-3AB0D2B7F85A}
+	EndGlobalSection
+EndGlobal

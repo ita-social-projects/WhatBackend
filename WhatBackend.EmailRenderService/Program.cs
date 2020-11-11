@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 
 
-namespace CharlieBackend.EmailRenderService
+namespace WhatBackend.EmailRenderService
 {
     public class Program
     {
