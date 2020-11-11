@@ -34,6 +34,7 @@ namespace CharlieBackend.Business.Services
 
             Type sgType = typeof(StudentGroupFileModel);
             char charPointer = 'A';
+            int numPointer = 2;
 
             var properties = sgType.GetProperties();
             foreach (PropertyInfo property in properties)
@@ -46,7 +47,37 @@ namespace CharlieBackend.Business.Services
                 }
                 charPointer++;
             }
-            
+            //fileimportservicebase
+            StudentGroupFileModel fileLine = new StudentGroupFileModel();
+            while (!await IsEndOfFileAsync(numPointer, wsGroups))
+            {
+                try
+                {
+
+                    fileLine.CourseId = Convert.ToInt32(wsGroups.Cell($"B{numPointer}").Value);
+                    fileLine.Name = Convert.ToString(wsGroups.Cell($"C{numPointer}").Value);
+                    fileLine.StartDate = Convert.ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
+                    fileLine.FinishDate = Convert.ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
+
+
+                    StudentGroup group = new StudentGroup
+                    {
+                        CourseId = fileLine.CourseId,
+                        Name = fileLine.Name,
+                        StartDate = fileLine.StartDate,
+                        FinishDate = fileLine.FinishDate,
+                    };
+                    importedGroups.Add(group);
+                    _unitOfWork.StudentGroupRepository.Add(group);
+                    numPointer++;
+                }
+                catch (FormatException ex)
+                {
+                    _unitOfWork.Rollback();
+                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError, "The format of the inputed data is incorrect.\n" + ex.Message);
+                }
+            }
+
             await _unitOfWork.CommitAsync();
             return Result<List<StudentGroup>>.Success(_mapper.Map<List<StudentGroup>>(importedGroups));
         }
