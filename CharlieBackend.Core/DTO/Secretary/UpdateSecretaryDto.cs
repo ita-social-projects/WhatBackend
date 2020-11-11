@@ -5,6 +5,8 @@ namespace CharlieBackend.Core.DTO.Secretary
 {
     public class UpdateSecretaryDto
     {
+        #nullable enable
+
         [EmailAddress]
         [StringLength(50)]
         public string? Email { get; set; }
@@ -14,5 +16,7 @@ namespace CharlieBackend.Core.DTO.Secretary
 
         [StringLength(30)]
         public string? LastName { get; set; }
+
+        #nullable disable
     }
 }

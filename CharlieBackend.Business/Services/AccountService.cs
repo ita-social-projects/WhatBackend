@@ -8,7 +8,6 @@ using CharlieBackend.Core.Entities;
 using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
-using System.Collections.Generic;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 

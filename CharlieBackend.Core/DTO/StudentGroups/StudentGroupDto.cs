@@ -11,24 +11,19 @@ namespace CharlieBackend.Core.DTO.StudentGroups
         public long Id { get; set; }
 
         [Required]
-        [JsonPropertyName("course_id")]
         public long? CourseId { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; }
 
         [DataType(DataType.Date)]
-        [JsonPropertyName("start_date")]
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        [JsonPropertyName("finish_date")]
         public DateTime FinishDate { get; set; }
 
-        [JsonPropertyName("student_ids")]
         public IList<long> StudentIds { get; set; }
 
-        [JsonPropertyName("mentor_ids")]
         public IList<long> MentorIds { get; set; }
 
     }
