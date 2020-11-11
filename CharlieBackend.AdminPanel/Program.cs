@@ -8,13 +8,14 @@ namespace CharlieBackend.AdminPanel
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static void Main(string[] args)
         {
+
             // check environment is set
             if (String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
             {
                 Console.WriteLine("ASPNETCORE_ENVIRONMENT env variable must be set!");
-                return 1;
+                return ;
             }
 
             Console.Title = "CharlieBackend.AdminPanel";
@@ -23,7 +24,9 @@ namespace CharlieBackend.AdminPanel
 
             host.Run();
 
-            return 0;
+            Console.Title = "CharlieBackend.AdminPanel";
+
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
