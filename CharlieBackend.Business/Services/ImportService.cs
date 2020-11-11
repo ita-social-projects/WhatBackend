@@ -62,7 +62,7 @@ namespace CharlieBackend.Business.Services
                     fileLine.FinishDate = Convert
                         .ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
 
-                    await IsValueValid(fileLine);
+                    await IsValueValid(fileLine, numPointer);
 
                     StudentGroup group = new StudentGroup
                     {
@@ -88,24 +88,24 @@ namespace CharlieBackend.Business.Services
                 .Success(_mapper.Map<List<StudentGroup>>(importedGroups));
         }
 
-        private async Task IsValueValid(StudentGroupFileModel fileLine)
+        private async Task IsValueValid(StudentGroupFileModel fileLine, int numPointer)
         {
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
                 throw new FormatException("CourseId field shouldn't be empty.\n" +
-                    "");
+                    $"Problem was occured in row {numPointer}, col B");
             }
 
             if (fileLine.Name == "")
             {
-                throw new FormatException("Name field shouldn't be empty.\n" + 
-                    "Problem ");
+                throw new FormatException("Name field shouldn't be empty.\n" +
+                    $"Problem was occured in row {numPointer}, col C");
             }
 
             if (fileLine.StartDate > fileLine.FinishDate)
             {
                 throw new FormatException("StartDate must be less than FinishDate.\n" +
-                    "");
+                    $"Problem was occured in row {numPointer}, col D and E");
             }
         }
 
