@@ -57,7 +57,8 @@ namespace CharlieBackend.AdminPanel
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsEnvironment("DevelopmentLocalhost")
+                || env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
