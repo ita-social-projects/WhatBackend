@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CharlieBackend.Api.Middlewares
 {
@@ -20,7 +21,9 @@ namespace CharlieBackend.Api.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IAccountService accountService)
         {
-            if (context.Request.Path.Value.Contains("accounts")
+            var endpointMetadata = context.GetEndpoint()?.Metadata;
+            if (endpointMetadata?.Any(x => x is AllowAnonymousAttribute) == true
+                || context.Request.Path.Value.Contains("accounts")
                 || context.Request.Path.Value.Contains("swagger"))
             {
                 await _next.Invoke(context);

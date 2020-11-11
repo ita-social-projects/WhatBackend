@@ -1,6 +1,5 @@
-using EasyNetQ;﻿
+using EasyNetQ;
 using AutoMapper;
-using CharlieBackend.Core;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
@@ -9,7 +8,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.IntegrationEvents.Events;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using EasyNetQ;
 
 namespace CharlieBackend.Business.Services
 {

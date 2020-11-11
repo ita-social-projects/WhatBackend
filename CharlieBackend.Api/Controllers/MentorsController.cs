@@ -8,6 +8,8 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
+using EasyNetQ;
+using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -18,12 +20,33 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
+        private readonly IBus _bus;
         #endregion
 
-        public MentorsController(IMentorService mentorService, IAccountService accountService)
+        public MentorsController(IMentorService mentorService, IAccountService accountService, IBus bus)
         {
             _mentorService = mentorService;
             _accountService = accountService;
+            _bus = bus;
+        }
+
+        
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public async Task<string> Get()
+        {
+            try
+            {
+                await _bus.PubSub.PublishAsync(new AccountApprovedEvent("test@test.com",
+                                        "FirstName", "LastName", Roles.Admin), "EmailRenderTopic");
+            }
+            catch (System.Exception e)
+            {
+
+                throw;
+            }
+
+            return "success";
         }
 
         [Authorize(Roles = "Admin")]

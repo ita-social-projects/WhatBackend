@@ -63,9 +63,6 @@ namespace CharlieBackend.Api
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
-            // EasyNetQ Congiguration through extension
-            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
-
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
             {

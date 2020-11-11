@@ -1,34 +1,35 @@
 ﻿using CharlieBackend.EmailRenderService.IntegrationEvents.Events;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using static CharlieBackend.EmailRenderService.IntegrationEvents.Abstractions.IIntegrationEventHandler;
 using Serilog.Context;
 using EasyNetQ;
+using EasyNetQ.AutoSubscribe;
+using System.Threading;
 
 namespace CharlieBackend.EmailRenderService.IntegrationEvents.EventHandling
 {
-    public class AccountApprovedHandler : IIntegrationEventHandler<AccountApprovedEvent>
+    public class AccountApprovedConsumer : IConsumeAsync<AccountApprovedEvent>
     {
         #region
-        private readonly ILogger<AccountApprovedHandler> _logger;
+        private readonly ILogger<AccountApprovedConsumer> _logger;
         private readonly IBus _bus;
         #endregion
 
-        public AccountApprovedHandler(ILogger<AccountApprovedHandler> logger, IBus bus)
+        public AccountApprovedConsumer(ILogger<AccountApprovedConsumer> logger, IBus bus)
         {
             _logger = logger;
             _bus = bus;
         }
 
-        public async Task HandleAsync(AccountApprovedEvent @event)
+        public async Task ConsumeAsync(AccountApprovedEvent message, CancellationToken cancellationToken = default)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event}"))
+            using (LogContext.PushProperty("IntegrationEventContext", $"{message}"))
             {
 
-                _logger.LogInformation($"Account has been approved: {@event}");
+                _logger.LogInformation($"Account has been approved: {message}");
 
                 string header = "WHAT Backend credentials";
-                string emailBody = 
+                string emailBody =
                         "<table style='width: 100% !important;border-collapse: collapse; width: 100% !important;height: 100%;background: #efefef;-webkit-font-smoothing: antialiased;-webkit-text-size-adjust: none;'>" +
                         "<tr>" +
                             "<td style='display: block !important;clear: both !important;margin: 0 auto !important;max-width: 580px !important;'>" +
@@ -41,12 +42,12 @@ namespace CharlieBackend.EmailRenderService.IntegrationEvents.EventHandling
                                 "<tr>" +
                                     "<td style='display: block !important;clear: both !important;margin: 0 auto !important;max-width: 580px !important;'>" +
                                         "<p>" +
-                                            "Welcome, " + @event.FirstName + " " + @event.LastName + "! " + "Your account has been successfully approved!" +
+                                            "Welcome, " + message.FirstName + " " + message.LastName + "! " + "Your account has been successfully approved!" +
                                         "</p>" +
                                        "<p>" +
                                             "<ul>" +
                                                 "<li>" +
-                                                    "Your role: " + @event.Role + 
+                                                    "Your role: " + message.Role +
                                                 "</li>" +
                                             "</ul>" +
                                         "</p>" +
@@ -68,13 +69,11 @@ namespace CharlieBackend.EmailRenderService.IntegrationEvents.EventHandling
                     "</tr>" +
                 "</table>";
 
-                (string, string) data = (@event.RecepientMail, emailBody);
+                (string, string) data = (message.RecepientMail, emailBody);
 
                 _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
 
                 await _bus.PubSub.PublishAsync(data, "EmailSenderService").ConfigureAwait(false);
-
-                await Task.CompletedTask;
             }
         }
     }

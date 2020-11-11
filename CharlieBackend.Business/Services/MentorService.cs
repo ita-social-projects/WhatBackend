@@ -1,8 +1,6 @@
 using EasyNetQ;
 using AutoMapper;
-using CharlieBackend.Core;
 using System.Threading.Tasks;
-using CharlieBackend.Core.DTO;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Mentor;
@@ -10,10 +8,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.IntegrationEvents.Events;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using EasyNetQ;
-using EasyNetQ.Topology;
-using System.Text;
-using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
 
 namespace CharlieBackend.Business.Services
 {
