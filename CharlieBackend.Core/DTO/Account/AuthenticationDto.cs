@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.Models.Account
+namespace CharlieBackend.Core.DTO.Account
 {
-    public class AuthenticationModel
+    public class AuthenticationDto
     {
         [Required]
         [EmailAddress]

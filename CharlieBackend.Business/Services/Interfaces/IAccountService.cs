@@ -1,17 +1,20 @@
 ﻿using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel);
+        Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel);
 
-        Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel);
+        Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
-        Task<BaseAccountModel> UpdateAccountCredentialsAsync(Account account);
+        Task<Account> GetAccountCredentialsByIdAsync(long id);
+
+        Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
 

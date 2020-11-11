@@ -1,15 +1,13 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.Models.Secretary
+namespace CharlieBackend.Core.DTO.Mentor
 {
-    public class CreateSecretaryModel : SecretaryModel
+    public class MentorDto
     {
         [Required]
-        [JsonIgnore]
         public long Id { get; set; }
 
         [Required]
@@ -17,14 +15,13 @@ namespace CharlieBackend.Core.Models.Secretary
         [StringLength(50)]
         public string Email { get; set; }
 
-        [Required] //can be null in bd
-        [JsonPropertyName("first_name")]
+        [Required]
         [StringLength(30)]
         public string FirstName { get; set; }
 
-        [Required] //can be null in bd
-        [JsonPropertyName("last_name")]
+        [Required]
         [StringLength(30)]
         public string LastName { get; set; }
+
     }
 }

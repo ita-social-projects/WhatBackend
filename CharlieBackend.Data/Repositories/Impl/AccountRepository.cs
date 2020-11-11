@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Core.Models.Account;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Data.Repositories.Impl
@@ -14,12 +14,18 @@ namespace CharlieBackend.Data.Repositories.Impl
         { 
         }
 
-        public Task<Account> GetAccountCredentials(AuthenticationModel authenticationModel)
+        public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel)
         {
             return _applicationContext.Accounts
                 .FirstOrDefaultAsync(account 
                          => account.Email == authenticationModel.Email 
                                 && account.Password == authenticationModel.Password);
+        }
+
+		public Task<Account> GetAccountCredentialsById(long id)
+        {
+            return _applicationContext.Accounts
+                .FirstOrDefaultAsync(account => account.Id == id);
         }
 
         public async Task<string> GetAccountSaltByEmail(string email)

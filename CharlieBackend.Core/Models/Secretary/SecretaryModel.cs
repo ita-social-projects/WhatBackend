@@ -3,20 +3,21 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Core.Models.Secretary
 {
-    public class SecretaryModel : BaseAccountModel
+    public class SecretaryModel
     {
         [JsonIgnore]
         [StringLength(65)]
-        public override string Password { get; set; }
+        public string Password { get; set; }
         
         [JsonIgnore]
-        public override int Role { get; set; }
+        public Roles Role { get; set; }
 
         [Required]
         [JsonIgnore]
-        public override bool IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }

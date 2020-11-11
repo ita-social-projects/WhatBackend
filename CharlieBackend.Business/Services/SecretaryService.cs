@@ -38,7 +38,7 @@ namespace CharlieBackend.Business.Services
                         Email = secretaryDto.Email,
                         FirstName = secretaryDto.FirstName,
                         LastName = secretaryDto.LastName,
-                        Role = 3
+                        Role = Roles.Secretary
                     };
 
                     account.Salt = _accountService.GenerateSalt();

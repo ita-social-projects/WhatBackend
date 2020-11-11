@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Controllers
             _coursesService = coursesService;
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<CreateCourseDto>> PostCourse(CreateCourseDto courseDto)
         {
@@ -42,7 +42,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdCourse);
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
         public async Task<ActionResult<IList<CourseDto>>> GetAllCourses()
         {
@@ -52,7 +52,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(courses);
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)
         {
