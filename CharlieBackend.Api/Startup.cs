@@ -14,6 +14,7 @@ using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Api
 {
@@ -52,7 +53,10 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
