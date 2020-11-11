@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
@@ -22,22 +23,22 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         private readonly IOptions<ApplicationSettings> _config;
 
-        private readonly IApiUtil _apiUtil;
+        private readonly IStudentGroupService _studentGroupService;
 
 
-        public StudentGroupController(ILogger<StudentGroupController> logger, IOptions<ApplicationSettings> config, IApiUtil apiUtil)
+        public StudentGroupController(ILogger<StudentGroupController> logger, IOptions<ApplicationSettings> config, IStudentGroupService studentGroupService)
         {
             _logger = logger;
-            _apiUtil = apiUtil;
+            _studentGroupService = studentGroupService;
 
             _config = config;
         }
 
         public async Task<IActionResult> AllStudentGroups()
         {
-            var students = await _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", Request.Cookies["accessToken"]);
+            var studentGroups = await _studentGroupService.GetAllStudentGroups(Request.Cookies["accessToken"]);
 
-            return View(students);
+            return View(studentGroups);
         }
     }
 }

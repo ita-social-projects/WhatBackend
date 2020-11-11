@@ -1,4 +1,8 @@
 using System;
+using AutoMapper;
+using CharlieBackend.AdminPanel.Models.Mapping;
+using CharlieBackend.AdminPanel.Services;
+using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,6 +35,16 @@ namespace CharlieBackend.AdminPanel
             services.AddTransient<IHttpUtil, HttpUtil>();
             services.AddTransient<IApiUtil, ApiUtil>();
 
+            services.AddTransient<IStudentService, StudentService>(); 
+            services.AddTransient<IStudentGroupService, StudentGroupService>();
+
+            // AutoMapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ViewModelMapping());
+            });
+
+            services.AddSingleton(mappingConfig.CreateMapper());
 
             services.AddCors(options =>
             {

@@ -1,5 +1,5 @@
 ﻿
-@model IList<CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto>
+@model IList<CharlieBackend.AdminPanel.Models.StudentGroups.StudentGroupViewModel>
 
 @{
     Layout = "_Layout";
@@ -31,80 +31,80 @@
 
                                 @foreach (var item in Model)
                                 {
-                                    <tr>
-                                        <td>@item.Id</td>
-                                        <td>@item.CourseId</td>
-                                        <td>@item.Name</td>
-                                        <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
-                                        <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.CourseId</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
+                                    <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
 
 
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                    Show student IDs
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    @if (@item.StudentIds != null)
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                Show student IDs
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @if (@item.Students.Any())
+                                                {
+                                                    @foreach (var student in @item.Students)
                                                     {
-                                                        @foreach (var student in @item.StudentIds)
-                                                        {
-                                                            <label class="dropdown-item" href="#">@student</label>
-                                                        }
+                                                <label class="dropdown-item" href="#">@student.Id @student.FirstName @student.LastName   </label>
                                                     }
-                                                    else
-                                                    {
-                                                        <label class="dropdown-item" href="#">null</label>
-                                                    }
-                                                </div>
+                                                }
+                                                else
+                                                {
+                                                    <label class="dropdown-item" href="#">null</label>
+                                                }
                                             </div>
-                                        </td>
+                                        </div>
+                                    </td>
 
-                                        <td>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                    Show mentor IDs
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    @if (@item.MentorIds != null)
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                Show mentor IDs
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @if (@item.Mentors.Any())
+                                                {
+                                                    @foreach (var mentor in @item.Mentors)
                                                     {
-                                                        @foreach (var mentor in @item.MentorIds)
-                                                        {
-                                                            <label class="dropdown-item" href="#">@mentor</label>
-                                                        }
+                                                <label class="dropdown-item" href="#">@mentor.Id @mentor.FirstName @mentor.LastName</label>
                                                     }
-                                                    else
-                                                    {
-                                                        <label class="dropdown-item" href="#">null</label>
-                                                    }
-                                                </div>
+                                                }
+                                                else
+                                                {
+                                                    <label class="dropdown-item" href="#">null</label>
+                                                }
                                             </div>
-                                        </td>
+                                        </div>
+                                    </td>
 
-                                         <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-outline-secondar dropdown-toggle"
-                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fas fa-cog"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                       
-                                                        <a href="#" class=" dropdown-item ">
-                                                            <i class="fas fa-pen"></i>
-                                                            <span>Edit </span>
-                                                        </a>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondar dropdown-toggle"
+                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-cog"></i>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                        <a href="#" class=" dropdown-item ">
-                                                            <i class="fas fa-trash"></i>
-                                                            <span>Delete </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                         </td>
+                                                <a href="#" class=" dropdown-item ">
+                                                    <i class="fas fa-pen"></i>
+                                                    <span>Edit </span>
+                                                </a>
 
-                                       
-                                    </tr>
+                                                <a href="#" class=" dropdown-item ">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span>Delete </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
                                 }
 
                             </tbody>

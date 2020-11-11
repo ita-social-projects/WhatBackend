@@ -1,0 +1,13 @@
+﻿using CharlieBackend.AdminPanel.Models.Students;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CharlieBackend.AdminPanel.Services.Interfaces
+{
+    public interface IStudentService
+    {
+        public Task<IList<StudentViewModel>> GetAllStudents(string accessToken);
+    }
+}
