@@ -54,10 +54,33 @@ namespace CharlieBackend.Business.Services
                 try
                 {
 
+
+                    if (Convert.ToString(wsGroups.Cell($"B{numPointer}").Value).Replace(" ", "") == "")
+                    {
+                        throw new FormatException("CourseId field shouldn't be empty");
+                    }
+
+
                     fileLine.CourseId = Convert.ToInt32(wsGroups.Cell($"B{numPointer}").Value);
                     fileLine.Name = Convert.ToString(wsGroups.Cell($"C{numPointer}").Value);
                     fileLine.StartDate = Convert.ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
                     fileLine.FinishDate = Convert.ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
+
+
+                    if (fileLine.CourseId == 0)
+                    {
+                        throw new FormatException("CourseId field shouldn't be empty");
+                    }
+
+                    if (fileLine.Name == "")
+                    {
+                        throw new FormatException("Name field shouldn't be empty./nProblem ");
+                    }
+
+                    if (fileLine.StartDate > fileLine.FinishDate)
+                    {
+                        throw new FormatException("StartDate must be less than FinishDate");
+                    }
 
 
                     StudentGroup group = new StudentGroup
