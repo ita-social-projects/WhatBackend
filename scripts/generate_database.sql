@@ -208,7 +208,8 @@ CREATE TABLE IF NOT EXISTS `soft`.`schedule` (
   INDEX `FK_student_group_of_schedule` (`student_group_id` ASC),
   CONSTRAINT `FK_student_group_of_schedule`
     FOREIGN KEY (`student_group_id`)
-    REFERENCES `soft`.`student_group` (`id`))
+    REFERENCES `soft`.`student_group` (`id`)
+    ON DELETE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 16
 DEFAULT CHARACTER SET = utf8mb4

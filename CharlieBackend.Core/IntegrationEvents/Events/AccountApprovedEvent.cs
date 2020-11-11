@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.IntegrationEvents.Abstractions;
 

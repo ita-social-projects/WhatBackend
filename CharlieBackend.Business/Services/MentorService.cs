@@ -1,15 +1,16 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO;
-using CharlieBackend.Core.DTO.Mentor;
-using AutoMapper;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CharlieBackend.Core.Models.ResultModel;
 using EasyNetQ;
+using AutoMapper;
+using CharlieBackend.Core;
+using System.Threading.Tasks;
+using CharlieBackend.Core.DTO;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.IntegrationEvents.Events;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using EasyNetQ;
 using EasyNetQ.Topology;
 using System.Text;
 using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
@@ -87,24 +88,25 @@ namespace CharlieBackend.Business.Services
             return mentors;
         }
 
-        public async Task<Result<MentorDto>> UpdateMentorAsync(long accountId, UpdateMentorDto mentorModel)
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
         {
             try
             {
-                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
-
-                if (!isEmailChangableTo)
-                {
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
-                        "Email is already taken!");
-                }
-
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(accountId);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
 
                 if (foundMentor == null)
                 {
                     return Result<MentorDto>.Error(ErrorCode.ValidationError,
                         "Mentor not found");
+                }
+
+                var isEmailChangableTo = await _accountService
+                        .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
                 }
 
                 foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;

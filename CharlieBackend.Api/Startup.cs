@@ -9,12 +9,14 @@ using CharlieBackend.Core.Mapping;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api
 {
@@ -54,7 +56,12 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter()));
+
+            // EasyNetQ Congiguration through extension
+            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
@@ -129,7 +136,7 @@ namespace CharlieBackend.Api
 
             app.UseHttpsRedirection();
 
-            //Added Serilog to the app’s middleware pipeline
+            //Added Serilog to the appï¿½s middleware pipeline
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
