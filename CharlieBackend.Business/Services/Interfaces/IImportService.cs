@@ -1,12 +1,13 @@
-﻿using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.Entities;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using CharlieBackend.Core.DTO.File;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IImportService
     {
-
+        public Task<Result<List<StudentGroup>>> ImportFileAsync(ImportFileDto file);
     }
 }
