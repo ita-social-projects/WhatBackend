@@ -6,7 +6,7 @@ namespace CharlieBackend.Core.FileModels
 {
     public class StudentGroupFileModel
     {
-        public long? Id { get; set; }
+        public string Id { get; set; }
 
         public long CourseId { get; set; }
 

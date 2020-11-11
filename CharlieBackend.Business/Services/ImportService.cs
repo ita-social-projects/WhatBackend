@@ -61,7 +61,7 @@ namespace CharlieBackend.Business.Services
                     }
 
 
-                    fileLine.CourseId = Convert.ToInt32(wsGroups.Cell($"B{numPointer}").Value);
+                    fileLine.CourseId = Convert.ToString(wsGroups.Cell($"B{numPointer}").Value);
                     fileLine.Name = Convert.ToString(wsGroups.Cell($"C{numPointer}").Value);
                     fileLine.StartDate = Convert.ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
                     fileLine.FinishDate = Convert.ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
@@ -103,6 +103,11 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
             return Result<List<StudentGroup>>.Success(_mapper.Map<List<StudentGroup>>(importedGroups));
+        }
+
+        private async Task<bool> IsNameValid() 
+        {
+            return true;
         }
 
         private async Task<bool> IsEndOfFileAsync(int counter, IXLWorksheet ws)
