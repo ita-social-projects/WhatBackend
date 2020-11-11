@@ -37,6 +37,12 @@ namespace CharlieBackend.Business.Services
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
+                if (account == null)
+                {
+                    return Result<StudentDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
+
                 if (account.Role == UserRole.NotAssigned)
                 {
                     account.Role = UserRole.Student;
@@ -99,13 +105,6 @@ namespace CharlieBackend.Business.Services
                 {
                         return Result<StudentDto>.Error(ErrorCode.ValidationError,
                         "Email is already taken!");
-                }
-
-                
-                if (foundStudent == null)
-                {
-                        return Result<StudentDto>.Error(ErrorCode.ValidationError,
-                        "Student not found");
                 }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;

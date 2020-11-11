@@ -36,6 +36,12 @@ namespace CharlieBackend.Business.Services
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
+                if (account == null)
+                {
+                    return Result<SecretaryDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
+
                 if (account.Role == UserRole.NotAssigned)
                 {
                     account.Role = UserRole.Secretary;
