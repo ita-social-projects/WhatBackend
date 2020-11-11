@@ -1,22 +1,24 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using System;
+using AutoMapper;
+using ClosedXML.Excel;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using CharlieBackend.Core.DTO.File;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.FileModels;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using ClosedXML.Excel;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
     public class ImportService : IImportService
     {
+        #region private
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        #endregion
 
         public ImportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -51,10 +53,14 @@ namespace CharlieBackend.Business.Services
             {
                 try
                 {
-                    fileLine.CourseId = Convert.ToString(wsGroups.Cell($"B{numPointer}").Value);
-                    fileLine.Name = Convert.ToString(wsGroups.Cell($"C{numPointer}").Value);
-                    fileLine.StartDate = Convert.ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
-                    fileLine.FinishDate = Convert.ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
+                    fileLine.CourseId = Convert
+                        .ToString(wsGroups.Cell($"B{numPointer}").Value);
+                    fileLine.Name = Convert
+                        .ToString(wsGroups.Cell($"C{numPointer}").Value);
+                    fileLine.StartDate = Convert
+                        .ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
+                    fileLine.FinishDate = Convert
+                        .ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
 
                     await IsValueValid(fileLine);
 
@@ -73,28 +79,33 @@ namespace CharlieBackend.Business.Services
                 catch (FormatException ex)
                 {
                     _unitOfWork.Rollback();
-                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError, "The format of the inputed data is incorrect.\n" + ex.Message);
+                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                        "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
             }
             await _unitOfWork.CommitAsync();
-            return Result<List<StudentGroup>>.Success(_mapper.Map<List<StudentGroup>>(importedGroups));
+            return Result<List<StudentGroup>>
+                .Success(_mapper.Map<List<StudentGroup>>(importedGroups));
         }
 
         private async Task IsValueValid(StudentGroupFileModel fileLine)
         {
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
-                throw new FormatException("CourseId field shouldn't be empty");
+                throw new FormatException("CourseId field shouldn't be empty.\n" +
+                    "");
             }
 
             if (fileLine.Name == "")
             {
-                throw new FormatException("Name field shouldn't be empty./nProblem ");
+                throw new FormatException("Name field shouldn't be empty.\n" + 
+                    "Problem ");
             }
 
             if (fileLine.StartDate > fileLine.FinishDate)
             {
-                throw new FormatException("StartDate must be less than FinishDate");
+                throw new FormatException("StartDate must be less than FinishDate.\n" +
+                    "");
             }
         }
 
