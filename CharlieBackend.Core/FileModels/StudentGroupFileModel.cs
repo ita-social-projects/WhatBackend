@@ -8,7 +8,7 @@ namespace CharlieBackend.Core.FileModels
     {
         public string Id { get; set; }
 
-        public long CourseId { get; set; }
+        public string CourseId { get; set; }
 
         public string Name { get; set; }
 
