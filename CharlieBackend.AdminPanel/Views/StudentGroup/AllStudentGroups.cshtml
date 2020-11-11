@@ -17,8 +17,8 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive" style="overflow-x:unset">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
+                        <table class="table table-bordered table-striped text-center" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>Id</th>
                                     <th>Course id</th>
@@ -31,62 +31,61 @@
                             </thead>
                             <tbody>
 
-                               @foreach (var item in Model)
-                               {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.CourseId</td>
-                                    <td>@item.Name</td>
-                                    <td>@item.StartDate</td>
-                                    <td>@item.FinishDate</td>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.CourseId</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
+                                        <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
 
-                                 
 
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                                Show student IDs
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                @if (@item.StudentIds.Any())
-                                                {
-                                                    @foreach (var student in @item.StudentIds.ToList())
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                    Show student IDs
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (@item.StudentIds != null)
                                                     {
-                                                        <label class="dropdown-item" href="#">@student</label>
+                                                        @foreach (var student in @item.StudentIds)
+                                                        {
+                                                            <label class="dropdown-item" href="#">@student</label>
+                                                        }
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <label class="dropdown-item" href="#">null</label>
-                                                }
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                                Show mentor IDs
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                @if (@item.MentorIds.Any())
-                                                {
-                                                    @foreach (var mentor in @item.MentorIds.ToList())
+                                                    else
                                                     {
-                                                        <label class="dropdown-item" href="#">@mentor</label>
+                                                        <label class="dropdown-item" href="#">null</label>
                                                     }
-                                                } else
-                                                {
-                                                <label class="dropdown-item" href="#">null</label>
-                                                }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    @*<td>@item.StudentIds</td>*@
-                                    @*<td>@item.MentorIds</td>*@
-                                </tr>
-                               }
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                    Show mentor IDs
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (@item.MentorIds != null)
+                                                    {
+                                                        @foreach (var mentor in @item.MentorIds)
+                                                        {
+                                                            <label class="dropdown-item" href="#">@mentor</label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="dropdown-item" href="#">null</label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                       
+                                    </tr>
+                                }
 
                             </tbody>
                         </table>

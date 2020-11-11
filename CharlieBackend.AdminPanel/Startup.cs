@@ -45,13 +45,6 @@ namespace CharlieBackend.AdminPanel
                 }
             });
 
-            services.AddDistributedMemoryCache();
-            services.AddSession(options =>
-            {
-                options.Cookie.Name = "CharlieBackend.AdminPanel";
-                options.IdleTimeout = TimeSpan.FromSeconds(3600);
-            });
-
             services.AddAuthorization();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
@@ -85,9 +78,6 @@ namespace CharlieBackend.AdminPanel
             app.UseAuthorization();     
 
          
-            app.UseSession();
-
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

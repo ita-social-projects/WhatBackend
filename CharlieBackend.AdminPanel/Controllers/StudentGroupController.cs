@@ -37,8 +37,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             var students = await _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", Request.Cookies["accessToken"]);
 
-            Console.WriteLine(JsonConvert.SerializeObject(students));
-
             return View(students);
         }
     }

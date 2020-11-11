@@ -51,8 +51,6 @@ namespace CharlieBackend.AdminPanel.Controllers
             Response.Cookies.Append("accessToken", httpResponseToken);
 
 
-            //HttpContext.Session.SetString("accessToken", httpResponseToken);
-
             return RedirectToAction("Index", "Home");
         }
 
