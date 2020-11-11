@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using CharlieBackend.Core.Models.ResultModel;
 using EasyNetQ;
 using CharlieBackend.Core.IntegrationEvents.Events;
+using EasyNetQ.Topology;
+using System.Text;
+using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
 
 namespace CharlieBackend.Business.Services
 {
@@ -52,8 +55,9 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
-                                        account.FirstName, account.LastName, account.Role));
+                    await _bus.PubSub.PublishAsync(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role), 
+                                        "EmailRenderService");
 
                     return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
