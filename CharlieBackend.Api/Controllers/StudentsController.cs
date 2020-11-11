@@ -30,19 +30,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostStudent(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var createdStudentModel = await _studentService
                     .CreateStudentAsync(accountId);
-
-            if (createdStudentModel == null)
-            {
-                return Result<StudentDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot create student.").ToActionResult();
-            }
 
             return createdStudentModel.ToActionResult();
         }
@@ -83,18 +72,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{studentId}")]
         public async Task<ActionResult> PutStudent(long studentId, UpdateStudentDto studentModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }           
-
             var updatedStudent = await _studentService.UpdateStudentAsync(studentId, studentModel);
-
-            if (updatedStudent == null)
-            {
-                return Result<StudentDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot update student.").ToActionResult();
-            }
 
             return updatedStudent.ToActionResult();
         }

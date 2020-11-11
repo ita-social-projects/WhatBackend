@@ -12,12 +12,10 @@ namespace CharlieBackend.Core.DTO.Account
         public string Email { get; set; }
 
         [Required]
-        [JsonPropertyName("first_name")]
         [StringLength(30)]
         public string FirstName { get; set; }
 
         [Required]
-        [JsonPropertyName("last_name")]
         [StringLength(30)]
         public string LastName { get; set; }
 

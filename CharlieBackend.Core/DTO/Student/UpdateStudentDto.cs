@@ -6,6 +6,8 @@ namespace CharlieBackend.Core.DTO.Student
 {
     public class UpdateStudentDto
     {
+        #nullable enable
+
         [EmailAddress]
         [StringLength(50)]
         public string? Email { get; set; }
@@ -17,5 +19,7 @@ namespace CharlieBackend.Core.DTO.Student
         public string? LastName { get; set; }
 
         public IList<long>? StudentGroupIds { get; set; }
+
+        #nullable disable
     }
 }

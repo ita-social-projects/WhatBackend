@@ -158,15 +158,23 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
             #region Secretaries mapping
 
             CreateMap<SecretaryDto, Secretary>();
-            CreateMap<Secretary, SecretaryDto>();
+            CreateMap<Secretary, SecretaryDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
-            CreateMap<CreateSecretaryDto, Secretary>();
-            CreateMap<Secretary, CreateSecretaryDto>();
+            CreateMap<UpdateSecretaryDto, Secretary>();
+            CreateMap<Secretary, UpdateSecretaryDto>();
+
+            CreateMap<UpdateSecretaryDto, SecretaryDto>();
+            CreateMap<SecretaryDto, UpdateSecretaryDto>();
 
             #endregion
+
 
             #region Schedules mapping
 

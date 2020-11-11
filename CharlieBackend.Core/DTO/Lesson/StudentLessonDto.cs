@@ -9,7 +9,6 @@ namespace CharlieBackend.Core.DTO.Lesson
     public class StudentLessonDto
     {
         [Required]
-        [JsonPropertyName("theme_name")]
         [StringLength(100)]
         public string ThemeName { get; set; }
 
@@ -24,10 +23,8 @@ namespace CharlieBackend.Core.DTO.Lesson
         [StringLength(1024)]
         public string Comment { get; set; }
 
-        [JsonPropertyName("student_group_id")]
         public long? StudentGroupId { get; set; }
 
-        [JsonPropertyName("lesson_date")]
         [DataType(DataType.DateTime)]
         public DateTime LessonDate { get; set; }
     }
