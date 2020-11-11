@@ -25,6 +25,17 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        
+       
+        private async Task<bool> IsEndOfFileAsync(int counter, IXLWorksheet ws)
+        {
+            if (Convert.ToString(ws.Cell($"B{counter}").Value) == ""
+               && Convert.ToString(ws.Cell($"C{counter}").Value) == ""
+               && Convert.ToString(ws.Cell($"D{counter}").Value) == ""
+               && Convert.ToString(ws.Cell($"E{counter}").Value) == "")
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
