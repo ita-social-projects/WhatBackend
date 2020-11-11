@@ -25,7 +25,32 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-       
+        public async Task<Result<List<StudentGroup>>> ImportFileAsync(ImportFileDto file)
+        {
+            List<StudentGroup> importedGroups = new List<StudentGroup>();
+            var wb = new XLWorkbook(file.url);
+            var wsGroups = wb.Worksheet("Groups");
+
+
+            Type sgType = typeof(StudentGroupFileModel);
+            char charPointer = 'A';
+
+            var properties = sgType.GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                if (property.Name != Convert.ToString(wsGroups.Cell($"{charPointer}1").Value))
+                {
+                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                                "The format of the downloaded file is not suitable." +
+                                " Check headers in the file");
+                }
+                charPointer++;
+            }
+            
+            await _unitOfWork.CommitAsync();
+            return Result<List<StudentGroup>>.Success(_mapper.Map<List<StudentGroup>>(importedGroups));
+        }
+
         private async Task<bool> IsEndOfFileAsync(int counter, IXLWorksheet ws)
         {
             if (Convert.ToString(ws.Cell($"B{counter}").Value) == ""
