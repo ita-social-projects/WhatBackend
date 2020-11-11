@@ -32,31 +32,44 @@ namespace CharlieBackend.AdminPanel.Controllers
             _config = config;
         }
 
-        [HttpGet("LogIn")]
-        public async Task<IActionResult> LogIn()
+        [HttpGet("Login")]
+        public ViewResult Login()
         {
-            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", new AuthenticationDto
-            {
-                Email = "admin.@gmail.com",
-                Password = "admin"
-            });
+            return View();
+        }
 
-            await Authenticate(httpResponseToken);
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(AuthenticationDto authDto)
+        {
+            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
+
+            if(httpResponseToken == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if(!await AuthenticateAdmin(httpResponseToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             HttpContext.Session.SetString("accessToken", httpResponseToken);
 
-            return Ok(httpResponseToken);
+
+            return RedirectToAction("Index", "Home");
         }
 
 
-        [HttpPost("LogOut")]
-        public async Task<IActionResult> LogOut()
+        [HttpGet("LogOut")]
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return NoContent();
+            return RedirectToAction("Login", "Account");
         }
 
-        private async Task Authenticate(string token)
+        private async Task<bool> AuthenticateAdmin(string token)
+       
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -65,6 +78,11 @@ namespace CharlieBackend.AdminPanel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+
+            if(role != "Admin")
+            {
+                return false;
+            }
 
             var claims = new List<Claim>
             {
@@ -75,6 +93,9 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             // set authentication cookies
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+
+            return true;
+
         }
 
     }
