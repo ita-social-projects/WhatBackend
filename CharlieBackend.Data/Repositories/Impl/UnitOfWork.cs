@@ -19,7 +19,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IMentorOfCourseRepository _mentorOfCourseRepository;
         private IStudentRepository _studentRepository;
         private IStudentGroupRepository _studentGroupRepository;
-        private IVisitRepository _visitRepository; 
+        private IVisitRepository _visitRepository;
+        private ScheduleRepository _scheduleRepository;
 
         #endregion 
 
@@ -105,6 +106,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             { 
                 return _visitRepository = _visitRepository 
                         ?? new VisitRepository(_applicationContext); 
+            }
+        }
+
+        public IScheduleRepository ScheduleRepository
+        {
+            get
+            {
+                return _scheduleRepository = _scheduleRepository
+                        ?? new ScheduleRepository(_applicationContext);
             }
         }
 

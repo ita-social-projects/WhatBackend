@@ -426,7 +426,7 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.LessonStart).HasColumnName("lesson_start");
 
-                entity.Property(e => e.LessonStart).HasColumnName("lesson_end");
+                entity.Property(e => e.LessonEnd).HasColumnName("lesson_end");
 
                 entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
 

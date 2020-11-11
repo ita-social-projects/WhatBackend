@@ -1,10 +1,10 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {

@@ -1,9 +1,10 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Account;
-using System.Threading.Tasks;
 using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
+
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -17,11 +18,13 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<AccountDto>> GetAllAccountsAsync();
 
+        Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
+
         Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
 
-        Task<bool> IsEmailChangableToAsync(string newEmail);
+        Task<bool> IsEmailChangableToAsync(long id, string newEmail);
 
         Task<bool?> IsAccountActiveAsync(string email);
 

@@ -50,8 +50,8 @@ values
 
 insert  schedule (student_group_id, lesson_start, lesson_end, repeat_rate, day_number)
 values
-( (select id from student_group where student_group.name = '121_18_1'),  '11:12', '12:30', 2, null),
-( (select id from student_group where student_group.name = '121_18_1'),  '17:30', '18:12', 3, null);
+( (select id from student_group where student_group.name = '121_18_1'),  '11:12', '12:30', 0, null),
+( (select id from student_group where student_group.name = '121_18_1'),  '17:30', '18:12', 0, null);
 
 insert student_of_student_group (student_group_id, student_id)
 values
