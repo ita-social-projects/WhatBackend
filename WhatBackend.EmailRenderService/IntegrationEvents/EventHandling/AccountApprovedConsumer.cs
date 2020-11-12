@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using EasyNetQ;
 using Serilog.Context;
-using EasyNetQ;
-using EasyNetQ.AutoSubscribe;
 using System.Threading;
+using System.Threading.Tasks;
+using EasyNetQ.AutoSubscribe;
+using Microsoft.Extensions.Logging;
 using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
@@ -73,7 +73,7 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 
                 _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
 
-                await _bus.PubSub.PublishAsync(data, "EmailSenderService").ConfigureAwait(false);
+                await _bus.SendReceive.SendAsync("EmailSenderService", data);
             }
         }
     }

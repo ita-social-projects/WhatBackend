@@ -1,8 +1,8 @@
-﻿using EasyNetQ.AutoSubscribe;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyNetQ.AutoSubscribe;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WhatBackend.EmailRenderService
 {

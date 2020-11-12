@@ -56,9 +56,8 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    await _bus.PubSub.PublishAsync(new AccountApprovedEvent(account.Email,
-                                        account.FirstName, account.LastName, account.Role), 
-                                        "EmailRenderService");
+                    await _bus.SendReceive.SendAsync("EmailRenderService", new AccountApprovedEvent(account.Email,
+                                       account.FirstName, account.LastName, account.Role));
 
                     return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }

@@ -1,12 +1,13 @@
+using Serilog;
+using EasyNetQ;
+using System.Reflection;
+using EasyNetQ.AutoSubscribe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using EasyNetQ;
-using Serilog;
-using EasyNetQ.AutoSubscribe;
-using System.Reflection;
+using WhatBackend.EmailRenderService.IntegrationEvents.EventHandling;
 
 namespace WhatBackend.EmailRenderService
 {
@@ -22,16 +23,18 @@ namespace WhatBackend.EmailRenderService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //  services.AddControllers();
             services.AddCors();
-            services.AddSingleton(RabbitHutch.CreateBus("host=localhost"));
+            services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
             services.AddSingleton<MessageDispatcher>();
+            services.AddScoped<AccountApprovedConsumer>();
             services.AddSingleton(provider =>
             {
                 var subscriber = new AutoSubscriber(provider.GetRequiredService<IBus>(), "EmailRenderService")
                 {
-                    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>()
+                    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>(),
+                    ConfigureSubscriptionConfiguration = new System.Action<ISubscriptionConfiguration>(c => c.WithQueueName("EmailRenderService"))
                 };
+
                 return subscriber;
             });
         }
@@ -59,16 +62,8 @@ namespace WhatBackend.EmailRenderService
             }
 
             app.UseSerilogRequestLogging();
-            //app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            //app.UseAuthorization();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using EasyNetQ;
+﻿using EasyNetQ;
 using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -56,8 +55,8 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
-                                        account.FirstName, account.LastName, account.Role));
+                    await _bus.SendReceive.SendAsync("EmailRenderService", new AccountApprovedEvent(account.Email,
+                                       account.FirstName, account.LastName, account.Role));
 
                     return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
                 } 
