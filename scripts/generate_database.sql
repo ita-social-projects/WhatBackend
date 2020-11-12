@@ -180,14 +180,14 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 -- Table `soft`.`secretary`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `soft`.`secretary` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `account_id` BIGINT(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_account_of_secretary` (`account_id` ASC),
-  CONSTRAINT `FK_account_of_secretary`
-    FOREIGN KEY (`account_id`)
-    REFERENCES `soft`.`account` (`id`))
+CREATE TABLE IF NOT EXISTS soft.secretary (
+  id BIGINT(20) NOT NULL AUTO_INCREMENT,
+  account_id BIGINT(20) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX FK_account_of_secretary (account_id ASC),
+  CONSTRAINT FK_account_of_secretary
+    FOREIGN KEY (account_id)
+    REFERENCES soft.account (id))
 ENGINE = InnoDB
 AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8mb4
