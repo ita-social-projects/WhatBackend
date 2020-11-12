@@ -116,6 +116,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return _dashboardRepository = _dashboardRepository
                         ?? new DashboardRepository(_applicationContext);
+            }
 
         public IScheduleRepository ScheduleRepository
         {
