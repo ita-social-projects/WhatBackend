@@ -8,6 +8,9 @@ using CharlieBackend.Core.Models.ResultModel;
 using System.Threading.Tasks;
 using CharlieBackend.Core;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services
 {
@@ -28,9 +31,43 @@ namespace CharlieBackend.Business.Services
                     .Error(ErrorCode.UnprocessableEntity, "No request data parameters given");
             }
 
+            var result = new DashboardDto();
+            if (request.IncludeAnalytics.Contains(DashboardResultType.AverageStudentMark))
+            {
+                ValidateAverageStudentMarkAnalytics(request);
+                //data aggregation
+                //var groupIds = await _unitOfWork.StudentGroupRepository
+                //.GetQueryableNoTracking()
+                //.Where(x => x.CourseId == courseId)
+                //.Select(x => x.CourseId)
+                //.ToListAsync();
+
+                //var studentsByGroups = await _unitOfWork.StudentRepository
+                //    .GetQueryableNoTracking()
+                //    .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue && groupIds.Contains(x.StudentGroupId.Value)))
+                //    .ToListAsync();
+                //...
+                //result.AverageMarks = 
+            }
+
+            if (request.IncludeAnalytics.Contains(DashboardResultType.AverageStudentMark))
+            {
+                ValidateAverageStudentMarkAnalytics(request);
+                //data aggregation
+                //...
+                //result.AverageMarks = 
+            }
+
+
+
+
+
+
+
+
             if (request.CourceId != null && request.CourceId != 0)
             {
-                var groupsResults =  await GetGroupsListByCourceIdAsync((long)request.CourceId, request.ReportData);
+                var groupsResults =  await GetGroupsListByCourceIdAsync((long)request.CourceId, request.IncludeAnalytics);
 
                 if (groupsResults.Data != null)
                 { 
@@ -45,7 +82,7 @@ namespace CharlieBackend.Business.Services
 
             if (request.GroupId != null && request.GroupId != 0)
             {
-                var groupResult = await GetStudentGroupResultsAsync((long)request.GroupId, request.ReportData);
+                var groupResult = await GetStudentGroupResultsAsync((long)request.GroupId, request.IncludeAnalytics);
 
                 if (groupResult.Data != null)
                 { 
@@ -59,10 +96,35 @@ namespace CharlieBackend.Business.Services
                     .Error(ErrorCode.UnprocessableEntity, "Request parameters not recognised");
         }
 
-        public async Task<Result<IList<StudentGroupResultDto>>> GetGroupsListByCourceIdAsync(long courceId, params DashboardResultType[] type)
+        private IEnumerable<string> ValidateAverageStudentMarkAnalytics(DashboardRequestDto request)
         {
+            if (!request.GroupId.HasValue)
+            {
+                yield return "Please provide groupId";
+            }
+        }
+
+        public async Task<Result<IList<StudentGroupResultDto>>> GetGroupsListByCourceIdAsync(long courseId, params DashboardResultType[] type)
+        {
+            var groupIds = await _unitOfWork.StudentGroupRepository
+                .GetQueryableNoTracking()
+                .Where(x => x.CourseId == courseId)
+                .Select(x => x.CourseId)
+                .ToListAsync();
+
+            var studentsByGroups = await _unitOfWork.StudentRepository
+                .GetQueryableNoTracking()
+                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue && groupIds.Contains(x.StudentGroupId.Value)))
+                .Select(x => new {
+                    x.AccountId,
+                    x.Id
+                })
+                .ToListAsync();
+
+
+
             var groupsList = await _unitOfWork.DashboardRepository
-                    .GetStudentGroupsByCourceIdAsync(courceId);
+                    .GetStudentGroupsByCourceIdAsync(courseId);
 
             if (groupsList != null)
             {

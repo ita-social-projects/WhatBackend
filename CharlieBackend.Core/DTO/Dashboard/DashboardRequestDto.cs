@@ -11,7 +11,7 @@ namespace CharlieBackend.Core.DTO.Dashboard
 
         public long? CourceId { get; set; }
 
-        public DashboardResultType[] ReportData { get; set; }
+        public DashboardResultType[] IncludeAnalytics { get; set; }
     }
 
     public enum DashboardResultType
