@@ -27,11 +27,11 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<List<StudentGroup>>> ImportFileAsync(ImportFileDto file)
+        public async Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(ImportFileDto file)
         {
-            List<StudentGroup> importedGroups = new List<StudentGroup>();
             var wb = new XLWorkbook(file.url);
             var wsGroups = wb.Worksheet("Groups");
+            List<StudentGroupFileModel> importedGroups = new List<StudentGroupFileModel>();
 
             Type sgType = typeof(StudentGroupFileModel);
             char charPointer = 'A';
@@ -42,18 +42,20 @@ namespace CharlieBackend.Business.Services
             {
                 if (property.Name != Convert.ToString(wsGroups.Cell($"{charPointer}1").Value))
                 {
-                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
                                 "The format of the downloaded file is not suitable."
                                      + "Check headers in the file.");
                 }
                 charPointer++;
             }
         
-            StudentGroupFileModel fileLine = new StudentGroupFileModel();
             while (!await IsEndOfFileAsync(numPointer, wsGroups))
             {
+
                 try
                 {
+                StudentGroupFileModel fileLine = new StudentGroupFileModel();
+
                     fileLine.CourseId = Convert
                         .ToString(wsGroups.Cell($"B{numPointer}").Value);
                     fileLine.Name = Convert
@@ -73,36 +75,45 @@ namespace CharlieBackend.Business.Services
                         FinishDate = fileLine.FinishDate,
                     };
 
-                    importedGroups.Add(group);
+                    importedGroups.Add(fileLine);
                     _unitOfWork.StudentGroupRepository.Add(group);
                     numPointer++;
                 }
                 catch (FormatException ex)
                 {
                     _unitOfWork.Rollback();
-                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
                         "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
-
+                catch (DbUpdateException ex)
+                {
+                    _unitOfWork.Rollback();
+                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
+                        "Inputed data is incorrect.\n" + ex.Message);
+                }
             }
-            //try
-            //{
-                await _unitOfWork.CommitAsync();
-            //}
-            /*catch (DbUpdateException)
-            {
-                _unitOfWork.Rollback();
-                return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
-                    "The format of the inputed data is incorrect.\n" +
-                    "Such value of Name field already exists.\n" +
-                    $"Problem was occured in col C, row { numPointer}.");
-            }*/
-            return Result<List<StudentGroup>>
-                .Success(_mapper.Map<List<StudentGroup>>(importedGroups));
+            
+            await _unitOfWork.CommitAsync();
+            return Result<List<StudentGroupFileModel>>
+                .Success(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
 
         private async Task IsValueValid(StudentGroupFileModel fileLine, int numPointer)
         {
+            List<long> existingCourseIds = new List<long>();
+            List<string> existingGroupNames = new List<string>();
+
+            foreach (Course course in await _unitOfWork.CourseRepository.GetAllAsync())
+            {
+                existingCourseIds.Add(course.Id);
+            }
+
+            foreach (StudentGroup group in await _unitOfWork.StudentGroupRepository.GetAllAsync())
+            {
+                existingGroupNames.Add(group.Name);
+            }
+
+
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
                 throw new FormatException("CourseId field shouldn't be empty.\n" +
@@ -121,16 +132,16 @@ namespace CharlieBackend.Business.Services
                     $"Problem was occured in col D/E, row {numPointer}.");
             }
 
-            List<long> existingCourseIds = new List<long>();
-            foreach (Course course in await _unitOfWork.CourseRepository.GetAllAsync())
-            {
-                existingCourseIds.Add(course.Id);
-            }
-
-            if (!existingCourseIds.Contains(Convert.ToInt64(fileLine.CourseId))) 
+            if (!existingCourseIds.Contains(Convert.ToInt64(fileLine.CourseId)))
             {
                 throw new DbUpdateException($"Course with id {fileLine.CourseId} doesn't exist.\n" +
                    $"Problem was occured in col B, row {numPointer}.");
+            }
+
+            if (existingGroupNames.Contains(fileLine.Name))
+            {
+                throw new DbUpdateException($"Group with name {fileLine.Name} already exist.\n" +
+                   $"Problem was occured in col C, row {numPointer}.");
             }
         }
 

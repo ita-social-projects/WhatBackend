@@ -21,6 +21,10 @@ namespace CharlieBackend.Root
                   b => b.MigrationsAssembly("CharlieBackend.Api"));
             });
 
+            services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling
+                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddSingleton<ICredentialsSenderService>
             (
                 x => new EmailCredentialsSenderService(
