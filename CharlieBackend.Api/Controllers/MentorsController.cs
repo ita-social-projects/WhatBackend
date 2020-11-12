@@ -8,8 +8,6 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
-using EasyNetQ;
-using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -20,7 +18,6 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
-        private readonly IBus _bus;
         #endregion
 
         public MentorsController(IMentorService mentorService, IAccountService accountService)
