@@ -20,7 +20,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
 
-        [Authorize(Roles = "Mentor, Secretary, 4")]
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
         [HttpPost]
         public async Task<ActionResult> ImportDataFromFile(ImportFileDto file)
         {
