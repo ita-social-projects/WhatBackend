@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
             return createdSecretaryDto.ToActionResult();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult> GetAllSecretaries()
         {
