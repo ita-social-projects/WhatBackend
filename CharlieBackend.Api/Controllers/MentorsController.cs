@@ -23,30 +23,10 @@ namespace CharlieBackend.Api.Controllers
         private readonly IBus _bus;
         #endregion
 
-        public MentorsController(IMentorService mentorService, IAccountService accountService, IBus bus)
+        public MentorsController(IMentorService mentorService, IAccountService accountService)
         {
             _mentorService = mentorService;
             _accountService = accountService;
-            _bus = bus;
-        }
-
-        
-        [AllowAnonymous]
-        [HttpGet("test")]
-        public async Task<string> Get()
-        {
-            try
-            {
-                await _bus.PubSub.PublishAsync(new AccountApprovedEvent("test@test.com",
-                                        "FirstName", "LastName", Roles.Admin), "EmailRenderTopic");
-            }
-            catch (System.Exception e)
-            {
-
-                throw;
-            }
-
-            return "success";
         }
 
         [Authorize(Roles = "Admin")]
@@ -57,7 +37,6 @@ namespace CharlieBackend.Api.Controllers
 
             return createdMentorModel.ToActionResult(); ;
         }
-
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
