@@ -56,10 +56,8 @@ namespace CharlieBackend.Business.Services
                 {
                 StudentGroupFileModel fileLine = new StudentGroupFileModel();
 
-                    fileLine.CourseId = Convert
-                        .ToString(wsGroups.Cell($"B{numPointer}").Value);
-                    fileLine.Name = Convert
-                        .ToString(wsGroups.Cell($"C{numPointer}").Value);
+                    fileLine.CourseId = wsGroups.Cell($"B{numPointer}").Value.ToString();
+                    fileLine.Name = wsGroups.Cell($"C{numPointer}").Value.ToString();
                     fileLine.StartDate = Convert
                         .ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
                     fileLine.FinishDate = Convert
@@ -146,15 +144,11 @@ namespace CharlieBackend.Business.Services
         }
 
         private async Task<bool> IsEndOfFileAsync(int counter, IXLWorksheet ws)
-        {
-            if (Convert.ToString(ws.Cell($"B{counter}").Value) == ""
-               && Convert.ToString(ws.Cell($"C{counter}").Value) == ""
-               && Convert.ToString(ws.Cell($"D{counter}").Value) == ""
-               && Convert.ToString(ws.Cell($"E{counter}").Value) == "")
-            {
-                return true;
-            }
-            return false;
+        { 
+            return (ws.Cell($"B{counter}").Value.ToString() == "")
+               && (ws.Cell($"C{counter}").Value.ToString() == "")
+               && (ws.Cell($"D{counter}").Value.ToString() == "")
+               && (ws.Cell($"E{counter}").Value.ToString() == "");
         }
     }
 }
