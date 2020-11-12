@@ -1,4 +1,5 @@
 ﻿using System;
+using EasyNetQ;
 using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
@@ -16,88 +18,72 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICredentialsSenderService _credentialsSender;
+        private readonly IBus _bus;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
-                                IMapper mapper, ICredentialsSenderService credentialsSender)
+                                IMapper mapper, ICredentialsSenderService credentialsSender, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _credentialsSender = credentialsSender;
+            _bus = bus;
         }
 
-        public async Task<Result<SecretaryDto>> CreateSecretaryAsync(CreateSecretaryDto secretaryDto)
+        public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
         {
-            if (secretaryDto == null)
+            try
             {
-                return Result<SecretaryDto>.Error(ErrorCode.UnprocessableEntity, "No secretary data received");
-            }
+                var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
-            using (var transaction = _unitOfWork.BeginTransaction())
-            {
-                try
+                if (account == null)
                 {
-                    var isEmailTaken = await _accountService.IsEmailTakenAsync(secretaryDto.Email);
+                    return Result<SecretaryDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
 
-                    if (isEmailTaken)
-                    {
-                        return Result<SecretaryDto>.Error(ErrorCode.Conflict, "Email already taken");
-                    };
-
-                    var generatedPassword = _accountService.GenerateSalt();
-
-                    var account = new Account
-                    {
-                        Email = secretaryDto.Email,
-                        FirstName = secretaryDto.FirstName,
-                        LastName = secretaryDto.LastName,
-                        Role = Roles.Secretary
-                    };
-
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
+                if (account.Role == UserRole.NotAssigned)
+                {
+                    account.Role = UserRole.Secretary;
 
                     var secretary = new Secretary
                     {
                         Account = account,
+                        AccountId = accountId
                     };
 
                     _unitOfWork.SecretaryRepository.Add(secretary);
 
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
-                    {
-                        transaction.Commit();
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
 
-                        return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
-                    }
-                    else
-                    {
-                        //TODO implementation for resending email or sent a status msg
-                        transaction.Commit();
-
-                        return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
-                        //need to handle the exception with a right logic to sent it for contorller if fails
-                        //throw new System.Exception("Faild to send credentials");
-                    }
-                }
-                catch
+                    return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
+                } 
+                else
                 {
-                    transaction.Rollback();
+                    _unitOfWork.Rollback();
 
-                    return Result<SecretaryDto>.Error(ErrorCode.InternalServerError, "Error while creating secretary");
+                    return Result<SecretaryDto>.Error(ErrorCode.ValidationError,
+                       "This account already assigned.");
                 }
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+
+                return Result<SecretaryDto>.Error(ErrorCode.InternalServerError, "Error while creating secretary");
             }
 
         }
 
-        public async Task<Result<SecretaryDto>> UpdateSecretaryAsync(UpdateSecretaryDto secretaryDto)
+        public async Task<Result<SecretaryDto>> UpdateSecretaryAsync(long secretaryId, UpdateSecretaryDto secretaryDto)
         {
             try
             {
                 var foundSecretary = await _unitOfWork.SecretaryRepository
-                        .GetByIdAsync(secretaryDto.Id);
+                        .GetByIdAsync(secretaryId);
 
                 if (foundSecretary == null)
                 {
@@ -116,12 +102,6 @@ namespace CharlieBackend.Business.Services
                 foundSecretary.Account.FirstName = secretaryDto.FirstName ?? foundSecretary.Account.FirstName;
                 foundSecretary.Account.LastName = secretaryDto.LastName ?? foundSecretary.Account.LastName;
 
-                if (!string.IsNullOrEmpty(secretaryDto.Password))
-                {
-                    foundSecretary.Account.Salt = _accountService.GenerateSalt();
-                    foundSecretary.Account.Password = _accountService.HashPassword(secretaryDto.Password, foundSecretary.Account.Salt);
-                }
-
                 await _unitOfWork.CommitAsync();
 
                 return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(foundSecretary));
@@ -131,7 +111,8 @@ namespace CharlieBackend.Business.Services
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<SecretaryDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot update mentor.");
             }
         }
 

@@ -11,7 +11,7 @@ namespace CharlieBackend.Core.IntegrationEvents.Events
 
         [JsonConstructor]
         public AccountApprovedEvent(string recepientMail, string firstName,
-                                   string lastName, Roles role)
+                                   string lastName, UserRole role)
         {
             RecepientMail = recepientMail;
             FirstName = firstName;

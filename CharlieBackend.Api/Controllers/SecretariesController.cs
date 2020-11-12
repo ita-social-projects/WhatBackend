@@ -25,10 +25,10 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<ActionResult> CreateSecretary(CreateSecretaryDto secretaryDto)
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> PostSecretary(long accountId)
         {
-            var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(secretaryDto);
+            var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(accountId);
 
             return createdSecretaryDto.ToActionResult();
         }
@@ -44,10 +44,9 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{secretaryId}")]
-        public async Task<ActionResult> UpdateSecretary(long secretaryId, UpdateSecretaryDto secretaryDto)
+        public async Task<ActionResult> PutSecretary(long secretaryId, UpdateSecretaryDto secretaryDto)
         {
-            secretaryDto.Id = secretaryId;
-            var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryDto);
+            var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryId, secretaryDto);
 
             return updatedSecretary.ToActionResult();
         }

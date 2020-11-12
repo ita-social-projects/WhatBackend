@@ -22,8 +22,8 @@ namespace CharlieBackend.Core.DTO.Account
         [StringLength(50)]
         public string Email { get; set; }
 
-        [EnumDataType(typeof(Roles))]
-        public Roles Role { get; set; }
+        [EnumDataType(typeof(UserRole))]
+        public UserRole Role { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
