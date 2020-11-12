@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WhatBackend.EmailRenderService.IntegrationEvents;
 using WhatBackend.EmailRenderService.IntegrationEvents.EventHandling;
 
 namespace WhatBackend.EmailRenderService
