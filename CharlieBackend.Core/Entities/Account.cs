@@ -4,14 +4,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Account : BaseEntity
     {
-        public Account()
-        {
-            Mentors = new HashSet<Mentor>();
-            Students = new HashSet<Student>();
-            Secretaries = new HashSet<Secretary>();
-        }
-
-        public sbyte? Role { get; set; }
+        public UserRole Role { get; set; } = UserRole.NotAssigned;
 
         public string FirstName { get; set; }
 

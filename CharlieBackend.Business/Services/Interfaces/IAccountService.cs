@@ -1,21 +1,29 @@
-﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Account;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.Models.ResultModel;
+
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<BaseAccountModel> CreateAccountAsync(BaseAccountModel accountModel);
+        Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel);
 
-        Task<BaseAccountModel> GetAccountCredentialsAsync(AuthenticationModel authenticationModel);
+        Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
-        Task<BaseAccountModel> UpdateAccountCredentialsAsync(Account account);
+        Task<Account> GetAccountCredentialsByIdAsync(long id);
+
+        Task<IList<AccountDto>> GetAllAccountsAsync();
+
+        Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
+
+        Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
 
-        Task<bool> IsEmailChangableToAsync(string newEmail);
+        Task<bool> IsEmailChangableToAsync(long id, string newEmail);
 
         Task<bool?> IsAccountActiveAsync(string email);
 

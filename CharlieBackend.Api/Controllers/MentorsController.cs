@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Mentor;
+using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,35 +26,19 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "4")]
-        [HttpPost]
-        public async Task<ActionResult> PostMentor(CreateMentorModel mentorModel)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> PostMentor(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(mentorModel.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account already exists!");
-            }
-
-            var createdMentorModel = await _mentorService.CreateMentorAsync(mentorModel);
-
-            if (createdMentorModel == null)
-            {
-                return StatusCode(422, "Cannot create mentor.");
-            }
-
-            return Ok(new { createdMentorModel.Id });
+            return createdMentorModel.ToActionResult(); ;
         }
 
-        [Authorize(Roles = "4")]
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<MentorModel>>> GetAllMentors()
+        public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
 
             var mentorsModels = await _mentorService.GetAllMentorsAsync();
@@ -59,35 +46,16 @@ namespace CharlieBackend.Api.Controllers
             return Ok(mentorsModels);
         }
 
-        [Authorize(Roles = "4")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> PutMentor(long id, UpdateMentorModel mentorModel)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{mentorId}")]
+        public async Task<ActionResult> PutMentor(long mentorId, UpdateMentorDto mentorModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
+            return updatedMentor.ToActionResult();
+        } 
 
-            if (!isEmailChangableTo)
-            {
-                return StatusCode(409, "Email is already taken!");
-            }
-
-            mentorModel.Id = id;
-            var updatedMentor = await _mentorService.UpdateMentorAsync(mentorModel);
-
-            if (updatedMentor != null)
-            {
-                return Ok(updatedMentor);
-            }
-
-            return StatusCode(409, "Cannot update.");
-        }
-
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {

@@ -22,19 +22,20 @@ namespace CharlieBackend.Core
             {
                 switch (result.ErrorData.ErrorCode)
                 {
-                    case ErrorCode.Unauthorized: //401
-                        return new UnauthorizedObjectResult(result.ErrorData.ErrorMessage);
-                    case ErrorCode.ValidationError: //400
-                        return new BadRequestObjectResult(result.ErrorData.ErrorMessage);
-                    case ErrorCode.InternalServerError: //500
-                        return new StatusCodeResult(500);
-
+                    case ErrorCode.Unauthorized:
+                        return new UnauthorizedObjectResult(result.ErrorData.ErrorMessage);//401
+                    case ErrorCode.ValidationError:
+                        return new BadRequestObjectResult(result.ErrorData.ErrorMessage);//400
+                    case ErrorCode.InternalServerError:
+                        return new StatusCodeResult(500);//500
+                    case ErrorCode.NullReference:
+                        return new BadRequestResult();//400
                     case ErrorCode.NotFound:
                         return new NotFoundObjectResult(result.ErrorData.ErrorMessage);//404
-
                     case ErrorCode.UnprocessableEntity:
                         return new UnprocessableEntityObjectResult(result.ErrorData.ErrorMessage);//422
-
+                    case ErrorCode.Conflict:
+                        return new ConflictObjectResult(result.ErrorData.ErrorMessage);//409
                     default:
                         return new StatusCodeResult(500);
                 }

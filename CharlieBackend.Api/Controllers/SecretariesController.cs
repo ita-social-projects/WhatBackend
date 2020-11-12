@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
@@ -22,82 +24,40 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "4")]
-        [HttpPost]
-        public async Task<ActionResult> CreateSecretary(CreateSecretaryDto secretaryDto)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> PostSecretary(long accountId)
         {
+            var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(accountId);
 
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(secretaryDto.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account already exists!");
-            }
-
-            var createdSecretaryDto = await _secretaryService.CreateSecretaryAsync(secretaryDto);
-
-            if (createdSecretaryDto == null)
-            {
-                return StatusCode(422, "Cannot create secretary.");
-            }
-
-            return Ok(createdSecretaryDto);
+            return createdSecretaryDto.ToActionResult();
         }
 
-        [Authorize(Roles = "4")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
+        public async Task<ActionResult> GetAllSecretaries()
         {
-
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
-            return Ok(secretariesDtos);
+            return secretariesDtos.ToActionResult();
         }
 
-        [Authorize(Roles = "4")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateSecretary(long id, UpdateSecretaryDto secretaryDto)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{secretaryId}")]
+        public async Task<ActionResult> PutSecretary(long secretaryId, UpdateSecretaryDto secretaryDto)
         {
+            var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryId, secretaryDto);
 
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(secretaryDto.Email);
-
-            if (!isEmailChangableTo)
-            {
-                return StatusCode(409, "Email is already taken!");
-            }
-
-            secretaryDto.Id = id;
-            var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryDto);
-
-            if (updatedSecretary != null)
-            {
-                return Ok(updatedSecretary);
-            }
-
-            return StatusCode(409, "Cannot update.");
+            return updatedSecretary.ToActionResult();
         }
 
-        [Authorize(Roles = "4")]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableSecretary(long id)
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{secretaryId}")]
+        public async Task<ActionResult> DisableSecretary(long secretaryId)
         {
+            var isDisabled = await _secretaryService.DisableSecretaryAsync(secretaryId);
 
-            var accountId = await _secretaryService.GetAccountId(id);
-
-            if (accountId == null)
-            {
-                return BadRequest("Unknown secretary id.");
-            }
-
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return NoContent();
-            }
-
-            return StatusCode(500, "Error occurred while trying to disable secretary account.");
+            return isDisabled.ToActionResult();
         }
 
     }

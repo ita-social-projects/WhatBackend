@@ -1,20 +1,23 @@
 using System;
 using Serilog;
+using EasyNetQ;
 using AutoMapper;
 using CharlieBackend.Root;
+using CharlieBackend.Core;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using CharlieBackend.Core.Mapping;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
+using System.Text.Json.Serialization;
 using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Api
 {
@@ -34,6 +37,7 @@ namespace CharlieBackend.Api
 
             var authOptions = new AuthOptions();
             Configuration.GetSection("AuthOptions").Bind(authOptions);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -53,10 +57,17 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
-            services.AddControllers().AddJsonOptions(opts =>
-            {
-                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                        options.JsonSerializerOptions.Converters
+                        .Add(new JsonStringEnumConverter());
+                    }
+                    );
+
+            // EasyNetQ Congiguration through extension
+            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -128,7 +139,7 @@ namespace CharlieBackend.Api
 
             app.UseHttpsRedirection();
 
-            //Added Serilog to the app’s middleware pipeline
+            //Added Serilog to the appï¿½s middleware pipeline
             app.UseSerilogRequestLogging();
 
             app.UseRouting();

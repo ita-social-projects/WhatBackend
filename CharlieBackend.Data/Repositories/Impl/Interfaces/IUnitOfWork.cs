@@ -9,6 +9,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public ISecretaryRepository SecretaryRepository { get; }
 
+        public IScheduleRepository ScheduleRepository { get; }
+
         public ILessonRepository LessonRepository { get; }
 
         public IThemeRepository ThemeRepository { get; }

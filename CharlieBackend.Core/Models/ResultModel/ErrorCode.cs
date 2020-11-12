@@ -13,6 +13,8 @@ namespace CharlieBackend.Core.Models.ResultModel
         InternalServerError,
         NotFound,
         NullReference,
-        UnprocessableEntity
+        UnprocessableEntity,
+        Conflict
     }
 }
+

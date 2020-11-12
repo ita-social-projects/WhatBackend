@@ -1,5 +1,6 @@
-﻿using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Mentor;
+﻿using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,14 +8,16 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IMentorService
     {
-        public Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel);
+        public Task<Result<MentorDto>> CreateMentorAsync(long accountId);
 
-        public Task<IList<MentorModel>> GetAllMentorsAsync();
+        public Task<IList<MentorDto>> GetAllMentorsAsync();
 
         public Task<long?> GetAccountId(long mentorId);
 
-        public Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel);
+        public Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel);
 
-        public Task<MentorModel> GetMentorByAccountIdAsync(long accountId);
+        public Task<MentorDto> GetMentorByAccountIdAsync(long accountId);
+
+        public Task<MentorDto> GetMentorByIdAsync(long mentorId);
     }
 }

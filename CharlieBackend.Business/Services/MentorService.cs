@@ -1,11 +1,15 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+using EasyNetQ;
+using AutoMapper;
 using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models;
-using CharlieBackend.Core.Models.Mentor;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using CharlieBackend.Core.DTO;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -14,122 +18,101 @@ namespace CharlieBackend.Business.Services
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialsSender;
+        private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
-        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender)
+        public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender,
+                             IMapper mapper, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialsSender = credentialsSender;
+            _mapper = mapper;
+            _bus = bus;
         }
 
-        public async Task<MentorModel> CreateMentorAsync(CreateMentorModel mentorModel)
+        public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
         {
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
+                var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
+
+                if (account == null)
                 {
-                    bool credsSent = false;
-                    var generatedPassword = _accountService.GenerateSalt();
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
 
-                    var account = new Account
-                    {
-                        Email = mentorModel.Email,
-                        FirstName = mentorModel.FirstName,
-                        LastName = mentorModel.LastName,
-                        Role = 2
-                    };
+                if (account.Role == UserRole.NotAssigned)
+                {
+                    account.Role = UserRole.Mentor;
 
-                    account.Salt = _accountService.GenerateSalt();
-                    account.Password = _accountService.HashPassword(generatedPassword, account.Salt);
 
                     var mentor = new Mentor
                     {
-                        Account = account
+                        Account = account,
+                        AccountId = accountId
                     };
 
                     _unitOfWork.MentorRepository.Add(mentor);
 
-                    if (mentorModel.CourseIds.Count != 0)
-                    {
-                        var courses = await _unitOfWork.CourseRepository.GetCoursesByIdsAsync(mentorModel.CourseIds);
-
-                        mentor.MentorsOfCourses = new List<MentorOfCourse>();
-
-                        for (int i = 0; i < courses.Count; i++)
-                        {
-                            mentor.MentorsOfCourses.Add(new MentorOfCourse
-                            {
-                                Mentor = mentor,
-                                Course = courses[i]
-                            });
-                        }
-                    }
-
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(account.Email, generatedPassword))
-                    {
-                        credsSent = true;
-                        transaction.Commit();
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
 
-                        return mentor.ToMentorModel();
-                    }
-                    else
-                    {
-                        //TODO implementation for resending email or sent a status msg
-                        transaction.Commit();
-                        credsSent = false;
-                        return mentor.ToMentorModel();
-                        //need to handle the exception with a right logic to sent it for contorller if fails
-                        //throw new System.Exception("Faild to send credentials");
-                    }
+                    return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
-                catch
+                else
                 {
-                    transaction.Rollback();
+                    _unitOfWork.Rollback();
 
-                    return null;
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "This account already assigned.");
                 }
             }
-
-        }
-
-        public async Task<IList<MentorModel>> GetAllMentorsAsync()
-        {
-            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
-
-            var mentorModels = new List<MentorModel>();
-
-            foreach (var mentor in mentors)
+            catch
             {
-                var mentorModel = mentor.ToMentorModel();
+                 _unitOfWork.Rollback();
 
-                mentorModels.Add(mentorModel);
+                 return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot create mentor.");
             }
 
-            return mentorModels;
         }
 
-        public async Task<MentorModel> UpdateMentorAsync(UpdateMentorModel mentorModel)
+        public async Task<IList<MentorDto>> GetAllMentorsAsync()
+        {
+
+            var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
+
+            return mentors;
+        }
+
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
         {
             try
             {
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorModel.Id);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
 
                 if (foundMentor == null)
                 {
-                    return null;
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                        "Mentor not found");
+                }
+
+                var isEmailChangableTo = await _accountService
+                        .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
                 }
 
                 foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;
                 foundMentor.Account.FirstName = mentorModel.FirstName ?? foundMentor.Account.FirstName;
                 foundMentor.Account.LastName = mentorModel.LastName ?? foundMentor.Account.LastName;
-
-                if (!string.IsNullOrEmpty(mentorModel.Password))
-                {
-                    foundMentor.Account.Salt = _accountService.GenerateSalt();
-                    foundMentor.Account.Password = _accountService.HashPassword(mentorModel.Password, foundMentor.Account.Salt);
-                }
 
                 if (mentorModel.CourseIds != null)
                 {
@@ -138,11 +121,11 @@ namespace CharlieBackend.Business.Services
 
                     foreach (var newCourseId in mentorModel.CourseIds)
                     {
-                        newMentorCourses.Add(new MentorOfCourse
-                        {
-                            CourseId = newCourseId,
-                            MentorId = foundMentor.Id
-                        });
+                       newMentorCourses.Add(new MentorOfCourse
+                       {
+                           CourseId = newCourseId,
+                           MentorId = foundMentor.Id
+                       });
                     }
 
                     _unitOfWork.MentorRepository.UpdateMentorCourses(currentMentorCourses, newMentorCourses);
@@ -167,28 +150,28 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return foundMentor.ToMentorModel();
-
+                return Result<MentorDto>.Success(_mapper.Map<MentorDto>(foundMentor));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                      "Cannot update mentor.");
             }
         }
 
-        public async Task<MentorModel> GetMentorByAccountIdAsync(long accountId)
+        public async Task<MentorDto> GetMentorByAccountIdAsync(long accountId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
 
-            return mentor?.ToMentorModel();
+            return _mapper.Map<MentorDto>(mentor);
         }
-        public async Task<MentorModel> GetMentorByIdAsync(long mentorId)
+        public async Task<MentorDto> GetMentorByIdAsync(long mentorId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(mentorId);
 
-            return mentor?.ToMentorModel();
+            return _mapper.Map<MentorDto>(mentor);
         }
 
         public async Task<long?> GetAccountId(long mentorId)

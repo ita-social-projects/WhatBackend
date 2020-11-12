@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
 using System.Linq;
-using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.DTO.Course;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -16,6 +18,20 @@ namespace CharlieBackend.Core.Mapping
     {
         public ModelMappingProfile()
         {
+            #region Accounts mapping
+
+            CreateMap<Account, AccountDto>();
+            CreateMap<AccountDto, Account>();
+
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            CreateMap<Account, AuthenticationDto>();
+            CreateMap<AuthenticationDto, Account>();
+
+            #endregion
+
+
             #region Courses mapping
 
             CreateMap<CreateCourseDto, Course>();
@@ -31,6 +47,7 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CourseDto, UpdateCourseDto>();
 
             #endregion
+            
 
             #region Lessons mapping
 
@@ -65,6 +82,40 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, Lesson>();
             #endregion
+
+
+            #region Mentors mapping
+
+            CreateMap<MentorDto, Mentor>();
+            CreateMap<Mentor, MentorDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+
+            CreateMap<UpdateMentorDto, Mentor>();
+            CreateMap<Mentor, UpdateMentorDto>();
+
+            CreateMap<UpdateMentorDto, MentorDto>();
+            CreateMap<MentorDto, UpdateMentorDto>();
+
+            #endregion
+
+
+            #region Students mapping
+
+            CreateMap<StudentDto, Student>();
+            CreateMap<Student, StudentDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+
+            CreateMap<UpdateStudentDto, Student>();
+            CreateMap<Student, UpdateStudentDto>();
+
+            CreateMap<UpdateStudentDto, StudentDto>();
+            CreateMap<StudentDto, UpdateStudentDto>();
+            #endregion
+
 
             #region StudentGroups mapping
 
@@ -107,16 +158,31 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
             #region Secretaries mapping
 
             CreateMap<SecretaryDto, Secretary>();
-            CreateMap<Secretary, SecretaryDto>();
+            CreateMap<Secretary, SecretaryDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
-            CreateMap<CreateSecretaryDto, Secretary>();
-            CreateMap<Secretary, CreateSecretaryDto>();
+            CreateMap<UpdateSecretaryDto, Secretary>();
+            CreateMap<Secretary, UpdateSecretaryDto>();
+
+            CreateMap<UpdateSecretaryDto, SecretaryDto>();
+            CreateMap<SecretaryDto, UpdateSecretaryDto>();
 
             #endregion
 
+
+            #region Schedules mapping
+
+            CreateMap<CreateScheduleDto, Schedule>();
+            CreateMap<UpdateScheduleDto, Schedule>();
+            CreateMap<Schedule, ScheduleDto>();
+
+            #endregion
 
         }
     }

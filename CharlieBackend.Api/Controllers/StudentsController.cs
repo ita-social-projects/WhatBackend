@@ -1,10 +1,12 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Models.Student;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using CharlieBackend.Core;
 using System.Threading.Tasks;
-using System;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Student;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -24,44 +26,19 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "2, 4")]
-        [HttpPost]
-        public async Task<ActionResult> PostStudent(CreateStudentModel studentModel)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("{accountId}")]
+        public async Task<ActionResult> PostStudent(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var foundStudent = await _studentService
-                    .GetStudentByEmailAsync(studentModel.Email);
-
-            if (foundStudent != null)
-            {
-                return Ok(foundStudent.Id);
-            }
-
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(studentModel.Email);
-
-            if (isEmailTaken)
-            {
-                return StatusCode(409, "Account with this email already exists!");
-            }
-
             var createdStudentModel = await _studentService
-                    .CreateStudentAsync(studentModel);
+                    .CreateStudentAsync(accountId);
 
-            if (createdStudentModel == null)
-            {
-                return StatusCode(422, "Cannot create student.");
-            }
-
-            return Ok(new { createdStudentModel.Id });
+            return createdStudentModel.ToActionResult();
         }
-
-        [Authorize(Roles = "2, 4")]
+        
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<UpdateStudentModel>>> GetStudentById(long id)
+        public async Task<ActionResult<List<StudentDto>>> GetStudentById(long id)
         {
 
             var studentModel = await _studentService.GetStudentByIdAsync(id);
@@ -72,7 +49,7 @@ namespace CharlieBackend.Api.Controllers
                 {
                     first_name = studentModel.FirstName,
                     last_name = studentModel.LastName,
-                    student_group_ids = studentModel.StudentGroupIds,
+                    //student_group_ids = studentModel.StudentGroupIds, // TODO fix
                     email = studentModel.Email
                 });
             }
@@ -80,10 +57,9 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot find student with such id.");
         }
 
-
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentModel>>> GetAllStudents()
+        public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
         {
 
             var studentsModels = await _studentService.GetAllStudentsAsync();
@@ -92,37 +68,16 @@ namespace CharlieBackend.Api.Controllers
 
         }
 
-        [Authorize(Roles = "2, 4")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> PutStudent(long id, UpdateStudentModel mentorModel)
+        [Authorize(Roles = "Mentor, Admin")]
+        [HttpPut("{studentId}")]
+        public async Task<ActionResult> PutStudent(long studentId, UpdateStudentDto studentModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            var updatedStudent = await _studentService.UpdateStudentAsync(studentId, studentModel);
 
-
-            var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(mentorModel.Email);
-
-            if (!isEmailChangableTo)
-            {
-                return StatusCode(409, "Email is already taken!");
-            }
-
-            mentorModel.Id = id;
-
-            var updatedStudent = await _studentService.UpdateStudentAsync(mentorModel);
-
-            if (updatedStudent != null)
-            {
-                return Ok(updatedStudent);
-            }
-
-            return StatusCode(409, "Cannot update.");
+            return updatedStudent.ToActionResult();
         }
 
-        [Authorize(Roles = "2, 4")]
+        [Authorize(Roles = "Mentor, Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {
@@ -143,8 +98,6 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(500, "Error occurred while trying to disable student account.");
-
-
         }
     }
 }
