@@ -44,7 +44,7 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
                                 "The format of the downloaded file is not suitable."
-                                     + " Check headers in the file");
+                                     + "Check headers in the file.");
                 }
                 charPointer++;
             }
@@ -83,20 +83,20 @@ namespace CharlieBackend.Business.Services
                     return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
                         "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
-                try 
-                {
-                    await _unitOfWork.CommitAsync();
-                }
-                catch (DbUpdateException ex)
-                {
-                    _unitOfWork.Rollback();
-                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
-                        "The format of the inputed data is incorrect.\n " +
-                        "Such value of Name field already exists.\n" +
-                        $"Problem was occured in col C, row { numPointer}");
-                }
 
             }
+            //try
+            //{
+                await _unitOfWork.CommitAsync();
+            //}
+            /*catch (DbUpdateException)
+            {
+                _unitOfWork.Rollback();
+                return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                    "The format of the inputed data is incorrect.\n" +
+                    "Such value of Name field already exists.\n" +
+                    $"Problem was occured in col C, row { numPointer}.");
+            }*/
             return Result<List<StudentGroup>>
                 .Success(_mapper.Map<List<StudentGroup>>(importedGroups));
         }
@@ -118,7 +118,19 @@ namespace CharlieBackend.Business.Services
             if (fileLine.StartDate > fileLine.FinishDate)
             {
                 throw new FormatException("StartDate must be less than FinishDate.\n" +
-                    $"Problem was occured in col D/E, row {numPointer}");
+                    $"Problem was occured in col D/E, row {numPointer}.");
+            }
+
+            List<long> existingCourseIds = new List<long>();
+            foreach (Course course in await _unitOfWork.CourseRepository.GetAllAsync())
+            {
+                existingCourseIds.Add(course.Id);
+            }
+
+            if (!existingCourseIds.Contains(Convert.ToInt64(fileLine.CourseId))) 
+            {
+                throw new DbUpdateException($"Course with id {fileLine.CourseId} doesn't exist.\n" +
+                   $"Problem was occured in col B, row {numPointer}.");
             }
         }
 
