@@ -53,18 +53,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
-
-            if (createdMentorModel == null)
-            {
-                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot create mentor.").ToActionResult();
-            }
 
             return createdMentorModel.ToActionResult(); ;
         }
@@ -84,20 +73,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{mentorId}")]
         public async Task<ActionResult> PutMentor(long mentorId, UpdateMentorDto mentorModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
-            if (updatedMentor == null)
-            {
-                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot update mentor.").ToActionResult();
-            }
-
-            
             return updatedMentor.ToActionResult();
         } 
 

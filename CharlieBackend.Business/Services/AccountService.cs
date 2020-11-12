@@ -8,7 +8,6 @@ using CharlieBackend.Core.Entities;
 using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
-using System.Collections.Generic;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
@@ -32,6 +31,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
+            var isEmailTaken = await IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!");
+            }
+
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 try
@@ -40,8 +47,7 @@ namespace CharlieBackend.Business.Services
                     {
                         Email = accountModel.Email,
                         FirstName = accountModel.FirstName,
-                        LastName = accountModel.LastName,
-                        Role = 0
+                        LastName = accountModel.LastName
                     };
 
                     account.Salt = GenerateSalt();

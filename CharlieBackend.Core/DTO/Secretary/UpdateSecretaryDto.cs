@@ -5,22 +5,18 @@ namespace CharlieBackend.Core.DTO.Secretary
 {
     public class UpdateSecretaryDto
     {
-
-        [JsonIgnore]
-        public long Id { get; set; }
-
-        [JsonIgnore]
-        [StringLength(65)]
-        public string Password { get; set; }
+        #nullable enable
 
         [EmailAddress]
         [StringLength(50)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [StringLength(30)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [StringLength(30)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
+
+        #nullable disable
     }
 }

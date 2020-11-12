@@ -34,10 +34,16 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
-                
-                if (account.Role == Roles.NotAssigned)
+
+                if (account == null)
                 {
-                    account.Role = Roles.Mentor;
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
+
+                if (account.Role == UserRole.NotAssigned)
+                {
+                    account.Role = UserRole.Mentor;
 
 
                     var mentor = new Mentor
@@ -90,7 +96,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundMentor == null)
                 {
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
                         "Mentor not found");
                 }
 
