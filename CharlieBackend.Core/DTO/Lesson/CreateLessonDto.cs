@@ -12,23 +12,18 @@ namespace CharlieBackend.Core.DTO.Lesson
     {
 
         [Required]
-        [JsonPropertyName("theme_name")]
         [StringLength(100)]
         public string ThemeName { get; set; }
 
-        [JsonPropertyName("mentor_id")]
         public long MentorId { get; set; }
 
         [Required]
-        [JsonPropertyName("group_id")]
         public long StudentGroupId { get; set; }
 
         [Required]
-        [JsonPropertyName("lesson_visits")]
         public IList<VisitDto> LessonVisits { get; set; }
 
         [Required]
-        [JsonPropertyName("lesson_date")]
         [DataType(DataType.DateTime)]
         public DateTime LessonDate { get; set; }
     }

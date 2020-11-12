@@ -1,13 +1,15 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO;
-using CharlieBackend.Core.DTO.Mentor;
+using EasyNetQ;
 using AutoMapper;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Collections.Generic;
+using CharlieBackend.Core;
 using System.Threading.Tasks;
+using CharlieBackend.Core.DTO;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -17,14 +19,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialsSender;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork, ICredentialsSenderService credentialsSender,
-                             IMapper mapper)
+                             IMapper mapper, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialsSender = credentialsSender;
             _mapper = mapper;
+            _bus = bus;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -32,10 +36,16 @@ namespace CharlieBackend.Business.Services
             try
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
-                
-                if (account.Role == Roles.NotAssigned)
+
+                if (account == null)
                 {
-                    account.Role = Roles.Mentor;
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
+
+                if (account.Role == UserRole.NotAssigned)
+                {
+                    account.Role = UserRole.Mentor;
 
 
                     var mentor = new Mentor
@@ -47,6 +57,9 @@ namespace CharlieBackend.Business.Services
                     _unitOfWork.MentorRepository.Add(mentor);
 
                     await _unitOfWork.CommitAsync();
+
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
 
                     return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
                 }
@@ -70,29 +83,31 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<MentorDto>> GetAllMentorsAsync()
         {
+
             var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
 
             return mentors;
         }
 
-        public async Task<Result<MentorDto>> UpdateMentorAsync(long accountId, UpdateMentorDto mentorModel)
+        public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
         {
             try
             {
-                var isEmailChangableTo = await _accountService.IsEmailChangableToAsync(mentorModel.Email);
+                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
+
+                if (foundMentor == null)
+                {
+                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                        "Mentor not found");
+                }
+
+                var isEmailChangableTo = await _accountService
+                        .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
 
                 if (!isEmailChangableTo)
                 {
                     return Result<MentorDto>.Error(ErrorCode.ValidationError,
                         "Email is already taken!");
-                }
-
-                var foundMentor = await _unitOfWork.MentorRepository.GetByIdAsync(accountId);
-
-                if (foundMentor == null)
-                {
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
-                        "Mentor not found");
                 }
 
                 foundMentor.Account.Email = mentorModel.Email ?? foundMentor.Account.Email;

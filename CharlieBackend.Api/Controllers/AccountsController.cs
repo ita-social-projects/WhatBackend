@@ -24,17 +24,20 @@ namespace CharlieBackend.Api.Controllers
         private readonly IAccountService _accountService;
         private readonly IStudentService _studentService;
         private readonly IMentorService _mentorService;
+        private readonly ISecretaryService _secretaryService;
         private readonly AuthOptions _authOptions;
         #endregion
 
         public AccountsController(IAccountService accountService,
                 IStudentService studentService,
                 IMentorService mentorService,
+                ISecretaryService secretaryService,
                 IOptions<AuthOptions> authOptions)
         {
             _accountService = accountService;
             _studentService = studentService;
             _mentorService = mentorService;
+            _secretaryService = secretaryService;
             _authOptions = authOptions.Value;
         }
 
@@ -59,9 +62,9 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            long studentOrMentorId = foundAccount.Id;
+            long entityId = foundAccount.Id;
 
-            if (foundAccount.Role == Roles.Student)
+            if (foundAccount.Role == UserRole.Student)
             {
                 var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
 
@@ -70,9 +73,10 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                studentOrMentorId = foundStudent.Id;
+                entityId = foundStudent.Id;
             }
-            if (foundAccount.Role == Roles.Mentor)
+
+            if (foundAccount.Role == UserRole.Mentor)
             {
                 var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
 
@@ -81,10 +85,22 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                studentOrMentorId = foundMentor.Id;
+                entityId = foundMentor.Id;
             }
 
-            if (foundAccount.Role == Roles.NotAssigned)
+            if (foundAccount.Role == UserRole.Secretary)
+            {
+                var foundSecretary = await _secretaryService.GetSecretaryByAccountIdAsync(foundAccount.Id);
+
+                if (foundSecretary == null)
+                {
+                    return BadRequest();
+                }
+
+                entityId = foundSecretary.Data.Id;
+            }
+
+            if (foundAccount.Role == UserRole.NotAssigned)
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
@@ -99,7 +115,7 @@ namespace CharlieBackend.Api.Controllers
                     {
                             new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     foundAccount.Role.ToString()),
-                            new Claim("Id", studentOrMentorId.ToString()),
+                            new Claim("Id", entityId.ToString()),
                             new Claim("Email", foundAccount.Email)
                     },
                     expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
@@ -115,7 +131,7 @@ namespace CharlieBackend.Api.Controllers
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
                 role = foundAccount.Role,
-                id = studentOrMentorId
+                id = entityId
             };
 
             Response.Headers.Add("Authorization", "Bearer " + encodedJwt);
@@ -130,27 +146,20 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostAccount(CreateAccountDto accountModel)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var isEmailTaken = await _accountService.IsEmailTakenAsync(accountModel.Email);
-
-            if (isEmailTaken)
-            {
-                return Result<CreateAccountDto>.Error(ErrorCode.Conflict,
-                    "Account already exists!").ToActionResult();
-            }
-
             var createdAccountModel = await _accountService.CreateAccountAsync(accountModel);
 
             return createdAccountModel.ToActionResult();
         }
 
-        [Route("NotAssigned")]
         [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult> GetAllAccount()
+        {
+            return Ok(await _accountService.GetAllAccountsAsync());
+        }
+        
+        [Route("NotAssigned")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<AccountDto>>> GetAllNotAssignedAccounts()
         {

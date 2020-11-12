@@ -15,13 +15,15 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Account> GetAccountCredentialsByIdAsync(long id);
 
+        Task<IList<AccountDto>> GetAllAccountsAsync();
+
         Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
 
         Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
 
-        Task<bool> IsEmailChangableToAsync(string newEmail);
+        Task<bool> IsEmailChangableToAsync(long id, string newEmail);
 
         Task<bool?> IsAccountActiveAsync(string email);
 

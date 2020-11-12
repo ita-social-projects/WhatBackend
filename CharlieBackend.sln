@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.AdminPanel", "CharlieBackend.AdminPanel\CharlieBackend.AdminPanel.csproj", "{38761295-2D89-4BAC-A843-F12AA8BC4CD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSendingService", "EmailSendingService\EmailSendingService.csproj", "{67D28C3E-5346-4D84-8B46-C6F1F9092F73}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{38761295-2D89-4BAC-A843-F12AA8BC4CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38761295-2D89-4BAC-A843-F12AA8BC4CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38761295-2D89-4BAC-A843-F12AA8BC4CD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67D28C3E-5346-4D84-8B46-C6F1F9092F73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67D28C3E-5346-4D84-8B46-C6F1F9092F73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67D28C3E-5346-4D84-8B46-C6F1F9092F73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67D28C3E-5346-4D84-8B46-C6F1F9092F73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

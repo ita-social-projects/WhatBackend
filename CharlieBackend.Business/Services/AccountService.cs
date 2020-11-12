@@ -11,7 +11,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
-
 namespace CharlieBackend.Business.Services
 {
     public class AccountService : IAccountService
@@ -32,6 +31,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
+            var isEmailTaken = await IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!");
+            }
+
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 try
@@ -40,8 +47,7 @@ namespace CharlieBackend.Business.Services
                     {
                         Email = accountModel.Email,
                         FirstName = accountModel.FirstName,
-                        LastName = accountModel.LastName 
-                        //Role = 0;
+                        LastName = accountModel.LastName
                     };
 
                     account.Salt = GenerateSalt();
@@ -90,6 +96,13 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
+        public async Task<IList<AccountDto>> GetAllAccountsAsync()
+        {
+            var foundAccount = _mapper.Map<IList<AccountDto>>(await _unitOfWork.AccountRepository.GetAllAsync());
+
+            return foundAccount;
+        }
+
         public async Task<Account> GetAccountCredentialsByIdAsync(long id)
         {
             var account = await _unitOfWork.AccountRepository.GetAccountCredentialsById(id);
@@ -127,9 +140,9 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<AccountDto>(account);
         }
 
-        public Task<bool> IsEmailChangableToAsync(string newEmail)
+        public Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
-            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
+            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(id, newEmail);
         }
 
         public Task<bool?> IsAccountActiveAsync(string email)

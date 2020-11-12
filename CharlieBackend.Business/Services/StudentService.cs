@@ -1,12 +1,14 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+using EasyNetQ;﻿
+using AutoMapper;
 using CharlieBackend.Core;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Student;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -16,15 +18,17 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICredentialsSenderService _credentialSender;
         private readonly IMapper _mapper;
+        private readonly IBus _bus;
 
         public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, 
                               ICredentialsSenderService credentialsSender,
-                              IMapper mapper)
+                              IMapper mapper, IBus bus)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _credentialSender = credentialsSender;
             _mapper = mapper;
+            _bus = bus;
         }
 
         public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
@@ -33,9 +37,15 @@ namespace CharlieBackend.Business.Services
             {
                 var account = await _accountService.GetAccountCredentialsByIdAsync(accountId);
 
-                if (account.Role == Roles.NotAssigned)
+                if (account == null)
                 {
-                    account.Role = Roles.Student;
+                    return Result<StudentDto>.Error(ErrorCode.NotFound,
+                        "Account not found");
+                }
+
+                if (account.Role == UserRole.NotAssigned)
+                {
+                    account.Role = UserRole.Student;
 
 
                     var student = new Student
@@ -47,6 +57,9 @@ namespace CharlieBackend.Business.Services
                     _unitOfWork.StudentRepository.Add(student);
 
                     await _unitOfWork.CommitAsync();
+
+                    _bus.PubSub.Publish(new AccountApprovedEvent(account.Email,
+                                        account.FirstName, account.LastName, account.Role));
 
                     return Result<StudentDto>.Success(_mapper.Map<StudentDto>(student));
                 }
@@ -74,25 +87,24 @@ namespace CharlieBackend.Business.Services
             return students;
         }
 
-        public async Task<Result<StudentDto>> UpdateStudentAsync(long accountId, UpdateStudentDto studentModel)
+        public async Task<Result<StudentDto>> UpdateStudentAsync(long studentId, UpdateStudentDto studentModel)
         {
             try
             {
-                var isEmailChangableTo = await _accountService
-                    .IsEmailChangableToAsync(studentModel.Email);
-
-                if (!isEmailChangableTo)
-                {
-                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
-                        "Email is already taken!");
-                }
-
-                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(accountId);
+                var foundStudent = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
 
                 if (foundStudent == null)
                 {
-                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
-                        "Student not found");
+                        return Result<StudentDto>.Error(ErrorCode.NotFound, "Student not found");
+                }
+
+                var isEmailChangableTo = await _accountService
+                    .IsEmailChangableToAsync((long)foundStudent.AccountId, studentModel.Email);
+
+                if (!isEmailChangableTo)
+                {
+                        return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        "Email is already taken!");
                 }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;

@@ -4,7 +4,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Account : BaseEntity
     {
-        public Roles Role { get; set; } = Roles.NotAssigned;
+        public UserRole Role { get; set; } = UserRole.NotAssigned;
 
         public string FirstName { get; set; }
 
