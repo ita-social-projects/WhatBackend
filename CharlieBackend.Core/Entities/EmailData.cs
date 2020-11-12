@@ -1,5 +1,6 @@
-﻿
-namespace WhatBackend.EmailRenderService.IntegrationEvents
+﻿using System;
+
+namespace CharlieBackend.Core.Entities
 {
     public class EmailData
     {

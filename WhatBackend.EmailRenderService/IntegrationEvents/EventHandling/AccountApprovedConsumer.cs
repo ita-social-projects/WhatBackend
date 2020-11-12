@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ.AutoSubscribe;
 using Microsoft.Extensions.Logging;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
