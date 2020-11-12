@@ -69,11 +69,12 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
                     "</tr>" +
                 "</table>";
 
-                (string, string) data = (message.RecepientMail, emailBody);
-
                 _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
 
-                await _bus.SendReceive.SendAsync("EmailSenderService", data);
+                await _bus.SendReceive.SendAsync("EmailSenderService", new EmailData {
+                                                  RecipientMail = message.RecepientMail,
+                                                  EmailBody = emailBody 
+                                                  });
             }
         }
     }
