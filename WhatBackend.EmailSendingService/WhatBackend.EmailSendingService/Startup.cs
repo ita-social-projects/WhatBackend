@@ -1,40 +1,68 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog;
+using EasyNetQ;
+using System.Reflection;
+using EasyNetQ.AutoSubscribe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using WhatBackend.EmailSendingService.Services;
 
 namespace WhatBackend.EmailSendingService
 {
 	public class Startup
 	{
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
+		}
+
+		public IConfiguration Configuration { get; }
+
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddCors();
+			services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
+			services.AddSingleton<MessageDispatcher>();
+			services.AddScoped<EmailSendingConsumer>();
+			services.AddSingleton(provider =>
+			{
+				var subscriber = new AutoSubscriber(provider.GetRequiredService<IBus>(), "EmailSenderService")
+				{
+					AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>(),
+					ConfigureSubscriptionConfiguration = new System.
+						Action<ISubscriptionConfiguration>(c => c.WithQueueName("EmailSenderService"))
+				};
+				return subscriber;
+			});
 		}
+
+		
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			//registering message consumers
+			app.ApplicationServices.GetRequiredService<AutoSubscriber>()
+					.SubscribeAsync(new[] { Assembly.GetExecutingAssembly() });
+
+			app.UseCors(builder =>
+			{
+				builder
+				.AllowAnyOrigin()
+				.AllowAnyMethod()
+				.AllowAnyHeader();
+			});
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseRouting();
+			app.UseSerilogRequestLogging();
 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapGet("/", async context =>
-				{
-					await context.Response.WriteAsync("Hello World!");
-				});
-			});
+			app.UseRouting();
 		}
 	}
 }
