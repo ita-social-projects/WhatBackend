@@ -10,6 +10,7 @@ using CharlieBackend.Core.FileModels;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CharlieBackend.Business.Services
 {
@@ -82,8 +83,20 @@ namespace CharlieBackend.Business.Services
                     return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
                         "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
+                try 
+                {
+                    await _unitOfWork.CommitAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _unitOfWork.Rollback();
+                    return Result<List<StudentGroup>>.Error(ErrorCode.ValidationError,
+                        "The format of the inputed data is incorrect.\n " +
+                        "Such value of Name field already exists.\n" +
+                        $"Problem was occured in col C, row { numPointer}");
+                }
+
             }
-            await _unitOfWork.CommitAsync();
             return Result<List<StudentGroup>>
                 .Success(_mapper.Map<List<StudentGroup>>(importedGroups));
         }
@@ -93,19 +106,19 @@ namespace CharlieBackend.Business.Services
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
                 throw new FormatException("CourseId field shouldn't be empty.\n" +
-                    $"Problem was occured in row {numPointer}, col B");
+                    $"Problem was occured in col B, row {numPointer}");
             }
 
             if (fileLine.Name == "")
             {
                 throw new FormatException("Name field shouldn't be empty.\n" +
-                    $"Problem was occured in row {numPointer}, col C");
+                    $"Problem was occured in col C, row {numPointer}");
             }
 
             if (fileLine.StartDate > fileLine.FinishDate)
             {
                 throw new FormatException("StartDate must be less than FinishDate.\n" +
-                    $"Problem was occured in row {numPointer}, col D and E");
+                    $"Problem was occured in col D/E, row {numPointer}");
             }
         }
 
