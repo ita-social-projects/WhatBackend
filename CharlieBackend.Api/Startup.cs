@@ -1,6 +1,6 @@
 using System;
 using Serilog;
-
+using EasyNetQ;
 using AutoMapper;
 using CharlieBackend.Root;
 using Microsoft.OpenApi.Models;
