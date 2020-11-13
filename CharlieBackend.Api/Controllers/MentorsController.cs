@@ -35,7 +35,6 @@ namespace CharlieBackend.Api.Controllers
             return createdMentorModel.ToActionResult(); ;
         }
 
-
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
