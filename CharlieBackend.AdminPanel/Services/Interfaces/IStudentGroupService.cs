@@ -8,6 +8,6 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 {
     public interface IStudentGroupService
     {
-        public Task<IList<StudentGroupViewModel>> GetAllStudentGroups(string accessToken);
+        Task<IList<StudentGroupViewModel>> GetAllStudentGroups(string accessToken);
     }
 }
