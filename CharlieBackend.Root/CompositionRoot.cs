@@ -21,13 +21,6 @@ namespace CharlieBackend.Root
                   b => b.MigrationsAssembly("CharlieBackend.Api"));
             });
 
-            services.AddSingleton<ICredentialsSenderService>
-            (
-                x => new EmailCredentialsSenderService(
-                configuration.GetSection("CredentialsSendersSettings").GetSection("email").Value,
-                configuration.GetSection("CredentialsSendersSettings").GetSection("password").Value)
-            );
-
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
@@ -50,6 +43,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<INotificationService, NotificationService>();
             #endregion
         }
     }

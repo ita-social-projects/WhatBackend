@@ -1,6 +1,5 @@
-﻿using System;
-
-namespace CharlieBackend.Core.Entities
+﻿
+namespace CharlieBackend.Core.DTO.EmailData
 {
     public class EmailData
     {

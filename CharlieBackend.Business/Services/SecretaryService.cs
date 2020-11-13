@@ -1,12 +1,10 @@
-﻿using EasyNetQ;
-using AutoMapper;
+﻿using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.IntegrationEvents.Events;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
@@ -16,17 +14,15 @@ namespace CharlieBackend.Business.Services
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICredentialsSenderService _credentialsSender;
-        private readonly IBus _bus;
+        private readonly INotificationService _notification;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
-                                IMapper mapper, ICredentialsSenderService credentialsSender, IBus bus)
+                                IMapper mapper, INotificationService notification)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _credentialsSender = credentialsSender;
-            _bus = bus;
+            _notification = notification;
         }
 
         public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
@@ -55,8 +51,7 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    await _bus.SendReceive.SendAsync("EmailRenderService", new AccountApprovedEvent(account.Email,
-                                       account.FirstName, account.LastName, account.Role));
+                    await _notification.AccountApproved(account);
 
                     return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
                 } 

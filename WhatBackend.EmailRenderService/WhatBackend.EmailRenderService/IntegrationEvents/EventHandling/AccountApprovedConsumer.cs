@@ -4,17 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ.AutoSubscribe;
 using Microsoft.Extensions.Logging;
-using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.EmailData;
 using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 {
     public class AccountApprovedConsumer : IConsumeAsync<AccountApprovedEvent>
     {
-        #region
+      
         private readonly ILogger<AccountApprovedConsumer> _logger;
         private readonly IBus _bus;
-        #endregion
 
         public AccountApprovedConsumer(ILogger<AccountApprovedConsumer> logger, IBus bus)
         {
