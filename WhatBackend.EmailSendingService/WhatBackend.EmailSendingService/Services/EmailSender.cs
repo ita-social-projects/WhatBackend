@@ -1,46 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using WhatBackend.EmailSendingService.Services.Interfaces;
-using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.EmailData;
 
 namespace WhatBackend.EmailSendingService.Services
 {
-	public class EmailSender : IEmailSender
-	{
-		private readonly string _email;
-		private readonly string _password;
+    public class EmailSender : IEmailSender
+    {
+        private readonly string _email;
+        private readonly string _password;
 
-		public EmailSender(string email, string password)
-		{
-			_email = email;
-			_password = password;
-		}
-		public async Task SendMessageAsync(EmailData data)
-		{
-			MailMessage message = new MailMessage();
+        public EmailSender(string email, string password)
+        {
+            _email = email;
+            _password = password;
+        }
 
-			message.From = new MailAddress(_email);
+        public async Task SendMessageAsync(EmailData data)
+        {
+            MailMessage message = new MailMessage();
 
-			message.To.Add(new MailAddress(data.RecipientMail));
+            message.From = new MailAddress(_email);
 
-			message.Subject = "WHAT Project approve";
+            message.To.Add(new MailAddress(data.RecipientMail));
 
-			message.IsBodyHtml = true;
+            message.Subject = "WHAT Project approve";
 
-			message.Body = data.EmailBody;
+            message.IsBodyHtml = true;
 
-			using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
-			{
-				smtp.UseDefaultCredentials = false;
-				smtp.Credentials = new NetworkCredential(_email, _password);
-				smtp.EnableSsl = true;
-				smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-				await smtp.SendMailAsync(message);
-			}
-		}
-	}
+            message.Body = data.EmailBody;
+
+            using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+            {
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential(_email, _password);
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                await smtp.SendMailAsync(message);
+            }
+        }
+    }
 }

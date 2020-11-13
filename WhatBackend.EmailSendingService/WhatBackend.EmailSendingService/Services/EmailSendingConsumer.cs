@@ -4,15 +4,13 @@ using Serilog.Context;
 using System.Threading;
 using EasyNetQ.AutoSubscribe;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using CharlieBackend.Core.Entities;
-using System.Net.Mail;
+using CharlieBackend.Core.DTO.EmailData;
 using WhatBackend.EmailSendingService.Services.Interfaces;
 
 namespace WhatBackend.EmailSendingService.Services
 {
-	public class EmailSendingConsumer : IConsumeAsync<EmailData>
+    public class EmailSendingConsumer : IConsumeAsync<EmailData>
     {
         private readonly ILogger<EmailSendingConsumer> _logger;
         private readonly IBus _bus;
