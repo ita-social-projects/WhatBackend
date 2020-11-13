@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using CharlieBackend.AdminPanel.Models.Mentor;
+using CharlieBackend.AdminPanel.Models.Students;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace CharlieBackend.Core.DTO.StudentGroups
+namespace CharlieBackend.AdminPanel.Models.StudentGroups
 {
-    public class StudentGroupDto
+    public class StudentGroupViewModel
     {
         public long Id { get; set; }
 
@@ -22,9 +24,8 @@ namespace CharlieBackend.Core.DTO.StudentGroups
         [DataType(DataType.Date)]
         public DateTime FinishDate { get; set; }
 
-        public IList<long> StudentIds { get; set; }
+        public IList<StudentViewModel> Students { get; set; }
 
-        public IList<long> MentorIds { get; set; }
-
+        public IList<MentorViewModel> Mentors { get; set; }
     }
 }

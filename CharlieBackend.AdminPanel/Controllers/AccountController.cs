@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("api/admin/account")]
+    [Route("admin/account")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -43,17 +43,12 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
 
-            if(httpResponseToken == null)
+            if(httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            if(!await AuthenticateAdmin(httpResponseToken))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            HttpContext.Session.SetString("accessToken", httpResponseToken);
+            Response.Cookies.Append("accessToken", httpResponseToken);
 
 
             return RedirectToAction("Index", "Home");
@@ -69,7 +64,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
         private async Task<bool> AuthenticateAdmin(string token)
-       
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -95,7 +89,6 @@ namespace CharlieBackend.AdminPanel.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
             return true;
-
         }
 
     }

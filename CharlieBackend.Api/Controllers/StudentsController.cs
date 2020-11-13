@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostStudent(long accountId)
         {
@@ -36,7 +36,7 @@ namespace CharlieBackend.Api.Controllers
             return createdStudentModel.ToActionResult();
         }
         
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}")]
         public async Task<ActionResult<List<StudentDto>>> GetStudentById(long id)
         {
@@ -57,7 +57,7 @@ namespace CharlieBackend.Api.Controllers
             return StatusCode(409, "Cannot find student with such id.");
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
         {
@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
 
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPut("{studentId}")]
         public async Task<ActionResult> PutStudent(long studentId, UpdateStudentDto studentModel)
         {
@@ -77,7 +77,7 @@ namespace CharlieBackend.Api.Controllers
             return updatedStudent.ToActionResult();
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {
