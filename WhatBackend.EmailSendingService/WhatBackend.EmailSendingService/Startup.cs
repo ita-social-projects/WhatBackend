@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WhatBackend.EmailSendingService.Services;
+using WhatBackend.EmailSendingService.Services.Interfaces;
 
 namespace WhatBackend.EmailSendingService
 {
@@ -23,9 +24,19 @@ namespace WhatBackend.EmailSendingService
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddCors();
+
 			services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
+
 			services.AddSingleton<MessageDispatcher>();
+
+			services.AddSingleton<IEmailSender>(
+				x => new EmailSender(
+					Configuration.GetSection("SendersSettings").GetSection("email").Value,
+					Configuration.GetSection("SendersSettings").GetSection("password").Value)
+				);
+
 			services.AddScoped<EmailSendingConsumer>();
+
 			services.AddSingleton(provider =>
 			{
 				var subscriber = new AutoSubscriber(provider.GetRequiredService<IBus>(), "EmailSenderService")
@@ -39,7 +50,6 @@ namespace WhatBackend.EmailSendingService
 		}
 
 		
-
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
