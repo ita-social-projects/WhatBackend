@@ -45,6 +45,7 @@ namespace WhatBackend.EmailSendingService
 					ConfigureSubscriptionConfiguration = new System.
 						Action<ISubscriptionConfiguration>(c => c.WithQueueName("EmailSenderService"))
 				};
+				
 				return subscriber;
 			});
 		}
