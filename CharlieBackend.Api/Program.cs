@@ -46,6 +46,10 @@ namespace CharlieBackend.Api
             {
                 DotNetEnv.Env.Load(envFilePath);
             }
+            else
+            {
+                Log.Warning(".Env file must be configured");
+            }
 
             var builder = Host.CreateDefaultBuilder(args)
                     .ConfigureHostConfiguration(x => HostConfigurationBuilder(args))

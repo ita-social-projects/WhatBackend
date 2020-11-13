@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -35,12 +36,12 @@ namespace CharlieBackend.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 500;
-            
-            return context.Response.WriteAsync(new ErrorDetails()
+
+            return context.Response.WriteAsync(JsonSerializer.Serialize (new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
                 Message = "Internal Server Error. " + exception.Message
-            }.ToString());
+            }));
         }
 
         private class ErrorDetails

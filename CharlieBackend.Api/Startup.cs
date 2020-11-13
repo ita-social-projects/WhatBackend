@@ -1,5 +1,6 @@
 using System;
 using Serilog;
+using EasyNetQ;
 using AutoMapper;
 using CharlieBackend.Root;
 using Microsoft.OpenApi.Models;
@@ -8,12 +9,14 @@ using CharlieBackend.Core.Mapping;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api
 {
@@ -33,6 +36,7 @@ namespace CharlieBackend.Api
 
             var authOptions = new AuthOptions();
             Configuration.GetSection("AuthOptions").Bind(authOptions);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -52,7 +56,12 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter()));
+
+            // EasyNetQ Congiguration through extension
+            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -103,6 +112,9 @@ namespace CharlieBackend.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
+
+            app.UseMiddleware<ExceptionHandleMiddleware>();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
@@ -124,7 +136,7 @@ namespace CharlieBackend.Api
 
             app.UseHttpsRedirection();
 
-            //Added Serilog to the app’s middleware pipeline
+            //Added Serilog to the appï¿½s middleware pipeline
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
@@ -132,7 +144,6 @@ namespace CharlieBackend.Api
             app.UseAuthentication();
             app.UseAuthorization();
             
-            app.UseMiddleware<ExceptionHandleMiddleware>();
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>

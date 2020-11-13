@@ -1,14 +1,14 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using System;
 using AutoMapper;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using System.Security.Cryptography;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -19,17 +19,23 @@ namespace CharlieBackend.Business.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICredentialsSenderService _credentialsSender;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ICredentialsSenderService credentialsSender)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _credentialsSender = credentialsSender;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
         {
+            var isEmailTaken = await IsEmailTakenAsync(accountModel.Email);
+
+            if (isEmailTaken)
+            {
+                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                    "Account already exists!");
+            }
+
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 try
@@ -38,8 +44,7 @@ namespace CharlieBackend.Business.Services
                     {
                         Email = accountModel.Email,
                         FirstName = accountModel.FirstName,
-                        LastName = accountModel.LastName,
-                        Role = 0
+                        LastName = accountModel.LastName
                     };
 
                     account.Salt = GenerateSalt();
@@ -49,18 +54,10 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(account.Email, accountModel.ConfirmPassword))
-                    {
-                        transaction.Commit();
+                    transaction.Commit();
 
-                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-                    }
-                    else
-                    {
-                        transaction.Commit();
-
-                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-                    }
+                    return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                   
                 }
                 catch
                 {
@@ -88,6 +85,13 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
+        public async Task<IList<AccountDto>> GetAllAccountsAsync()
+        {
+            var foundAccount = _mapper.Map<IList<AccountDto>>(await _unitOfWork.AccountRepository.GetAllAsync());
+
+            return foundAccount;
+        }
+
         public async Task<Account> GetAccountCredentialsByIdAsync(long id)
         {
             var account = await _unitOfWork.AccountRepository.GetAccountCredentialsById(id);
@@ -98,6 +102,13 @@ namespace CharlieBackend.Business.Services
             }
 
             return null;
+        }
+
+        public async Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync()
+        {
+            var accounts = _mapper.Map<List<AccountDto>>(await _unitOfWork.AccountRepository.GetAllNotAssignedAsync());
+
+            return accounts;
         }
 
         public Task<bool> IsEmailTakenAsync(string email)
@@ -118,9 +129,9 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<AccountDto>(account);
         }
 
-        public Task<bool> IsEmailChangableToAsync(string newEmail)
+        public Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
-            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(newEmail);
+            return _unitOfWork.AccountRepository.IsEmailChangableToAsync(id, newEmail);
         }
 
         public Task<bool?> IsAccountActiveAsync(string email)
