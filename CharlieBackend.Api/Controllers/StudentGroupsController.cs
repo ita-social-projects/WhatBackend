@@ -34,7 +34,7 @@ namespace CharlieBackend.Api.Controllers
         //    }
         //}
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPost]
         public async Task<ActionResult<StudentGroupDto>> PostStudentGroup(CreateStudentGroupDto studentGroup)
         {
@@ -52,7 +52,7 @@ namespace CharlieBackend.Api.Controllers
             return resStudentGroup.ToActionResult();
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<UpdateStudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
@@ -70,7 +70,7 @@ namespace CharlieBackend.Api.Controllers
             return updatedStudentGroup.ToActionResult();
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPut("{id}/students")]
         public async Task<ActionResult<UpdateStudentsForStudentGroup>> PutStudentsOfStudentGroup(long id, UpdateStudentsForStudentGroup studentGroupDto) 
         {
@@ -80,14 +80,14 @@ namespace CharlieBackend.Api.Controllers
             return updatedStudentGroup.ToActionResult();
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
         public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
         {
             return Ok(await _studentGroupService.GetAllStudentGroupsAsync());
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentGroupDto>> GetStudentGroupById(long id)
         {

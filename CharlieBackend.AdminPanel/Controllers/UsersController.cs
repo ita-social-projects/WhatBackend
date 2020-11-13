@@ -14,7 +14,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 {
 
     [Authorize(Roles = "Admin")]
-    [Route("api/admin/users")]
+    [Route("admin/users")]
     public class UsersController : Controller
     {
         private readonly ILogger<UsersController> _logger;
