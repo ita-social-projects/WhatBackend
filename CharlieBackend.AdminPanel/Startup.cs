@@ -37,6 +37,8 @@ namespace CharlieBackend.AdminPanel
 
             services.AddTransient<IStudentService, StudentService>(); 
             services.AddTransient<IStudentGroupService, StudentGroupService>();
+            services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<IMentorService, MentorService>();
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>

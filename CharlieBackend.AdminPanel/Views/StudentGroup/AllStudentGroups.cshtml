@@ -31,80 +31,81 @@
 
                                 @foreach (var item in Model)
                                 {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.CourseId</td>
-                                    <td>@item.Name</td>
-                                    <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
-                                    <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.CourseId</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
+                                        <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
 
 
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                Show students
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                @if (@item.Students.Any())
-                                                {
-                                                    @foreach (var student in @item.Students)
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                    Show students
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (@item.Students.Any())
                                                     {
-                                                <label class="dropdown-item" href="#">@student.Id @student.FirstName @student.LastName   </label>
+                                                        @foreach (var student in @item.Students)
+                                                        {
+                                                            <label class="dropdown-item" href="#">@student.Id @student.FirstName @student.LastName   </label>
+                                                        }
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <label class="dropdown-item" href="#">null</label>
-                                                }
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <div class="dropdown">
-                                            <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                Show mentors
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                @if (@item.Mentors.Any())
-                                                {
-                                                    @foreach (var mentor in @item.Mentors)
+                                                    else
                                                     {
-                                                <label class="dropdown-item" href="#">@mentor.Id @mentor.FirstName @mentor.LastName</label>
+                                                        <label class="dropdown-item" href="#">null</label>
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <label class="dropdown-item" href="#">null</label>
-                                                }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondar dropdown-toggle"
-                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-                                                <a href="#" class=" dropdown-item ">
-                                                    <i class="fas fa-pen"></i>
-                                                    <span>Edit </span>
-                                                </a>
-
-                                                <a href="#" class=" dropdown-item ">
-                                                    <i class="fas fa-trash"></i>
-                                                    <span>Delete </span>
-                                                </a>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
+                                                    Show mentors
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (@item.Mentors.Any())
+                                                    {
+                                                        @foreach (var mentor in @item.Mentors)
+                                                        {
+                                                            <label class="dropdown-item" href="#">@mentor.Id @mentor.FirstName @mentor.LastName</label>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="dropdown-item" href="#">null</label>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
+
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                    <a class="dropdown-item" href="#" data-toggle="modal"
+                                                       data-target="#editForm">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Edit </span>
+                                                    </a>
+
+                                                    <a href="#" class=" dropdown-item ">
+                                                        <i class="fas fa-trash"></i>
+                                                        <span>Delete </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
 
 
-                                </tr>
+                                    </tr>
                                 }
 
                             </tbody>
@@ -117,4 +118,77 @@
 
     </div>
 
+</div>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="editForm" role="dialog" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+
+                        <div class="form-group">
+                            <label>Course </label>
+                            <select class="custom-select" size="1">
+                                <option selected>.NET</option>
+                                <option value="1">DP</option>
+                                <option value="2">UI</option>
+                                <option value="3">JAVA</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Group name</label>
+                            <input type="text" class="form-control" id="roupName"
+                                   placeholder="Group name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start date</label>
+                            <input type="date" name="startDate" min="1900-01-01"
+                                   max="2100-12-31" class="form-control" value="@DateTime.Now" >
+                        </div>
+
+                        <div class="form-group">
+                            <label>End date</label>
+                            <input type="date" name="bday" min="1000-01-01"
+                                   max="3000-12-31" class="form-control" value="@DateTime.Now.AddMonths(2)">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Students</label>
+                            <select class="custom-select" size="3" multiple>
+                                <option selected>.NET</option>
+                                <option value="1">DP</option>
+                                <option value="2">UI</option>
+                                <option value="3">JAVA</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mentors</label>
+                            <select class="custom-select" size="3" multiple>
+                                <option selected>.NET</option>
+                                <option value="1">DP</option>
+                                <option value="2">UI</option>
+                                <option value="3">JAVA</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

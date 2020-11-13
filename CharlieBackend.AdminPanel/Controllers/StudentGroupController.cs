@@ -40,5 +40,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             return View(studentGroups);
         }
+
+     
     }
 }

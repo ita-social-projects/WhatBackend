@@ -73,5 +73,6 @@ namespace CharlieBackend.AdminPanel.Services
 
             return studentGroups;
         }
+
     }
 }
