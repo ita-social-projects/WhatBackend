@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdLesson);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [Route("assign")]
         [HttpPost]
         public async Task<ActionResult> AssignMentorToLesson(AssignMentorToLessonDto ids)
@@ -47,7 +47,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(changedLesson);
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor,")]
         [HttpGet]
         public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
         {
@@ -56,7 +56,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "Student, Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<List<StudentLessonDto>>> GetStudentLessons(long id)
         {
@@ -66,7 +66,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(lessons);
         }
 
-        [Authorize(Roles = "Mentor, Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonDto lessonDto)
         {

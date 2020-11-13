@@ -44,14 +44,14 @@ namespace CharlieBackend.Business.Services
                 scheduleEntity.StudentGroup = await _unitOfWork.StudentGroupRepository
                     .GetByIdAsync(scheduleEntity.StudentGroupId);
 
-                if(scheduleEntity.StudentGroup == null)
+                if (scheduleEntity.StudentGroup == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, 
-                        $"Student group with id={scheduleModel.StudentGroupId} does not exist");         
+                    return Result<ScheduleDto>.Error(ErrorCode.NotFound,
+                        $"Student group with id={scheduleModel.StudentGroupId} does not exist");
                 }
 
                 _unitOfWork.ScheduleRepository.Add(scheduleEntity);
-             
+
                 await _unitOfWork.CommitAsync();
 
                 return Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
@@ -68,7 +68,7 @@ namespace CharlieBackend.Business.Services
         {
             var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
 
-            if(scheduleEntity != null)
+            if (scheduleEntity != null)
             {
                 var mappedSchedule = _mapper.Map<ScheduleDto>(scheduleEntity);
                 await _unitOfWork.ScheduleRepository.DeleteAsync(id);
@@ -78,7 +78,7 @@ namespace CharlieBackend.Business.Services
                 return Result<ScheduleDto>.Success(mappedSchedule);
             }
 
-            return Result<ScheduleDto>.Error(ErrorCode.NotFound, 
+            return Result<ScheduleDto>.Error(ErrorCode.NotFound,
                 $"Schedule with id={id} does not exist");
         }
 
@@ -93,7 +93,7 @@ namespace CharlieBackend.Business.Services
         {
             var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
 
-            return scheduleEntity == null ? 
+            return scheduleEntity == null ?
                 Result<ScheduleDto>.Error(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
                 Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
         }
@@ -102,9 +102,9 @@ namespace CharlieBackend.Business.Services
         {
             var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
 
-            if(groupEntity == null)
+            if (groupEntity == null)
             {
-               return null;
+                return null;
             }
             var schedulesOfGroup = await _unitOfWork.ScheduleRepository.GetSchedulesByStudentGroupIdAsync(id);
 
@@ -115,16 +115,16 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                
-                if(scheduleDTO == null)
+
+                if (scheduleDTO == null)
                 {
                     return Result<ScheduleDto>.Error(ErrorCode.NotFound, "UpdateScheduleDto is null");
                 }
                 var foundSchedule = await _unitOfWork.ScheduleRepository.GetByIdAsync(scheduleId);
 
-                if(foundSchedule == null)
+                if (foundSchedule == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, 
+                    return Result<ScheduleDto>.Error(ErrorCode.NotFound,
                         $"Schedule with id={scheduleId} does not exist");
                 }
                 var updatedEntity = _mapper.Map<Schedule>(scheduleDTO);
@@ -138,7 +138,7 @@ namespace CharlieBackend.Business.Services
 
                 foundSchedule.RepeatRate = updatedEntity.RepeatRate;
 
-                if(updatedEntity.DayNumber != null)
+                if (updatedEntity.DayNumber != null)
                 {
                     foundSchedule.DayNumber = updatedEntity.DayNumber;
                 }
@@ -165,12 +165,12 @@ namespace CharlieBackend.Business.Services
         private string Validate(Schedule schedule)
         {
 
-            if(IsNotValidRepeating(schedule) )
+            if (IsNotValidRepeating(schedule))
             {
                 return "DayNumber can`t be null because RepeatRate is not either 0 or 1";
             }
 
-            if(schedule.LessonEnd <= schedule.LessonStart)
+            if (schedule.LessonEnd <= schedule.LessonStart)
             {
                 return "LessonEnd can`t be less than or equal to LessonStart";
             }
