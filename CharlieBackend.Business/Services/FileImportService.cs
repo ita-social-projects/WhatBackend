@@ -14,14 +14,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CharlieBackend.Business.Services
 {
-    public class ImportService : IImportService
+    public class FileImportService : IFileImportService
     {
         #region private
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         #endregion
 
-        public ImportService(IUnitOfWork unitOfWork, IMapper mapper)
+        public FileImportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -35,7 +35,7 @@ namespace CharlieBackend.Business.Services
 
             Type sgType = typeof(StudentGroupFileModel);
             char charPointer = 'A';
-            int numPointer = 2;
+            int rowCounter = 2;
 
             var properties = sgType.GetProperties();
             foreach (PropertyInfo property in properties)
@@ -48,22 +48,22 @@ namespace CharlieBackend.Business.Services
                 }
                 charPointer++;
             }
-        
-            while (!await IsEndOfFileAsync(numPointer, wsGroups))
+
+            while (!await IsEndOfFileAsync(rowCounter, wsGroups))
             {
 
                 try
                 {
-                StudentGroupFileModel fileLine = new StudentGroupFileModel();
+                    StudentGroupFileModel fileLine = new StudentGroupFileModel();
 
-                    fileLine.CourseId = wsGroups.Cell($"B{numPointer}").Value.ToString();
-                    fileLine.Name = wsGroups.Cell($"C{numPointer}").Value.ToString();
+                    fileLine.CourseId = wsGroups.Cell($"B{rowCounter}").Value.ToString();
+                    fileLine.Name = wsGroups.Cell($"C{rowCounter}").Value.ToString();
                     fileLine.StartDate = Convert
-                        .ToDateTime(wsGroups.Cell($"D{numPointer}").Value);
+                        .ToDateTime(wsGroups.Cell($"D{rowCounter}").Value);
                     fileLine.FinishDate = Convert
-                        .ToDateTime(wsGroups.Cell($"E{numPointer}").Value);
+                        .ToDateTime(wsGroups.Cell($"E{rowCounter}").Value);
 
-                    await IsValueValid(fileLine, numPointer);
+                    await IsValueValid(fileLine, rowCounter);
 
                     StudentGroup group = new StudentGroup
                     {
@@ -75,7 +75,7 @@ namespace CharlieBackend.Business.Services
 
                     importedGroups.Add(fileLine);
                     _unitOfWork.StudentGroupRepository.Add(group);
-                    numPointer++;
+                    rowCounter++;
                 }
                 catch (FormatException ex)
                 {
@@ -90,13 +90,13 @@ namespace CharlieBackend.Business.Services
                         "Inputed data is incorrect.\n" + ex.Message);
                 }
             }
-            
+
             await _unitOfWork.CommitAsync();
             return Result<List<StudentGroupFileModel>>
                 .Success(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
 
-        private async Task IsValueValid(StudentGroupFileModel fileLine, int numPointer)
+        async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
         {
             List<long> existingCourseIds = new List<long>();
             List<string> existingGroupNames = new List<string>();
@@ -115,40 +115,41 @@ namespace CharlieBackend.Business.Services
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
                 throw new FormatException("CourseId field shouldn't be empty.\n" +
-                    $"Problem was occured in col B, row {numPointer}");
+                    $"Problem was occured in col B, row {rowCounter}");
             }
 
             if (fileLine.Name == "")
             {
                 throw new FormatException("Name field shouldn't be empty.\n" +
-                    $"Problem was occured in col C, row {numPointer}");
+                    $"Problem was occured in col C, row {rowCounter}");
             }
 
             if (fileLine.StartDate > fileLine.FinishDate)
             {
                 throw new FormatException("StartDate must be less than FinishDate.\n" +
-                    $"Problem was occured in col D/E, row {numPointer}.");
+                    $"Problem was occured in col D/E, row {rowCounter}.");
             }
 
             if (!existingCourseIds.Contains(Convert.ToInt64(fileLine.CourseId)))
             {
                 throw new DbUpdateException($"Course with id {fileLine.CourseId} doesn't exist.\n" +
-                   $"Problem was occured in col B, row {numPointer}.");
+                   $"Problem was occured in col B, row {rowCounter}.");
             }
 
             if (existingGroupNames.Contains(fileLine.Name))
             {
                 throw new DbUpdateException($"Group with name {fileLine.Name} already exist.\n" +
-                   $"Problem was occured in col C, row {numPointer}.");
+                   $"Problem was occured in col C, row {rowCounter}.");
             }
         }
 
-        private async Task<bool> IsEndOfFileAsync(int counter, IXLWorksheet ws)
-        { 
-            return (ws.Cell($"B{counter}").Value.ToString() == "")
-               && (ws.Cell($"C{counter}").Value.ToString() == "")
-               && (ws.Cell($"D{counter}").Value.ToString() == "")
-               && (ws.Cell($"E{counter}").Value.ToString() == "");
+        async Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws)
+        {
+            return (ws.Cell($"B{rowCounter}").Value.ToString() == "")
+               && (ws.Cell($"C{rowCounter}").Value.ToString() == "")
+               && (ws.Cell($"D{rowCounter}").Value.ToString() == "")
+               && (ws.Cell($"E{rowCounter}").Value.ToString() == "");
         }
+
     }
 }

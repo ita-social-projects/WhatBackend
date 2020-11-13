@@ -12,9 +12,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly IImportService _importService;
+        private readonly IFileImportService _importService;
 
-        public ImportController(IImportService importService)
+        public ImportController(IFileImportService importService)
         {
             _importService = importService;
         }
@@ -24,7 +24,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ImportDataFromFile(ImportFileDto file)
         {
-
             var listOfImportedGroups = await _importService.ImportFileAsync(file);
             return listOfImportedGroups.ToActionResult();
 
