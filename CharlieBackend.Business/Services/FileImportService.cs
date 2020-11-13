@@ -96,7 +96,7 @@ namespace CharlieBackend.Business.Services
                 .Success(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
 
-        async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
+        private async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
         {
             List<long> existingCourseIds = new List<long>();
             List<string> existingGroupNames = new List<string>();
@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        async Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws)
+        private async Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws)
         {
             return (ws.Cell($"B{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"C{rowCounter}").Value.ToString() == "")

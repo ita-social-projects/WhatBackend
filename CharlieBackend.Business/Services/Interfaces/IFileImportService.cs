@@ -10,7 +10,13 @@ namespace CharlieBackend.Business.Services.Interfaces
     public interface IFileImportService
     {
         public Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(ImportFileDto file);
-        protected Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws);
-        protected Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter);
+
+        /*
+          
+            protected Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws);
+       
+            protected Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter);
+
+        */
     }
 }
