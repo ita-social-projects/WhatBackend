@@ -1,4 +1,4 @@
-﻿namespace CharlieBackend.Core.DTO.EmailData
+namespace CharlieBackend.Core.DTO.EmailData
 {
     public class EmailData
     {
