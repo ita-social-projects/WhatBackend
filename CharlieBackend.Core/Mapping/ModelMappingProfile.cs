@@ -7,9 +7,10 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.DTO.Course;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -157,16 +158,31 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
             #region Secretaries mapping
 
             CreateMap<SecretaryDto, Secretary>();
-            CreateMap<Secretary, SecretaryDto>();
+            CreateMap<Secretary, SecretaryDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
-            CreateMap<CreateSecretaryDto, Secretary>();
-            CreateMap<Secretary, CreateSecretaryDto>();
+            CreateMap<UpdateSecretaryDto, Secretary>();
+            CreateMap<Secretary, UpdateSecretaryDto>();
+
+            CreateMap<UpdateSecretaryDto, SecretaryDto>();
+            CreateMap<SecretaryDto, UpdateSecretaryDto>();
 
             #endregion
 
+
+            #region Schedules mapping
+
+            CreateMap<CreateScheduleDto, Schedule>();
+            CreateMap<UpdateScheduleDto, Schedule>();
+            CreateMap<Schedule, ScheduleDto>();
+
+            #endregion
 
         }
     }

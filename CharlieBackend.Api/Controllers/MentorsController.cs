@@ -26,28 +26,16 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("{id}")]
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
-
-            if (createdMentorModel == null)
-            {
-                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot create mentor.").ToActionResult();
-            }
 
             return createdMentorModel.ToActionResult(); ;
         }
 
-
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
@@ -57,28 +45,16 @@ namespace CharlieBackend.Api.Controllers
             return Ok(mentorsModels);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> PutMentor(long accountId, UpdateMentorDto mentorModel)
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpPut("{mentorId}")]
+        public async Task<ActionResult> PutMentor(long mentorId, UpdateMentorDto mentorModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+            var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
-            var updatedMentor = await _mentorService.UpdateMentorAsync(accountId, mentorModel);
-
-            if (updatedMentor == null)
-            {
-                return Result<MentorDto>.Error(ErrorCode.UnprocessableEntity,
-                    "Cannot update mentor.").ToActionResult();
-            }
-
-            
             return updatedMentor.ToActionResult();
         } 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {
