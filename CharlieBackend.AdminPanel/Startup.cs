@@ -1,14 +1,17 @@
 using System;
-using System.Collections.Generic;
+using AutoMapper;
+using CharlieBackend.AdminPanel.Models.Mapping;
+using CharlieBackend.AdminPanel.Services;
+using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace CharlieBackend.AdminPanel
 {
@@ -32,6 +35,16 @@ namespace CharlieBackend.AdminPanel
             services.AddTransient<IHttpUtil, HttpUtil>();
             services.AddTransient<IApiUtil, ApiUtil>();
 
+            services.AddTransient<IStudentService, StudentService>(); 
+            services.AddTransient<IStudentGroupService, StudentGroupService>();
+
+            // AutoMapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ViewModelMapping());
+            });
+
+            services.AddSingleton(mappingConfig.CreateMapper());
 
             services.AddCors(options =>
             {
@@ -46,62 +59,26 @@ namespace CharlieBackend.AdminPanel
                 }
             });
 
-            services.AddDistributedMemoryCache();
-            services.AddSession(options =>
-            {
-                options.Cookie.Name = "CharlieBackend.AdminPanel";
-                options.IdleTimeout = TimeSpan.FromSeconds(3600);
-            });
-
             services.AddAuthorization();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
                 {
-                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/admin/account/LogIn");
+                     options.LoginPath = new PathString("/admin/account/LogIn");
                  });
 
             services.AddControllersWithViews();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend.AdminPanel", Version = "1.0.0" });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "Specify a Bearer token. \nExample: Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsEnvironment("DevelopmentLocalhost")
+                || env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
@@ -115,19 +92,7 @@ namespace CharlieBackend.AdminPanel
             app.UseAuthentication(); 
             app.UseAuthorization();     
 
-            app.UseSwagger(c =>
-            {
-                c.SerializeAsV2 = true;
-            });
-
-            app.UseSession();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.RoutePrefix = "/swagger";
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CharlieBackend.AdminPanel");
-            });
-
+         
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
