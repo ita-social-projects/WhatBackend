@@ -25,13 +25,6 @@ namespace CharlieBackend.Root
                     options.SerializerSettings.ReferenceLoopHandling
                         = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddSingleton<ICredentialsSenderService>
-            (
-                x => new EmailCredentialsSenderService(
-                configuration.GetSection("CredentialsSendersSettings").GetSection("email").Value,
-                configuration.GetSection("CredentialsSendersSettings").GetSection("password").Value)
-            );
-
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
