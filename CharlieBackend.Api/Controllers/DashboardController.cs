@@ -26,18 +26,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets data and returns report for given report parameters. Parameters sent in body
+        /// Gets data and returns report for given report parameters. Report of students results in student groups.
+        /// Parameters sent in body
         /// </summary>
-        /// <param name="request">is student group id, "courceId" is id or student course, 
-        /// "reportData": [] have to receive data type (eg. "averageStudentMark", "averageStudentVisits"
-        /// , "classbook"  to return</param>
+        /// <param name="request">You have to mention of of: "groupId" is student group id, "courceId" is id of student course.
+        /// "startDate" is optional param to filter start date of group start.
+        /// "includeAnalytics": [] have to receive params for data to return ("AverageStudentMark", "AverageStudentVisits", 
+        /// "StudentPresence", "StudentMarks" </param>
         /// <returns>Returns report of requested data</returns>
-        [Authorize(Roles = "2, 3, 4")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost]
-        public async Task<ActionResult> GetResults(DashboardRequestDto request)
+        public async Task<ActionResult> GetStudentsResults(DashboardRequestDto request)
         {
             var results = await _dashboardService
-                .GetResultAsync(request);
+                .GetStudentsResultAsync(request);
 
             return results.ToActionResult();
         }

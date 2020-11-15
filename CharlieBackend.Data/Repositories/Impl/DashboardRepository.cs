@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.StudentGroups;
+﻿using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,91 +13,177 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class DashboardRepository : Repository<StudentGroup>, IDashboardRepository
     {
+
         public DashboardRepository(ApplicationContext applicationContext)
                 : base(applicationContext)
         {
+
         }
 
-        public async Task<List<StudentGroup>> GetAllStudentGroupsAsync()
+        public async Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate)
         {
-            return await _applicationContext.StudentGroups.ToListAsync();
+            var groupIdsbyCourceid = await _applicationContext.StudentGroups
+                .AsNoTracking()
+                .Where(x => x.CourseId == courceId)
+                .Where(x => x.StartDate >= startDate)
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            return groupIdsbyCourceid;
         }
 
-        public async Task<StudentGroup> GetStudentGroupByIdAsync(long studentGroupId)
+        public async Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> groupsIds)
         {
-            return await _applicationContext.StudentGroups
-                .FirstOrDefaultAsync(x => x.Id == studentGroupId);
+            var studentsIdsBygroupsIds = await _applicationContext.Students
+                .AsNoTracking()
+                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue 
+                && groupsIds.Contains(x.StudentGroupId.Value)))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            return studentsIdsBygroupsIds;
         }
 
-        public async Task<List<Lesson>> GetStudentGroupLessonsAsync(long? studentGroupId)
+        public async Task<List<long>> GetStudentsIdsByGroupIdAsync(long studentGroupId)
         {
-            var lessons = await _applicationContext.Lessons
-                    .Include(lesson => lesson.Visits)
-                    .Where(lesson => lesson.StudentGroupId == studentGroupId).ToListAsync();
+            var studentIdsByStudentGroupId = await _applicationContext.Students
+                .AsNoTracking()
+                .Where(x => x.StudentsOfStudentGroups
+                .Any(x => x.StudentGroupId.HasValue
+                && x.StudentGroupId == studentGroupId))
+                .Select(x => x.Id)
+                .ToListAsync();
 
-            return lessons;
+            return studentIdsByStudentGroupId;
         }
 
-        public async Task<List<StudentOfStudentGroup>> GetStudentsOfStudentGroup(long studentGroupId)
+        public async Task<List<AverageStudentMarkDto>> GetStudentsAverageMarksByStudentIdsAsync(IEnumerable<long> studentIds)
         {
-            var students = await _applicationContext.StudentsOfStudentGroups
-                    .Where(studentGroup => studentGroup.StudentGroupId == studentGroupId).ToListAsync();
+            var studentsAverageMarks = await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                    .Any(x => studentIds.Contains(x.Student.Id))
+                    && x.StudentMark != null)
+                    .Select(x => new
+                    {
+                        CourceId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = x.Lesson.StudentGroupId,
+                        StudentId = x.StudentId,
+                        StudentLessonMark = x.StudentMark,
+                    }).AsQueryable()
+                    .GroupBy(x => new
+                    {
+                        StudentId = x.StudentId,
+                        GroupId = x.StudentGroupId,
+                        CourceId = x.CourceId
+                    })
+                    .Select(x => new AverageStudentMarkDto
+                    {
+                        CourceId = x.Key.CourceId,
+                        StudentGroupId = (long)x.Key.GroupId,
+                        StudentId = (long)x.Key.StudentId,
+                        StudentAverageMark = x.Sum(x => (double)x.StudentLessonMark) / x.Count()
+                    }
+                    ).ToListAsync();
 
-            return students;
+            return studentsAverageMarks;
         }
 
-        public async Task<List<Visit>> GetStudentGroupLessonVisitsAsync(long lessonId)
+        public async Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAsync(IEnumerable<long> studentIds)
         {
-            var lesson = await _applicationContext.Visits
-                    .Where(lesson => lesson.LessonId == lessonId).ToListAsync();
+            var studentsVisitsList = await _applicationContext.Visits
+                .AsNoTracking()
+                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                .Any(x => studentIds.Contains(x.Student.Id)))
+                .Select(x => new StudentVisitDto
+                {
+                    CourceId = x.Lesson.StudentGroup.CourseId,
+                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    StudentId = (long)x.StudentId,
+                    Presence = x.Presence,
+                }).ToListAsync();
 
-            return lesson;
+            var studentsAverageVisitsList = studentsVisitsList
+                .GroupBy(x => new
+                {
+                    StudentId = x.StudentId,
+                    GroupId = x.StudentGroupId,
+                    CourceId = x.CourceId
+                })
+                .Select(x => new AverageStudentVisitsDto
+                {
+                     CourceId = x.Key.CourceId,
+                     StudentGroupId = x.Key.GroupId,
+                     StudentId = x.Key.StudentId,
+                     StudentAverageVisits = (int)((double)x
+                     .Where(d => d.Presence == true).Count()
+                      / (double)x.Count() * 100)
+                 }).ToList();
+                
+
+            return studentsAverageVisitsList;
         }
 
-        public async Task<List<Visit>> GetStudentVisitsAsync(long lessonId)
+        public List<AverageStudentVisitsDto> GetStudentsAverageVisitsByStudentsVisits(List<StudentVisitDto> studentsVisits)
         {
-            var lesson = await _applicationContext.Visits
-                    .Where(lesson => lesson.LessonId == lessonId).ToListAsync();
+            var studentsAverageVisits = studentsVisits
+                    .GroupBy(x => new
+                    {
+                        StudentId = x.StudentId,
+                        GroupId = x.StudentGroupId,
+                        CourceId = x.CourceId
+                    })
+                    .Select(x => new AverageStudentVisitsDto
+                    {
+                        CourceId = x.Key.CourceId,
+                        StudentId = x.Key.StudentId,
+                        StudentAverageVisits = (int)((double)x
+                            .Where(d => d.Presence == true).Count()
+                            / (double)x.Count() * 100)
+                    }
+                    ).ToList();
 
-            return lesson;
+            return studentsAverageVisits;
         }
 
-        public async Task<List<Visit>> GetStudentVisitsByStudentIdAndStudGroupAsync(long studentGroupId, long studentId)
+        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByStudentIds(IEnumerable<long> studentIds)
         {
-            var lessons = await _applicationContext.Visits
-                    .Include(visits => visits.Lesson)
-                    .Where(studId => studId.StudentId == studentId)
-                    .Where(studGroup => studGroup.Lesson.StudentGroupId == studentGroupId)
-                    .ToListAsync();
+            var studentsPresenceList = await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                    .Any(x => studentIds.Contains(x.Student.Id)))
+                    .Select(x => new StudentVisitDto
+                    {
+                        CourceId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        Presence = x.Presence,
+                    }).ToListAsync();
 
-            return lessons;
+            return studentsPresenceList;
         }
 
-        public async Task<List<StudentOfStudentGroup>> GetStudentGroupsAsync(long studentId)
+        public async Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds)
         {
-            var lessons = await _applicationContext.StudentsOfStudentGroups
-                    .Where(studId => studId.StudentId == studentId).ToListAsync();
+            var studentsMarksList = await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                    .Any(x => studentIds.Contains(x.Student.Id)) 
+                    && x.StudentMark != null)
+                    .Select(x => new StudentMarkDto
+                    {
+                        CourceId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        StudentMark = x.StudentMark,
+                    }).ToListAsync();
 
-            return lessons;
+            return studentsMarksList;
         }
-
-        public async Task<Visit> GetStudentVisitByLessonIdAndStudentId(long studentId, long lessonId)
-        {
-            var visit = await _applicationContext.Visits
-                .Where(x => x.StudentId == studentId)
-                .FirstOrDefaultAsync(x => x.LessonId == lessonId);
-
-            return visit;
-        }
-
-        public async Task<List<StudentGroup>> GetStudentGroupsByCourceIdAsync(long courceId)
-        {
-            var studentGroups = await _applicationContext.StudentGroups
-                .Where(x => x.CourseId == courceId).ToListAsync();
-
-            return studentGroups;
-        }
-
 
     }
 }

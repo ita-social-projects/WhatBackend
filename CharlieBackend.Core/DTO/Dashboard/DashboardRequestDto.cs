@@ -9,15 +9,19 @@ namespace CharlieBackend.Core.DTO.Dashboard
     {
         public long? GroupId { get; set; }
 
-        public long? CourceId { get; set; }
+        public long? CourseId { get; set; }
 
-        public DashboardResultType[] ReportData { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime StartDate { get; set; }
+
+        public DashboardResultType[] IncludeAnalytics { get; set; }
     }
 
     public enum DashboardResultType
     {
         AverageStudentMark,
         AverageStudentVisits,
-        Classbook,
+        StudentPresence,
+        StudentMarks,
     }
 }

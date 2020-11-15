@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.StudentGroups;
+﻿using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,24 +10,20 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IDashboardRepository
     {
-        public Task<List<StudentGroup>> GetAllStudentGroupsAsync();
+        public Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate);
 
-        public Task<List<Lesson>> GetStudentGroupLessonsAsync(long? studentGroupId);
+        public Task<List<long>> GetStudentsIdsByGroupIdAsync(long studentGroupId);
 
-        public Task<StudentGroup> GetStudentGroupByIdAsync(long studentGroupId);
+        public Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> studentsIds);
 
-        public Task<List<StudentOfStudentGroup>> GetStudentsOfStudentGroup(long studentGroupId);
+        public Task<List<AverageStudentMarkDto>> GetStudentsAverageMarksByStudentIdsAsync(IEnumerable<long> studentIds);
 
-        public Task<List<Visit>> GetStudentGroupLessonVisitsAsync(long lessonId);
+        public Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAsync(IEnumerable<long> studentIds);
 
-        public Task<List<Visit>> GetStudentVisitsAsync(long lessonId);
+        public List<AverageStudentVisitsDto> GetStudentsAverageVisitsByStudentsVisits(List<StudentVisitDto> studentsVisits);
 
-        public Task<List<Visit>> GetStudentVisitsByStudentIdAndStudGroupAsync(long studentGroupId, long studentId);
+        public Task<List<StudentVisitDto>> GetStudentsPresenceListByStudentIds(IEnumerable<long> studentIds);
 
-        public Task<List<StudentOfStudentGroup>> GetStudentGroupsAsync(long studentId);
-
-        public Task<Visit> GetStudentVisitByLessonIdAndStudentId(long studentId, long lessonId);
-
-        public Task<List<StudentGroup>> GetStudentGroupsByCourceIdAsync(long courceId);
+        public Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds);
     }
 }
