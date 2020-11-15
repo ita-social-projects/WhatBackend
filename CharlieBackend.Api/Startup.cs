@@ -118,6 +118,9 @@ namespace CharlieBackend.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
+
+            app.UseMiddleware<ExceptionHandleMiddleware>();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
@@ -147,7 +150,6 @@ namespace CharlieBackend.Api
             app.UseAuthentication();
             app.UseAuthorization();
             
-            app.UseMiddleware<ExceptionHandleMiddleware>();
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>

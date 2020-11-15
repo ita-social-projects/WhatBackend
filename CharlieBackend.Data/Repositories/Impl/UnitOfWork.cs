@@ -21,7 +21,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IStudentGroupRepository _studentGroupRepository;
         private IVisitRepository _visitRepository;
         private IDashboardRepository _dashboardRepository;
-        private ScheduleRepository _scheduleRepository;
+        private IScheduleRepository _scheduleRepository;
 
         #endregion 
 

@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
         {
@@ -35,8 +35,7 @@ namespace CharlieBackend.Api.Controllers
             return createdMentorModel.ToActionResult(); ;
         }
 
-
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
@@ -46,7 +45,7 @@ namespace CharlieBackend.Api.Controllers
             return Ok(mentorsModels);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{mentorId}")]
         public async Task<ActionResult> PutMentor(long mentorId, UpdateMentorDto mentorModel)
         {
@@ -55,7 +54,7 @@ namespace CharlieBackend.Api.Controllers
             return updatedMentor.ToActionResult();
         } 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {

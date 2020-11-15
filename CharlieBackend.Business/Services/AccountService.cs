@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoMapper;
 using System.Text;
-using CharlieBackend.Core;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
@@ -20,13 +19,11 @@ namespace CharlieBackend.Business.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICredentialsSenderService _credentialsSender;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ICredentialsSenderService credentialsSender)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _credentialsSender = credentialsSender;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
@@ -57,18 +54,10 @@ namespace CharlieBackend.Business.Services
 
                     await _unitOfWork.CommitAsync();
 
-                    if (await _credentialsSender.SendCredentialsAsync(account.Email, accountModel.ConfirmPassword))
-                    {
-                        transaction.Commit();
+                    transaction.Commit();
 
-                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-                    }
-                    else
-                    {
-                        transaction.Commit();
-
-                        return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
-                    }
+                    return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                   
                 }
                 catch
                 {
