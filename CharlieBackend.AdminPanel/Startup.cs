@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using CharlieBackend.AdminPanel.Middlewares;
 using CharlieBackend.AdminPanel.Models.Mapping;
 using CharlieBackend.AdminPanel.Services;
 using CharlieBackend.AdminPanel.Services.Interfaces;
@@ -92,9 +93,10 @@ namespace CharlieBackend.AdminPanel
             app.UseRouting();
 
             app.UseAuthentication(); 
-            app.UseAuthorization();     
+            app.UseAuthorization();
 
-         
+            app.UseMiddleware<ExceptionHandleMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
