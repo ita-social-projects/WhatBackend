@@ -26,7 +26,7 @@ namespace CharlieBackend.AdminPanel.Services
             _mapper = mapper;
         }
 
-        public async Task<IList<CourseViewModel>> GetAllCourses(string accessToken)
+        public async Task<IList<CourseViewModel>> GetAllCoursesAsync(string accessToken)
         {
             var courses =  _mapper.Map<IList<CourseViewModel>>(await _apiUtil.GetAsync<IList<CourseDto>>($"{_config.Value.Urls.Api.Https}/api/courses", accessToken));
 

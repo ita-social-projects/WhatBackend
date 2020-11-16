@@ -8,6 +8,6 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 {
     public interface IMentorService
     {
-        public Task<IList<MentorViewModel>> GetAllMentors(string accessToken);
+        public Task<IList<MentorViewModel>> GetAllMentorsAsync(string accessToken);
     }
 }

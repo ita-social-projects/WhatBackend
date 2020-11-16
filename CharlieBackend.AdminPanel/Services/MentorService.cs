@@ -25,7 +25,7 @@ namespace CharlieBackend.AdminPanel.Services
             _mapper = mapper;
         }
 
-        public async Task<IList<MentorViewModel>> GetAllMentors(string accessToken)
+        public async Task<IList<MentorViewModel>> GetAllMentorsAsync(string accessToken)
         {
             var courses = await _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", accessToken);
 

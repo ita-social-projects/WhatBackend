@@ -39,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Utils
 
             if (!String.IsNullOrEmpty(accessToken))
             {
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+                requestMessage.Headers.Add("Authorization", accessToken);
             }
 
 
@@ -56,7 +56,7 @@ namespace CharlieBackend.AdminPanel.Utils
 
             if (!String.IsNullOrEmpty(accessToken))
             {
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+                requestMessage.Headers.Add("Authorization", accessToken);
             }
 
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
@@ -71,7 +71,7 @@ namespace CharlieBackend.AdminPanel.Utils
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, url);
             if (!String.IsNullOrEmpty(accessToken))
             {
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+                requestMessage.Headers.Add("Authorization", accessToken);
             }
 
             var responseMessage = await _client.SendAsync(requestMessage);

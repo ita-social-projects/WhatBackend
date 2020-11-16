@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Models.Mapping
 {
-    public class ViewModelMapping: Profile
+    public class ViewModelMapping : Profile
     {
         public ViewModelMapping()
         {
@@ -22,6 +22,15 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
                 .ForMember(destination => destination.Students, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
                 .ForMember(destination => destination.Mentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
 
+
+            CreateMap<StudentGroupDto, StudentGroupEditViewModel>()
+               .ForMember(detination => detination.ActiveCourse, config => config.MapFrom(x => new CourseViewModel { Id = x.CourseId }))
+               .ForMember(destination => destination.ActiveStudents, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
+               .ForMember(destination => destination.ActiveMentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
+
+            CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
+
+            CreateMap<StudentGroupDto, UpdateStudentsForStudentGroup>();
 
             #endregion
 

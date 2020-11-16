@@ -13,8 +13,9 @@ namespace CharlieBackend.AdminPanel.Models.StudentGroups
     {
         public long Id { get; set; }
 
-        [Required]
-        public IList<CourseViewModel> CourseId { get; set; }
+        public IList<CourseViewModel> AllCourses { get; set; }
+
+        public CourseViewModel ActiveCourse { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; }
@@ -25,8 +26,12 @@ namespace CharlieBackend.AdminPanel.Models.StudentGroups
         [DataType(DataType.Date)]
         public DateTime FinishDate { get; set; }
 
-        public IList<StudentViewModel> Students { get; set; }
+        public IList<StudentViewModel> AllStudents { get; set; }
 
-        public IList<MentorViewModel> Mentors { get; set; }
+        public IList<StudentViewModel> ActiveStudents { get; set; }
+
+        public IList<MentorViewModel> AllMentors { get; set; }
+
+        public IList<MentorViewModel> ActiveMentors { get; set; }
     }
 }

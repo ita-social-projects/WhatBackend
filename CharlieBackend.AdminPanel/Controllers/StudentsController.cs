@@ -28,7 +28,7 @@ namespace CharlieBackend.AdminPanel.Controllers
      
         public async Task<IActionResult> AllStudents()
         {
-            var students = await _studentService.GetAllStudents(Request.Cookies["accessToken"]);
+            var students = await _studentService.GetAllStudentsAsync(Request.Cookies["accessToken"]);
 
             return View(students);
         }

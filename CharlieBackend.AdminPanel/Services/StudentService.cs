@@ -21,7 +21,7 @@ namespace CharlieBackend.AdminPanel.Services
             _config = config;
         }
 
-        public async Task<IList<StudentViewModel>> GetAllStudents (string accessToken)
+        public async Task<IList<StudentViewModel>> GetAllStudentsAsync(string accessToken)
         {
             var students = await _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students", accessToken);
 
