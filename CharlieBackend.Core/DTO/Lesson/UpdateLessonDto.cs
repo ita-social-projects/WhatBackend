@@ -9,7 +9,6 @@ namespace CharlieBackend.Core.DTO.Lesson
 {
     public class UpdateLessonDto
     {
-        [Required]
         public long Id { get; set; }
 
         [Required]
@@ -20,6 +19,6 @@ namespace CharlieBackend.Core.DTO.Lesson
         public DateTime LessonDate { get; set; }
 
         [Required]
-        public IList<VisitDto> LessonVisits { get; set; }
+        public IList<VisitDto> Visits { get; set; }
     }
 }

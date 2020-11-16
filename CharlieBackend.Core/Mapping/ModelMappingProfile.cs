@@ -81,6 +81,9 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<Lesson, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, Lesson>();
+
+            CreateMap<LessonDto, UpdateLessonDto>();
+            CreateMap<UpdateLessonDto, LessonDto>();
             #endregion
 
 
