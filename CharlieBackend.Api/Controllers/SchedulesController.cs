@@ -41,15 +41,6 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpGet("{scheduleId}")]
-        public async Task<ActionResult<ScheduleDto>> GetScheduleById(long scheduleId)
-        {
-            var foundSchedule = await _scheduleService.GetScheduleByIdAsync(scheduleId);
-
-            return foundSchedule.ToActionResult();
-        }
-
-        [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{studentGroupId}/groupSchedule")]
         public async Task<ActionResult<List<ScheduleDto>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
