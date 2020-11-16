@@ -45,13 +45,8 @@ namespace CharlieBackend.Api.Controllers
 
             if (studentModel != null)
             {
-                return Ok(new
-                {
-                    first_name = studentModel.FirstName,
-                    last_name = studentModel.LastName,
-                    //student_group_ids = studentModel.StudentGroupIds, // TODO fix
-                    email = studentModel.Email
-                });
+                return Ok(studentModel); //student_group_ids = studentModel.StudentGroupIds, // TODO fix
+          
             }
 
             return StatusCode(409, "Cannot find student with such id.");

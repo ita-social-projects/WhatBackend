@@ -4,6 +4,7 @@ using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Models.Students;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,8 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
 
 
             #region Student mapping
+
+            CreateMap<StudentDto, StudentViewModel>();
 
             CreateMap<StudentViewModel, StudentViewModel>();
 

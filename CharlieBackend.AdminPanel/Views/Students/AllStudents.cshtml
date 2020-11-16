@@ -28,33 +28,33 @@
 
                                 @foreach (var item in Model)
                                 {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.Email</td>
-                                    <td>@item.FirstName</td>
-                                    <td>@item.LastName</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondar dropdown-toggle"
-                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                <a href="#" class=" dropdown-item ">
-                                                    <i class="fas fa-pen"></i>
-                                                    <span>Edit </span>
-                                                </a>
+                                                    <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Edit </span>
+                                                    </a>
 
-                                                <a href="#" class=" dropdown-item ">
-                                                    <i class="fas fa-trash"></i>
-                                                    <span>Delete </span>
-                                                </a>
+                                                    <a href="#" class=" dropdown-item ">
+                                                        <i class="fas fa-trash"></i>
+                                                        <span>Delete </span>
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
 
 
                                 }
