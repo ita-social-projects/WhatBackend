@@ -11,14 +11,12 @@ namespace CharlieBackend.Core.DTO.Lesson
     {
         public long Id { get; set; }
 
-        [Required]
         [StringLength(100)]
         public string ThemeName { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime LessonDate { get; set; }
 
-        [Required]
         public IList<VisitDto> Visits { get; set; }
     }
 }
