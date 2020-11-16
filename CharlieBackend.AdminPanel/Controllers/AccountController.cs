@@ -15,7 +15,6 @@ using System.Linq;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("admin/account")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;

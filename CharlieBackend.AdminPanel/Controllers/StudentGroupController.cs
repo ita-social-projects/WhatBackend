@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 namespace CharlieBackend.AdminPanel.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("admin/student_groups")]
+    [Route("[controller]/[action]")]
     public class StudentGroupController : Controller
     {
         private readonly ILogger<StudentGroupController> _logger;
@@ -32,6 +32,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             _config = config;
         }
 
+        [HttpGet]
         public async Task<IActionResult> AllStudentGroups()
         {
             var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync(Request.Cookies["accessToken"]);
@@ -57,6 +58,24 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllStudentGroups", "StudentGroup");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateStudentGroup()
+        {
+            var studentGroupData = await _studentGroupService.PrepareStudentGroupAddAsync(Request.Cookies["accessToken"]);
 
+            ViewBag.StudentGroup = studentGroupData;
+
+            return View("AddStudentGroup");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddStudentGroup(long id, CreateStudentGroupDto data)
+        {
+            var updatedStudentGroup = await _studentGroupService.AddStudentGroupAsync(id, data, Request.Cookies["accessToken"]);
+
+            return RedirectToAction("AllStudentGroups", "StudentGroup");
+        }
+
+        
     }
 }

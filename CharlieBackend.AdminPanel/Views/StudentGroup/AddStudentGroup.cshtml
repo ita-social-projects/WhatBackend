@@ -1,4 +1,4 @@
-﻿@model CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto    
+﻿@model CharlieBackend.Core.DTO.StudentGroups.CreateStudentGroupDto
 
 @{
     Layout = "_Layout";
@@ -13,24 +13,18 @@
         <div class="card shadow mb-4">
 
             <div class="modal-body">
-                <form method="post" asp-action="UpdateStudentGroup" asp-controller="StudentGroup" asp-route-id="@ViewBag.StudentGroup.Id">
+                <form method="post" asp-action="AddStudentGroup" asp-controller="StudentGroup">
 
                     <div class="form-group">
                         <label>Course </label>
                         <select class="custom-select" asp-for="CourseId" size="1">
-                            
+
                             @if (@ViewBag.StudentGroup.AllCourses != null)
                             {
                                 @foreach (var item in @ViewBag.StudentGroup.AllCourses)
                                 {
-                                    if (@ViewBag.StudentGroup.ActiveCourse.Id == item.Id)
-                                    {
-                                        <option selected value="@item.Id">@item.Id @item.Name</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@item.Id">@item.Id @item.Name</option>
-                                    }
+
+                                    <option value="@item.Id">@item.Id @item.Name</option>
                                 }
                             }
                             else
@@ -43,19 +37,19 @@
 
                     <div class="form-group">
                         <label>Group name</label>
-                        <input type="text" class="form-control" id="groupName" asp-for="Name" value="@ViewBag.StudentGroup.Name">
+                        <input type="text" class="form-control" id="groupName" asp-for="Name" placeholder="Enter group name">
                     </div>
 
                     <div class="form-group">
                         <label>Start date</label>
                         <input type="date" min="1900-01-01" max="2100-12-31"
-                               class="form-control" value="@ViewBag.StudentGroup.StartDate.ToString("yyyy-MM-dd")" asp-for="StartDate">
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" asp-for="StartDate">
                     </div>
 
                     <div class="form-group">
                         <label>End date</label>
                         <input type="date" min="1000-01-01" max="3000-12-31" class="form-control"
-                               value="@ViewBag.StudentGroup.FinishDate.ToString("yyyy-MM-dd")" asp-for="FinishDate">
+                               value="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd")" asp-for=" FinishDate">
                     </div>
 
                     <div class="form-group">
@@ -66,21 +60,10 @@
                             {
                                 @foreach (var item in @ViewBag.StudentGroup.AllStudents)
                                 {
-                                    @if ((@ViewBag.StudentGroup.ActiveStudents as IEnumerable<CharlieBackend.AdminPanel.Models.Students.StudentViewModel>).Any(x => x.Id == item.Id))
-                                    {
-                                        <option selected value="@item.Id">
-                                            @item.Id @item.FirstName
-                                            @item.LastName
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@item.Id">
-                                            @item.Id @item.FirstName
-                                            @item.LastName
-                                        </option>
-                                    }
-
+                                    <option value="@item.Id">
+                                        @item.Id @item.FirstName
+                                        @item.LastName
+                                    </option>
                                 }
                             }
                             else
@@ -98,20 +81,11 @@
                             {
                                 @foreach (var item in @ViewBag.StudentGroup.AllMentors)
                                 {
-                                    @if ((@ViewBag.StudentGroup.ActiveMentors as IEnumerable<CharlieBackend.AdminPanel.Models.Mentor.MentorViewModel>).Any(x => x.Id == item.Id))
-                                    {
-                                        <option selected value="@item.Id">
-                                            @item.Id @item.FirstName
-                                            @item.LastName
-                                        </option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@item.Id">
-                                            @item.Id @item.FirstName
-                                            @item.LastName
-                                        </option>
-                                    }
+
+                                    <option value="@item.Id">
+                                        @item.Id @item.FirstName
+                                        @item.LastName
+                                    </option>
 
                                 }
                             }

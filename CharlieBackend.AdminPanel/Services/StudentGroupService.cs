@@ -100,15 +100,38 @@ namespace CharlieBackend.AdminPanel.Services
             return studentGroup;
         }
 
-        public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto UpdateDto, string accessToken)
+        public async Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync(string accessToken)
         {
-            var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(UpdateDto), accessToken);
-            var updateStudentsForStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}/students", _mapper.Map<UpdateStudentsForStudentGroup>(UpdateDto), accessToken);
+            var studentsTask = _studentService.GetAllStudentsAsync(accessToken);
+            var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
+            var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
+
+            var studentGroup = new StudentGroupEditViewModel();
+
+            studentGroup.AllCourses = await coursesTask;
+            studentGroup.AllStudents = await studentsTask;
+            studentGroup.AllMentors = await mentorsTask;
+
+            return studentGroup;
+        }
+
+        public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto, string accessToken)
+        {
+            var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(updateDto), accessToken);
+            var updateStudentsForStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}/students", _mapper.Map<UpdateStudentsForStudentGroup>(updateDto), accessToken);
 
             var updateStudentGroup = await updateStudentGroupTask;
             var updateStudentsForStudentGroup = await updateStudentsForStudentGroupTask;
 
-            return UpdateDto;
+            return updateDto;
         }
+
+        public async Task<CreateStudentGroupDto> AddStudentGroupAsync(long id, CreateStudentGroupDto addDto, string accessToken)
+        {
+            var createStudentGroup = await _apiUtil.CreateAsync($"{_config.Value.Urls.Api.Https}/api/student_groups", addDto, accessToken);
+
+            return createStudentGroup;
+        }
+
     }
 }

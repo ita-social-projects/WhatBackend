@@ -11,6 +11,10 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 
         Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id, string accessToken);
 
-        public Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto UpdateDto, string accessToken);
+        Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync(string accessToken);
+
+        Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto, string accessToken);
+
+        Task<CreateStudentGroupDto> AddStudentGroupAsync(long id, CreateStudentGroupDto addDto, string accessToken);
     }
 }

@@ -14,5 +14,7 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
         Task<StudentEditViewModel> GetStudentByIdAsync(long id, string accessToken);
 
         Task<UpdateStudentDto> UpdateStudentAsync(long id, UpdateStudentDto UpdateDto, string accessToken);
+
+        Task<StudentDto> AddStudentAsync(long id, string accessToken);
     }
 }

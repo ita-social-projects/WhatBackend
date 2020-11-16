@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace CharlieBackend.AdminPanel.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("admin/students")]
+    [Route("[controller]/[action]")]
     public class StudentsController : Controller
     {
         private readonly IStudentService _studentService;
@@ -49,6 +49,14 @@ namespace CharlieBackend.AdminPanel.Controllers
         public async Task<IActionResult> UpdateStudent(long id, UpdateStudentDto data)
         {
             var updatedStudentGroup = await _studentService.UpdateStudentAsync(id, data, Request.Cookies["accessToken"]);
+
+            return RedirectToAction("AllStudents", "Students");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddStudent(long id)
+        {
+            var updatedStudentGroup = await _studentService.AddStudentAsync(id, Request.Cookies["accessToken"]);
 
             return RedirectToAction("AllStudents", "Students");
         }

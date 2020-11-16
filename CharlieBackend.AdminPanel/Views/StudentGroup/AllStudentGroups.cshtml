@@ -9,6 +9,12 @@
 
     <div id="content">
 
+        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+            <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+
         <div class="container-fluid">
 
             <div class="card shadow mb-4">
@@ -35,8 +41,8 @@
                                         <td>@item.Id</td>
                                         <td>@item.CourseId</td>
                                         <td>@item.Name</td>
-                                        <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
-                                        <td>@item.FinishDate.ToString("dd.MM.yyyy")</td>
+                                        <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@item.FinishDate.ToString("yyyy-MM-dd")</td>
 
 
                                         <td>

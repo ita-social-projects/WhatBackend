@@ -42,7 +42,6 @@ namespace CharlieBackend.AdminPanel.Utils
                 requestMessage.Headers.Add("Authorization", accessToken);
             }
 
-
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
 
             var responseMessage = await _client.SendAsync(requestMessage);

@@ -52,6 +52,13 @@ namespace CharlieBackend.AdminPanel.Services
 
             return updateStudent;
         }
+
+        public async Task<StudentDto> AddStudentAsync(long id,  string accessToken)
+        {
+            var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>($"{_config.Value.Urls.Api.Https}/api/students/{id}", null, accessToken);
+
+            return addedStudentTask;
+        }
     }
 
 }

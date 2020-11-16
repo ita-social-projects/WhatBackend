@@ -54,6 +54,11 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data, accessToken);
 
+            if(httpResponse.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return default; // TODO
+            }
+
             httpResponse.EnsureSuccessStatusCode();
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
