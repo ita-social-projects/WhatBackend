@@ -51,13 +51,28 @@ namespace CharlieBackend.Api.Controllers
             return updatedSecretary.ToActionResult();
         }
 
+
+
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
         public async Task<ActionResult> DisableSecretary(long secretaryId)
         {
-            var isDisabled = await _secretaryService.DisableSecretaryAsync(secretaryId);
 
-            return isDisabled.ToActionResult();
+            var accountId = await _secretaryService.GetAccountId(secretaryId);
+
+            if (accountId == null)
+            {
+                return BadRequest("Unknown secretary id.");
+            }
+
+            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+
+            if (isDisabled)
+            {
+                return Ok(await _secretaryService.GetSecretaryByIdAsync(secretaryId));
+            }
+
+            return StatusCode(500, "Error occurred while trying to disable secretary account.");
         }
 
     }

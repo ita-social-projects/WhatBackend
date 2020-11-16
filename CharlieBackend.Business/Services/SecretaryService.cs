@@ -129,7 +129,7 @@ namespace CharlieBackend.Business.Services
         {
             var secretary = await _unitOfWork.SecretaryRepository.GetByIdAsync(secretaryId);
 
-            return secretary?.Id;
+            return secretary?.AccountId;
         }
 
         public async Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync()
@@ -137,26 +137,6 @@ namespace CharlieBackend.Business.Services
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
             return Result<IList<SecretaryDto>>.Success(_mapper.Map<IList<SecretaryDto>>(secretaries));
-        }
-
-        public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
-        {
-            var accountId = await GetAccountId(secretaryId);
-
-            if (accountId == null)
-            {
-                return Result<SecretaryDto>.Error(ErrorCode.NotFound, "Unknown secretary id.");
-            }
-
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return Result<SecretaryDto>.Success(null);
-            }
-
-            return Result<SecretaryDto>.Error(ErrorCode.InternalServerError,
-                "Error occurred while trying to disable secretary account.");
         }
     }
 }
