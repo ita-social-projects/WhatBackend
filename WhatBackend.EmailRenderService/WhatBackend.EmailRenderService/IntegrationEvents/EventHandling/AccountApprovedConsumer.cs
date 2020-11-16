@@ -28,7 +28,7 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 
                 _logger.LogInformation($"Account has been approved: {message}");
 
-                string header = "WHAT Backend credentials";
+                string header = "WHAT Backend notification info";
                 string emailBody =
                         "<table style='width: 100% !important;border-collapse: collapse; width: 100% !important;height: 100%;background: #efefef;-webkit-font-smoothing: antialiased;-webkit-text-size-adjust: none;'>" +
                         "<tr>" +
