@@ -89,15 +89,6 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<ScheduleDto>>(scheduleEntities);
         }
 
-        public async Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
-        {
-            var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
-
-            return scheduleEntity == null ?
-                Result<ScheduleDto>.Error(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
-                Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
-        }
-
         public async Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long id)
         {
             var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
