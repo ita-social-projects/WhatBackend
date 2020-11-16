@@ -80,18 +80,21 @@ namespace CharlieBackend.Business.Services
                 catch (FormatException ex)
                 {
                     _unitOfWork.Rollback();
+
                     return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
                         "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
                 catch (DbUpdateException ex)
                 {
                     _unitOfWork.Rollback();
+
                     return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
                         "Inputed data is incorrect.\n" + ex.Message);
                 }
             }
 
             await _unitOfWork.CommitAsync();
+
             return Result<List<StudentGroupFileModel>>
                 .Success(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
@@ -110,7 +113,6 @@ namespace CharlieBackend.Business.Services
             {
                 existingGroupNames.Add(group.Name);
             }
-
 
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
