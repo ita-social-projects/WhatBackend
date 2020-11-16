@@ -49,7 +49,7 @@ namespace CharlieBackend.Business.Services
                 charPointer++;
             }
 
-            while (!await IsEndOfFileAsync(rowCounter, wsGroups))
+            while (!IsEndOfFile(rowCounter, wsGroups))
             {
 
                 try
@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private async Task<bool> IsEndOfFileAsync(int rowCounter, IXLWorksheet ws)
+        private bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
         {
             return (ws.Cell($"B{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"C{rowCounter}").Value.ToString() == "")
