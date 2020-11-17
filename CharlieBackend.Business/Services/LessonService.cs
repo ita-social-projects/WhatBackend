@@ -123,19 +123,19 @@ namespace CharlieBackend.Business.Services
                     foundLesson.LessonDate = lessonModel.LessonDate;
                 }
 
-                if (lessonModel.LessonVisits != null)
+                if (lessonModel.Visits != null)
                 {
                     await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
-                    for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
+                    for (int i = 0; i < lessonModel.Visits.Count; i++)
                     {
                         var visit = new Visit
                         {
                             Lesson = foundLesson,
-                            StudentId = lessonModel.LessonVisits[i].StudentId,
-                            Comment = lessonModel.LessonVisits[i].Comment,
-                            Presence = lessonModel.LessonVisits[i].Presence,
-                            StudentMark = lessonModel.LessonVisits[i].StudentMark
+                            StudentId = lessonModel.Visits[i].StudentId,
+                            Comment = lessonModel.Visits[i].Comment,
+                            Presence = lessonModel.Visits[i].Presence,
+                            StudentMark = lessonModel.Visits[i].StudentMark
                         };
 
                         _unitOfWork.VisitRepository.Add(visit);
