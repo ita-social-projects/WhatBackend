@@ -42,7 +42,9 @@ namespace CharlieBackend.Business.Services
             {
                 if (property.Name != Convert.ToString(wsGroups.Cell($"{charPointer}1").Value))
                 {
-                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
+
+
+                    return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
                                 "The format of the downloaded file is not suitable."
                                      + "Check headers in the file.");
                 }
@@ -81,14 +83,15 @@ namespace CharlieBackend.Business.Services
                 {
                     _unitOfWork.Rollback();
 
-                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
+                    return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
                         "The format of the inputed data is incorrect.\n" + ex.Message);
                 }
                 catch (DbUpdateException ex)
                 {
                     _unitOfWork.Rollback();
 
-                    return Result<List<StudentGroupFileModel>>.Error(ErrorCode.ValidationError,
+
+                    return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
                         "Inputed data is incorrect.\n" + ex.Message);
                 }
             }
@@ -96,7 +99,8 @@ namespace CharlieBackend.Business.Services
             await _unitOfWork.CommitAsync();
 
             return Result<List<StudentGroupFileModel>>
-                .Success(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
+
+                .GetSuccess(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
 
         private async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)

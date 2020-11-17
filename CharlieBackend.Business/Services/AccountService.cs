@@ -32,7 +32,7 @@ namespace CharlieBackend.Business.Services
 
             if (isEmailTaken)
             {
-                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                return Result<AccountDto>.GetError(ErrorCode.Conflict,
                     "Account already exists!");
             }
 
@@ -56,14 +56,14 @@ namespace CharlieBackend.Business.Services
 
                     transaction.Commit();
 
-                    return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                    return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
                    
                 }
                 catch
                 {
                     transaction.Rollback();
 
-                    return Result<AccountDto>.Error(ErrorCode.InternalServerError, "Cannot create account.");
+                    return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Cannot create account.");
                 }
             }
         }
