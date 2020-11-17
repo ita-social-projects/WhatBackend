@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupDto == null)
                 {
-                    return Result<StudentGroupDto>.Error(ErrorCode.ValidationError, "StudentGroupDto is null");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "StudentGroupDto is null");
                 }
 
                 var studentGroup = new StudentGroup
@@ -73,14 +73,14 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<StudentGroupDto>.Success(_mapper.Map<StudentGroupDto>(studentGroup));
+                return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<StudentGroupDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -88,12 +88,12 @@ namespace CharlieBackend.Business.Services
         {
             if(name == null)
             {
-                return Result<bool>.Error(ErrorCode.ValidationError, "Name is null");
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Name is null");
             }
 
             var res = await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(name);
 
-            return Result<bool>.Success(res);
+            return Result<bool>.GetSuccess(res);
         }
 
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
@@ -114,7 +114,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupDto == null)
                 {
-                    return Result<UpdateStudentGroupDto>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
+                    return Result<UpdateStudentGroupDto>.GetError(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
                 }
 
                 var updatedEntity = _mapper.Map<StudentGroup>(studentGroupDto);
@@ -146,13 +146,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<UpdateStudentGroupDto>.Success(_mapper.Map<UpdateStudentGroupDto>(updatedEntity));
+                return Result<UpdateStudentGroupDto>.GetSuccess(_mapper.Map<UpdateStudentGroupDto>(updatedEntity));
             }
             catch 
             {
                 _unitOfWork.Rollback();
 
-                return Result<UpdateStudentGroupDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<UpdateStudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -162,7 +162,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupModel == null)
                 {
-                    return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
+                    return Result<UpdateStudentsForStudentGroup>.GetError(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
                 }
 
                 var updatedEntity = _mapper.Map<StudentGroup>(studentGroupModel); 
@@ -184,13 +184,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<UpdateStudentsForStudentGroup>.Success(_mapper.Map<UpdateStudentsForStudentGroup>(updatedEntity));
+                return Result<UpdateStudentsForStudentGroup>.GetSuccess(_mapper.Map<UpdateStudentsForStudentGroup>(updatedEntity));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<UpdateStudentsForStudentGroup>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
            
         }
@@ -201,10 +201,10 @@ namespace CharlieBackend.Business.Services
 
             if (foundStudentGroup == null)
             {
-                return Result<StudentGroupDto>.Error(ErrorCode.NotFound, "Student group not found");
+                return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group not found");
             }
 
-            return Result<StudentGroupDto>.Success(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+            return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
        

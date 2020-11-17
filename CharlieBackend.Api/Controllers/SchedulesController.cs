@@ -56,7 +56,7 @@ namespace CharlieBackend.Api.Controllers
             var foundSchedules = await _scheduleService.GetSchedulesByStudentGroupIdAsync(studentGroupId);
 
             return foundSchedules == null ? 
-                Result<ScheduleDto>.Error(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
+                Result<ScheduleDto>.GetError(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
                 Ok(foundSchedules);
         }
 

@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (isStudentGroupNameExist.Data)
             {
-                return Result<StudentGroupDto>.Error(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
+                return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
             }
 
             var resStudentGroup = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (isStudentGroupNameExist.Data)
             {
-                return Result<StudentGroupDto>.Error(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
+                return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
             }
 
             var updatedStudentGroup = await _studentGroupService
