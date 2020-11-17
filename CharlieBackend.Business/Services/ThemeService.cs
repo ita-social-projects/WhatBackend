@@ -51,10 +51,10 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<ThemeDto>.Success(mappedTheme);
+                return Result<ThemeDto>.GetSuccess(mappedTheme);
             }
 
-            return Result<ThemeDto>.Error(ErrorCode.NotFound,
+            return Result<ThemeDto>.GetError(ErrorCode.NotFound,
                 $"Theme with id={themeId} does not exist");
 
         }
@@ -80,25 +80,25 @@ namespace CharlieBackend.Business.Services
             {
                 if(themeDto == null)
                 {
-                    return Result<ThemeDto>.Error(ErrorCode.NotFound, "UpdateThemeDto is null");
+                    return Result<ThemeDto>.GetError(ErrorCode.NotFound, "UpdateThemeDto is null");
                 }
                 var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByIdAsync(themeId);
                 if (foundTheme == null)
                 {
-                    return Result<ThemeDto>.Error(ErrorCode.NotFound,
+                    return Result<ThemeDto>.GetError(ErrorCode.NotFound,
                         $"Theme with id={themeId} does not exist");
                 }
                 foundTheme.Name = themeDto.Name;
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<ThemeDto>.Success(_mapper.Map<ThemeDto>(foundTheme));
+                return Result<ThemeDto>.GetSuccess(_mapper.Map<ThemeDto>(foundTheme));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<ThemeDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<ThemeDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
     }
