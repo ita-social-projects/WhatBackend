@@ -55,7 +55,7 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<ThemeDto>.Error(ErrorCode.NotFound,
-                $"Schedule with id={themeId} does not exist");
+                $"Theme with id={themeId} does not exist");
 
         }
 
