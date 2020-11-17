@@ -23,7 +23,6 @@ namespace CharlieBackend.AdminPanel.Middlewares
         {
             try
             {
-
                 await _next(context);
             }
             catch (HttpRequestException ex)

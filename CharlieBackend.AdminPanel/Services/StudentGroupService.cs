@@ -120,8 +120,8 @@ namespace CharlieBackend.AdminPanel.Services
             var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(updateDto), accessToken);
             var updateStudentsForStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}/students", _mapper.Map<UpdateStudentsForStudentGroup>(updateDto), accessToken);
 
-            var updateStudentGroup = await updateStudentGroupTask;
-            var updateStudentsForStudentGroup = await updateStudentsForStudentGroupTask;
+            await updateStudentGroupTask;
+            await updateStudentsForStudentGroupTask;
 
             return updateDto;
         }

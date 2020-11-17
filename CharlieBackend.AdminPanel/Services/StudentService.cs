@@ -37,9 +37,8 @@ namespace CharlieBackend.AdminPanel.Services
             var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
 
             var student = await studentTask;
-            var studentGroups = await studentGroupsTask;
 
-            student.AllGroups = studentGroups;
+            student.AllGroups = await studentGroupsTask;
 
             return student;
         }
