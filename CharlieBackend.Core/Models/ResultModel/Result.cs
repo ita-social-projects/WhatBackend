@@ -21,7 +21,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// which will be converted into Return type</param>
         /// <returns></returns>
         ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
-        public static Result<T> Success(T transferredData)
+        public static Result<T> GetSuccess(T transferredData)
         {
             
             if (object.Equals(transferredData, default(T) ) && typeof(T) != typeof(bool)) // default(bool) is false
@@ -43,7 +43,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// If followed code assume returning error, use Error method to return Error. 
         /// It will convert data into Return T data type.
         /// </summary>
-        public static Result<T> Error(ErrorCode errorCode, string errorMessage)
+        public static Result<T> GetError(ErrorCode errorCode, string errorMessage)
         {
             var newResult = new Result<T> 
             { 
