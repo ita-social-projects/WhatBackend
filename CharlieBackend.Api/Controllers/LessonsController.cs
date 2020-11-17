@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Lesson;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -44,7 +45,7 @@ namespace CharlieBackend.Api.Controllers
             {
                 return StatusCode(422, "Lesson doesn't exist");
             }
-            return Ok(changedLesson);
+            return changedLesson.ToActionResult();
         }
 
         [Authorize(Roles = "Admin, Mentor,")]

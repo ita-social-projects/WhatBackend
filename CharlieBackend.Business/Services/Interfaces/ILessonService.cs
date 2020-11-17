@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,11 +12,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<IList<LessonDto>> GetAllLessonsAsync();
 
-        public Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);
+        public Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);
 
         public Task<LessonDto> UpdateLessonAsync(UpdateLessonDto lessonModel);
 
         public Task<IList<StudentLessonDto>> GetStudentLessonsAsync(long studentId);
-        
     }
 }

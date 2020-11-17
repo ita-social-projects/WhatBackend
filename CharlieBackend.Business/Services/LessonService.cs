@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -70,13 +71,13 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<LessonDto>>(lessons);
         }
 
-        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
+        public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
-            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByIdAsync(ids.MentorId);
 
             if (mentorToAssign == null)
             {
-                throw new NullReferenceException();
+                return Result<Lesson>.Error(ErrorCode.NotFound, "this mentor id doesn't exist");
             }
             var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(ids.LessonId);
 
@@ -84,7 +85,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return foundLesson;
+            return Result<Lesson>.Success(foundLesson);
         }
 
         public async Task<LessonDto> UpdateLessonAsync(UpdateLessonDto lessonModel)

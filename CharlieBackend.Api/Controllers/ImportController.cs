@@ -19,6 +19,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("student_groups")]
         [HttpPost]
         public async Task<ActionResult> ImportDataFromFile(ImportFileDto file)
         {
