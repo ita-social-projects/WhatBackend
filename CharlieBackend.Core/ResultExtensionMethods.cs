@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.Models.ResultModel;
+using System.Text.Json;
+using Microsoft.Net.Http.Headers;
+using static CharlieBackend.Core.Models.ResultModel.ErrorModel;
 
 namespace CharlieBackend.Core
 {
@@ -16,26 +19,35 @@ namespace CharlieBackend.Core
         {
             if (Equals(result, null))
             {
-                return new ObjectResult("No data received while processing data model") { StatusCode = 500 };
+                result = new Result<T>
+                {
+                    Error = new ErrorData()
+                    {
+                        Code = ErrorCode.InternalServerError,
+                        Message = "No data received while processing data model"
+                    }
+                };
+
+                return new JsonResult(ConverToJson(result)) { StatusCode = 500 };
             }
-            else if (result.ErrorData != null)
+            else if (result.Error != null)
             {
-                switch (result.ErrorData.ErrorCode)
+                switch (result.Error.Code)
                 {
                     case ErrorCode.Unauthorized:
-                        return new UnauthorizedObjectResult(result.ErrorData.ErrorMessage);//401
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 401 };//401
                     case ErrorCode.ValidationError:
-                        return new BadRequestObjectResult(result.ErrorData.ErrorMessage);//400
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 400 };//400
                     case ErrorCode.InternalServerError:
-                        return new StatusCodeResult(500);//500
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 500 };//500
                     case ErrorCode.NotFound:
-                        return new NotFoundObjectResult(result.ErrorData.ErrorMessage);//404
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 404 };//404
                     case ErrorCode.UnprocessableEntity:
-                        return new UnprocessableEntityObjectResult(result.ErrorData.ErrorMessage);//422
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 422 };//422
                     case ErrorCode.Conflict:
-                        return new ConflictObjectResult(result.ErrorData.ErrorMessage);//409
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 409 };//409
                     default:
-                        return new StatusCodeResult(500);
+                        return new JsonResult(ConverToJson(result)) { StatusCode = 500 };
                 }
             }
             else if (!object.Equals(result.Data, default(T)))
@@ -47,6 +59,24 @@ namespace CharlieBackend.Core
                 return new OkResult();
             }
 
+            ErrorModel ConverToJson(Result<T> errorResult)
+            {
+                var intCodeOfEnum = errorResult.Error.Code;
+
+                var errorForJson = new ErrorModel
+                {
+                    Error = new ErrorBody()
+                    {
+                        Code = (int)intCodeOfEnum,
+                        Message = errorResult.Error.Message
+                    }
+                };
+
+                return errorForJson;
+            }
         }
+
+
+
     }
 }
