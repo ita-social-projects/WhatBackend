@@ -7,7 +7,13 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface IRepository<T> where T : BaseEntity
     {
         Task<List<T>> GetAllAsync();
-        Task<T> InsertAsync(T entity);
-        void Delete(T entity);
+
+        Task<T> GetByIdAsync(long id);
+
+        void Add(T entity);
+
+        void Update(T entity);
+
+        Task DeleteAsync(long id);
     }
 }

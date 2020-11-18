@@ -1,8 +1,7 @@
-﻿
-namespace CharlieBackend.Core.Entities
+﻿namespace CharlieBackend.Core.Entities
 {
     public interface IBaseEntity
     {
-        public string uuid { get; set; }
+        public long Id { get; set; }
     }
 }
