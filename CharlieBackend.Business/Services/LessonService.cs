@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
                 }
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<LessonDto>(lessonModel);
+                return _mapper.Map<LessonDto>(foundLesson);
 
             }
             catch

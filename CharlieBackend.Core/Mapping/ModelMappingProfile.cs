@@ -55,8 +55,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, LessonDto>();
 
             CreateMap<Lesson, CreateLessonDto>();
-
-
             CreateMap<CreateLessonDto, Lesson>()
                   .ForMember(destination => destination.Theme, conf => conf.MapFrom(x =>new Theme() { Name = x.ThemeName}))
                   .ForMember(destination => destination.Visits,
@@ -71,7 +69,7 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, LessonDto>()
                 .ForMember(destination => destination.LessonVisits, conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto()
                             {
-                                 Id = y.Id,
+                                 //Id = y.Id,
                                  StudentId = y.StudentId,
                                  StudentMark = y.StudentMark,
                                  Presence = y.Presence,
