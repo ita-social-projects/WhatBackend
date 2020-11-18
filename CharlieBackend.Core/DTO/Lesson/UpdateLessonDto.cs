@@ -9,6 +9,8 @@ namespace CharlieBackend.Core.DTO.Lesson
 {
     public class UpdateLessonDto
     {
+        #nullable enable
+
         [StringLength(100)]
         public string? ThemeName { get; set; }
 
@@ -16,5 +18,7 @@ namespace CharlieBackend.Core.DTO.Lesson
         public DateTime LessonDate { get; set; }
 
         public IList<VisitDto>? LessonVisits { get; set; }
+
+        #nullable disable
     }
 }

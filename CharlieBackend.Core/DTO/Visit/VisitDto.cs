@@ -8,8 +8,10 @@ namespace CharlieBackend.Core.DTO.Visit
 {
     public class VisitDto
     {
+        #nullable enable
+
         [Required]
-        public long StudentId { get; set; }
+        public long? StudentId { get; set; }
 
         public sbyte? StudentMark { get; set; }
 
@@ -18,5 +20,7 @@ namespace CharlieBackend.Core.DTO.Visit
 
         [StringLength(1024)]
         public string? Comment { get; set; }
+
+        #nullable disable
     }
 }
