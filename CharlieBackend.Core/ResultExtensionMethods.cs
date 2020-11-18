@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.Models.ResultModel;
-using System.Text.Json;
-using Microsoft.Net.Http.Headers;
-using static CharlieBackend.Core.Models.ResultModel.ErrorModel;
 
 namespace CharlieBackend.Core
 {
@@ -60,13 +57,13 @@ namespace CharlieBackend.Core
                 return new OkResult();
             }
 
-            ErrorModel ConverToJson(Result<T> errorResult)
+            object ConverToJson(Result<T> errorResult)
             {
                 var intCodeOfEnum = errorResult.Error.Code;
 
-                var errorForJson = new ErrorModel
+                var errorForJson = new 
                 {
-                    Error = new ErrorBody()
+                    Error = new 
                     {
                         Code = (int)intCodeOfEnum,
                         Message = errorResult.Error.Message
