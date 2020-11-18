@@ -69,7 +69,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, LessonDto>()
                 .ForMember(destination => destination.LessonVisits, conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto()
                             {
-                                 //Id = y.Id,
                                  StudentId = y.StudentId,
                                  StudentMark = y.StudentMark,
                                  Presence = y.Presence,
