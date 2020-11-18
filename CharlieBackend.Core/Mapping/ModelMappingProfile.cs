@@ -155,6 +155,7 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<CreateThemeDto, Theme>();
             CreateMap<Theme, CreateThemeDto>();
+            CreateMap<UpdateThemeDto, Theme>();
 
             #endregion
 

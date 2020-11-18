@@ -9,7 +9,7 @@ namespace CharlieBackend.Core.DTO.Visit
     public class VisitDto
     {
         [Required]
-        public long? StudentId { get; set; }
+        public long StudentId { get; set; }
 
         public sbyte? StudentMark { get; set; }
 
@@ -17,6 +17,6 @@ namespace CharlieBackend.Core.DTO.Visit
         public bool Presence { get; set; }
 
         [StringLength(1024)]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
     }
 }

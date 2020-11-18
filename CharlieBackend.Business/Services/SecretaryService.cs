@@ -33,7 +33,7 @@ namespace CharlieBackend.Business.Services
 
                 if (account == null)
                 {
-                    return Result<SecretaryDto>.Error(ErrorCode.NotFound,
+                    return Result<SecretaryDto>.GetError(ErrorCode.NotFound,
                         "Account not found");
                 }
 
@@ -53,13 +53,13 @@ namespace CharlieBackend.Business.Services
 
                     await _notification.AccountApproved(account);
 
-                    return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
+                    return Result<SecretaryDto>.GetSuccess(_mapper.Map<SecretaryDto>(secretary));
                 } 
                 else
                 {
                     _unitOfWork.Rollback();
 
-                    return Result<SecretaryDto>.Error(ErrorCode.ValidationError,
+                    return Result<SecretaryDto>.GetError(ErrorCode.ValidationError,
                        "This account already assigned.");
                 }
             }
@@ -67,7 +67,7 @@ namespace CharlieBackend.Business.Services
             {
                 _unitOfWork.Rollback();
 
-                return Result<SecretaryDto>.Error(ErrorCode.InternalServerError, "Error while creating secretary");
+                return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError, "Error while creating secretary");
             }
 
         }
@@ -81,7 +81,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundSecretary == null)
                 {
-                    return Result<SecretaryDto>.Error(ErrorCode.NotFound, "Secretary not found");
+                    return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Secretary not found");
                 }
 
                 var isEmailChangableTo = await _accountService
@@ -89,7 +89,7 @@ namespace CharlieBackend.Business.Services
 
                 if (!isEmailChangableTo)
                 {
-                    return Result<SecretaryDto>.Error(ErrorCode.Conflict, "Email is already taken");
+                    return Result<SecretaryDto>.GetError(ErrorCode.Conflict, "Email is already taken");
                 }
 
                 foundSecretary.Account.Email = secretaryDto.Email ?? foundSecretary.Account.Email;
@@ -98,14 +98,14 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(foundSecretary));
+                return Result<SecretaryDto>.GetSuccess(_mapper.Map<SecretaryDto>(foundSecretary));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<SecretaryDto>.Error(ErrorCode.InternalServerError,
+                return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
                       "Cannot update mentor.");
             }
         }
@@ -115,14 +115,14 @@ namespace CharlieBackend.Business.Services
             var secretary = await _unitOfWork
                 .SecretaryRepository.GetSecretaryByAccountIdAsync(accountId);
 
-            return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
+            return Result<SecretaryDto>.GetSuccess(_mapper.Map<SecretaryDto>(secretary));
         }
 
         public async Task<Result<SecretaryDto>> GetSecretaryByIdAsync(long secretaryId)
         {
             var secretary = await _unitOfWork.SecretaryRepository.GetByIdAsync(secretaryId);
 
-            return Result<SecretaryDto>.Success(_mapper.Map<SecretaryDto>(secretary));
+            return Result<SecretaryDto>.GetSuccess(_mapper.Map<SecretaryDto>(secretary));
         }
 
         public async Task<long?> GetAccountId(long secretaryId)
@@ -136,7 +136,7 @@ namespace CharlieBackend.Business.Services
         {
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
-            return Result<IList<SecretaryDto>>.Success(_mapper.Map<IList<SecretaryDto>>(secretaries));
+            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<IList<SecretaryDto>>(secretaries));
         }
 
         public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
@@ -145,17 +145,17 @@ namespace CharlieBackend.Business.Services
 
             if (accountId == null)
             {
-                return Result<SecretaryDto>.Error(ErrorCode.NotFound, "Unknown secretary id.");
+                return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
             var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
 
             if (isDisabled)
             {
-                return Result<SecretaryDto>.Success(null);
+                return Result<SecretaryDto>.GetSuccess(null);
             }
 
-            return Result<SecretaryDto>.Error(ErrorCode.InternalServerError,
+            return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
                 "Error occurred while trying to disable secretary account.");
         }
     }

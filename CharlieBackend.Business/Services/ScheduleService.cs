@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (scheduleModel == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.ValidationError, "ScheduleDto is null");
+                    return Result<ScheduleDto>.GetError(ErrorCode.ValidationError, "ScheduleDto is null");
                 }
 
                 var scheduleEntity = _mapper.Map<Schedule>(scheduleModel);
@@ -38,7 +38,7 @@ namespace CharlieBackend.Business.Services
 
                 if (errorMessage != null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.ValidationError, errorMessage);
+                    return Result<ScheduleDto>.GetError(ErrorCode.ValidationError, errorMessage);
                 }
 
                 scheduleEntity.StudentGroup = await _unitOfWork.StudentGroupRepository
@@ -46,7 +46,7 @@ namespace CharlieBackend.Business.Services
 
                 if (scheduleEntity.StudentGroup == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.NotFound,
+                    return Result<ScheduleDto>.GetError(ErrorCode.NotFound,
                         $"Student group with id={scheduleModel.StudentGroupId} does not exist");
                 }
 
@@ -54,13 +54,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(scheduleEntity));
+                return Result<ScheduleDto>.GetSuccess(_mapper.Map<ScheduleDto>(scheduleEntity));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<ScheduleDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<ScheduleDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -75,10 +75,10 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<ScheduleDto>.Success(mappedSchedule);
+                return Result<ScheduleDto>.GetSuccess(mappedSchedule);
             }
 
-            return Result<ScheduleDto>.Error(ErrorCode.NotFound,
+            return Result<ScheduleDto>.GetError(ErrorCode.NotFound,
                 $"Schedule with id={id} does not exist");
         }
 
@@ -87,6 +87,15 @@ namespace CharlieBackend.Business.Services
             var scheduleEntities = await _unitOfWork.ScheduleRepository.GetAllAsync();
 
             return _mapper.Map<IList<ScheduleDto>>(scheduleEntities);
+        }
+
+        public async Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
+        {
+            var scheduleEntity = await _unitOfWork.ScheduleRepository.GetByIdAsync(id);
+
+            return scheduleEntity == null ?
+                Result<ScheduleDto>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
+                Result<ScheduleDto>.GetSuccess(_mapper.Map<ScheduleDto>(scheduleEntity));
         }
 
         public async Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long id)
@@ -109,13 +118,13 @@ namespace CharlieBackend.Business.Services
 
                 if (scheduleDTO == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.NotFound, "UpdateScheduleDto is null");
+                    return Result<ScheduleDto>.GetError(ErrorCode.NotFound, "UpdateScheduleDto is null");
                 }
                 var foundSchedule = await _unitOfWork.ScheduleRepository.GetByIdAsync(scheduleId);
 
                 if (foundSchedule == null)
                 {
-                    return Result<ScheduleDto>.Error(ErrorCode.NotFound,
+                    return Result<ScheduleDto>.GetError(ErrorCode.NotFound,
                         $"Schedule with id={scheduleId} does not exist");
                 }
                 var updatedEntity = _mapper.Map<Schedule>(scheduleDTO);
@@ -124,7 +133,7 @@ namespace CharlieBackend.Business.Services
 
                 if (errorMessage != null)
                 {
-                    Result<ScheduleDto>.Error(ErrorCode.ValidationError, errorMessage);
+                    Result<ScheduleDto>.GetError(ErrorCode.ValidationError, errorMessage);
                 }
 
                 foundSchedule.RepeatRate = updatedEntity.RepeatRate;
@@ -135,14 +144,14 @@ namespace CharlieBackend.Business.Services
                 }
                 await _unitOfWork.CommitAsync();
 
-                return Result<ScheduleDto>.Success(_mapper.Map<ScheduleDto>(foundSchedule));
+                return Result<ScheduleDto>.GetSuccess(_mapper.Map<ScheduleDto>(foundSchedule));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<ScheduleDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<ScheduleDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
