@@ -9,7 +9,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface IScheduleRepository : IRepository<Schedule>
     {
         public new Task<List<Schedule>> GetAllAsync();
-        public new Task<Schedule> GetByIdAsync(long id);
         Task<List<Schedule>> GetSchedulesByStudentGroupIdAsync(long id);
     }
 }
