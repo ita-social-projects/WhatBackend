@@ -21,7 +21,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// </summary>
         /// <param name="transferredData">Any data type to return in calling method, 
         /// which will be converted into Return type</param>
-        /// <returns></returns>
+        /// <returns>Return transferred data in success option, or error data</returns>
         ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
         public static Result<T> GetSuccess(T transferredData)
         {

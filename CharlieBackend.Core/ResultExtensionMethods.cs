@@ -13,7 +13,8 @@ namespace CharlieBackend.Core
         /// </summary>
         /// <typeparam name="T">Type of transferred data</typeparam>
         /// <param name="result">Result T variable with data or error to transfer to consumer from controller</param>
-        /// <returns>Status code depending Result T data. If ErrorData is not empty, return error status code.
+        /// <returns>Status code depending Result T data. If ErrorData is not empty, return error status code,
+        /// and message in Json format
         /// If no error transferred, returns OkResult (200 or 204 status code)</returns>
         public static ActionResult ToActionResult<T>(this Result<T> result)
         {
@@ -75,8 +76,5 @@ namespace CharlieBackend.Core
                 return errorForJson;
             }
         }
-
-
-
     }
 }
