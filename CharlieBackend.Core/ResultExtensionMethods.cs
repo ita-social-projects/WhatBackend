@@ -11,7 +11,7 @@ namespace CharlieBackend.Core
         /// <typeparam name="T">Type of transferred data</typeparam>
         /// <param name="result">Result T variable with data or error to transfer to consumer from controller</param>
         /// <returns>Status code depending Result T data. If ErrorData is not empty, return error status code,
-        /// and message in Json format
+        /// and error message description in Json format.
         /// If no error transferred, returns OkResult (200 or 204 status code)</returns>
         public static ActionResult ToActionResult<T>(this Result<T> result)
         {
@@ -26,26 +26,26 @@ namespace CharlieBackend.Core
                     }
                 };
 
-                return new JsonResult(ConverToJson(result)) { StatusCode = 500 };
+                return new JsonResult(result.Error) { StatusCode = 500 };
             }
             else if (result.Error != null)
             {
                 switch (result.Error.Code)
                 {
                     case ErrorCode.Unauthorized:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 401 };//401
+                        return new JsonResult(result.Error) { StatusCode = 401 };//401
                     case ErrorCode.ValidationError:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 400 };//400
+                        return new JsonResult(result.Error) { StatusCode = 400 };//400
                     case ErrorCode.InternalServerError:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 500 };//500
+                        return new JsonResult(result.Error) { StatusCode = 500 };//500
                     case ErrorCode.NotFound:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 404 };//404
+                        return new JsonResult(result.Error) { StatusCode = 404 };//404
                     case ErrorCode.UnprocessableEntity:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 422 };//422
+                        return new JsonResult(result.Error) { StatusCode = 422 };//422
                     case ErrorCode.Conflict:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 409 };//409
+                        return new JsonResult(result.Error) { StatusCode = 409 };//409
                     default:
-                        return new JsonResult(ConverToJson(result)) { StatusCode = 500 };
+                        return new JsonResult(result.Error) { StatusCode = 500 };
                 }
             }
             else if (!object.Equals(result.Data, default(T)))
@@ -55,22 +55,6 @@ namespace CharlieBackend.Core
             else
             {
                 return new OkResult();
-            }
-
-            object ConverToJson(Result<T> errorResult)
-            {
-                var intCodeOfEnum = errorResult.Error.Code;
-
-                var errorForJson = new 
-                {
-                    Error = new 
-                    {
-                        Code = (int)intCodeOfEnum,
-                        Message = errorResult.Error.Message
-                    }
-                };
-
-                return errorForJson;
             }
         }
     }
