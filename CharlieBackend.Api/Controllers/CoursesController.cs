@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
+using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Library.SwaggerExamples.CoursesController;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -19,6 +21,13 @@ namespace CharlieBackend.Api.Controllers
             _coursesService = coursesService;
         }
 
+        /// <summary>
+        /// Adds new course
+        /// </summary>
+        /// <response code="200">Course succeesfully added</response>
+        /// <response code="409">Course already exists</response>
+        /// <response code="500">Can not create course</response>
+        [SwaggerResponse(200, type: typeof(CourseDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPost]
         public async Task<ActionResult<CreateCourseDto>> PostCourse(CreateCourseDto courseDto)
@@ -42,6 +51,11 @@ namespace CharlieBackend.Api.Controllers
             return Ok(createdCourse);
         }
 
+        /// <summary>
+        /// Gets all cources
+        /// </summary>
+        /// <response code="200">Successful return of list of courses</response>
+        /// <response code="500">Unable to get courses list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         public async Task<ActionResult<IList<CourseDto>>> GetAllCourses()
@@ -52,6 +66,12 @@ namespace CharlieBackend.Api.Controllers
             return Ok(courses);
         }
 
+        /// <summary>
+        /// Update course
+        /// </summary>
+        /// <response code="200">Successful update of course</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="409">Course already exist</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)

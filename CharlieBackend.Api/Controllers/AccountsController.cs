@@ -13,6 +13,9 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Library.SwaggerExamples.AccountsController;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -41,9 +44,21 @@ namespace CharlieBackend.Api.Controllers
             _authOptions = authOptions.Value;
         }
 
+        /// <summary>
+        /// Allows user to sign in
+        /// </summary>
+        /// <returns>JWT</returns>
+        /// <response code="200">User successfully logged in</response>
+        /// <response code="400">Impossible to log in</response>
+        /// <response code="401">Impossible to log in, wrong credentials</response>
+        /// <response code="401">Account is not active</response>
+        /// <response code="403">Account not approved</response>
+        /// <response code="500">Impossible to log in</response>
+        [SwaggerResponse(200, type: typeof(SignInResponse))]
+        [SwaggerResponseHeader(200, "Authorization Bearer", "string", "token")]
         [Route("auth")]
         [HttpPost]
-        public async Task<ActionResult> SignIn(AuthenticationDto authenticationModel)
+        public async Task<ActionResult> SignIn([FromBody]AuthenticationDto authenticationModel)
         {
             if (!ModelState.IsValid)
             {
@@ -142,6 +157,13 @@ namespace CharlieBackend.Api.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Registration of account
+        /// </summary>
+        /// <response code="200">User successfully registered</response>
+        /// <response code="409">Email already exists</response>
+        /// <response code="500">Can not create account</response>
+        [SwaggerResponse(200, type: typeof(AccountDto))]
         [Route("reg")]
         [HttpPost]
         public async Task<ActionResult> PostAccount(CreateAccountDto accountModel)
@@ -151,13 +173,24 @@ namespace CharlieBackend.Api.Controllers
             return createdAccountModel.ToActionResult();
         }
 
+        /// <summary>
+        /// Returns all registered accounts
+        /// </summary>
+        /// <response code="200">Successful return of list of registered accounts</response>
+        /// <response code="500">Impossible to get list of registered accounts</response>
+        [SwaggerResponse(200, type: typeof(IList<AccountDto>))]
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> GetAllAccount()
         {
             return Ok(await _accountService.GetAllAccountsAsync());
         }
-        
+
+        /// <summary>
+        /// Returns all not assigned accounts
+        /// </summary>
+        /// <response code="200">Successful return of list of all accounts which is not assigned to any role entity</response>
+        /// <response code="500">Impossible to get registered accounts</response>
         [Route("NotAssigned")]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
