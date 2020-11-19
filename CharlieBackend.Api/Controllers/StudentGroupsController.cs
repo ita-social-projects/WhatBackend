@@ -6,6 +6,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -54,7 +55,7 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateStudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
+        public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, UpdateStudentGroupDto studentGroupDto)
         {
             var isStudentGroupNameExist = await _studentGroupService
                    .IsGroupNameExistAsync(studentGroupDto.Name);
@@ -66,16 +67,6 @@ namespace CharlieBackend.Api.Controllers
 
             var updatedStudentGroup = await _studentGroupService
                     .UpdateStudentGroupAsync(id, studentGroupDto);
-
-            return updatedStudentGroup.ToActionResult();
-        }
-
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
-        [HttpPut("{id}/students")]
-        public async Task<ActionResult<UpdateStudentsForStudentGroup>> PutStudentsOfStudentGroup(long id, UpdateStudentsForStudentGroup studentGroupDto) 
-        {
-            var updatedStudentGroup = await _studentGroupService
-                    .UpdateStudentsForStudentGroupAsync(id, studentGroupDto);
 
             return updatedStudentGroup.ToActionResult();
         }
