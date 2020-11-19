@@ -7,7 +7,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IStudentRepository : IRepository<Student>
     {
-        public new Task<List<Student>> GetAllAsync();
+        new Task<List<Student>> GetAllAsync();
+
+        Task<List<Student>> GetAllActiveAsync();
 
         Task<Student> GetStudentByAccountIdAsync(long accountId);
 

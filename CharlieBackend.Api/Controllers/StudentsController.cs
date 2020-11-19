@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.Controllers
         
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<StudentDto>>> GetStudentById(long id)
+        public async Task<ActionResult<StudentDto>> GetStudentById(long id)
         {
 
             var studentModel = await _studentService.GetStudentByIdAsync(id);
@@ -59,10 +59,21 @@ namespace CharlieBackend.Api.Controllers
 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
+        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() // returns all students (active and unactive)
         {
 
             var studentsModels = await _studentService.GetAllStudentsAsync();
+
+            return Ok(studentsModels);
+
+        }
+
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("active")]
+        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents() // returns only active students
+        {
+
+            var studentsModels = await _studentService.GetAllActiveStudentsAsync();
 
             return Ok(studentsModels);
 
