@@ -70,14 +70,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonDto lessonDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            lessonDto.Id = id;
-
-            var updatedLesson = await _lessonService.UpdateLessonAsync(lessonDto);
+            var updatedLesson = await _lessonService.UpdateLessonAsync(id, lessonDto);
 
             if (updatedLesson != null)
             {

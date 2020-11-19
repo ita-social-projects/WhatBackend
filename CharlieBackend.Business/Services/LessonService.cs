@@ -87,11 +87,11 @@ namespace CharlieBackend.Business.Services
             return foundLesson;
         }
 
-        public async Task<LessonDto> UpdateLessonAsync(UpdateLessonDto lessonModel)
+        public async Task<LessonDto> UpdateLessonAsync(long id, UpdateLessonDto lessonModel)
         {
             try
             {
-                var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonModel.Id);
+                var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);
 
                 if (foundLesson == null)
                 {
@@ -123,19 +123,19 @@ namespace CharlieBackend.Business.Services
                     foundLesson.LessonDate = lessonModel.LessonDate;
                 }
 
-                if (lessonModel.Visits != null)
+                if (lessonModel.LessonVisits != null)
                 {
                     await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
-                    for (int i = 0; i < lessonModel.Visits.Count; i++)
+                    for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
                     {
                         var visit = new Visit
                         {
                             Lesson = foundLesson,
-                            StudentId = lessonModel.Visits[i].StudentId,
-                            Comment = lessonModel.Visits[i].Comment,
-                            Presence = lessonModel.Visits[i].Presence,
-                            StudentMark = lessonModel.Visits[i].StudentMark
+                            StudentId = lessonModel.LessonVisits[i].StudentId,
+                            Comment = lessonModel.LessonVisits[i].Comment,
+                            Presence = lessonModel.LessonVisits[i].Presence,
+                            StudentMark = lessonModel.LessonVisits[i].StudentMark
                         };
 
                         _unitOfWork.VisitRepository.Add(visit);
@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
                 }
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<LessonDto>(lessonModel);
+                return _mapper.Map<LessonDto>(foundLesson);
 
             }
             catch
