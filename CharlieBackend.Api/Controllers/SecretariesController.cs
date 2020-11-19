@@ -60,7 +60,7 @@ namespace CharlieBackend.Api.Controllers
         /// Updates exact secretary entity
         /// </summary>
         /// <response code="200">Returns updated data of secretary</response>
-        /// <response code="404">Secretary Id not found</response>
+        /// <response code="404">Secretary not found</response>
         /// <response code="409">Email already taken</response>
         /// <response code="500">Can not update secretary</response>
         [SwaggerResponse(200, type: typeof(UpdateSecretaryDto))]

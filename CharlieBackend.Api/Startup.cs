@@ -113,7 +113,7 @@ namespace CharlieBackend.Api
             });
 
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
-
+            
             services.AddSwaggerExamplesFromAssemblies(Assembly.Load("CharlieBackend.Library"));
         }
 
