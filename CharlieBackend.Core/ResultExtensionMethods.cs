@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core.DTO.Result;
+using AutoMapper;
 
 namespace CharlieBackend.Core
 {
@@ -26,26 +28,26 @@ namespace CharlieBackend.Core
                     }
                 };
 
-                return new JsonResult(result.Error) { StatusCode = 500 };
+                return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 500 };
             }
             else if (result.Error != null)
             {
                 switch (result.Error.Code)
                 {
                     case ErrorCode.Unauthorized:
-                        return new JsonResult(result.Error) { StatusCode = 401 };//401
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 401 };//401
                     case ErrorCode.ValidationError:
-                        return new JsonResult(result.Error) { StatusCode = 400 };//400
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 400 };//400
                     case ErrorCode.InternalServerError:
-                        return new JsonResult(result.Error) { StatusCode = 500 };//500
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 500 };//500
                     case ErrorCode.NotFound:
-                        return new JsonResult(result.Error) { StatusCode = 404 };//404
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 404 };//404
                     case ErrorCode.UnprocessableEntity:
-                        return new JsonResult(result.Error) { StatusCode = 422 };//422
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 422 };//422
                     case ErrorCode.Conflict:
-                        return new JsonResult(result.Error) { StatusCode = 409 };//409
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 409 };//409
                     default:
-                        return new JsonResult(result.Error) { StatusCode = 500 };
+                        return new JsonResult(ToErrorDto(result.Error)) { StatusCode = 500 };
                 }
             }
             else if (!object.Equals(result.Data, default(T)))
@@ -55,6 +57,16 @@ namespace CharlieBackend.Core
             else
             {
                 return new OkResult();
+            }
+
+            ErrorDto ToErrorDto(ErrorData errorData)
+            {
+                var errorDtoData = new ErrorDto
+                {
+                    Error = errorData
+                };
+
+                return errorDtoData;
             }
         }
     }
