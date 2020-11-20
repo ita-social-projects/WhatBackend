@@ -38,7 +38,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CharlieBackend.Business\CharlieBackend.Business.csproj" />
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
-    <ProjectReference Include="..\CharlieBackend.Library\CharlieBackend.Library.csproj" />
     <ProjectReference Include="..\CharlieBackend.Root\CharlieBackend.Root.csproj" />
   </ItemGroup>
 
