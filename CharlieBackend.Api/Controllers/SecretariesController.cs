@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -33,6 +34,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="404">Acccount not found</response>
         /// <response code="500">Can not assign account to secretary</response>
         [SwaggerResponse(200, type: typeof(SecretaryDto))]
+
         [Authorize(Roles = "Admin")]
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostSecretary(long accountId)
