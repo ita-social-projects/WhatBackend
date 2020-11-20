@@ -8,6 +8,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -26,6 +27,14 @@ namespace CharlieBackend.Api.Controllers
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Assign account to mentor
+        /// </summary>
+        /// <response code="200">Successful assigning of account to mentor</response>
+        /// <response code="404">Can not find account</response>
+        /// <response code="400">Error, account already assigned</response>
+        /// <response code="500">Error while assigning mentor</response>
+        [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
@@ -35,6 +44,12 @@ namespace CharlieBackend.Api.Controllers
             return createdMentorModel.ToActionResult(); ;
         }
 
+        /// <summary>
+        /// Gets list of all mentors
+        /// </summary>
+        /// <response code="200">Successful return of mentors list</response>
+        /// <response code="500">Error while returning list of mentors</response>
+        [SwaggerResponse(200, type: typeof(IList<MentorDto>))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
@@ -45,15 +60,32 @@ namespace CharlieBackend.Api.Controllers
             return Ok(mentorsModels);
         }
 
+        /// <summary>
+        /// Update of mentor
+        /// </summary>
+        /// <remarks>
+        /// **courseIds** and **studentGroupIds** is optional
+        /// </remarks>
+        /// <response code="200">Successful update of mentor</response>
+        /// <response code="404">Mentor not found</response>
+        /// <response code="400">Can not update mentor due to data conflict</response>
+        /// <response code="500">Error while updating mentor</response>
+        [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{mentorId}")]
-        public async Task<ActionResult> PutMentor(long mentorId, UpdateMentorDto mentorModel)
+        public async Task<ActionResult> PutMentor(long mentorId, [FromBody]UpdateMentorDto mentorModel)
         {
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
             return updatedMentor.ToActionResult();
-        } 
+        }
 
+        /// <summary>
+        /// Disabling of mentor account
+        /// </summary>
+        /// <response code="204">Successful disabling of mentor</response>
+        /// <response code="400">Can not find mentor</response>
+        /// <response code="500">Error while disabling of mentor</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)

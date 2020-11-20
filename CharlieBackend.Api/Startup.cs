@@ -21,6 +21,7 @@ using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Library.SwaggerExamples.LessonsController;
 
 namespace CharlieBackend.Api
 {
