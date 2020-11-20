@@ -1,9 +1,9 @@
 ﻿using EasyNetQ;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.IntegrationEvents.Events;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.IntegrationEvents.Events;
 
 namespace CharlieBackend.Business.Services
 {
@@ -25,6 +25,15 @@ namespace CharlieBackend.Business.Services
 
             await _bus.SendReceive.SendAsync("EmailRenderService", new AccountApprovedEvent(account.Email,
                                        account.FirstName, account.LastName, account.Role));
+        }
+
+        public async Task RegistrationSuccess(Account account)
+        {
+            _logger.LogInformation($"RegistrationSuccessEvent has been sent for user " +
+                                   $"{account.FirstName} {account.LastName}");
+
+            await _bus.SendReceive.SendAsync("EmailRenderService", new RegistrationSuccessEvent(account.Email,
+                                       account.FirstName, account.LastName));
         }
     }
 }

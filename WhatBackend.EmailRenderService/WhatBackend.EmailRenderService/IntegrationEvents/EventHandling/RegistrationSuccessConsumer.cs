@@ -10,14 +10,14 @@
 
 //namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 //{
-//    public class AccountApprovedConsumer : IConsumeAsync<AccountApprovedEvent>
+//    public class RegistrationSuccessConsumer : IConsumeAsync<RegistrationSuccessEvent>
 //    {
 
-//        private readonly ILogger<AccountApprovedConsumer> _logger;
+//        private readonly ILogger<RegistrationSuccessConsumer> _logger;
 //        private readonly IBus _bus;
 //        private readonly IMessageTemplateService _messageTemplate;
 
-//        public AccountApprovedConsumer(ILogger<AccountApprovedConsumer> logger, IBus bus,
+//        public RegistrationSuccessConsumer(ILogger<RegistrationSuccessConsumer> logger, IBus bus,
 //                                       IMessageTemplateService messageTemplate)
 //        {
 //            _logger = logger;
@@ -25,19 +25,19 @@
 //            _messageTemplate = messageTemplate;
 //        }
 
-//        public async Task ConsumeAsync(AccountApprovedEvent message, CancellationToken cancellationToken = default)
+//        public async Task ConsumeAsync(RegistrationSuccessEvent message, CancellationToken cancellationToken = default)
 //        {
 //            using (LogContext.PushProperty("IntegrationEventContext", $"{message}"))
 //            {
 
-//                _logger.LogInformation($"Account has been approved: {message}");
+//                _logger.LogInformation($"Registration success: {message}");
 
-//                _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
+//                _logger.LogInformation("-----Publishing RegistrationSuccesEvent integration event----- ");
 
 //                await _bus.SendReceive.SendAsync("EmailSenderService", new EmailData
 //                                                 {
 //                                                     RecipientMail = message.RecepientMail,
-//                                                     EmailBody = _messageTemplate.AccountApprovedTemplate(message)
+//                                                     EmailBody = _messageTemplate.RegistrationSuccessTemplate(message)
 //                                                 });
 //            }
 //        }

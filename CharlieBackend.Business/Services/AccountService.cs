@@ -19,11 +19,14 @@ namespace CharlieBackend.Business.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper,
+                              INotificationService notification)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notification = notification;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
@@ -55,6 +58,8 @@ namespace CharlieBackend.Business.Services
                     await _unitOfWork.CommitAsync();
 
                     transaction.Commit();
+
+                    await _notification.RegistrationSuccess(account);
 
                     return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
                    
