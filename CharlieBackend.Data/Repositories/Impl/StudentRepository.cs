@@ -21,6 +21,15 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Include(student => student.Account)
                     .ToListAsync();
         }
+
+        public Task<List<Student>> GetAllActiveAsync()
+        {
+            return _applicationContext.Students
+                    .Include(student => student.Account)
+                    .Where(student => student.Account.IsActive == true)
+                    .ToListAsync();
+        }
+
         public new Task<Student> GetByIdAsync(long id)
         {
             return _applicationContext.Students

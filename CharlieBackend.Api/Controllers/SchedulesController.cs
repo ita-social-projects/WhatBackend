@@ -41,22 +41,13 @@ namespace CharlieBackend.Api.Controllers
         }
 
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpGet("{scheduleId}")]
-        public async Task<ActionResult<ScheduleDto>> GetScheduleById(long scheduleId)
-        {
-            var foundSchedule = await _scheduleService.GetScheduleByIdAsync(scheduleId);
-
-            return foundSchedule.ToActionResult();
-        }
-
-        [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{studentGroupId}/groupSchedule")]
         public async Task<ActionResult<List<ScheduleDto>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
             var foundSchedules = await _scheduleService.GetSchedulesByStudentGroupIdAsync(studentGroupId);
 
             return foundSchedules == null ? 
-                Result<ScheduleDto>.Error(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
+                Result<ScheduleDto>.GetError(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
                 Ok(foundSchedules);
         }
 

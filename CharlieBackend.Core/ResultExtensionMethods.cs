@@ -28,8 +28,6 @@ namespace CharlieBackend.Core
                         return new BadRequestObjectResult(result.ErrorData.ErrorMessage);//400
                     case ErrorCode.InternalServerError:
                         return new StatusCodeResult(500);//500
-                    case ErrorCode.NullReference:
-                        return new BadRequestResult();//400
                     case ErrorCode.NotFound:
                         return new NotFoundObjectResult(result.ErrorData.ErrorMessage);//404
                     case ErrorCode.UnprocessableEntity:
