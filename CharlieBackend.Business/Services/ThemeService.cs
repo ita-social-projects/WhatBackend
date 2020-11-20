@@ -64,7 +64,6 @@ namespace CharlieBackend.Business.Services
         {
             var themes = await _unitOfWork.ThemeRepository.GetAllAsync();
 
-
             return Result<IList<ThemeDto>>
                 .GetSuccess(_mapper.Map<IList<ThemeDto>>(themes));
         }
