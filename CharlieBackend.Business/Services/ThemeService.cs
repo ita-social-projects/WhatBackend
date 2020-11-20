@@ -73,6 +73,13 @@ namespace CharlieBackend.Business.Services
         {
             var theme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(name);
 
+            if (theme == null)
+            {
+                return Result<ThemeDto>
+                 .GetError(ErrorCode.NotFound,
+                    $"Schedule with name = {name} does not exist");
+            }
+
             return Result<ThemeDto>
                 .GetSuccess(_mapper.Map<ThemeDto>(theme));
         }
@@ -81,7 +88,7 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-                if(themeDto == null)
+                if (themeDto == null)
                 {
                     return Result<ThemeDto>.GetError(ErrorCode.NotFound, "UpdateThemeDto is null");
                 }
