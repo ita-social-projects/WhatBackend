@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.Controllers
 
             var themes = await _themeService.GetAllThemesAsync();
 
-            return Ok(themes);
+            return themes.ToActionResult();
         }
 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
@@ -36,7 +36,7 @@ namespace CharlieBackend.Api.Controllers
 
             var themeResult = await _themeService.CreateThemeAsync(addThemeModel);
 
-            return Ok(themeResult);
+            return themeResult.ToActionResult();
 
         }
 

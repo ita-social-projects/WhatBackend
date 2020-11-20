@@ -20,7 +20,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<ThemeDto> CreateThemeAsync(CreateThemeDto themeDto)
+        public async Task<Result<ThemeDto>> CreateThemeAsync(CreateThemeDto themeDto)
         {
             try
             {
@@ -30,13 +30,14 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<ThemeDto>(createdThemeEntity);
+                return Result<ThemeDto>
+                    .GetSuccess(_mapper.Map<ThemeDto>(createdThemeEntity));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<ThemeDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -59,19 +60,21 @@ namespace CharlieBackend.Business.Services
 
         }
 
-        public async Task<IList<ThemeDto>> GetAllThemesAsync()
+        public async Task<Result<IList<ThemeDto>>> GetAllThemesAsync()
         {
             var themes = await _unitOfWork.ThemeRepository.GetAllAsync();
 
 
-            return _mapper.Map<IList<ThemeDto>>(themes);
+            return Result<IList<ThemeDto>>
+                .GetSuccess(_mapper.Map<IList<ThemeDto>>(themes));
         }
 
-        public async Task<ThemeDto> GetThemeByNameAsync(string name)
+        public async Task<Result<ThemeDto>> GetThemeByNameAsync(string name)
         {
             var theme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(name);
 
-            return _mapper.Map<ThemeDto>(theme);
+            return Result<ThemeDto>
+                .GetSuccess(_mapper.Map<ThemeDto>(theme));
         }
 
         public async Task<Result<ThemeDto>> UpdateThemeAsync(long themeId, UpdateThemeDto themeDto)
