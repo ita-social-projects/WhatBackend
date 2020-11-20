@@ -17,12 +17,9 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
     {
         public ViewModelMapping()
         {
-            #region Student groups mapping
-
             CreateMap<StudentGroupDto, StudentGroupViewModel>()
                 .ForMember(destination => destination.Students, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
                 .ForMember(destination => destination.Mentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
-
 
             CreateMap<StudentGroupDto, StudentGroupEditViewModel>()
                .ForMember(detination => detination.ActiveCourse, config => config.MapFrom(x => new CourseViewModel { Id = x.CourseId }))
@@ -31,31 +28,13 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 
-            #endregion
-
-
-            #region Student mapping
-
             CreateMap<StudentDto, StudentViewModel>();
 
             CreateMap<StudentViewModel, StudentViewModel>();
 
-            #endregion
-
-
-            #region Mentors mapping
-
             CreateMap<MentorViewModel, MentorViewModel>();
 
-            #endregion
-
-
-            #region Courses mapping
-
             CreateMap<CourseDto, CourseViewModel>();
-
-            #endregion
-
         }
     }
 }

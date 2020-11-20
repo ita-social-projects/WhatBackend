@@ -54,7 +54,6 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
@@ -90,6 +89,5 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             return true;
         }
-
     }
 }
