@@ -10,6 +10,9 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller for operations related to secretary entity
+    /// </summary>
     [Route("api/secretaries")]
     [ApiController]
     public class SecretariesController : ControllerBase
@@ -18,7 +21,9 @@ namespace CharlieBackend.Api.Controllers
         private readonly ISecretaryService _secretaryService;
         private readonly IAccountService _accountService;
         #endregion
-
+        /// <summary>
+        /// SecretariesController constructor to inject related services
+        /// </summary>
         public SecretariesController(ISecretaryService secretaryService, IAccountService accountService)
         {
             _secretaryService = secretaryService;
@@ -32,7 +37,6 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful secretary entity create</response>
         /// <response code="400">Account already assigned to secretary</response>
         /// <response code="404">Acccount not found</response>
-        /// <response code="500">Can not assign account to secretary</response>
         [SwaggerResponse(200, type: typeof(SecretaryDto))]
 
         [Authorize(Roles = "Admin")]
@@ -64,7 +68,6 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Returns updated data of secretary</response>
         /// <response code="404">Secretary not found</response>
         /// <response code="409">Email already taken</response>
-        /// <response code="500">Can not update secretary</response>
         [SwaggerResponse(200, type: typeof(UpdateSecretaryDto))]
         [Authorize(Roles = "Admin")]
         [HttpPut("{secretaryId}")]
@@ -80,7 +83,6 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Secretary successfully disabled</response>
         /// <response code="404">Secretary not found</response>
-        /// <response code="500">Can not disable secretary</response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
         public async Task<ActionResult> DisableSecretary(long secretaryId)
