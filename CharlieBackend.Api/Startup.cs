@@ -114,7 +114,7 @@ namespace CharlieBackend.Api
 
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
             
-            services.AddSwaggerExamplesFromAssemblies(Assembly.Load("CharlieBackend.Library"));
+            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
