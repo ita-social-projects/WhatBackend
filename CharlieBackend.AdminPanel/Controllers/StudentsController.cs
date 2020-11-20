@@ -48,7 +48,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudent(long id, UpdateStudentDto data)
         {
-            var updatedStudentGroup = await _studentService.UpdateStudentAsync(id, data, Request.Cookies["accessToken"]);
+            var updatedStudent = await _studentService.UpdateStudentAsync(id, data, Request.Cookies["accessToken"]);
 
             return RedirectToAction("AllStudents", "Students");
         }
@@ -56,7 +56,15 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudent(long id)
         {
-            var updatedStudentGroup = await _studentService.AddStudentAsync(id, Request.Cookies["accessToken"]);
+            var addedStudent = await _studentService.AddStudentAsync(id, Request.Cookies["accessToken"]);
+
+            return RedirectToAction("AllStudents", "Students");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DisableStudent(long id)
+        {
+            var disabledStudent = await _studentService.DisableStudentAsync(id, Request.Cookies["accessToken"]);
 
             return RedirectToAction("AllStudents", "Students");
         }

@@ -106,11 +106,12 @@ namespace CharlieBackend.AdminPanel.Services
             var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
             var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
 
-            var studentGroup = new StudentGroupEditViewModel();
-
-            studentGroup.AllCourses = await coursesTask;
-            studentGroup.AllStudents = await studentsTask;
-            studentGroup.AllMentors = await mentorsTask;
+            var studentGroup = new StudentGroupEditViewModel
+            {
+                AllCourses = await coursesTask,
+                AllStudents = await studentsTask,
+                AllMentors = await mentorsTask
+            };
 
             return studentGroup;
         }
@@ -118,10 +119,9 @@ namespace CharlieBackend.AdminPanel.Services
         public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto, string accessToken)
         {
             var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(updateDto), accessToken);
-            var updateStudentsForStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}/students", _mapper.Map<UpdateStudentsForStudentGroup>(updateDto), accessToken);
+
 
             await updateStudentGroupTask;
-            await updateStudentsForStudentGroupTask;
 
             return updateDto;
         }

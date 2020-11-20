@@ -15,9 +15,9 @@
                     <i class="fas fa-plus"></i>
                 </button>
                 <div class="dropdown-menu ">
-                    <form method="post" class="input-group" asp-action="AddStudent" asp-controller="Students" >
+                    <form method="post" class="input-group" asp-action="AddStudent" asp-controller="Students">
                         <input type="text" class="form-control" name="id" placeholder="Account id" />
-                        <button type="submit" class="btn btn-outline-success btn-sm" >
+                        <button type="submit" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-plus"></i>
                         </button>
                     </form>
@@ -39,6 +39,7 @@
                                     <th>Email</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
+                                    <th>Is active</th>
                                     <th>Controll</th>
                                 </tr>
                             </thead>
@@ -51,6 +52,7 @@
                                         <td>@item.Email</td>
                                         <td>@item.FirstName</td>
                                         <td>@item.LastName</td>
+                                        <td>@item.IsActive</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondar dropdown-toggle"
@@ -65,7 +67,7 @@
                                                         <span>Edit </span>
                                                     </a>
 
-                                                    <a href="#" class=" dropdown-item ">
+                                                    <a class="dropdown-item" asp-action="DisableStudent" asp-controller="Students" asp-route-id="@item.Id">
                                                         <i class="fas fa-trash"></i>
                                                         <span>Delete </span>
                                                     </a>

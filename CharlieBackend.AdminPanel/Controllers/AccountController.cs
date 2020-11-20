@@ -15,6 +15,7 @@ using System.Linq;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -31,13 +32,13 @@ namespace CharlieBackend.AdminPanel.Controllers
             _config = config;
         }
 
-        [HttpGet("Login")]
+        [HttpGet]
         public ViewResult Login()
         {
             return View();
         }
 
-        [HttpPost("Login")]
+        [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
             var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
@@ -54,7 +55,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
 
-        [HttpGet("LogOut")]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

@@ -20,6 +20,7 @@ namespace CharlieBackend.AdminPanel.Models.Students
         [StringLength(30)]
         public string LastName { get; set; }
 
+        public bool IsActive { get; set; }
       
     }
 }

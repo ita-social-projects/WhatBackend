@@ -5,6 +5,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,24 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync(string accessToken)
         {
-            var students = await _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students", accessToken);
+            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students", accessToken);
+            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students/active", accessToken);
 
-            return students;
+            var allStudents = await allStudentsTask;
+            var activeStudents = await activeStudentsTask;
+
+            Console.WriteLine("_-------all 1  " + JsonConvert.SerializeObject(allStudents));
+
+            foreach (var student in allStudents)
+            {
+                student.IsActive = activeStudents.Any(x => x.Id == student.Id);
+            }
+
+            Console.WriteLine("_-------active 2 " + JsonConvert.SerializeObject(activeStudents));
+
+            Console.WriteLine("_-------result 2 " + JsonConvert.SerializeObject(allStudents));
+
+            return allStudents;
         }
 
         public async Task<StudentEditViewModel> GetStudentByIdAsync(long id, string accessToken)
@@ -45,11 +61,9 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<UpdateStudentDto> UpdateStudentAsync(long id, UpdateStudentDto UpdateDto, string accessToken)
         {
-            var updateStudentTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/students/{id}", UpdateDto, accessToken);
+            var updatedStudent = await _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/students/{id}", UpdateDto, accessToken);
             
-            var updateStudent = await updateStudentTask;
-
-            return updateStudent;
+            return updatedStudent;
         }
 
         public async Task<StudentDto> AddStudentAsync(long id,  string accessToken)
@@ -57,6 +71,13 @@ namespace CharlieBackend.AdminPanel.Services
             var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>($"{_config.Value.Urls.Api.Https}/api/students/{id}", null, accessToken);
 
             return addedStudentTask;
+        }
+
+        public async Task<StudentDto> DisableStudentAsync(long id, string accessToken)
+        {
+            var disabledStudent = await _apiUtil.DeleteAsync<StudentDto>($"{_config.Value.Urls.Api.Https}/api/students/{id}", accessToken);
+
+            return disabledStudent;
         }
     }
 

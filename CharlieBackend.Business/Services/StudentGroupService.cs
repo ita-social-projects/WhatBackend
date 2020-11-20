@@ -157,9 +157,9 @@ namespace CharlieBackend.Business.Services
                     _unitOfWork.StudentGroupRepository.UpdateManyToMany(foundStudentGroup.StudentsOfStudentGroups, newStudentsOfStudentGroup);
                 }
 
-                if (updatedStudentGroupDto.MentorsIds != null)
+                if (updatedStudentGroupDto.MentorIds != null)
                 {
-                    var newMentorsOfStudentGroup = updatedStudentGroupDto.MentorsIds.Select(x => new MentorOfStudentGroup
+                    var newMentorsOfStudentGroup = updatedStudentGroupDto.MentorIds.Select(x => new MentorOfStudentGroup
                     {
                         StudentGroupId = foundStudentGroup.Id,
                         MentorId = x

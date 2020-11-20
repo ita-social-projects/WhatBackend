@@ -31,8 +31,6 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 
-            CreateMap<StudentGroupDto, UpdateStudentsForStudentGroup>();
-
             #endregion
 
 
