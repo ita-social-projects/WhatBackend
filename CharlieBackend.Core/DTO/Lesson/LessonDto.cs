@@ -21,6 +21,6 @@ namespace CharlieBackend.Core.DTO.Lesson
         [DataType(DataType.DateTime)]
         public DateTime LessonDate { get; set; }
 
-        public virtual IList<VisitDto> Visits { get; set; }
+        public virtual IList<VisitDto> LessonVisits { get; set; }
     }
 }

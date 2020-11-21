@@ -38,7 +38,6 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 400, API: 0">Account already assigned to secretary</response>
         /// <response code="HTTP: 404, API: 3">Acccount not found</response>
         [SwaggerResponse(200, type: typeof(SecretaryDto))]
-
         [Authorize(Roles = "Admin")]
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostSecretary(long accountId)

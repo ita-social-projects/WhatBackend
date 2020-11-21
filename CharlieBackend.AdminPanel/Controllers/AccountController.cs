@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("admin/account")]
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -32,13 +32,13 @@ namespace CharlieBackend.AdminPanel.Controllers
             _config = config;
         }
 
-        [HttpGet("Login")]
+        [HttpGet]
         public ViewResult Login()
         {
             return View();
         }
 
-        [HttpPost("Login")]
+        [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
             var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
@@ -54,8 +54,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-        [HttpGet("LogOut")]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -83,13 +82,12 @@ namespace CharlieBackend.AdminPanel.Controllers
                  new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
             };
            
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             // set authentication cookies
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(roleClaim));
 
             return true;
         }
-
     }
 }

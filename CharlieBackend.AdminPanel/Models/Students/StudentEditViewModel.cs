@@ -1,8 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CharlieBackend.AdminPanel.Models.StudentGroups;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Models.Students
 {
-    public class StudentViewModel
+    public class StudentEditViewModel
     {
         [Required]
         public long Id { get; set; }
@@ -20,6 +25,6 @@ namespace CharlieBackend.AdminPanel.Models.Students
         [StringLength(30)]
         public string LastName { get; set; }
 
-        public bool IsActive { get; set; }
+        public IList<StudentGroupViewModel> AllGroups { get; set; }
     }
 }

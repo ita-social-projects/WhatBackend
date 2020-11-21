@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.Models.ResultModel
 {
@@ -11,7 +13,7 @@ namespace CharlieBackend.Core.Models.ResultModel
     {
         public T Data { get; set; }
 
-        public ErrorData ErrorData { get; set; }
+        public ErrorData Error { get; set; }
 
         /// <summary>
         /// If followed code assume returning data without errors, use Success method. 
@@ -19,7 +21,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// </summary>
         /// <param name="transferredData">Any data type to return in calling method, 
         /// which will be converted into Return type</param>
-        /// <returns></returns>
+        /// <returns>Return transferred data in success option, or error data</returns>
         ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
         public static Result<T> GetSuccess(T transferredData)
         {
@@ -46,11 +48,11 @@ namespace CharlieBackend.Core.Models.ResultModel
         public static Result<T> GetError(ErrorCode errorCode, string errorMessage)
         {
             var newResult = new Result<T> 
-            { 
-                ErrorData = new ErrorData
+            {
+                Error = new ErrorData
                 {
-                    ErrorCode = errorCode,
-                    ErrorMessage = errorMessage
+                    Code = errorCode,
+                    Message = errorMessage
                 },
             };
 

@@ -2,12 +2,11 @@
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace CharlieBackend.Api.SwaggerExamples.SecretariesController
+namespace CharlieBackend.Library.SwaggerExamples.SecretaryController
 {
-    class PutSecretaryRequest : IExamplesProvider<UpdateSecretaryDto>
+    public class PutSecretaryRequest : IExamplesProvider<UpdateSecretaryDto>
     {
         public UpdateSecretaryDto GetExamples()
         {

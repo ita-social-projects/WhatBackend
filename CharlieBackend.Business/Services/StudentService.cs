@@ -75,7 +75,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<StudentDto>> GetAllStudentsAsync()
         {
-            var students = _mapper.Map<List<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+
+            return students;
+        }
+
+        public async Task<IList<StudentDto>> GetAllActiveStudentsAsync()
+        {
+            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllActiveAsync());
 
             return students;
         }

@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+
+    <!-- 404 Error Text -->
+    <div class="text-center">
+        <div class="error mx-auto" data-text="@ViewBag.statusCode">@ViewBag.statusCode</div>
+        <p class="text-gray-500 mb-0">Sorry, something went wrong...</p>
+        <a asp-controller="Home" asp-action="Index">&larr; Back to Dashboard</a>
+    </div>
+
+</div>

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Secretary;
 using Swashbuckle.AspNetCore.Filters;
-using CharlieBackend.Core.DTO.Secretary;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace CharlieBackend.Api.SwaggerExamples.SecretariesController
+namespace CharlieBackend.Library.SwaggerExamples.SecretaryController
 {
-    class PostSecretaryRequest : IExamplesProvider<SecretaryDto>
+    public class PostSecretaryRequest : IExamplesProvider<SecretaryDto>
     {
         public SecretaryDto GetExamples()
         {

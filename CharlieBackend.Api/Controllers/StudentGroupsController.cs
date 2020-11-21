@@ -7,6 +7,7 @@ using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
 using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
