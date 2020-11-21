@@ -76,7 +76,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(UpdateStudentGroupDto))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<UpdateStudentGroupDto>> PutStudentGroup(long id, [FromBody]UpdateStudentGroupDto studentGroupDto)
+        public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, [FromBody]UpdateStudentGroupDto studentGroupDto)
         {
             var isStudentGroupNameExist = await _studentGroupService
                    .IsGroupNameExistAsync(studentGroupDto.Name);
@@ -92,22 +92,6 @@ namespace CharlieBackend.Api.Controllers
             return updatedStudentGroup.ToActionResult();
         }
 
-        /// <summary>
-        /// Update students of stunde group
-        /// </summary>
-        /// <response code="200">Successful update of student group students</response>
-        /// <response code="HTTP: 400, API: 0">Error, given data is wrong</response>
-        [SwaggerResponse(200, type: typeof(UpdateStudentsForStudentGroup))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
-        [HttpPut("{id}/students")]
-        public async Task<ActionResult<UpdateStudentsForStudentGroup>> PutStudentsOfStudentGroup(long id, [FromBody]UpdateStudentsForStudentGroup studentGroupDto) 
-        {
-            var updatedStudentGroup = await _studentGroupService
-                    .UpdateStudentsForStudentGroupAsync(id, studentGroupDto);
-
-            return updatedStudentGroup.ToActionResult();
-        }
-        
         /// <summary>
         /// Gets all student groups
         /// </summary>
