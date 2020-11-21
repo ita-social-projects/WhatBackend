@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using CharlieBackend.Core.DTO.Mentor;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -55,16 +56,16 @@ namespace CharlieBackend.Api.UnitTest
                 .Callback<Mentor>(x => x.Id = mentorExpectedId);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
 
-            var menotrService = new MentorService(
+            var mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
                 _notificationServiceMock.Object);
 
             //Act
-            var nonExistingIdResult = await menotrService.CreateMentorAsync(0);
-            var successResult = await menotrService.CreateMentorAsync(1);
-            var alreadyAssignedResult = await menotrService.CreateMentorAsync(2);
+            var nonExistingIdResult = await mentorService.CreateMentorAsync(0);
+            var successResult = await mentorService.CreateMentorAsync(1);
+            var alreadyAssignedResult = await mentorService.CreateMentorAsync(2);
 
             //Assert
             Assert.Equal(ErrorCode.NotFound, nonExistingIdResult.Error.Code);
@@ -73,6 +74,35 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(successResult.Data.Id, mentorExpectedId);
 
             Assert.Equal(ErrorCode.ValidationError, alreadyAssignedResult.Error.Code);
+        }
+
+        [Fact]
+        public async Task GetAllMentorsAsync()
+        {
+            //Arrange
+            var Mentors = new List<Mentor>() {
+                new Mentor()
+                {
+
+                }
+            };
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.Add(It.IsAny<Mentor>()))
+                .Callback<Mentor>(x => x.Id = 1);
+            //_unitOfWorkMock.Setup(x => x.MentorRepository.GetAllAsync()).Returns();
+
+            var mentorService = new MentorService(
+                _accountServiceMock.Object,
+                _unitOfWorkMock.Object,
+                _mapper,
+                _notificationServiceMock.Object);
+
+            //Act
+            var successResult = await mentorService.GetAllMentorsAsync();
+
+            //Assert
+          //  Assert.Equal(1,successResult.Count);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
