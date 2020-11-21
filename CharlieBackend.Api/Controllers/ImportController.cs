@@ -10,12 +10,18 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller to manage import from external sources
+    /// </summary>
     [Route("api/imports")]
     [ApiController]
     public class ImportController : ControllerBase
     {
         private readonly IFileImportService _importService;
 
+        /// <summary>
+        /// Import controllers constructor
+        /// </summary>
         public ImportController(IFileImportService importService)
         {
             _importService = importService;
@@ -25,7 +31,7 @@ namespace CharlieBackend.Api.Controllers
         /// Imports data from file to application
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
-        /// <response code="400">File validation error</response>
+        /// <response code="HTTP: 400, API: 4">File validation error</response>
         [SwaggerResponse(200, type: typeof(List<StudentGroupFileModel>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [HttpPost]

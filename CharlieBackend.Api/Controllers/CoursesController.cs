@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Library.SwaggerExamples.CoursesController;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller to manage cources data
+    /// </summary>
     [Route("api/courses")]
     [ApiController]
     public class CoursesController : ControllerBase
@@ -16,6 +18,9 @@ namespace CharlieBackend.Api.Controllers
       
         private readonly ICourseService _coursesService;
 
+        /// <summary>
+        /// Courses controllers constructor
+        /// </summary>
         public CoursesController(ICourseService coursesService)
         {
             _coursesService = coursesService;
@@ -25,8 +30,7 @@ namespace CharlieBackend.Api.Controllers
         /// Adds new course
         /// </summary>
         /// <response code="200">Course succeesfully added</response>
-        /// <response code="409">Course already exists</response>
-        /// <response code="500">Can not create course</response>
+        /// <response code="HTTP: 409, API: 5">Course already exists</response>
         [SwaggerResponse(200, type: typeof(CourseDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPost]
@@ -55,7 +59,6 @@ namespace CharlieBackend.Api.Controllers
         /// Gets all cources
         /// </summary>
         /// <response code="200">Successful return of list of courses</response>
-        /// <response code="500">Unable to get courses list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         public async Task<ActionResult<IList<CourseDto>>> GetAllCourses()
@@ -70,8 +73,8 @@ namespace CharlieBackend.Api.Controllers
         /// Update course
         /// </summary>
         /// <response code="200">Successful update of course</response>
-        /// <response code="400">Bad request</response>
-        /// <response code="409">Course already exist</response>
+        /// <response code="HTTP: 400, API: 0">Bad request</response>
+        /// <response code="HTTP: 409, API: 5">Course already exist</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)

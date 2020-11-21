@@ -7,7 +7,7 @@ using CharlieBackend.Core.DTO.Secretary;
 
 namespace CharlieBackend.Api.SwaggerExamples.SecretariesController
 {
-    public class PostSecretaryRequest : IExamplesProvider<SecretaryDto>
+    internal class PostSecretaryRequest : IExamplesProvider<SecretaryDto>
     {
         public SecretaryDto GetExamples()
         {

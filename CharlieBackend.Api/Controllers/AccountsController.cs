@@ -1,24 +1,27 @@
 ﻿using System;
+using CharlieBackend.Core;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using CharlieBackend.Core.Entities;
+using Swashbuckle.AspNetCore.Filters;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Library.SwaggerExamples.AccountsController;
-using Swashbuckle.AspNetCore.Filters;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Api.SwaggerExamples.AccountsController;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller to manupulate with account
+    /// </summary>
     [Route("api/accounts")]
     [ApiController]
     public class AccountsController : ControllerBase
@@ -30,7 +33,9 @@ namespace CharlieBackend.Api.Controllers
         private readonly ISecretaryService _secretaryService;
         private readonly AuthOptions _authOptions;
         #endregion
-
+        /// <summary>
+        /// Account controller constructor
+        /// </summary>
         public AccountsController(IAccountService accountService,
                 IStudentService studentService,
                 IMentorService mentorService,
@@ -49,11 +54,10 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <returns>JWT</returns>
         /// <response code="200">User successfully logged in</response>
-        /// <response code="400">Impossible to log in</response>
-        /// <response code="401">Impossible to log in, wrong credentials</response>
-        /// <response code="401">Account is not active</response>
+        /// <response code="HTTP: 400, API: 0">Impossible to log in</response>
+        /// <response code="HTTP: 401, API: 1">Impossible to log in due to wrong credentials</response>
+        /// <response code="HTTP: 401, API: 1">Account is not active</response>
         /// <response code="403">Account not approved</response>
-        /// <response code="500">Impossible to log in</response>
         [SwaggerResponse(200, type: typeof(SignInResponse))]
         [SwaggerResponseHeader(200, "Authorization Bearer", "string", "token")]
         [Route("auth")]
@@ -161,8 +165,7 @@ namespace CharlieBackend.Api.Controllers
         /// Registration of account
         /// </summary>
         /// <response code="200">User successfully registered</response>
-        /// <response code="409">Email already exists</response>
-        /// <response code="500">Can not create account</response>
+        /// <response code="HTTP: 409, API: 5">Email already exists</response>
         [SwaggerResponse(200, type: typeof(AccountDto))]
         [Route("reg")]
         [HttpPost]
@@ -177,7 +180,6 @@ namespace CharlieBackend.Api.Controllers
         /// Returns all registered accounts
         /// </summary>
         /// <response code="200">Successful return of list of registered accounts</response>
-        /// <response code="500">Impossible to get list of registered accounts</response>
         [SwaggerResponse(200, type: typeof(IList<AccountDto>))]
         [Authorize(Roles = "Admin")]
         [HttpGet]
@@ -190,7 +192,6 @@ namespace CharlieBackend.Api.Controllers
         /// Returns all not assigned accounts
         /// </summary>
         /// <response code="200">Successful return of list of all accounts which is not assigned to any role entity</response>
-        /// <response code="500">Impossible to get registered accounts</response>
         [Route("NotAssigned")]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]

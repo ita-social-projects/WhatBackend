@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.SecretariesController
 {
-    public class PutSecretaryRequest : IExamplesProvider<UpdateSecretaryDto>
+    internal class PutSecretaryRequest : IExamplesProvider<UpdateSecretaryDto>
     {
         public UpdateSecretaryDto GetExamples()
         {

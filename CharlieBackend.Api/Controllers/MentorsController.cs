@@ -12,6 +12,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller to manage mentors and related data
+    /// </summary>
     [Route("api/mentors")]
     [ApiController]
     public class MentorsController : ControllerBase
@@ -20,7 +23,9 @@ namespace CharlieBackend.Api.Controllers
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
         #endregion
-
+        /// <summary>
+        /// Mentors controller constructor
+        /// </summary>
         public MentorsController(IMentorService mentorService, IAccountService accountService)
         {
             _mentorService = mentorService;
@@ -31,9 +36,8 @@ namespace CharlieBackend.Api.Controllers
         /// Assign account to mentor
         /// </summary>
         /// <response code="200">Successful assigning of account to mentor</response>
-        /// <response code="404">Can not find account</response>
-        /// <response code="400">Error, account already assigned</response>
-        /// <response code="500">Error while assigning mentor</response>
+        /// <response code="HTTP: 404, API: 3">Can not find account</response>
+        /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPost("{accountId}")]
@@ -48,7 +52,6 @@ namespace CharlieBackend.Api.Controllers
         /// Gets list of all mentors
         /// </summary>
         /// <response code="200">Successful return of mentors list</response>
-        /// <response code="500">Error while returning list of mentors</response>
         [SwaggerResponse(200, type: typeof(IList<MentorDto>))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
@@ -67,9 +70,8 @@ namespace CharlieBackend.Api.Controllers
         /// **courseIds** and **studentGroupIds** is optional
         /// </remarks>
         /// <response code="200">Successful update of mentor</response>
-        /// <response code="404">Mentor not found</response>
-        /// <response code="400">Can not update mentor due to data conflict</response>
-        /// <response code="500">Error while updating mentor</response>
+        /// <response code="HTTP: 404, API: 3">Mentor not found</response>
+        /// <response code="HTTP: 400, API: 5">Can not update mentor due to data conflict</response>
         [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{mentorId}")]
@@ -84,8 +86,7 @@ namespace CharlieBackend.Api.Controllers
         /// Disabling of mentor account
         /// </summary>
         /// <response code="204">Successful disabling of mentor</response>
-        /// <response code="400">Can not find mentor</response>
-        /// <response code="500">Error while disabling of mentor</response>
+        /// <response code="HTTP: 400, API: 3">Can not find mentor</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
