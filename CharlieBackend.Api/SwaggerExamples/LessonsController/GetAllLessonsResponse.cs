@@ -20,11 +20,10 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     MentorId = 2,
                     LessonDate = new DateTime(2015, 7, 20, 18, 30, 25),
                     StudentGroupId = 22,
-                    Visits = new List<VisitDto>()
+                    LessonVisits = new List<VisitDto>()
                 {
                     new VisitDto()
                     {
-                        Id = 11,
                         StudentId = 45,
                         StudentMark = 5,
                         Presence = true,
@@ -32,7 +31,6 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     },
                     new VisitDto()
                     {
-                        Id = 12,
                         StudentId = 74,
                         Presence = false,
                         Comment = ""
@@ -45,11 +43,10 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     MentorId = 2,
                     LessonDate = new DateTime(2015, 8, 20, 18, 30, 25),
                     StudentGroupId = 22,
-                    Visits = new List<VisitDto>()
+                    LessonVisits = new List<VisitDto>()
                 {
                     new VisitDto()
                     {
-                        Id = 13,
                         StudentId = 45,
                         StudentMark = 4,
                         Presence = true,
@@ -57,7 +54,6 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     },
                     new VisitDto()
                     {
-                        Id = 14,
                         StudentId = 74,
                         StudentMark = 4,
                         Presence = true,

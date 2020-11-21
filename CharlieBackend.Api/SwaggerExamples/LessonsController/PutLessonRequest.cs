@@ -15,7 +15,7 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
             {
                 LessonDate = new DateTime(2015, 8, 20, 18, 30, 25),
                 ThemeName = "New theme name",
-                Visits = new List<VisitDto>
+                LessonVisits = new List<VisitDto>
                  {
                     new VisitDto
                     {
