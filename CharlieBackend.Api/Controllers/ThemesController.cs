@@ -23,43 +23,36 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IList<ThemeDto>>> GetAllThemes()
         {
-
             var themes = await _themeService.GetAllThemesAsync();
 
-            return Ok(themes);
+            return themes.ToActionResult();
         }
 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost]
         public async Task<ActionResult<IList<ThemeDto>>> PostThemes(CreateThemeDto addThemeModel)
         {
-
             var themeResult = await _themeService.CreateThemeAsync(addThemeModel);
 
-            return Ok(themeResult);
-
+            return themeResult.ToActionResult();
         }
 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPut("{themeId}")]
         public async Task<ActionResult<IList<ThemeDto>>> UpdateTheme(long themeId, UpdateThemeDto UpdateThemeModel)
         {
-
             var themeResult = await _themeService.UpdateThemeAsync(themeId, UpdateThemeModel);
 
             return themeResult.ToActionResult();
-
         }
 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{themeId}")]
         public async Task<ActionResult<IList<ThemeDto>>> DeleteTheme(long themeId)
         {
-
             var themeResult = await _themeService.DeleteThemeAsync(themeId);
 
             return themeResult.ToActionResult();
-
         }
 
     }
