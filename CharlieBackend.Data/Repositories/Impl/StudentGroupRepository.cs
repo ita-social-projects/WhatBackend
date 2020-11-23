@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,19 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _applicationContext.StudentGroups
                     .Include(group => group.StudentsOfStudentGroups)
                     .Include(group => group.MentorsOfStudentGroups).ToListAsync();
+        }
+
+        public async Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.StudentsOfStudentGroups)
+                    .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == id))
+                    .Select(x => new StudentStudyGroupsDto 
+                    { 
+                        Id = x.Id,
+                        Name = x.Name
+                    }).ToListAsync();
+                   
         }
 
         public async Task<bool> IsGroupNameExistAsync(string name)

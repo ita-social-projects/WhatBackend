@@ -57,5 +57,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(student => 
                     student.Account.Email == email && student.Account.Role == UserRole.Student);
         }
+
+        public bool IsStudentExist(long studentId)
+        {
+            return _applicationContext.Students.Any(x => x.Id == studentId);
+        }
+
     }
 }

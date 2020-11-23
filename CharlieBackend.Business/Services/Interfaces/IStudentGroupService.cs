@@ -11,6 +11,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync();
 
+        Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id);
+
         Task<Result<bool>> IsGroupNameExistAsync(string groupName);
 
         bool DeleteStudentGrop(long StudentGroupId);

@@ -89,7 +89,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<bool>> IsGroupNameExistAsync(string name)
         {
-            if(name == null)
+            if (name == null)
             {
                 return Result<bool>.GetError(ErrorCode.ValidationError, "Name is null");
             }
@@ -112,7 +112,7 @@ namespace CharlieBackend.Business.Services
         }
 
         // if we set StudentIds or MentorsIds to null, they won't update
-        public async Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto updatedStudentGroupDto) 
+        public async Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto updatedStudentGroupDto)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace CharlieBackend.Business.Services
 
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
 
@@ -192,6 +192,23 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+        }
+
+        public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
+        {
+            var foundGroups = await _unitOfWork.StudentGroupRepository.GetStudentStudyGroups(id);
+
+            if (!_unitOfWork.StudentRepository.IsStudentExist(id))
+            {
+                return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Student doesn`t exist");
+            }
+
+            if (!foundGroups.Any())
+            {
+                return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, $"Study groups for student with id {id} not found");
+            }
+
+            return Result<IList<StudentStudyGroupsDto>>.GetSuccess(foundGroups);
         }
 
     }
