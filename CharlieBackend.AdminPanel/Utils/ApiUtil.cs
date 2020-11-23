@@ -41,7 +41,7 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.GetAsync(url, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
@@ -54,7 +54,7 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
@@ -67,7 +67,7 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.PutJsonAsync(url, data, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
@@ -81,7 +81,7 @@ namespace CharlieBackend.AdminPanel.Utils
         {
             var httpResponse = await _httpUtil.DeleteAsync(url, accessToken);
 
-            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 

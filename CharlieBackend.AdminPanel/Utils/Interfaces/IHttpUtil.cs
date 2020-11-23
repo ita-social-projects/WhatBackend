@@ -14,7 +14,7 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
 
         Task<HttpResponseMessage> DeleteAsync(string url, string accessToken = null);
 
-        void EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
+        Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
 
     }
 }
