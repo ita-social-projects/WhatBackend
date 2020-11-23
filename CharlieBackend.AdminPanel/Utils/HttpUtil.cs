@@ -7,6 +7,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
+using CharlieBackend.AdminPanel.Exceptions;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
@@ -76,6 +77,14 @@ namespace CharlieBackend.AdminPanel.Utils
             var responseMessage = await _client.SendAsync(requestMessage);
 
             return responseMessage;
+        }
+
+        public void EnsureSuccessStatusCode(HttpResponseMessage httpResponse)
+        {
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new HttpStatusException(httpResponse);
+            }
         }
 
     }
