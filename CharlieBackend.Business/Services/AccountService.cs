@@ -21,7 +21,8 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper,
+        public AccountService(IUnitOfWork unitOfWork, 
+                              IMapper mapper,
                               INotificationService notification)
         {
             _unitOfWork = unitOfWork;

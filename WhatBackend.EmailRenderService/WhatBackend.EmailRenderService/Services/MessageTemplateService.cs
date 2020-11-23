@@ -5,7 +5,7 @@ namespace WhatBackend.EmailRenderService.Services
 {
     public class MessageTemplateService : IMessageTemplateService
     {
-        public string AccountApprovedTemplate(AccountApprovedEvent message)
+        public string GetAccountApprovedTemplate(AccountApprovedEvent message)
         {
 
             string header = "WHAT Project";
@@ -52,7 +52,7 @@ namespace WhatBackend.EmailRenderService.Services
             return emailBody;
         }
 
-        public string RegistrationSuccessTemplate(RegistrationSuccessEvent message)
+        public string GetRegistrationSuccessTemplate(RegistrationSuccessEvent message)
         {
             string header = "WHAT Project";
             string emailBody =

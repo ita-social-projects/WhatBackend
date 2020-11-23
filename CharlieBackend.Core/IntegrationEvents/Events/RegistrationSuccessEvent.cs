@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
-using CharlieBackend.Core.IntegrationEvents.Abstractions;
 
 namespace CharlieBackend.Core.IntegrationEvents.Events
 {
     //immutable
-    public class RegistrationSuccessEvent : IEvent
+    public class RegistrationSuccessEvent
     {
         [JsonConstructor]
-        public RegistrationSuccessEvent(string recepientMail, string firstName,
+        public RegistrationSuccessEvent(string recepientMail, 
+                                        string firstName,
                                         string lastName)
         {
             RecepientMail = recepientMail;

@@ -12,12 +12,14 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 {
     public class EventConsumer : IConsumeAsync<AccountApprovedEvent>, IConsumeAsync<RegistrationSuccessEvent>
     {
+        private const string queueName = "EmailSenderService";
         private readonly ILogger<EventConsumer> _logger;
         private readonly IBus _bus;
         private readonly IMessageTemplateService _messageTemplate;
 
-        public EventConsumer(ILogger<EventConsumer> logger, IBus bus,
-                                       IMessageTemplateService messageTemplate)
+        public EventConsumer(ILogger<EventConsumer> logger, 
+                             IBus bus,
+                             IMessageTemplateService messageTemplate)
         {
             _logger = logger;
             _bus = bus;
@@ -33,10 +35,10 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 
                 _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
 
-                await _bus.SendReceive.SendAsync("EmailSenderService", new EmailData
+                await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.AccountApprovedTemplate(message)
+                    EmailBody = _messageTemplate.GetAccountApprovedTemplate(message)
                 });
             }
         }
@@ -50,10 +52,10 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 
                 _logger.LogInformation("-----Publishing RegistrationSuccesEvent integration event----- ");
 
-                await _bus.SendReceive.SendAsync("EmailSenderService", new EmailData
+                await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.RegistrationSuccessTemplate(message)
+                    EmailBody = _messageTemplate.GetRegistrationSuccessTemplate(message)
                 });
             }
         }

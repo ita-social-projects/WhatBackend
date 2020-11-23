@@ -1,16 +1,17 @@
 ﻿using Newtonsoft.Json;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.IntegrationEvents.Abstractions;
 
 namespace CharlieBackend.Core.IntegrationEvents.Events
 {
     //immutable
-    public class AccountApprovedEvent : IEvent
+    public class AccountApprovedEvent
     {
 
         [JsonConstructor]
-        public AccountApprovedEvent(string recepientMail, string firstName,
-                                   string lastName, UserRole role)
+        public AccountApprovedEvent(string recepientMail, 
+                                    string firstName,
+                                    string lastName, 
+                                    UserRole role)
         {
             RecepientMail = recepientMail;
             FirstName = firstName;

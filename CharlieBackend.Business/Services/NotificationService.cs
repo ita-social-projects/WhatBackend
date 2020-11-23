@@ -9,6 +9,7 @@ namespace CharlieBackend.Business.Services
 {
     public class NotificationService : INotificationService
     {
+        private const string queueName = "EmailRenderService";
         private readonly IBus _bus;
         private readonly ILogger<NotificationService> _logger;
 
@@ -23,7 +24,7 @@ namespace CharlieBackend.Business.Services
             _logger.LogInformation($"AccountApprovedEvent has been sent for user " +
                                    $"{account.FirstName} {account.LastName}");
 
-            await _bus.SendReceive.SendAsync("EmailRenderService", new AccountApprovedEvent(account.Email,
+            await _bus.SendReceive.SendAsync(queueName, new AccountApprovedEvent(account.Email,
                                        account.FirstName, account.LastName, account.Role));
         }
 
@@ -32,7 +33,7 @@ namespace CharlieBackend.Business.Services
             _logger.LogInformation($"RegistrationSuccessEvent has been sent for user " +
                                    $"{account.FirstName} {account.LastName}");
 
-            await _bus.SendReceive.SendAsync("EmailRenderService", new RegistrationSuccessEvent(account.Email,
+            await _bus.SendReceive.SendAsync(queueName, new RegistrationSuccessEvent(account.Email,
                                        account.FirstName, account.LastName));
         }
     }
