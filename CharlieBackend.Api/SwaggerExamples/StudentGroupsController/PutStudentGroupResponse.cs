@@ -16,7 +16,9 @@ namespace CharlieBackend.Api.SwaggerExamples.StudentGroupsController
                 CourseId = 13,
                 Name = "LVX-18",
                 StartDate = new DateTime(2015, 7, 20),
-                FinishDate = new DateTime(2015, 7, 20)
+                FinishDate = new DateTime(2015, 7, 20),
+                StudentIds = new List<long> { 11, 46, 38 },
+                MentorIds = new List<long> { 12, 34, 23 }
             };
         }
     }
