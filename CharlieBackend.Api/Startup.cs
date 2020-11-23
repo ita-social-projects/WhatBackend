@@ -79,10 +79,15 @@ namespace CharlieBackend.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "19.11.2020" });
                 c.ExampleFilters();
+                c.OperationFilter<AddResponseHeadersFilter>();
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
+               c.IncludeXmlComments(xmlPath);
+
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.IncludeXmlComments(xmlPath); 
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

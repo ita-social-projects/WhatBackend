@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -34,8 +35,8 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <param name="accountId">Account id to approve</param>
         /// <response code="200">Successful secretary entity create</response>
-        /// <response code="400">Account already assigned to secretary</response>
-        /// <response code="404">Acccount not found</response>
+        /// <response code="HTTP: 400, API: 0">Account already assigned to secretary</response>
+        /// <response code="HTTP: 404, API: 3">Acccount not found</response>
         [SwaggerResponse(200, type: typeof(SecretaryDto))]
         [Authorize(Roles = "Admin")]
         [HttpPost("{accountId}")]
@@ -64,8 +65,8 @@ namespace CharlieBackend.Api.Controllers
         /// Updates exact secretary entity
         /// </summary>
         /// <response code="200">Returns updated data of secretary</response>
-        /// <response code="404">Secretary not found</response>
-        /// <response code="409">Email already taken</response>
+        /// <response code="HTTP: 404, API: 3">Secretary not found</response>
+        /// <response code="HTTP: 409, API: 5">Email already taken</response>
         [SwaggerResponse(200, type: typeof(UpdateSecretaryDto))]
         [Authorize(Roles = "Admin")]
         [HttpPut("{secretaryId}")]
@@ -80,7 +81,7 @@ namespace CharlieBackend.Api.Controllers
         /// Disable secretary entity
         /// </summary>
         /// <response code="200">Secretary successfully disabled</response>
-        /// <response code="404">Secretary not found</response>
+        /// <response code="HTTP: 404, API: 3">Secretary not found</response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
         public async Task<ActionResult> DisableSecretary(long secretaryId)
