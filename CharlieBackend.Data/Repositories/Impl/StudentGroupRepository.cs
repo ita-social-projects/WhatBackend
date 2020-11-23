@@ -51,7 +51,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Id = x.Id,
                         Name = x.Name
                     }).ToListAsync();
-                   
         }
 
         public async Task<bool> IsGroupNameExistAsync(string name)

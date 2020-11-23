@@ -62,6 +62,5 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return _applicationContext.Students.Any(x => x.Id == studentId);
         }
-
     }
 }

@@ -210,6 +210,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<IList<StudentStudyGroupsDto>>.GetSuccess(foundGroups);
         }
-
     }
 }

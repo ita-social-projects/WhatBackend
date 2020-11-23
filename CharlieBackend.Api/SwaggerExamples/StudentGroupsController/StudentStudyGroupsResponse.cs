@@ -23,7 +23,6 @@ namespace CharlieBackend.Api.SwaggerExamples.StudentGroupsController
                     Id = 14,
                     Name = "DP-20"
                 }
-
             };
         }
     }
