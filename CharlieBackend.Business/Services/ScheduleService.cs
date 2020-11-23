@@ -82,11 +82,12 @@ namespace CharlieBackend.Business.Services
                 $"Schedule with id={id} does not exist");
         }
 
-        public async Task<IList<ScheduleDto>> GetAllSchedulesAsync()
+        public async Task<Result<IList<ScheduleDto>>> GetAllSchedulesAsync()
         {
             var scheduleEntities = await _unitOfWork.ScheduleRepository.GetAllAsync();
 
-            return _mapper.Map<IList<ScheduleDto>>(scheduleEntities);
+            return Result<IList<ScheduleDto>>.GetSuccess(
+                _mapper.Map<IList<ScheduleDto>>(scheduleEntities));
         }
 
         public async Task<Result<ScheduleDto>> GetScheduleByIdAsync(long id)
@@ -98,7 +99,7 @@ namespace CharlieBackend.Business.Services
                 Result<ScheduleDto>.GetSuccess(_mapper.Map<ScheduleDto>(scheduleEntity));
         }
 
-        public async Task<IList<ScheduleDto>> GetSchedulesByStudentGroupIdAsync(long id)
+        public async Task<Result<IList<ScheduleDto>>> GetSchedulesByStudentGroupIdAsync(long id)
         {
             var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
 
@@ -108,7 +109,8 @@ namespace CharlieBackend.Business.Services
             }
             var schedulesOfGroup = await _unitOfWork.ScheduleRepository.GetSchedulesByStudentGroupIdAsync(id);
 
-            return _mapper.Map<IList<ScheduleDto>>(schedulesOfGroup);
+            return Result<IList<ScheduleDto>>.GetSuccess(
+                _mapper.Map<IList<ScheduleDto>>(schedulesOfGroup));
         }
 
         public async Task<Result<ScheduleDto>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)

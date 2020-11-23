@@ -57,7 +57,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ScheduleDto>>> GetAllSchedules()
         {
-            return Ok(await _scheduleService.GetAllSchedulesAsync());
+            var resSchedule = await _scheduleService.GetAllSchedulesAsync();
+            return resSchedule.ToActionResult();
         }
 
         /// <summary>
@@ -72,9 +73,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var foundSchedules = await _scheduleService.GetSchedulesByStudentGroupIdAsync(studentGroupId);
 
-            return foundSchedules == null ? 
-                Result<ScheduleDto>.GetError(ErrorCode.NotFound, "studentGroupId is not valid").ToActionResult() :
-                Ok(foundSchedules);
+            return foundSchedules.ToActionResult();
         }
 
         /// <summary>
