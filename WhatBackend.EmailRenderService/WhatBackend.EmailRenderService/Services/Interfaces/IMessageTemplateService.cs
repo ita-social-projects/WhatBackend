@@ -6,6 +6,7 @@ namespace WhatBackend.EmailRenderService.Services.Interfaces
     public interface IMessageTemplateService
     {
         public string AccountApprovedTemplate(AccountApprovedEvent message);
+
         public string RegistrationSuccessTemplate(RegistrationSuccessEvent message);
     }
 }

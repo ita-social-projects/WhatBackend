@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.Core.IntegrationEvents.Events;
+﻿using CharlieBackend.Core.IntegrationEvents.Events;
 using WhatBackend.EmailRenderService.Services.Interfaces;
 
 namespace WhatBackend.EmailRenderService.Services
@@ -73,6 +69,9 @@ namespace WhatBackend.EmailRenderService.Services
                                     "<td style='display: block !important;clear: both !important;margin: 0 auto !important;max-width: 580px !important;'>" +
                                         "<p>" +
                                             "Welcome, " + message.FirstName + " " + message.LastName + "! " + "Your account registration is success!" +
+                                        "</p>" +
+                                        "<p>" +
+                                            "Please await approving for your account." +
                                         "</p>" +
                                     "</td>" +
                                 "</tr>" +

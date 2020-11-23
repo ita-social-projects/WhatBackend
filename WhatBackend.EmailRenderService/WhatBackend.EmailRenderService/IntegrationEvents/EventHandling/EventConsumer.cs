@@ -24,7 +24,6 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
             _messageTemplate = messageTemplate;
         }
 
-        [ForTopic("CharlieBackend.Core.IntegrationEvents.Events.AccountApprovedEvent, CharlieBackend.Core")]
         public async Task ConsumeAsync(AccountApprovedEvent message, CancellationToken cancellationToken = default)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message}"))
@@ -42,7 +41,6 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
             }
         }
 
-        [ForTopic("CharlieBackend.Core.IntegrationEvents.Events.RegistrationSuccessEvent, CharlieBackend.Core")]
         public async Task ConsumeAsync(RegistrationSuccessEvent message, CancellationToken cancellationToken = default)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message}"))

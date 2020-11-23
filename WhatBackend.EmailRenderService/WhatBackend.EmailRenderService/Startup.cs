@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WhatBackend.EmailRenderService.IntegrationEvents;
 using WhatBackend.EmailRenderService.Services.Interfaces;
 using WhatBackend.EmailRenderService.IntegrationEvents.EventHandling;
+using CharlieBackend.Core.IntegrationEvents.Events;
 using System;
 
 namespace WhatBackend.EmailRenderService
@@ -29,18 +30,15 @@ namespace WhatBackend.EmailRenderService
         {
             
             services.AddCors();
-            services.AddScoped<IMessageTemplateService, MessageTemplateService>();
+            services.AddSingleton<IMessageTemplateService, MessageTemplateService>();
             services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
             services.AddSingleton<MessageDispatcher>();
-            //services.AddScoped<RegistrationSuccessConsumer>();
-            //services.AddScoped<AccountApprovedConsumer>();
             services.AddScoped<EventConsumer>();
 
             services.AddSingleton(provider =>
             {
                 var subscriber = new AutoSubscriber(provider.GetRequiredService<IBus>(), "EmailRenderService")
                 {
-                    //GenerateSubscriptionId = c => AppDomain.CurrentDomain.FriendlyName + c.ConcreteType.Name,
                     AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>(),
                     ConfigureSubscriptionConfiguration = new System.Action<ISubscriptionConfiguration>(c => c.WithQueueName("EmailRenderService"))
                 };
@@ -57,7 +55,11 @@ namespace WhatBackend.EmailRenderService
             IBus bus
             )
         {
-            applicationLifetime.ApplicationStopped.Register(OnShutdown, bus);
+            //When the application is stopping we need to make unsubscribe for IBus.
+            //Important! Even in debugg mode finish this application with Ctrl+C in a console to make sure
+            //what unsubscribe was done well.
+            applicationLifetime.ApplicationStopping.Register(OnShutdown, bus);
+
             //registering message consumers
             app.ApplicationServices.GetRequiredService<AutoSubscriber>().SubscribeAsync(new[] { Assembly.GetExecutingAssembly() });
 
@@ -78,6 +80,7 @@ namespace WhatBackend.EmailRenderService
 
             app.UseRouting();
         }
+
         private void OnShutdown(object toDispose)
         {
             ((IDisposable)toDispose).Dispose();
