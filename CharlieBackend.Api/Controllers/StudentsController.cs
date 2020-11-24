@@ -65,27 +65,39 @@ namespace CharlieBackend.Api.Controllers
 
             if (studentModel != null)
             {
-                return Ok(studentModel); //student_group_ids = studentModel.StudentGroupIds, // TODO fix
-          
+                return Ok(studentModel); 
             }
 
             return StatusCode(409, "Cannot find student with such id.");
         }
 
         /// <summary>
-        /// Get all students
+        /// Get all students (active and unactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
         [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() // returns all students (active and unactive)
+        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() 
         {
 
             var studentsModels = await _studentService.GetAllStudentsAsync();
 
             return Ok(studentsModels);
+        }
 
+        /// <summary>
+        /// Get only active students
+        /// </summary>
+        /// <response code="200">Successful return of students list</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("active")]
+        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
+        {
+
+            var studentsModels = await _studentService.GetAllActiveStudentsAsync();
+
+            return Ok(studentsModels);
         }
 
         /// <summary>
@@ -95,17 +107,6 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, can not find student</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(UpdateStudentDto))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpGet("active")]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents() // returns only active students
-        {
-
-            var studentsModels = await _studentService.GetAllActiveStudentsAsync();
-
-            return Ok(studentsModels);
-
-        }
-
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPut("{studentId}")]
         public async Task<ActionResult> PutStudent(long studentId, [FromBody]UpdateStudentDto studentModel)
