@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CharlieBackend.AdminPanel.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CharlieBackend.AdminPanel.Middlewares
 
@@ -25,13 +26,11 @@ namespace CharlieBackend.AdminPanel.Middlewares
             {
                 await _next(context);
             }
-            catch (HttpRequestException ex)
+            catch (HttpStatusException ex)
             {
-                Regex regex = new Regex(@"\d{3}");
+                _logger.LogError($"Something went wrong with API. {ex.Message}");
 
-                _logger.LogError($"Something went wrong with API: {ex}");
-
-                context.Response.Redirect($"/Home/ApiError/{regex.Match(ex.Message).Value}");
+                context.Response.Redirect($"/Home/ApiError/{(uint)ex.HttpStatusCode}/{ex.Message}");
             }
             catch (Exception ex)
             {

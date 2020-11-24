@@ -7,6 +7,8 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
+using CharlieBackend.AdminPanel.Exceptions;
+using CharlieBackend.Core.DTO.Result;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
@@ -76,6 +78,18 @@ namespace CharlieBackend.AdminPanel.Utils
             var responseMessage = await _client.SendAsync(requestMessage);
 
             return responseMessage;
+        }
+
+        public async Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse)
+        {
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                string apiStringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+                var apiResponseMessage = JsonConvert.DeserializeObject<ErrorDto>(apiStringResponse).Error.Message;
+
+                throw new HttpStatusException(httpResponse.StatusCode, apiResponseMessage);
+            }
         }
 
     }
