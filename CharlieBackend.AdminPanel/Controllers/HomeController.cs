@@ -16,10 +16,12 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View();
         }
 
-        [Route("Home/ApiError/{statusCode}")]
-        public IActionResult ApiError(uint statusCode)
+        [Route("Home/ApiError/{statusCode}/{message}")]
+        public IActionResult ApiError(uint statusCode, string message)
         {
             ViewBag.statusCode = statusCode;
+            ViewBag.message = message;
+
             return View();
         }
     }
