@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Core.DTO.StudentGroups;
+﻿using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;

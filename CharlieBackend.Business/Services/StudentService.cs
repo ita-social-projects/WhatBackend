@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -85,6 +86,23 @@ namespace CharlieBackend.Business.Services
             var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllActiveAsync());
 
             return students;
+        }
+
+        public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
+        {
+            if (!await _unitOfWork.StudentRepository.IsEntityExistAsync(id))
+            {
+                return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Student doesn`t exist");
+            }
+
+            var foundGroups = await _unitOfWork.StudentGroupRepository.GetStudentStudyGroups(id);
+
+            if (!foundGroups.Any())
+            {
+                return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, $"Study groups for student with id {id} not found");
+            }
+
+            return Result<IList<StudentStudyGroupsDto>>.GetSuccess(foundGroups);
         }
 
         public async Task<Result<StudentDto>> UpdateStudentAsync(long studentId, UpdateStudentDto studentModel)

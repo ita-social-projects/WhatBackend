@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CharlieBackend.Core.DTO.StudentGroups
+namespace CharlieBackend.Core.DTO.Student
 {
     public class StudentStudyGroupsDto
     {

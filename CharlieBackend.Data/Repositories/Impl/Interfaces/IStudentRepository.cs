@@ -16,7 +16,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds);
 
         Task<Student> GetStudentByEmailAsync(string email);
-
-        bool IsStudentExist(long studentId);
     }
 }
