@@ -9,6 +9,22 @@
 
     <div id="content">
 
+        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+            <div class="dropleft">
+                <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="dropdown-menu ">
+                    <form style="min-width: 170px;" method="post" class="input-group" asp-action="AddTheme" asp-controller="Themes">
+                        <input type="text" class="form-control" name="Name" placeholder="Theme`s name" />
+                        <button type="submit" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid">
 
             <div class="card shadow mb-4">
@@ -26,25 +42,32 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.Name</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondar dropdown-toggle"
-                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" asp-action="DeleteTheme" asp-controller="Themes" asp-route-id="@item.Id">
-                                                    <i class="fas fa-pen"></i>
-                                                    <span>Delete</span>
-                                                </a>
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Name</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                    <a class="dropdown-item" asp-action="UpdateTheme" asp-controller="Themes" asp-route-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Edit </span>
+                                                    </a>
+
+                                                    <a class="dropdown-item" asp-action="DeleteTheme" asp-controller="Themes" asp-route-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Delete</span>
+                                                    </a>
+
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>

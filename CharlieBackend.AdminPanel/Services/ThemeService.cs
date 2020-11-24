@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.AdminPanel.Models.Theme;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Core.DTO.Theme;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,25 @@ namespace CharlieBackend.AdminPanel.Services
         public async Task DeleteTheme(long id, string accessToken)
         {
             await
-                _apiUtil.DeleteAsync<ThemeViewModel>($"{_config.Value.Urls.Api.Https}/api/themes", accessToken);
+                _apiUtil.DeleteAsync<ThemeViewModel>($"{_config.Value.Urls.Api.Https}/api/themes/{id}", accessToken);
+        }
+
+        public async Task UpdateTheme(long id, UpdateThemeDto UpdateDto, string accessToken)
+        {
+            await
+                _apiUtil.PutAsync<UpdateThemeDto>($"{_config.Value.Urls.Api.Https}/api/themes/{id}", UpdateDto, accessToken);
         }
 
         public async Task<IList<ThemeViewModel>> GetAllThemesAsync(string accessToken)
         {
             return await
                 _apiUtil.GetAsync<IList<ThemeViewModel>>($"{_config.Value.Urls.Api.Https}/api/themes", accessToken);
+        }
+
+        public async Task AddThemeAsync(CreateThemeDto themeDto, string accessToken)
+        {
+            await
+                _apiUtil.CreateAsync<CreateThemeDto>($"{_config.Value.Urls.Api.Https}/api/themes", themeDto, accessToken);
         }
     }
 }
