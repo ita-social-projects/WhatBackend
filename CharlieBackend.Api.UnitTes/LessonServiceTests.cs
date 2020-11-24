@@ -68,16 +68,16 @@ namespace CharlieBackend.Api.UnitTest
                 LessonVisits = visitsDto
             };
 
-            //var lesson = new Lesson()
-            //{
-            //    MentorId = 2,
-            //    StudentGroupId = 3,
-            //    ThemeId = 5,
-            //    Mentor = mentor,
-            //    StudentGroup = studentGroup,
-            //    Theme = theme,
-            //    Visits = { }
-            //};
+            var lesson = new Lesson()
+            {
+                MentorId = 2,
+                StudentGroupId = 3,
+                ThemeId = 5,
+                Mentor = mentor,
+                StudentGroup = studentGroup,
+                Theme = theme,
+                Visits = { }
+            };
 
             var lessonRepositoryMock = new Mock<ILessonRepository>();
             lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
@@ -94,7 +94,24 @@ namespace CharlieBackend.Api.UnitTest
                     x.Visits = visits;
                 });
 
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.Add(It.IsAny<Theme>()))
+                .Callback<Theme>(x =>
+                {
+                    x.Id = 5;
+                    x.Name = "ExampleName";
+                });
+
+            //var visitRepositoryMock = new Mock<IVisitRepository>();
+            //visitRepositoryMock.Setup(x => x.Add(It.IsAny<Visit>()))
+            //    .Callback<Visit>(x =>
+            //    {
+                    
+            //    });
+
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            //_unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
 
             var lessonService = new LessonService(
                 _unitOfWorkMock.Object,
@@ -105,7 +122,12 @@ namespace CharlieBackend.Api.UnitTest
             var succesResult = await lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            Assert.Equal(createdLesson, succesResult);
+            Assert.Equal(createdLesson.Id, succesResult.Id);
+            Assert.Equal(createdLesson.LessonDate, succesResult.LessonDate);
+            Assert.Equal(createdLesson.LessonVisits, succesResult.LessonVisits);
+            Assert.Equal(createdLesson.MentorId, succesResult.MentorId);
+            Assert.Equal(createdLesson.StudentGroupId, succesResult.StudentGroupId);
+            Assert.Equal(createdLesson.ThemeName, succesResult.ThemeName);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
