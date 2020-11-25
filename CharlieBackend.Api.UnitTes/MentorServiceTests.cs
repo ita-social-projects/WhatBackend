@@ -105,6 +105,94 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(Mentors.Count, successResult.Count);
         }
 
+        [Fact]
+        public async Task UpdateMentorAsync()
+        {
+            //Arrange
+            string usedEmail = "used@gmail.com";
+
+            var nonExistingUpdateMentorDto = new UpdateMentorDto();
+
+            var successUpdateMentorDto = new UpdateMentorDto()
+            {
+                Email = "updateTest@gmail.com",
+                FirstName = "updateTest",
+                LastName = "updateTest"
+            };
+
+            var successMentor = new Mentor()
+            {
+                Id = 1,
+                AccountId = 1,
+                Account = new Account()
+                {
+                    Id = 1,
+                    Email = "test@gmail.com"
+                }
+            };
+
+
+            var alreadyExistingEmailUpdateMentorDto = new UpdateMentorDto()
+            {
+                Email = usedEmail,
+                FirstName = "updateTest",
+                LastName = "updateTest"
+            };
+
+            var alreadyExistingEmailMentor = new Mentor()
+            {
+                Id = 2,
+                AccountId = 2,
+                Account = new Account()
+                {
+                    Id = 2,
+                    Email = usedEmail
+                }
+            };
+
+            _accountServiceMock.Setup(x => x.IsEmailChangableToAsync(
+                    (long)successMentor.AccountId, successUpdateMentorDto.Email))
+                    .ReturnsAsync(true);
+
+            _accountServiceMock.Setup(x => x.IsEmailChangableToAsync(
+                    (long)alreadyExistingEmailMentor.AccountId, 
+                    usedEmail))
+                    .ReturnsAsync(false);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+
+            mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
+                    .ReturnsAsync(successMentor);
+            mentorRepositoryMock.Setup(x => x.GetByIdAsync(2))
+                    .ReturnsAsync(alreadyExistingEmailMentor);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
+
+            var mentorService = new MentorService(
+                _accountServiceMock.Object,
+                _unitOfWorkMock.Object,
+                _mapper,
+                _notificationServiceMock.Object);
+
+            //Act
+            var nonExistingIdResult = await mentorService
+                    .UpdateMentorAsync(0, nonExistingUpdateMentorDto);
+            var successResult = await mentorService
+                    .UpdateMentorAsync(1, successUpdateMentorDto);
+            var alreadyExistingEmailResult = await mentorService
+                    .UpdateMentorAsync(2, alreadyExistingEmailUpdateMentorDto);
+
+            //Assert
+            Assert.Equal(ErrorCode.NotFound, nonExistingIdResult.Error.Code);
+
+            Assert.NotNull(successResult.Data);
+            Assert.Equal(successResult.Data.Email, successUpdateMentorDto.Email);
+            Assert.Equal(successResult.Data.FirstName, successUpdateMentorDto.FirstName);
+            Assert.Equal(successResult.Data.LastName, successUpdateMentorDto.LastName);
+
+            Assert.Equal(ErrorCode.ValidationError, alreadyExistingEmailResult.Error.Code);
+        }
+
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
