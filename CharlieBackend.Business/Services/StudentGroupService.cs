@@ -35,6 +35,11 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "StudentGroupDto is null");
                 }
 
+                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(studentGroupDto.Name))
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                }
+
                 var studentGroup = new StudentGroup
                 {
                     Name = studentGroupDto.Name,
@@ -126,6 +131,11 @@ namespace CharlieBackend.Business.Services
                 if (foundStudentGroup == null)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student Group not found");
+                }
+
+                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
                 }
 
                 foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
