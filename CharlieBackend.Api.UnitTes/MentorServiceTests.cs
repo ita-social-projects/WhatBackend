@@ -81,16 +81,16 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             var Mentors = new List<Mentor>() {
-                new Mentor()
-                {
-
-                }
+                new Mentor() { },
+                new Mentor() { },
+                new Mentor() { }
             };
 
             var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.Add(It.IsAny<Mentor>()))
-                .Callback<Mentor>(x => x.Id = 1);
-            //_unitOfWorkMock.Setup(x => x.MentorRepository.GetAllAsync()).Returns();
+            mentorRepositoryMock.Setup(x => x.GetAllAsync())
+                    .ReturnsAsync(Mentors);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
 
             var mentorService = new MentorService(
                 _accountServiceMock.Object,
@@ -102,7 +102,7 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await mentorService.GetAllMentorsAsync();
 
             //Assert
-          //  Assert.Equal(1,successResult.Count);
+            Assert.Equal(Mentors.Count, successResult.Count);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
