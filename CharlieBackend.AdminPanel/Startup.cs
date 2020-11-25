@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using CharlieBackend.AdminPanel.Middlewares;
 using CharlieBackend.AdminPanel.Models.Mapping;
 using CharlieBackend.AdminPanel.Services;
 using CharlieBackend.AdminPanel.Services.Interfaces;
@@ -37,6 +38,8 @@ namespace CharlieBackend.AdminPanel
 
             services.AddTransient<IStudentService, StudentService>(); 
             services.AddTransient<IStudentGroupService, StudentGroupService>();
+            services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<IMentorService, MentorService>();
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -63,7 +66,7 @@ namespace CharlieBackend.AdminPanel
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
                 {
-                     options.LoginPath = new PathString("/admin/account/LogIn");
+                     options.LoginPath = new PathString("/Account/Login");
                  });
 
             services.AddControllersWithViews();
@@ -90,9 +93,10 @@ namespace CharlieBackend.AdminPanel
             app.UseRouting();
 
             app.UseAuthentication(); 
-            app.UseAuthorization();     
+            app.UseAuthorization();
 
-         
+            app.UseMiddleware<ExceptionHandleMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

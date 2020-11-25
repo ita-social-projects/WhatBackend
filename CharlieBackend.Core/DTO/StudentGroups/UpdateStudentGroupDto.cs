@@ -8,19 +8,22 @@ namespace CharlieBackend.Core.DTO.StudentGroups
 {
     public class UpdateStudentGroupDto
     {
-        [Required]
-        public string Name { get; set; }
+        #nullable enable
 
-        [Required]
+        public string? Name { get; set; }
+
         public long CourseId { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
         public DateTime FinishDate { get; set; }
 
+        public IList<long>? StudentIds { get; set; }
+
+        public IList<long>? MentorIds { get; set; }
+
+      #nullable disable
     }
 }

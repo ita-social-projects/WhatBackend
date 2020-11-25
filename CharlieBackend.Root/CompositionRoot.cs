@@ -21,12 +21,17 @@ namespace CharlieBackend.Root
                   b => b.MigrationsAssembly("CharlieBackend.Api"));
             });
 
+            services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling
+                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IFileImportService, FileImportService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<ICourseService, CourseService>();

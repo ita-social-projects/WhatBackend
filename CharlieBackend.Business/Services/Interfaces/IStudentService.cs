@@ -7,18 +7,20 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IStudentService
     {
-        public Task<Result<StudentDto>> CreateStudentAsync(long accountId);
+        Task<Result<StudentDto>> CreateStudentAsync(long accountId);
 
-        public Task<IList<StudentDto>> GetAllStudentsAsync();
+        Task<IList<StudentDto>> GetAllStudentsAsync();
 
-        public Task<long?> GetAccountId(long studentId);
+        Task<IList<StudentDto>> GetAllActiveStudentsAsync();
 
-        public Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel);
+        Task<long?> GetAccountId(long studentId);
 
-        public Task<StudentDto> GetStudentByAccountIdAsync(long accountId);
+        Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel);
 
-        public Task<StudentDto> GetStudentByIdAsync(long studentId);
+        Task<StudentDto> GetStudentByAccountIdAsync(long accountId);
 
-        public Task<StudentDto> GetStudentByEmailAsync(string email);
+        Task<StudentDto> GetStudentByIdAsync(long studentId);
+
+        Task<StudentDto> GetStudentByEmailAsync(string email);
     }
 }

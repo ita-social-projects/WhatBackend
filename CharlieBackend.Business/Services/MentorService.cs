@@ -33,7 +33,7 @@ namespace CharlieBackend.Business.Services
 
                 if (account == null)
                 {
-                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                    return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Account not found");
                 }
 
@@ -54,13 +54,13 @@ namespace CharlieBackend.Business.Services
 
                     await _notification.AccountApproved(account);
 
-                    return Result<MentorDto>.Success(_mapper.Map<MentorDto>(mentor));
+                    return Result<MentorDto>.GetSuccess(_mapper.Map<MentorDto>(mentor));
                 }
                 else
                 {
                     _unitOfWork.Rollback();
 
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                    return Result<MentorDto>.GetError(ErrorCode.ValidationError,
                         "This account already assigned.");
                 }
             }
@@ -68,7 +68,7 @@ namespace CharlieBackend.Business.Services
             {
                  _unitOfWork.Rollback();
 
-                 return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                 return Result<MentorDto>.GetError(ErrorCode.InternalServerError,
                       "Cannot create mentor.");
             }
 
@@ -90,7 +90,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundMentor == null)
                 {
-                    return Result<MentorDto>.Error(ErrorCode.NotFound,
+                    return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Mentor not found");
                 }
 
@@ -99,7 +99,7 @@ namespace CharlieBackend.Business.Services
 
                 if (!isEmailChangableTo)
                 {
-                    return Result<MentorDto>.Error(ErrorCode.ValidationError,
+                    return Result<MentorDto>.GetError(ErrorCode.ValidationError,
                         "Email is already taken!");
                 }
 
@@ -143,13 +143,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<MentorDto>.Success(_mapper.Map<MentorDto>(foundMentor));
+                return Result<MentorDto>.GetSuccess(_mapper.Map<MentorDto>(foundMentor));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<MentorDto>.Error(ErrorCode.InternalServerError,
+                return Result<MentorDto>.GetError(ErrorCode.InternalServerError,
                       "Cannot update mentor.");
             }
         }

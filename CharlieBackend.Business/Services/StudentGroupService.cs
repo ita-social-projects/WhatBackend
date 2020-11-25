@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
+using Microsoft.Extensions.Logging;
 
 namespace CharlieBackend.Business.Services
 {
@@ -16,11 +17,13 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<StudentGroupService> _logger;
 
-        public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<StudentGroupService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<Result<StudentGroupDto>> CreateStudentGroupAsync(CreateStudentGroupDto studentGroupDto)
@@ -29,7 +32,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (studentGroupDto == null)
                 {
-                    return Result<StudentGroupDto>.Error(ErrorCode.ValidationError, "StudentGroupDto is null");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "StudentGroupDto is null");
                 }
 
                 var studentGroup = new StudentGroup
@@ -73,14 +76,14 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<StudentGroupDto>.Success(_mapper.Map<StudentGroupDto>(studentGroup));
+                return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<StudentGroupDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -88,12 +91,12 @@ namespace CharlieBackend.Business.Services
         {
             if(name == null)
             {
-                return Result<bool>.Error(ErrorCode.ValidationError, "Name is null");
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Name is null");
             }
 
             var res = await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(name);
 
-            return Result<bool>.Success(res);
+            return Result<bool>.GetSuccess(res);
         }
 
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
@@ -108,91 +111,75 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
         }
 
-        public async Task<Result<UpdateStudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto studentGroupDto) 
+        // if we set StudentIds or MentorsIds to null, they won't update
+        public async Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto updatedStudentGroupDto) 
         {
             try
             {
-                if (studentGroupDto == null)
+                if (updatedStudentGroupDto == null)
                 {
-                    return Result<UpdateStudentGroupDto>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
                 }
-
-                var updatedEntity = _mapper.Map<StudentGroup>(studentGroupDto);
-
 
                 var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(groupId);
 
                 if (foundStudentGroup == null)
                 {
-                    return null;
+                    return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student Group not found");
                 }
 
-                foundStudentGroup.Name = updatedEntity.Name ?? foundStudentGroup.Name;
+                foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
 
-                if (updatedEntity.StartDate != null)
+                if (updatedStudentGroupDto.StartDate != null)
                 {
-                    foundStudentGroup.StartDate = (DateTime?)(updatedEntity.StartDate) ?? foundStudentGroup.StartDate;
+                    foundStudentGroup.StartDate = (DateTime?)(updatedStudentGroupDto.StartDate) ?? foundStudentGroup.StartDate;
                 }
 
-                if (updatedEntity.FinishDate != null)
+                if (updatedStudentGroupDto.FinishDate != null)
                 {
-                    foundStudentGroup.FinishDate = (DateTime?)(updatedEntity.FinishDate) ?? foundStudentGroup.FinishDate;
+                    foundStudentGroup.FinishDate = (DateTime?)(updatedStudentGroupDto.FinishDate) ?? foundStudentGroup.FinishDate;
                 }
 
-                if (updatedEntity.CourseId != 0)
+                if (updatedStudentGroupDto.CourseId != 0)
                 {
-                    foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedEntity.CourseId);
+                    foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedStudentGroupDto.CourseId);
+                }
+
+
+                if (updatedStudentGroupDto.StudentIds != null)
+                {
+                    var newStudentsOfStudentGroup = updatedStudentGroupDto.StudentIds.Select(x => new StudentOfStudentGroup
+                    {
+                        StudentGroupId = foundStudentGroup.Id,
+                        StudentId = x
+                    }).ToList();
+
+                    _unitOfWork.StudentGroupRepository.UpdateManyToMany(foundStudentGroup.StudentsOfStudentGroups, newStudentsOfStudentGroup);
+                }
+
+                if (updatedStudentGroupDto.MentorIds != null)
+                {
+                    var newMentorsOfStudentGroup = updatedStudentGroupDto.MentorIds.Select(x => new MentorOfStudentGroup
+                    {
+                        StudentGroupId = foundStudentGroup.Id,
+                        MentorId = x
+                    }).ToList();
+
+                    _unitOfWork.MentorRepository.UpdateMentorGroups(foundStudentGroup.MentorsOfStudentGroups, newMentorsOfStudentGroup);
                 }
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<UpdateStudentGroupDto>.Success(_mapper.Map<UpdateStudentGroupDto>(updatedEntity));
+                return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
             }
-            catch 
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
-                return Result<UpdateStudentGroupDto>.Error(ErrorCode.InternalServerError, "Internal error");
+                return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
-        }
-
-        public async Task<Result<UpdateStudentsForStudentGroup>> UpdateStudentsForStudentGroupAsync(long id, UpdateStudentsForStudentGroup studentGroupModel) 
-        {
-            try
-            {
-                if (studentGroupModel == null)
-                {
-                    return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.ValidationError, "UpdateStudentGroupDto is null");
-                }
-
-                var updatedEntity = _mapper.Map<StudentGroup>(studentGroupModel); 
-
-                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
-
-                if (foundStudentGroup == null)
-                {
-                    return null;
-                }
-
-                var newStudentsOfStudentGroup = updatedEntity.StudentsOfStudentGroups.Select(x => new StudentOfStudentGroup
-                {
-                    StudentGroupId = foundStudentGroup.Id,
-                    StudentId = x.StudentId
-                }).ToList();
-
-                _unitOfWork.StudentGroupRepository.UpdateManyToMany(foundStudentGroup.StudentsOfStudentGroups, newStudentsOfStudentGroup);
-
-                await _unitOfWork.CommitAsync();
-
-                return Result<UpdateStudentsForStudentGroup>.Success(_mapper.Map<UpdateStudentsForStudentGroup>(updatedEntity));
-            }
-            catch
-            {
-                _unitOfWork.Rollback();
-
-                return Result<UpdateStudentsForStudentGroup>.Error(ErrorCode.InternalServerError, "Internal error");
-            }
-           
         }
 
         public async Task<Result<StudentGroupDto>> GetStudentGroupByIdAsync(long id)
@@ -201,12 +188,11 @@ namespace CharlieBackend.Business.Services
 
             if (foundStudentGroup == null)
             {
-                return Result<StudentGroupDto>.Error(ErrorCode.NotFound, "Student group not found");
+                return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group not found");
             }
 
-            return Result<StudentGroupDto>.Success(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+            return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
-       
     }
 }

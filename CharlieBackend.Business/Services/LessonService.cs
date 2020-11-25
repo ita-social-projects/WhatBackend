@@ -87,11 +87,11 @@ namespace CharlieBackend.Business.Services
             return foundLesson;
         }
 
-        public async Task<LessonDto> UpdateLessonAsync(UpdateLessonDto lessonModel)
+        public async Task<LessonDto> UpdateLessonAsync(long id, UpdateLessonDto lessonModel)
         {
             try
             {
-                var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonModel.Id);
+                var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);
 
                 if (foundLesson == null)
                 {
@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
                 }
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<LessonDto>(lessonModel);
+                return _mapper.Map<LessonDto>(foundLesson);
 
             }
             catch

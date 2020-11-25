@@ -33,7 +33,7 @@ namespace CharlieBackend.Business.Services
 
                 if (account == null)
                 {
-                    return Result<StudentDto>.Error(ErrorCode.NotFound,
+                    return Result<StudentDto>.GetError(ErrorCode.NotFound,
                         "Account not found");
                 }
 
@@ -54,13 +54,13 @@ namespace CharlieBackend.Business.Services
 
                     await _notification.AccountApproved(account);
 
-                    return Result<StudentDto>.Success(_mapper.Map<StudentDto>(student));
+                    return Result<StudentDto>.GetSuccess(_mapper.Map<StudentDto>(student));
                 }
                 else
                 {
                     _unitOfWork.Rollback();
 
-                    return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                    return Result<StudentDto>.GetError(ErrorCode.ValidationError,
                         "This account already assigned.");
                 }
             }
@@ -68,14 +68,21 @@ namespace CharlieBackend.Business.Services
             {
                 _unitOfWork.Rollback();
 
-                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                return Result<StudentDto>.GetError(ErrorCode.InternalServerError,
                     "Cannot create student.");
             }
         }
 
         public async Task<IList<StudentDto>> GetAllStudentsAsync()
         {
-            var students = _mapper.Map<List<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+
+            return students;
+        }
+
+        public async Task<IList<StudentDto>> GetAllActiveStudentsAsync()
+        {
+            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllActiveAsync());
 
             return students;
         }
@@ -88,7 +95,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundStudent == null)
                 {
-                        return Result<StudentDto>.Error(ErrorCode.NotFound, "Student not found");
+                        return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
                 }
 
                 var isEmailChangableTo = await _accountService
@@ -96,7 +103,7 @@ namespace CharlieBackend.Business.Services
 
                 if (!isEmailChangableTo)
                 {
-                        return Result<StudentDto>.Error(ErrorCode.ValidationError,
+                        return Result<StudentDto>.GetError(ErrorCode.ValidationError,
                         "Email is already taken!");
                 }
 
@@ -123,14 +130,14 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<StudentDto>.Success(_mapper.Map<StudentDto>(foundStudent));
+                return Result<StudentDto>.GetSuccess(_mapper.Map<StudentDto>(foundStudent));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<StudentDto>.Error(ErrorCode.InternalServerError,
+                return Result<StudentDto>.GetError(ErrorCode.InternalServerError,
                       "Cannot update student.");
             }
         }

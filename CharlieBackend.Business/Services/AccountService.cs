@@ -19,11 +19,15 @@ namespace CharlieBackend.Business.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountService(IUnitOfWork unitOfWork, 
+                              IMapper mapper,
+                              INotificationService notification)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notification = notification;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
@@ -32,7 +36,7 @@ namespace CharlieBackend.Business.Services
 
             if (isEmailTaken)
             {
-                return Result<AccountDto>.Error(ErrorCode.Conflict,
+                return Result<AccountDto>.GetError(ErrorCode.Conflict,
                     "Account already exists!");
             }
 
@@ -56,14 +60,16 @@ namespace CharlieBackend.Business.Services
 
                     transaction.Commit();
 
-                    return Result<AccountDto>.Success(_mapper.Map<AccountDto>(account));
+                    await _notification.RegistrationSuccess(account);
+
+                    return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
                    
                 }
                 catch
                 {
                     transaction.Rollback();
 
-                    return Result<AccountDto>.Error(ErrorCode.InternalServerError, "Cannot create account.");
+                    return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Cannot create account.");
                 }
             }
         }
