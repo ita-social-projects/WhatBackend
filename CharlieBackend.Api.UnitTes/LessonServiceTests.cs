@@ -68,17 +68,6 @@ namespace CharlieBackend.Api.UnitTest
                 LessonVisits = visitsDto
             };
 
-            var lesson = new Lesson()
-            {
-                MentorId = 2,
-                StudentGroupId = 3,
-                ThemeId = 5,
-                Mentor = mentor,
-                StudentGroup = studentGroup,
-                Theme = theme,
-                Visits = { }
-            };
-
             var lessonRepositoryMock = new Mock<ILessonRepository>();
             lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
                 .Callback<Lesson>(x => {
@@ -102,16 +91,8 @@ namespace CharlieBackend.Api.UnitTest
                     x.Name = "ExampleName";
                 });
 
-            //var visitRepositoryMock = new Mock<IVisitRepository>();
-            //visitRepositoryMock.Setup(x => x.Add(It.IsAny<Visit>()))
-            //    .Callback<Visit>(x =>
-            //    {
-                    
-            //    });
-
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-            //_unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
 
             var lessonService = new LessonService(
                 _unitOfWorkMock.Object,
@@ -119,21 +100,299 @@ namespace CharlieBackend.Api.UnitTest
                 );
 
             //Act
-            var succesResult = await lessonService.CreateLessonAsync(createLessonDto);
+            var result = await lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            Assert.Equal(createdLesson.Id, succesResult.Id);
-            Assert.Equal(createdLesson.LessonDate, succesResult.LessonDate);
-            Assert.Equal(createdLesson.LessonVisits, succesResult.LessonVisits);
-            Assert.Equal(createdLesson.MentorId, succesResult.MentorId);
-            Assert.Equal(createdLesson.StudentGroupId, succesResult.StudentGroupId);
-            Assert.Equal(createdLesson.ThemeName, succesResult.ThemeName);
+            Assert.NotNull(result);
+
+            Assert.Equal(createdLesson.Id, result.Id);
+            Assert.Equal(createdLesson.LessonDate, result.LessonDate);
+            Assert.Equal(createdLesson.LessonVisits, result.LessonVisits);
+            Assert.Equal(createdLesson.MentorId, result.MentorId);
+            Assert.Equal(createdLesson.StudentGroupId, result.StudentGroupId);
+            Assert.Equal(createdLesson.ThemeName, result.ThemeName);
+        }
+
+        [Fact]
+        public async Task GetAllLessonsAsync()
+        {
+            //Arrange
+            Theme theme = new Theme
+            {
+                Name = "ExampleName",
+                Id = 5
+            };
+
+            Mentor mentor = new Mentor
+            {
+                Id = 2
+            };
+
+            StudentGroup studentGroup = new StudentGroup
+            {
+                Id = 3
+            };
+
+            List<Lesson> lessons = new List<Lesson>
+            {
+                new Lesson
+                {
+                    Id = 7,
+                    MentorId = 2,
+                    StudentGroupId = 3,
+                    ThemeId = 5,
+                    LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                    Mentor = mentor,
+                    StudentGroup = studentGroup,
+                    Theme = theme,
+                    Visits = default
+                },
+                new Lesson
+                {
+                    Id = 8,
+                    MentorId = 2,
+                    StudentGroupId = 3,
+                    ThemeId = 5,
+                    LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                    Mentor = mentor,
+                    StudentGroup = studentGroup,
+                    Theme = theme,
+                    Visits = default
+                },
+                new Lesson
+                {
+                   Id = 9,
+                   MentorId = 2,
+                   StudentGroupId = 3,
+                   ThemeId = 5,
+                   LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                   Mentor = mentor,
+                   StudentGroup = studentGroup,
+                   Theme = theme,
+                   Visits = default
+                }
+            };
+
+            List<LessonDto> lessonsDto = new List<LessonDto>
+            {
+                new LessonDto
+                {
+                   Id = 7,
+                   ThemeName = "ExampleName",
+                   MentorId = 2,
+                   StudentGroupId = 3,
+                   LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                   LessonVisits = default
+                },
+                new LessonDto
+                {
+                   Id = 8,
+                   ThemeName = "ExampleName",
+                   MentorId = 2,
+                   StudentGroupId = 3,
+                   LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                   LessonVisits = default
+                },
+                new LessonDto
+                {
+                   Id = 9,
+                   ThemeName = "ExampleName",
+                   MentorId = 2,
+                   StudentGroupId = 3,
+                   LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                   LessonVisits = default
+                }
+            };
+
+            var lessonsRepositoryMock = new Mock<ILessonRepository>();
+            lessonsRepositoryMock.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(lessons);
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonsRepositoryMock.Object);
+
+            var lessonService = new LessonService(
+               _unitOfWorkMock.Object,
+               _mapper
+               );
+
+            //Act
+            var result = await lessonService.GetAllLessonsAsync();
+
+            //Assert
+            Assert.NotNull(result);
+
+            Assert.Equal(lessonsDto.Count, result.Count);
+
+            for (int i = 0; i < lessonsDto?.Count; i++)
+            {
+                Assert.Equal(lessonsDto[i].Id, result[i].Id);
+                Assert.Equal(lessonsDto[i].LessonDate, result[i].LessonDate);
+
+                for (int j = 0; j < lessonsDto[i].LessonVisits?.Count; j++)
+                {
+                    Assert.Equal(lessonsDto[i].LessonVisits[j]?.Comment, result[i].LessonVisits[j]?.Comment);
+                    Assert.Equal(lessonsDto[i].LessonVisits[j]?.Presence, result[i].LessonVisits[j]?.Presence);
+                    Assert.Equal(lessonsDto[i].LessonVisits[j]?.StudentId, result[i].LessonVisits[j]?.StudentId);
+                    Assert.Equal(lessonsDto[i].LessonVisits[j]?.StudentMark, result[i].LessonVisits[j]?.StudentMark);
+                }
+                
+                Assert.Equal(lessonsDto[i].MentorId, result[i].MentorId);
+                Assert.Equal(lessonsDto[i].StudentGroupId, result[i].StudentGroupId);
+                Assert.Equal(lessonsDto[i].ThemeName, result[i].ThemeName);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateLessonAsync()
+        {
+            //Arrange
+            Theme theme = new Theme
+            {
+                Name = "ExampleName",
+                Id = 5
+            };
+
+            Mentor mentor = new Mentor
+            {
+                Id = 2
+            };
+
+            StudentGroup studentGroup = new StudentGroup
+            {
+                Id = 3
+            };
+
+            List<VisitDto> visitsDto = new List<VisitDto>() { };
+
+            var foundLesson = new Lesson()
+            {
+                Id = 7,
+                MentorId = 2,
+                StudentGroupId = 3,
+                ThemeId = 5,
+                Mentor = mentor,
+                StudentGroup = studentGroup,
+                Theme = theme,
+                Visits = { }
+            };
+
+            var updateLessonDto = new UpdateLessonDto
+            {
+                ThemeName = null,
+                LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
+                LessonVisits = null
+            };
+
+            var foundLessonDto = new LessonDto()
+            {
+                Id = 7,
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                LessonVisits = null
+            };
+
+            var updatedLesson = new LessonDto()
+            {
+                Id = 7,
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
+                LessonVisits = visitsDto
+            };
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository.GetByIdAsync(7))
+                .ReturnsAsync(foundLesson);
+
+            var lessonService = new LessonService(
+                _unitOfWorkMock.Object,
+                _mapper
+                );
+
+            //Act
+            var result = await lessonService.UpdateLessonAsync(7, updateLessonDto);
+
+            //Assert
+            Assert.NotNull(result);
+
+            Assert.Equal(updatedLesson.Id, result.Id);
+            Assert.Equal(updatedLesson.LessonDate, result.LessonDate);
+            Assert.Equal(updatedLesson.LessonVisits, result.LessonVisits);
+            Assert.Equal(updatedLesson.MentorId, result.MentorId);
+            Assert.Equal(updatedLesson.StudentGroupId, result.StudentGroupId);
+            Assert.Equal(updatedLesson.ThemeName, result.ThemeName);
+        }
+
+        [Fact]
+        public async Task GetStudentLessonsAsync()
+        {
+            List<StudentLessonDto> studentLessons = new List<StudentLessonDto>()
+            {
+                new StudentLessonDto
+                {
+                    ThemeName = ".NET vs Java",
+                    Id = 9,
+                    Presence = true,
+                    Mark = 12,
+                    Comment = "Good knowledge of .NET!",
+                    StudentGroupId = 3,
+                    LessonDate = DateTime.Parse("2020-11-10T15:00:00.384Z")
+                },
+                new StudentLessonDto
+                {
+                    ThemeName = ".NET Demo_1",
+                    Id = 10,
+                    Presence = true,
+                    Mark = 10,
+                    Comment = "Good teamwork!",
+                    StudentGroupId = 3,
+                    LessonDate = DateTime.Parse("2020-11-12T15:00:00.384Z")
+                },
+                new StudentLessonDto
+                {
+                    ThemeName = "Events",
+                    Id = 11,
+                    Presence = true,
+                    Mark = 11,
+                    Comment = "Was good!",
+                    StudentGroupId = 3,
+                    LessonDate = DateTime.Parse("2020-11-14T15:00:00.384Z")
+                }
+            };
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository.GetStudentInfoAsync(3))
+               .ReturnsAsync(studentLessons);
+
+            var lessonService = new LessonService(
+               _unitOfWorkMock.Object,
+               _mapper
+               );
+
+            //Act
+            var result = await lessonService.GetStudentLessonsAsync(3);
+
+            //Assert
+            Assert.NotNull(result);
+
+            Assert.Equal(studentLessons.Count, result.Count);
+
+            for (int i = 0; i < studentLessons.Count; i++)
+            {
+                Assert.Equal(studentLessons[i].Id, result[i].Id);
+                Assert.Equal(studentLessons[i].LessonDate, result[i].LessonDate);
+                Assert.Equal(studentLessons[i].Mark, result[i].Mark);
+                Assert.Equal(studentLessons[i].Presence, result[i].Presence);
+                Assert.Equal(studentLessons[i].StudentGroupId, result[i].StudentGroupId);
+                Assert.Equal(studentLessons[i].ThemeName, result[i].ThemeName);
+            }
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
-
             var mock = new Mock<IUnitOfWork>();
+
             return mock;
         }
     }
