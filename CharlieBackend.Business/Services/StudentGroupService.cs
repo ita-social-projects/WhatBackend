@@ -60,6 +60,7 @@ namespace CharlieBackend.Business.Services
                     {
                         studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
                         {
+                            StudentId = students[i].Id,
                             Student = students[i]
                         });
                     }
@@ -74,19 +75,24 @@ namespace CharlieBackend.Business.Services
                     {
                         studentGroup.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
                         {
+                            MentorId = mentors[i].Id,
                             Mentor = mentors[i]
                         }); ;
                     }
                 }
+
 
                 await _unitOfWork.CommitAsync();
 
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
-            catch
+            catch(Exception ex)
             {
                 _unitOfWork.Rollback();
+
+                Console.WriteLine(ex.Message);
+
 
                 return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }

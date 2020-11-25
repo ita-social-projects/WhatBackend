@@ -127,6 +127,12 @@ namespace CharlieBackend.Core.Mapping
                               conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
                                           Select(y => y.StudentId).ToList()));
 
+            //CreateMap<CreateStudentGroupDto, StudentGroup>()
+            //    .ForMember(source => source.MentorsOfStudentGroups,
+            //               conf => conf.MapFrom(x => x.MentorIds.Select(y => new MentorOfStudentGroup() { MentorId = y })))
+            //     .ForMember(source => source.StudentsOfStudentGroups,
+            //                conf => conf.MapFrom(x => x.StudentIds.Select(y => new StudentOfStudentGroup() { StudentId = y })));
+
             #endregion
 
 
