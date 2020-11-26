@@ -1,19 +1,15 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Mapping;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data.Repositories.Impl;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.DTO.Visit;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Moq;
 using Xunit;
+using System;
+using AutoMapper;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Mapping;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Business.Services;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -107,7 +103,16 @@ namespace CharlieBackend.Api.UnitTest
 
             Assert.Equal(createdLesson.Id, result.Id);
             Assert.Equal(createdLesson.LessonDate, result.LessonDate);
-            Assert.Equal(createdLesson.LessonVisits, result.LessonVisits);
+            Assert.Equal(createdLesson.LessonVisits.Count, result.LessonVisits.Count);
+
+            for (int i = 0; i < result.LessonVisits?.Count; i++)
+            {
+                Assert.Equal(createdLesson.LessonVisits[i]?.Comment, result.LessonVisits[i]?.Comment);
+                Assert.Equal(createdLesson.LessonVisits[i]?.Presence, result.LessonVisits[i]?.Presence);
+                Assert.Equal(createdLesson.LessonVisits[i]?.StudentId, result.LessonVisits[i]?.StudentId);
+                Assert.Equal(createdLesson.LessonVisits[i]?.StudentMark, result.LessonVisits[i]?.StudentMark);
+            }
+
             Assert.Equal(createdLesson.MentorId, result.MentorId);
             Assert.Equal(createdLesson.StudentGroupId, result.StudentGroupId);
             Assert.Equal(createdLesson.ThemeName, result.ThemeName);
@@ -223,12 +228,12 @@ namespace CharlieBackend.Api.UnitTest
 
             Assert.Equal(lessonsDto.Count, result.Count);
 
-            for (int i = 0; i < lessonsDto?.Count; i++)
+            for (int i = 0; i < result?.Count; i++)
             {
                 Assert.Equal(lessonsDto[i].Id, result[i].Id);
                 Assert.Equal(lessonsDto[i].LessonDate, result[i].LessonDate);
 
-                for (int j = 0; j < lessonsDto[i].LessonVisits?.Count; j++)
+                for (int j = 0; j < result[i].LessonVisits?.Count; j++)
                 {
                     Assert.Equal(lessonsDto[i].LessonVisits[j]?.Comment, result[i].LessonVisits[j]?.Comment);
                     Assert.Equal(lessonsDto[i].LessonVisits[j]?.Presence, result[i].LessonVisits[j]?.Presence);
