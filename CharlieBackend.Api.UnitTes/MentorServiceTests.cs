@@ -77,35 +77,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetAllMentorsAsync()
-        {
-            //Arrange
-            var Mentors = new List<Mentor>() {
-                new Mentor() { },
-                new Mentor() { },
-                new Mentor() { }
-            };
-
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.GetAllAsync())
-                    .ReturnsAsync(Mentors);
-
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
-
-            var mentorService = new MentorService(
-                _accountServiceMock.Object,
-                _unitOfWorkMock.Object,
-                _mapper,
-                _notificationServiceMock.Object);
-
-            //Act
-            var successResult = await mentorService.GetAllMentorsAsync();
-
-            //Assert
-            Assert.Equal(Mentors.Count, successResult.Count);
-        }
-
-        [Fact]
         public async Task UpdateMentorAsync()
         {
             //Arrange
