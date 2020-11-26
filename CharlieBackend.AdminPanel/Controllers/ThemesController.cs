@@ -34,6 +34,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             var themes = await _themeService.GetAllThemesAsync(Request.Cookies["accessToken"]);
             ViewBag.Theme = themes.First(el => el.Id == id);
+
             return View("UpdateTheme");
         }
 
