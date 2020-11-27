@@ -9,6 +9,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Api.SwaggerExamples.StudentsController;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -46,6 +47,27 @@ namespace CharlieBackend.Api.Controllers
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             return createdMentorModel.ToActionResult(); ;
+        }
+
+        /// <summary>
+        /// Get mentor information by mentor id
+        /// </summary>
+        /// <response code="200">Successful return of mentor</response>
+        /// <response code="409">Error, can not find mentor</response>
+        [SwaggerResponse(200, type: typeof(MentorMock))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MentorDto>> GetMentorById(long id)
+        {
+
+            var mentorModel = await _mentorService.GetMentorByIdAsync(id);
+
+            if (mentorModel != null)
+            {
+                return Ok(mentorModel);
+            }
+
+            return StatusCode(409, "Cannot find mentor with such id.");
         }
 
         /// <summary>
