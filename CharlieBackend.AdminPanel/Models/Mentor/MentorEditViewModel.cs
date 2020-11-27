@@ -24,7 +24,5 @@ namespace CharlieBackend.AdminPanel.Models.Mentor
         [Required]
         [StringLength(30)]
         public string LastName { get; set; }
-
-        public IList<StudentGroupViewModel> AllGroups { get; set; }
     }
 }

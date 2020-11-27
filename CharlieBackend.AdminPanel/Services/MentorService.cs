@@ -59,11 +59,7 @@ namespace CharlieBackend.AdminPanel.Services
         {
             var mentor = await
                             _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", accessToken);
-            var mentorGroups = await
-                            _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
-
-            mentor.AllGroups = mentorGroups;
-
+    
             return mentor;
         }
 
