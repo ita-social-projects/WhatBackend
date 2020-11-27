@@ -42,9 +42,17 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync(string accessToken)
         {
-            var mentors = await _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", accessToken);
+            var allMentors = await 
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", accessToken);
+            var activeMentors = await 
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors/active", accessToken);
 
-            return mentors;
+            foreach (var mentor in allMentors)
+            {
+                mentor.IsActive = activeMentors.Any(x => x.Id == mentor.Id);
+            }
+
+            return allMentors;
         }
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id, string accessToken)

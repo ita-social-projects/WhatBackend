@@ -50,6 +50,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get only active students
+        /// </summary>
+        /// <response code="200">Successful return of students list</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("active")]
+        public async Task<ActionResult<IList<MentorDto>>> GetAllActiveStudents()
+        {
+
+            var mentors = await _mentorService.GetAllActiveMentorsAsync();
+
+            return mentors.ToActionResult();
+        }
+
+        /// <summary>
         /// Get mentor information by mentor id
         /// </summary>
         /// <response code="200">Successful return of mentor</response>

@@ -173,5 +173,12 @@ namespace CharlieBackend.Business.Services
 
             return mentor?.AccountId;
         }
+
+        public async Task<Result<IList<MentorDto>>> GetAllActiveMentorsAsync()
+        {
+            var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
+
+            return Result<IList<MentorDto>>.GetSuccess(mentors);
+        }
     }
 }
