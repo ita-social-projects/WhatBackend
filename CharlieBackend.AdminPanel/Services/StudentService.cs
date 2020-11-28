@@ -33,16 +33,10 @@ namespace CharlieBackend.AdminPanel.Services
             var allStudents = await allStudentsTask;
             var activeStudents = await activeStudentsTask;
 
-            Console.WriteLine("_-------all 1  " + JsonConvert.SerializeObject(allStudents));
-
             foreach (var student in allStudents)
             {
                 student.IsActive = activeStudents.Any(x => x.Id == student.Id);
             }
-
-            Console.WriteLine("_-------active 2 " + JsonConvert.SerializeObject(activeStudents));
-
-            Console.WriteLine("_-------result 2 " + JsonConvert.SerializeObject(allStudents));
 
             return allStudents;
         }
