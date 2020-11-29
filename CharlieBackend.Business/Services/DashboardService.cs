@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
+using CharlieBackend.Core;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Collections.Generic;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Models.ResultModel;
-using System.Threading.Tasks;
-using CharlieBackend.Core;
-using System.Linq;
+using CharlieBackend.Business.Services.Interfaces;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Core.Entities;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
 
 namespace CharlieBackend.Business.Services
@@ -252,13 +252,13 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupsResultsDto>.GetSuccess(result);
         }
 
-        //private IEnumerable<string> ValidateAverageStudentMarkAnalytics(StudentsResultsRequestDto request)
-        //{
-        //    if (!request.GroupId.HasValue)
-        //    {
-        //        yield return "Please provide groupId";
-        //    }
-        //}
+        private IEnumerable<string> ValidateAverageStudentMarkAnalytics(StudentsResultsRequestDto request)
+        {
+            if (!request.CourseId.HasValue)
+            {
+                yield return "Please provide groupId";
+            }
+        }
     }
 }
 

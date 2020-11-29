@@ -1,23 +1,21 @@
-﻿using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core.DTO.StudentGroups;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class DashboardRepository : Repository<StudentGroup>, IDashboardRepository
     {
-
         public DashboardRepository(ApplicationContext applicationContext)
                 : base(applicationContext)
         {
-
         }
 
         public async Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate, DateTime finishDate)

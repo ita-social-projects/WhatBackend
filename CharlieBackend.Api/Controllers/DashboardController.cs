@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
+using CharlieBackend.Core;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core;
 using CharlieBackend.Business.Services.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
 
