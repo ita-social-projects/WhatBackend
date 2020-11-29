@@ -9,39 +9,128 @@ using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core;
 using CharlieBackend.Business.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CharlieBackend.Api.Controllers
 {
+    /// <summary>
+    /// Controller to export aggregated data reports
+    /// </summary>
     [Route("api/dashboard")]
     [ApiController]
     public class DashboardController : ControllerBase
     {
         #region
         private readonly IDashboardService _dashboardService;
+        private readonly IStudentService _studentService;
         #endregion
-
-        public DashboardController(IDashboardService dashboardService)
+        /// <summary>
+        /// Dashboard controllers constructor
+        /// </summary>
+        public DashboardController(IDashboardService dashboardService, IStudentService studentService)
         {
             _dashboardService = dashboardService;
+            _studentService = studentService;
         }
 
         /// <summary>
-        /// Gets data and returns report for given report parameters. Report of students results in student groups.
-        /// Parameters sent in body
+        /// Gets classbook results of every students lesson
         /// </summary>
-        /// <param name="request">You have to mention of of: "groupId" is student group id, "courceId" is id of student course.
-        /// "startDate" is optional param to filter start date of group start.
-        /// "includeAnalytics": [] have to receive params for data to return ("AverageStudentMark", "AverageStudentVisits", 
-        /// "StudentPresence", "StudentMarks" </param>
+        /// <param name="courceId">Gets classbook for every student of student groups in given cource</param>
+        /// <param name="groupId">Gets classbook for students in given student group</param>
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// learning period of cource groups.
+        /// "includeAnalytics": [] have to receive params for data to return ("StudentPresence", "StudentMarks" </param>
         /// <returns>Returns report of requested data</returns>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpPost]
-        public async Task<ActionResult> GetStudentsResults(DashboardRequestDto request)
+        [HttpPost("studentsClassbook/cource/{courceId}")]
+        [HttpPost("studentsClassbook/studentgroup/{groupId}")]
+        public async Task<ActionResult> GetStudentsClassbook(long courceId, long groupId, 
+                [FromBody]StudentsClassbookRequestDto request)
         {
             var results = await _dashboardService
-                .GetStudentsResultAsync(request);
+                .GetStudentsClassbookAsync(courceId, groupId, request);
 
             return results.ToActionResult();
         }
+
+        /// <summary>
+        /// Gets results of every student
+        /// </summary>
+        /// <param name="courceId">Gets report for student groups in given cource</param>
+        /// <param name="groupId">Gets report for students in given student group</param>
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// learning period of cource groups.
+        /// "includeAnalytics": [] have to receive params for data to return ("AverageStudentMark", "AverageStudentVisits" </param>
+        /// <returns>Returns report of requested data</returns>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPost("studentsResults/cource/{courceId}")]
+        [HttpPost("studentsResults/studentgroup/{groupId}")]
+        public async Task<ActionResult> GetStudentsResults(long courceId, long groupId, 
+                [FromBody]StudentsResultsRequestDto request)
+        {
+            var results = await _dashboardService
+                .GetStudentsResultAsync(courceId, groupId, request);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets classbook data of given student
+        /// </summary>
+        /// <param name="studentId">Student id</param>
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// learning period of students group.
+        /// "includeAnalytics": [] have to receive params for data to return "StudentPresence", "StudentMarks" </param>
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpPost("studentClassbook/{studentId}")]
+        public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]StudentsClassbookRequestDto request)
+        {
+            string authHeader = Request.Headers["Authorization"];
+
+            var results = await _dashboardService
+            .GetStudentClassbookAsync(studentId, request, authHeader);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets results data of given student
+        /// </summary>
+        /// <param name="studentId">Student id</param>
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// learning period of students group.
+        /// "includeAnalytics": [] have to receive params for data to return "AverageStudentMark", "AverageStudentVisits" </param>
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpPost("studentResults/{studentId}")]
+        public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]StudentsResultsRequestDto request)
+        {
+            string authHeader = Request.Headers["Authorization"];
+
+            var results = await _dashboardService
+            .GetStudentResultAsync(studentId, request, authHeader);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets report data of student group results
+        /// </summary>
+        /// <param name="courceId">Cource id</param>
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// learning period of students group.
+        /// "includeAnalytics": [] have to receive params for data to return "AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage" </param>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPost("studentGroupResults/{courceId}")]
+        public async Task<ActionResult> GetStudentGroupResults(long courceId, [FromBody]StudentGroupsResultsRequestDto request)
+        {
+            var results = await _dashboardService
+            .GetStudentGroupResultAsync(courceId, request);
+
+            return results.ToActionResult();
+        }
+
+
     }
 }

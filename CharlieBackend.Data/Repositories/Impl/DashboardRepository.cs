@@ -20,16 +20,31 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate)
+        public async Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate, DateTime finishDate)
         {
-            var groupIdsbyCourceid = await _applicationContext.StudentGroups
-                .AsNoTracking()
-                .Where(x => x.CourseId == courceId)
-                .Where(x => x.StartDate >= startDate)
-                .Select(x => x.Id)
-                .ToListAsync();
+            if (startDate == default(DateTime) && finishDate == default(DateTime))
+            {
+                var groupIdsbyCourceid = await _applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .Where(x => x.CourseId == courceId)
+                    .Select(x => x.Id)
+                    .ToListAsync();
 
-            return groupIdsbyCourceid;
+                return groupIdsbyCourceid;
+            }
+            else
+            {
+                var groupIdsbyCourceidAndPeriod = await _applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .Where(x => x.CourseId == courceId)
+                    .Where(x => (finishDate != default(DateTime))
+                        ? (x.StartDate >= startDate && x.FinishDate <= finishDate)
+                        : (x.StartDate >= startDate))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                return groupIdsbyCourceidAndPeriod;
+            }
         }
 
         public async Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> groupsIds)
@@ -82,7 +97,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         CourceId = x.Key.CourceId,
                         StudentGroupId = (long)x.Key.GroupId,
                         StudentId = (long)x.Key.StudentId,
-                        StudentAverageMark = x.Sum(x => (double)x.StudentLessonMark) / x.Count()
+                        StudentAverageMark = Math.Round(
+                            x.Sum(x => (double)x.StudentLessonMark) / x.Count(), 
+                            2)
                     }
                     ).ToListAsync();
 
@@ -115,11 +132,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                      CourceId = x.Key.CourceId,
                      StudentGroupId = x.Key.GroupId,
                      StudentId = x.Key.StudentId,
-                     StudentAverageVisits = (int)((double)x
+                     StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
                       / (double)x.Count() * 100)
                  }).ToList();
-                
 
             return studentsAverageVisitsList;
         }
@@ -137,7 +153,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         CourceId = x.Key.CourceId,
                         StudentId = x.Key.StudentId,
-                        StudentAverageVisits = (int)((double)x
+                        StudentAverageVisitsPercentage = (int)((double)x
                             .Where(d => d.Presence == true).Count()
                             / (double)x.Count() * 100)
                     }
@@ -184,6 +200,203 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return studentsMarksList;
         }
+
+        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime startDate, DateTime finishDate)
+        {
+            if (startDate == default && finishDate == default)
+            {
+                var groupIdsbyStudentId = await _applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == studentId))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                return groupIdsbyStudentId;
+            }
+            else
+            {
+                var groupIdsbyStudentIdAndPeriod = await _applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == studentId))
+                    .Where(x => (finishDate != default)
+                    ? (x.StartDate >= startDate && x.FinishDate <= finishDate)
+                    : (x.StartDate >= startDate))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                return groupIdsbyStudentIdAndPeriod;
+            }
+        }
+
+        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdAsync(long studentId, List<long> studentGroupsIds)
+        {
+            var studentAverageMarskList = await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                    .Any(x => x.StudentId == studentId) && x.StudentMark != null)
+                    .Select(x => new 
+                    {
+                        CourceId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentLessonMark = x.StudentMark,
+                        StudentId = x.StudentId
+                    })
+                    .AsQueryable()
+                    .GroupBy(x => new
+                    {
+                        GroupId = x.StudentGroupId,
+                        CourceId = x.CourceId,
+                        StudentId = x.StudentId
+                    })
+                    .Select(x => new AverageStudentMarkDto
+                    {
+                        CourceId = x.Key.CourceId,
+                        StudentGroupId = (long)x.Key.GroupId,
+                        StudentId = (long)x.Key.StudentId,
+                        StudentAverageMark = Math.Round(x.Sum(x => (double)x.StudentLessonMark) 
+                        / x.Count(), 2)
+                    }
+                    ).ToListAsync();
+
+            return studentAverageMarskList;
+        }
+
+        public async Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds)
+        {
+            var studentVisitsList = await _applicationContext.Visits
+                .AsNoTracking()
+                .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                        .Any(x => x.StudentId == studentId))
+                .Select(x => new StudentVisitDto
+                {
+                    CourceId = x.Lesson.StudentGroup.CourseId,
+                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    StudentId = (long)x.StudentId,
+                    Presence = x.Presence,
+                }).ToListAsync();
+
+            var StudentAverageVisitsPercentage = studentVisitsList
+                .GroupBy(x => new
+                {
+                    StudentId = x.StudentId,
+                    GroupId = x.StudentGroupId,
+                    CourceId = x.CourceId
+                })
+                .Select(x => new AverageStudentVisitsDto
+                {
+                    CourceId = x.Key.CourceId,
+                    StudentGroupId = x.Key.GroupId,
+                    StudentId = x.Key.StudentId,
+                    StudentAverageVisitsPercentage = (int)((double)x
+                     .Where(d => d.Presence == true).Count()
+                      / (double)x.Count() * 100)
+                }).ToList();
+
+            return StudentAverageVisitsPercentage;
+        }
+
+        public async Task<List<StudentVisitDto>> GetStudentPresenceListByStudentIds(long studentId, List<long> studentGroupsIds)
+        {
+            var studentsPresenceList = await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                            .Any(x => x.StudentId == studentId))
+                    .Select(x => new StudentVisitDto
+                    {
+                        CourceId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        Presence = x.Presence,
+                    }).ToListAsync();
+
+            return studentsPresenceList;
+        }
+
+        public async Task<List<StudentMarkDto>> GetStudentMarksListByStudentIds(long studentId, List<long> studentGroupsIds)
+        {
+            var studentsMarksList = await _applicationContext.Visits
+                .AsNoTracking()
+                .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
+                .Any(x => x.StudentId == studentId) && x.StudentMark != default)
+                .Select(x => new StudentMarkDto
+                {
+                    CourceId = x.Lesson.StudentGroup.CourseId,
+                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    StudentId = (long)x.StudentId,
+                    LessonId = x.LessonId,
+                    LessonDate = x.Lesson.LessonDate,
+                    StudentMark = x.StudentMark,
+                }).ToListAsync();
+
+            return studentsMarksList;
+        }
+
+        public async Task<List<AverageStudentGroupMarkDto>> GetStudentGroupsAverageMarks(List<long> studentGroupIds)
+        {
+            var studentGroupMarskList = await _applicationContext.Visits
+                .AsNoTracking()
+                .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Where(x => x.StudentMark != default)
+                .Select( x => new
+                {
+                    CourceId = x.Lesson.StudentGroup.CourseId,
+                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    StudentMark = x.StudentMark
+                })
+                .AsQueryable()
+                .GroupBy(x => new
+                {
+                    GroupId = x.StudentGroupId,
+                    CourceId = x.CourceId
+                })
+                .Select(x => new AverageStudentGroupMarkDto
+                {
+                    CourceId = x.Key.CourceId,
+                    StudentGroupId = x.Key.GroupId,
+                    AverageMark = Math.Round(x.Sum(x => (double)x.StudentMark)
+                        / x.Count(), 2)
+                }).ToListAsync();
+
+            return studentGroupMarskList;
+        }
+
+        public async Task<List<AverageStudentGroupVisitDto>> GetStudentGroupsAverageVisits(List<long> studentGroupIds)
+        {
+            var studentGroupVisits = await _applicationContext.Visits
+                .AsNoTracking()
+                .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Select(x => new
+                {
+                    CourceId = x.Lesson.StudentGroup.CourseId,
+                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    StudentPresense = x.Presence
+                })
+                .ToListAsync();
+
+            var studentGroupAveragevisits = studentGroupVisits
+                .GroupBy(x => new
+                {
+                    GroupId = x.StudentGroupId,
+                    CourceId = x.CourceId
+                })
+                .Select(x => new AverageStudentGroupVisitDto
+                {
+                    CourceId = x.Key.CourceId,
+                    StudentGroupId = x.Key.GroupId,
+                    AverageVisitPercentage = (int)((double)x
+                     .Where(d => d.StudentPresense == true).Count()
+                      / (double)x.Count() * 100)
+                }).ToList();
+
+            return studentGroupAveragevisits;
+        }
+
 
     }
 }

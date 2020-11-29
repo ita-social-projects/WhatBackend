@@ -92,11 +92,11 @@ namespace CharlieBackend.Api
 
                c.IncludeXmlComments(xmlPath);
 
-                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.IncludeXmlComments(xmlPath); 
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Description = "Specify a Bearer token. \nExample: Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9",
                     Name = "Authorization",

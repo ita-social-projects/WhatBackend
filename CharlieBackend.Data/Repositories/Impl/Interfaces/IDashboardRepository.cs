@@ -10,7 +10,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IDashboardRepository
     {
-        public Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate);
+        public Task<List<long>> GetGroupsIdsByCourceIdAsync(long courceId, DateTime startDate, DateTime finishDate);
 
         public Task<List<long>> GetStudentsIdsByGroupIdAsync(long studentGroupId);
 
@@ -25,5 +25,19 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public Task<List<StudentVisitDto>> GetStudentsPresenceListByStudentIds(IEnumerable<long> studentIds);
 
         public Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds);
+
+        public Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime startDate, DateTime finishDate);
+
+        public Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdAsync(long studentId, List<long> studentGroupsIds);
+
+        public Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds);
+
+        public Task<List<StudentVisitDto>> GetStudentPresenceListByStudentIds(long studentId, List<long> studentGroupsIds);
+
+        public Task<List<StudentMarkDto>> GetStudentMarksListByStudentIds(long studentId, List<long> studentGroupsIds);
+
+        public Task<List<AverageStudentGroupMarkDto>> GetStudentGroupsAverageMarks(List<long> studentGroupIds);
+
+        public Task<List<AverageStudentGroupVisitDto>> GetStudentGroupsAverageVisits(List<long> studentGroupIds);
     }
 }
