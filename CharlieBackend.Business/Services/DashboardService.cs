@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.Entities;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
 
 namespace CharlieBackend.Business.Services
 {
@@ -29,8 +30,7 @@ namespace CharlieBackend.Business.Services
             _dashboardRepository = dashboardRepository;
         }
 
-        public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(long courceId, long groupId,
-                StudentsClassbookRequestDto request)
+        public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsClassbookRequestDto request)
         {
             if (request == default && request.IncludeAnalytics == default)
             {
@@ -38,7 +38,7 @@ namespace CharlieBackend.Business.Services
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
             }
 
-            if (courceId == default(long) && groupId == default(long))
+            if (request.CourseId == default(long?) && request.StudentGroupId == default(long?))
             {
                 return Result<StudentsClassbookResultDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No course or group Id given");
@@ -47,17 +47,17 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsClassbookResultDto();
             var studentsIds = new List<long>();
 
-            if (courceId != default)
+            if (request.CourseId != default(long?))
             {
                 var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourceIdAsync(courceId, request.StartDate, request.FinishDate);
+                    .GetGroupsIdsByCourceIdAsync((long)request.CourseId, request.StartDate, request.FinishDate);
 
                 studentsIds = await _dashboardRepository
                     .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             }
-            else if (groupId != default)
+            else if (request.StudentGroupId != default(long?))
             {
-                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync(groupId);
+                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync((long)request.StudentGroupId);
             }
             else
             {
@@ -80,8 +80,7 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsClassbookResultDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(long courceId, long groupId, 
-            StudentsResultsRequestDto request)
+        public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsResultsRequestDto request)
         {
             if (request == null && request.IncludeAnalytics == null)
             {
@@ -89,7 +88,7 @@ namespace CharlieBackend.Business.Services
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
             }
 
-            if (courceId == default(long) && groupId == default(long))
+            if (request.CourseId == default(long?) && request.StudentGroupId == default(long?))
             {
                 return Result<StudentsResultsDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No course or group Id given");
@@ -98,17 +97,17 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsResultsDto();
             var studentsIds = new List<long>();
 
-            if (courceId != default(long))
+            if (request.CourseId != default(long?))
             {
                 var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourceIdAsync(courceId, request.StartDate, request.FinishtDate);
+                    .GetGroupsIdsByCourceIdAsync((long)request.CourseId, request.StartDate, request.FinishtDate);
 
                 studentsIds = await _dashboardRepository
                     .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             }
-            else if (groupId != default(long))
+            else if (request.StudentGroupId != default(long?))
             {
-                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync(groupId);
+                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync((long)request.StudentGroupId);
             }
             else
             {
@@ -131,8 +130,8 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsResultsDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId, 
-            StudentsClassbookRequestDto request, string authHeader)
+        public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
+            StudentClassbookRequestDto request, string authHeader)
         {
             var handler = new JwtSecurityTokenHandler();
             authHeader = authHeader.Replace("Bearer ", "");
@@ -176,8 +175,8 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsClassbookResultDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, 
-            StudentsResultsRequestDto request, string authHeader)
+        public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
+            StudentResultRequestDto request, string authHeader)
         {
             var handler = new JwtSecurityTokenHandler();
             authHeader = authHeader.Replace("Bearer ", "");

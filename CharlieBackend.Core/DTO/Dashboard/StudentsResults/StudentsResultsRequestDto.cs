@@ -5,14 +5,18 @@ using System.Text;
 
 namespace CharlieBackend.Core.DTO.Dashboard
 {
-    public class StudentsClassbookRequestDto
+    public class StudentsResultsRequestDto
     {
+        public long? CourseId { get; set; }
+
+        public long? StudentGroupId { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FinishDate { get; set; }
+        public DateTime FinishtDate { get; set; }
 
-        public ClassbookResultType[] IncludeAnalytics { get; set; }
+        public StudentResultType[] IncludeAnalytics { get; set; }
     }
 }

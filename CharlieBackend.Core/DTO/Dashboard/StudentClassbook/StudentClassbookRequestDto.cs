@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CharlieBackend.Core.DTO.Dashboard
+namespace CharlieBackend.Core.DTO.Dashboard.StudentClassbook
 {
-    public class StudentsResultsRequestDto
+    public class StudentClassbookRequestDto
     {
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FinishtDate { get; set; }
+        public DateTime FinishDate { get; set; }
 
-        public StudentResultType[] IncludeAnalytics { get; set; }
+        public ClassbookResultType[] IncludeAnalytics { get; set; }
     }
 }
