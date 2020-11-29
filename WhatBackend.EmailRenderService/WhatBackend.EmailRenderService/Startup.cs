@@ -79,4 +79,3 @@ namespace WhatBackend.EmailRenderService
         }
     }
 }
-    
