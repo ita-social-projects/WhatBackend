@@ -21,10 +21,12 @@ namespace CharlieBackend.Api.UnitTest
     public class AccountServiceTests : TestBase
     { 
         private readonly IMapper _mapper;
+        private readonly Mock<INotificationService> _notificationServiceMock;
 
         public AccountServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
+            _notificationServiceMock = new Mock<INotificationService>();
         }
 
         [Fact]
@@ -32,8 +34,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             string accountExpectedEmail = "user@example.com";
-
-            //var isEmailTaken = true;
+            int accountExpectedId = 2;
 
             var successAccountModel = new CreateAccountDto()
             {
@@ -55,31 +56,40 @@ namespace CharlieBackend.Api.UnitTest
 
             var existingAccount = new Account()
             {
-                Id = 1,
+                Id = accountExpectedId,
                 Email = accountExpectedEmail,
-                Role = UserRole.Mentor
+                Role = UserRole.NotAssigned
             };
 
             var accountRepositoryMock = new Mock<IAccountRepository>();
+
             accountRepositoryMock.Setup(x => x.Add(It.IsAny<Account>()))
-                .Callback<Account>(x => x = existingAccount); 
+                .Callback<Account>(x => x = existingAccount);
+
+            accountRepositoryMock.Setup(x => x.Add(It.IsAny<Account>()))
+                .Callback<Account>(x => x.Id = accountExpectedId);
+
+            accountRepositoryMock.Setup(x => x.IsEmailTakenAsync(accountExpectedEmail))
+                    .ReturnsAsync(true);
+
             _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(accountRepositoryMock.Object);
 
 
             var accountService = new AccountService(
                 _unitOfWorkMock.Object,
-                _mapper);
+                _mapper,
+                _notificationServiceMock.Object);
 
             //Act
-             //var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
-            //var successResult = await accountService.CreateAccountAsync(successAccountModel);
+             var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
+             var successResult = await accountService.CreateAccountAsync(successAccountModel);
 
             //Assert
-            //Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
+            Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
 
-           // Assert.NotNull(successResult.Data);
-           // Assert.Equal(successResult.Data.Id, accountExpectedId);
-           // Assert.Equal(successResult.Data.Role, UserRole.NotAssigned);
+            Assert.NotNull(successResult.Data);
+            Assert.Equal(accountExpectedId, successResult.Data.Id);
+            Assert.Equal(UserRole.NotAssigned, successResult.Data.Role);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
