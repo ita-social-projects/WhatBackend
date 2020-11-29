@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Core.DTO.Account;
-
 
 
 namespace CharlieBackend.Api.UnitTest
@@ -73,7 +72,6 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(true);
 
             _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(accountRepositoryMock.Object);
-
 
             var accountService = new AccountService(
                 _unitOfWorkMock.Object,
