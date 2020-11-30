@@ -231,8 +231,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentAverageMarskList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => x.StudentId == studentId) && x.StudentMark != null)
+                    .Where(x => x.StudentId == studentId && x.StudentMark != null)
                     .Select(x => new 
                     {
                         CourceId = x.Lesson.StudentGroup.CourseId,
@@ -265,8 +264,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentVisitsList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                        .Any(x => x.StudentId == studentId))
+                .Where(x => x.StudentId == studentId)
                 .Select(x => new StudentVisitDto
                 {
                     CourceId = x.Lesson.StudentGroup.CourseId,
@@ -300,8 +298,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                            .Any(x => x.StudentId == studentId))
+                    .Where(x => x.StudentId == studentId)
                     .Select(x => new StudentVisitDto
                     {
                         CourceId = x.Lesson.StudentGroup.CourseId,
@@ -320,8 +317,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentsMarksList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                .Any(x => x.StudentId == studentId) && x.StudentMark != default)
+                .Where(x => x.StudentId == studentId && x.StudentMark != default)
                 .Select(x => new StudentMarkDto
                 {
                     CourceId = x.Lesson.StudentGroup.CourseId,
