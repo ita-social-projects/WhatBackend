@@ -13,6 +13,7 @@ namespace CharlieBackend.Core.DTO.Dashboard.StudentClassbook
         [DataType(DataType.Date)]
         public DateTime FinishtDate { get; set; }
 
+        [Required]
         public StudentResultType[] IncludeAnalytics { get; set; }
     }
 }
