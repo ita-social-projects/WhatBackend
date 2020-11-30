@@ -126,7 +126,6 @@ namespace CharlieBackend.Core.Mapping
                    .ForMember(source => source.StudentIds,
                               conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
                                           Select(y => y.StudentId).ToList()));
-
             #endregion
 
 
