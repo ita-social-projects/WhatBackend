@@ -40,37 +40,32 @@ namespace CharlieBackend.Business.Services
                     "Account already exists!");
             }
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            try
             {
-                try
+                var account = new Account
                 {
-                    var account = new Account
-                    {
-                        Email = accountModel.Email,
-                        FirstName = accountModel.FirstName,
-                        LastName = accountModel.LastName
-                    };
+                    Email = accountModel.Email,
+                    FirstName = accountModel.FirstName,
+                    LastName = accountModel.LastName
+                };
 
-                    account.Salt = GenerateSalt();
-                    account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
+                account.Salt = GenerateSalt();
+                account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
 
-                    _unitOfWork.AccountRepository.Add(account);
+                _unitOfWork.AccountRepository.Add(account);
 
-                    await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync();
 
-                    transaction.Commit();
+                await _notification.RegistrationSuccess(account);
 
-                    await _notification.RegistrationSuccess(account);
+                return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
 
-                    return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
-                   
-                }
-                catch
-                {
-                    transaction.Rollback();
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
 
-                    return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Cannot create account.");
-                }
+                return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Cannot create account.");
             }
         }
 

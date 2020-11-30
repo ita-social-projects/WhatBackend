@@ -71,7 +71,7 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.NotFound, nonExistingIdResult.Error.Code);
 
             Assert.NotNull(successResult.Data);
-            Assert.Equal(successResult.Data.Id, mentorExpectedId);
+            Assert.Equal(mentorExpectedId, successResult.Data.Id);
 
             Assert.Equal(ErrorCode.ValidationError, alreadyAssignedResult.Error.Code);
         }
@@ -157,9 +157,9 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.NotFound, nonExistingIdResult.Error.Code);
 
             Assert.NotNull(successResult.Data);
-            Assert.Equal(successResult.Data.Email, successUpdateMentorDto.Email);
-            Assert.Equal(successResult.Data.FirstName, successUpdateMentorDto.FirstName);
-            Assert.Equal(successResult.Data.LastName, successUpdateMentorDto.LastName);
+            Assert.Equal(successUpdateMentorDto.Email, successResult.Data.Email);
+            Assert.Equal(successUpdateMentorDto.FirstName, successResult.Data.FirstName);
+            Assert.Equal(successUpdateMentorDto.LastName, successResult.Data.LastName);
 
             Assert.Equal(ErrorCode.ValidationError, alreadyExistingEmailResult.Error.Code);
         }
