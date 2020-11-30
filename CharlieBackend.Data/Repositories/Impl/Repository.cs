@@ -30,7 +30,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public void Add(T entity)
         {
-            if (entity == null) 
+            if (entity == null)
             {
                 throw new ArgumentNullException();
             }
@@ -47,10 +47,15 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var found = await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
 
-            if (found != null) 
+            if (found != null)
             {
                 _entities.Remove(found);
             }
+        }
+
+        public async Task<bool> IsEntityExistAsync(long id)
+        {
+            return await _entities.AnyAsync(x => x.Id == id);
         }
     }
 }

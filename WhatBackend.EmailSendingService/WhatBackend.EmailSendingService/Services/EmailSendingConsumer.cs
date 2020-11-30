@@ -32,9 +32,5 @@ namespace WhatBackend.EmailSendingService.Services
 
             await _sender.SendMessageAsync(data);
         }
-
-
     }
-
 }
-
