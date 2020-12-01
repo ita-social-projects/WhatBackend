@@ -67,10 +67,13 @@
                                                         <span>Edit </span>
                                                     </a>
 
-                                                    <a class="dropdown-item" asp-action="DisableStudent" asp-controller="Students" asp-route-id="@item.Id">
-                                                        <i class="fas fa-trash"></i>
-                                                        <span>Delete </span>
-                                                    </a>
+                                                    @if (@item.IsActive)
+                                                    {
+                                                        <a class="dropdown-item" asp-action="DisableStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Delete </span>
+                                                        </a>
+                                                    }
                                                 </div>
                                             </div>
                                         </td>
