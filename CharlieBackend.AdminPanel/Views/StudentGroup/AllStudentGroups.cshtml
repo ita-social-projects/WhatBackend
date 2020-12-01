@@ -19,15 +19,15 @@
 
             <div class="card shadow mb-4">
                 <div class="card-body">
-                    <div class="table-responsive p-2" style="overflow-x:unset">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
                         <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col-1">Id</th>
                                     <th class="col-1">Course id</th>
                                     <th class="col-2">Name</th>
-                                    <th class="col-1">Start date</th>
-                                    <th class="col-1">Finish date</th>
+                                    <th class="col-2">Start date</th>
+                                    <th class="col-2">Finish date</th>
                                     <th class="col">Students id</th>
                                     <th class="col">Mentors id</th>
                                     <th class="col-1">Controll</th>
@@ -41,8 +41,8 @@
                                         <td class="col-1 text-truncate">@item.Id</td>
                                         <td class="col-1 text-truncate">@item.CourseId</td>
                                         <td class="col-2 text-truncate">@item.Name</td>
-                                        <td class="col-1">@item.StartDate.ToString("yyyy-MM-dd")</td>
-                                        <td class="col-1">@item.FinishDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="col-2">@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="col-2">@item.FinishDate.ToString("yyyy-MM-dd")</td>
 
                                         <td class="col">
                                             <div class="dropdown">
@@ -104,18 +104,13 @@
                                                 </div>
                                             </div>
                                         </td>
-
                                     </tr>
                                 }
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-
 </div>
