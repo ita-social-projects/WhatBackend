@@ -68,7 +68,6 @@ namespace CharlieBackend.Business.Services
                 if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(id))
                 {
                     return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course id not found");
-
                 }
 
                 if (await IsCourseNameTakenAsync(updateCourseDto.Name))
