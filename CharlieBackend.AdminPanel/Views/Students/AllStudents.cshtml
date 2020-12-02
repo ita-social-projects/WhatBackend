@@ -69,7 +69,8 @@
 
                                                     @if (@item.IsActive)
                                                     {
-                                                        <a class="dropdown-item" asp-action="DisableStudent" asp-controller="Students" asp-route-id="@item.Id">
+
+                                                        <a class="dropdown-item text-dark" id="disableStudent" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
                                                             <i class="fas fa-trash"></i>
                                                             <span>Disable </span>
                                                         </a>
@@ -86,4 +87,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Disable student modal window-->
+    <div class="modal fade" id="disableStudentModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Disable student?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmDisableStudent" href="/Students/DisableStudent/">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<script type="text/javascript">
+
+    var disableStudentId = document.querySelector("#disableStudent").getAttribute('data-item-id');
+
+    var confirmDisableStudent = document.querySelector("#confirmDisableStudent");
+
+    confirmDisableStudent.href = confirmDisableStudent.href + disableStudentId;
+
+</script>
