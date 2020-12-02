@@ -53,15 +53,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<StudentGroupDto>> PostStudentGroup([FromBody]CreateStudentGroupDto studentGroup)
         {
-            
-            var isStudentGroupNameExist = await _studentGroupService
-                    .IsGroupNameExistAsync(studentGroup.Name);
-
-            if (isStudentGroupNameExist.Data)
-            {
-                return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
-            }
-
             var resStudentGroup = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
           
             return resStudentGroup.ToActionResult();
@@ -78,14 +69,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, [FromBody]UpdateStudentGroupDto studentGroupDto)
         {
-            var isStudentGroupNameExist = await _studentGroupService
-                   .IsGroupNameExistAsync(studentGroupDto.Name);
-
-            if (isStudentGroupNameExist.Data)
-            {
-                return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists").ToActionResult();
-            }
-
             var updatedStudentGroup = await _studentGroupService
                     .UpdateStudentGroupAsync(id, studentGroupDto);
 

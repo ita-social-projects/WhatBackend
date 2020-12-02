@@ -35,6 +35,11 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "StudentGroupDto is null");
                 }
 
+                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(studentGroupDto.Name))
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                }
+
                 var studentGroup = new StudentGroup
                 {
                     Name = studentGroupDto.Name,
@@ -55,6 +60,7 @@ namespace CharlieBackend.Business.Services
                     {
                         studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
                         {
+                            StudentId = students[i].Id,
                             Student = students[i]
                         });
                     }
@@ -69,19 +75,24 @@ namespace CharlieBackend.Business.Services
                     {
                         studentGroup.MentorsOfStudentGroups.Add(new MentorOfStudentGroup
                         {
+                            MentorId = mentors[i].Id,
                             Mentor = mentors[i]
                         }); ;
                     }
                 }
+
 
                 await _unitOfWork.CommitAsync();
 
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
-            catch
+            catch(Exception ex)
             {
                 _unitOfWork.Rollback();
+
+                Console.WriteLine(ex.Message);
+
 
                 return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
@@ -89,7 +100,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<bool>> IsGroupNameExistAsync(string name)
         {
-            if(name == null)
+            if (name == null)
             {
                 return Result<bool>.GetError(ErrorCode.ValidationError, "Name is null");
             }
@@ -112,7 +123,7 @@ namespace CharlieBackend.Business.Services
         }
 
         // if we set StudentIds or MentorsIds to null, they won't update
-        public async Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto updatedStudentGroupDto) 
+        public async Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long groupId, UpdateStudentGroupDto updatedStudentGroupDto)
         {
             try
             {
@@ -126,6 +137,11 @@ namespace CharlieBackend.Business.Services
                 if (foundStudentGroup == null)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student Group not found");
+                }
+
+                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
                 }
 
                 foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
@@ -172,7 +188,7 @@ namespace CharlieBackend.Business.Services
 
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
 
@@ -193,6 +209,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
-
     }
 }
