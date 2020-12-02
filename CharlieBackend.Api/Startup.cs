@@ -24,15 +24,27 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CharlieBackend.Api
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -66,6 +78,9 @@ namespace CharlieBackend.Api
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
+
+            //AzureStorageBlobs Congiguration through extension
+            services.AddAzureStorageBlobs(Configuration.GetConnectionString("AzureBlobsAccessKey"));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -122,6 +137,9 @@ namespace CharlieBackend.Api
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
