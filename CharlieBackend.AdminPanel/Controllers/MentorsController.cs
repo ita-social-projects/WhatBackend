@@ -15,7 +15,6 @@ namespace CharlieBackend.AdminPanel.Controllers
     {
         private readonly IMentorService _mentorService;
 
-
         public MentorsController(IMentorService mentorService)
         {
             _mentorService = mentorService;

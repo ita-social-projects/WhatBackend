@@ -55,9 +55,8 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of students list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<MentorDto>>> GetAllActiveStudents()
+        public async Task<ActionResult<IList<MentorDto>>> GetAllActiveMentors()
         {
-
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
             return mentors.ToActionResult();
@@ -67,21 +66,19 @@ namespace CharlieBackend.Api.Controllers
         /// Get mentor information by mentor id
         /// </summary>
         /// <response code="200">Successful return of mentor</response>
-        /// <response code="409">Error, can not find mentor</response>
-        [SwaggerResponse(200, type: typeof(MentorMock))]
+        /// <response code="404">Error, can not find mentor</response>
+        [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}")]
         public async Task<ActionResult<MentorDto>> GetMentorById(long id)
         {
-
             var mentorModel = await _mentorService.GetMentorByIdAsync(id);
 
             if (mentorModel != null)
             {
                 return Ok(mentorModel);
             }
-
-            return StatusCode(409, "Cannot find mentor with such id.");
+            return NotFound("Cannot find mentor with such id.");
         }
 
         /// <summary>

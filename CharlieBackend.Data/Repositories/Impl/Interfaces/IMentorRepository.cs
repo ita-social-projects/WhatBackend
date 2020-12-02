@@ -16,8 +16,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<Mentor>> GetAllActiveAsync();
 
-        //public Task<Mentor> GetAccountByMentorIdAsync(long mentorId);
-
         Task<Mentor> GetMentorByAccountIdAsync(long accountId);
 
         Task<Mentor> GetMentorByIdAsync(long mentorId);
