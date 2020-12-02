@@ -8,6 +8,6 @@ namespace CharlieBackend.Core.DTO.File
     public class ImportFileDto
     {
         [Required]
-        public string url { get; set; }
+        public byte [] FileAsByte { get; set; }
     }
 }

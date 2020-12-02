@@ -31,7 +31,6 @@ namespace CharlieBackend.Root
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IFileImportService, FileImportService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<ICourseService, CourseService>();

@@ -11,25 +11,26 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace CharlieBackend.Business.Services
 {
-    public class FileImportService : IFileImportService
+    public class GroupImportService 
     {
         #region private
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         #endregion
 
-        public FileImportService(IUnitOfWork unitOfWork, IMapper mapper)
+        public GroupImportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(ImportFileDto file)
+        public override async Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(ImportFileDto file)
         {
-            var wb = new XLWorkbook(file.url);
+            var wb = GetFile(file.FileAsByte);
             var wsGroups = wb.Worksheet("Groups");
             List<StudentGroupFileModel> importedGroups = new List<StudentGroupFileModel>();
 
@@ -99,7 +100,7 @@ namespace CharlieBackend.Business.Services
                 .GetSuccess(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
         }
 
-        private async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
+        protected override async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
         {
             List<long> existingCourseIds = new List<long>();
             List<string> existingGroupNames = new List<string>();
@@ -140,17 +141,23 @@ namespace CharlieBackend.Business.Services
 
             if (existingGroupNames.Contains(fileLine.Name))
             {
-                throw new DbUpdateException($"Group with name {fileLine.Name} already exist.\n" +
+                throw new DbUpdateException($"Group with name {fileLine.Name} already exists.\n" +
                    $"Problem was occured in col C, row {rowCounter}.");
             }
         }
 
-        private bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
+        protected override bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
         {
             return (ws.Cell($"B{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"C{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"D{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"E{rowCounter}").Value.ToString() == "");
+        }
+
+        protected override XLWorkbook GetFile(byte [] fileAsBytes) 
+        {
+            File.WriteAllBytes(@"C:\Users\Public\13.xlsx", fileAsBytes);
+            return new XLWorkbook(@"C:\Users\Public\13.xlsx");
         }
 
     }
