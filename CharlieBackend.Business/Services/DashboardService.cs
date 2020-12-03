@@ -19,10 +19,8 @@ namespace CharlieBackend.Business.Services
 {
     public class DashboardService : IDashboardService
     {
-        #region privateFields
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDashboardRepository _dashboardRepository;
-        #endregion
 
         public DashboardService(IUnitOfWork unitOfWork, IDashboardRepository dashboardRepository)
         {
@@ -32,7 +30,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsClassbookRequestDto request)
         {
-            if (request == default && request.IncludeAnalytics == default)
+            if (request == default || request.IncludeAnalytics == default 
+                || request.IncludeAnalytics.Length == 0)
             {
                 return Result<StudentsClassbookResultDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
@@ -47,22 +46,18 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsClassbookResultDto();
             var studentsIds = new List<long>();
 
-            if (request.CourseId != default(long?))
+            if (request.StudentGroupId != default(long?))
             {
-                var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourceIdAsync((long)request.CourseId, request.StartDate, request.FinishDate);
-
                 studentsIds = await _dashboardRepository
-                    .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
-            }
-            else if (request.StudentGroupId != default(long?))
-            {
-                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync((long)request.StudentGroupId);
+                    .GetStudentsIdsByGroupIdsAsync(new List<long> { (long)request.StudentGroupId });
             }
             else
             {
-                return Result<StudentsClassbookResultDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No correct request parameters given");
+                var studentGroupsIds = await _dashboardRepository
+                    .GetGroupsIdsByCourseIdAsync((long)request.CourseId, request.StartDate, request.FinishDate);
+
+                studentsIds = await _dashboardRepository
+                    .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
@@ -82,7 +77,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsResultsRequestDto request)
         {
-            if (request == null && request.IncludeAnalytics == null)
+            if (request == default || request.IncludeAnalytics == default
+                || request.IncludeAnalytics.Length == 0)
             {
                 return Result<StudentsResultsDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
@@ -97,22 +93,18 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsResultsDto();
             var studentsIds = new List<long>();
 
-            if (request.CourseId != default(long?))
+            if (request.StudentGroupId != default(long?))
             {
-                var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourceIdAsync((long)request.CourseId, request.StartDate, request.FinishtDate);
-
-                studentsIds = await _dashboardRepository
-                    .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
-            }
-            else if (request.StudentGroupId != default(long?))
-            {
-                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdAsync((long)request.StudentGroupId);
+                studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdsAsync(
+                    new List<long> { (long)request.StudentGroupId });
             }
             else
             {
-                return Result<StudentsResultsDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
+                var studentGroupsIds = await _dashboardRepository
+                    .GetGroupsIdsByCourseIdAsync((long)request.CourseId, request.StartDate, request.FinishtDate);
+
+                studentsIds = await _dashboardRepository
+                    .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
@@ -139,7 +131,8 @@ namespace CharlieBackend.Business.Services
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
-            if (request == null && request.IncludeAnalytics == null && studentId == 0)
+            if (request == default || request.IncludeAnalytics == default
+                || request.IncludeAnalytics.Length == 0 || studentId == 0)
             {
                 return Result<StudentsClassbookResultDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
@@ -184,7 +177,8 @@ namespace CharlieBackend.Business.Services
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
-            if (request == null && request.IncludeAnalytics == null && studentId == 0)
+            if (request == default || request.IncludeAnalytics == default
+                || request.IncludeAnalytics.Length == 0 || studentId == 0)
             {
                 return Result<StudentsResultsDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
@@ -220,9 +214,10 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsResultsDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courceId, StudentGroupsResultsRequestDto request)
+        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, StudentGroupsResultsRequestDto request)
         {
-            if (courceId == 0 && request == null && request.IncludeAnalytics == null)
+            if (courseId == 0 || request == default || request.IncludeAnalytics == default
+                || request.IncludeAnalytics.Length == 0)
             {
                 return Result<StudentGroupsResultsDto>
                     .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
@@ -230,7 +225,7 @@ namespace CharlieBackend.Business.Services
 
             var result = new StudentGroupsResultsDto();
             var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourceIdAsync(courceId, request.StartDate, request.FinishDate);
+                    .GetGroupsIdsByCourseIdAsync(courseId, request.StartDate, request.FinishDate);
 
             if (studentGroupsIds == null)
             {

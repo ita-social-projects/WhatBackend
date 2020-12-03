@@ -18,6 +18,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, StudentResultRequestDto request, string authHeader);
 
-        public Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courceId, StudentGroupsResultsRequestDto request);
+        public Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, StudentGroupsResultsRequestDto request);
     }
 }

@@ -23,10 +23,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class DashboardController : ControllerBase
     {
-        #region
         private readonly IDashboardService _dashboardService;
         private readonly IStudentService _studentService;
-        #endregion
+
         /// <summary>
         /// Dashboard controllers constructor
         /// </summary>
@@ -40,7 +39,7 @@ namespace CharlieBackend.Api.Controllers
         /// Gets classbook data of every students lesson
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courceId" or "groupId" to filter all course groups or exact student group.
+        /// 1. Mention "courseId" or "groupId" to filter all course groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
@@ -59,7 +58,7 @@ namespace CharlieBackend.Api.Controllers
         /// Gets results of every student
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courceId" or "groupId" to filter all cource groups or exact student group.
+        /// 1. Mention "courseId" or "groupId" to filter all cource groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
@@ -115,16 +114,16 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets report data of student group results
         /// </summary>
-        /// <param name="courceId">Cource id</param>
+        /// <param name="courseId">Course id</param>
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": [] have to receive params for data to return "AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage" </param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpPost("studentGroupResults/{courceId}")]
-        public async Task<ActionResult> GetStudentGroupResults(long courceId, [FromBody]StudentGroupsResultsRequestDto request)
+        [HttpPost("studentGroupResults/{courseId}")]
+        public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]StudentGroupsResultsRequestDto request)
         {
             var results = await _dashboardService
-            .GetStudentGroupResultAsync(courceId, request);
+            .GetStudentGroupResultAsync(courseId, request);
 
             return results.ToActionResult();
         }
