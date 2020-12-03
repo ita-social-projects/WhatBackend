@@ -55,8 +55,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Lesson, LessonDto>();
 
             CreateMap<Lesson, CreateLessonDto>();
-
-
             CreateMap<CreateLessonDto, Lesson>()
                   .ForMember(destination => destination.Theme, conf => conf.MapFrom(x =>new Theme() { Name = x.ThemeName}))
                   .ForMember(destination => destination.Visits,
@@ -69,9 +67,8 @@ namespace CharlieBackend.Core.Mapping
                              }).ToList()));
 
             CreateMap<Lesson, LessonDto>()
-                .ForMember(destination => destination.Visits, conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto()
+                .ForMember(destination => destination.LessonVisits, conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto()
                             {
-                                 Id = y.Id,
                                  StudentId = y.StudentId,
                                  StudentMark = y.StudentMark,
                                  Presence = y.Presence,
@@ -129,25 +126,6 @@ namespace CharlieBackend.Core.Mapping
                    .ForMember(source => source.StudentIds,
                               conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
                                           Select(y => y.StudentId).ToList()));
-
-            CreateMap<UpdateStudentGroupDto, StudentGroup>();
-            CreateMap<StudentGroup, UpdateStudentGroupDto>();
-
-            CreateMap<UpdateStudentsForStudentGroup, StudentGroup>()
-               .ForMember(source => source.StudentsOfStudentGroups, 
-                          conf => conf.MapFrom(x => x.StudentIds.
-                                       Select(x => new StudentOfStudentGroup() 
-                                       { 
-                                           StudentId = x 
-
-                                       }).ToList()));
-
-            CreateMap<StudentGroup, UpdateStudentsForStudentGroup>()
-              .ForMember(source => source.StudentIds, 
-                        conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
-                                     Select(y => y.StudentId).ToList()));
-
-
             #endregion
 
 
@@ -158,6 +136,7 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<CreateThemeDto, Theme>();
             CreateMap<Theme, CreateThemeDto>();
+            CreateMap<UpdateThemeDto, Theme>();
 
             #endregion
 

@@ -1,0 +1,135 @@
+﻿@model CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto    
+
+@{
+    Layout = "_Layout";
+}
+
+<div id="content-wrapper" class="d-flex flex-row  justify-content-center">
+
+    <div class="container mt-3 col-5">
+
+        <h1 class="h3 mb-2 text-gray-800">Edit student group</h1>
+
+        <div class="card shadow mb-4">
+
+            <div class="modal-body">
+                <form method="post" asp-action="UpdateStudentGroup" asp-controller="StudentGroup" asp-route-id="@ViewBag.StudentGroup.Id">
+
+                    <div class="form-group">
+                        <label>Course </label>
+                        <select class="custom-select" asp-for="CourseId" size="1">
+                            
+                            @if (@ViewBag.StudentGroup.AllCourses != null)
+                            {
+                                @foreach (var item in @ViewBag.StudentGroup.AllCourses)
+                                {
+                                    if (@ViewBag.StudentGroup.ActiveCourse.Id == item.Id)
+                                    {
+                                        <option selected value="@item.Id">@item.Id @item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Id @item.Name</option>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Group name</label>
+                        <input type="text" class="form-control" id="groupName" asp-for="Name" value="@ViewBag.StudentGroup.Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start date</label>
+                        <input type="date" min="1900-01-01" max="2100-12-31"
+                               class="form-control" value="@ViewBag.StudentGroup.StartDate.ToString("yyyy-MM-dd")" asp-for="StartDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>End date</label>
+                        <input type="date" min="1000-01-01" max="3000-12-31" class="form-control"
+                               value="@ViewBag.StudentGroup.FinishDate.ToString("yyyy-MM-dd")" asp-for="FinishDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Students</label>
+                        <select class="custom-select" asp-for="StudentIds" size="4" multiple>
+
+                            @if (@ViewBag.StudentGroup.AllStudents != null)
+                            {
+                                @foreach (var item in @ViewBag.StudentGroup.AllStudents)
+                                {
+                                    @if ((@ViewBag.StudentGroup.ActiveStudents as IEnumerable<CharlieBackend.AdminPanel.Models.Students.StudentViewModel>).Any(x => x.Id == item.Id))
+                                    {
+                                        <option selected value="@item.Id">
+                                            @item.Id @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.Id @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mentors</label>
+                        <select class="custom-select" asp-for="MentorIds" size="3" multiple>
+                            @if (@ViewBag.StudentGroup.AllMentors != null)
+                            {
+                                @foreach (var item in @ViewBag.StudentGroup.AllMentors)
+                                {
+                                    @if ((@ViewBag.StudentGroup.ActiveMentors as IEnumerable<CharlieBackend.AdminPanel.Models.Mentor.MentorViewModel>).Any(x => x.Id == item.Id))
+                                    {
+                                        <option selected value="@item.Id">
+                                            @item.Id @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.Id @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mt-3">
+                        <a class="btn btn-secondary" asp-action="AllStudentGroups" asp-controller="StudentGroup">Close</a>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

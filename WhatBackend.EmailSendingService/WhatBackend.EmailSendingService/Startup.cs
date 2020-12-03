@@ -1,3 +1,4 @@
+using System;
 using Serilog;
 using EasyNetQ;
 using System.Reflection;
@@ -50,10 +51,20 @@ namespace WhatBackend.EmailSendingService
             });
         }
 
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IHostApplicationLifetime applicationLifetime,
+            IBus bus
+            )
         {
+            //When the application is stopping we need to make unsubscribe for IBus.
+            //Important! Even in debugg mode finish this application with Ctrl+C in a console to make sure
+            //what unsubscribe was done well.
+            applicationLifetime.ApplicationStopping.Register(OnShutdown, bus);
+
             //registering message consumers
             app.ApplicationServices.GetRequiredService<AutoSubscriber>()
                     .SubscribeAsync(new[] { Assembly.GetExecutingAssembly() });
@@ -74,6 +85,10 @@ namespace WhatBackend.EmailSendingService
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
+        }
+        private void OnShutdown(object toDispose)
+        {
+            ((IDisposable)toDispose).Dispose();
         }
     }
 }

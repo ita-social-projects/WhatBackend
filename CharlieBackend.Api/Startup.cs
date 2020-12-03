@@ -1,8 +1,11 @@
 using System;
 using Serilog;
 using EasyNetQ;
+using System.IO;
 using AutoMapper;
+using System.Reflection;
 using CharlieBackend.Root;
+using CharlieBackend.Core;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using CharlieBackend.Core.Mapping;
@@ -12,11 +15,12 @@ using Microsoft.Extensions.Hosting;
 using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Api
 {
@@ -73,8 +77,20 @@ namespace CharlieBackend.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "13.07.2020" });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "19.11.2020" });
+                c.ExampleFilters();
+                c.OperationFilter<AddResponseHeadersFilter>();
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+               c.IncludeXmlComments(xmlPath);
+
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                c.IncludeXmlComments(xmlPath); 
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Description = "Specify a Bearer token. \nExample: Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9",
                     Name = "Authorization",
@@ -100,6 +116,10 @@ namespace CharlieBackend.Api
                     }
                 });
             });
+
+            services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
+            
+            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

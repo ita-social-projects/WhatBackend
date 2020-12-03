@@ -36,7 +36,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" asp-action="Index" asp-controller="Home">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
@@ -61,6 +61,11 @@
                 <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
                     <i class="far fa-address-book"></i>
                     <span>Students groups</span>
+                </a>
+
+                <a class="nav-link collapsed" asp-action="AllThemes" asp-controller="Themes">
+                    <i class="far fa-address-book"></i>
+                    <span>Themes</span>
                 </a>
 
             </li>
@@ -133,7 +138,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Charlie WHAT backend 2020</span>
+                        <span>Admin Panel WHAT Backend 2020</span>
                     </div>
                 </div>
             </footer>
@@ -144,10 +149,7 @@
 
     </div>
     <!-- End of Page Wrapper -->
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+    
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
