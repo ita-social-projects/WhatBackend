@@ -29,14 +29,16 @@
         <div class="container-fluid">
 
             <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Students</h6>
+                </div>
 
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
                         <table class="table table-striped text-center" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-1">Id</th>
-                                    <th class="col-3">Email</th>
+                                    <th class="col-4">Email</th>
                                     <th class="col-3">First Name</th>
                                     <th class="col-3">Last Name</th>
                                     <th class="col-1">Is active</th>
@@ -48,8 +50,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr class="row">
-                                        <td class="col-1 text-truncate">@item.Id</td>
-                                        <td class="col-3 text-truncate">@item.Email</td>
+                                        <td class="col-4 text-truncate">@item.Email</td>
                                         <td class="col-3 text-truncate">@item.FirstName</td>
                                         <td class="col-3 text-truncate">@item.LastName</td>
                                         <td class="col-1">@item.IsActive</td>
