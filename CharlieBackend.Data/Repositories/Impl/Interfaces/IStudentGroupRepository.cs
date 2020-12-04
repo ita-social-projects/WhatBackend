@@ -16,8 +16,10 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         StudentGroup SearchStudentGroup(long studentGroupId);
 
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
-        
+
         bool DeleteStudentGroup(long StudentGroupModelId);
-        void UpdateManyToMany(IList<StudentOfStudentGroup> studentsOfStudentGroups, List<StudentOfStudentGroup> newStudentsOfStudentGroup);
+
+        public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
+                                     IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
     }
 }
