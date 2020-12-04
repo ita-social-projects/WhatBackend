@@ -51,8 +51,10 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(assignedExistingAccount);
 
             var secretaryRepositoryMock = new Mock<ISecretaryRepository>();
+
             secretaryRepositoryMock.Setup(x => x.Add(It.IsAny<Secretary>()))
                 .Callback<Secretary>(x => x.Id = secretaryExpectedId);
+
             _unitOfWorkMock.Setup(x => x.SecretaryRepository).Returns(secretaryRepositoryMock.Object);
 
             var secretaryService = new SecretaryService(
@@ -78,6 +80,7 @@ namespace CharlieBackend.Api.UnitTest
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
+
             return mock;
         }
     }

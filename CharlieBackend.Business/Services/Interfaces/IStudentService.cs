@@ -13,6 +13,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<StudentDto>> GetAllActiveStudentsAsync();
 
+        Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id);
+
         Task<long?> GetAccountId(long studentId);
 
         Task<Result<StudentDto>> UpdateStudentAsync(long id, UpdateStudentDto studentModel);
