@@ -19,12 +19,10 @@ namespace CharlieBackend.Business.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IDashboardRepository _dashboardRepository;
 
-        public DashboardService(IUnitOfWork unitOfWork, IDashboardRepository dashboardRepository)
+        public DashboardService(IDashboardRepository dashboardRepository)
         {
-            _unitOfWork = unitOfWork;
             _dashboardRepository = dashboardRepository;
         }
 
@@ -273,8 +271,6 @@ namespace CharlieBackend.Business.Services
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
 
-            var isStudentRole = claimsContext.IsInRole("Student");
-
             if (!IsRequestAllowedForStudent(studentId, claimsContext))
             {
                 yield return "Not allowed to request other student results";
@@ -304,8 +300,6 @@ namespace CharlieBackend.Business.Services
             {
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
-
-            var isStudentRole = claimsContext.IsInRole("Student");
 
             if (!IsRequestAllowedForStudent(studentId, claimsContext))
             {
@@ -339,7 +333,7 @@ namespace CharlieBackend.Business.Services
 
         private bool IsRequestAllowedForStudent(long studentId, ClaimsPrincipal claimsContext)
         {
-            var isStudentRole = claimsContext.IsInRole("Student");
+            var isStudentRole = claimsContext.IsInRole(UserRole.Student.ToString());
 
             if (isStudentRole)
             {

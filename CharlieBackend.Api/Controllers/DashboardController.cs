@@ -24,15 +24,13 @@ namespace CharlieBackend.Api.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;
-        private readonly IStudentService _studentService;
 
         /// <summary>
         /// Dashboard controllers constructor
         /// </summary>
-        public DashboardController(IDashboardService dashboardService, IStudentService studentService)
+        public DashboardController(IDashboardService dashboardService)
         {
             _dashboardService = dashboardService;
-            _studentService = studentService;
         }
 
         /// <summary>

@@ -114,28 +114,6 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsAverageVisitsList;
         }
 
-        public List<AverageStudentVisitsDto> GetStudentsAverageVisitsByStudentsVisits(List<StudentVisitDto> studentsVisits)
-        {
-            var studentsAverageVisits = studentsVisits
-                    .GroupBy(x => new
-                    {
-                        StudentId = x.StudentId,
-                        GroupId = x.StudentGroupId,
-                        CourseId = x.CourseId
-                    })
-                    .Select(x => new AverageStudentVisitsDto
-                    {
-                        CourseId = x.Key.CourseId,
-                        StudentId = x.Key.StudentId,
-                        StudentAverageVisitsPercentage = (int)((double)x
-                            .Where(d => d.Presence == true).Count()
-                            / (double)x.Count() * 100)
-                    }
-                    ).ToList();
-
-            return studentsAverageVisits;
-        }
-
         public async Task<List<StudentVisitDto>> GetStudentsPresenceListByStudentIds(IEnumerable<long> studentIds)
         {
             var studentsPresenceList = await _applicationContext.Visits
