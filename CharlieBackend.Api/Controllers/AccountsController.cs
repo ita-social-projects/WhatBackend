@@ -13,7 +13,6 @@ using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Api.SwaggerExamples.AccountsController;
 
@@ -203,11 +202,10 @@ namespace CharlieBackend.Api.Controllers
             return Ok(accountsModels);
         }
 
-
         /// <summary>
-        /// Returns updated account
+        /// Returns an updated account
         /// </summary>
-        /// <response code="200">Successful return updated account entity</response>
+        /// <response code="200">Successful return an updated account entity</response>
         [AllowAnonymous]
         [Route("ChangePassword")]
         [Authorize(Roles = "Secretary, Mentor, Student, NotAssigned")]

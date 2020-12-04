@@ -19,8 +19,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
 
-        //Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
-
         Task<bool> IsEmailTakenAsync(string email);
 
         Task<bool> IsEmailChangableToAsync(long id, string newEmail);

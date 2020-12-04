@@ -11,17 +11,14 @@ namespace CharlieBackend.Core.DTO.Account
 
         [Required]
         [StringLength(30)]
-        [DataType(DataType.Password)]
         public string CurrentPassword { get; set; } 
 
         [Required]
-        [StringLength(30, ErrorMessage = "Password should has at least 6 symbols.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
+        [StringLength(30)]
         public string NewPassword { get; set; }
 
         [Required]
-        [StringLength(30, ErrorMessage = "Password should has at least 6 symbols.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
+        [StringLength(30)]
         [Compare(nameof(NewPassword), ErrorMessage = "Passwords do not match.")]
         public string ConfirmNewPassword { get; set; }
     }

@@ -117,19 +117,6 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
-        //public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
-        //{
-            
-        //    account.Salt = GenerateSalt();
-        //    account.Password = HashPassword(account.Password, account.Salt);
-
-        //    _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
-
-        //    await _unitOfWork.CommitAsync();
-
-        //    return _mapper.Map<AccountDto>(account);
-        //}
-
         public Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
             return _unitOfWork.AccountRepository.IsEmailChangableToAsync(id, newEmail);
