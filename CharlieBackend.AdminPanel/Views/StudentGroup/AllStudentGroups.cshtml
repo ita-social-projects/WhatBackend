@@ -23,13 +23,12 @@
                         <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-1">Id</th>
-                                    <th class="col-1">Course id</th>
-                                    <th class="col-2">Name</th>
+                                    <th class="col-2">Course name</th>
+                                    <th class="col-2">Group name</th>
                                     <th class="col-2">Start date</th>
                                     <th class="col-2">Finish date</th>
-                                    <th class="col">Students id</th>
-                                    <th class="col">Mentors id</th>
+                                    <th class="col">Students</th>
+                                    <th class="col">Mentors</th>
                                     <th class="col-1">Controll</th>
                                 </tr>
                             </thead>
@@ -38,8 +37,7 @@
                                 @foreach (var item in @Model)
                                 {
                                     <tr class="row">
-                                        <td class="col-1 text-truncate">@item.Id</td>
-                                        <td class="col-1 text-truncate">@item.CourseId</td>
+                                        <td class="col-2 text-truncate">@item.Course.Name</td>
                                         <td class="col-2 text-truncate">@item.Name</td>
                                         <td class="col-2">@item.StartDate.ToString("yyyy-MM-dd")</td>
                                         <td class="col-2">@item.FinishDate.ToString("yyyy-MM-dd")</td>
@@ -54,7 +52,7 @@
                                                     {
                                                         @foreach (var student in @item.Students)
                                                         {
-                                                            <label class="dropdown-item" href="#">@student.Id @student.FirstName @student.LastName   </label>
+                                                            <label class="dropdown-item" href="#">@student.FirstName @student.LastName   </label>
                                                         }
                                                     }
                                                     else
@@ -75,7 +73,7 @@
                                                     {
                                                         @foreach (var mentor in @item.Mentors)
                                                         {
-                                                            <label class="dropdown-item" href="#">@mentor.Id @mentor.FirstName @mentor.LastName</label>
+                                                            <label class="dropdown-item" href="#">@mentor.FirstName @mentor.LastName</label>
                                                         }
                                                     }
                                                     else
