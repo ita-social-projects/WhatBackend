@@ -206,9 +206,8 @@ namespace CharlieBackend.Api.Controllers
         /// Returns an updated account
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
-        [AllowAnonymous]
         [Route("ChangePassword")]
-        [Authorize(Roles = "Secretary, Mentor, Student, NotAssigned")]
+        [Authorize(Roles = "Secretary, Mentor, Student")]
         [HttpPost]
         public async Task<ActionResult> ResetPassword(ChangeCurrentPasswordDto changePasswd)
         {

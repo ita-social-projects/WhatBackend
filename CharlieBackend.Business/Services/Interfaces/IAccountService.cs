@@ -31,6 +31,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public string HashPassword(string password, string salt);
 
-       Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
+        Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
     }
 }
