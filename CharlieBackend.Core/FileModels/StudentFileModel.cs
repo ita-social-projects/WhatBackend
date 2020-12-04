@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace CharlieBackend.Core.FileModels
 {
     public class StudentFileModel
@@ -11,6 +8,5 @@ namespace CharlieBackend.Core.FileModels
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-
     }
 }

@@ -15,9 +15,6 @@ namespace CharlieBackend.Data.Repositories.Impl
             : base(applicationContext) 
         {
         }
-
-
-
         public new Task<List<Student>> GetAllAsync()
         {
             return _applicationContext.Students

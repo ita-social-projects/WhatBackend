@@ -15,14 +15,14 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
-    public class GroupImportService : IGroupImportService
+    public class StudentGroupImportService : IStudentGroupImportService
     {
         #region private
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         #endregion
 
-        public GroupImportService(IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentGroupImportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -36,17 +36,17 @@ namespace CharlieBackend.Business.Services
             if (uploadedFile != null)
             {
                 path = await CreateFile(uploadedFile);
-                var wb = new XLWorkbook(path);
-                var wsGroups = wb.Worksheet("Groups");
+                var book = new XLWorkbook(path);
+                var groupsSheet = book.Worksheet("Groups");
 
-                Type sgType = typeof(StudentGroupFileModel);
+                Type studentGroupType = typeof(StudentGroupFileModel);
                 char charPointer = 'A';
                 int rowCounter = 2;
 
-                var properties = sgType.GetProperties();
+                var properties = studentGroupType.GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
-                    if (property.Name != Convert.ToString(wsGroups.Cell($"{charPointer}1").Value))
+                    if (property.Name != Convert.ToString(groupsSheet.Cell($"{charPointer}1").Value))
                     {
                         return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
                                     "The format of the downloaded file is not suitable."
@@ -55,18 +55,19 @@ namespace CharlieBackend.Business.Services
                     charPointer++;
                 }
 
-                while (!IsEndOfFile(rowCounter, wsGroups))
+                while (!IsEndOfFile(rowCounter, groupsSheet))
                 {
                     try
                     {
-                        StudentGroupFileModel fileLine = new StudentGroupFileModel();
-
-                        fileLine.CourseId = wsGroups.Cell($"B{rowCounter}").Value.ToString();
-                        fileLine.Name = wsGroups.Cell($"C{rowCounter}").Value.ToString();
-                        fileLine.StartDate = Convert
-                            .ToDateTime(wsGroups.Cell($"D{rowCounter}").Value);
-                        fileLine.FinishDate = Convert
-                            .ToDateTime(wsGroups.Cell($"E{rowCounter}").Value);
+                        StudentGroupFileModel fileLine = new StudentGroupFileModel
+                        {
+                            CourseId = groupsSheet.Cell($"B{rowCounter}").Value.ToString(),
+                            Name = groupsSheet.Cell($"C{rowCounter}").Value.ToString(),
+                            StartDate = Convert
+                            .ToDateTime(groupsSheet.Cell($"D{rowCounter}").Value),
+                            FinishDate = Convert
+                            .ToDateTime(groupsSheet.Cell($"E{rowCounter}").Value)
+                        };
 
                         await IsValueValid(fileLine, rowCounter);
 
@@ -116,7 +117,6 @@ namespace CharlieBackend.Business.Services
                 existingCourseIds.Add(course.Id);
             }
 
-
             if (fileLine.CourseId.Replace(" ", "") == "")
             {
                 throw new FormatException("CourseId field shouldn't be empty.\n" +
@@ -148,12 +148,12 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
+        private bool IsEndOfFile(int rowCounter, IXLWorksheet sheet)
         {
-            return (ws.Cell($"B{rowCounter}").Value.ToString() == "")
-               && (ws.Cell($"C{rowCounter}").Value.ToString() == "")
-               && (ws.Cell($"D{rowCounter}").Value.ToString() == "")
-               && (ws.Cell($"E{rowCounter}").Value.ToString() == "");
+            return (sheet.Cell($"B{rowCounter}").Value.ToString() == "")
+               && (sheet.Cell($"C{rowCounter}").Value.ToString() == "")
+               && (sheet.Cell($"D{rowCounter}").Value.ToString() == "")
+               && (sheet.Cell($"E{rowCounter}").Value.ToString() == "");
         }
 
         private async Task<string> CreateFile(IFormFile file)
@@ -182,8 +182,8 @@ namespace CharlieBackend.Business.Services
         public bool CheckIfExcelFile(IFormFile file)
         {
             var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-            return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
 
+            return (extension == ".xlsx" || extension == ".xls");
         }
     }
 }

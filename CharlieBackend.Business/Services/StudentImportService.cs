@@ -50,17 +50,17 @@ namespace CharlieBackend.Business.Services
 
             if (uploadedFile != null)
             {
-                var wb = new XLWorkbook(await CreateFile(uploadedFile));
-                var wsStudents = wb.Worksheet("Students");
+                var book = new XLWorkbook(await CreateFile(uploadedFile));
+                var studentsSheet = book.Worksheet("Students");
 
-                Type sgType = typeof(StudentFileModel);
+                Type studentType = typeof(StudentFileModel);
                 char charPointer = 'A';
                 int rowCounter = 2;
 
-                var properties = sgType.GetProperties();
+                var properties = studentType.GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
-                    if (property.Name != Convert.ToString(wsStudents.Cell($"{charPointer}1").Value))
+                    if (property.Name != Convert.ToString(studentsSheet.Cell($"{charPointer}1").Value))
                     {
                         return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
                                     "The format of the downloaded file is not suitable."
@@ -69,16 +69,17 @@ namespace CharlieBackend.Business.Services
                     charPointer++;
                 }
 
-                while (!IsEndOfFile(rowCounter, wsStudents))
+                while (!IsEndOfFile(rowCounter, studentsSheet))
                 {
 
                     try
                     {
-                        StudentFileModel fileLine = new StudentFileModel();
-
-                        fileLine.Email = wsStudents.Cell($"A{rowCounter}").Value.ToString();
-                        fileLine.FirstName = wsStudents.Cell($"B{rowCounter}").Value.ToString();
-                        fileLine.LastName = wsStudents.Cell($"C{rowCounter}").Value.ToString();
+                        StudentFileModel fileLine = new StudentFileModel
+                        {
+                            Email = studentsSheet.Cell($"A{rowCounter}").Value.ToString(),
+                            FirstName = studentsSheet.Cell($"B{rowCounter}").Value.ToString(),
+                            LastName = studentsSheet.Cell($"C{rowCounter}").Value.ToString()
+                        };
 
                         await IsValueValid(fileLine, rowCounter);
 
@@ -197,11 +198,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
+        private bool IsEndOfFile(int rowCounter, IXLWorksheet studentsSheet)
         {
-            return (ws.Cell($"A{rowCounter}").Value.ToString() == "")
-               && (ws.Cell($"B{rowCounter}").Value.ToString() == "")
-               && (ws.Cell($"C{rowCounter}").Value.ToString() == "");
+            return (studentsSheet.Cell($"A{rowCounter}").Value.ToString() == "")
+               && (studentsSheet.Cell($"B{rowCounter}").Value.ToString() == "")
+               && (studentsSheet.Cell($"C{rowCounter}").Value.ToString() == "");
         }
 
         private async Task<string> CreateFile(IFormFile file)
@@ -230,8 +231,8 @@ namespace CharlieBackend.Business.Services
         public bool CheckIfExcelFile(IFormFile file)
         {
             var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-            return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
 
+            return (extension == ".xlsx" || extension == ".xls");
         }
     }
 }

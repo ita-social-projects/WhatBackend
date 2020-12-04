@@ -19,12 +19,12 @@ namespace CharlieBackend.Api.Controllers
     public class ImportController : ControllerBase
     {
         private readonly IStudentImportService _studentImportService;
-        private readonly IGroupImportService _groupImportService;
+        private readonly IStudentGroupImportService _groupImportService;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IStudentImportService studentImportService, IGroupImportService groupImportService)
+        public ImportController(IStudentImportService studentImportService, IStudentGroupImportService groupImportService)
         {
             _studentImportService = studentImportService;
             _groupImportService = groupImportService;

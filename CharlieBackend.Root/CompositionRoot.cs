@@ -38,7 +38,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
             services.AddScoped<IStudentImportService, StudentImportService>();
-            services.AddScoped<IGroupImportService, GroupImportService>();
+            services.AddScoped<IStudentGroupImportService, StudentGroupImportService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IThemeRepository, ThemeRepository>();
