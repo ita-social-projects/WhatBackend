@@ -191,7 +191,6 @@ namespace CharlieBackend.Business.Services
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
             }
 
-
             var disabled = await _accountService.DisableAccountAsync((long)accountId);
 
             return Result<MentorDto>.GetSuccess(mentor);
