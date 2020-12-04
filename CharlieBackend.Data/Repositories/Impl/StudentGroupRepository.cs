@@ -15,6 +15,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
+        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        {
+            _applicationContext.StudentsOfStudentGroups
+                   .AddRange(items);
+        }
         public bool DeleteStudentGroup(long StudentGroupModelId)
         {
             var x = SearchStudentGroup(StudentGroupModelId);

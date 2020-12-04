@@ -16,6 +16,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                     IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
+
+        void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
     }
 }
 

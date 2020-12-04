@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Data.Helpers;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -14,6 +15,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             : base(applicationContext) 
         {
         }
+
+
 
         public new Task<List<Student>> GetAllAsync()
         {

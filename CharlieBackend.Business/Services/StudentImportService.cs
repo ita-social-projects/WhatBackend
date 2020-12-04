@@ -1,109 +1,175 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Core.DTO.File;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.FileModels;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using ClosedXML.Excel;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using AutoMapper;
+using ClosedXML.Excel;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Core.FileModels;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
-    public class StudentImportService 
+    public class StudentImportService : IStudentImportService
     {
         #region private
+        private readonly IStudentService _studentService;
+        private readonly IStudentGroupService _studentGroupService; 
         private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         #endregion
 
-        public StudentImportService(IUnitOfWork unitOfWork, IMapper mapper, IAccountService accountService)
+        public StudentImportService(IMapper mapper,
+                                    IUnitOfWork unitOfWork,
+                                    IAccountService accountService,
+                                    IStudentService studentService,
+                                    IStudentGroupService studentGroupService)
         {
+            _studentGroupService = studentGroupService;
+            _studentService = studentService;
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public override async Task<Result<List<StudentFileModel>>> ImportFileAsync(ImportFileDto file)
+        public async Task<Result<List<StudentFileModel>>> ImportFileAsync(long groupId, IFormFile uploadedFile)
         {
-            var wb = GetFile(file.FileAsByte);
-            var wsStudents = wb.Worksheet("Students");
-            List<StudentFileModel> importedStudents = new List<StudentFileModel>();
-
-            Type sgType = typeof(StudentFileModel);
-            char charPointer = 'A';
-            int rowCounter = 2;
-
-            var properties = sgType.GetProperties();
-            foreach (PropertyInfo property in properties)
+            List<StudentFileModel> importedAccounts = new List<StudentFileModel>();
+            var groupName = _unitOfWork.StudentGroupRepository.SearchStudentGroup(groupId).Name;
+            if (!await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(groupName))
             {
-                if (property.Name != Convert.ToString(wsStudents.Cell($"{charPointer}1").Value))
-                {
-                    return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
-                                "The format of the downloaded file is not suitable."
-                                     + "Check headers in the file.");
-                }
-                charPointer++;
+                return Result<List<StudentFileModel>>.GetError(ErrorCode.NotFound, $"Group {groupName} doesn't exist.");
             }
 
-            while (!IsEndOfFile(rowCounter, wsStudents))
+            if (uploadedFile != null)
             {
+                var wb = new XLWorkbook(await CreateFile(uploadedFile));
+                var wsStudents = wb.Worksheet("Students");
 
-                try
+                Type sgType = typeof(StudentFileModel);
+                char charPointer = 'A';
+                int rowCounter = 2;
+
+                var properties = sgType.GetProperties();
+                foreach (PropertyInfo property in properties)
                 {
-                    StudentFileModel fileLine = new StudentFileModel();
-
-                    fileLine.Email = wsStudents.Cell($"A{rowCounter}").Value.ToString();
-                    fileLine.FirstName = wsStudents.Cell($"B{rowCounter}").Value.ToString();
-                    fileLine.LastName = wsStudents.Cell($"C{rowCounter}").Value.ToString();
-
-                    await IsValueValid(fileLine, rowCounter);
-
-                    CreateAccountDto studentAccount = new CreateAccountDto
+                    if (property.Name != Convert.ToString(wsStudents.Cell($"{charPointer}1").Value))
                     {
-                        Email = fileLine.Email,
-                        FirstName = fileLine.FirstName,
-                        LastName = fileLine.LastName,
-                        Password = "changeYourPassword",
-                        ConfirmPassword = "changeYourPassword"
-                    };
-                    
-                    await _accountService.CreateAccountAsync(studentAccount);
-
-                    importedStudents.Add(fileLine);
-                    rowCounter++;
+                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                                    "The format of the downloaded file is not suitable."
+                                         + "Check headers in the file.");
+                    }
+                    charPointer++;
                 }
-                catch (FormatException ex)
-                {
-                    _unitOfWork.Rollback();
 
-                    return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
-                        "The format of the inputed data is incorrect.\n" + ex.Message);
-                }
-                catch (DbUpdateException ex)
+                while (!IsEndOfFile(rowCounter, wsStudents))
                 {
-                    _unitOfWork.Rollback();
 
-                    return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
-                        "Inputed data is incorrect.\n" + ex.Message);
+                    try
+                    {
+                        StudentFileModel fileLine = new StudentFileModel();
+
+                        fileLine.Email = wsStudents.Cell($"A{rowCounter}").Value.ToString();
+                        fileLine.FirstName = wsStudents.Cell($"B{rowCounter}").Value.ToString();
+                        fileLine.LastName = wsStudents.Cell($"C{rowCounter}").Value.ToString();
+
+                        await IsValueValid(fileLine, rowCounter);
+
+                        CreateAccountDto studentAccount = new CreateAccountDto
+                        {
+                            Email = fileLine.Email,
+                            FirstName = fileLine.FirstName,
+                            LastName = fileLine.LastName,
+                            Password = "changeYourPassword",
+                            ConfirmPassword = "changeYourPassword"
+                        };
+
+                        await _accountService.CreateAccountAsync(studentAccount);
+
+                        importedAccounts.Add(fileLine);
+                        rowCounter++;
+                    }
+                    catch (FormatException ex)
+                    {
+                        _unitOfWork.Rollback();
+
+                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                            "The format of the inputed data is incorrect.\n" + ex.Message);
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        _unitOfWork.Rollback();
+
+                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                            "Inputed data is incorrect.\n" + ex.Message);
+                    }
                 }
             }
-
             await _unitOfWork.CommitAsync();
 
+            Array.ForEach(Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files")), File.Delete);
+
+            await BoundStudentsToTheGroupAsync(importedAccounts, groupId);
+
             return Result<List<StudentFileModel>>
-                .GetSuccess(_mapper.Map<List<StudentFileModel>>(importedStudents));
+                .GetSuccess(_mapper.Map<List<StudentFileModel>>(importedAccounts));
         }
 
-        protected override async Task IsValueValid(StudentFileModel fileLine, int rowCounter)
+        private async Task BoundStudentsToTheGroupAsync(List<StudentFileModel> importedAccounts, long groupId)
+        {
+            List<string> studentEmails = new List<string>();
+            List<long> accountsIds = new List<long>();
+            List<long> studentsIds = new List<long>();
+            var newStudentStudentGroup = new List<StudentOfStudentGroup>();
+
+            foreach (var account in importedAccounts)
+            {
+                studentEmails.Add(account.Email);
+            }
+
+            foreach (var account in await _accountService.GetAllNotAssignedAccountsAsync())
+            {
+                if (studentEmails.Contains(account.Email))
+                {
+                    accountsIds.Add(account.Id);
+                }
+            }
+
+            foreach (var id in accountsIds)
+            {
+                await _studentService.CreateStudentAsync(id);
+            }
+
+            foreach (var student in await _studentService.GetAllActiveStudentsAsync())
+            {
+                if (studentEmails.Contains(student.Email))
+                {
+                    studentsIds.Add(student.Id);
+                }
+            }
+
+            foreach (var studentId in studentsIds)
+            {
+                newStudentStudentGroup.Add(new StudentOfStudentGroup
+                {
+                    StudentGroupId = groupId,
+                    StudentId = studentId
+                });
+            }
+
+            _studentGroupService.AddStudentOfStudentGroups(newStudentStudentGroup);
+            await _unitOfWork.CommitAsync();
+        }
+
+
+        private async Task IsValueValid(StudentFileModel fileLine, int rowCounter)
         {
             List<string> existingEmails = new List<string>();
 
@@ -131,17 +197,41 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        protected override bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
+        private bool IsEndOfFile(int rowCounter, IXLWorksheet ws)
         {
             return (ws.Cell($"A{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"B{rowCounter}").Value.ToString() == "")
                && (ws.Cell($"C{rowCounter}").Value.ToString() == "");
         }
 
-        protected override XLWorkbook GetFile(byte[] fileAsBytes)
+        private async Task<string> CreateFile(IFormFile file)
         {
-            File.WriteAllBytes(@"C:\Users\Public\Student.xlsx", fileAsBytes);
-            return new XLWorkbook(@"C:\Users\Public\Student.xlsx");
+            string path = "";
+            string fileName;
+            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+            fileName = DateTime.Now.Ticks + extension; //Create a new Name for the file due to security reasons.
+
+            var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+
+            if (!Directory.Exists(pathBuilt))
+            {
+                Directory.CreateDirectory(pathBuilt);
+            }
+
+            path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files", fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            return path;
+        }
+
+        public bool CheckIfExcelFile(IFormFile file)
+        {
+            var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+            return (extension == ".xlsx" || extension == ".xls"); // Change the extension based on your need
+
         }
     }
 }
