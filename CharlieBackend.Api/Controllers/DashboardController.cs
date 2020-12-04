@@ -39,7 +39,7 @@ namespace CharlieBackend.Api.Controllers
         /// Gets classbook data of every students lesson
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courseId" or "groupId" to filter all course groups or exact student group.
+        /// 1. Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
@@ -58,7 +58,7 @@ namespace CharlieBackend.Api.Controllers
         /// Gets results of every student
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courseId" or "groupId" to filter all cource groups or exact student group.
+        /// 1. Mention "courseId" or "studentGroupId" to filter all cource groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
@@ -84,10 +84,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentClassbook/{studentId}")]
         public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]StudentClassbookRequestDto request)
         {
-            string authHeader = Request.Headers["Authorization"];
+            var userContext = HttpContext.User;
 
             var results = await _dashboardService
-            .GetStudentClassbookAsync(studentId, request, authHeader);
+            .GetStudentClassbookAsync(studentId, request, userContext);
 
             return results.ToActionResult();
         }
@@ -103,10 +103,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentResults/{studentId}")]
         public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]StudentResultRequestDto request)
         {
-            string authHeader = Request.Headers["Authorization"];
+            var userContext = HttpContext.User;
 
             var results = await _dashboardService
-            .GetStudentResultAsync(studentId, request, authHeader);
+            .GetStudentResultAsync(studentId, request, userContext);
 
             return results.ToActionResult();
         }

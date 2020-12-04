@@ -65,8 +65,6 @@ namespace CharlieBackend.Api
                 .AddJsonOptions(options =>
                     {
                         options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-                        options.JsonSerializerOptions.Converters
-                        .Add(new JsonStringEnumConverter());
                     }
                     );
 

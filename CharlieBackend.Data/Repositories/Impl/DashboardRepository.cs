@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq.Expressions;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -18,31 +20,18 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, DateTime startDate, DateTime finishDate)
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, DateTime? startDate, DateTime? finishDate)
         {
-            if (startDate == default(DateTime) && finishDate == default(DateTime))
-            {
-                var groupIdsbyCourseId = await _applicationContext.StudentGroups
-                    .AsNoTracking()
-                    .Where(x => x.CourseId == courseId)
-                    .Select(x => x.Id)
-                    .ToListAsync();
-
-                return groupIdsbyCourseId;
-            }
-            else
-            {
                 var groupIdsbyCourseIdAndPeriod = await _applicationContext.StudentGroups
                     .AsNoTracking()
                     .Where(x => x.CourseId == courseId)
-                    .Where(x => (finishDate != default(DateTime))
-                        ? (x.StartDate >= startDate && x.FinishDate <= finishDate)
-                        : (x.StartDate >= startDate))
+                    .WhereIf(startDate != null && finishDate != default(DateTime), x => x.StartDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.FinishDate <= finishDate)
                     .Select(x => x.Id)
                     .ToListAsync();
 
                 return groupIdsbyCourseIdAndPeriod;
-            }
+            
         }
 
         public async Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> groupsIds)
@@ -186,31 +175,17 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
-        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime startDate, DateTime finishDate)
+        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime? startDate, DateTime? finishDate)
         {
-            if (startDate == default && finishDate == default)
-            {
-                var groupIdsbyStudentId = await _applicationContext.StudentGroups
-                    .AsNoTracking()
-                    .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == studentId))
-                    .Select(x => x.Id)
-                    .ToListAsync();
-
-                return groupIdsbyStudentId;
-            }
-            else
-            {
                 var groupIdsbyStudentIdAndPeriod = await _applicationContext.StudentGroups
                     .AsNoTracking()
                     .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == studentId))
-                    .Where(x => (finishDate != default)
-                    ? (x.StartDate >= startDate && x.FinishDate <= finishDate)
-                    : (x.StartDate >= startDate))
+                    .WhereIf(startDate != null && finishDate != default(DateTime), x => x.StartDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.FinishDate <= finishDate)
                     .Select(x => x.Id)
                     .ToListAsync();
 
                 return groupIdsbyStudentIdAndPeriod;
-            }
         }
 
         public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdAsync(long studentId, List<long> studentGroupsIds)
@@ -304,7 +279,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentsMarksList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.StudentId == studentId && x.StudentMark != default)
+                .Where(x => x.StudentId == studentId && x.StudentMark != null)
                 .Select(x => new StudentMarkDto
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
@@ -323,7 +298,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentGroupMarskList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.StudentMark != default)
+                .Where(x => x.StudentMark != null)
                 .Select( x => new
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
@@ -376,7 +351,5 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return studentGroupAveragevisits;
         }
-
-
     }
 }

@@ -30,23 +30,16 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsClassbookRequestDto request)
         {
-            if (request == default || request.IncludeAnalytics == default 
-                || request.IncludeAnalytics.Length == 0)
+            if (ValidateStudentsClassbookRequest(request).Any())
             {
-                return Result<StudentsClassbookResultDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
-            }
-
-            if (request.CourseId == default(long?) && request.StudentGroupId == default(long?))
-            {
-                return Result<StudentsClassbookResultDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No course or group Id given");
+                return Result<StudentsClassbookResultDto>.GetError(ErrorCode.ValidationError, 
+                    String.Join(";\n", ValidateStudentsClassbookRequest(request))) ;
             }
 
             var result = new StudentsClassbookResultDto();
             var studentsIds = new List<long>();
 
-            if (request.StudentGroupId != default(long?))
+            if (request.StudentGroupId != default)
             {
                 studentsIds = await _dashboardRepository
                     .GetStudentsIdsByGroupIdsAsync(new List<long> { (long)request.StudentGroupId });
@@ -77,23 +70,16 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsResultsRequestDto request)
         {
-            if (request == default || request.IncludeAnalytics == default
-                || request.IncludeAnalytics.Length == 0)
+            if (ValidateStudentsResultsRequest(request).Any())
             {
-                return Result<StudentsResultsDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
-            }
-
-            if (request.CourseId == default(long?) && request.StudentGroupId == default(long?))
-            {
-                return Result<StudentsResultsDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No course or group Id given");
+                return Result<StudentsResultsDto>.GetError(ErrorCode.ValidationError,
+                    String.Join(";\n", ValidateStudentsResultsRequest(request)));
             }
 
             var result = new StudentsResultsDto();
             var studentsIds = new List<long>();
 
-            if (request.StudentGroupId != default(long?))
+            if (request.StudentGroupId != default)
             {
                 studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdsAsync(
                     new List<long> { (long)request.StudentGroupId });
@@ -123,30 +109,13 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
-            StudentClassbookRequestDto request, string authHeader)
+            StudentClassbookRequestDto request, ClaimsPrincipal userContext)
         {
-            var handler = new JwtSecurityTokenHandler();
-            authHeader = authHeader.Replace("Bearer ", "");
-            var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-
-            if (request == default || request.IncludeAnalytics == default
-                || request.IncludeAnalytics.Length == 0 || studentId == 0)
+            if (ValidateStudentClassbookRequest(studentId, request, userContext).Any())
             {
                 return Result<StudentsClassbookResultDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
-            }
-
-            if (role == "Student")
-            {
-                var studentIdfromToken = Convert.ToInt64(tokenS.Claims.First(claim => claim.Type == "Id").Value);
-
-                if (studentIdfromToken != default && studentIdfromToken != studentId)
-                {
-                    return Result<StudentsClassbookResultDto>
-                        .GetError(ErrorCode.Unauthorized, "Not allowed to get other student results");
-                }
+                           .GetError(ErrorCode.ValidationError, String.Join(";\n",
+                           ValidateStudentClassbookRequest(studentId, request, userContext)));
             }
 
             var result = new StudentsClassbookResultDto();
@@ -169,30 +138,13 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
-            StudentResultRequestDto request, string authHeader)
+            StudentResultRequestDto request, ClaimsPrincipal userContext)
         {
-            var handler = new JwtSecurityTokenHandler();
-            authHeader = authHeader.Replace("Bearer ", "");
-            var jsonToken = handler.ReadToken(authHeader);
-            var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-            var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-
-            if (request == default || request.IncludeAnalytics == default
-                || request.IncludeAnalytics.Length == 0 || studentId == 0)
+            if (ValidateStudentResultRequest(studentId, request, userContext).Any())
             {
                 return Result<StudentsResultsDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
-            }
-
-            if (role == "Student")
-            {
-                var studentIdfromToken = Convert.ToInt64(tokenS.Claims.First(claim => claim.Type == "Id").Value);
-
-                if (studentIdfromToken != default && studentIdfromToken != studentId)
-                {
-                    return Result<StudentsResultsDto>
-                        .GetError(ErrorCode.Unauthorized, "Not allowed to get other student results");
-                }
+                           .GetError(ErrorCode.ValidationError, String.Join(";\n",
+                           ValidateStudentResultRequest(studentId, request, userContext)));
             }
 
             var result = new StudentsResultsDto();
@@ -214,13 +166,14 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsResultsDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, StudentGroupsResultsRequestDto request)
+        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, 
+            StudentGroupsResultsRequestDto request)
         {
-            if (courseId == 0 || request == default || request.IncludeAnalytics == default
-                || request.IncludeAnalytics.Length == 0)
+            if (ValidateStudentGroupsResultsRequest(courseId, request).Any())
             {
                 return Result<StudentGroupsResultsDto>
-                    .GetError(ErrorCode.UnprocessableEntity, "No request data parameters given");
+                           .GetError(ErrorCode.ValidationError, String.Join(";\n",
+                           ValidateStudentGroupsResultsRequest(courseId, request)));
             }
 
             var result = new StudentGroupsResultsDto();
@@ -229,7 +182,8 @@ namespace CharlieBackend.Business.Services
 
             if (studentGroupsIds == null)
             {
-                return Result<StudentGroupsResultsDto>.GetSuccess(result);
+                return Result<StudentGroupsResultsDto>
+                    .GetError(ErrorCode.NotFound, "Student groups not found");
             }
 
             if (request.IncludeAnalytics.Contains(StudentGroupResultType.AverageStudentGroupMark))
@@ -247,12 +201,158 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupsResultsDto>.GetSuccess(result);
         }
 
-        private IEnumerable<string> ValidateAverageStudentMarkAnalytics(StudentsResultsRequestDto request)
+        private IEnumerable<string> ValidateStudentsClassbookRequest(StudentsClassbookRequestDto request)
         {
-            if (!request.CourseId.HasValue)
+            if (request == default)
             {
-                yield return "Please provide groupId";
+                yield return "Please provide request data";
+                yield break;
             }
+
+            if (request.IncludeAnalytics == default)
+            {
+                yield return "Please provide 'IncludeAnalytics' data";
+            }
+
+            if (request.IncludeAnalytics.Length == 0)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (!request.CourseId.HasValue && !request.StudentGroupId.HasValue)
+            {
+                yield return "Please provide course or student group id";
+            }
+        }
+
+        private IEnumerable<string> ValidateStudentsResultsRequest(StudentsResultsRequestDto request)
+        {
+            if (request == default)
+            {
+                yield return "Please provide request data";
+                yield break;
+            }
+
+            if (request.IncludeAnalytics == default)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (request.IncludeAnalytics.Length == 0)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (!request.CourseId.HasValue && !request.StudentGroupId.HasValue)
+            {
+                yield return "Please provide course or student group id";
+            }
+        }
+
+        private IEnumerable<string> ValidateStudentClassbookRequest(long studentId,
+            StudentClassbookRequestDto request, ClaimsPrincipal claimsContext)
+        {
+            if (studentId == default)
+            {
+                yield return "Please provide student id";
+            }
+
+            if (request == default)
+            {
+                yield return "Please provide request data";
+                yield break;
+            }
+
+            if (request.IncludeAnalytics == default)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (request.IncludeAnalytics.Length == 0)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            var isStudentRole = claimsContext.IsInRole("Student");
+
+            if (!IsRequestAllowedForStudent(studentId, claimsContext))
+            {
+                yield return "Not allowed to request other student results";
+            }
+        }
+
+        private IEnumerable<string> ValidateStudentResultRequest(long studentId,
+    StudentResultRequestDto request, ClaimsPrincipal claimsContext)
+        {
+            if (studentId == default)
+            {
+                yield return "Please provide student id";
+            }
+
+            if (request == default)
+            {
+                yield return "Please provide request data";
+                yield break;
+            }
+
+            if (request.IncludeAnalytics == default)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (request.IncludeAnalytics.Length == 0)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            var isStudentRole = claimsContext.IsInRole("Student");
+
+            if (!IsRequestAllowedForStudent(studentId, claimsContext))
+            {
+                yield return "Not allowed to request other student results";
+            }
+        }
+
+        private IEnumerable<string> ValidateStudentGroupsResultsRequest(long courseId, StudentGroupsResultsRequestDto request)
+        {
+            if (courseId == default)
+            {
+                yield return "Please provide course id";
+            }
+
+            if (request == default)
+            {
+                yield return "Please provide request data";
+                yield break;
+            }
+
+            if (request.IncludeAnalytics == default)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+
+            if (request.IncludeAnalytics.Length == 0)
+            {
+                yield return "Please provide 'IncludeAnalytics' parameters";
+            }
+        }
+
+        private bool IsRequestAllowedForStudent(long studentId, ClaimsPrincipal claimsContext)
+        {
+            var isStudentRole = claimsContext.IsInRole("Student");
+
+            if (isStudentRole)
+            {
+                var studentIdFromContext = Convert.ToInt64(claimsContext.Claims
+                    .First(claim => claim.Type == "Id").Value);
+
+                if (studentId != studentIdFromContext)
+                {
+                    return false;
+                }
+            }
+
+                return true;
         }
     }
 }
