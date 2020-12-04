@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -24,12 +25,19 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         private readonly IApiUtil _apiUtil;
 
-        public AccountController(ILogger<AccountController> logger, IOptions<ApplicationSettings> config, IApiUtil apiUtil)
+        private readonly IDataProtector _protector;
+
+        public AccountController(ILogger<AccountController> logger,
+                                 IOptions<ApplicationSettings> config, 
+                                 IApiUtil apiUtil, 
+                                 IDataProtectionProvider provider)
         {
             _logger = logger;
             _apiUtil = apiUtil;
 
             _config = config;
+
+            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
         }
 
         [HttpGet]
@@ -48,8 +56,7 @@ namespace CharlieBackend.AdminPanel.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            Response.Cookies.Append("accessToken", httpResponseToken);
-
+            Response.Cookies.Append("accessToken", _protector.Protect(httpResponseToken));
 
             return RedirectToAction("Index", "Home");
         }

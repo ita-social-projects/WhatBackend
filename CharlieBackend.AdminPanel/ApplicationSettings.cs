@@ -11,6 +11,9 @@ namespace CharlieBackend.AdminPanel
 
         public UrlsSettings Urls { get; set; }
 
+        public CookiesSettings Cookies { get; set; }
+
+
     }
 
     public class UrlsSettings
@@ -25,6 +28,10 @@ namespace CharlieBackend.AdminPanel
         public string Https { get; set; }
     }
 
+    public class CookiesSettings
+    {
+        public string SecureKey { get; set; }
+    }
 
     public class CorsSettings
     {
