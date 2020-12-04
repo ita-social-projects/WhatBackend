@@ -15,5 +15,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         void Update(T entity);
 
         Task DeleteAsync(long id);
+
+        Task<bool> IsEntityExistAsync(long id);
     }
 }

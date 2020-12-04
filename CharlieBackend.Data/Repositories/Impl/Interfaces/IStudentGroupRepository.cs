@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,17 +7,17 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IStudentGroupRepository : IRepository<StudentGroup>
     {
-        public new Task<List<StudentGroup>> GetAllAsync();
+        new Task<List<StudentGroup>> GetAllAsync();
 
-        public Task<bool> IsGroupNameExistAsync(string name);
+        Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id);
 
-        public StudentGroup SearchStudentGroup(long studentGroupId);
+        Task<bool> IsGroupNameExistAsync(string name);
 
-        public bool DeleteStudentGroup(long StudentGroupModelId);
-
-        public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
-                                    IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
+        StudentGroup SearchStudentGroup(long studentGroupId);
 
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
+        
+        bool DeleteStudentGroup(long StudentGroupModelId);
+
     }
 }

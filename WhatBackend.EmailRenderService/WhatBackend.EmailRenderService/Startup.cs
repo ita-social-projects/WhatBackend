@@ -1,18 +1,15 @@
+using System;
 using Serilog;
 using EasyNetQ;
-using System.Reflection;
-using EasyNetQ.AutoSubscribe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using WhatBackend.EmailRenderService.Services;
 using Microsoft.Extensions.DependencyInjection;
-using WhatBackend.EmailRenderService.IntegrationEvents;
+using CharlieBackend.Core.IntegrationEvents.Events;
 using WhatBackend.EmailRenderService.Services.Interfaces;
 using WhatBackend.EmailRenderService.IntegrationEvents.EventHandling;
-using CharlieBackend.Core.IntegrationEvents.Events;
-using System;
 
 namespace WhatBackend.EmailRenderService
 {
@@ -28,23 +25,11 @@ namespace WhatBackend.EmailRenderService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddCors();
             services.AddSingleton<IMessageTemplateService, MessageTemplateService>();
+            services.AddSingleton<AccountApprovedHanlder>();
+            services.AddSingleton<RegistrationSuccessHanlder>();
             services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
-            services.AddSingleton<MessageDispatcher>();
-            services.AddScoped<EventConsumer>();
-
-            services.AddSingleton(provider =>
-            {
-                var subscriber = new AutoSubscriber(provider.GetRequiredService<IBus>(), "EmailRenderService")
-                {
-                    AutoSubscriberMessageDispatcher = provider.GetRequiredService<MessageDispatcher>(),
-                    ConfigureSubscriptionConfiguration = new System.Action<ISubscriptionConfiguration>(c => c.WithQueueName("EmailRenderService"))
-                };
-
-                return subscriber;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,8 +45,15 @@ namespace WhatBackend.EmailRenderService
             //what unsubscribe was done well.
             applicationLifetime.ApplicationStopping.Register(OnShutdown, bus);
 
-            //registering message consumers
-            app.ApplicationServices.GetRequiredService<AutoSubscriber>().SubscribeAsync(new[] { Assembly.GetExecutingAssembly() });
+            app.ApplicationServices.GetRequiredService<IBus>().SendReceive.Receive("AccountApproved", 
+                    x => x.Add<AccountApprovedEvent>(message => 
+                    app.ApplicationServices.GetService<AccountApprovedHanlder>()
+                    .HandleAsync(message)));
+
+            app.ApplicationServices.GetRequiredService<IBus>().SendReceive.Receive("RegistrationSuccess",
+                    x => x.Add<RegistrationSuccessEvent>(message => 
+                    app.ApplicationServices.GetService<RegistrationSuccessHanlder>()
+                    .HandleAsync(message)));
 
             app.UseCors(builder =>
             {

@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.SwaggerExamples.AccountsController
                 FirstName = "Bob",
                 LastName = "Marley",
                 IsActive = true,
-                Role = UserRole.Student
+                Role = UserRole.NotAssigned
             };
         }
     }

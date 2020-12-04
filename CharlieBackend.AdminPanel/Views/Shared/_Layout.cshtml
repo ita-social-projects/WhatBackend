@@ -31,15 +31,12 @@
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gray-900 sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
             <li class="nav-item ">
                 <a class="nav-link" asp-action="Index" asp-controller="Home">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                    <span>Home</span>
                 </a>
             </li>
 
@@ -61,6 +58,11 @@
                 <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
                     <i class="far fa-address-book"></i>
                     <span>Students groups</span>
+                </a>
+
+                <a class="nav-link collapsed" asp-action="AllThemes" asp-controller="Themes">
+                    <i class="far fa-address-book"></i>
+                    <span>Themes</span>
                 </a>
 
             </li>

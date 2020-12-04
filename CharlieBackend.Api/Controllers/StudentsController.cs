@@ -72,7 +72,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get all students (active and unactive)
+        /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
         [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
@@ -98,6 +98,22 @@ namespace CharlieBackend.Api.Controllers
             var studentsModels = await _studentService.GetAllActiveStudentsAsync();
 
             return Ok(studentsModels);
+        }
+
+        /// <summary>
+        /// Gets all of the student's study group
+        /// </summary>
+        /// <response code="200">Successful return of student's study groups</response>
+        /// <response code="HTTP: 404, API: 3">Error, can not find student or student's study groups</response>
+        [SwaggerResponse(200, type: typeof(IList<StudentStudyGroupsDto>))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpGet("{id}/groups")]
+        public async Task<ActionResult<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentId(long id)
+        {
+            var foundGroups = await _studentService
+                    .GetStudentStudyGroupsByStudentIdAsync(id);
+
+            return foundGroups.ToActionResult();
         }
 
         /// <summary>
