@@ -64,7 +64,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         }
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup, 
-                                    IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
+                                     IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
         {
             _applicationContext.StudentsOfStudentGroups.
                     TryUpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);

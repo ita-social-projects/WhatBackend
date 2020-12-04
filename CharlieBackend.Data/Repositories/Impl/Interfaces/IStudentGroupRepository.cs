@@ -20,4 +20,3 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
     }
 }
-
