@@ -142,8 +142,8 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> DisableStudent(long id)
         {
             var disabledStudentModel = await _studentService.DisableStudentAsync(id);
+            
             return disabledStudentModel.ToActionResult();
-
         }
     }
 }

@@ -190,7 +190,6 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentDto>> DisableStudentAsync(long id)
         {
-
             var accountId = await GetAccountId(id);
 
             if (accountId == null)
@@ -198,9 +197,9 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentDto>.GetError(ErrorCode.NotFound, "Unknown student id.");
             }
 
-
             var student = await GetStudentByAccountIdAsync((long)accountId);
             var isActive = await _accountService.IsAccountActiveAsync(student.Email);
+            
             if ((bool)!isActive)
             {
                 return Result<StudentDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
@@ -208,9 +207,8 @@ namespace CharlieBackend.Business.Services
 
 
             var disabled = await _accountService.DisableAccountAsync((long)accountId);
+            
             return Result<StudentDto>.GetSuccess(student);
-
-
         }
     }
 }

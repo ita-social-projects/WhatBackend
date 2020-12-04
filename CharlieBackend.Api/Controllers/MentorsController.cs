@@ -92,6 +92,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> DisableMentor(long id)
         {
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
+
             return disabledMentorModel.ToActionResult();
         }
     }

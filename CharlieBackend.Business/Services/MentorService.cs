@@ -176,16 +176,16 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<MentorDto>> DisableMentorAsync(long mentorId)
         {
-
             var accountId = await GetAccountId(mentorId);
+
             if (accountId == null)
             {
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
             }
 
-
             var mentor = await GetMentorByAccountIdAsync((long)accountId);
             var isActive = await _accountService.IsAccountActiveAsync(mentor.Email);
+            
             if ((bool)!isActive)
             {
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
@@ -193,10 +193,8 @@ namespace CharlieBackend.Business.Services
 
 
             var disabled = await _accountService.DisableAccountAsync((long)accountId);
+
             return Result<MentorDto>.GetSuccess(mentor);
-
-
-
         }
     }
 }
