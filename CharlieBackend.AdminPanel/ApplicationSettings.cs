@@ -12,8 +12,6 @@ namespace CharlieBackend.AdminPanel
         public UrlsSettings Urls { get; set; }
 
         public CookiesSettings Cookies { get; set; }
-
-
     }
 
     public class UrlsSettings
