@@ -24,5 +24,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<StudentDto> GetStudentByIdAsync(long studentId);
 
         Task<StudentDto> GetStudentByEmailAsync(string email);
+
+        Task<Result<StudentDto>> DisableStudentAsync(long id);
     }
 }
