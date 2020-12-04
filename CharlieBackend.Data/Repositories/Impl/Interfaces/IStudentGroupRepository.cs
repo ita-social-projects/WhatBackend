@@ -18,6 +18,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
         
         bool DeleteStudentGroup(long StudentGroupModelId);
-
+        void UpdateManyToMany(IList<StudentOfStudentGroup> studentsOfStudentGroups, List<StudentOfStudentGroup> newStudentsOfStudentGroup);
     }
 }
