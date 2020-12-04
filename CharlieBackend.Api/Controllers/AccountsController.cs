@@ -202,5 +202,21 @@ namespace CharlieBackend.Api.Controllers
 
             return Ok(accountsModels);
         }
+
+
+        /// <summary>
+        /// Returns updated account
+        /// </summary>
+        /// <response code="200">Successful return updated account entity</response>
+        [AllowAnonymous]
+        [Route("ChangePassword")]
+        [Authorize(Roles = "Secretary, Mentor, Student, NotAssigned")]
+        [HttpPost]
+        public async Task<ActionResult> ResetPassword(ChangeCurrentPasswordDto changePasswd)
+        {
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
+
+            return updatedAccount.ToActionResult();
+        }
     }
 }

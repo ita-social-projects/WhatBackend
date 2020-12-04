@@ -19,7 +19,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
 
-        Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
+        //Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 
         Task<bool> IsEmailTakenAsync(string email);
 
@@ -32,5 +32,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         public string GenerateSalt();
 
         public string HashPassword(string password, string salt);
+
+       Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
     }
 }

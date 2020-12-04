@@ -117,18 +117,18 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
-        public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
-        {
+        //public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
+        //{
             
-            account.Salt = GenerateSalt();
-            account.Password = HashPassword(account.Password, account.Salt);
+        //    account.Salt = GenerateSalt();
+        //    account.Password = HashPassword(account.Password, account.Salt);
 
-            _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
+        //    _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
 
-            await _unitOfWork.CommitAsync();
+        //    await _unitOfWork.CommitAsync();
 
-            return _mapper.Map<AccountDto>(account);
-        }
+        //    return _mapper.Map<AccountDto>(account);
+        //}
 
         public Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
@@ -156,6 +156,39 @@ namespace CharlieBackend.Business.Services
 
                 return false;
             }
+        }
+
+        public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePasswd.Email);
+            
+            if (user != null)
+            {
+                var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePasswd.Email);
+
+                if (salt != "")
+                {
+                    string checkPassword = HashPassword(changePasswd.CurrentPassword, salt);
+
+                    if (user.Password == checkPassword)
+                    {
+                        user.Salt = GenerateSalt();
+                        user.Password = HashPassword(changePasswd.NewPassword, user.Salt);
+
+                        _unitOfWork.AccountRepository.UpdateAccountCredentials(user);
+
+                        await _unitOfWork.CommitAsync();
+
+                        return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+                    }
+                    else
+                    {
+                        return Result<AccountDto>.GetError(ErrorCode.Conflict, "Wrong current password.");
+                    }
+                }
+            }
+
+            return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
         }
 
         #region hash
