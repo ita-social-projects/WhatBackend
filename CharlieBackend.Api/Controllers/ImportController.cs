@@ -1,16 +1,13 @@
 ﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using CharlieBackend.Core.FileModels;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.FileModels;
-using System.Collections.Generic;
-using CharlieBackend.Business.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
-using System.Threading;
-using System;
-using System.IO;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -82,10 +79,5 @@ namespace CharlieBackend.Api.Controllers
 
             return listOfImportedStudents.ToActionResult();
         }
-
-
-
-        
-
     }
 }
