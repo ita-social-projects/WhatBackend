@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.Models.ResultModel;
+
 
 namespace CharlieBackend.Api.Controllers.Tests
 {
@@ -16,7 +18,7 @@ namespace CharlieBackend.Api.Controllers.Tests
 			//Arrange
 
 			var courceServiceMock = new Mock<ICourseService>();
-			courceServiceMock.Setup(repo => repo.GetAllCoursesAsync()).Returns(GetCourses);
+			courceServiceMock.Setup(repo => repo.GetAllCoursesAsync()).Returns(GetCourses());
 			CoursesController controller = new CoursesController(courceServiceMock.Object);
 
 			//Act
@@ -28,10 +30,10 @@ namespace CharlieBackend.Api.Controllers.Tests
 
 			//Assert
 
-			Assert.Equal(toCompare.Count, actualResult.Count);
+			Assert.Equal(toCompare.Count, actualResult.Data.Count);
 		}
 
-		public async Task<IList<CourseDto>> GetCourses()
+		public async Task<Result<IList<CourseDto>>> GetCourses()
 		{
 			List<CourseDto> coursesL = new List<CourseDto>
 			{
@@ -39,7 +41,7 @@ namespace CharlieBackend.Api.Controllers.Tests
 				new CourseDto { Id = 13, Name = "Alfa" },
 				new CourseDto { Id = 14, Name = "Omega" }
 			};
-			return coursesL;
+			return Result < IList < CourseDto >>.GetSuccess(coursesL);
 		}	
 	}
 }

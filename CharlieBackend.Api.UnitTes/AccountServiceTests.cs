@@ -18,7 +18,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 namespace CharlieBackend.Api.UnitTest
 {
     public class AccountServiceTests : TestBase
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
 
@@ -49,7 +49,7 @@ namespace CharlieBackend.Api.UnitTest
                 Email = accountExpectedEmail,
                 FirstName = "test",
                 LastName = "test",
-                Password ="qwerty",
+                Password = "qwerty",
                 ConfirmPassword = "qwerty"
             };
 
@@ -79,8 +79,8 @@ namespace CharlieBackend.Api.UnitTest
                 _notificationServiceMock.Object);
 
             //Act
-             var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
-             var successResult = await accountService.CreateAccountAsync(successAccountModel);
+            var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
+            var successResult = await accountService.CreateAccountAsync(successAccountModel);
 
             //Assert
             Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
