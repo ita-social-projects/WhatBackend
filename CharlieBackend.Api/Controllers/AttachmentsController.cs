@@ -41,14 +41,19 @@ namespace CharlieBackend.Api.Controllers
 
             return addedAttachments.ToActionResult();
         }
-         /*
-        // GET: api/<AttachmentsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
+        /// <summary>
+        /// GET: api/attachments
+        /// </summary>
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpGet]
+        public async Task<IActionResult> GetAttachments()
+        {
+            var attachments = await _attachmentService.GetAttachmentsListAsync();
+
+            return attachments.ToActionResult();
+        }
+        /*
         // GET api/<AttachmentsController>/5
         [HttpGet("{id}")]
         public string Get(int id)

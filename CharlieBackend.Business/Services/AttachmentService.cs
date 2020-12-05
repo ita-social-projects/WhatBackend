@@ -22,10 +22,12 @@ namespace CharlieBackend.Business.Services
         private readonly BlobServiceClient _blobServiceClient;
         private readonly ILogger<AttachmentService> _logger;
 
-        public AttachmentService( IUnitOfWork unitOfWork,
+        public AttachmentService( 
+                             IUnitOfWork unitOfWork,
                              IMapper mapper,
                              BlobServiceClient blobServiceClient,
-                             ILogger<AttachmentService> logger)
+                             ILogger<AttachmentService> logger
+                                )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -53,7 +55,6 @@ namespace CharlieBackend.Business.Services
 
 
                     _logger.LogInformation("FileName: " + file.FileName);
-
                     _logger.LogInformation("Uri: " + blobClient.Uri);
 
                     using Stream uploadFileStream = file.OpenReadStream();
@@ -67,10 +68,11 @@ namespace CharlieBackend.Business.Services
 
                     _unitOfWork.AttachmentRepository.Add(attachment);
 
-                    attachments.Add(_mapper.Map<AttachmentDto>(attachment));
-                }
                     await _unitOfWork.CommitAsync();
 
+                    attachments.Add(_mapper.Map<AttachmentDto>(attachment));
+                }
+                    
                 return Result<IList<AttachmentDto>>.GetSuccess(attachments);
             }
             catch
@@ -81,6 +83,13 @@ namespace CharlieBackend.Business.Services
                      "Cannot add attachments");
             }
             
+        }
+
+        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
+        {
+            var attachments = _mapper.Map<IList<AttachmentDto>>(await _unitOfWork.AttachmentRepository.GetAllAsync());
+
+            return Result<IList<AttachmentDto>>.GetSuccess(attachments);
         }
     }
 }

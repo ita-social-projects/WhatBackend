@@ -10,5 +10,7 @@ namespace CharlieBackend.Business.Services.Interfaces
    public interface IAttachmentService
     {
         Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(IFormFileCollection fileCollection);
+
+        Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync();
     }
 }
