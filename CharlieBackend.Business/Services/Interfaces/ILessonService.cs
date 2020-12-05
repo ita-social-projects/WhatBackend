@@ -8,15 +8,15 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface ILessonService
     {
-        public Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonModel);
+        Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonModel);
 
-        public Task<Result<IList<LessonDto>>> GetAllLessonsAsync();
+        Task<Result<IList<LessonDto>>> GetAllLessonsAsync();
 
-        public Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);
+        Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);
 
-        public Task<Result<LessonDto>> UpdateLessonAsync(long id, UpdateLessonDto lessonModel);
+        Task<Result<LessonDto>> UpdateLessonAsync(long id, UpdateLessonDto lessonModel);
 
-        public Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId);
+        Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId);
         
     }
 }

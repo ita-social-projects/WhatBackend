@@ -209,6 +209,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<StudentDto>.GetSuccess(student.Data);
         }
-
     }
 }

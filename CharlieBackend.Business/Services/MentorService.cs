@@ -71,7 +71,6 @@ namespace CharlieBackend.Business.Services
                 return Result<MentorDto>.GetError(ErrorCode.InternalServerError,
                      "Cannot create mentor.");
             }
-
         }
 
         public async Task<Result<IList<MentorDto>>> GetAllMentorsAsync()

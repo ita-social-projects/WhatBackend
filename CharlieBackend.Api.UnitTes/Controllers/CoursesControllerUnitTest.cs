@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Models.ResultModel;
 
-
 namespace CharlieBackend.Api.Controllers.Tests
 {
     public class CoursesControllerUnitTest
