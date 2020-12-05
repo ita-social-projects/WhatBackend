@@ -26,12 +26,12 @@ namespace CharlieBackend.Business.Services
             _dashboardRepository = dashboardRepository;
         }
 
-        public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsClassbookRequestDto request)
+        public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request)
         {
-            if (ValidateStudentsClassbookRequest(request).Any())
+            if (ValidateStudentsRequest(request).Any())
             {
                 return Result<StudentsClassbookResultDto>.GetError(ErrorCode.ValidationError, 
-                    String.Join(";\n", ValidateStudentsClassbookRequest(request))) ;
+                    String.Join(";\n", ValidateStudentsRequest(request))) ;
             }
 
             var result = new StudentsClassbookResultDto();
@@ -66,12 +66,12 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsClassbookResultDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsResultsRequestDto request)
+        public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsRequestDto<StudentResultType> request)
         {
-            if (ValidateStudentsResultsRequest(request).Any())
+            if (ValidateStudentsRequest(request).Any())
             {
                 return Result<StudentsResultsDto>.GetError(ErrorCode.ValidationError,
-                    String.Join(";\n", ValidateStudentsResultsRequest(request)));
+                    String.Join(";\n", ValidateStudentsRequest(request)));
             }
 
             var result = new StudentsResultsDto();
@@ -85,7 +85,7 @@ namespace CharlieBackend.Business.Services
             else
             {
                 var studentGroupsIds = await _dashboardRepository
-                    .GetGroupsIdsByCourseIdAsync((long)request.CourseId, request.StartDate, request.FinishtDate);
+                    .GetGroupsIdsByCourseIdAsync((long)request.CourseId, request.StartDate, request.FinishDate);
 
                 studentsIds = await _dashboardRepository
                     .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
@@ -107,13 +107,13 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
-            StudentClassbookRequestDto request, ClaimsPrincipal userContext)
+            GenericRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateStudentClassbookRequest(studentId, request, userContext).Any())
+            if (ValidateStudentRequest(studentId, request, userContext).Any())
             {
                 return Result<StudentsClassbookResultDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateStudentClassbookRequest(studentId, request, userContext)));
+                           ValidateStudentRequest(studentId, request, userContext)));
             }
 
             var result = new StudentsClassbookResultDto();
@@ -136,18 +136,18 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
-            StudentResultRequestDto request, ClaimsPrincipal userContext)
+            GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateStudentResultRequest(studentId, request, userContext).Any())
+            if (ValidateStudentRequest(studentId, request, userContext).Any())
             {
                 return Result<StudentsResultsDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateStudentResultRequest(studentId, request, userContext)));
+                           ValidateStudentRequest(studentId, request, userContext)));
             }
 
             var result = new StudentsResultsDto();
             var studentGroupsIds = await _dashboardRepository
-                .GetGroupsIdsByStudentIdAndPeriodAsync(studentId, request.StartDate, request.FinishtDate);
+                .GetGroupsIdsByStudentIdAndPeriodAsync(studentId, request.StartDate, request.FinishDate);
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
@@ -164,14 +164,14 @@ namespace CharlieBackend.Business.Services
             return Result<StudentsResultsDto>.GetSuccess(result);
         }
 
-        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, 
-            StudentGroupsResultsRequestDto request)
+        public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId,
+            GenericRequestDto<StudentGroupResultType> request)
         {
-            if (ValidateStudentGroupsResultsRequest(courseId, request).Any())
+            if (ValidateGenericRequest(request).Any())
             {
                 return Result<StudentGroupsResultsDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateStudentGroupsResultsRequest(courseId, request)));
+                           ValidateGenericRequest(request)));
             }
 
             var result = new StudentGroupsResultsDto();
@@ -199,7 +199,7 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupsResultsDto>.GetSuccess(result);
         }
 
-        private IEnumerable<string> ValidateStudentsClassbookRequest(StudentsClassbookRequestDto request)
+        private IEnumerable<string> ValidateStudentsRequest<T>(StudentsRequestDto<T> request) where T: Enum
         {
             if (request == default)
             {
@@ -223,32 +223,8 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private IEnumerable<string> ValidateStudentsResultsRequest(StudentsResultsRequestDto request)
-        {
-            if (request == default)
-            {
-                yield return "Please provide request data";
-                yield break;
-            }
-
-            if (request.IncludeAnalytics == default)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (request.IncludeAnalytics.Length == 0)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (!request.CourseId.HasValue && !request.StudentGroupId.HasValue)
-            {
-                yield return "Please provide course or student group id";
-            }
-        }
-
-        private IEnumerable<string> ValidateStudentClassbookRequest(long studentId,
-            StudentClassbookRequestDto request, ClaimsPrincipal claimsContext)
+        private IEnumerable<string> ValidateStudentRequest<T>(long studentId,
+            GenericRequestDto<T> request, ClaimsPrincipal claimsContext) where T: Enum
         {
             if (studentId == default)
             {
@@ -277,43 +253,8 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private IEnumerable<string> ValidateStudentResultRequest(long studentId,
-    StudentResultRequestDto request, ClaimsPrincipal claimsContext)
+        private IEnumerable<string> ValidateGenericRequest<T>(GenericRequestDto<T> request) where T : Enum
         {
-            if (studentId == default)
-            {
-                yield return "Please provide student id";
-            }
-
-            if (request == default)
-            {
-                yield return "Please provide request data";
-                yield break;
-            }
-
-            if (request.IncludeAnalytics == default)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (request.IncludeAnalytics.Length == 0)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (!IsRequestAllowedForStudent(studentId, claimsContext))
-            {
-                yield return "Not allowed to request other student results";
-            }
-        }
-
-        private IEnumerable<string> ValidateStudentGroupsResultsRequest(long courseId, StudentGroupsResultsRequestDto request)
-        {
-            if (courseId == default)
-            {
-                yield return "Please provide course id";
-            }
-
             if (request == default)
             {
                 yield return "Please provide request data";

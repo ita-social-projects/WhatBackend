@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CharlieBackend.Core.DTO.Dashboard.StudentClassbook
+namespace CharlieBackend.Core.DTO.Dashboard
 {
-    public class StudentClassbookRequestDto
+    public class StudentsRequestDto<T> where T : Enum
     {
+        public long? CourseId { get; set; }
+
+        public long? StudentGroupId { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
@@ -14,6 +18,6 @@ namespace CharlieBackend.Core.DTO.Dashboard.StudentClassbook
         public DateTime FinishDate { get; set; }
 
         [Required]
-        public ClassbookResultType[] IncludeAnalytics { get; set; }
+        public T[] IncludeAnalytics { get; set; }
     }
 }
