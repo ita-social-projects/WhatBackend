@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
@@ -22,7 +23,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<LessonDto> CreateLessonAsync(CreateLessonDto lessonDto)
+        public async Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonDto)
         {
             try
             {
@@ -52,8 +53,9 @@ namespace CharlieBackend.Business.Services
                 }
 
                 await _unitOfWork.CommitAsync();
+                var createdLesson = _mapper.Map<LessonDto>(createdLessonEntity);
 
-                return _mapper.Map<LessonDto>(createdLessonEntity);
+                return Result<LessonDto>.GetSuccess(createdLesson);
             }
             catch
             {
@@ -63,14 +65,15 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<LessonDto>> GetAllLessonsAsync()
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsAsync()
         {
             var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
+            var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
-            return _mapper.Map<IList<LessonDto>>(lessons);
+            return Result<IList<LessonDto>>.GetSuccess(listLessons);
         }
 
-        public async Task<Lesson> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
+        public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
             var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
 
@@ -84,10 +87,10 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return foundLesson;
+            return Result<Lesson>.GetSuccess(foundLesson);
         }
 
-        public async Task<LessonDto> UpdateLessonAsync(long id, UpdateLessonDto lessonModel)
+        public async Task<Result<LessonDto>> UpdateLessonAsync(long id, UpdateLessonDto lessonModel)
         {
             try
             {
@@ -142,8 +145,9 @@ namespace CharlieBackend.Business.Services
                     }
                 }
                 await _unitOfWork.CommitAsync();
+                var foundLessonDto = _mapper.Map<LessonDto>(foundLesson);
 
-                return _mapper.Map<LessonDto>(foundLesson);
+                return Result<LessonDto>.GetSuccess(foundLessonDto);
 
             }
             catch
@@ -154,11 +158,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<StudentLessonDto>> GetStudentLessonsAsync(long studentId)
+        public async Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId)
         {
             var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
 
-            return _mapper.Map<IList<StudentLessonDto>>(studentLessonModels) ?? null;
+            return Result<IList<StudentLessonDto>>.GetSuccess( _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
         }
 
     }

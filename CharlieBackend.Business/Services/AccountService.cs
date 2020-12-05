@@ -21,7 +21,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, 
+        public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               INotificationService notification)
         {
@@ -69,7 +69,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
+        public async Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
 
@@ -80,17 +80,17 @@ namespace CharlieBackend.Business.Services
 
                 var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
-                return foundAccount;
+                return Result<AccountDto>.GetSuccess(foundAccount);
             }
 
             return null;
         }
 
-        public async Task<IList<AccountDto>> GetAllAccountsAsync()
+        public async Task<Result<IList<AccountDto>>> GetAllAccountsAsync()
         {
             var foundAccount = _mapper.Map<IList<AccountDto>>(await _unitOfWork.AccountRepository.GetAllAsync());
 
-            return foundAccount;
+            return Result<IList<AccountDto>>.GetSuccess(foundAccount);
         }
 
         public async Task<Account> GetAccountCredentialsByIdAsync(long id)
@@ -105,11 +105,11 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
-        public async Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync()
+        public async Task<Result<IList<AccountDto>>> GetAllNotAssignedAccountsAsync()
         {
             var accounts = _mapper.Map<List<AccountDto>>(await _unitOfWork.AccountRepository.GetAllNotAssignedAsync());
 
-            return accounts;
+            return Result<IList<AccountDto>>.GetSuccess(accounts);
         }
 
         public Task<bool> IsEmailTakenAsync(string email)
@@ -119,7 +119,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
         {
-            
+
             account.Salt = GenerateSalt();
             account.Password = HashPassword(account.Password, account.Salt);
 
@@ -148,7 +148,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return true;
+                return isSucceeded;
             }
             catch
             {

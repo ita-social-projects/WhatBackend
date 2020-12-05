@@ -57,7 +57,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
-
             var mentorsModels = await _mentorService.GetAllMentorsAsync();
 
             return Ok(mentorsModels);
@@ -91,22 +90,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {
+            var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
-            var accountId = await _mentorService.GetAccountId(id);
-
-            if (accountId == null)
-            {
-                return BadRequest("Unknown mentor id.");
-            }
-
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return NoContent();
-            }
-
-            return StatusCode(500, "Error occurred while trying to disable mentor account.");
+            return disabledMentorModel.ToActionResult();
         }
     }
 }

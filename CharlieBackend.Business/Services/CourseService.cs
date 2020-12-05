@@ -2,6 +2,7 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<CourseDto> CreateCourseAsync(CreateCourseDto courseModel)
+        public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel)
         {
             try
             {
@@ -28,8 +29,9 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.CourseRepository.Add(createdCourseEntity);
 
                 await _unitOfWork.CommitAsync();
+                var createdCourseDto = _mapper.Map<CourseDto>(createdCourseEntity);
 
-                return _mapper.Map<CourseDto>(createdCourseEntity);
+                return Result<CourseDto>.GetSuccess(createdCourseDto);
             }
             catch 
             {
@@ -40,14 +42,14 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<CourseDto>> GetAllCoursesAsync()
+        public async Task<Result<IList<CourseDto>>> GetAllCoursesAsync()
         {
             var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllAsync());
 
-            return courses;
+            return Result<IList<CourseDto>>.GetSuccess(courses);
         }
 
-        public async Task<CourseDto> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
+        public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
         {
             try
             {
@@ -58,8 +60,9 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.CourseRepository.Update(updatedEntity);
 
                 await _unitOfWork.CommitAsync();
+                var updatedCourse = _mapper.Map<CourseDto>(updatedEntity);
 
-                return _mapper.Map<CourseDto>(updatedEntity);
+                return Result<CourseDto>.GetSuccess(updatedCourse);
             }
             catch
             {

@@ -17,7 +17,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork, 
+        public StudentService(IAccountService accountService, IUnitOfWork unitOfWork,
                               IMapper mapper, INotificationService notification)
         {
             _accountService = accountService;
@@ -74,18 +74,18 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<StudentDto>> GetAllStudentsAsync()
+        public async Task<Result<IList<StudentDto>>> GetAllStudentsAsync()
         {
             var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
 
-            return students;
+            return Result<IList<StudentDto>>.GetSuccess(students);
         }
 
-        public async Task<IList<StudentDto>> GetAllActiveStudentsAsync()
+        public async Task<Result<IList<StudentDto>>> GetAllActiveStudentsAsync()
         {
             var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllActiveAsync());
 
-            return students;
+            return Result<IList<StudentDto>>.GetSuccess(students);
         }
 
         public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
@@ -113,7 +113,7 @@ namespace CharlieBackend.Business.Services
 
                 if (foundStudent == null)
                 {
-                        return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
+                    return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
                 }
 
                 var isEmailChangableTo = await _accountService
@@ -121,8 +121,8 @@ namespace CharlieBackend.Business.Services
 
                 if (!isEmailChangableTo)
                 {
-                        return Result<StudentDto>.GetError(ErrorCode.ValidationError,
-                        "Email is already taken!");
+                    return Result<StudentDto>.GetError(ErrorCode.ValidationError,
+                    "Email is already taken!");
                 }
 
                 foundStudent.Account.Email = studentModel.Email ?? foundStudent.Account.Email;
@@ -160,11 +160,12 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<StudentDto> GetStudentByAccountIdAsync(long accountId)
+        public async Task<Result<StudentDto>> GetStudentByAccountIdAsync(long accountId)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+            var studentDto = _mapper.Map<StudentDto>(student);
 
-            return _mapper.Map<StudentDto>(student);
+            return Result<StudentDto>.GetSuccess(studentDto);
         }
 
         public async Task<long?> GetAccountId(long studentId)
@@ -174,18 +175,40 @@ namespace CharlieBackend.Business.Services
             return student?.AccountId;
         }
 
-        public async Task<StudentDto> GetStudentByIdAsync(long studentId)
+        public async Task<Result<StudentDto>> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            var studentDto = _mapper.Map<StudentDto>(student);
 
-            return _mapper.Map<StudentDto>(student);
+            return Result<StudentDto>.GetSuccess(studentDto);
         }
 
-        public async Task<StudentDto> GetStudentByEmailAsync(string email)
+        public async Task<Result<StudentDto>> GetStudentByEmailAsync(string email)
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByEmailAsync(email);
-
-            return _mapper.Map<StudentDto>(student);
+            var studentDto = _mapper.Map<StudentDto>(student);
+            return Result<StudentDto>.GetSuccess(studentDto);
         }
+
+        public async Task<Result<StudentDto>> DisableStudentAsync(long id)
+        {
+            var accountId = await GetAccountId(id);
+
+            if (accountId == null)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Unknown student id.");
+            }
+
+            var student = await GetStudentByAccountIdAsync((long)accountId);
+            var isActive = await _accountService.DisableAccountAsync((long)accountId);
+
+            if (!isActive)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
+            }
+
+            return Result<StudentDto>.GetSuccess(student.Data);
+        }
+
     }
 }

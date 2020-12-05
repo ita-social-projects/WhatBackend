@@ -69,7 +69,8 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            var foundAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
+            var resultAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
+            var foundAccount = resultAccount.Data;
 
             if (foundAccount == null)
             {
@@ -92,7 +93,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                entityId = foundStudent.Id;
+                entityId = foundStudent.Data.Id;
             }
 
             if (foundAccount.Role == UserRole.Mentor)
@@ -104,7 +105,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                entityId = foundMentor.Id;
+                entityId = foundMentor.Data.Id;
             }
 
             if (foundAccount.Role == UserRole.Secretary)

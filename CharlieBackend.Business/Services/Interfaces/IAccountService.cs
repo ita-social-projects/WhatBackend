@@ -11,13 +11,13 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel);
 
-        Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
+        Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
         Task<Account> GetAccountCredentialsByIdAsync(long id);
 
-        Task<IList<AccountDto>> GetAllAccountsAsync();
+        Task<Result<IList<AccountDto>>> GetAllAccountsAsync();
 
-        Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync();
+        Task<Result<IList<AccountDto>>> GetAllNotAssignedAccountsAsync();
 
         Task<AccountDto> UpdateAccountCredentialsAsync(Account account);
 

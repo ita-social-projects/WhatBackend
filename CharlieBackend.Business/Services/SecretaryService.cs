@@ -129,7 +129,7 @@ namespace CharlieBackend.Business.Services
         {
             var secretary = await _unitOfWork.SecretaryRepository.GetByIdAsync(secretaryId);
 
-            return secretary?.Id;
+            return secretary?.AccountId;
         }
 
         public async Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync()
@@ -148,15 +148,15 @@ namespace CharlieBackend.Business.Services
                 return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+            var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
+            var isActive = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (isDisabled)
+            if (!isActive)
             {
-                return Result<SecretaryDto>.GetSuccess(null);
+                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsryaccount is already disabled.");
             }
 
-            return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
-                "Error occurred while trying to disable secretary account.");
+            return Result<SecretaryDto>.GetSuccess(secretary.Data);
         }
     }
 }
