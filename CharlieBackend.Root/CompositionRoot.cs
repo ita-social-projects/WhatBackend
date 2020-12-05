@@ -49,6 +49,7 @@ namespace CharlieBackend.Root
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IAttachmentService, AttachmentService>();
             #endregion
         }
     }
