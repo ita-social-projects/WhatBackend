@@ -4,6 +4,7 @@ using AutoMapper;
 using Azure.Storage.Blobs;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Core.DTO.Attachment;
@@ -32,11 +33,12 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<AttachmentDto>> AddAttachmentsAsync(IFormFileCollection fileCollection)
+        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(IFormFileCollection fileCollection)
         {
             try
             {
-
+                IList<AttachmentDto> attachments = new List<AttachmentDto>();
+                
                 foreach (var file in fileCollection) 
                 {
                     // Container names must start or end with a letter or number, 
@@ -49,7 +51,6 @@ namespace CharlieBackend.Business.Services
 
                     BlobClient blobClient = cloudBlobContainerClient.GetBlobClient(file.FileName);
 
-                    Attachment
 
                     _logger.LogInformation("FileName: " + file.FileName);
 
@@ -57,16 +58,26 @@ namespace CharlieBackend.Business.Services
 
                     using Stream uploadFileStream = file.OpenReadStream();
 
-                    await blobClient.UploadAsync(uploadFileStream); 
+                    await blobClient.UploadAsync(uploadFileStream);
+
+                    Attachment attachment = new Attachment()
+                    {
+                        Uri = blobClient.Uri.ToString()
+                    };
+
+                    _unitOfWork.AttachmentRepository.Add(attachment);
+
+                    attachments.Add(_mapper.Map<AttachmentDto>(attachment));
                 }
-                  //  await _unitOfWork.CommitAsync();
-                return Result<AttachmentDto>.GetSuccess(null);
+                    await _unitOfWork.CommitAsync();
+
+                return Result<IList<AttachmentDto>>.GetSuccess(attachments);
             }
             catch
             {
-               // _unitOfWork.Rollback();
+                _unitOfWork.Rollback();
 
-                return Result<AttachmentDto>.GetError(ErrorCode.InternalServerError,
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.InternalServerError,
                      "Cannot add attachments");
             }
             

@@ -6,6 +6,6 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Attachment : BaseEntity
     {
-
+        public string Uri { get; set; }
     }
 }

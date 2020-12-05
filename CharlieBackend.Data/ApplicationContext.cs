@@ -37,6 +37,8 @@ namespace CharlieBackend.Data
         
         public virtual DbSet<Schedule> Schedules { get; set; }
 
+        public virtual DbSet<Attachment> Attachments { get; set; }
+
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
         //            if (!optionsBuilder.IsConfigured)
@@ -438,6 +440,25 @@ namespace CharlieBackend.Data
                     .WithMany(p => p.Schedule)
                     .HasForeignKey(d => d.StudentGroupId)
                     .HasConstraintName("FK_student_group_of_schedule");
+            });
+
+            modelBuilder.Entity<Attachment>(entity =>
+            {
+                entity.ToTable("Attachment");
+
+                entity.HasIndex(e => e.Uri)
+                    .HasName("Uri_UNIQUE")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Uri)
+                    .IsRequired()
+                    .HasColumnName("Uri")
+                    .HasColumnType("varchar(200)")
+                    .HasComment("name has been set to not null and unique")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
             });
 
             OnModelCreatingPartial(modelBuilder);
