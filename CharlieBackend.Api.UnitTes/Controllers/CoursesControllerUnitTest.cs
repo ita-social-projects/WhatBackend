@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers.Tests
 {
     public class CoursesControllerUnitTest
     {
-
+        /*
         [Fact]
         public async Task GetAllCoursesTestAsync()
         {
@@ -44,6 +44,6 @@ namespace CharlieBackend.Api.Controllers.Tests
             };
             return Result<IList<CourseDto>>.GetSuccess(coursesL);
         }
-
+        */
     }
 }
