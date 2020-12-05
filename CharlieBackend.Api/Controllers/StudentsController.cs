@@ -72,7 +72,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get all students (active and unactive)
+        /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
         [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
