@@ -9,5 +9,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public Task<bool> IsCourseNameTakenAsync(string courseName);
 
         public Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
+
+        Task<bool> DisableCourseByIdAsync(long id);
+        Task<bool> IsCourseEmptyAsync(long id);
     }
 }

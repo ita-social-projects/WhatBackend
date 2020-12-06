@@ -3,6 +3,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -51,6 +52,10 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                if (await _unitOfWork.CourseRepository.IsCourseEmptyAsync(id))
+                {
+                    return null;
+                }
                 var updatedEntity = _mapper.Map<Course>(courseModel);
 
                 updatedEntity.Id = id;
@@ -61,17 +66,38 @@ namespace CharlieBackend.Business.Services
 
                 return _mapper.Map<CourseDto>(updatedEntity);
             }
-            catch
+            catch 
             {
-                _unitOfWork.Rollback();
 
                 return null;
             }
+
         }
 
         public Task<bool> IsCourseNameTakenAsync(string courseName)
         {
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
+        }
+
+        public async Task<bool> DisableCourceAsync(long id)
+        {
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
+            foreach (var item in studentGroup)
+            {
+                if (id == item.CourseId && item.FinishDate >= DateTime.Now)
+                {
+                    return false;
+                }
+            }
+
+            var course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+            return course;
+        }
+
+        public Task<bool> IsCourseEmptyAsync(long id)
+        {
+            return _unitOfWork.CourseRepository.IsCourseEmptyAsync(id);
         }
     }
 }

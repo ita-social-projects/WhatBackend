@@ -103,7 +103,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(account => account.Id == id);
             if (foundAccount == null)
             {
-                return false;
+                return false;   
             }
             foundAccount.IsActive = false;
             return false;

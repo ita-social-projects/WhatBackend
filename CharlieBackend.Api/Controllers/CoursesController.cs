@@ -92,7 +92,31 @@ namespace CharlieBackend.Api.Controllers
                 return Ok(updatedCourse);
             }
 
-            return StatusCode(409, "Course already exists!");
+            return StatusCode(409, "Course already have studet Group!");
         }
+
+
+
+        /// <summary>
+        /// Delete course
+        /// </summary>
+        /// <response code="200">Successful delete  course</response>
+        /// <response code="HTTP: 400, API: 0">Bad request</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<CourseDto>> DeleteCourse(long id)
+        {
+            if (!await _coursesService.IsCourseEmptyAsync(id))
+            {
+                return BadRequest("Course is not found");
+            }
+
+            var deletecoures = await _coursesService.DisableCourceAsync(id);
+            return Ok(deletecoures);
+
+
+        }
+
+
     }
 }

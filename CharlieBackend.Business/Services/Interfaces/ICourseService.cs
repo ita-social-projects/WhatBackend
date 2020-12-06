@@ -13,5 +13,9 @@ namespace CharlieBackend.Business.Services.Interfaces
         public Task<CourseDto> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
 
         public Task<bool> IsCourseNameTakenAsync(string courseName);
+
+        public Task<bool> IsCourseEmptyAsync(long id);
+        public Task<bool> DisableCourceAsync(long id);
     }
+
 }

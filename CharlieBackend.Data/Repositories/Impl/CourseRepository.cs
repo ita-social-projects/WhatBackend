@@ -27,5 +27,23 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Contains(course.Id))
                     .ToListAsync();
         }
+
+        public async Task<bool> IsCourseEmptyAsync(long id)
+        {
+            return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
+        }
+
+        public async Task<bool> DisableCourseByIdAsync(long id)
+        {
+            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course == null)
+            {
+                return false;
+            }
+
+            course.IsActive = false;
+           
+            return true;
+        }
     }
 }
