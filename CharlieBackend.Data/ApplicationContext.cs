@@ -446,17 +446,25 @@ namespace CharlieBackend.Data
             {
                 entity.ToTable("Attachment");
 
-                entity.HasIndex(e => e.Uri)
-                    .HasName("Uri_UNIQUE")
+                entity.HasIndex(e => e.containerName)
+                    .HasName("containerName_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Uri)
+                entity.Property(e => e.containerName)
                     .IsRequired()
-                    .HasColumnName("Uri")
-                    .HasColumnType("varchar(200)")
+                    .HasColumnName("containerName")
+                    .HasColumnType("varchar(100)")
                     .HasComment("name has been set to not null and unique")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.fileName)
+                    .IsRequired()
+                    .HasColumnName("fileName")
+                    .HasColumnType("varchar(100)")
+                    .HasComment("name has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
             });

@@ -9,6 +9,8 @@ namespace CharlieBackend.Core.DTO.Attachment
     {
         public long Id { get; set; }
 
-        public string Uri { get; set; }
+        public string ContainerName { get; set; }
+
+        public string FileName { get; set; }
     }
 }

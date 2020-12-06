@@ -8,6 +8,7 @@ using CharlieBackend.Core;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
+using System.IO;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -53,15 +54,25 @@ namespace CharlieBackend.Api.Controllers
 
             return attachments.ToActionResult();
         }
-        /*
-        // GET api/<AttachmentsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+
+        /// </summary>
+        /// GET: api/attachments/{id}
+        /// </summary>
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpGet("{attachmentId}")]
+        public async Task<IActionResult> GetAttachment(long attachmentId)
         {
-            return "value";
+            var attachment = await _attachmentService.DownloadAttachmentAsync(attachmentId);
+
+            return File
+                (
+                attachment.Data.downloadInfo.Content, 
+                attachment.Data.downloadInfo.ContentType, 
+                attachment.Data.fileName 
+                );
         }
 
-
+        /*
         // PUT api/<AttachmentsController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

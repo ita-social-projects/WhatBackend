@@ -271,9 +271,10 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`attachment` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `Uri` VARCHAR(200) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'Uri has been set to not null and unique',
+  `containerName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'containerName has been set to not null and unique',
+  `fileName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'filerName has been set to not null',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `Uri_UNIQUE` (`Uri` ASC))
+  UNIQUE INDEX `containerName_UNIQUE` (`containerName` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;

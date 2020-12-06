@@ -13,7 +13,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-
     }
 
 }

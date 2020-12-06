@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using AutoMapper;
+using CharlieBackend.Core;
 using Azure.Storage.Blobs;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
@@ -11,7 +13,8 @@ using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-
+using Azure.Storage.Blobs.Models;
+using Azure.Storage;
 
 namespace CharlieBackend.Business.Services
 {
@@ -19,19 +22,19 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly BlobServiceClient _blobServiceClient;
+        private readonly AzureStorageBlobAccount  _blobAccount;
         private readonly ILogger<AttachmentService> _logger;
 
         public AttachmentService( 
                              IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             BlobServiceClient blobServiceClient,
+                             AzureStorageBlobAccount blobAccount,
                              ILogger<AttachmentService> logger
                                 )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _blobServiceClient = blobServiceClient;
+            _blobAccount = blobAccount;
             _logger = logger;
         }
 
@@ -48,8 +51,10 @@ namespace CharlieBackend.Business.Services
                     // All letters in a container name must be lowercase.
                     string containerName = "what-attachments-" + Guid.NewGuid().ToString();
 
-                    BlobContainerClient cloudBlobContainerClient = await _blobServiceClient.
-                                CreateBlobContainerAsync(containerName);
+                    BlobContainerClient cloudBlobContainerClient = 
+                                new BlobContainerClient(_blobAccount.connectionString, containerName);
+
+                    await cloudBlobContainerClient.CreateIfNotExistsAsync();
 
                     BlobClient blobClient = cloudBlobContainerClient.GetBlobClient(file.FileName);
 
@@ -63,7 +68,8 @@ namespace CharlieBackend.Business.Services
 
                     Attachment attachment = new Attachment()
                     {
-                        Uri = blobClient.Uri.ToString()
+                        containerName = containerName,
+                        fileName = file.FileName
                     };
 
                     _unitOfWork.AttachmentRepository.Add(attachment);
@@ -90,6 +96,28 @@ namespace CharlieBackend.Business.Services
             var attachments = _mapper.Map<IList<AttachmentDto>>(await _unitOfWork.AttachmentRepository.GetAllAsync());
 
             return Result<IList<AttachmentDto>>.GetSuccess(attachments);
+        }
+
+        public async Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId)
+        {
+            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
+
+            BlobClient blobClient = new BlobClient
+                        (
+                        _blobAccount.connectionString,
+                        attachment.containerName,
+                        attachment.fileName
+                        );
+
+            BlobDownloadInfo download = await blobClient.DownloadAsync();
+
+            DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
+                        { 
+                           downloadInfo = download,
+                           fileName = attachment.fileName
+                        };
+
+            return Result<DownloadAttachmentDto>.GetSuccess(downloadedAttachment);
         }
     }
 }

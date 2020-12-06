@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+﻿using CharlieBackend.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CharlieBackend.Api.Extensions
@@ -7,14 +7,15 @@ namespace CharlieBackend.Api.Extensions
     /// 
     /// </summary>
     public static class AzureStorageBlobsExtension
-    {
+    { 
+
         /// <summary>
         /// 
         /// </summary>
         public static void AddAzureStorageBlobs(this IServiceCollection service, string azureConnectionString)
-        {
-            var blobService = new BlobServiceClient(azureConnectionString);
+         {
+            var blobService = new AzureStorageBlobAccount(azureConnectionString);
             service.AddSingleton(blobService);
-        }
+         }
     }
 }
