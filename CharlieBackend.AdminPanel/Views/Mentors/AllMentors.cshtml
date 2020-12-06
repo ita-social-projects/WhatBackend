@@ -117,6 +117,14 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
+                                                        @if (@item.IsActive)
+                                                        {
+
+                                                            <a class="dropdown-item text-dark" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Disable </span>
+                                                            </a>
+                                                        }
                                                     </div>
                                                 </div>
                                             </td>
