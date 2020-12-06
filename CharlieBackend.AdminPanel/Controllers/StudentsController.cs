@@ -7,6 +7,7 @@ using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,16 +22,23 @@ namespace CharlieBackend.AdminPanel.Controllers
     {
         private readonly IStudentService _studentService;
 
+        private readonly IOptions<ApplicationSettings> _config;
 
-        public StudentsController(IStudentService studentService)
+        private readonly IDataProtector _protector;
+
+        public StudentsController(IStudentService studentService,
+                                  IOptions<ApplicationSettings> config,
+                                  IDataProtectionProvider provider)
         {
             _studentService = studentService;
+            _config = config;
+            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
 
         }
 
         public async Task<IActionResult> AllStudents()
         {
-            var students = await _studentService.GetAllStudentsAsync(Request.Cookies["accessToken"]);
+            var students = await _studentService.GetAllStudentsAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
 
             return View(students);
         }
@@ -38,7 +46,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateStudent(long id)
         {
-            var student = await _studentService.GetStudentByIdAsync(id, Request.Cookies["accessToken"]);
+            var student = await _studentService.GetStudentByIdAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
 
             ViewBag.Student = student;
 
@@ -48,7 +56,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudent(long id, UpdateStudentDto data)
         {
-            var updatedStudent = await _studentService.UpdateStudentAsync(id, data, Request.Cookies["accessToken"]);
+            var updatedStudent = await _studentService.UpdateStudentAsync(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
 
             return RedirectToAction("AllStudents", "Students");
         }
@@ -56,7 +64,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudent(long id)
         {
-            var addedStudent = await _studentService.AddStudentAsync(id, Request.Cookies["accessToken"]);
+            var addedStudent = await _studentService.AddStudentAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
 
             return RedirectToAction("AllStudents", "Students");
         }
@@ -64,7 +72,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> DisableStudent(long id)
         {
-            var disabledStudent = await _studentService.DisableStudentAsync(id, Request.Cookies["accessToken"]);
+            var disabledStudent = await _studentService.DisableStudentAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
 
             return RedirectToAction("AllStudents", "Students");
         }
