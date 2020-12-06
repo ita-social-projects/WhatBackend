@@ -36,14 +36,14 @@
 
                         <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
 
-                        <a class=" btn btn-light js-mentor-list-button" id="activeMentors">
+                        <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
                             <i class="far fa-eye"></i>
-                            <span> Active mentors </span>
+                            <span> Active Mentors </span>
                         </a>
 
-                        <a class="btn btn-light js-mentor-list-button d-none" id="inactiveMentors">
+                        <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
                             <i class="far fa-eye-slash"></i>
-                            <span> Inactive mentors</span>
+                            <span> Inactive Mentors</span>
                         </a>
                     </div>
 
@@ -85,14 +85,10 @@
                                                             <span>Edit </span>
                                                         </a>
 
-                                                        @if (@item.IsActive)
-                                                        {
-
-                                                            <a class="dropdown-item text-dark js-disable-mentor" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
-                                                                <i class="fas fa-trash"></i>
-                                                                <span>Disable </span>
-                                                            </a>
-                                                        }
+                                                        <a class="dropdown-item text-dark js-disable-Mentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Disable </span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -117,6 +113,7 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
+
                                                     </div>
                                                 </div>
                                             </td>
@@ -131,12 +128,12 @@
         </div>
     </div>
 
-    <!-- Disable mentor modal window-->
+    <!-- Disable Mentor modal window-->
     <div class="modal fade" id="disableMentorModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Disable mentor?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Disable Mentor?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -155,12 +152,12 @@
 @section Scripts{
     <script type="text/javascript">
 
-        let isOnlyActiveMentors = false;
+        var isOnlyActiveMentors = false;
 
-        let switchButtons = document.querySelectorAll(".js-mentor-list-button");
+        var switchButtons = document.querySelectorAll(".js-Mentor-list-button");
 
-        let activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
-        let inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
+        var activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
+        var inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
 
         switchButtons.forEach(function (item) {
 
@@ -204,17 +201,19 @@
 
     <script type="text/javascript">
 
-        let disableMentorURL = "/Mentor/DisableMentor/";
-        let disableMentorId = null;
-        $(document).on("click", ".js-disable-mentor", function (e) {
+        var routeForDisableMentor = "/Mentors/DisableMentor/";
+
+        var disableMentorId = null;
+
+        $(document).on("click", ".js-disable-Mentor", function (e) {
 
             e.preventDefault();
 
-            let _self = $(this);
+            var _self = $(this);
 
             disableMentorId = _self.data('item-id');
 
-            $("#confirmDisableMentor").attr("href", disableMentorURL + disableMentorId);
+            $("#confirmDisableMentor").attr("href", routeForDisableMentor + disableMentorId);
 
         });
 
