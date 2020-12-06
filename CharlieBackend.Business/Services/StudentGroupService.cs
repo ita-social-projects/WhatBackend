@@ -208,5 +208,10 @@ namespace CharlieBackend.Business.Services
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
+
+        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        {
+            _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
+        }
     }
 }

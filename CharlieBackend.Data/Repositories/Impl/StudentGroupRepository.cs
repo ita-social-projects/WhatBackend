@@ -16,6 +16,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
+        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        {
+            _applicationContext.StudentsOfStudentGroups
+                   .AddRange(items);
+        }
         public bool DeleteStudentGroup(long StudentGroupModelId)
         {
             var x = SearchStudentGroup(StudentGroupModelId);
@@ -72,7 +77,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         }
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup, 
-                                    IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
+                                     IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
         {
             _applicationContext.StudentsOfStudentGroups.
                     TryUpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
