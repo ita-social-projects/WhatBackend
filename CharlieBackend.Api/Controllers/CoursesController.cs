@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -36,23 +37,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<CreateCourseDto>> PostCourse(CreateCourseDto courseDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
-
-            var isCourseNameTaken = await _coursesService.IsCourseNameTakenAsync(courseDto.Name);
-
-            if (isCourseNameTaken)
-            {
-                return StatusCode(409, "Course already exists!");
-            }
-
             var createdCourse = await _coursesService.CreateCourseAsync(courseDto);
 
-            if (createdCourse == null)
-            {
-                return StatusCode(500);
-            }
-
-            return Ok(createdCourse);
+            return createdCourse.ToActionResult();
         }
 
         /// <summary>
@@ -61,12 +48,11 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of list of courses</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
-        public async Task<ActionResult<IList<CourseDto>>> GetAllCourses()
+        public async Task<ActionResult<CourseDto>> GetAllCourses()
         {
-
             var courses =  await _coursesService.GetAllCoursesAsync();
 
-            return Ok(courses);
+            return courses.ToActionResult();
         }
 
         /// <summary>
@@ -79,20 +65,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> PutCourse(long id, UpdateCourseDto courseDto)
         {
-            //if (id != courseModel.Id) return BadRequest();
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var updatedCourse = await _coursesService.UpdateCourseAsync(id, courseDto);
 
-            if (updatedCourse != null)
-            {
-                return Ok(updatedCourse);
-            }
+            return updatedCourse.ToActionResult();
 
-            return StatusCode(409, "Course already exists!");
         }
     }
 }

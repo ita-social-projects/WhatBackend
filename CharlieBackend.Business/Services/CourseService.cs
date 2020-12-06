@@ -2,6 +2,7 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,39 +20,62 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<CourseDto> CreateCourseAsync(CreateCourseDto courseModel)
+        public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseDto)
         {
             try
             {
-                var createdCourseEntity = _mapper.Map<Course>(courseModel);
+                if (courseDto == null)
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "CourseDto is null");
+                }
+
+                if (await IsCourseNameTakenAsync(courseDto.Name))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "Course already exists");
+                }
+
+                var createdCourseEntity = _mapper.Map<Course>(courseDto);
 
                 _unitOfWork.CourseRepository.Add(createdCourseEntity);
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<CourseDto>(createdCourseEntity);
+                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(createdCourseEntity));
             }
-            catch 
+            catch
             {
-
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<CourseDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
-        public async Task<IList<CourseDto>> GetAllCoursesAsync()
+        public async Task<Result<IList<CourseDto>>> GetAllCoursesAsync()
         {
-            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllAsync());
-
-            return courses;
+            return Result<IList<CourseDto>>.GetSuccess(_mapper
+                    .Map<IList<CourseDto>>(await _unitOfWork.CourseRepository.GetAllAsync()));
         }
 
-        public async Task<CourseDto> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
+        public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
         {
             try
             {
-                var updatedEntity = _mapper.Map<Course>(courseModel);
+                if (updateCourseDto == null)
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "CourseDto is null");
+                }
+
+                if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(id))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course id not found");
+                }
+
+                if (await IsCourseNameTakenAsync(updateCourseDto.Name))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "Course already exists");
+                }
+
+                var updatedEntity = _mapper.Map<Course>(updateCourseDto);
 
                 updatedEntity.Id = id;
 
@@ -59,13 +83,13 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return _mapper.Map<CourseDto>(updatedEntity);
+                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<CourseDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 

@@ -93,7 +93,6 @@ namespace CharlieBackend.Business.Services
 
                 Console.WriteLine(ex.Message);
 
-
                 return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
