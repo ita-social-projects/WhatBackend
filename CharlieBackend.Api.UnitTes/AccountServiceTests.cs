@@ -189,6 +189,11 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedAccountDto.IsActive, successResult.Data.IsActive);
             Assert.Equal(updatedAccountDto.Role, successResult.Data.Role);
         }
+        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
+        {
+            var mock = new Mock<IUnitOfWork>();
+            return mock;
+        }
 
         #region Hash
         public string GenerateSalt()
@@ -234,12 +239,6 @@ namespace CharlieBackend.Api.UnitTest
             var result = new SHA256Managed().ComputeHash(data);
 
             return BitConverter.ToString(result).Replace("-", "").ToLower();
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
         }
         #endregion
     }
