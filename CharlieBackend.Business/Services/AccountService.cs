@@ -149,33 +149,33 @@ namespace CharlieBackend.Business.Services
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePasswd.Email);
             
-            if (user != null)
+            if (user == null)
             {
-                var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePasswd.Email);
+                return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            }
 
-                if (salt != "")
+            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePasswd.Email);
+
+            if (!string.IsNullOrEmpty(salt))
+            {
+                string checkPassword = HashPassword(changePasswd.CurrentPassword, salt);
+
+                if (user.Password == checkPassword)
                 {
-                    string checkPassword = HashPassword(changePasswd.CurrentPassword, salt);
+                    user.Salt = GenerateSalt();
+                    user.Password = HashPassword(changePasswd.NewPassword, user.Salt);
 
-                    if (user.Password == checkPassword)
-                    {
-                        user.Salt = GenerateSalt();
-                        user.Password = HashPassword(changePasswd.NewPassword, user.Salt);
+                    await _unitOfWork.CommitAsync();
 
-                        _unitOfWork.AccountRepository.UpdateAccountCredentials(user);
-
-                        await _unitOfWork.CommitAsync();
-
-                        return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
-                    }
-                    else
-                    {
-                        return Result<AccountDto>.GetError(ErrorCode.Conflict, "Wrong current password.");
-                    }
+                    return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+                }
+                else
+                {
+                    return Result<AccountDto>.GetError(ErrorCode.Conflict, "Wrong current password.");
                 }
             }
 
-            return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
         #region hash

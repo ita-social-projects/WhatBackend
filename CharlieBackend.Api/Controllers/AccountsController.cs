@@ -209,7 +209,7 @@ namespace CharlieBackend.Api.Controllers
         [Route("ChangePassword")]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPost]
-        public async Task<ActionResult> ResetPassword(ChangeCurrentPasswordDto changePasswd)
+        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
         {
             var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
 
