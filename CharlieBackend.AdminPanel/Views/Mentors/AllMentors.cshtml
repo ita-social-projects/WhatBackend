@@ -35,12 +35,12 @@
 
                         <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
 
-                        <a class=" btn btn-light js-student-list-button" id="activeMentors">
+                        <a class=" btn btn-light js-mentor-list-button" id="activeMentors">
                             <i class="far fa-eye"></i>
                             <span> Active mentors </span>
                         </a>
 
-                        <a class="btn btn-light js-student-list-button d-none" id="inactiveMentors">
+                        <a class="btn btn-light js-mentor-list-button d-none" id="inactiveMentors">
                             <i class="far fa-eye-slash"></i>
                             <span> Inactive mentors</span>
                         </a>
@@ -51,7 +51,7 @@
 
                 <div class="card-body">
                     <div class="table-responsive" style="overflow-x:unset">
-                        <table class="table table-bordered table-striped text-center" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered table-hover text-center" id="dataTable" width="100%" cellspacing="0">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>Email</th>
@@ -64,33 +64,65 @@
 
                                 @foreach (var item in Model)
                                 {
-                                    <tr>
-                                        <td class="col-4 text-truncate">@item.Email</td>
-                                        <td class="col-3 text-truncate">@item.FirstName</td>
-                                        <td class="col-3 text-truncate">@item.LastName</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-outline-secondar dropdown-toggle"
-                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-cog"></i>
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    if (item.IsActive)
+                                    {
+                                        <tr class="row" id="activeMentorsRow">
+                                            <td class="col-4 text-truncate">@item.Email</td>
+                                            <td class="col-3 text-truncate">@item.FirstName</td>
+                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                    <a class="dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
-                                                        <i class="fas fa-pen"></i>
-                                                        <span>Edit</span>
-                                                    </a>
+                                                        <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                        </a>
 
-                                                    <a class="dropdown-item" asp-action="DisableMentor" asp-controller="Mentors" asp-route-id="@item.Id">
-                                                        <i class="fas fa-trash"></i>
-                                                        <span>Delete</span>
-                                                    </a>
+
+                                                        @if (@item.IsActive)
+                                                        {
+
+                                                            <a class="dropdown-item text-dark" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Disable </span>
+                                                            </a>
+                                                        }
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
 
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="row d-none" id="inactiveMentorsRow">
+                                            <td class="col-4 text-truncate">@item.Email</td>
+                                            <td class="col-3 text-truncate">@item.FirstName</td>
+                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                        <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
 
                                 }
 
@@ -105,3 +137,59 @@
     </div>
 
 </div>
+@section Scripts{
+    <script type="text/javascript">
+
+        let isOnlyActiveMentors = false;
+
+        let switchButtons = document.querySelectorAll(".js-mentor-list-button");
+
+        let activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
+        let inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
+
+        switchButtons.forEach(function (item) {
+            item.addEventListener('click', function (event) {
+                event.stopPropagation();
+                if (isOnlyActiveMentors) {
+
+                    document.querySelector("#activeMentors").classList.remove('d-none')
+                    document.querySelector("#inactiveMentors").classList.add('d-none');
+
+                    activeMentorsRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+
+                    inactiveMentorsRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+
+                } else {
+                    document.querySelector("#inactiveMentors").classList.remove('d-none')
+                    document.querySelector("#activeMentors").classList.add('d-none');
+
+                    inactiveMentorsRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+
+                    activeMentorsRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                }
+
+                isOnlyActiveMentors = !isOnlyActiveMentors;
+
+            }, true)
+        });
+
+
+    </script>
+
+    <script type="text/javascript">
+
+        let disableMentorId = document.querySelector("#disableMentor").getAttribute('data-item-id');
+        let confirmDisableMentor = document.querySelector("#confirmDisableMentor");
+
+        confirmDisableMentor.href = confirmDisableMentor.href + disableMentorId;
+
+    </script>
+}
