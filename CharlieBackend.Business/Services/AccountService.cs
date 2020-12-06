@@ -21,8 +21,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public AccountService(
-                              IUnitOfWork unitOfWork,
+        public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               INotificationService notification)
         {
@@ -84,7 +83,7 @@ namespace CharlieBackend.Business.Services
                 return Result<AccountDto>.GetSuccess(foundAccount);
             }
 
-            return null;
+            return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
         }
 
         public async Task<Result<IList<AccountDto>>> GetAllAccountsAsync()

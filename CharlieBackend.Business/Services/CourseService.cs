@@ -24,6 +24,16 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                if (courseModel == null)
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "validation error");
+                }
+
+                if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseModel.Name))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This name is already teken");
+                }
+
                 var createdCourseEntity = _mapper.Map<Course>(courseModel);
 
                 _unitOfWork.CourseRepository.Add(createdCourseEntity);
@@ -38,7 +48,7 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<CourseDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
@@ -53,9 +63,23 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
+                if (courseModel == null)
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "invalid course model");
+                }
+                if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(id))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course Not Found");
+                }
+
                 var updatedEntity = _mapper.Map<Course>(courseModel);
 
                 updatedEntity.Id = id;
+
+                if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(updatedEntity.Name))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This course name is already taken");
+                }
 
                 _unitOfWork.CourseRepository.Update(updatedEntity);
 
@@ -68,7 +92,7 @@ namespace CharlieBackend.Business.Services
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<CourseDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 

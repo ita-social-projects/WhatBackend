@@ -27,4 +27,8 @@
     <ProjectReference Include="..\CharlieBackend.Root\CharlieBackend.Root.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
