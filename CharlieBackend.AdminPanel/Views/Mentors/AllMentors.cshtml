@@ -88,7 +88,7 @@
                                                         @if (@item.IsActive)
                                                         {
 
-                                                            <a class="dropdown-item text-dark" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
+                                                            <a class="dropdown-item text-dark js-disable-mentor" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
                                                                 <i class="fas fa-trash"></i>
                                                                 <span>Disable </span>
                                                             </a>
@@ -117,14 +117,6 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
-                                                        @if (@item.IsActive)
-                                                        {
-
-                                                            <a class="dropdown-item text-dark" id="disableMentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
-                                                                <i class="fas fa-trash"></i>
-                                                                <span>Disable </span>
-                                                            </a>
-                                                        }
                                                     </div>
                                                 </div>
                                             </td>
@@ -152,7 +144,7 @@
                 <div class="modal-footer">
 
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" id="confirmDisableMentor" href="/Mentors/DisableMentor/">Confirm</a>
+                    <a class="btn btn-primary" id="confirmDisableMentor" href="">Confirm</a>
                 </div>
             </div>
         </div>
@@ -163,12 +155,12 @@
 @section Scripts{
     <script type="text/javascript">
 
-        var isOnlyActiveMentors = false;
+        let isOnlyActiveMentors = false;
 
-        var switchButtons = document.querySelectorAll(".js-mentor-list-button");
+        let switchButtons = document.querySelectorAll(".js-mentor-list-button");
 
-        var activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
-        var inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
+        let activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
+        let inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
 
         switchButtons.forEach(function (item) {
 
@@ -212,14 +204,13 @@
 
     <script type="text/javascript">
 
-        let disableMentorURL = "/Students/DisableMentor/";
-        var disableMentorId = null;
-
-        $(document).on("click", ".js-disable-student", function (e) {
+        let disableMentorURL = "/Mentor/DisableMentor/";
+        let disableMentorId = null;
+        $(document).on("click", ".js-disable-mentor", function (e) {
 
             e.preventDefault();
 
-            var _self = $(this);
+            let _self = $(this);
 
             disableMentorId = _self.data('item-id');
 
