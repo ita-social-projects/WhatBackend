@@ -212,12 +212,20 @@
 
     <script type="text/javascript">
 
+        let disableMentorURL = "/Students/DisableMentor/";
+        var disableMentorId = null;
 
-        var disableMentorId = document.querySelector("#disableMentor").getAttribute('data-item-id');
+        $(document).on("click", ".js-disable-student", function (e) {
 
-        var confirmDisableMentor = document.querySelector("#confirmDisableMentor");
+            e.preventDefault();
 
-        confirmDisableMentor.href = confirmDisableMentor.href + disableMentorId;
+            var _self = $(this);
+
+            disableMentorId = _self.data('item-id');
+
+            $("#confirmDisableMentor").attr("href", disableMentorURL + disableMentorId);
+
+        });
 
     </script>
 }
