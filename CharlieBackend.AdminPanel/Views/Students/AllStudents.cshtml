@@ -85,7 +85,7 @@
                                                             <span>Edit </span>
                                                         </a>
 
-                                                        <a class="dropdown-item text-dark" id="disableStudent" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
+                                                        <a class="dropdown-item text-dark js-disable-student" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
                                                             <i class="fas fa-trash"></i>
                                                             <span>Disable </span>
                                                         </a>
@@ -141,7 +141,7 @@
                 <div class="modal-footer">
 
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" id="confirmDisableStudent" href="/Students/DisableStudent/">Confirm</a>
+                    <a class="btn btn-primary" id="confirmDisableStudent" href="">Confirm</a>
                 </div>
             </div>
         </div>
@@ -201,12 +201,21 @@
 
     <script type="text/javascript">
 
+        var routeForDisableStudent = "/Students/DisableStudent/";
 
-        var disableStudentId = document.querySelector("#disableStudent").getAttribute('data-item-id');
+        var disableStudentId = null;
 
-        var confirmDisableStudent = document.querySelector("#confirmDisableStudent");
+        $(document).on("click", ".js-disable-student", function (e) {
 
-        confirmDisableStudent.href = confirmDisableStudent.href + disableStudentId;
+            e.preventDefault();
+
+            var _self = $(this);
+
+            disableStudentId = _self.data('item-id');
+
+            $("#confirmDisableStudent").attr("href", routeForDisableStudent + disableStudentId);
+
+        });
 
     </script>
 }
