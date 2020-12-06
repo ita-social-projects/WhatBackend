@@ -94,9 +94,8 @@ namespace CharlieBackend.Api.UnitTest
                 _mapper
                 );
 
-            //Act
-            var Result = await lessonService.CreateLessonAsync(createLessonDto);
-            var result = Result.Data;
+            //Act 
+            var result = (await lessonService.CreateLessonAsync(createLessonDto)).Data;
 
             //Assert
             Assert.NotNull(result);
@@ -188,8 +187,7 @@ namespace CharlieBackend.Api.UnitTest
                 );
 
             //Act
-            var Result = await lessonService.UpdateLessonAsync(7, updateLessonDto);
-            var result = Result.Data;
+            var result = (await lessonService.UpdateLessonAsync(7, updateLessonDto)).Data;
 
             //Assert
             Assert.NotNull(result);

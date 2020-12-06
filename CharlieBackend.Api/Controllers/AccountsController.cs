@@ -69,8 +69,7 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            var resultAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
-            var foundAccount = resultAccount.Data;
+            var foundAccount = (await _accountService.GetAccountCredentialsAsync(authenticationModel)).Data;
 
             if (foundAccount == null)
             {

@@ -77,6 +77,11 @@ namespace CharlieBackend.Business.Services
         {
             var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
 
+            if (mentors == null)
+            {
+                return Result<IList<MentorDto>>.GetError(ErrorCode.NotFound, "Not Found");
+            }
+
             return Result<IList<MentorDto>>.GetSuccess(mentors);
         }
 
@@ -157,6 +162,11 @@ namespace CharlieBackend.Business.Services
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
             var mentorDto = _mapper.Map<MentorDto>(mentor);
 
+            if (mentorDto == null)
+            {
+                return Result<MentorDto>.GetError(ErrorCode.NotFound, "Not Found");
+            }
+
             return Result<MentorDto>.GetSuccess(mentorDto);
         }
 
@@ -184,9 +194,8 @@ namespace CharlieBackend.Business.Services
             }
 
             var mentor = await GetMentorByAccountIdAsync((long)accountId);
-            var isActive = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!isActive)
+            if (!await _accountService.DisableAccountAsync((long)accountId))
             {
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
             }

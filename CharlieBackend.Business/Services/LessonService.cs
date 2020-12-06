@@ -53,9 +53,8 @@ namespace CharlieBackend.Business.Services
                 }
 
                 await _unitOfWork.CommitAsync();
-                var createdLesson = _mapper.Map<LessonDto>(createdLessonEntity);
 
-                return Result<LessonDto>.GetSuccess(createdLesson);
+                return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(createdLessonEntity));
             }
             catch
             {
@@ -145,9 +144,8 @@ namespace CharlieBackend.Business.Services
                     }
                 }
                 await _unitOfWork.CommitAsync();
-                var foundLessonDto = _mapper.Map<LessonDto>(foundLesson);
 
-                return Result<LessonDto>.GetSuccess(foundLessonDto);
+                return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(foundLesson));
 
             }
             catch
@@ -161,6 +159,11 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId)
         {
             var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
+
+            if (studentLessonModels == null)
+            {
+                return Result<IList<StudentLessonDto>>.GetError(ErrorCode.NotFound, "Not found");
+            }
 
             return Result<IList<StudentLessonDto>>.GetSuccess( _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
         }

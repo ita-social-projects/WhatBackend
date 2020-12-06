@@ -136,6 +136,11 @@ namespace CharlieBackend.Business.Services
         {
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
+            if (secretaries == null)
+            {
+                return Result<IList<SecretaryDto>>.GetError(ErrorCode.NotFound, "Not Found");
+            }
+
             return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<IList<SecretaryDto>>(secretaries));
         }
 
@@ -149,11 +154,10 @@ namespace CharlieBackend.Business.Services
             }
 
             var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
-            var isActive = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!isActive)
+            if (!await _accountService.DisableAccountAsync((long)accountId))
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsryaccount is already disabled.");
+                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsry account is already disabled.");
             }
 
             return Result<SecretaryDto>.GetSuccess(secretary.Data);

@@ -39,9 +39,8 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.CourseRepository.Add(createdCourseEntity);
 
                 await _unitOfWork.CommitAsync();
-                var createdCourseDto = _mapper.Map<CourseDto>(createdCourseEntity);
 
-                return Result<CourseDto>.GetSuccess(createdCourseDto);
+                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(createdCourseEntity));
             }
             catch 
             {
@@ -59,11 +58,11 @@ namespace CharlieBackend.Business.Services
             return Result<IList<CourseDto>>.GetSuccess(courses);
         }
 
-        public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel)
+        public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
         {
             try
             {
-                if (courseModel == null)
+                if (updateCourseDto == null)
                 {
                     return Result<CourseDto>.GetError(ErrorCode.ValidationError, "invalid course model");
                 }
@@ -72,7 +71,7 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course Not Found");
                 }
 
-                var updatedEntity = _mapper.Map<Course>(courseModel);
+                var updatedEntity = _mapper.Map<Course>(updateCourseDto);
 
                 updatedEntity.Id = id;
 
@@ -84,9 +83,8 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.CourseRepository.Update(updatedEntity);
 
                 await _unitOfWork.CommitAsync();
-                var updatedCourse = _mapper.Map<CourseDto>(updatedEntity);
 
-                return Result<CourseDto>.GetSuccess(updatedCourse);
+                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
             }
             catch
             {
