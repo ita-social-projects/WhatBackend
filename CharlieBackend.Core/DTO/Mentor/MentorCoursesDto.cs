@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CharlieBackend.Core.DTO.Mentor
 {
-    class MentorCoursesDto
+    public class MentorCoursesDto
     {
         public long Id { get; set; }
 

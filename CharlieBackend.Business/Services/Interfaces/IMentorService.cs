@@ -14,6 +14,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<IList<MentorDto>> GetAllMentorsAsync();
 
+        public Task<Result<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorIdAsync(long id);
+
+        public Task<Result<IList<MentorCoursesDto>>> GetMentorCoursesByMentorIdAsync(long id);
+
         public Task<long?> GetAccountId(long mentorId);
 
         public Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel);
