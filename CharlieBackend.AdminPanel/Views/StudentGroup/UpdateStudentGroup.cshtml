@@ -1,4 +1,4 @@
-﻿@model CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto    
+﻿@model CharlieBackend.Core.DTO.StudentGroups.StudentGroupDto
 
 @{
     Layout = "_Layout";
@@ -18,18 +18,18 @@
                     <div class="form-group">
                         <label>Course </label>
                         <select class="custom-select" asp-for="CourseId" size="1">
-                            
+
                             @if (@ViewBag.StudentGroup.AllCourses != null)
                             {
                                 @foreach (var item in @ViewBag.StudentGroup.AllCourses)
                                 {
                                     if (@ViewBag.StudentGroup.ActiveCourse.Id == item.Id)
                                     {
-                                        <option selected value="@item.Id">@item.Id @item.Name</option>
+                                        <option selected value="@item.Id">@item.Name</option>
                                     }
                                     else
                                     {
-                                        <option value="@item.Id">@item.Id @item.Name</option>
+                                        <option value="@item.Id"> @item.Name</option>
                                     }
                                 }
                             }
@@ -69,14 +69,14 @@
                                     @if ((@ViewBag.StudentGroup.ActiveStudents as IEnumerable<CharlieBackend.AdminPanel.Models.Students.StudentViewModel>).Any(x => x.Id == item.Id))
                                     {
                                         <option selected value="@item.Id">
-                                            @item.Id @item.FirstName
+                                            @item.FirstName
                                             @item.LastName
                                         </option>
                                     }
                                     else
                                     {
                                         <option value="@item.Id">
-                                            @item.Id @item.FirstName
+                                            @item.FirstName
                                             @item.LastName
                                         </option>
                                     }
@@ -101,14 +101,14 @@
                                     @if ((@ViewBag.StudentGroup.ActiveMentors as IEnumerable<CharlieBackend.AdminPanel.Models.Mentor.MentorViewModel>).Any(x => x.Id == item.Id))
                                     {
                                         <option selected value="@item.Id">
-                                            @item.Id @item.FirstName
+                                            @item.FirstName
                                             @item.LastName
                                         </option>
                                     }
                                     else
                                     {
                                         <option value="@item.Id">
-                                            @item.Id @item.FirstName
+                                            @item.FirstName
                                             @item.LastName
                                         </option>
                                     }
