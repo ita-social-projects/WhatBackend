@@ -34,9 +34,10 @@ namespace CharlieBackend.AdminPanel.Middlewares
             }
             catch (Exception ex)
             {
-                context.Response.Redirect("/Home/ApiError/500");
+                context.Response.Redirect("/Home/ApiError/500/Internal Server Error");
 
                 _logger.LogError($"Internal Server Error: {ex.Message}");
+                _logger.LogError(ex.StackTrace);
             }
         }
 
