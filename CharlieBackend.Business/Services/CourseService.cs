@@ -92,6 +92,7 @@ namespace CharlieBackend.Business.Services
 
             var course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
             await _unitOfWork.CommitAsync();
+
             return course;
         }
 
