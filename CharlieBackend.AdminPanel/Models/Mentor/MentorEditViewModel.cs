@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharlieBackend.AdminPanel.Models.StudentGroups;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Models.Mentor
 {
-    public class MentorViewModel
+    public class MentorEditViewModel
     {
         [Required]
         public long Id { get; set; }
@@ -23,7 +24,5 @@ namespace CharlieBackend.AdminPanel.Models.Mentor
         [Required]
         [StringLength(30)]
         public string LastName { get; set; }
-
-        public bool IsActive { get; set; }
     }
 }

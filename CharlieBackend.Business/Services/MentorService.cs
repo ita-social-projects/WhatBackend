@@ -162,7 +162,7 @@ namespace CharlieBackend.Business.Services
         }
         public async Task<MentorDto> GetMentorByIdAsync(long mentorId)
         {
-            var mentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(mentorId);
+            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
 
             return _mapper.Map<MentorDto>(mentor);
         }
@@ -172,6 +172,13 @@ namespace CharlieBackend.Business.Services
             var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
 
             return mentor?.AccountId;
+        }
+
+        public async Task<Result<IList<MentorDto>>> GetAllActiveMentorsAsync()
+        {
+            var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
+
+            return Result<IList<MentorDto>>.GetSuccess(mentors);
         }
     }
 }

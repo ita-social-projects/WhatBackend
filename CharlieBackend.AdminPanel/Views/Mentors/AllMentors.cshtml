@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<CharlieBackend.AdminPanel.Models.Students.StudentViewModel>
+@model IEnumerable<CharlieBackend.AdminPanel.Models.Mentor.MentorViewModel>
 
 @{
     Layout = "_Layout";
@@ -13,22 +13,12 @@
             <i class="fas fa-plus"></i>
         </button>
         <div class="dropdown-menu ">
-            <form method="post" class="input-group" asp-action="AddStudent" asp-controller="Students">
+            <form method="post" class="input-group" asp-action="AddMentor" asp-controller="Mentors">
                 <input type="text" class="form-control" name="id" placeholder="Account id" />
                 <button type="submit" class="btn btn-outline-success btn-sm">
                     <i class="fas fa-plus"></i>
                 </button>
-                <div class="dropdown-menu" style="border: 0;">
-                    <form method="post" class="input-group position-fixed" asp-action="AddStudent" asp-controller="Students">
-                        <input type="text" class="form-control" name="id" placeholder="Account id" />
-                        <button type="submit" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </form>
-                </div>
-                </form>
-            </div>
-
+            </form>
         </div>
     </div>
 
@@ -44,16 +34,16 @@
                 <div class="card-header py-3">
                     <div class="row">
 
-                        <h6 class="m-2 font-weight-bold text-primary">Students</h6>
+                        <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
 
-                        <a class=" btn btn-light js-student-list-button" id="activeStudents">
+                        <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
                             <i class="far fa-eye"></i>
-                            <span> Active students </span>
+                            <span> Active Mentors </span>
                         </a>
 
-                        <a class="btn btn-light js-student-list-button d-none" id="inactiveStudents">
+                        <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
                             <i class="far fa-eye-slash"></i>
-                            <span> Inactive students</span>
+                            <span> Inactive Mentors</span>
                         </a>
                     </div>
 
@@ -77,7 +67,7 @@
 
                                     if (item.IsActive)
                                     {
-                                        <tr class="row" id="activeStudentsRow">
+                                        <tr class="row" id="activeMentorsRow">
                                             <td class="col-4 text-truncate">@item.Email</td>
                                             <td class="col-3 text-truncate">@item.FirstName</td>
                                             <td class="col-3 text-truncate">@item.LastName</td>
@@ -90,12 +80,12 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                        <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                        <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
 
-                                                        <a class="dropdown-item text-dark js-disable-student" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
+                                                        <a class="dropdown-item text-dark js-disable-Mentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
                                                             <i class="fas fa-trash"></i>
                                                             <span>Disable </span>
                                                         </a>
@@ -106,7 +96,7 @@
                                     }
                                     else
                                     {
-                                        <tr class="row d-none" id="inactiveStudentsRow">
+                                        <tr class="row d-none" id="inactiveMentorsRow">
                                             <td class="col-4 text-truncate">@item.Email</td>
                                             <td class="col-3 text-truncate">@item.FirstName</td>
                                             <td class="col-3 text-truncate">@item.LastName</td>
@@ -119,7 +109,7 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                        <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                        <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
@@ -138,12 +128,12 @@
         </div>
     </div>
 
-    <!-- Disable student modal window-->
-    <div class="modal fade" id="disableStudentModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Disable Mentor modal window-->
+    <div class="modal fade" id="disableMentorModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Disable student?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Disable Mentor?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -151,7 +141,7 @@
                 <div class="modal-footer">
 
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" id="confirmDisableStudent" href="">Confirm</a>
+                    <a class="btn btn-primary" id="confirmDisableMentor" href="">Confirm</a>
                 </div>
             </div>
         </div>
@@ -162,12 +152,12 @@
 @section Scripts{
     <script type="text/javascript">
 
-        var isOnlyActiveStudents = false;
+        var isOnlyActiveMentors = false;
 
-        var switchButtons = document.querySelectorAll(".js-student-list-button");
+        var switchButtons = document.querySelectorAll(".js-Mentor-list-button");
 
-        var activeStudentsRow = document.querySelectorAll("#activeStudentsRow");
-        var inactiveStudentsRow = document.querySelectorAll("#inactiveStudentsRow");
+        var activeMentorsRow = document.querySelectorAll("#activeMentorsRow");
+        var inactiveMentorsRow = document.querySelectorAll("#inactiveMentorsRow");
 
         switchButtons.forEach(function (item) {
 
@@ -175,33 +165,33 @@
 
                 event.stopPropagation();
 
-                if (isOnlyActiveStudents) {
+                if (isOnlyActiveMentors) {
 
-                    document.querySelector("#activeStudents").classList.remove('d-none')
-                    document.querySelector("#inactiveStudents").classList.add('d-none');
+                    document.querySelector("#activeMentors").classList.remove('d-none')
+                    document.querySelector("#inactiveMentors").classList.add('d-none');
 
-                    activeStudentsRow.forEach(function (item) {
+                    activeMentorsRow.forEach(function (item) {
                         item.classList.remove('d-none');
                     });
 
-                    inactiveStudentsRow.forEach(function (item) {
+                    inactiveMentorsRow.forEach(function (item) {
                         item.classList.add('d-none');
                     });
 
                 } else {
-                    document.querySelector("#inactiveStudents").classList.remove('d-none')
-                    document.querySelector("#activeStudents").classList.add('d-none');
+                    document.querySelector("#inactiveMentors").classList.remove('d-none')
+                    document.querySelector("#activeMentors").classList.add('d-none');
 
-                    inactiveStudentsRow.forEach(function (item) {
+                    inactiveMentorsRow.forEach(function (item) {
                         item.classList.remove('d-none');
                     });
 
-                    activeStudentsRow.forEach(function (item) {
+                    activeMentorsRow.forEach(function (item) {
                         item.classList.add('d-none');
                     });
                 }
 
-                isOnlyActiveStudents = !isOnlyActiveStudents;
+                isOnlyActiveMentors = !isOnlyActiveMentors;
 
             }, true)
         });
@@ -211,19 +201,19 @@
 
     <script type="text/javascript">
 
-        var routeForDisableStudent = "/Students/DisableStudent/";
+        var routeForDisableMentor = "/Mentors/DisableMentor/";
 
-        var disableStudentId = null;
+        var disableMentorId = null;
 
-        $(document).on("click", ".js-disable-student", function (e) {
+        $(document).on("click", ".js-disable-Mentor", function (e) {
 
             e.preventDefault();
 
             var _self = $(this);
 
-            disableStudentId = _self.data('item-id');
+            disableMentorId = _self.data('item-id');
 
-            $("#confirmDisableStudent").attr("href", routeForDisableStudent + disableStudentId);
+            $("#confirmDisableMentor").attr("href", routeForDisableMentor + disableMentorId);
 
         });
 
