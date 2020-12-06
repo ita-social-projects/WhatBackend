@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System;
 
 namespace CharlieBackend.Api
 {
@@ -19,6 +20,8 @@ namespace CharlieBackend.Api
                     .WriteTo.Debug()
                     .WriteTo.Console()
                     .CreateLogger();
+
+            Console.Title = "CharlieBackend.Api";
 
             try
             {
