@@ -191,12 +191,6 @@ namespace CharlieBackend.Business.Services
 
             var foundGroups = await _unitOfWork.StudentGroupRepository.GetMentorStudyGroups(id);
 
-            if (!foundGroups.Any())
-            {
-                return Result<IList<MentorStudyGroupsDto>>.
-                    GetSuccess(foundGroups);
-            }
-
             return Result<IList<MentorStudyGroupsDto>>.GetSuccess(foundGroups);
         }
 
@@ -208,12 +202,6 @@ namespace CharlieBackend.Business.Services
             }
 
             var foundCourses = await _unitOfWork.CourseRepository.GetMentorCourses(id);
-
-            if (!foundCourses.Any())
-            {
-                return Result<IList<MentorCoursesDto>>.
-                    GetSuccess(foundCourses);
-            }
 
             return Result<IList<MentorCoursesDto>>.GetSuccess(foundCourses);
         }
