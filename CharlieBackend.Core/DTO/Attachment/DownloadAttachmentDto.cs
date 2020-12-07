@@ -5,8 +5,8 @@ namespace CharlieBackend.Core.DTO.Attachment
 {
     public class DownloadAttachmentDto
     {
-        public BlobDownloadInfo downloadInfo { get; set; }
+        public BlobDownloadInfo DownloadInfo { get; set; }
 
-        public string fileName { get; set; }
+        public string FileName { get; set; }
     }
 }

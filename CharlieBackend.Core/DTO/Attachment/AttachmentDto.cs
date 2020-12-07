@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 
 namespace CharlieBackend.Core.DTO.Attachment
@@ -9,8 +7,10 @@ namespace CharlieBackend.Core.DTO.Attachment
     {
         public long Id { get; set; }
 
+        [StringLength(100)]
         public string ContainerName { get; set; }
 
+        [StringLength(100)]
         public string FileName { get; set; }
     }
 }

@@ -4,8 +4,8 @@ using AutoMapper;
 using CharlieBackend.Core;
 using Azure.Storage.Blobs;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Azure.Storage.Blobs.Models;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.Extensions.Logging;
@@ -13,8 +13,7 @@ using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage;
+
 
 namespace CharlieBackend.Business.Services
 {
@@ -68,8 +67,8 @@ namespace CharlieBackend.Business.Services
 
                     Attachment attachment = new Attachment()
                     {
-                        containerName = containerName,
-                        fileName = file.FileName
+                        ContainerName = containerName,
+                        FileName = file.FileName
                     };
 
                     _unitOfWork.AttachmentRepository.Add(attachment);
@@ -105,16 +104,16 @@ namespace CharlieBackend.Business.Services
             BlobClient blobClient = new BlobClient
                         (
                         _blobAccount.connectionString,
-                        attachment.containerName,
-                        attachment.fileName
+                        attachment.ContainerName,
+                        attachment.FileName
                         );
 
             BlobDownloadInfo download = await blobClient.DownloadAsync();
 
             DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
                         { 
-                           downloadInfo = download,
-                           fileName = attachment.fileName
+                           DownloadInfo = download,
+                           FileName = attachment.FileName
                         };
 
             return Result<DownloadAttachmentDto>.GetSuccess(downloadedAttachment);

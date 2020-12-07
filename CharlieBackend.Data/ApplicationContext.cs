@@ -446,13 +446,13 @@ namespace CharlieBackend.Data
             {
                 entity.ToTable("Attachment");
 
-                entity.HasIndex(e => e.containerName)
+                entity.HasIndex(e => e.ContainerName)
                     .HasName("containerName_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.containerName)
+                entity.Property(e => e.ContainerName)
                     .IsRequired()
                     .HasColumnName("containerName")
                     .HasColumnType("varchar(100)")
@@ -460,7 +460,7 @@ namespace CharlieBackend.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
-                entity.Property(e => e.fileName)
+                entity.Property(e => e.FileName)
                     .IsRequired()
                     .HasColumnName("fileName")
                     .HasColumnType("varchar(100)")

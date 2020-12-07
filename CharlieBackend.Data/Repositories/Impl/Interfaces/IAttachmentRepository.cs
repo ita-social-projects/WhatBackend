@@ -6,6 +6,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IAttachmentRepository : IRepository<Attachment>
     {
-
     }
 }

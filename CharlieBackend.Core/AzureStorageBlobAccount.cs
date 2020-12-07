@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CharlieBackend.Core
+﻿namespace CharlieBackend.Core
 {
     public class AzureStorageBlobAccount
     {

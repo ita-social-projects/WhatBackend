@@ -6,8 +6,8 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Attachment : BaseEntity
     {
-        public string containerName { get; set; }
+        public string ContainerName { get; set; }
 
-        public string fileName { get; set; }
+        public string FileName { get; set; }
     }
 }
