@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.AdminPanel.Models.Course;
 using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Services.Interfaces;
@@ -57,9 +58,14 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id, string accessToken)
         {
-            var mentor = await
-                            _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", accessToken);
-    
+            var mentorTask = _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", accessToken);
+            var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>($"{_config.Value.Urls.Api.Https}/api/courses", accessToken);
+            var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
+
+            var mentor = await mentorTask;
+            mentor.AllGroups = await studentGroupTask;
+            mentor.AllCourses = await coursesTask;
+
             return mentor;
         }
 

@@ -138,7 +138,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, can not find mentor or mentor's courses</response>
         [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
-        [HttpGet("{id}/groups")]
+        [HttpGet("{id}/courses")]
         public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
         {
             var foundCourses = await _mentorService
