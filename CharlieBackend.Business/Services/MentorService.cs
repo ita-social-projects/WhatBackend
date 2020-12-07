@@ -194,7 +194,7 @@ namespace CharlieBackend.Business.Services
             if (!foundGroups.Any())
             {
                 return Result<IList<MentorStudyGroupsDto>>.
-                    GetSuccess(new List<MentorStudyGroupsDto>());
+                    GetSuccess(foundGroups);
             }
 
             return Result<IList<MentorStudyGroupsDto>>.GetSuccess(foundGroups);
@@ -212,7 +212,7 @@ namespace CharlieBackend.Business.Services
             if (!foundCourses.Any())
             {
                 return Result<IList<MentorCoursesDto>>.
-                    GetSuccess(new List<MentorCoursesDto>());
+                    GetSuccess(foundCourses);
             }
 
             return Result<IList<MentorCoursesDto>>.GetSuccess(foundCourses);
