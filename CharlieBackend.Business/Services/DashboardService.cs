@@ -27,10 +27,12 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request)
         {
-            if (ValidateStudentsRequest(request).Any())
+            var errors = ValidateStudentsRequest(request);
+
+            if (errors.Any())
             {
                 return Result<StudentsClassbookResultDto>.GetError(ErrorCode.ValidationError, 
-                    String.Join(";\n", ValidateStudentsRequest(request))) ;
+                    String.Join(";\n", errors)) ;
             }
 
             var result = new StudentsClassbookResultDto();
@@ -67,39 +69,44 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsRequestDto<StudentResultType> request)
         {
-            if (ValidateStudentsRequest(request).Any())
+            var errors = ValidateStudentsRequest(request);
+
+            if (errors.Any())
             {
                 return Result<StudentsResultsDto>.GetError(ErrorCode.ValidationError,
-                    String.Join(";\n", ValidateStudentsRequest(request)));
+                    String.Join(";\n", errors));
             }
 
             var result = new StudentsResultsDto();
             var studentsIds = new List<long>();
+            var studentGroupIds = new List<long>();
 
             if (request.StudentGroupId != default)
             {
+                studentGroupIds.Add((long)request.StudentGroupId);
+
                 studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdsAsync(
                     new List<long> { (long)request.StudentGroupId });
             }
             else
             {
-                var studentGroupsIds = await _dashboardRepository
+                studentGroupIds = await _dashboardRepository
                     .GetGroupsIdsByCourseIdAsync((long)request.CourseId, request.StartDate, request.FinishDate);
 
                 studentsIds = await _dashboardRepository
-                    .GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
+                    .GetStudentsIdsByGroupIdsAsync(studentGroupIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
                 result.AverageStudentsMarks = await _dashboardRepository
-                    .GetStudentsAverageMarksByStudentIdsAsync(studentsIds);
+                    .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(studentsIds, studentGroupIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
                 result.AverageStudentVisits = await _dashboardRepository
-                    .GetStudentsAverageVisitsByStudentIdsAsync(studentsIds);
+                    .GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(studentsIds, studentGroupIds);
             }
 
             return Result<StudentsResultsDto>.GetSuccess(result);
@@ -108,17 +115,13 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
             GenericRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateGenericRequest(request).Any())
+            var error = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId, userContext));
+
+            if (error.Any())
             {
                 return Result<StudentsClassbookResultDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateGenericRequest(request)));
-            }
-            else if (ValidateStudentRights(studentId, userContext).Any())
-            {
-                return Result<StudentsClassbookResultDto>
-                            .GetError(ErrorCode.Unauthorized, String.Join(";\n",
-                            ValidateStudentRights(studentId, userContext)));
+                           error));
             }
 
             var result = new StudentsClassbookResultDto();
@@ -143,12 +146,12 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
             GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateGenericRequest(request).Any() 
-                    || ValidateStudentRights(studentId, userContext).Any())
+            var errors = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId, userContext));
+
+            if (errors.Any())
             {
                 return Result<StudentsResultsDto>
-                           .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateGenericRequest(request), ValidateStudentRights(studentId, userContext)));
+                           .GetError(ErrorCode.ValidationError, String.Join(";\n", errors));
             }
 
             var result = new StudentsResultsDto();
@@ -158,7 +161,7 @@ namespace CharlieBackend.Business.Services
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
                 result.AverageStudentsMarks = await _dashboardRepository
-                    .GetStudentAverageMarksByStudentIdAsync(studentId, studentGroupsIds);
+                    .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentId }, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
@@ -173,11 +176,12 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId,
             GenericRequestDto<StudentGroupResultType> request)
         {
-            if (ValidateGenericRequest(request).Any())
+            var errors = ValidateGenericRequest(request);
+
+            if (errors.Any())
             {
-                return Result<StudentGroupsResultsDto>
-                           .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateGenericRequest(request)));
+                return Result<StudentGroupsResultsDto>.GetError(ErrorCode.ValidationError, String.Join(";\n",
+                           errors));
             }
 
             var result = new StudentGroupsResultsDto();
@@ -213,7 +217,7 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            if (request.IncludeAnalytics == default && request.IncludeAnalytics.Length == 0)
+            if (request.IncludeAnalytics == default || request.IncludeAnalytics.Length == 0)
             {
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
@@ -245,7 +249,7 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            if (request.IncludeAnalytics == default && request.IncludeAnalytics.Length == 0)
+            if (request.IncludeAnalytics == default || request.IncludeAnalytics.Length == 0)
             {
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }

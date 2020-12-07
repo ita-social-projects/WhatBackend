@@ -28,6 +28,14 @@ namespace CharlieBackend.Data.Repositories.Impl
             return groupIdsbyCourseIdAndPeriod;
         }
 
+        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
+    DateTime? startDate, DateTime? finishDate)
+        {
+            List<long> groupIdsbyStudentIdAndPeriod = await GetGroupIds(startDate, finishDate, null, studentId);
+
+            return groupIdsbyStudentIdAndPeriod;
+        }
+
         private async Task<List<long>> GetGroupIds(DateTime? startDate, DateTime? finishDate, long? courseId = null, long? studentId = null)
         {
             return await _applicationContext.StudentGroups
@@ -42,14 +50,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
-    DateTime? startDate, DateTime? finishDate)
-        {
-            List<long> groupIdsbyStudentIdAndPeriod = await GetGroupIds(startDate, finishDate, 0, studentId);
-
-            return groupIdsbyStudentIdAndPeriod;
-        }
-
         public async Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> groupsIds)
         {
             var studentsIdsBygroupsIds = await _applicationContext.Students
@@ -62,12 +62,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsIdsBygroupsIds;
         }
 
-        public async Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAsync(IEnumerable<long> studentIds)
+        public async Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(IEnumerable<long> studentIds, 
+            IEnumerable<long> studentGroupIds)
         {
             var studentsVisitsList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                .Any(x => studentIds.Contains(x.Student.Id)))
+                        .Any(x => studentIds.Contains(x.Student.Id)))
+                .WhereIf(studentGroupIds != default && studentGroupIds.Any(), 
+                        x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
                 .Select(x => new StudentVisitDto
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
@@ -135,21 +138,23 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
-        public async Task<List<AverageStudentMarkDto>> GetStudentsAverageMarksByStudentIdsAsync(IEnumerable<long> studentIds)
+        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds, 
+            IEnumerable<long> studentGroupsIds)
         {
-            List<AverageStudentMarkDto> studentAverageMarskList = await GetStudentAverageMarks(studentIds, null);
+            if (!studentGroupsIds.Any())
+            {
+                return new List<AverageStudentMarkDto>();
+            }
+            else
+            {
+                var studentAverageMarskList = await GetStudentAverageMarks(studentIds, studentGroupsIds);
 
-            return studentAverageMarskList;
+                return studentAverageMarskList;
+            }
         }
 
-        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdAsync(long studentId, List<long> studentGroupsIds)
-        {
-            List<AverageStudentMarkDto> studentAverageMarskList = await GetStudentAverageMarks(new List<long> { studentId }, studentGroupsIds);
-
-            return studentAverageMarskList;
-        }
-
-        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds = null, IEnumerable<long> studentGroupsIds = null)
+        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds = null, 
+            IEnumerable<long> studentGroupsIds = null)
         {
             return await _applicationContext.Visits
                     .AsNoTracking()
