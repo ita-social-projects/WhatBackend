@@ -85,8 +85,7 @@ namespace CharlieBackend.Business.Services
 
                 return Result<IList<AttachmentDto>>.GetError(ErrorCode.InternalServerError,
                      "Cannot add attachments");
-            }
-            
+            }          
         }
 
         public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()

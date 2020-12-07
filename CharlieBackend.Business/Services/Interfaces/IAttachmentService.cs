@@ -5,7 +5,6 @@ using Azure.Storage.Blobs.Models;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 
-
 namespace CharlieBackend.Business.Services.Interfaces
 {
    public interface IAttachmentService
