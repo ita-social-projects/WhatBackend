@@ -4,8 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using System.Security.Cryptography;
+//using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Providers;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -14,9 +15,6 @@ namespace CharlieBackend.Business.Services
 {
     public class AccountService : IAccountService
     {
-        private const string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
-        private const int _saltLen = 15;
-
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
@@ -49,8 +47,8 @@ namespace CharlieBackend.Business.Services
                     LastName = accountModel.LastName
                 };
 
-                account.Salt = GenerateSalt();
-                account.Password = HashPassword(accountModel.ConfirmPassword, account.Salt);
+                account.Salt = HashPasswordProvider.GenerateSalt();
+                account.Password = HashPasswordProvider.HashPassword(accountModel.ConfirmPassword, account.Salt);
 
                 _unitOfWork.AccountRepository.Add(account);
 
@@ -59,7 +57,6 @@ namespace CharlieBackend.Business.Services
                 await _notification.RegistrationSuccess(account);
 
                 return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
-
             }
             catch
             {
@@ -75,8 +72,7 @@ namespace CharlieBackend.Business.Services
 
             if (salt != "")
             {
-
-                authenticationModel.Password = HashPassword(authenticationModel.Password, salt);
+                authenticationModel.Password = HashPasswordProvider.HashPassword(authenticationModel.Password, salt);
 
                 var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
@@ -158,12 +154,12 @@ namespace CharlieBackend.Business.Services
 
             if (!string.IsNullOrEmpty(salt))
             {
-                string checkPassword = HashPassword(changePasswd.CurrentPassword, salt);
+                string checkPassword = HashPasswordProvider.HashPassword(changePasswd.CurrentPassword, salt);
 
                 if (user.Password == checkPassword)
                 {
-                    user.Salt = GenerateSalt();
-                    user.Password = HashPassword(changePasswd.NewPassword, user.Salt);
+                    user.Salt = HashPasswordProvider.GenerateSalt();
+                    user.Password = HashPasswordProvider.HashPassword(changePasswd.NewPassword, user.Salt);
 
                     await _unitOfWork.CommitAsync();
 
@@ -177,53 +173,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
-
-        #region hash
-        public string GenerateSalt()
-        {
-            //StringBuilder object with a predefined buffer size for the resulting string
-            StringBuilder sb = new StringBuilder(_saltLen - 1);
-
-            //a variable for storing a random character position from the string Str
-            int Position = 0;
-
-            for (int i = 0; i < _saltLen; i++)
-            {
-                Position = this.Next(0, _saltAlphabet.Length - 1);
-
-                //add the selected character to the object StringBuilder
-                sb.Append(_saltAlphabet[Position]);
-            }
-
-            return sb.ToString();
-        }
-        public Int32 Next(Int32 minValue, Int32 maxValue)
-        {
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] uint32Buffer = new byte[4];
-                Int64 diff = maxValue - minValue;
-                while (true)
-                {
-                    rng.GetBytes(uint32Buffer);
-                    UInt32 rand = BitConverter.ToUInt32(uint32Buffer, 0);
-                    Int64 max = (1 + (Int64)UInt32.MaxValue);
-                    Int64 remainder = max % diff;
-                    if (rand < max - remainder)
-                    {
-                        return (Int32)(minValue + (rand % diff));
-                    }
-                }
-            }
-        }
-        public string HashPassword(string password, string salt)
-        {
-            byte[] data = Encoding.Default.GetBytes(password + salt);
-            var result = new SHA256Managed().ComputeHash(data);
-
-            return BitConverter.ToString(result).Replace("-", "").ToLower();
-        }
-
-        #endregion
     }
 }
