@@ -1,7 +1,7 @@
 ﻿
 namespace CharlieBackend.Core.FileModels
 {
-    public class StudentFileModel
+    public class StudentFile
     {
         public string Email { get; set; }
 

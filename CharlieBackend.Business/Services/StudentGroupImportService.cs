@@ -17,10 +17,8 @@ namespace CharlieBackend.Business.Services
 {
     public class StudentGroupImportService : IStudentGroupImportService
     {
-        #region private
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        #endregion
 
         public StudentGroupImportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -28,10 +26,10 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(IFormFile uploadedFile)
+        public async Task<Result<List<StudentGroupFile>>> ImportFileAsync(IFormFile uploadedFile)
         {
             string path = "";
-            List<StudentGroupFileModel> importedGroups = new List<StudentGroupFileModel>();
+            List<StudentGroupFile> importedGroups = new List<StudentGroupFile>();
 
             if (uploadedFile != null)
             {
@@ -39,7 +37,7 @@ namespace CharlieBackend.Business.Services
                 var book = new XLWorkbook(path);
                 var groupsSheet = book.Worksheet("Groups");
 
-                Type studentGroupType = typeof(StudentGroupFileModel);
+                Type studentGroupType = typeof(StudentGroupFile);
                 char charPointer = 'A';
                 int rowCounter = 2;
 
@@ -48,7 +46,7 @@ namespace CharlieBackend.Business.Services
                 {
                     if (property.Name != Convert.ToString(groupsSheet.Cell($"{charPointer}1").Value))
                     {
-                        return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
+                        return Result<List<StudentGroupFile>>.GetError(ErrorCode.ValidationError,
                                     "The format of the downloaded file is not suitable."
                                          + "Check headers in the file.");
                     }
@@ -59,7 +57,7 @@ namespace CharlieBackend.Business.Services
                 {
                     try
                     {
-                        StudentGroupFileModel fileLine = new StudentGroupFileModel
+                        StudentGroupFile fileLine = new StudentGroupFile
                         {
                             CourseId = groupsSheet.Cell($"B{rowCounter}").Value.ToString(),
                             Name = groupsSheet.Cell($"C{rowCounter}").Value.ToString(),
@@ -87,14 +85,14 @@ namespace CharlieBackend.Business.Services
                     {
                         _unitOfWork.Rollback();
 
-                        return Result<List<StudentGroupFileModel>>.GetError(ErrorCode.ValidationError,
+                        return Result<List<StudentGroupFile>>.GetError(ErrorCode.ValidationError,
                             "The format of the inputed data is incorrect.\n" + ex.Message);
                     }
                     catch (DbUpdateException ex)
                     {
                         _unitOfWork.Rollback();
 
-                        return Result<List<StudentGroupFileModel>>
+                        return Result<List<StudentGroupFile>>
                             .GetError(ErrorCode.ValidationError,
                                 "Inputed data is incorrect.\n" + ex.Message);
                     }
@@ -104,11 +102,11 @@ namespace CharlieBackend.Business.Services
 
             Array.ForEach(Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files")), File.Delete);
 
-            return Result<List<StudentGroupFileModel>>
-                .GetSuccess(_mapper.Map<List<StudentGroupFileModel>>(importedGroups));
+            return Result<List<StudentGroupFile>>
+                .GetSuccess(_mapper.Map<List<StudentGroupFile>>(importedGroups));
         }
 
-        private async Task IsValueValid(StudentGroupFileModel fileLine, int rowCounter)
+        private async Task IsValueValid(StudentGroupFile fileLine, int rowCounter)
         {
             List<long> existingCourseIds = new List<long>();
 

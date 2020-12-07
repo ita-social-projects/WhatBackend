@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CharlieBackend.Core.FileModels
 {
-    public class StudentGroupFileModel
+    public class StudentGroupFile
     {
         public string Id { get; set; }
 

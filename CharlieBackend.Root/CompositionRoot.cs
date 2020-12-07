@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Business.Options;
-using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data;
-using CharlieBackend.Data.Repositories.Impl;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
+﻿using CharlieBackend.Data;
 using Microsoft.EntityFrameworkCore;
+using CharlieBackend.Business.Options;
+using CharlieBackend.Business.Services;
 using Microsoft.Extensions.Configuration;
+using CharlieBackend.Data.Repositories.Impl;
 using Microsoft.Extensions.DependencyInjection;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Root
 {
@@ -38,6 +38,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
             services.AddScoped<IStudentImportService, StudentImportService>();
+            services.AddScoped<IThemeImportService, ThemeImportService>();
             services.AddScoped<IStudentGroupImportService, StudentGroupImportService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
