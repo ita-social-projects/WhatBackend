@@ -73,16 +73,16 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<MentorDto>>> GetAllMentorsAsync()
+        public async Task<IList<MentorDto>> GetAllMentorsAsync()
         {
-            var mentors = _mapper.Map<List<MentorDto>>(await _unitOfWork.MentorRepository.GetAllAsync());
+            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
 
             if (mentors == null)
             {
-                return Result<IList<MentorDto>>.GetError(ErrorCode.NotFound, "Not Found");
+                return new List<MentorDto>();
             }
 
-            return Result<IList<MentorDto>>.GetSuccess(mentors);
+            return _mapper.Map<List<MentorDto>>(mentors);
         }
 
         public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)

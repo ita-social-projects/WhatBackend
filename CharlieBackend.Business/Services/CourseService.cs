@@ -20,21 +20,21 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel)
+        public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseDto)
         {
             try
             {
-                if (courseModel == null)
+                if (courseDto == null)
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "validation error");
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "empty Dto");
                 }
 
-                if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseModel.Name))
+                if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseDto.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This name is already teken");
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This name is already taken");
                 }
 
-                var createdCourseEntity = _mapper.Map<Course>(courseModel);
+                var createdCourseEntity = _mapper.Map<Course>(courseDto);
 
                 _unitOfWork.CourseRepository.Add(createdCourseEntity);
 
@@ -64,7 +64,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (updateCourseDto == null)
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "invalid course model");
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Course Dto is null");
                 }
                 if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(id))
                 {

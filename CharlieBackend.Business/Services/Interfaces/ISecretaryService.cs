@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId);
 
-        Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync();
+        Task<IList<SecretaryDto>> GetAllSecretariesAsync();
 
         Task<long?> GetAccountId(long secretaryId);
 

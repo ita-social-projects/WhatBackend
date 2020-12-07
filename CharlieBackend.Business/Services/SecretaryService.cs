@@ -132,16 +132,16 @@ namespace CharlieBackend.Business.Services
             return secretary?.AccountId;
         }
 
-        public async Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync()
+        public async Task<IList<SecretaryDto>> GetAllSecretariesAsync()
         {
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
             if (secretaries == null)
             {
-                return Result<IList<SecretaryDto>>.GetError(ErrorCode.NotFound, "Not Found");
+                return new List<SecretaryDto>();
             }
 
-            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<IList<SecretaryDto>>(secretaries));
+            return _mapper.Map<IList<SecretaryDto>>(secretaries);
         }
 
         public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
