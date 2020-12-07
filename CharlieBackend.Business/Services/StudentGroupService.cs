@@ -93,7 +93,6 @@ namespace CharlieBackend.Business.Services
 
                 Console.WriteLine(ex.Message);
 
-
                 return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
@@ -208,6 +207,11 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+        }
+
+        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        {
+            _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
         }
     }
 }

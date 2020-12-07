@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -10,7 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
 
-        Task<bool> DisableCourseByIdAsync(long id);
+        Task<Result<bool>> DisableCourseByIdAsync(long id);
+
         Task<bool> IsCourseEmptyAsync(long id);
     }
 }

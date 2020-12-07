@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using CharlieBackend.Core;
 using System.Security.Claims;
 using System.Threading.Tasks;
