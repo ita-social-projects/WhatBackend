@@ -51,7 +51,7 @@ namespace CharlieBackend.Api.Controllers
             return attachments.ToActionResult();
         }
 
-        /// </summary>
+        /// <summary>
         /// GET: api/attachments/{id}
         /// </summary>
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
