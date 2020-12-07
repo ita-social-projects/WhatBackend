@@ -46,6 +46,7 @@ namespace CharlieBackend.Business.Providers
                 }
             }
         }
+
         public static string HashPassword(string password, string salt)
         {
             byte[] data = Encoding.Default.GetBytes(password + salt);

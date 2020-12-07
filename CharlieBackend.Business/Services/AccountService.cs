@@ -1,10 +1,7 @@
-﻿using System;
-using AutoMapper;
-using System.Text;
+﻿using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-//using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Providers;
 using CharlieBackend.Core.Models.ResultModel;
