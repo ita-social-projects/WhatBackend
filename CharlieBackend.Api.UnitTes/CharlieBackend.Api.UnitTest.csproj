@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <None Remove="Controllers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Moq" Version="4.14.5" />
@@ -25,10 +31,6 @@
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
     <ProjectReference Include="..\CharlieBackend.Data\CharlieBackend.Data.csproj" />
     <ProjectReference Include="..\CharlieBackend.Root\CharlieBackend.Root.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
