@@ -88,7 +88,7 @@ namespace CharlieBackend.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "19.11.2020" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WHAT Project API", Version = "07.12.2020" });
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 
@@ -159,7 +159,7 @@ namespace CharlieBackend.Api
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CharlieBackend");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WHAT Project API");
             });
 
             if (env.IsDevelopment())
