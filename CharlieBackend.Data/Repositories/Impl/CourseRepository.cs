@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -33,17 +34,20 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
         }
 
-        public async Task<bool> DisableCourseByIdAsync(long id)
+        public async Task<Result<bool>> DisableCourseByIdAsync(long id)
         {
             var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
+           
             if (course == null)
             {
-                return false;
+                return Result<bool>.GetError(ErrorCode.NotFound,"Course is not found");
+            }
+            if (course.IsActive != false)
+            {
+                course.IsActive = false;
             }
 
-            course.IsActive = false;
-           
-            return true;
+            return Result<bool>.GetSuccess(true);
         }
     }
 }

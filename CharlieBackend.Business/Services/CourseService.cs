@@ -75,6 +75,11 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "Course already exists");
                 }
 
+                if (await _unitOfWork.CourseRepository.IsCourseEmptyAsync(id))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Student group are included in this Course");
+                }
+
                 var updatedEntity = _mapper.Map<Course>(updateCourseDto);
 
                 updatedEntity.Id = id;
@@ -96,6 +101,23 @@ namespace CharlieBackend.Business.Services
         public Task<bool> IsCourseNameTakenAsync(string courseName)
         {
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
+        }
+
+        public async Task<Result<bool>> DisableCourceAsync(long id)
+        {
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
+            foreach (var item in studentGroup)
+            {
+                if (id == item.CourseId && item.FinishDate >= System.DateTime.Now)
+                {
+                    return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
+                }
+            }
+
+            Result<bool> course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return course;
         }
     }
 }
