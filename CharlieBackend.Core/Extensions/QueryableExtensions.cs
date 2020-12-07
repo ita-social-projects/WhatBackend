@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CharlieBackend.Core
 {
-    public static class RepositoryExtensionMethods
+    public static class QueryableExtensions
     {
         public static IQueryable<TSource> WhereIf<TSource>(this IQueryable<TSource> source, bool condition,
     Expression<Func<TSource, bool>> predicate)

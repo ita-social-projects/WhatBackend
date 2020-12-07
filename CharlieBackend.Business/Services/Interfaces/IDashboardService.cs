@@ -9,14 +9,14 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IDashboardService
     {
-        public Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request);
+        Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request);
 
-        public Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsRequestDto<StudentResultType> request);
+        Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsRequestDto<StudentResultType> request);
 
-        public Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId, GenericRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext);
+        Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId, GenericRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext);
 
-        public Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext);
+        Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext);
 
-        public Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, GenericRequestDto<StudentGroupResultType> request);
+        Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, GenericRequestDto<StudentGroupResultType> request);
     }
 }

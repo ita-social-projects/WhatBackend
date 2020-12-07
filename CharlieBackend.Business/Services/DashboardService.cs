@@ -143,17 +143,12 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
             GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateGenericRequest(request).Any())
+            if (ValidateGenericRequest(request).Any() 
+                    || ValidateStudentRights(studentId, userContext).Any())
             {
                 return Result<StudentsResultsDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateGenericRequest(request)));
-            }
-            else if (ValidateStudentRights(studentId, userContext).Any())
-            {
-                return Result<StudentsResultsDto>
-                            .GetError(ErrorCode.Unauthorized, String.Join(";\n",
-                            ValidateStudentRights(studentId, userContext)));
+                           ValidateGenericRequest(request), ValidateStudentRights(studentId, userContext)));
             }
 
             var result = new StudentsResultsDto();
@@ -218,12 +213,7 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            if (request.IncludeAnalytics == default)
-            {
-                yield return "Please provide 'IncludeAnalytics' data";
-            }
-
-            if (request.IncludeAnalytics.Length == 0)
+            if (request.IncludeAnalytics == default && request.IncludeAnalytics.Length == 0)
             {
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
@@ -255,12 +245,7 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            if (request.IncludeAnalytics == default)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (request.IncludeAnalytics.Length == 0)
+            if (request.IncludeAnalytics == default && request.IncludeAnalytics.Length == 0)
             {
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
