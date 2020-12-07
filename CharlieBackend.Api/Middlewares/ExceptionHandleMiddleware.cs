@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CharlieBackend.Api.Middlewares
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ExceptionHandleMiddleware
     {
         #region
@@ -13,12 +16,18 @@ namespace CharlieBackend.Api.Middlewares
         private readonly ILogger<ExceptionHandleMiddleware> _logger = null;
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ExceptionHandleMiddleware(RequestDelegate next, ILogger<ExceptionHandleMiddleware> logger)
         {
             _next = next;
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task InvokeAsync(HttpContext context)
         {
             try

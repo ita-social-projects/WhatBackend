@@ -7,17 +7,26 @@ using System.Linq;
 
 namespace CharlieBackend.Api.Middlewares
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class IsAccountActiveMiddleware
     {
         #region
         private readonly RequestDelegate _next;
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IsAccountActiveMiddleware(RequestDelegate next)
         {
             this._next = next;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public async Task InvokeAsync(HttpContext context, IAccountService accountService)
         {
             if (context.Request.Path.Value.Contains("accounts")

@@ -7,8 +7,14 @@ using System;
 
 namespace CharlieBackend.Api
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static void Main(string[] args)
         {
             //Configuration for Serilog
@@ -41,6 +47,9 @@ namespace CharlieBackend.Api
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
@@ -65,6 +74,9 @@ namespace CharlieBackend.Api
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static IConfigurationBuilder  HostConfigurationBuilder(string[] args)
         {
             var configuration = new ConfigurationBuilder()
