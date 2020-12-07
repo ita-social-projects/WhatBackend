@@ -29,6 +29,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public IVisitRepository VisitRepository { get; }
 
+        public IDashboardRepository DashboardRepository { get; }
 
         Task CommitAsync();
 

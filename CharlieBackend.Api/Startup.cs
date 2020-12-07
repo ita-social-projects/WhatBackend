@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Business.Options;
@@ -73,7 +74,9 @@ namespace CharlieBackend.Api
 
             services.AddControllers()
                 .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter()));
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                    });
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
@@ -100,7 +103,7 @@ namespace CharlieBackend.Api
 
                c.IncludeXmlComments(xmlPath);
 
-                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.IncludeXmlComments(xmlPath); 
 

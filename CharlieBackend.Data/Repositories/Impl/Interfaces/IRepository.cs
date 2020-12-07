@@ -1,11 +1,14 @@
 ﻿using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
+        IQueryable<T> GetQueryableNoTracking();
+
         Task<List<T>> GetAllAsync();
 
         Task<T> GetByIdAsync(long id);
