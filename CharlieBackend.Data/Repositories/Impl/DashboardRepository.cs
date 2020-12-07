@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Linq.Expressions;
 using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
@@ -23,15 +20,15 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, 
             DateTime? startDate, DateTime? finishDate)
         {
-            List<long> groupIdsbyCourseIdAndPeriod = await GetGroupIds(startDate, finishDate, courseId, null);
+            List<long> groupIdsbyCourseIdAndPeriod = await GetGroupIds(startDate, finishDate, courseId);
 
             return groupIdsbyCourseIdAndPeriod;
         }
 
         public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
-    DateTime? startDate, DateTime? finishDate)
+            DateTime? startDate, DateTime? finishDate)
         {
-            List<long> groupIdsbyStudentIdAndPeriod = await GetGroupIds(startDate, finishDate, null, studentId);
+            List<long> groupIdsbyStudentIdAndPeriod = await GetGroupIds(startDate, finishDate, studentId: studentId);
 
             return groupIdsbyStudentIdAndPeriod;
         }
@@ -153,8 +150,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds = null, 
-            IEnumerable<long> studentGroupsIds = null)
+        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds, 
+            IEnumerable<long> studentGroupsIds)
         {
             return await _applicationContext.Visits
                     .AsNoTracking()

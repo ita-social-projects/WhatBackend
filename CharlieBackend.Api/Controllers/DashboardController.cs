@@ -77,7 +77,7 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentClassbook/{studentId}")]
-        public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]GenericRequestDto<ClassbookResultType> request)
+        public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
             var userContext = HttpContext.User;
 
@@ -96,7 +96,7 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}")]
-        public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]GenericRequestDto<StudentResultType> request)
+        public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]DashboardAnalyticsRequestDto<StudentResultType> request)
         {
             var userContext = HttpContext.User;
 
@@ -115,7 +115,7 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost("studentGroupResults/{courseId}")]
-        public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]GenericRequestDto<StudentGroupResultType> request)
+        public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
             .GetStudentGroupResultAsync(courseId, request);
