@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -179,6 +180,30 @@ namespace CharlieBackend.Business.Services
             var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
 
             return Result<IList<MentorDto>>.GetSuccess(mentors);
+        }
+
+        public async Task<Result<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorIdAsync(long id)
+        {
+            if (!await _unitOfWork.MentorRepository.IsEntityExistAsync(id))
+            {
+                return Result<IList<MentorStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Mentor doesn`t exist");
+            }
+
+            var foundGroups = await _unitOfWork.StudentGroupRepository.GetMentorStudyGroups(id);
+
+            return Result<IList<MentorStudyGroupsDto>>.GetSuccess(foundGroups);
+        }
+
+        public async Task<Result<IList<MentorCoursesDto>>> GetMentorCoursesByMentorIdAsync(long id)
+        {
+            if (!await _unitOfWork.MentorRepository.IsEntityExistAsync(id))
+            {
+                return Result<IList<MentorCoursesDto>>.GetError(ErrorCode.NotFound, "Mentor doesn`t exist");
+            }
+
+            var foundCourses = await _unitOfWork.CourseRepository.GetMentorCourses(id);
+
+            return Result<IList<MentorCoursesDto>>.GetSuccess(foundCourses);
         }
     }
 }
