@@ -13,7 +13,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
 
 namespace CharlieBackend.Business.Services
 {
@@ -109,11 +108,17 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
             GenericRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateStudentRequest(studentId, request, userContext).Any())
+            if (ValidateGenericRequest(request).Any())
             {
                 return Result<StudentsClassbookResultDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateStudentRequest(studentId, request, userContext)));
+                           ValidateGenericRequest(request)));
+            }
+            else if (ValidateStudentRights(studentId, userContext).Any())
+            {
+                return Result<StudentsClassbookResultDto>
+                            .GetError(ErrorCode.Unauthorized, String.Join(";\n",
+                            ValidateStudentRights(studentId, userContext)));
             }
 
             var result = new StudentsClassbookResultDto();
@@ -138,11 +143,17 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
             GenericRequestDto<StudentResultType> request, ClaimsPrincipal userContext)
         {
-            if (ValidateStudentRequest(studentId, request, userContext).Any())
+            if (ValidateGenericRequest(request).Any())
             {
                 return Result<StudentsResultsDto>
                            .GetError(ErrorCode.ValidationError, String.Join(";\n",
-                           ValidateStudentRequest(studentId, request, userContext)));
+                           ValidateGenericRequest(request)));
+            }
+            else if (ValidateStudentRights(studentId, userContext).Any())
+            {
+                return Result<StudentsResultsDto>
+                            .GetError(ErrorCode.Unauthorized, String.Join(";\n",
+                            ValidateStudentRights(studentId, userContext)));
             }
 
             var result = new StudentsResultsDto();
@@ -223,28 +234,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private IEnumerable<string> ValidateStudentRequest<T>(long studentId,
-            GenericRequestDto<T> request, ClaimsPrincipal claimsContext) where T: Enum
+        private IEnumerable<string> ValidateStudentRights(long studentId, ClaimsPrincipal claimsContext)
         {
             if (studentId == default)
             {
                 yield return "Please provide student id";
-            }
-
-            if (request == default)
-            {
-                yield return "Please provide request data";
-                yield break;
-            }
-
-            if (request.IncludeAnalytics == default)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
-            }
-
-            if (request.IncludeAnalytics.Length == 0)
-            {
-                yield return "Please provide 'IncludeAnalytics' parameters";
             }
 
             if (!IsRequestAllowedForStudent(studentId, claimsContext))
