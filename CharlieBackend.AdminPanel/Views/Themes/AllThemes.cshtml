@@ -59,7 +59,7 @@
                                                         <span>Edit </span>
                                                     </a>
 
-                                                    <a class="dropdown-item" asp-action="DeleteTheme" asp-controller="Themes" asp-route-id="@item.Id">
+                                                    <a class="dropdown-item text-dark js-delete-theme" data-toggle="modal" data-target="#deleteThemeModalWindow" data-item-id="@item.Id">
                                                         <i class="fas fa-pen"></i>
                                                         <span>Delete</span>
                                                     </a>
@@ -98,3 +98,27 @@
     </div>
 
 </div>
+
+@section Scripts{
+
+<script type="text/javascript">
+
+    var routeForDeleteTheme = "/Themes/DeleteTheme";
+
+    var deleteThemId = null;
+
+    $(document).on("click", ".js-delete-theme", function (e) {
+
+        e.preventDefault();
+
+        var _self = $(this);
+
+        deleteThemId = _self.data('item-id');
+
+        $("#confirmDeleteTheme").attr("href", routeForDeleteTheme + deleteThemId);
+
+    });
+
+</script>
+
+}
