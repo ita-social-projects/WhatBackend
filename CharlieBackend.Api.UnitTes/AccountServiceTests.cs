@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Providers;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -91,7 +91,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task ChangePasswordAsync()
         {
             //Arrange
-            var salt = HashPasswordProvider.GenerateSalt();
+            var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
             var newPassword = "changedPass";
 
@@ -100,7 +100,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "user@exmaple.com",
-                Password = HashPasswordProvider.HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = salt,
                 Role = UserRole.Mentor
             };
@@ -144,7 +144,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "withoutSalt@exmaple.com",
-                Password = HashPasswordProvider.HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = null,
                 Role = UserRole.Mentor
             };

@@ -2,9 +2,9 @@
 using System.Text;
 using System.Security.Cryptography;
 
-namespace CharlieBackend.Business.Providers
+namespace CharlieBackend.Business.Helpers
 {
-    public static class HashPasswordProvider
+    public static class PasswordHelper
     {
         private static readonly string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
         private static readonly int _saltLen = 15;
@@ -12,7 +12,7 @@ namespace CharlieBackend.Business.Providers
         public static string GenerateSalt()
         {
             //StringBuilder object with a predefined buffer size for the resulting string
-            StringBuilder sb = new StringBuilder(_saltLen - 1);
+            StringBuilder stringBuilder = new StringBuilder(_saltLen - 1);
 
             //a variable for storing a random character position from the string Str
             int Position = 0;
@@ -22,13 +22,21 @@ namespace CharlieBackend.Business.Providers
                 Position = Next(0, _saltAlphabet.Length - 1);
 
                 //add the selected character to the object StringBuilder
-                sb.Append(_saltAlphabet[Position]);
+                stringBuilder.Append(_saltAlphabet[Position]);
             }
 
-            return sb.ToString();
+            return stringBuilder.ToString();
         }
 
-        public static Int32 Next(Int32 minValue, Int32 maxValue)
+        public static string HashPassword(string password, string salt)
+        {
+            byte[] data = Encoding.Default.GetBytes(password + salt);
+            var result = new SHA256Managed().ComputeHash(data);
+
+            return BitConverter.ToString(result).Replace("-", "").ToLower();
+        }
+
+        private static Int32 Next(Int32 minValue, Int32 maxValue)
         {
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
             {
@@ -46,14 +54,6 @@ namespace CharlieBackend.Business.Providers
                     }
                 }
             }
-        }
-
-        public static string HashPassword(string password, string salt)
-        {
-            byte[] data = Encoding.Default.GetBytes(password + salt);
-            var result = new SHA256Managed().ComputeHash(data);
-
-            return BitConverter.ToString(result).Replace("-", "").ToLower();
         }
     }
 }

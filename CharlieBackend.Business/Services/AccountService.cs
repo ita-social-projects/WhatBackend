@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Business.Providers;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -44,8 +44,8 @@ namespace CharlieBackend.Business.Services
                     LastName = accountModel.LastName
                 };
 
-                account.Salt = HashPasswordProvider.GenerateSalt();
-                account.Password = HashPasswordProvider.HashPassword(accountModel.ConfirmPassword, account.Salt);
+                account.Salt = PasswordHelper.GenerateSalt();
+                account.Password = PasswordHelper.HashPassword(accountModel.ConfirmPassword, account.Salt);
 
                 _unitOfWork.AccountRepository.Add(account);
 
@@ -69,7 +69,7 @@ namespace CharlieBackend.Business.Services
 
             if (salt != "")
             {
-                authenticationModel.Password = HashPasswordProvider.HashPassword(authenticationModel.Password, salt);
+                authenticationModel.Password = PasswordHelper.HashPassword(authenticationModel.Password, salt);
 
                 var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
@@ -138,25 +138,25 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd)
+        public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePasswd.Email);
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);
             
             if (user == null)
             {
                 return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
             }
 
-            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePasswd.Email);
+            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePassword.Email);
 
             if (!string.IsNullOrEmpty(salt))
             {
-                string checkPassword = HashPasswordProvider.HashPassword(changePasswd.CurrentPassword, salt);
+                string checkPassword = PasswordHelper.HashPassword(changePassword.CurrentPassword, salt);
 
                 if (user.Password == checkPassword)
                 {
-                    user.Salt = HashPasswordProvider.GenerateSalt();
-                    user.Password = HashPasswordProvider.HashPassword(changePasswd.NewPassword, user.Salt);
+                    user.Salt = PasswordHelper.GenerateSalt();
+                    user.Password = PasswordHelper.HashPassword(changePassword.NewPassword, user.Salt);
 
                     await _unitOfWork.CommitAsync();
 
