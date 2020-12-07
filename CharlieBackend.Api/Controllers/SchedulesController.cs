@@ -20,6 +20,9 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class SchedulesController : ControllerBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly IScheduleService _scheduleService;
 
         /// <summary>
