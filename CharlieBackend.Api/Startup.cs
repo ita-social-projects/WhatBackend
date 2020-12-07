@@ -78,6 +78,9 @@ namespace CharlieBackend.Api
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
 
+            //AzureStorageBlobs Congiguration through extension
+            services.AddAzureStorageBlobs(Configuration.GetConnectionString("AzureBlobsAccessKey"));
+
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
             {

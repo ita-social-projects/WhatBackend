@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Attachment;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -166,6 +167,13 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
+            #region Attachments mapping
+
+            CreateMap<AttachmentDto, Attachment>();
+            CreateMap<Attachment, AttachmentDto>();
+
+            #endregion
         }
     }
 }
