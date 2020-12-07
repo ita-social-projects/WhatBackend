@@ -27,6 +27,7 @@ namespace CharlieBackend.Business.Providers
 
             return sb.ToString();
         }
+
         public static Int32 Next(Int32 minValue, Int32 maxValue)
         {
             using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
