@@ -178,11 +178,14 @@ namespace CharlieBackend.Business.Services
             return Result<MentorDto>.GetSuccess(mentorDto);
         }
 
-        public async Task<MentorDto> GetMentorByIdAsync(long mentorId)
+        public async Task<Result<MentorDto>> GetMentorByIdAsync(long mentorId)
         {
             var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(mentorId);
-
-            return _mapper.Map<MentorDto>(mentor);
+            if (mentor == null)
+            {
+                return Result<MentorDto>.GetError(ErrorCode.NotFound, "Mentor not found");
+            }
+            return Result<MentorDto>.GetSuccess(_mapper.Map<MentorDto>(mentor));
         }
 
         public async Task<long?> GetAccountId(long mentorId)
