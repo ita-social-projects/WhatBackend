@@ -3,11 +3,18 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System;
 
 namespace CharlieBackend.Api
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static void Main(string[] args)
         {
             //Configuration for Serilog
@@ -19,6 +26,8 @@ namespace CharlieBackend.Api
                     .WriteTo.Debug()
                     .WriteTo.Console()
                     .CreateLogger();
+
+            Console.Title = "CharlieBackend.Api";
 
             try
             {
@@ -38,6 +47,9 @@ namespace CharlieBackend.Api
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
@@ -62,6 +74,9 @@ namespace CharlieBackend.Api
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static IConfigurationBuilder  HostConfigurationBuilder(string[] args)
         {
             var configuration = new ConfigurationBuilder()

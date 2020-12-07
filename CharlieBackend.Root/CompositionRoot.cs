@@ -31,13 +31,14 @@ namespace CharlieBackend.Root
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IFileImportService, FileImportService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IMentorService, MentorService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
+            services.AddScoped<IStudentImportService, StudentImportService>();
+            services.AddScoped<IStudentGroupImportService, StudentGroupImportService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IThemeRepository, ThemeRepository>();

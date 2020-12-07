@@ -23,6 +23,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
+        public Task<List<Mentor>> GetAllActiveAsync()
+        {
+            return _applicationContext.Mentors
+                    .Include(mentor => mentor.Account)
+                    .Where(mentor => mentor.Account.IsActive == true)
+                    .ToListAsync();
+        }
+
         public Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds)
         {
             return _applicationContext.Mentors

@@ -14,7 +14,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         void UpdateMentorGroups(IEnumerable<MentorOfStudentGroup> currentItems,
                                 IEnumerable<MentorOfStudentGroup> newItems);
 
-        //public Task<Mentor> GetAccountByMentorIdAsync(long mentorId);
+        Task<List<Mentor>> GetAllActiveAsync();
 
         Task<Mentor> GetMentorByAccountIdAsync(long accountId);
 
