@@ -193,7 +193,8 @@ namespace CharlieBackend.Business.Services
 
             if (!foundGroups.Any())
             {
-                return Result<IList<MentorStudyGroupsDto>>.GetError(ErrorCode.NotFound, $"Study groups for mentor with id {id} not found");
+                return Result<IList<MentorStudyGroupsDto>>.
+                    GetSuccess(new List<MentorStudyGroupsDto>());
             }
 
             return Result<IList<MentorStudyGroupsDto>>.GetSuccess(foundGroups);
@@ -210,7 +211,8 @@ namespace CharlieBackend.Business.Services
 
             if (!foundCourses.Any())
             {
-                return Result<IList<MentorCoursesDto>>.GetError(ErrorCode.NotFound, $"Courses for mentor with id {id} not found");
+                return Result<IList<MentorCoursesDto>>.
+                    GetSuccess(new List<MentorCoursesDto>());
             }
 
             return Result<IList<MentorCoursesDto>>.GetSuccess(foundCourses);

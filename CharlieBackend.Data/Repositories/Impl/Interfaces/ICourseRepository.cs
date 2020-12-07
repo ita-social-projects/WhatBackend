@@ -7,10 +7,10 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface ICourseRepository : IRepository<Course>
     {
-        public Task<bool> IsCourseNameTakenAsync(string courseName);
+        Task<bool> IsCourseNameTakenAsync(string courseName);
 
-        public Task<List<MentorCoursesDto>> GetMentorCourses(long id);
+        Task<List<MentorCoursesDto>> GetMentorCourses(long id);
 
-        public Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
+        Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
     }
 }
