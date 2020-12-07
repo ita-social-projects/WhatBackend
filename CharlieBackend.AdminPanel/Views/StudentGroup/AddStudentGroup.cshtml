@@ -24,7 +24,7 @@
                                 @foreach (var item in @ViewBag.StudentGroup.AllCourses)
                                 {
 
-                                    <option value="@item.Id">@item.Id @item.Name</option>
+                                    <option value="@item.Id">@item.Name</option>
                                 }
                             }
                             else
@@ -61,7 +61,7 @@
                                 @foreach (var item in @ViewBag.StudentGroup.AllStudents)
                                 {
                                     <option value="@item.Id">
-                                        @item.Id @item.FirstName
+                                        @item.FirstName
                                         @item.LastName
                                     </option>
                                 }
@@ -83,7 +83,7 @@
                                 {
 
                                     <option value="@item.Id">
-                                        @item.Id @item.FirstName
+                                        @item.FirstName
                                         @item.LastName
                                     </option>
 

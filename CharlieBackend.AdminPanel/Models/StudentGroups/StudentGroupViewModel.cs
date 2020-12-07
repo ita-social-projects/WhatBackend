@@ -1,4 +1,5 @@
-﻿using CharlieBackend.AdminPanel.Models.Mentor;
+﻿using CharlieBackend.AdminPanel.Models.Course;
+using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.Students;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace CharlieBackend.AdminPanel.Models.StudentGroups
         public long Id { get; set; }
 
         [Required]
-        public long? CourseId { get; set; }
+        public CourseViewModel Course { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; }
