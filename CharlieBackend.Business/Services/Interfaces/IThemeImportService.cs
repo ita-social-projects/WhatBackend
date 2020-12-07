@@ -6,9 +6,9 @@ using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
-    public interface IStudentGroupImportService
+    public interface IThemeImportService
     {
-        Task<Result<List<StudentGroupFile>>> ImportFileAsync(IFormFile uploadedFile);
+        Task<Result<List<ThemeFile>>> ImportFileAsync(IFormFile uploadedFile);
 
         bool CheckIfExcelFile(IFormFile file);
     }

@@ -13,7 +13,6 @@ using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Api.SwaggerExamples.AccountsController;
 
@@ -201,6 +200,20 @@ namespace CharlieBackend.Api.Controllers
             var accountsModels = await _accountService.GetAllNotAssignedAccountsAsync();
 
             return Ok(accountsModels);
+        }
+
+        /// <summary>
+        /// Returns an updated account
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("ChangePassword")]
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
+        {
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
+
+            return updatedAccount.ToActionResult();
         }
     }
 }
