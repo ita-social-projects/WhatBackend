@@ -8,8 +8,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         public new Task<List<Mentor>> GetAllAsync();
 
-        public Task<List<Mentor>> GetAllActiveAsync();
-
         void UpdateMentorCourses(IEnumerable<MentorOfCourse> currentItems,
                                  IEnumerable<MentorOfCourse> newItems);
 
