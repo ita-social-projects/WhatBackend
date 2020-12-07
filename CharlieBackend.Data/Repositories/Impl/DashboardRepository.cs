@@ -20,18 +20,20 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, DateTime? startDate, DateTime? finishDate)
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, 
+            DateTime? startDate, DateTime? finishDate)
         {
                 var groupIdsbyCourseIdAndPeriod = await _applicationContext.StudentGroups
                     .AsNoTracking()
                     .Where(x => x.CourseId == courseId)
-                    .WhereIf(startDate != null && finishDate != default(DateTime), x => x.StartDate >= startDate)
-                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.FinishDate <= finishDate)
+                    .WhereIf(startDate != null && finishDate != default(DateTime), 
+                    x => x.StartDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), 
+                    x => x.FinishDate <= finishDate)
                     .Select(x => x.Id)
                     .ToListAsync();
 
                 return groupIdsbyCourseIdAndPeriod;
-            
         }
 
         public async Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> groupsIds)
@@ -153,13 +155,16 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
-        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime? startDate, DateTime? finishDate)
+        public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, 
+            DateTime? startDate, DateTime? finishDate)
         {
                 var groupIdsbyStudentIdAndPeriod = await _applicationContext.StudentGroups
                     .AsNoTracking()
                     .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == studentId))
-                    .WhereIf(startDate != null && finishDate != default(DateTime), x => x.StartDate >= startDate)
-                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.FinishDate <= finishDate)
+                    .WhereIf(startDate != null && finishDate != default(DateTime), 
+                    x => x.StartDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), 
+                    x => x.FinishDate <= finishDate)
                     .Select(x => x.Id)
                     .ToListAsync();
 

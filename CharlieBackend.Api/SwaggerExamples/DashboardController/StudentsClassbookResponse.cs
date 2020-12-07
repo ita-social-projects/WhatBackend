@@ -45,7 +45,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         LessonDate = new DateTime(2017, 5, 21),
                         Presence = true
                     },
-                                        new StudentVisitDto
+                    new StudentVisitDto
                     {
                         StudentId = 34,
                         CourseId = 4,

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {

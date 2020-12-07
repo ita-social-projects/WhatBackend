@@ -6,13 +6,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Business.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.DTO.Dashboard.StudentClassbook;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -125,7 +122,5 @@ namespace CharlieBackend.Api.Controllers
 
             return results.ToActionResult();
         }
-
-
     }
 }

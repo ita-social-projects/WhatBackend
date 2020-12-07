@@ -65,8 +65,7 @@ namespace CharlieBackend.Api
                 .AddJsonOptions(options =>
                     {
                         options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-                    }
-                    );
+                    });
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
