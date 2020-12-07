@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Blobs.Models;
 
-
 namespace CharlieBackend.Core.DTO.Attachment
 {
     public class DownloadAttachmentDto

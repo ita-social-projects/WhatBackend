@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-
 namespace CharlieBackend.Core.DTO.Attachment
 {
     public class AttachmentDto

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
 
-
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>

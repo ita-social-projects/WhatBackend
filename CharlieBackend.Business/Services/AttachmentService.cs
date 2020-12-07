@@ -14,7 +14,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
-
 namespace CharlieBackend.Business.Services
 {
     public class AttachmentService : IAttachmentService

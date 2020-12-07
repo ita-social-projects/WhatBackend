@@ -3,7 +3,6 @@ using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
-
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class AttachmentRepository : Repository<Attachment>, IAttachmentRepository 
@@ -12,7 +11,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                     : base(applicationContext)
         {
         }
-
     }
-
 }
