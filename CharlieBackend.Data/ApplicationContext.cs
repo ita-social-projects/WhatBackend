@@ -124,6 +124,17 @@ namespace CharlieBackend.Data
                     .HasComment("salt has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasIndex(e => e.ForgotPasswordToken)
+                     .HasName("forgot_password_token_UNIQUE")
+                     .IsUnique();
+
+                entity.Property(e => e.ForgotPasswordToken)
+                    .HasColumnName("forgot_password_token")
+                    .HasColumnType("varchar")
+                    .HasComment("token for resetting password")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
             });
 
             modelBuilder.Entity<Course>(entity =>

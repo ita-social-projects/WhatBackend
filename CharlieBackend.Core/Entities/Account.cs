@@ -18,10 +18,12 @@ namespace CharlieBackend.Core.Entities
 
         public bool? IsActive { get; set; }
 
+        public string? ForgotPasswordToken { get; set; }
+
         public virtual ICollection<Mentor> Mentors { get; set; }
-        
+
         public virtual ICollection<Student> Students { get; set; }
-        
+
         public virtual ICollection<Secretary> Secretaries { get; set; }
     }
 }

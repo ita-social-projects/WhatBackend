@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
@@ -169,6 +170,29 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
+        }
+
+        /*
+             * This method will send a url to a form, where user will fill ResetPasswordDto.
+             * After that a form will make POST request for reset password 
+             */
+        public async Task SendChangeUrAsync(ForgotPasswordDto forgotPassword)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
+
+            var userGuid = Guid.NewGuid();
+            user.ForgotPasswordToken = userGuid.ToString();
+
+            await _unitOfWork.CommitAsync();
+
+            //send this to user in email
+            string formUrl = "";
+
+            await _notification.ForgotPasswordNotify(forgotPassword.Email, formUrl);
+
+
+            //this 
+            string callbackUrl = "http://localhost:5000/api/accounts/ConfirmPasswordChange/" + userGuid; //add get parameter for form url
         }
     }
 }

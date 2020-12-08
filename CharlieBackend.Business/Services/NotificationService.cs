@@ -11,6 +11,7 @@ namespace CharlieBackend.Business.Services
     {
         private const string queueAccountApproved = "AccountApproved";
         private const string queueRegistrationSuccess = "RegistrationSuccess";
+        private const string queueForgotPassword = "ForgotPassword";
         private readonly IBus _bus;
         private readonly ILogger<NotificationService> _logger;
 
@@ -36,6 +37,14 @@ namespace CharlieBackend.Business.Services
 
             await _bus.SendReceive.SendAsync(queueRegistrationSuccess, new RegistrationSuccessEvent(account.Email,
                                        account.FirstName, account.LastName));
+        }
+
+        public async Task ForgotPasswordNotify(string recepientMail, string url)
+        {
+            _logger.LogInformation($"ForgotPasswordNotify has been sent for email " +
+                                   $"{recepientMail}");
+
+            await _bus.SendReceive.SendAsync(queueForgotPassword, new ForgotPasswordEvent(recepientMail, url));
         }
     }
 }

@@ -215,5 +215,53 @@ namespace CharlieBackend.Api.Controllers
 
             return updatedAccount.ToActionResult();
         }
+
+        /// <summary>
+        /// Returns a result of sending email
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("password/forgot")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeFgtPasswd)
+        {
+            if (await _accountService.IsEmailTakenAsync(changeFgtPasswd.Email))
+            {
+                await _accountService.SendChangeUrAsync(changeFgtPasswd);
+                return Ok($"Link to change password has been sent to email {changeFgtPasswd.Email}");
+            }
+
+            return BadRequest($"Account with email {changeFgtPasswd.Email} does not exist!");
+        }
+
+        /// <summary>
+        /// Returns a result of confirmed password change
+        /// </summary>
+        /// <response code="200">Successful user redirection to UI form</response>
+        [Route("password/confirm/{userGuid}")]
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<ActionResult> ConfirmPassword(Guid guid)
+        {
+            //В общем, тут я конфёрмлю guid и делают редирект на форму фронтэнда
+            //Нужно выяснить, как выполнить редирект отсюда на форму.
+            //compare guid and redirect user for UI form to provide data for ResetPasswordDto
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a result of confirmed password change
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("ResetPassword")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ResetForgotPassword(Guid guid, ResetPasswordDto resetPassword)
+        {
+            //Сюда форма присылает POST запрос с ResetPasswordDto, производится апдейд пароля юзера
+            //Также нужно удалять guid у юзера в forgot pasword token, чтобы ссылка была одноразовой
+            //Также нужно выяснить, как верифицировать или скрыть этот эндпопоинт, чтобы левый человек не смог поменять пароль
+            throw new NotImplementedException();
+        }
     }
 }

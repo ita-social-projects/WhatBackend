@@ -30,9 +30,12 @@ CREATE TABLE IF NOT EXISTS `soft`.`account` (
   `password` VARCHAR(65) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'password has been set to not null',
   `salt` VARCHAR(65) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'salt has been set to not null',
   `is_active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
+  `forgot_password_token` VARCHAR CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL COMMENT 'token for resetting password',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC)),
+  UNIQUE INDEX `forgot_password_token_UNIQUE` (`forgot_password_token` ASC)
 ENGINE = InnoDB
+AUTO_INCREMENT = 20
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
