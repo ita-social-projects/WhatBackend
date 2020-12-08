@@ -7,12 +7,12 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface ICourseService
     {
-        public Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel);
+        Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel);
 
-        public Task<Result<IList<CourseDto>>> GetAllCoursesAsync();
+        Task<Result<IList<CourseDto>>> GetAllCoursesAsync();
 
-        public Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
+        Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
 
-        public Task<bool> IsCourseNameTakenAsync(string courseName);
+        Task<bool> IsCourseNameTakenAsync(string courseName);
     }
 }

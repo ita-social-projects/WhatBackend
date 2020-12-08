@@ -20,7 +20,9 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IStudentRepository _studentRepository;
         private IStudentGroupRepository _studentGroupRepository;
         private IVisitRepository _visitRepository;
+        private IDashboardRepository _dashboardRepository;
         private IScheduleRepository _scheduleRepository;
+        private IAttachmentRepository _attachmentRepository;
 
         #endregion 
 
@@ -35,6 +37,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return _accountRepository = _accountRepository
                         ?? new AccountRepository(_applicationContext);
+            }
+        }
+
+        public IAttachmentRepository AttachmentRepository
+        {
+             get
+            {
+                return _attachmentRepository = _attachmentRepository
+                        ?? new AttachmentRepository(_applicationContext);
             }
         }
         public ISecretaryRepository SecretaryRepository
@@ -106,6 +117,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             { 
                 return _visitRepository = _visitRepository 
                         ?? new VisitRepository(_applicationContext); 
+            }
+        }
+
+        public IDashboardRepository DashboardRepository
+        {
+            get
+            {
+                return _dashboardRepository = _dashboardRepository
+                        ?? new DashboardRepository(_applicationContext);
             }
         }
 

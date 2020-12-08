@@ -8,7 +8,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IStudentGroupImportService
     {
-        Task<Result<List<StudentGroupFileModel>>> ImportFileAsync(IFormFile uploadedFile);
+        Task<Result<List<StudentGroupFile>>> ImportFileAsync(IFormFile uploadedFile);
 
         bool CheckIfExcelFile(IFormFile file);
     }
