@@ -64,6 +64,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllThemes", "Themes");
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> DeleteTheme(long id)
         {
             await _themeService.DeleteTheme(id, _protector.Unprotect(Request.Cookies["accessToken"]));
