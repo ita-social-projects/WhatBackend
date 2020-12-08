@@ -155,10 +155,9 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Visits
                     .AsNoTracking()
-                    .WhereIf(studentIds != default && studentIds.Any(), 
-                            x => x.Lesson.StudentGroup.StudentsOfStudentGroups.Any(x => studentIds.Contains(x.Student.Id)))
-                    .WhereIf(studentGroupsIds != default && studentGroupsIds.Any(), 
-                            x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                    .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
+                    .Where(x => studentIds.Contains((long)x.StudentId))
+                    .Where(x => x.StudentMark != null)
                     .Select(x => new
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
