@@ -4,27 +4,26 @@
 @{
     Layout = "_Layout";
 }
+<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+    <div class="dropleft">
+        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="dropdown-menu" style="min-width: 170px;">
+            <form method="post" class="input-group" asp-action="AddTheme" asp-controller="Themes">
+                <input type="text" class="form-control" name="Name" placeholder="Theme`s name" />
+                <button type="submit" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
+</div>
 <div id="content-wrapper" class="d-flex flex-column">
 
     <div id="content">
 
-        <div class="fixed-bottom" style="left:90%; bottom:8%;">
-            <div class="dropleft">
-                <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <div class="dropdown-menu" style="min-width: 170px;" >
-                    <form method="post" class="input-group" asp-action="AddTheme" asp-controller="Themes">
-                        <input type="text" class="form-control" name="Name" placeholder="Theme`s name" />
-                        <button type="submit" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
 
         <div class="container-fluid">
 
