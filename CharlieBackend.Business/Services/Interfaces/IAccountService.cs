@@ -27,10 +27,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<bool> DisableAccountAsync(long id);
 
-        public string GenerateSalt();
-
-        public string HashPassword(string password, string salt);
-
         Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
     }
 }
