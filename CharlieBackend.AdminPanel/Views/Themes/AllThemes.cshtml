@@ -54,7 +54,7 @@
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                    <a class="dropdown-item" asp-action="UpdateTheme" asp-controller="Themes" asp-route-id="@item.Id">
+                                                    <a class="dropdown-item text-dark js-edit-theme" data-toggle="modal" data-target="#editThemeModal" data-item-name="@item.Name" data-item-id="@item.Id">
                                                         <i class="fas fa-pen"></i>
                                                         <span>Edit </span>
                                                     </a>
@@ -97,28 +97,75 @@
         </div>
     </div>
 
+    <div class="modal fade" id="editThemeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editThemeTitle">Edit theme</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <label for="themeNameInput">Name:</label>
+                    <input id="themeNameInput" class="modalTextInput form-control" value="" />
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" id="confirmEditTheme" href="">Save changes</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 @section Scripts{
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    var routeForDeleteTheme = "/Themes/DeleteTheme/";
+        var routeForDeleteTheme = "/Themes/DeleteTheme/";
 
-    var deleteThemId = null;
+        var deleteThemId = null;
 
-    $(document).on("click", ".js-delete-theme", function (e) {
+        $(document).on("click", ".js-delete-theme", function (e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        var _self = $(this);
+            var _self = $(this);
 
-        deleteThemId = _self.data('item-id');
+            deleteThemId = _self.data('item-id');
 
-        $("#confirmDeleteTheme").attr("href", routeForDeleteTheme + deleteThemId);
+            $("#confirmDeleteTheme").attr("href", routeForDeleteTheme + deleteThemId);
 
-    });
+        });
 
-</script>
+    </script>
 
+    <script type="text/javascript">
+
+        var routeForEditTheme = "/Themes/UpdateTheme/";
+
+        var editThemeId = null;
+
+        var editThemeName = null;
+
+        $(document).on("click", ".js-edit-theme", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            editThemeId = _self.data('item-id');
+            editThemeName = _self.data('item-name');
+
+            $("#themeNameInput").val(editThemeName);
+        });
+        $("#themeNameInput").on('change keyup paste', function () {
+            $("#confirmEditTheme").attr("href", routeForEditTheme + editThemeId + '?&name=' + $("#themeNameInput").val());
+        });
+
+    </script>
 }
