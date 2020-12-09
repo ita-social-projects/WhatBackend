@@ -31,6 +31,7 @@ namespace CharlieBackend.Api.Controllers
         private readonly IMentorService _mentorService;
         private readonly ISecretaryService _secretaryService;
         private readonly AuthOptions _authOptions;
+        private const string formUrl = "https://dp192-what-api.oa.r.appspot.com/index.html";
         #endregion
         /// <summary>
         /// Account controller constructor
@@ -206,9 +207,9 @@ namespace CharlieBackend.Api.Controllers
         /// Returns an updated account
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
-        [Route("ChangePassword")]
+        [Route("password")]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpPost]
+        [HttpPut]
         public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
         {
             var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
@@ -241,27 +242,34 @@ namespace CharlieBackend.Api.Controllers
         [Route("password/confirm/{userGuid}")]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult> ConfirmPassword(Guid guid)
+        public async Task<ActionResult> ConfirmPassword(string userGuid)
         {
-            //В общем, тут я конфёрмлю guid и делают редирект на форму фронтэнда
-            //Нужно выяснить, как выполнить редирект отсюда на форму.
-            //compare guid and redirect user for UI form to provide data for ResetPasswordDto
-            throw new NotImplementedException();
+            var userVerify = await _accountService.GuidVerify(userGuid);
+
+            if (userVerify)
+            {
+               return Redirect(formUrl);
+            }
+          
+            return BadRequest("Failed with user verification.");
         }
 
         /// <summary>
         /// Returns a result of confirmed password change
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
-        [Route("ResetPassword")]
+        [Route("password/reset/{guid}")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> ResetForgotPassword(Guid guid, ResetPasswordDto resetPassword)
+        public async Task<ActionResult> ResetForgotPassword(string guid, ResetPasswordDto resetPassword)
         {
             //Сюда форма присылает POST запрос с ResetPasswordDto, производится апдейд пароля юзера
             //Также нужно удалять guid у юзера в forgot pasword token, чтобы ссылка была одноразовой
             //Также нужно выяснить, как верифицировать или скрыть этот эндпопоинт, чтобы левый человек не смог поменять пароль
-            throw new NotImplementedException();
+            //Как передать в форму guid и выполнить с ним же POST запрос для соблюдения секъюрности?
+            var updatedAccount = await _accountService.ResetPasswordAsync(guid, resetPassword);
+
+            return updatedAccount.ToActionResult();
         }
     }
 }

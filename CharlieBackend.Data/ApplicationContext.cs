@@ -131,7 +131,7 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.ForgotPasswordToken)
                     .HasColumnName("forgot_password_token")
-                    .HasColumnType("varchar")
+                    .HasColumnType("varchar(100)")
                     .HasComment("token for resetting password")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");

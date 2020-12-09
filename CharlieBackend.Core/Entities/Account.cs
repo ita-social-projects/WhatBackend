@@ -18,7 +18,9 @@ namespace CharlieBackend.Core.Entities
 
         public bool? IsActive { get; set; }
 
+#nullable enable
         public string? ForgotPasswordToken { get; set; }
+#nullable disable
 
         public virtual ICollection<Mentor> Mentors { get; set; }
 

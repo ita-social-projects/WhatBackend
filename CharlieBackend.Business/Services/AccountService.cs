@@ -172,13 +172,21 @@ namespace CharlieBackend.Business.Services
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
-        /*
-             * This method will send a url to a form, where user will fill ResetPasswordDto.
-             * After that a form will make POST request for reset password 
-             */
         public async Task SendChangeUrAsync(ForgotPasswordDto forgotPassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
+
+            var userGuid = Guid.NewGuid();
+            user.ForgotPasswordToken = userGuid.ToString();
+
+            await _unitOfWork.CommitAsync();
+
+            string callbackUrl = "http://localhost:5000/api/accounts/password/confirm/" + user.ForgotPasswordToken; //add get parameter for form url
+
+            await _notification.ForgotPasswordNotify(forgotPassword.Email, callbackUrl);
+
+            /*
+             * var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
 
             var userGuid = Guid.NewGuid();
             user.ForgotPasswordToken = userGuid.ToString();
@@ -193,6 +201,35 @@ namespace CharlieBackend.Business.Services
 
             //this 
             string callbackUrl = "http://localhost:5000/api/accounts/ConfirmPasswordChange/" + userGuid; //add get parameter for form url
+             */
+        }
+
+        public async Task<bool> GuidVerify(string guid)
+        {
+            return await _unitOfWork.AccountRepository.IsGuidExists(guid);
+        }
+
+        public async Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(resetPassword.Email);
+
+            if (user == null)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            }
+
+            if(user.ForgotPasswordToken != guid)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Form validation error.");
+            }
+
+            user.Salt = PasswordHelper.GenerateSalt();
+            user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
+            user.ForgotPasswordToken = null;
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
         }
     }
 }
