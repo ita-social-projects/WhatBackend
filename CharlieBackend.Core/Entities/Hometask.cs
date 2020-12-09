@@ -10,16 +10,20 @@ namespace CharlieBackend.Core.Entities
 
         public ushort? DeadlineDays { get; set; }
 
-        public string? TaskText { get; set; }
+        public string TaskText { get; set; }
 
-        public virtual IList<AttachmentOfHometask> AttachmentOfHometask { get; set; }
+        public string Comment { get; set; }
 
-        public string? Comment { get; set; }
+        public bool Common { get; set; }
 
-        public bool PublicTask { get; set; }
+        public long? ThemeId { get; set; }
 
-        ???public long ThemeId { get; set; }??? // List?
+        public Theme Theme { get; set; }
 
         public long MentorId { get; set; }
+
+        public Mentor Mentor { get; set; }
+
+        public virtual ICollection<AttachmentOfHometask> AttachmentOfHometasks { get; set; }
     }
 }
