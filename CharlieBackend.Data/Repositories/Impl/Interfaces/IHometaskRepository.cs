@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
-    public interface IHometask : IRepository<Hometask>
+    public interface IHometaskRepository : IRepository<Hometask>
     {
     }
 }

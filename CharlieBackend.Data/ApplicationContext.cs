@@ -39,6 +39,10 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Attachment> Attachments { get; set; }
 
+        public virtual DbSet<Hometask> Hometasks { get; set; }
+
+        public virtual DbSet<Hometask> AttachmentOfHometask { get; set; }
+
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
         //            if (!optionsBuilder.IsConfigured)
@@ -468,6 +472,80 @@ namespace CharlieBackend.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
             });
+
+            modelBuilder.Entity<Hometask>(entity =>
+            {
+                entity.ToTable("Hometask");
+
+                entity.HasIndex(e =>
+                    new { e.MentorId, e.ThemeId })
+                    .HasName("MentorAndThemeId");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Comment)
+                    .HasColumnName("comment")
+                    .HasColumnType("varchar(1024)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci"); ;
+
+                entity.Property(e => e.Common)
+                    .HasColumnName("common")
+                    .HasDefaultValueSql("'1'")
+                    .HasComment("common has been set to not null with true as a default value");
+
+                entity.Property(e => e.DeadlineDays)
+                    .HasColumnName("deadline_days")
+                    .HasDefaultValue(null);
+
+                entity.Property(e => e.TaskText)
+                    .HasColumnName("task_text")
+                    .HasColumnType("varchar(max)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.MentorId).HasColumnName("mentor_id");
+
+                entity.Property(e => e.ThemeId).HasColumnName("theme_id");
+
+                entity.HasOne(e => e.Theme)
+                    .WithMany(p => p.Hometasks)
+                    .HasForeignKey(d => d.ThemeId)
+                    .HasConstraintName("FK_theme_of_hometask");
+
+                entity.HasOne(d => d.Mentor)
+                    .WithMany(p => p.Hometasks)
+                    .HasForeignKey(d => d.MentorId)
+                    .HasConstraintName("FK_mentor_of_hometask");
+            });
+
+            modelBuilder.Entity<AttachmentOfHometask>(entity =>
+            {
+                entity.ToTable("AttacmentOfHomeTask");
+
+                entity.HasIndex(e => e.AttachmentId)
+                    .HasName("FK_attachment_of_hometask_id");
+
+                entity.HasIndex(e => e.HometaskId)
+                    .HasName("FK_hometask_of_attachment_id");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
+
+                entity.Property(e => e.HometaskId).HasColumnName("hometask_id");
+
+                entity.HasOne(d => d.Attachment)
+                    .WithMany(p => p.AttachmentOfHometasks)
+                    .HasForeignKey(d => d.AttachmentId)
+                    .HasConstraintName("FK_attachment_of_hometask");
+
+                entity.HasOne(d => d.Hometask)
+                    .WithMany(p => p.AttachmentOfHometasks)
+                    .HasForeignKey(d => d.HometaskId)
+                    .HasConstraintName("FK_hometask_of_attachment");
+            }
+                );
 
             OnModelCreatingPartial(modelBuilder);
         }

@@ -4,10 +4,8 @@ using System.Text;
 
 namespace CharlieBackend.Core.Entities
 {
-    public class AttachmentOfHometask
+    public partial class AttachmentOfHometask : BaseEntity
     {
-        public long Id { get; set; }
-
         public long? HometaskId { get; set; }
 
         public long? AttachmentId { get; set; }

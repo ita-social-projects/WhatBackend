@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -24,18 +25,44 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<HometaskDto>> CreateHometaskAsync(CreateHometaskDto course)
+        public async Task<Result<HometaskDto>> CreateHometaskAsync(CreateHometaskDto createHometaskDto)
         {
             try
             {
-                if (course == null)
+                if (createHometaskDto == null)
                 {
-                    return Result<HometaskDto>.GetError(ErrorCode.NotFound, 
+                    return Result<HometaskDto>.GetError(ErrorCode.NotFound,
                         "No hometask data received");
                 }
 
+                var newHometask = new Hometask
+                {
+                    Comment = createHometaskDto.Comment,
+                    Common = createHometaskDto.Common,
+                    DeadlineDays = createHometaskDto.DeadlineDays,
+                    MentorId = createHometaskDto.MentorId,
+                    TaskText = createHometaskDto.TaskText,
+                    ThemeId = createHometaskDto.ThemeId,
+                };
 
-                 
+                _unitOfWork.StudentGroupRepository.Add(studentGroup);
+
+                if (studentGroupDto?.StudentIds.Count != 0)
+                {
+                    var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupDto.StudentIds);
+                    studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
+
+                    for (int i = 0; i < students.Count; i++)
+                    {
+                        studentGroup.StudentsOfStudentGroups.Add(new StudentOfStudentGroup
+                        {
+                            StudentId = students[i].Id,
+                            Student = students[i]
+                        });
+                    }
+                }
+
+
             }
             catch
             {

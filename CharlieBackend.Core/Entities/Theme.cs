@@ -13,6 +13,6 @@ namespace CharlieBackend.Core.Entities
 
         public virtual ICollection<Lesson> Lessons { get; set; }
 
-
+        public virtual ICollection<Hometask> Hometasks { get; set; }
     }
 }

@@ -10,16 +10,16 @@ namespace CharlieBackend.Core.DTO.Homework
 
         public ushort? DeadlineDays { get; set; }
 
-        public string? TaskText { get; set; }
+        public string TaskText { get; set; }
 
         public virtual IList<long> AttachmentId { get; set; }
 
-        public string? Comment { get; set; }
+        public string Comment { get; set; }
 
-        public bool PublicTask { get; set; }
+        public bool Common { get; set; }
 
-        ???public long ThemeId { get; set; }??? // List?
+        public long? ThemeId { get; set; }
 
-        public long MentorId { get; set; }
+        public long? MentorId { get; set; }
     }
 }

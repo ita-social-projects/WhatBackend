@@ -4,10 +4,8 @@ using System.Text;
 
 namespace CharlieBackend.Core.Entities
 {
-    public partial class Hometask
+    public partial class Hometask : BaseEntity
     {
-        public long Id { get; set; }
-
         public ushort? DeadlineDays { get; set; }
 
         public string TaskText { get; set; }
@@ -20,7 +18,7 @@ namespace CharlieBackend.Core.Entities
 
         public Theme Theme { get; set; }
 
-        public long MentorId { get; set; }
+        public long? MentorId { get; set; }
 
         public Mentor Mentor { get; set; }
 

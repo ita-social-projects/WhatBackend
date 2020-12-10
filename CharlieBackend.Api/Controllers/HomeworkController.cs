@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Homework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,17 +26,17 @@ namespace CharlieBackend.Api.Controllers
             _homeworkService = homeworkService;
         }
 
-        /// <summary>
-        /// Adds hometask
-        /// </summary>
-        [Authorize(Roles = "Admin, Mentor")]
-        [HttpPost("studentsClassbook")]
-        public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
-        {
-            var results = await _homeworkService
-                .PostHometask(request);
+        ///// <summary>
+        ///// Adds hometask
+        ///// </summary>
+        //[Authorize(Roles = "Admin, Mentor")]
+        //[HttpPost("studentsClassbook")]
+        //public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
+        //{
+        //    var results = await _homeworkService
+        //        .PostHometask(request);
 
-            return results.ToActionResult();
-        }
+        //    return results.ToActionResult();
+        //}
     }
 }

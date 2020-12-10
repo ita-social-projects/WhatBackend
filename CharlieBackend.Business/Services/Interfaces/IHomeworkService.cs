@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.Models.ResultModel;
+﻿using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.Models.ResultModel;
 using System;
 using System.Collections.Generic;
 using System.Text;

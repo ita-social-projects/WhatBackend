@@ -23,6 +23,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IDashboardRepository _dashboardRepository;
         private IScheduleRepository _scheduleRepository;
         private IAttachmentRepository _attachmentRepository;
+        private IHometaskRepository _hometaskRepository;
 
         #endregion 
 
@@ -135,6 +136,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return _scheduleRepository = _scheduleRepository
                         ?? new ScheduleRepository(_applicationContext);
+            }
+        }
+
+        public IHometaskRepository HometaskRepository
+        {
+            get
+            {
+                return _hometaskRepository = _hometaskRepository
+                        ?? new HometaskRepository(_applicationContext);
             }
         }
 
