@@ -6,13 +6,13 @@ using System.Text;
 
 namespace CharlieBackend.Api.SwaggerExamples.ImportController
 {
-    internal class ImportDataFromFileResponse : IExamplesProvider<List<StudentGroupFileModel>>
+    internal class ImportDataFromFileResponse : IExamplesProvider<List<StudentGroupFile>>
     {
-        public List<StudentGroupFileModel> GetExamples()
+        public List<StudentGroupFile> GetExamples()
         {
-            return new List<StudentGroupFileModel>
+            return new List<StudentGroupFile>
             {
-                new StudentGroupFileModel
+                new StudentGroupFile
                 {
                     Id = "42",
                     CourseId = "12",
@@ -20,7 +20,7 @@ namespace CharlieBackend.Api.SwaggerExamples.ImportController
                     StartDate = new DateTime(2015, 7, 20),
                     FinishDate = new DateTime(2016, 8, 20)
                 },
-                new StudentGroupFileModel
+                new StudentGroupFile
                 {
                     Id = "45",
                     CourseId = "14",

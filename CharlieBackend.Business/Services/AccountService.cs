@@ -117,19 +117,6 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
         }
 
-        public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
-        {
-            
-            account.Salt = GenerateSalt();
-            account.Password = HashPassword(account.Password, account.Salt);
-
-            _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
-
-            await _unitOfWork.CommitAsync();
-
-            return _mapper.Map<AccountDto>(account);
-        }
-
         public Task<bool> IsEmailChangableToAsync(long id, string newEmail)
         {
             return _unitOfWork.AccountRepository.IsEmailChangableToAsync(id, newEmail);
@@ -156,6 +143,39 @@ namespace CharlieBackend.Business.Services
 
                 return false;
             }
+        }
+
+        public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePasswd.Email);
+            
+            if (user == null)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            }
+
+            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePasswd.Email);
+
+            if (!string.IsNullOrEmpty(salt))
+            {
+                string checkPassword = HashPassword(changePasswd.CurrentPassword, salt);
+
+                if (user.Password == checkPassword)
+                {
+                    user.Salt = GenerateSalt();
+                    user.Password = HashPassword(changePasswd.NewPassword, user.Salt);
+
+                    await _unitOfWork.CommitAsync();
+
+                    return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+                }
+                else
+                {
+                    return Result<AccountDto>.GetError(ErrorCode.Conflict, "Wrong current password.");
+                }
+            }
+
+            return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
         #region hash

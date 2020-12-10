@@ -19,7 +19,8 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
         {
             CreateMap<StudentGroupDto, StudentGroupViewModel>()
                 .ForMember(destination => destination.Students, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
-                .ForMember(destination => destination.Mentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
+                .ForMember(destination => destination.Mentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()))
+                 .ForMember(destination => destination.Course, config => config.MapFrom(x => new CourseViewModel() { Id = x.CourseId}));
 
             CreateMap<StudentGroupDto, StudentGroupEditViewModel>()
                .ForMember(detination => detination.ActiveCourse, config => config.MapFrom(x => new CourseViewModel { Id = x.CourseId }))

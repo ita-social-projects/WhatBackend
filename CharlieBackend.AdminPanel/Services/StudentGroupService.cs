@@ -45,10 +45,12 @@ namespace CharlieBackend.AdminPanel.Services
             var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
             var studentsTask = _studentService.GetAllStudentsAsync(accessToken);
             var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
+            var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
 
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(await studentGroupsTask);
             var students = await studentsTask;
             var mentors = await mentorsTask;
+            var courses = await coursesTask;
 
             foreach (var item in studentGroups)
             {
@@ -80,6 +82,7 @@ namespace CharlieBackend.AdminPanel.Services
                     }
                 }).ToList();
 
+                item.Course.Name = courses.Where(x => x.Id == item.Course.Id).FirstOrDefault()?.Name;
             }
 
             return studentGroups;

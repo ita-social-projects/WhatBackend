@@ -31,6 +31,17 @@ namespace CharlieBackend.AdminPanel
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
+            string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+
+            if (File.Exists(envFilePath))
+            {
+                DotNetEnv.Env.Load(envFilePath);
+            }
+            else
+            {
+                Console.WriteLine(".Env file must be configured");
+            }
+
             var builder = Host.CreateDefaultBuilder(args)
                     .ConfigureHostConfiguration(x => HostConfigurationBuilder(args))
                     .ConfigureWebHostDefaults(webBuilder =>

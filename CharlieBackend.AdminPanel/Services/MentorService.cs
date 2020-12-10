@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using CharlieBackend.AdminPanel.Models.Course;
 using CharlieBackend.AdminPanel.Models.Mentor;
+using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Theme;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -25,11 +29,50 @@ namespace CharlieBackend.AdminPanel.Services
             _mapper = mapper;
         }
 
+        public async Task<MentorDto> AddMentorAsync(long id, string accessToken)
+        {
+            return await
+                _apiUtil.CreateAsync<MentorDto>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", null, accessToken);
+        }
+
+        public async Task<MentorDto> DisableMentorAsync(long id, string accessToken)
+        {
+            return await 
+                _apiUtil.DeleteAsync<MentorDto>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", accessToken);
+        }
+
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync(string accessToken)
         {
-            var courses = await _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", accessToken);
+            var allMentors = await 
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", accessToken);
+            var activeMentors = await 
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors/active", accessToken);
 
-            return courses;
+            foreach (var mentor in allMentors)
+            {
+                mentor.IsActive = activeMentors.Any(x => x.Id == mentor.Id);
+            }
+
+            return allMentors;
+        }
+
+        public async Task<MentorEditViewModel> GetMentorByIdAsync(long id, string accessToken)
+        {
+            var mentorTask = _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", accessToken);
+            var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>($"{_config.Value.Urls.Api.Https}/api/courses", accessToken);
+            var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
+
+            var mentor = await mentorTask;
+            mentor.AllGroups = await studentGroupTask;
+            mentor.AllCourses = await coursesTask;
+
+            return mentor;
+        }
+
+        public async Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto, string accessToken)
+        {
+            return await 
+                _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", UpdateDto, accessToken);
         }
     }
 }

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using CharlieBackend.Api.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Business.Options;
@@ -24,16 +25,27 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CharlieBackend.Api
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
             CompositionRoot.InjectDependencies(services, Configuration);
@@ -62,10 +74,15 @@ namespace CharlieBackend.Api
 
             services.AddControllers()
                 .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter()));
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                    });
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
+
+            //AzureStorageBlobs Congiguration through extension
+            services.AddAzureStorageBlobs(Configuration.GetConnectionString("AzureBlobsAccessKey"));
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -77,7 +94,7 @@ namespace CharlieBackend.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CharlieBackend", Version = "19.11.2020" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WHAT Project API", Version = "07.12.2020" });
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 
@@ -86,7 +103,7 @@ namespace CharlieBackend.Api
 
                c.IncludeXmlComments(xmlPath);
 
-                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); 
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.IncludeXmlComments(xmlPath); 
 
@@ -122,7 +139,9 @@ namespace CharlieBackend.Api
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(builder =>
@@ -146,7 +165,7 @@ namespace CharlieBackend.Api
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CharlieBackend");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WHAT Project API");
             });
 
             if (env.IsDevelopment())

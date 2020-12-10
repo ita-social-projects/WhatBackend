@@ -8,16 +8,22 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IMentorService
     {
-        public Task<Result<MentorDto>> CreateMentorAsync(long accountId);
+        Task<Result<MentorDto>> CreateMentorAsync(long accountId);
 
-        public Task<IList<MentorDto>> GetAllMentorsAsync();
+        Task<Result<IList<MentorDto>>> GetAllActiveMentorsAsync();
 
-        public Task<long?> GetAccountId(long mentorId);
+        Task<IList<MentorDto>> GetAllMentorsAsync();
 
-        public Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel);
+        Task<Result<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorIdAsync(long id);
 
-        public Task<MentorDto> GetMentorByAccountIdAsync(long accountId);
+        Task<Result<IList<MentorCoursesDto>>> GetMentorCoursesByMentorIdAsync(long id);
 
-        public Task<MentorDto> GetMentorByIdAsync(long mentorId);
+        Task<long?> GetAccountId(long mentorId);
+
+        Task<Result<MentorDto>> UpdateMentorAsync(long id, UpdateMentorDto mentorModel);
+
+        Task<MentorDto> GetMentorByAccountIdAsync(long accountId);
+
+        Task<MentorDto> GetMentorByIdAsync(long mentorId);
     }
 }

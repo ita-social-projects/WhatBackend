@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Student;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -16,6 +17,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
+        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        {
+            _applicationContext.StudentsOfStudentGroups
+                   .AddRange(items);
+        }
         public bool DeleteStudentGroup(long StudentGroupModelId)
         {
             var x = SearchStudentGroup(StudentGroupModelId);
@@ -72,7 +78,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         }
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup, 
-                                    IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
+                                     IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
         {
             _applicationContext.StudentsOfStudentGroups.
                     TryUpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
@@ -85,5 +91,17 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Include(group => group.MentorsOfStudentGroups)
                     .FirstOrDefaultAsync(group => group.Id == id);
         }
+
+        public async Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .Where(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == id))
+                    .Select(x => new MentorStudyGroupsDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name
+                    }).ToListAsync();
+                    }
     }
 }
