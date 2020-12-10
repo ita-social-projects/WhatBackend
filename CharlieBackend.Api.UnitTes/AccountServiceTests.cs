@@ -1,13 +1,11 @@
 ﻿using Moq;
 using Xunit;
-using System;
 using AutoMapper;
-using System.Text;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
-using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
@@ -20,9 +18,6 @@ namespace CharlieBackend.Api.UnitTest
     { 
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
-
-        private const string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
-        private const int _saltLen = 15;
 
         public AccountServiceTests()
         {
@@ -81,8 +76,8 @@ namespace CharlieBackend.Api.UnitTest
                 _notificationServiceMock.Object);
 
             //Act
-             var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
-             var successResult = await accountService.CreateAccountAsync(successAccountModel);
+            var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
+            var successResult = await accountService.CreateAccountAsync(successAccountModel);
 
             //Assert
             Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
@@ -96,7 +91,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task ChangePasswordAsync()
         {
             //Arrange
-            var salt = GenerateSalt();
+            var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
             var newPassword = "changedPass";
 
@@ -105,7 +100,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "user@exmaple.com",
-                Password = HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = salt,
                 Role = UserRole.Mentor
             };
@@ -149,7 +144,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "withoutSalt@exmaple.com",
-                Password = HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = null,
                 Role = UserRole.Mentor
             };
@@ -195,52 +190,5 @@ namespace CharlieBackend.Api.UnitTest
             var mock = new Mock<IUnitOfWork>();
             return mock;
         }
-
-        #region Hash
-        public string GenerateSalt()
-        {
-            //StringBuilder object with a predefined buffer size for the resulting string
-            StringBuilder sb = new StringBuilder(_saltLen - 1);
-
-            //a variable for storing a random character position from the string Str
-            int Position = 0;
-
-            for (int i = 0; i < _saltLen; i++)
-            {
-                Position = this.Next(0, _saltAlphabet.Length - 1);
-
-                //add the selected character to the object StringBuilder
-                sb.Append(_saltAlphabet[Position]);
-            }
-
-            return sb.ToString();
-        }
-        public Int32 Next(Int32 minValue, Int32 maxValue)
-        {
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] uint32Buffer = new byte[4];
-                Int64 diff = maxValue - minValue;
-                while (true)
-                {
-                    rng.GetBytes(uint32Buffer);
-                    UInt32 rand = BitConverter.ToUInt32(uint32Buffer, 0);
-                    Int64 max = (1 + (Int64)UInt32.MaxValue);
-                    Int64 remainder = max % diff;
-                    if (rand < max - remainder)
-                    {
-                        return (Int32)(minValue + (rand % diff));
-                    }
-                }
-            }
-        }
-        public string HashPassword(string password, string salt)
-        {
-            byte[] data = Encoding.Default.GetBytes(password + salt);
-            var result = new SHA256Managed().ComputeHash(data);
-
-            return BitConverter.ToString(result).Replace("-", "").ToLower();
-        }
-        #endregion
     }
 }
