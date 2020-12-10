@@ -47,6 +47,10 @@ namespace CharlieBackend.Business.Services
 
             if (themeEntity != null)
             {
+                if (await _unitOfWork.ThemeRepository.IsThemeUsed(themeEntity.Id))
+                {
+                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Some lesson used this theme");
+                }
                 var mappedTheme = _mapper.Map<ThemeDto>(themeEntity);
                 await _unitOfWork.ThemeRepository.DeleteAsync(themeId);
 
