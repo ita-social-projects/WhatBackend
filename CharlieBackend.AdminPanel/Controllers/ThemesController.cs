@@ -39,15 +39,6 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(themes);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> UpdateTheme(long id)
-        {
-            var themes = await _themeService.GetAllThemesAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
-            ViewBag.Theme = themes.First(el => el.Id == id);
-
-            return View("UpdateTheme");
-        }
-
         [HttpPost]
         public async Task<IActionResult> AddTheme(CreateThemeDto themeDto)
         {
@@ -56,14 +47,15 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllThemes", "Themes");
         }
 
-        [HttpPost("{id}")]  
-        public async Task<IActionResult> UpdateTheme(long id, UpdateThemeDto data)
+        [HttpGet("{id}")]  
+        public async Task<IActionResult> UpdateTheme(long id, UpdateThemeDto updateThemeDto)
         {
-            await _themeService.UpdateTheme(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
+            await _themeService.UpdateTheme(id, updateThemeDto, _protector.Unprotect(Request.Cookies["accessToken"]));
 
             return RedirectToAction("AllThemes", "Themes");
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> DeleteTheme(long id)
         {
             await _themeService.DeleteTheme(id, _protector.Unprotect(Request.Cookies["accessToken"]));
