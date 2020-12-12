@@ -31,8 +31,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task SendChangeUrAsync(ForgotPasswordDto forgotPassword);
 
-        Task<bool> GuidVerify(string guid);
-
         Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword);
     }
 }

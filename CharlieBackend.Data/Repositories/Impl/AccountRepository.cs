@@ -114,11 +114,5 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Accounts
                         .FirstOrDefaultAsync(account => account.Email == email);
         }
-
-        public Task<bool> IsGuidExists(string guid)
-        {
-            return _applicationContext.Accounts
-                    .AnyAsync(account => account.ForgotPasswordToken == guid);
-        }
     }
 }

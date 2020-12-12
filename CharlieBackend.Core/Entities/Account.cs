@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -20,6 +21,8 @@ namespace CharlieBackend.Core.Entities
 
 #nullable enable
         public string? ForgotPasswordToken { get; set; }
+
+        public DateTime? ForgotTokenGenDate { get; set; }
 #nullable disable
 
         public virtual ICollection<Mentor> Mentors { get; set; }

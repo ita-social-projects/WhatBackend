@@ -220,7 +220,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Returns a result of sending email
         /// </summary>
-        /// <response code="200">Successful return an updated account entity</response>
+        /// <response code="200">Successful return a notification string</response>
         [Route("password/forgot")]
         [AllowAnonymous]
         [HttpPost]
@@ -238,35 +238,12 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Returns a result of confirmed password change
         /// </summary>
-        /// <response code="200">Successful user redirection to UI form</response>
-        [Route("password/confirm/{userGuid}")]
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<ActionResult> ConfirmPassword(string userGuid)
-        {
-            var userVerify = await _accountService.GuidVerify(userGuid);
-
-            if (userVerify)
-            {
-               return Redirect(formUrl);
-            }
-          
-            return BadRequest("Failed with user verification.");
-        }
-
-        /// <summary>
-        /// Returns a result of confirmed password change
-        /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
         [Route("password/reset/{guid}")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult> ResetForgotPassword(string guid, ResetPasswordDto resetPassword)
         {
-            //Сюда форма присылает POST запрос с ResetPasswordDto, производится апдейд пароля юзера
-            //Также нужно удалять guid у юзера в forgot pasword token, чтобы ссылка была одноразовой
-            //Также нужно выяснить, как верифицировать или скрыть этот эндпопоинт, чтобы левый человек не смог поменять пароль
-            //Как передать в форму guid и выполнить с ним же POST запрос для соблюдения секъюрности?
             var updatedAccount = await _accountService.ResetPasswordAsync(guid, resetPassword);
 
             return updatedAccount.ToActionResult();

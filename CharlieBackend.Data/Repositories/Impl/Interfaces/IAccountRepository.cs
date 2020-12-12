@@ -29,7 +29,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public void UpdateAccountCredentials(Account account);
 
         public Task<Account> GetAccountCredentialsByEmailAsync(string email);
-
-        public Task<bool> IsGuidExists(string guid);
     }
 }

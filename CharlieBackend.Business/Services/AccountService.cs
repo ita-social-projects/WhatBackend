@@ -16,6 +16,7 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly string formUrl = "https://frontenddomain/account/resetPassword?token=";
 
         public AccountService(IUnitOfWork unitOfWork, 
                               IMapper mapper,
@@ -178,35 +179,13 @@ namespace CharlieBackend.Business.Services
 
             var userGuid = Guid.NewGuid();
             user.ForgotPasswordToken = userGuid.ToString();
+            user.ForgotTokenGenDate = DateTime.Now;
 
             await _unitOfWork.CommitAsync();
 
-            string callbackUrl = "http://localhost:5000/api/accounts/password/confirm/" + user.ForgotPasswordToken; //add get parameter for form url
+            string callbackUrl = formUrl + user.ForgotPasswordToken;
 
             await _notification.ForgotPasswordNotify(forgotPassword.Email, callbackUrl);
-
-            /*
-             * var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
-
-            var userGuid = Guid.NewGuid();
-            user.ForgotPasswordToken = userGuid.ToString();
-
-            await _unitOfWork.CommitAsync();
-
-            //send this to user in email
-            string formUrl = "";
-
-            await _notification.ForgotPasswordNotify(forgotPassword.Email, formUrl);
-
-
-            //this 
-            string callbackUrl = "http://localhost:5000/api/accounts/ConfirmPasswordChange/" + userGuid; //add get parameter for form url
-             */
-        }
-
-        public async Task<bool> GuidVerify(string guid)
-        {
-            return await _unitOfWork.AccountRepository.IsGuidExists(guid);
         }
 
         public async Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword)
@@ -218,18 +197,37 @@ namespace CharlieBackend.Business.Services
                 return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
             }
 
-            if(user.ForgotPasswordToken != guid)
+            if (user.ForgotPasswordToken != guid)
             {
                 return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Form validation error.");
             }
 
-            user.Salt = PasswordHelper.GenerateSalt();
-            user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
-            user.ForgotPasswordToken = null;
+            if (user.ForgotTokenGenDate.HasValue)
+            {
+                DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
 
-            await _unitOfWork.CommitAsync();
+                if (tokenGenDate.AddDays(1) > DateTime.Now)
+                {
+                    user.ForgotPasswordToken = null;
+                    user.ForgotTokenGenDate = null;
 
-            return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+                    await _unitOfWork.CommitAsync();
+
+                    return Result<AccountDto>.GetError(ErrorCode.ValidationError,
+                                                       $"Forgot password token for {user.Email} is expired");
+                }
+
+                user.Salt = PasswordHelper.GenerateSalt();
+                user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
+                user.ForgotPasswordToken = null;
+                user.ForgotTokenGenDate = null;
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+            }
+
+            return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "No date of token generation");
         }
     }
 }
