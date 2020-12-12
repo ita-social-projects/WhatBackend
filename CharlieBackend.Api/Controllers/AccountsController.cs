@@ -229,6 +229,7 @@ namespace CharlieBackend.Api.Controllers
             if (await _accountService.IsEmailTakenAsync(changeFgtPasswd.Email))
             {
                 await _accountService.SendChangeUrAsync(changeFgtPasswd);
+                
                 return Ok($"Link to change password has been sent to email {changeFgtPasswd.Email}");
             }
 
