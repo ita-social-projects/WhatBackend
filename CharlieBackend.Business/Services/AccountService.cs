@@ -202,32 +202,32 @@ namespace CharlieBackend.Business.Services
                 return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Form validation error.");
             }
 
-            if (user.ForgotTokenGenDate.HasValue)
+            if (!user.ForgotTokenGenDate.HasValue)
             {
-                DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
+                return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "No date of token generation");
+            }
 
-                if (tokenGenDate.AddDays(1) > DateTime.Now)
-                {
-                    user.ForgotPasswordToken = null;
-                    user.ForgotTokenGenDate = null;
+            DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
 
-                    await _unitOfWork.CommitAsync();
-
-                    return Result<AccountDto>.GetError(ErrorCode.ValidationError,
-                                                       $"Forgot password token for {user.Email} is expired");
-                }
-
-                user.Salt = PasswordHelper.GenerateSalt();
-                user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
+            if (tokenGenDate.AddDays(1) > DateTime.Now)
+            {
                 user.ForgotPasswordToken = null;
                 user.ForgotTokenGenDate = null;
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+                return Result<AccountDto>.GetError(ErrorCode.ValidationError,
+                                                   $"Forgot password token for {user.Email} is expired");
             }
 
-            return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "No date of token generation");
+            user.Salt = PasswordHelper.GenerateSalt();
+            user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
+            user.ForgotPasswordToken = null;
+            user.ForgotTokenGenDate = null;
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
         }
     }
 }
