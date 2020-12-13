@@ -9,6 +9,6 @@ namespace WhatBackend.EmailRenderService.Services.Interfaces
 
         string GetRegistrationSuccessTemplate(RegistrationSuccessEvent message);
 
-        string GetRegistrationSuccessTemplate(ForgotPasswordEvent message);
+        string GetForgotPasswordTemplate(ForgotPasswordEvent message);
     }
 }

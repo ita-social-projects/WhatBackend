@@ -94,7 +94,7 @@ namespace WhatBackend.EmailRenderService.Services
             return emailBody;
         }
 
-        public string GetRegistrationSuccessTemplate(ForgotPasswordEvent message)
+        public string GetForgotPasswordTemplate(ForgotPasswordEvent message)
         {
             string header = "WHAT Project";
             string emailBody =
