@@ -37,7 +37,7 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
                 await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.GetForgotPasswordTemplate(message)
+                    EmailBody = _messageTemplate.GetEmailNotifyTemplate("Please, follow this link to change your password: " + message.Url)
                 });
             }
         }

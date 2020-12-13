@@ -17,9 +17,9 @@ namespace CharlieBackend.Core.Entities
 
         public string Salt { get; set; }
 
+#nullable enable
         public bool? IsActive { get; set; }
 
-#nullable enable
         public string? ForgotPasswordToken { get; set; }
 
         public DateTime? ForgotTokenGenDate { get; set; }
