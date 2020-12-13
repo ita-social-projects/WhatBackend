@@ -31,7 +31,6 @@ namespace CharlieBackend.Api.Controllers
         private readonly IMentorService _mentorService;
         private readonly ISecretaryService _secretaryService;
         private readonly AuthOptions _authOptions;
-        private const string formUrl = "https://dp192-what-api.oa.r.appspot.com/index.html";
         #endregion
         /// <summary>
         /// Account controller constructor
