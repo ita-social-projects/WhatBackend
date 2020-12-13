@@ -328,7 +328,7 @@ namespace CharlieBackend.Data
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.StudentGroup)
                     .HasForeignKey(d => d.CourseId)
-                    .OnDelete(DeleteBehavior.SetNull)
+                    //.OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_course_of_student_group");
             });
 
