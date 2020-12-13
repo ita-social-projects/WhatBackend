@@ -173,7 +173,7 @@ namespace CharlieBackend.Business.Services
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
-        public async Task SendChangeUrlAsync(ForgotPasswordDto forgotPassword)
+        public async Task SendChangePasswordUrlAsync(ForgotPasswordDto forgotPassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
 
