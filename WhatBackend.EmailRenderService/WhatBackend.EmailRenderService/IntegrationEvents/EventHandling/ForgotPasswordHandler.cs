@@ -37,7 +37,7 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
                 await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.GetRegistrationSuccessTemplate(message)
+                    EmailBody = _messageTemplate.GetForgotPasswordTemplate(message)
                 });
             }
         }
