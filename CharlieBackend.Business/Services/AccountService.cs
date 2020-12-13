@@ -209,7 +209,7 @@ namespace CharlieBackend.Business.Services
 
             DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
 
-            if (tokenGenDate.AddDays(1) > DateTime.Now)
+            if (DateTime.Now > tokenGenDate.AddDays(1))
             {
                 user.ForgotPasswordToken = null;
                 user.ForgotTokenGenDate = null;
