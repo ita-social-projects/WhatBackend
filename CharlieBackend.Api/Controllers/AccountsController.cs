@@ -209,9 +209,9 @@ namespace CharlieBackend.Api.Controllers
         [Route("password")]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPut]
-        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
+        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
-            var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
 
             return updatedAccount.ToActionResult();
         }
@@ -223,16 +223,16 @@ namespace CharlieBackend.Api.Controllers
         [Route("password/forgot")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPasswd)
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPassword)
         {
-            if (await _accountService.IsEmailTakenAsync(changeForgotPasswd.Email))
+            if (await _accountService.IsEmailTakenAsync(changeForgotPassword.Email))
             {
-                await _accountService.SendChangeUrAsync(changeForgotPasswd);
+                await _accountService.SendChangeUrAsync(changeForgotPassword);
                 
-                return Ok($"Link to change password has been sent to email {changeForgotPasswd.Email}");
+                return Ok($"Link to change password has been sent to email {changeForgotPassword.Email}");
             }
 
-            return BadRequest($"Account with email {changeForgotPasswd.Email} does not exist!");
+            return BadRequest($"Account with email {changeForgotPassword.Email} does not exist!");
         }
 
         /// <summary>
