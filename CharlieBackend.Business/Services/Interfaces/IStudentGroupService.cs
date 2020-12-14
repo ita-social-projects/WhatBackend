@@ -10,7 +10,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<StudentGroupDto>> CreateStudentGroupAsync(CreateStudentGroupDto studentGroupModel);
 
-        Task<Result<IList<StudentGroupDto>>> GetAllStudentGroupsAsync();
+        Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync();
 
         Task<Result<bool>> IsGroupNameExistAsync(string groupName);
 

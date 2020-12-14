@@ -55,11 +55,11 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of students list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<MentorDto>>> GetAllActiveMentors()
+        public async Task<IList<MentorDto>> GetAllActiveMentors()
         {
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
-            return mentors.ToActionResult();
+            return mentors;
         }
 
         /// <summary>
@@ -122,12 +122,12 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorStudyGroupsDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/groups")]
-        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId(long id)
+        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorId(long id)
         {
             var foundGroups = await _mentorService
                     .GetMentorStudyGroupsByMentorIdAsync(id);
 
-            return foundGroups.ToActionResult();
+            return foundGroups;
         }
 
         /// <summary>
@@ -138,12 +138,12 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/courses")]
-        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
+        public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorId(long id)
         {
             var foundCourses = await _mentorService
                     .GetMentorCoursesByMentorIdAsync(id);
 
-            return foundCourses.ToActionResult();
+            return foundCourses;
         }
 
         /// <summary>

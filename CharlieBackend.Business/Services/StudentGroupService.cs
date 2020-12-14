@@ -109,12 +109,12 @@ namespace CharlieBackend.Business.Services
             return Result<bool>.GetSuccess(res);
         }
 
-        public async Task<Result<IList<StudentGroupDto>>> GetAllStudentGroupsAsync()
+        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
             var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
-            return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
+            return studentGroupDto;
         }
 
         public bool DeleteStudentGrop(long StudentGroupId)

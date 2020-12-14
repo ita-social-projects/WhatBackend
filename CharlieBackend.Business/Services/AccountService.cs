@@ -86,11 +86,11 @@ namespace CharlieBackend.Business.Services
             return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
         }
 
-        public async Task<Result<IList<AccountDto>>> GetAllAccountsAsync()
+        public async Task<IList<AccountDto>> GetAllAccountsAsync()
         {
             var foundAccount = _mapper.Map<IList<AccountDto>>(await _unitOfWork.AccountRepository.GetAllAsync());
 
-            return Result<IList<AccountDto>>.GetSuccess(foundAccount);
+            return foundAccount;
         }
 
         public async Task<Account> GetAccountCredentialsByIdAsync(long id)
@@ -105,30 +105,16 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
-        public async Task<Result<IList<AccountDto>>> GetAllNotAssignedAccountsAsync()
+        public async Task<IList<AccountDto>> GetAllNotAssignedAccountsAsync()
         {
             var accounts = _mapper.Map<List<AccountDto>>(await _unitOfWork.AccountRepository.GetAllNotAssignedAsync());
 
-            return Result<IList<AccountDto>>.GetSuccess(accounts);
+            return accounts;
         }
 
         public Task<bool> IsEmailTakenAsync(string email)
         {
             return _unitOfWork.AccountRepository.IsEmailTakenAsync(email);
-        }
-
-
-        public async Task<AccountDto> UpdateAccountCredentialsAsync(Account account)
-        {
-
-            account.Salt = GenerateSalt();
-            account.Password = HashPassword(account.Password, account.Salt);
-
-            _unitOfWork.AccountRepository.UpdateAccountCredentials(account);
-
-            await _unitOfWork.CommitAsync();
-
-            return _mapper.Map<AccountDto>(account);
         }
 
         public Task<bool> IsEmailChangableToAsync(long id, string newEmail)

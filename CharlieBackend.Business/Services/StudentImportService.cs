@@ -135,7 +135,7 @@ namespace CharlieBackend.Business.Services
                 studentEmails.Add(account.Email);
             }
 
-            foreach (var account in (await _accountService.GetAllNotAssignedAccountsAsync()).Data)
+            foreach (var account in await _accountService.GetAllNotAssignedAccountsAsync())
             {
                 if (studentEmails.Contains(account.Email))
                 {

@@ -86,11 +86,11 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<List<MentorDto>>(mentors);
         }
 
-        public async Task<Result<IList<MentorDto>>> GetAllActiveMentorsAsync()
+        public async Task<IList<MentorDto>> GetAllActiveMentorsAsync()
         {
             var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
 
-            return Result<IList<MentorDto>>.GetSuccess(mentors);
+            return mentors;
         }
 
         public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
@@ -205,39 +205,39 @@ namespace CharlieBackend.Business.Services
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
             }
 
-            var mentor = await GetMentorByAccountIdAsync((long)accountId);
+            var mentorDto = await GetMentorByAccountIdAsync(accountId.Value);
 
-            if (!await _accountService.DisableAccountAsync((long)accountId))
+            if (!await _accountService.DisableAccountAsync(accountId.Value))
             {
                 return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
             }
 
-            return Result<MentorDto>.GetSuccess(mentor.Data);
+            return mentorDto;
 
         }
 
-        public async Task<Result<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorIdAsync(long id)
+        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorIdAsync(long id)
         {
-            if (!await _unitOfWork.MentorRepository.IsEntityExistAsync(id))
-            {
-                return Result<IList<MentorStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Mentor doesn`t exist");
-            }
-
             var foundGroups = await _unitOfWork.StudentGroupRepository.GetMentorStudyGroups(id);
 
-            return Result<IList<MentorStudyGroupsDto>>.GetSuccess(foundGroups);
-        }
-
-        public async Task<Result<IList<MentorCoursesDto>>> GetMentorCoursesByMentorIdAsync(long id)
-        {
-            if (!await _unitOfWork.MentorRepository.IsEntityExistAsync(id))
+            if (foundGroups == null)
             {
-                return Result<IList<MentorCoursesDto>>.GetError(ErrorCode.NotFound, "Mentor doesn`t exist");
+                return new List<MentorStudyGroupsDto>();
             }
 
+            return foundGroups;
+        }
+
+        public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorIdAsync(long id)
+        {
             var foundCourses = await _unitOfWork.CourseRepository.GetMentorCourses(id);
 
-            return Result<IList<MentorCoursesDto>>.GetSuccess(foundCourses);
+            if (foundCourses == null)
+            {
+                return new List<MentorCoursesDto>();
+            }
+
+            return foundCourses;
         }
     }
 }

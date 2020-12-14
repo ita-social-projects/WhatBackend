@@ -26,12 +26,12 @@ namespace CharlieBackend.Business.Services
             {
                 if (courseDto == null)
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "empty Dto");
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Course Dto is null");
                 }
 
                 if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseDto.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This name is already taken");
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Course name \"{courseDto.Name}\" is already taken");
                 }
 
                 var createdCourseEntity = _mapper.Map<Course>(courseDto);
@@ -51,11 +51,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<CourseDto>>> GetAllCoursesAsync()
+        public async Task<IList<CourseDto>> GetAllCoursesAsync()
         {
             var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllAsync());
 
-            return Result<IList<CourseDto>>.GetSuccess(courses);
+            return courses;
         }
 
         public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
@@ -77,7 +77,7 @@ namespace CharlieBackend.Business.Services
 
                 if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(updatedEntity.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "This course name is already taken");
+                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Сourse name \"{updatedEntity.Name}\"is already taken");
                 }
 
                 _unitOfWork.CourseRepository.Update(updatedEntity);
