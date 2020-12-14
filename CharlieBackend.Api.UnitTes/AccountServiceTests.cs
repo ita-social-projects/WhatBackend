@@ -253,7 +253,7 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(validUser);
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithoutDateOfForgotTokenDto.Email))
                     .ReturnsAsync(userWithoutDateOfForgotToken);
-            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithTokenDateExpired.Email))
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithTokenDateExpiredDto.Email))
                     .ReturnsAsync(userWithTokenDateExpired);
 
             var accountService = new AccountService(
