@@ -176,8 +176,7 @@ namespace CharlieBackend.Business.Services
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
 
-            var userGuid = Guid.NewGuid();
-            user.ForgotPasswordToken = userGuid.ToString();
+            user.ForgotPasswordToken = Guid.NewGuid().ToString();
             user.ForgotTokenGenDate = DateTime.Now;
 
             await _unitOfWork.CommitAsync();
