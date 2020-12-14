@@ -16,7 +16,6 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-        private readonly string formUrl = "https://frontenddomain/account/resetPassword?token=";
 
         public AccountService(IUnitOfWork unitOfWork, 
                               IMapper mapper,
@@ -173,7 +172,7 @@ namespace CharlieBackend.Business.Services
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
-        public async Task SendChangePasswordUrlAsync(ForgotPasswordDto forgotPassword)
+        public async Task SendChangePasswordUrlAsync(string formUrl, ForgotPasswordDto forgotPassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
 
@@ -183,7 +182,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            string callbackUrl = formUrl + user.ForgotPasswordToken;
+            string callbackUrl = formUrl + "token=" + user.ForgotPasswordToken;
 
             await _notification.ForgotPasswordNotify(forgotPassword.Email, callbackUrl);
         }
