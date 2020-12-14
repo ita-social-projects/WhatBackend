@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Xunit;
+using System;
 using AutoMapper;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
@@ -159,9 +160,9 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(accountWithoutSalt);
 
             var accountService = new AccountService(
-                _unitOfWorkMock.Object,
-                _mapper,
-                _notificationServiceMock.Object);
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
 
             //Act
             var notExistAccount = await accountService.ChangePasswordAsync(notExistDto);
@@ -183,6 +184,106 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedAccountDto.Email, successResult.Data.Email);
             Assert.Equal(updatedAccountDto.IsActive, successResult.Data.IsActive);
             Assert.Equal(updatedAccountDto.Role, successResult.Data.Role);
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync()
+        {
+            //Arrange
+            var userGuid = Guid.NewGuid().ToString();
+            var forgotPasswordGenDate = DateTime.Now;
+            var userWithoutTokenDateGuid = Guid.NewGuid().ToString();
+            var expiredDate = DateTime.Now.AddDays(-1);
+
+            var validUser = new Account
+            {
+                Id = 5,
+                Email = "example@example.com",
+                IsActive = true,
+                ForgotPasswordToken = userGuid,
+                ForgotTokenGenDate = forgotPasswordGenDate,
+                Role = UserRole.Mentor
+            };
+
+            var successResetPasswordDto = new ResetPasswordDto
+            {
+                Email = "example@example.com",
+                NewPassword = "bob228",
+                ConfirmNewPassword = "bob228"
+            };
+
+            var successAccountDto = new AccountDto
+            {
+                Id = 5,
+                Email = "example@example.com",
+                IsActive = true,
+                Role = UserRole.Mentor
+            };
+
+            var userDoesntExist = new ResetPasswordDto
+            {
+                Email = "dontexist@example.com"
+            };
+
+            var userWithoutDateOfForgotToken = new Account
+            {
+                Email = "withoutDate@example.com",
+                ForgotPasswordToken = userWithoutTokenDateGuid.ToString(),
+                ForgotTokenGenDate = null
+            };
+
+            var userWithoutDateOfForgotTokenDto = new ResetPasswordDto
+            {
+                Email = "withoutDate@example.com"
+            };
+
+            var userWithTokenDateExpired = new Account
+            {
+                Email = "expiredDate@example.com",
+                ForgotPasswordToken = userGuid,
+                ForgotTokenGenDate = expiredDate
+            };
+
+            var userWithTokenDateExpiredDto = new ResetPasswordDto
+            {
+                Email = "expiredDate@example.com"
+            };
+
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successResetPasswordDto.Email))
+                    .ReturnsAsync(validUser);
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithoutDateOfForgotTokenDto.Email))
+                    .ReturnsAsync(userWithoutDateOfForgotToken);
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithTokenDateExpired.Email))
+                    .ReturnsAsync(userWithTokenDateExpired);
+
+            var accountService = new AccountService(
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
+
+            //Act
+            var userDoesntExistResult = await accountService.ResetPasswordAsync(userGuid, userDoesntExist);
+            var invalidFormToken = await accountService.ResetPasswordAsync(Guid.NewGuid().ToString(), successResetPasswordDto);
+            var userWithoutDateToken = await accountService.ResetPasswordAsync(userWithoutTokenDateGuid, userWithoutDateOfForgotTokenDto);
+            var expiredTokenDate = await accountService.ResetPasswordAsync(userGuid, userWithTokenDateExpiredDto);
+            var successResult = await accountService.ResetPasswordAsync(userGuid.ToString(), successResetPasswordDto);
+
+            //Assert
+            Assert.NotNull(userDoesntExistResult);
+            Assert.NotNull(invalidFormToken);
+            Assert.NotNull(successResult);
+            Assert.NotNull(userWithoutDateToken);
+            Assert.NotNull(expiredTokenDate);
+
+            Assert.Equal(ErrorCode.NotFound, userDoesntExistResult.Error.Code);
+            Assert.Equal(ErrorCode.ValidationError, invalidFormToken.Error.Code);
+            Assert.Equal(ErrorCode.InternalServerError, userWithoutDateToken.Error.Code);
+            Assert.Equal(ErrorCode.ValidationError, expiredTokenDate.Error.Code);
+
+            Assert.Equal(successAccountDto.Id, successResult.Data.Id);
+            Assert.Equal(successAccountDto.Email, successResult.Data.Email);
+            Assert.Equal(successAccountDto.IsActive, successResult.Data.IsActive);
+            Assert.Equal(successAccountDto.Role, successResult.Data.Role);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
