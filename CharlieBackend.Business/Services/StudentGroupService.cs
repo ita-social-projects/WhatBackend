@@ -42,7 +42,7 @@ namespace CharlieBackend.Business.Services
 
                 if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(studentGroupDto.CourseId))
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId isn't exist");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
                 var studentGroup = new StudentGroup
@@ -95,8 +95,6 @@ namespace CharlieBackend.Business.Services
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-
-                Console.WriteLine(ex.Message);
 
                 return Result<StudentGroupDto>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
@@ -162,7 +160,7 @@ namespace CharlieBackend.Business.Services
 
                 if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(updatedStudentGroupDto.CourseId))
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId isn't exist");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
                 foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedStudentGroupDto.CourseId);

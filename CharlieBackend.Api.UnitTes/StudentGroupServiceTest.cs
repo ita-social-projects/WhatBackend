@@ -65,7 +65,7 @@ namespace CharlieBackend.Api.UnitTest
                 MentorIds = new List<long>()
             };
 
-            var withNotExistCourseIdStudentGroup = new CreateStudentGroupDto()
+            var studentGroupWithoutCourseID = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
                 CourseId = -1,
@@ -116,7 +116,7 @@ namespace CharlieBackend.Api.UnitTest
             courseRepositoryMock.Setup(x => x.IsEntityExistAsync(withoutMentorsAndStudentsStudentGroup.CourseId))
                                 .ReturnsAsync(true);
 
-            courseRepositoryMock.Setup(x => x.IsEntityExistAsync(withNotExistCourseIdStudentGroup.CourseId))
+            courseRepositoryMock.Setup(x => x.IsEntityExistAsync(studentGroupWithoutCourseID.CourseId))
                                 .ReturnsAsync(false);
 
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
@@ -136,7 +136,7 @@ namespace CharlieBackend.Api.UnitTest
             var groupNameExistResult = await studentGroupService.CreateStudentGroupAsync(existingStudentGroup);
             var nullGroupResult = await studentGroupService.CreateStudentGroupAsync(null);
             var withoutMentorsAndStudentsGroupResult = await studentGroupService.CreateStudentGroupAsync(withoutMentorsAndStudentsStudentGroup);
-            var withNotExistCoursIdResult = await studentGroupService.CreateStudentGroupAsync(withNotExistCourseIdStudentGroup);
+            var withNotExistCoursIdResult = await studentGroupService.CreateStudentGroupAsync(studentGroupWithoutCourseID);
 
             //Assert
 
@@ -199,7 +199,7 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "AAA"
             };
 
-            var withNotExistCourseIdStudentGroup = new CreateStudentGroupDto()
+            var studentGroupWithoutCourseID = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
                 CourseId = -1,
@@ -255,7 +255,7 @@ namespace CharlieBackend.Api.UnitTest
             var groupNameExistResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, existingNameStudentGroupDto);
             var groupNotExistResult = await studentGroupService.UpdateStudentGroupAsync(notExistingGroupId, updateStudentGroupDto);
             var nullGroupResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, null);
-            var withNotExistCoursIdResult = await studentGroupService.CreateStudentGroupAsync(withNotExistCourseIdStudentGroup);
+            var withNotExistCoursIdResult = await studentGroupService.CreateStudentGroupAsync(studentGroupWithoutCourseID);
 
             //Assert
 
