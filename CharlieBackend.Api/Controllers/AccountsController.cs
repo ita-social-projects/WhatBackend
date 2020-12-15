@@ -217,7 +217,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Returns a result of sending email
+        /// Returns a result of generating a forgot password token
         /// </summary>
         /// <response code="200">Successful returns a forgot password DTO</response>
         [Route("password/forgot")]
