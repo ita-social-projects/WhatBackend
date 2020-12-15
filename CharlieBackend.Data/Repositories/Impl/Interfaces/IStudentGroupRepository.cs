@@ -11,6 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id);
 
+        Task<bool> IsGroupOnCourseAsync(long id);
+
         Task<bool> IsGroupNameExistAsync(string name);
 
         StudentGroup SearchStudentGroup(long studentGroupId);

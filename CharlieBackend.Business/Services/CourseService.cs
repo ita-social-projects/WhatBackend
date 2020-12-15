@@ -75,7 +75,7 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, "Course already exists");
                 }
 
-                if (await _unitOfWork.CourseRepository.IsCourseEmptyAsync(id))
+                if (await _unitOfWork.CourseRepository.IsCourseHasGroupAsync(id))
                 {
                     return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Student group are included in this Course");
                 }
@@ -105,13 +105,9 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<bool>> DisableCourceAsync(long id)
         {
-            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
-            foreach (var item in studentGroup)
+            if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
             {
-                if (id == item.CourseId && item.FinishDate >= System.DateTime.Now)
-                {
-                    return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
-                }
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
             }
 
             Result<bool> course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);

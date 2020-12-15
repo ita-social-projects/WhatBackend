@@ -63,6 +63,11 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups.AnyAsync(x => x.Name == name);
         }
 
+        public async Task<bool> IsGroupOnCourseAsync(long id)
+        {
+            return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) &&(group.FinishDate >= System.DateTime.Now));
+        }
+
         public StudentGroup SearchStudentGroup(long studentGroupId)
         {
             foreach (var x in _applicationContext.StudentGroups)

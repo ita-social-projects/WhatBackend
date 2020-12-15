@@ -13,6 +13,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<Result<bool>> DisableCourseByIdAsync(long id);
 
-        Task<bool> IsCourseEmptyAsync(long id);
+        Task<bool> IsCourseHasGroupAsync(long id);
     }
 }
