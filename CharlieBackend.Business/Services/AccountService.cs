@@ -8,7 +8,6 @@ using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CharlieBackend.Business.Services
 {
