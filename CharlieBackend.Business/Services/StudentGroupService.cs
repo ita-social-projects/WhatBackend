@@ -92,7 +92,7 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
-            catch (Exception ex)
+            catch
             {
                 _unitOfWork.Rollback();
 
