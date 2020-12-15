@@ -225,9 +225,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPassword)
         {
-            var generatedForgotToken = await _accountService.GenerateForgotPasswordToken(changeForgotPassword);
+            var generatedForgotTokenResult = await _accountService.GenerateForgotPasswordToken(changeForgotPassword);
 
-            return generatedForgotToken.ToActionResult();
+            return generatedForgotTokenResult.ToActionResult();
         }
 
         /// <summary>
