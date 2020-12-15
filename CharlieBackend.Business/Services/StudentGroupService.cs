@@ -40,6 +40,11 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
                 }
 
+                if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(studentGroupDto.CourseId))
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId isn't exist");
+                }
+
                 var studentGroup = new StudentGroup
                 {
                     Name = studentGroupDto.Name,
@@ -87,7 +92,7 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup));
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _unitOfWork.Rollback();
 
@@ -155,11 +160,12 @@ namespace CharlieBackend.Business.Services
                     foundStudentGroup.FinishDate = (DateTime?)(updatedStudentGroupDto.FinishDate) ?? foundStudentGroup.FinishDate;
                 }
 
-                if (updatedStudentGroupDto.CourseId != 0)
+                if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(updatedStudentGroupDto.CourseId))
                 {
-                    foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedStudentGroupDto.CourseId);
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId isn't exist");
                 }
 
+                foundStudentGroup.Course = await _unitOfWork.CourseRepository.GetByIdAsync(updatedStudentGroupDto.CourseId);
 
                 if (updatedStudentGroupDto.StudentIds != null)
                 {
