@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.Models.ResultModel;
 
+
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class CourseRepository : Repository<Course>, ICourseRepository
@@ -36,9 +37,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<Result<bool>> DisableCourseByIdAsync(long id)
         {
-            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
            
-            if (course == null && course.IsActive)
+            if (course == null)
             {
                 return Result<bool>.GetError(ErrorCode.NotFound,"Course is not found");
             }
