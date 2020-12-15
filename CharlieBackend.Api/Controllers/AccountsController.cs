@@ -219,20 +219,15 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Returns a result of sending email
         /// </summary>
-        /// <response code="200">Successful return a notification string</response>
-        [Route("password/forgot/{formUrl}")]
+        /// <response code="200">Successful returns forgot password DTO</response>
+        [Route("password/forgot")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> ForgotPassword(string formUrl, ForgotPasswordDto changeForgotPassword)
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPassword)
         {
-            if (await _accountService.IsEmailTakenAsync(changeForgotPassword.Email))
-            {
-                await _accountService.SendChangePasswordUrlAsync(formUrl, changeForgotPassword);
-                
-                return Ok($"Link to change password has been sent to email {changeForgotPassword.Email}");
-            }
+            var generatedForgotToken = await _accountService.GenerateForgotPasswordToken(changeForgotPassword);
 
-            return BadRequest($"Account with email {changeForgotPassword.Email} does not exist!");
+            return generatedForgotToken.ToActionResult();
         }
 
         /// <summary>

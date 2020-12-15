@@ -187,6 +187,49 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task GenerateForgotPasswordToken()
+        {
+            //Arrange
+            var successForgotPasswordDto = new ForgotPasswordDto
+            {
+                Email = "example@example.com",
+                FormUrl = "https://frontenddomain/account/resetPassword"
+            };
+
+            var successUserAccount = new Account
+            {
+                Email = "example@example.com"
+            };
+
+            var userDoesntExistDto = new ForgotPasswordDto
+            {
+                Email = "doesntexist@example.com",
+                FormUrl = "https://frontenddomain/account/resetPassword"
+            };
+
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successForgotPasswordDto.Email))
+                    .ReturnsAsync(successUserAccount);
+
+            var accountService = new AccountService(
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
+
+            //Act
+            var successResult = await accountService.GenerateForgotPasswordToken(successForgotPasswordDto);
+            var userDoesntExistResult = await accountService.GenerateForgotPasswordToken(userDoesntExistDto);
+
+            //Assert
+            Assert.NotNull(successResult);
+            Assert.NotNull(userDoesntExistResult);
+
+            Assert.Equal(ErrorCode.NotFound, userDoesntExistResult.Error.Code);
+
+            Assert.Equal(successForgotPasswordDto.Email, successResult.Data.Email);
+            Assert.Equal(successForgotPasswordDto.FormUrl, successResult.Data.FormUrl);
+        }
+
+        [Fact]
         public async Task ResetPasswordAsync()
         {
             //Arrange
@@ -225,18 +268,6 @@ namespace CharlieBackend.Api.UnitTest
                 Email = "dontexist@example.com"
             };
 
-            var userWithoutDateOfForgotToken = new Account
-            {
-                Email = "withoutDate@example.com",
-                ForgotPasswordToken = userWithoutTokenDateGuid.ToString(),
-                ForgotTokenGenDate = null
-            };
-
-            var userWithoutDateOfForgotTokenDto = new ResetPasswordDto
-            {
-                Email = "withoutDate@example.com"
-            };
-
             var userWithTokenDateExpired = new Account
             {
                 Email = "expiredDate@example.com",
@@ -251,8 +282,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successResetPasswordDto.Email))
                     .ReturnsAsync(validUser);
-            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithoutDateOfForgotTokenDto.Email))
-                    .ReturnsAsync(userWithoutDateOfForgotToken);
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithTokenDateExpiredDto.Email))
                     .ReturnsAsync(userWithTokenDateExpired);
 
@@ -264,7 +293,6 @@ namespace CharlieBackend.Api.UnitTest
             //Act
             var userDoesntExistResult = await accountService.ResetPasswordAsync(userGuid, userDoesntExist);
             var invalidFormToken = await accountService.ResetPasswordAsync(Guid.NewGuid().ToString(), successResetPasswordDto);
-            var userWithoutDateToken = await accountService.ResetPasswordAsync(userWithoutTokenDateGuid, userWithoutDateOfForgotTokenDto);
             var expiredTokenDate = await accountService.ResetPasswordAsync(userGuid, userWithTokenDateExpiredDto);
             var successResult = await accountService.ResetPasswordAsync(userGuid.ToString(), successResetPasswordDto);
 
@@ -272,13 +300,11 @@ namespace CharlieBackend.Api.UnitTest
             Assert.NotNull(userDoesntExistResult);
             Assert.NotNull(invalidFormToken);
             Assert.NotNull(successResult);
-            Assert.NotNull(userWithoutDateToken);
             Assert.NotNull(expiredTokenDate);
 
             Assert.Equal(ErrorCode.NotFound, userDoesntExistResult.Error.Code);
             Assert.Equal(ErrorCode.ValidationError, invalidFormToken.Error.Code);
-            Assert.Equal(ErrorCode.InternalServerError, userWithoutDateToken.Error.Code);
-            Assert.Equal(ErrorCode.ValidationError, expiredTokenDate.Error.Code);
+            Assert.Equal(ErrorCode.ForgotPasswordExpired, expiredTokenDate.Error.Code);
 
             Assert.Equal(successAccountDto.Id, successResult.Data.Id);
             Assert.Equal(successAccountDto.Email, successResult.Data.Email);

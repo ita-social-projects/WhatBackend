@@ -8,6 +8,7 @@ using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CharlieBackend.Business.Services
 {
@@ -172,18 +173,26 @@ namespace CharlieBackend.Business.Services
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
         }
 
-        public async Task SendChangePasswordUrlAsync(string formUrl, ForgotPasswordDto forgotPassword)
+        public async Task<Result<ForgotPasswordDto>> GenerateForgotPasswordToken(ForgotPasswordDto forgotPassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
+
+            if (user == null)
+            {
+                return Result<ForgotPasswordDto>.GetError(ErrorCode.NotFound,
+                        $"Account with email {forgotPassword.Email} does not exist!");
+            }
 
             user.ForgotPasswordToken = Guid.NewGuid().ToString();
             user.ForgotTokenGenDate = DateTime.Now;
 
             await _unitOfWork.CommitAsync();
 
-            string callbackUrl = formUrl + "token=" + user.ForgotPasswordToken;
+            string callbackUrl = forgotPassword.FormUrl + "?token=" + user.ForgotPasswordToken;
 
             await _notification.ForgotPasswordNotify(forgotPassword.Email, callbackUrl);
+
+            return Result<ForgotPasswordDto>.GetSuccess(forgotPassword);
         }
 
         public async Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword)
@@ -197,24 +206,14 @@ namespace CharlieBackend.Business.Services
 
             if (user.ForgotPasswordToken != guid)
             {
-                return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Form validation error.");
-            }
-
-            if (!user.ForgotTokenGenDate.HasValue)
-            {
-                return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "No date of token generation");
+                return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Invalid forgot password token");
             }
 
             DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
 
-            if (DateTime.Now > tokenGenDate.AddDays(1))
+            if (DateTime.Now > tokenGenDate.AddDays(1) || !user.ForgotTokenGenDate.HasValue)
             {
-                user.ForgotPasswordToken = null;
-                user.ForgotTokenGenDate = null;
-
-                await _unitOfWork.CommitAsync();
-
-                return Result<AccountDto>.GetError(ErrorCode.ValidationError,
+                return Result<AccountDto>.GetError(ErrorCode.ForgotPasswordExpired,
                                                    $"Forgot password token for {user.Email} is expired");
             }
 

@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
 
-        Task SendChangePasswordUrlAsync(string formUrl, ForgotPasswordDto forgotPassword);
+        Task<Result<ForgotPasswordDto>> GenerateForgotPasswordToken(ForgotPasswordDto forgotPassword);
 
         Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword);
     }

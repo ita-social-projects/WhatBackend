@@ -8,5 +8,10 @@ namespace CharlieBackend.Core.DTO.Account
         [EmailAddress]
         [StringLength(50)]
         public string Email { get; set; }
+
+        [Required]
+        [Url]
+        [StringLength(200)]
+        public string FormUrl { get; set; }
     }
 }
