@@ -19,15 +19,19 @@ namespace CharlieBackend.Api.Controllers
     public class ImportController : ControllerBase
     {
         private readonly IStudentImportService _studentImportService;
+        private readonly IThemeImportService _themeImportService;
         private readonly IStudentGroupImportService _groupImportService;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IStudentImportService studentImportService, IStudentGroupImportService groupImportService)
+        public ImportController(IStudentImportService studentImportService,
+                                IStudentGroupImportService groupImportService,
+                                IThemeImportService themeImportService)
         {
             _studentImportService = studentImportService;
             _groupImportService = groupImportService;
+            _themeImportService = themeImportService;
         }
 
         /// <summary>
@@ -35,13 +39,13 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(List<StudentGroupFileModel>))]
+        [SwaggerResponse(200, type: typeof(List<StudentGroupFile>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("groups")]
         [HttpPost]
         public async Task<ActionResult> ImportGroupDataFromFile(IFormFile file)
         {
-            var listOfImportedGroups = new Result<List<StudentGroupFileModel>>();
+            var listOfImportedGroups = new Result<List<StudentGroupFile>>();
 
             if (_groupImportService.CheckIfExcelFile(file))
             {
@@ -60,13 +64,13 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(List<StudentFileModel>))]
+        [SwaggerResponse(200, type: typeof(List<StudentFile>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("students/{groupId}")]
         [HttpPost]
         public async Task<ActionResult> ImportStudentDataFromFile(long groupId, IFormFile file)
         {
-            var listOfImportedStudents = new Result<List<StudentFileModel>>();
+            var listOfImportedStudents = new Result<List<StudentFile>>();
 
             if (_groupImportService.CheckIfExcelFile(file))
             {
@@ -78,6 +82,31 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return listOfImportedStudents.ToActionResult();
+        }
+
+        /// <summary>
+        /// Imports student data from .xlsx file to database
+        /// </summary>
+        /// <response code="200">Successful import of data from file</response>
+        /// <response code="HTTP: 400, API: 4">File validation error</response>
+        [SwaggerResponse(200, type: typeof(List<ThemeFile>))]
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("themes")]
+        [HttpPost]
+        public async Task<ActionResult> ImportThemeDataFromFile(IFormFile file)
+        {
+            var listOfImportedThemes = new Result<List<ThemeFile>>();
+
+            if (_themeImportService.CheckIfExcelFile(file))
+            {
+                listOfImportedThemes = await _themeImportService.ImportFileAsync(file);
+            }
+            else
+            {
+                return BadRequest(new { message = "Invalid file extension" });
+            }
+
+            return listOfImportedThemes.ToActionResult();
         }
     }
 }

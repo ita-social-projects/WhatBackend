@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Student;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         new Task<List<StudentGroup>> GetAllAsync();
 
         Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id);
+
+        Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id);
 
         Task<bool> IsGroupOnCourseAsync(long id);
 

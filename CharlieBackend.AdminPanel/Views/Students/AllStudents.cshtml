@@ -5,6 +5,8 @@
     Layout = "_Layout";
 }
 
+
+
 <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
     <div class="dropleft">
         <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
@@ -22,6 +24,7 @@
 
 </div>
 
+
 <div id="content-wrapper" class="d-flex flex-column">
 
     <div id="content">
@@ -30,18 +33,31 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Students</h6>
+                    <div class="row">
+
+                        <h6 class="m-2 font-weight-bold text-primary">Students</h6>
+
+                        <a class=" btn btn-light js-student-list-button" id="activeStudents">
+                            <i class="far fa-eye"></i>
+                            <span> Active students </span>
+                        </a>
+
+                        <a class="btn btn-light js-student-list-button d-none" id="inactiveStudents">
+                            <i class="far fa-eye-slash"></i>
+                            <span> Inactive students</span>
+                        </a>
+                    </div>
+
                 </div>
 
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
-                        <table class="table table-striped text-center" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col-4">Email</th>
                                     <th class="col-3">First Name</th>
                                     <th class="col-3">Last Name</th>
-                                    <th class="col-1">Is active</th>
                                     <th class="col">Controll</th>
                                 </tr>
                             </thead>
@@ -49,37 +65,61 @@
 
                                 @foreach (var item in Model)
                                 {
-                                    <tr class="row">
-                                        <td class="col-4 text-truncate">@item.Email</td>
-                                        <td class="col-3 text-truncate">@item.FirstName</td>
-                                        <td class="col-3 text-truncate">@item.LastName</td>
-                                        <td class="col-1">@item.IsActive</td>
-                                        <td class="col">
-                                            <div class="dropdown">
-                                                <button class="btn btn-outline-secondar dropdown-toggle"
-                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-cog"></i>
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                    <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
-                                                        <i class="fas fa-pen"></i>
-                                                        <span>Edit </span>
-                                                    </a>
+                                    if (item.IsActive)
+                                    {
+                                        <tr class="row" id="activeStudentsRow">
+                                            <td class="col-4 text-truncate">@item.Email</td>
+                                            <td class="col-3 text-truncate">@item.FirstName</td>
+                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                    @if (@item.IsActive)
-                                                    {
+                                                        <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                        </a>
 
-                                                        <a class="dropdown-item text-dark" id="disableStudent" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
+                                                        <a class="dropdown-item text-dark js-disable-student" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@item.Id">
                                                             <i class="fas fa-trash"></i>
                                                             <span>Disable </span>
                                                         </a>
-                                                    }
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="row d-none" id="inactiveStudentsRow">
+                                            <td class="col-4 text-truncate">@item.Email</td>
+                                            <td class="col-3 text-truncate">@item.FirstName</td>
+                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                        <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@item.Id">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             </tbody>
                         </table>
@@ -102,7 +142,7 @@
                 <div class="modal-footer">
 
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" id="confirmDisableStudent" href="/Students/DisableStudent/">Confirm</a>
+                    <a class="btn btn-primary" id="confirmDisableStudent" href="">Confirm</a>
                 </div>
             </div>
         </div>
@@ -110,12 +150,73 @@
 
 </div>
 
-<script type="text/javascript">
+@section Scripts{
+    <script type="text/javascript">
 
-    var disableStudentId = document.querySelector("#disableStudent").getAttribute('data-item-id');
+        var isOnlyActiveStudents = false;
 
-    var confirmDisableStudent = document.querySelector("#confirmDisableStudent");
+        var switchButtons = document.querySelectorAll(".js-student-list-button");
 
-    confirmDisableStudent.href = confirmDisableStudent.href + disableStudentId;
+        var activeStudentsRow = document.querySelectorAll("#activeStudentsRow");
+        var inactiveStudentsRow = document.querySelectorAll("#inactiveStudentsRow");
 
-</script>
+        switchButtons.forEach(function (item) {
+
+            item.addEventListener('click', function (event) {
+
+                event.stopPropagation();
+
+                if (isOnlyActiveStudents) {
+
+                    document.querySelector("#activeStudents").classList.remove('d-none')
+                    document.querySelector("#inactiveStudents").classList.add('d-none');
+
+                    activeStudentsRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+
+                    inactiveStudentsRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+
+                } else {
+                    document.querySelector("#inactiveStudents").classList.remove('d-none')
+                    document.querySelector("#activeStudents").classList.add('d-none');
+
+                    inactiveStudentsRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+
+                    activeStudentsRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                }
+
+                isOnlyActiveStudents = !isOnlyActiveStudents;
+
+            }, true)
+        });
+
+
+    </script>
+
+    <script type="text/javascript">
+
+        var routeForDisableStudent = "/Students/DisableStudent/";
+
+        var disableStudentId = null;
+
+        $(document).on("click", ".js-disable-student", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            disableStudentId = _self.data('item-id');
+
+            $("#confirmDisableStudent").attr("href", routeForDisableStudent + disableStudentId);
+
+        });
+
+    </script>
+}

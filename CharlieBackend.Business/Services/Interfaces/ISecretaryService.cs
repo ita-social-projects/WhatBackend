@@ -7,18 +7,18 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface ISecretaryService
     {
-        public Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId);
+        Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId);
 
-        public Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync();
+        Task<IList<SecretaryDto>> GetAllSecretariesAsync();
 
-        public Task<long?> GetAccountId(long secretaryId);
+        Task<long?> GetAccountId(long secretaryId);
 
-        public Task<Result<SecretaryDto>> UpdateSecretaryAsync(long secretaryId, UpdateSecretaryDto secretaryDto);
+        Task<Result<SecretaryDto>> UpdateSecretaryAsync(long secretaryId, UpdateSecretaryDto secretaryDto);
 
-        public Task<Result<SecretaryDto>> GetSecretaryByAccountIdAsync(long accountId);
+        Task<Result<SecretaryDto>> GetSecretaryByAccountIdAsync(long accountId);
 
-        public Task<Result<SecretaryDto>> GetSecretaryByIdAsync(long secretaryId);
+        Task<Result<SecretaryDto>> GetSecretaryByIdAsync(long secretaryId);
 
-        public Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId);
+        Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId);
     }
 }

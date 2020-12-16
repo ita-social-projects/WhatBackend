@@ -39,13 +39,13 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<List<StudentFileModel>>> ImportFileAsync(long groupId, IFormFile uploadedFile)
+        public async Task<Result<List<StudentFile>>> ImportFileAsync(long groupId, IFormFile uploadedFile)
         {
-            List<StudentFileModel> importedAccounts = new List<StudentFileModel>();
+            List<StudentFile> importedAccounts = new List<StudentFile>();
             var groupName = _unitOfWork.StudentGroupRepository.SearchStudentGroup(groupId).Name;
             if (!await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(groupName))
             {
-                return Result<List<StudentFileModel>>.GetError(ErrorCode.NotFound, $"Group {groupName} doesn't exist.");
+                return Result<List<StudentFile>>.GetError(ErrorCode.NotFound, $"Group {groupName} doesn't exist.");
             }
 
             if (uploadedFile != null)
@@ -53,7 +53,7 @@ namespace CharlieBackend.Business.Services
                 var book = new XLWorkbook(await CreateFile(uploadedFile));
                 var studentsSheet = book.Worksheet("Students");
 
-                Type studentType = typeof(StudentFileModel);
+                Type studentType = typeof(StudentFile);
                 char charPointer = 'A';
                 int rowCounter = 2;
 
@@ -62,7 +62,7 @@ namespace CharlieBackend.Business.Services
                 {
                     if (property.Name != Convert.ToString(studentsSheet.Cell($"{charPointer}1").Value))
                     {
-                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                        return Result<List<StudentFile>>.GetError(ErrorCode.ValidationError,
                                     "The format of the downloaded file is not suitable."
                                          + "Check headers in the file.");
                     }
@@ -74,7 +74,7 @@ namespace CharlieBackend.Business.Services
 
                     try
                     {
-                        StudentFileModel fileLine = new StudentFileModel
+                        StudentFile fileLine = new StudentFile
                         {
                             Email = studentsSheet.Cell($"A{rowCounter}").Value.ToString(),
                             FirstName = studentsSheet.Cell($"B{rowCounter}").Value.ToString(),
@@ -101,14 +101,14 @@ namespace CharlieBackend.Business.Services
                     {
                         _unitOfWork.Rollback();
 
-                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                        return Result<List<StudentFile>>.GetError(ErrorCode.ValidationError,
                             "The format of the inputed data is incorrect.\n" + ex.Message);
                     }
                     catch (DbUpdateException ex)
                     {
                         _unitOfWork.Rollback();
 
-                        return Result<List<StudentFileModel>>.GetError(ErrorCode.ValidationError,
+                        return Result<List<StudentFile>>.GetError(ErrorCode.ValidationError,
                             "Inputed data is incorrect.\n" + ex.Message);
                     }
                 }
@@ -119,11 +119,11 @@ namespace CharlieBackend.Business.Services
 
             await BoundStudentsToTheGroupAsync(importedAccounts, groupId);
 
-            return Result<List<StudentFileModel>>
-                .GetSuccess(_mapper.Map<List<StudentFileModel>>(importedAccounts));
+            return Result<List<StudentFile>>
+                .GetSuccess(_mapper.Map<List<StudentFile>>(importedAccounts));
         }
 
-        private async Task BoundStudentsToTheGroupAsync(List<StudentFileModel> importedAccounts, long groupId)
+        private async Task BoundStudentsToTheGroupAsync(List<StudentFile> importedAccounts, long groupId)
         {
             List<string> studentEmails = new List<string>();
             List<long> accountsIds = new List<long>();
@@ -148,7 +148,7 @@ namespace CharlieBackend.Business.Services
                 await _studentService.CreateStudentAsync(id);
             }
 
-            foreach (var student in await _studentService.GetAllActiveStudentsAsync())
+            foreach (var student in (await _studentService.GetAllActiveStudentsAsync()).Data)
             {
                 if (studentEmails.Contains(student.Email))
                 {
@@ -170,7 +170,7 @@ namespace CharlieBackend.Business.Services
         }
 
 
-        private async Task IsValueValid(StudentFileModel fileLine, int rowCounter)
+        private async Task IsValueValid(StudentFile fileLine, int rowCounter)
         {
             List<string> existingEmails = new List<string>();
 

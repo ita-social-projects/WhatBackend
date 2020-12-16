@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Student;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -95,5 +96,17 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Include(group => group.MentorsOfStudentGroups)
                     .FirstOrDefaultAsync(group => group.Id == id);
         }
+
+        public async Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .Where(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == id))
+                    .Select(x => new MentorStudyGroupsDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name
+                    }).ToListAsync();
+                    }
     }
 }

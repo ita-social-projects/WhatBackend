@@ -30,10 +30,11 @@ CREATE TABLE IF NOT EXISTS `soft`.`account` (
   `password` VARCHAR(65) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'password has been set to not null',
   `salt` VARCHAR(65) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'salt has been set to not null',
   `is_active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
+  `forgot_password_token` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL COMMENT 'token for resetting password',
+  `forgot_token_gen_date` DATETIME NULL DEFAULT NULL COMMENT 'date of generation for users forgot password token',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 20
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -48,7 +49,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`course` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`mentor` (
     FOREIGN KEY (`account_id`)
     REFERENCES `soft`.`account` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -87,7 +86,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`student_group` (
     REFERENCES `soft`.`course` (`id`)
     ON DELETE SET NULL)
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -101,7 +99,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`theme` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -129,7 +126,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`lesson` (
     FOREIGN KEY (`theme_id`)
     REFERENCES `soft`.`theme` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -151,7 +147,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`mentor_of_course` (
     FOREIGN KEY (`mentor_id`)
     REFERENCES `soft`.`mentor` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -173,7 +168,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`mentor_of_student_group` (
     FOREIGN KEY (`student_group_id`)
     REFERENCES `soft`.`student_group` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -190,7 +184,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`secretary` (
     FOREIGN KEY (`account_id`)
     REFERENCES `soft`.`account` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -212,7 +205,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`schedule` (
     REFERENCES `soft`.`student_group` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 16
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -229,7 +221,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`student` (
     FOREIGN KEY (`account_id`)
     REFERENCES `soft`.`account` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 16
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -251,7 +242,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`student_of_student_group` (
     FOREIGN KEY (`student_id`)
     REFERENCES `soft`.`student` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 16
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -276,10 +266,21 @@ CREATE TABLE IF NOT EXISTS `soft`.`visit` (
     FOREIGN KEY (`student_id`)
     REFERENCES `soft`.`student` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+-- -----------------------------------------------------
+-- Table `soft`.`attachment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `containerName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'containerName has been set to not null and unique',
+  `fileName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'filerName has been set to not null',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `containerName_UNIQUE` (`containerName` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

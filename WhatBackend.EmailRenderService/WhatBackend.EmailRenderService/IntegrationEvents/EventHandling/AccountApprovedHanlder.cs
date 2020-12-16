@@ -37,7 +37,9 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
                 await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.GetAccountApprovedTemplate(message)
+                    EmailBody = _messageTemplate.GetEmailNotifyTemplate(string.Format("Welcome, {0} {1}! " +
+                            "Your account has been successfully approved! Your role: {2}",
+                            message.FirstName, message.LastName, message.Role))
                 });
             }
         }

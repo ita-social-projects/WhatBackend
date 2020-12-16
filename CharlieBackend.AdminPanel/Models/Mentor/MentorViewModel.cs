@@ -23,5 +23,7 @@ namespace CharlieBackend.AdminPanel.Models.Mentor
         [Required]
         [StringLength(30)]
         public string LastName { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

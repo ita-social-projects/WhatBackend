@@ -101,12 +101,18 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var foundAccount = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Id == id);
-            if (foundAccount == null)
+            if (foundAccount == null || (bool)!foundAccount.IsActive)
             {
                 return false;   
             }
             foundAccount.IsActive = false;
-            return false;
+            return true;
+        }
+
+        public async Task<Account> GetAccountCredentialsByEmailAsync(string email)
+        {
+            return await _applicationContext.Accounts
+                        .FirstOrDefaultAsync(account => account.Email == email);
         }
     }
 }

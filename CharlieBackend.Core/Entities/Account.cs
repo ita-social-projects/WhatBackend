@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -16,12 +17,18 @@ namespace CharlieBackend.Core.Entities
 
         public string Salt { get; set; }
 
+#nullable enable
         public bool? IsActive { get; set; }
 
+        public string? ForgotPasswordToken { get; set; }
+
+        public DateTime? ForgotTokenGenDate { get; set; }
+#nullable disable
+
         public virtual ICollection<Mentor> Mentors { get; set; }
-        
+
         public virtual ICollection<Student> Students { get; set; }
-        
+
         public virtual ICollection<Secretary> Secretaries { get; set; }
     }
 }

@@ -48,11 +48,11 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of list of courses</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
-        public async Task<ActionResult<CourseDto>> GetAllCourses()
+        public async Task<IList<CourseDto>> GetAllCourses()
         {
             var courses = await _coursesService.GetAllCoursesAsync();
 
-            return courses.ToActionResult();
+            return courses;
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
@@ -16,6 +17,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             _applicationContext = applicationContext;
             _entities = applicationContext.Set<T>();
+        }
+
+        public IQueryable<T> GetQueryableNoTracking()
+        {
+            return _entities.AsNoTracking();
         }
 
         public Task<List<T>> GetAllAsync()
