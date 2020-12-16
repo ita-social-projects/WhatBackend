@@ -5,7 +5,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface INotificationService
     {
-        public Task AccountApproved(Account account);
-        public Task RegistrationSuccess(Account account);
+        Task AccountApproved(Account account);
+
+        Task RegistrationSuccess(Account account);
+
+        Task ForgotPasswordNotify(string recepientMail, string url);
     }
 }

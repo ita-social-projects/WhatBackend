@@ -206,12 +206,40 @@ namespace CharlieBackend.Api.Controllers
         /// Returns an updated account
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
-        [Route("ChangePassword")]
+        [Route("password")]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpPost]
-        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
+        [HttpPut]
+        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
-            var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
+
+            return updatedAccount.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns a result of generating a forgot password token
+        /// </summary>
+        /// <response code="200">Successful returns a forgot password DTO</response>
+        [Route("password/forgot")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPassword)
+        {
+            var generatedForgotTokenResult = await _accountService.GenerateForgotPasswordToken(changeForgotPassword);
+
+            return generatedForgotTokenResult.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns a result of confirmed password change
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("password/reset/{guid}")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ResetForgotPassword(string guid, ResetPasswordDto resetPassword)
+        {
+            var updatedAccount = await _accountService.ResetPasswordAsync(guid, resetPassword);
 
             return updatedAccount.ToActionResult();
         }
