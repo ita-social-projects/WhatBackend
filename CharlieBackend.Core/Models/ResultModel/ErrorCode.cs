@@ -12,7 +12,8 @@ namespace CharlieBackend.Core.Models.ResultModel
         InternalServerError,
         NotFound,
         UnprocessableEntity,
-        Conflict
+        Conflict,
+        ForgotPasswordExpired
     }
 }
 

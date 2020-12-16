@@ -8,15 +8,15 @@ using WhatBackend.EmailRenderService.Services.Interfaces;
 
 namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
 {
-    public class AccountApprovedHanlder
+    public class ForgotPasswordHandler
     {
         private const string queueName = "EmailSenderService";
-        private readonly ILogger<AccountApprovedHanlder> _logger;
+        private readonly ILogger<ForgotPasswordHandler> _logger;
         private readonly IBus _bus;
         private readonly IMessageTemplateService _messageTemplate;
 
-        public AccountApprovedHanlder(
-                ILogger<AccountApprovedHanlder> logger,
+        public ForgotPasswordHandler(
+                ILogger<ForgotPasswordHandler> logger,
                 IBus bus,
                 IMessageTemplateService messageTemplate
                 )
@@ -26,20 +26,18 @@ namespace WhatBackend.EmailRenderService.IntegrationEvents.EventHandling
             _messageTemplate = messageTemplate;
         }
 
-        public async Task HandleAsync(AccountApprovedEvent message)
+        public async Task HandleAsync(ForgotPasswordEvent message)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{message}"))
             {
-                _logger.LogInformation($"Account has been approved: {message}");
+                _logger.LogInformation($"Registration success: {message}");
 
-                _logger.LogInformation("-----Publishing AccountApprovedEvent integration event----- ");
+                _logger.LogInformation("-----Publishing ForgotPasswordEvent integration event----- ");
 
                 await _bus.SendReceive.SendAsync(queueName, new EmailData
                 {
                     RecipientMail = message.RecepientMail,
-                    EmailBody = _messageTemplate.GetEmailNotifyTemplate(string.Format("Welcome, {0} {1}! " +
-                            "Your account has been successfully approved! Your role: {2}",
-                            message.FirstName, message.LastName, message.Role))
+                    EmailBody = _messageTemplate.GetEmailNotifyTemplate("Please, follow this link to change your password: " + message.Url)
                 });
             }
         }
