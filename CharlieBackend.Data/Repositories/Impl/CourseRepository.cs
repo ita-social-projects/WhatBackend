@@ -8,6 +8,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Mentor;
 
 
+
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class CourseRepository : Repository<Course>, ICourseRepository
@@ -58,24 +59,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Id = x.Id,
                         Name = x.Name
                     }).ToListAsync();
-        }
-
-        public async Task<bool> IsCourseHasGroupAsync(long id)
-        {
-            return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
-        }
-
-        public async Task<Result<bool>> DisableCourseByIdAsync(long id)
-        {
-            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
-           
-            if (course == null)
-            {
-                return Result<bool>.GetError(ErrorCode.NotFound,"Course is not found");
-            }
-            course.IsActive = false;
-
-            return Result<bool>.GetSuccess(true);
         }
     }
 }

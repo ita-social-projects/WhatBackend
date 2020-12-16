@@ -13,8 +13,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<MentorCoursesDto>> GetMentorCourses(long id);
 
         Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
-        public Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
-
+        
         Task<Result<bool>> DisableCourseByIdAsync(long id);
 
         Task<bool> IsCourseHasGroupAsync(long id);
