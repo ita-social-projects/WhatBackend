@@ -112,8 +112,9 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
+            var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
-            return _mapper.Map<List<StudentGroupDto>>(studentGroup);
+            return studentGroupDto;
         }
 
         public bool DeleteStudentGrop(long StudentGroupId)

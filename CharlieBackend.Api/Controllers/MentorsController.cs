@@ -55,11 +55,11 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of mentors list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<MentorDto>>> GetAllActiveMentors()
+        public async Task<IList<MentorDto>> GetAllActiveMentors()
         {
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
-            return mentors.ToActionResult();
+            return mentors;
         }
 
         /// <summary>
@@ -90,7 +90,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
         {
-
             var mentorsModels = await _mentorService.GetAllMentorsAsync();
 
             return Ok(mentorsModels);
@@ -123,12 +122,12 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorStudyGroupsDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/groups")]
-        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId(long id)
+        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorId(long id)
         {
             var foundGroups = await _mentorService
                     .GetMentorStudyGroupsByMentorIdAsync(id);
 
-            return foundGroups.ToActionResult();
+            return foundGroups;
         }
 
         /// <summary>
@@ -139,12 +138,12 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/courses")]
-        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
+        public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorId(long id)
         {
             var foundCourses = await _mentorService
                     .GetMentorCoursesByMentorIdAsync(id);
 
-            return foundCourses.ToActionResult();
+            return foundCourses;
         }
 
         /// <summary>
@@ -156,22 +155,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableMentor(long id)
         {
+            var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
-            var accountId = await _mentorService.GetAccountId(id);
-
-            if (accountId == null)
-            {
-                return BadRequest("Unknown mentor id.");
-            }
-
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return NoContent();
-            }
-
-            return StatusCode(500, "Error occurred while trying to disable mentor account.");
+            return disabledMentorModel.ToActionResult();
         }
     }
 }

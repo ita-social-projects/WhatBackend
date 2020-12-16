@@ -15,7 +15,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 namespace CharlieBackend.Api.UnitTest
 {
     public class AccountServiceTests : TestBase
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
 
@@ -46,7 +46,7 @@ namespace CharlieBackend.Api.UnitTest
                 Email = accountExpectedEmail,
                 FirstName = "test",
                 LastName = "test",
-                Password ="qwerty",
+                Password = "qwerty",
                 ConfirmPassword = "qwerty"
             };
 

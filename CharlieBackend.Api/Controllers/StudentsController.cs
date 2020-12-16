@@ -141,23 +141,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DisableStudent(long id)
         {
+            var disabledStudentModel = await _studentService.DisableStudentAsync(id);
 
-            var accountId = await _studentService.GetAccountId(id);
-
-            if (accountId == null)
-            {
-                return BadRequest("Unknown student id.");
-            }
-
-            var isDisabled = await _accountService
-                    .DisableAccountAsync((long)accountId);
-
-            if (isDisabled)
-            {
-                return NoContent();
-            }
-
-            return StatusCode(500, "Error occurred while trying to disable student account.");
+            return disabledStudentModel.ToActionResult();
         }
     }
 }

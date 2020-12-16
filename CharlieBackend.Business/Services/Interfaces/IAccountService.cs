@@ -11,7 +11,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel);
 
-        Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
+        Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
         Task<Account> GetAccountCredentialsByIdAsync(long id);
 

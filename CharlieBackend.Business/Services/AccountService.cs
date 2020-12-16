@@ -16,7 +16,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, 
+        public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               INotificationService notification)
         {
@@ -63,7 +63,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
+        public async Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
 
@@ -73,10 +73,10 @@ namespace CharlieBackend.Business.Services
 
                 var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
-                return foundAccount;
+                return Result<AccountDto>.GetSuccess(foundAccount);
             }
 
-            return null;
+            return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
         }
 
         public async Task<IList<AccountDto>> GetAllAccountsAsync()
@@ -128,7 +128,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return true;
+                return isSucceeded;
             }
             catch
             {
