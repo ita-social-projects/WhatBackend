@@ -54,11 +54,11 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Secretary")]
         [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
         [HttpGet]
-        public async Task<ActionResult> GetAllSecretaries()
+        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
         {
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
-            return secretariesDtos.ToActionResult();
+            return Ok(secretariesDtos);
         }
 
         /// <summary>

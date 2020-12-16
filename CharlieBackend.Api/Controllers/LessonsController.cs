@@ -8,6 +8,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -49,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(422, "Cannot create lesson");
             }
 
-            return Ok(createdLesson);
+            return createdLesson.ToActionResult();
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace CharlieBackend.Api.Controllers
             {
                 return StatusCode(422, "Lesson doesn't exist");
             }
-            return Ok(changedLesson);
+            return changedLesson.ToActionResult();
         }
 
         /// <summary>
@@ -82,8 +83,8 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
         {
             var lessons = await _lessonService.GetAllLessonsAsync();
-
-            return Ok(lessons);
+            
+            return lessons.ToActionResult();
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var lessons = await _lessonService.GetStudentLessonsAsync(id);
 
-            return Ok(lessons);
+            return lessons.ToActionResult();
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (updatedLesson != null)
             {
-                return Ok(updatedLesson);
+                return updatedLesson.ToActionResult();
             }
 
             return StatusCode(409, "Cannot update.");

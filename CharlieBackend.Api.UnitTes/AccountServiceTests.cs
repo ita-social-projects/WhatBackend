@@ -2,12 +2,11 @@
 using Xunit;
 using System;
 using AutoMapper;
-using System.Text;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
-using System.Security.Cryptography;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
@@ -17,12 +16,9 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 namespace CharlieBackend.Api.UnitTest
 {
     public class AccountServiceTests : TestBase
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
-
-        private const string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
-        private const int _saltLen = 15;
 
         public AccountServiceTests()
         {
@@ -51,7 +47,7 @@ namespace CharlieBackend.Api.UnitTest
                 Email = accountExpectedEmail,
                 FirstName = "test",
                 LastName = "test",
-                Password ="qwerty",
+                Password = "qwerty",
                 ConfirmPassword = "qwerty"
             };
 
@@ -81,8 +77,8 @@ namespace CharlieBackend.Api.UnitTest
                 _notificationServiceMock.Object);
 
             //Act
-             var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
-             var successResult = await accountService.CreateAccountAsync(successAccountModel);
+            var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
+            var successResult = await accountService.CreateAccountAsync(successAccountModel);
 
             //Assert
             Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
@@ -96,7 +92,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task ChangePasswordAsync()
         {
             //Arrange
-            var salt = GenerateSalt();
+            var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
             var newPassword = "changedPass";
 
@@ -105,7 +101,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "user@exmaple.com",
-                Password = HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = salt,
                 Role = UserRole.Mentor
             };
@@ -149,7 +145,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 5,
                 IsActive = true,
                 Email = "withoutSalt@exmaple.com",
-                Password = HashPassword(oldPassword, salt),
+                Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = null,
                 Role = UserRole.Mentor
             };
@@ -164,9 +160,9 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(accountWithoutSalt);
 
             var accountService = new AccountService(
-                _unitOfWorkMock.Object,
-                _mapper,
-                _notificationServiceMock.Object);
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
 
             //Act
             var notExistAccount = await accountService.ChangePasswordAsync(notExistDto);
@@ -190,57 +186,136 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedAccountDto.Role, successResult.Data.Role);
         }
 
+        [Fact]
+        public async Task GenerateForgotPasswordToken()
+        {
+            //Arrange
+            var successForgotPasswordDto = new ForgotPasswordDto
+            {
+                Email = "example@example.com",
+                FormUrl = "https://frontenddomain/account/resetPassword"
+            };
+
+            var successUserAccount = new Account
+            {
+                Email = "example@example.com"
+            };
+
+            var userDoesntExistDto = new ForgotPasswordDto
+            {
+                Email = "doesntexist@example.com",
+                FormUrl = "https://frontenddomain/account/resetPassword"
+            };
+
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successForgotPasswordDto.Email))
+                    .ReturnsAsync(successUserAccount);
+
+            var accountService = new AccountService(
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
+
+            //Act
+            var successResult = await accountService.GenerateForgotPasswordToken(successForgotPasswordDto);
+            var userDoesntExistResult = await accountService.GenerateForgotPasswordToken(userDoesntExistDto);
+
+            //Assert
+            Assert.NotNull(successResult);
+            Assert.NotNull(userDoesntExistResult);
+
+            Assert.Equal(ErrorCode.NotFound, userDoesntExistResult.Error.Code);
+
+            Assert.Equal(successForgotPasswordDto.Email, successResult.Data.Email);
+            Assert.Equal(successForgotPasswordDto.FormUrl, successResult.Data.FormUrl);
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync()
+        {
+            //Arrange
+            var userGuid = Guid.NewGuid().ToString();
+            var forgotPasswordGenDate = DateTime.Now;
+            var userWithoutTokenDateGuid = Guid.NewGuid().ToString();
+            var expiredDate = DateTime.Now.AddDays(-1);
+
+            var validUser = new Account
+            {
+                Id = 5,
+                Email = "example@example.com",
+                IsActive = true,
+                ForgotPasswordToken = userGuid,
+                ForgotTokenGenDate = forgotPasswordGenDate,
+                Role = UserRole.Mentor
+            };
+
+            var successResetPasswordDto = new ResetPasswordDto
+            {
+                Email = "example@example.com",
+                NewPassword = "bob228",
+                ConfirmNewPassword = "bob228"
+            };
+
+            var successAccountDto = new AccountDto
+            {
+                Id = 5,
+                Email = "example@example.com",
+                IsActive = true,
+                Role = UserRole.Mentor
+            };
+
+            var userDoesntExist = new ResetPasswordDto
+            {
+                Email = "dontexist@example.com"
+            };
+
+            var userWithTokenDateExpired = new Account
+            {
+                Email = "expiredDate@example.com",
+                ForgotPasswordToken = userGuid,
+                ForgotTokenGenDate = expiredDate
+            };
+
+            var userWithTokenDateExpiredDto = new ResetPasswordDto
+            {
+                Email = "expiredDate@example.com"
+            };
+
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successResetPasswordDto.Email))
+                    .ReturnsAsync(validUser);
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(userWithTokenDateExpiredDto.Email))
+                    .ReturnsAsync(userWithTokenDateExpired);
+
+            var accountService = new AccountService(
+                    _unitOfWorkMock.Object,
+                    _mapper,
+                    _notificationServiceMock.Object);
+
+            //Act
+            var userDoesntExistResult = await accountService.ResetPasswordAsync(userGuid, userDoesntExist);
+            var invalidFormToken = await accountService.ResetPasswordAsync(Guid.NewGuid().ToString(), successResetPasswordDto);
+            var expiredTokenDate = await accountService.ResetPasswordAsync(userGuid, userWithTokenDateExpiredDto);
+            var successResult = await accountService.ResetPasswordAsync(userGuid.ToString(), successResetPasswordDto);
+
+            //Assert
+            Assert.NotNull(userDoesntExistResult);
+            Assert.NotNull(invalidFormToken);
+            Assert.NotNull(successResult);
+            Assert.NotNull(expiredTokenDate);
+
+            Assert.Equal(ErrorCode.NotFound, userDoesntExistResult.Error.Code);
+            Assert.Equal(ErrorCode.ValidationError, invalidFormToken.Error.Code);
+            Assert.Equal(ErrorCode.ForgotPasswordExpired, expiredTokenDate.Error.Code);
+
+            Assert.Equal(successAccountDto.Id, successResult.Data.Id);
+            Assert.Equal(successAccountDto.Email, successResult.Data.Email);
+            Assert.Equal(successAccountDto.IsActive, successResult.Data.IsActive);
+            Assert.Equal(successAccountDto.Role, successResult.Data.Role);
+        }
+
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
             return mock;
         }
-
-        #region Hash
-        public string GenerateSalt()
-        {
-            //StringBuilder object with a predefined buffer size for the resulting string
-            StringBuilder sb = new StringBuilder(_saltLen - 1);
-
-            //a variable for storing a random character position from the string Str
-            int Position = 0;
-
-            for (int i = 0; i < _saltLen; i++)
-            {
-                Position = this.Next(0, _saltAlphabet.Length - 1);
-
-                //add the selected character to the object StringBuilder
-                sb.Append(_saltAlphabet[Position]);
-            }
-
-            return sb.ToString();
-        }
-        public Int32 Next(Int32 minValue, Int32 maxValue)
-        {
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] uint32Buffer = new byte[4];
-                Int64 diff = maxValue - minValue;
-                while (true)
-                {
-                    rng.GetBytes(uint32Buffer);
-                    UInt32 rand = BitConverter.ToUInt32(uint32Buffer, 0);
-                    Int64 max = (1 + (Int64)UInt32.MaxValue);
-                    Int64 remainder = max % diff;
-                    if (rand < max - remainder)
-                    {
-                        return (Int32)(minValue + (rand % diff));
-                    }
-                }
-            }
-        }
-        public string HashPassword(string password, string salt)
-        {
-            byte[] data = Encoding.Default.GetBytes(password + salt);
-            var result = new SHA256Managed().ComputeHash(data);
-
-            return BitConverter.ToString(result).Replace("-", "").ToLower();
-        }
-        #endregion
     }
 }

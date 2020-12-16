@@ -148,7 +148,7 @@ namespace CharlieBackend.Business.Services
                 await _studentService.CreateStudentAsync(id);
             }
 
-            foreach (var student in await _studentService.GetAllActiveStudentsAsync())
+            foreach (var student in (await _studentService.GetAllActiveStudentsAsync()).Data)
             {
                 if (studentEmails.Contains(student.Email))
                 {

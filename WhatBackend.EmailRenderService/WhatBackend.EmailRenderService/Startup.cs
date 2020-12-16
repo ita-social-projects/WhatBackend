@@ -29,6 +29,7 @@ namespace WhatBackend.EmailRenderService
             services.AddSingleton<IMessageTemplateService, MessageTemplateService>();
             services.AddSingleton<AccountApprovedHanlder>();
             services.AddSingleton<RegistrationSuccessHanlder>();
+            services.AddSingleton<ForgotPasswordHandler>();
             services.AddSingleton(RabbitHutch.CreateBus(Configuration.GetConnectionString("RabbitMQ")));
         }
 
@@ -53,6 +54,11 @@ namespace WhatBackend.EmailRenderService
             app.ApplicationServices.GetRequiredService<IBus>().SendReceive.Receive("RegistrationSuccess",
                     x => x.Add<RegistrationSuccessEvent>(message => 
                     app.ApplicationServices.GetService<RegistrationSuccessHanlder>()
+                    .HandleAsync(message)));
+
+            app.ApplicationServices.GetRequiredService<IBus>().SendReceive.Receive("ForgotPassword",
+                    x => x.Add<ForgotPasswordEvent>(message =>
+                    app.ApplicationServices.GetService<ForgotPasswordHandler>()
                     .HandleAsync(message)));
 
             app.UseCors(builder =>
