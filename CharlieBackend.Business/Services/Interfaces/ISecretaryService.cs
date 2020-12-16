@@ -20,8 +20,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<SecretaryDto>> GetSecretaryByIdAsync(long secretaryId);
 
         Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId);
-        public Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId);
-
+       
         Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync();
     }
 }
