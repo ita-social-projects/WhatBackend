@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Homework;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,17 +27,43 @@ namespace CharlieBackend.Api.Controllers
             _homeworkService = homeworkService;
         }
 
-        ///// <summary>
-        ///// Adds hometask
-        ///// </summary>
-        //[Authorize(Roles = "Admin, Mentor")]
-        //[HttpPost("studentsClassbook")]
-        //public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
-        //{
-        //    var results = await _homeworkService
-        //        .PostHometask(request);
+        /// <summary>
+        /// Adds hometask
+        /// </summary>
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpPost("addHometask")]
+        public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
+        {
+            var results = await _homeworkService
+                .CreateHometaskAsync(request);
 
-        //    return results.ToActionResult();
-        //}
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets all hometasks of course
+        /// </summary>
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpGet("getHometaskOfCourse/{courseId}")]
+        public async Task<ActionResult> GetHometaskOfCourse(long courseId)
+        {
+            var results = await _homeworkService
+                .GetHometaskOfCourseAsync(courseId);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets hometask by id
+        /// </summary>
+        [Authorize(Roles = "Admin, Mentor, Student")]
+        [HttpGet("getHometask/{hometaskId}")]
+        public async Task<ActionResult> GetHometaskById(long hometaskId)
+        {
+            var results = await _homeworkService
+                .GetHometaskByIdAsync(hometaskId);
+
+            return results.ToActionResult();
+        }
     }
 }

@@ -475,19 +475,13 @@ namespace CharlieBackend.Data
 
             modelBuilder.Entity<Hometask>(entity =>
             {
-                entity.ToTable("Hometask");
+                entity.ToTable("hometask");
 
                 entity.HasIndex(e =>
                     new { e.MentorId, e.ThemeId })
                     .HasName("MentorAndThemeId");
 
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Comment)
-                    .HasColumnName("comment")
-                    .HasColumnType("varchar(1024)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_0900_ai_ci"); ;
 
                 entity.Property(e => e.Common)
                     .HasColumnName("common")
@@ -500,7 +494,7 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.TaskText)
                     .HasColumnName("task_text")
-                    .HasColumnType("varchar(max)")
+                    .HasColumnType("varchar(4000)")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
@@ -521,7 +515,7 @@ namespace CharlieBackend.Data
 
             modelBuilder.Entity<AttachmentOfHometask>(entity =>
             {
-                entity.ToTable("AttacmentOfHomeTask");
+                entity.ToTable("attachment_of_hometask");
 
                 entity.HasIndex(e => e.AttachmentId)
                     .HasName("FK_attachment_of_hometask_id");

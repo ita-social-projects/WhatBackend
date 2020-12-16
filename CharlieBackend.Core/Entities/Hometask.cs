@@ -10,8 +10,6 @@ namespace CharlieBackend.Core.Entities
 
         public string TaskText { get; set; }
 
-        public string Comment { get; set; }
-
         public bool Common { get; set; }
 
         public long? ThemeId { get; set; }
@@ -22,6 +20,6 @@ namespace CharlieBackend.Core.Entities
 
         public Mentor Mentor { get; set; }
 
-        public virtual ICollection<AttachmentOfHometask> AttachmentOfHometasks { get; set; }
+        public virtual IList<AttachmentOfHometask> AttachmentOfHometasks { get; set; }
     }
 }

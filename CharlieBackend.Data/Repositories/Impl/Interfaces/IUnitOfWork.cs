@@ -31,6 +31,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public IDashboardRepository DashboardRepository { get; }
 
+        public IHometaskRepository HometaskRepository { get; }
+
         Task CommitAsync();
 
         void Rollback();

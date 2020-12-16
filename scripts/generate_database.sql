@@ -279,6 +279,52 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+
+-- -----------------------------------------------------
+-- Table `soft`.`hometask`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`hometask` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `deadline_days` SMALLINT(3) NULL DEFAULT NULL,
+  `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `common` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'presence default value has been set',
+  `theme_id` BIGINT(20) NULL DEFAULT NULL,
+  `mentor_id` BIGINT(20) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_theme_of_hometask` (`theme_id` ASC),
+  INDEX `FK_mentor_of_hometask` (`mentor_id` ASC),
+  CONSTRAINT `FK_theme_of_hometask`
+    FOREIGN KEY (`theme_id`)
+    REFERENCES `soft`.`theme` (`id`),
+  CONSTRAINT `FK_mentor_of_hometask`
+    FOREIGN KEY (`mentor_id`)
+    REFERENCES `soft`.`mentor` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `soft`.`attachment_of_hometask`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_hometask` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `hometask_id` BIGINT(20) NULL DEFAULT NULL,
+  `attachment_id` BIGINT(20) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_hometasktask_id` (`hometask_id` ASC),
+  INDEX `FK_attachment_id` (`attachment_id` ASC),
+  CONSTRAINT `FK_hometask_of_attachment`
+    FOREIGN KEY (`hometask_id`)
+    REFERENCES `soft`.`hometask` (`id`),
+  CONSTRAINT `FK_attachment_of_hometask`
+    FOREIGN KEY (`attachment_id`)
+    REFERENCES `soft`.`attachment` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
