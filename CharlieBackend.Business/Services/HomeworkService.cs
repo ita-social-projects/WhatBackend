@@ -34,12 +34,17 @@ namespace CharlieBackend.Business.Services
                 
                 if (await errors.AnyAsync())
                 {
+                    var errorsList = new List<string>();
+                    await foreach (var error in errors)
+                    {
+                        errorsList.Add(error);
+                    }
+
                     return Result<HometaskDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errors));
                 }
 
                 var newHometask = new Hometask
                 {
-                    Comment = createHometaskDto.Comment,
                     Common = createHometaskDto.Common,
                     DeadlineDays = createHometaskDto.DeadlineDays,
                     MentorId = createHometaskDto.MentorId,
@@ -47,9 +52,17 @@ namespace CharlieBackend.Business.Services
                     ThemeId = createHometaskDto.ThemeId,
                 };
 
+                _unitOfWork.HometaskRepository.Add(newHometask);
+
                 if (createHometaskDto.AttachmentIds?.Count != null)
                 {
                     var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHometaskDto.AttachmentIds);
+
+                    if (attachments == default)
+                    {
+                        return Result<HometaskDto>.GetError(ErrorCode.ValidationError, "No such attachments found");
+                    }
+
                     newHometask.AttachmentOfHometasks = new List<AttachmentOfHometask>();
 
                     foreach (var attachment in attachments) 
@@ -61,8 +74,6 @@ namespace CharlieBackend.Business.Services
                         });
                     }
                 }
-
-                _unitOfWork.HometaskRepository.Add(newHometask);
 
                 await _unitOfWork.CommitAsync();
 
@@ -128,6 +139,14 @@ namespace CharlieBackend.Business.Services
             if (theme == default)
             {
                 yield return "Given theme does not exist";
+            }
+
+            var mentor = await _unitOfWork.MentorRepository
+                .GetMentorByIdAsync(request.MentorId);
+
+            if (mentor == default)
+            {
+                yield return "Given mentor does not exist";
             }
         }
     }

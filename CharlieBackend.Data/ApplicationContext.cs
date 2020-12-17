@@ -538,8 +538,7 @@ namespace CharlieBackend.Data
                     .WithMany(p => p.AttachmentOfHometasks)
                     .HasForeignKey(d => d.HometaskId)
                     .HasConstraintName("FK_hometask_of_attachment");
-            }
-                );
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }

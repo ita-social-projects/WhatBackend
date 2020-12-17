@@ -1,9 +1,7 @@
-﻿using CharlieBackend.Core.DTO.Homework;
-using CharlieBackend.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

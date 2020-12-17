@@ -11,10 +11,6 @@ namespace CharlieBackend.Core.DTO.Homework
 
         public string TaskText { get; set; }
 
-        public virtual IList<long> AttachmentIds { get; set; }
-
-        public string Comment { get; set; }
-
         public bool Common { get; set; }
 
         [Required]
@@ -22,5 +18,7 @@ namespace CharlieBackend.Core.DTO.Homework
 
         [Required]
         public long MentorId { get; set; }
+
+        public virtual IList<long> AttachmentIds { get; set; }
     }
 }

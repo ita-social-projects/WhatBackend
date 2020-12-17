@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Core.DTO.Homework
 {
@@ -12,14 +12,12 @@ namespace CharlieBackend.Core.DTO.Homework
 
         public string TaskText { get; set; }
 
-        public virtual IList<long> AttachmentIds { get; set; }
-
-        public string Comment { get; set; }
-
         public bool Common { get; set; }
 
         public long? ThemeId { get; set; }
 
         public long? MentorId { get; set; }
+
+        public virtual IList<long> AttachmentIds { get; set; }
     }
 }

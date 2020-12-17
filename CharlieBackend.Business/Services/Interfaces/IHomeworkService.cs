@@ -1,10 +1,9 @@
-﻿using CharlieBackend.Core.DTO.Homework;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.ResultModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
