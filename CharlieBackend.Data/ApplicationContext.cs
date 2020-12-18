@@ -490,7 +490,7 @@ namespace CharlieBackend.Data
 
                 entity.HasIndex(e =>
                     new { e.MentorId, e.ThemeId })
-                    .HasName("mentor_and_themeId");
+                    .HasName("mentor_and_theme_Id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
