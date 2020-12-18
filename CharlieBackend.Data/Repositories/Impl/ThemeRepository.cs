@@ -23,5 +23,11 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _applicationContext.Themes
                     .FirstOrDefaultAsync(theme => theme.Id == themeId);
         }
+
+        public Task<bool> IsThemeUsed(long themeId)
+        {
+            return _applicationContext.Lessons
+                    .AnyAsync(les => les.ThemeId == themeId);
+        }
     }
 }
