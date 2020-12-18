@@ -11,7 +11,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel);
 
-        Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
+        Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel);
 
         Task<Account> GetAccountCredentialsByIdAsync(long id);
 
@@ -28,5 +28,9 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<bool> DisableAccountAsync(long id);
 
         Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePasswd);
+
+        Task<Result<ForgotPasswordDto>> GenerateForgotPasswordToken(ForgotPasswordDto forgotPassword);
+
+        Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword);
     }
 }

@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel);
 
-        Task<Result<IList<CourseDto>>> GetAllCoursesAsync();
+        Task<IList<CourseDto>> GetAllCoursesAsync();
 
         Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
 

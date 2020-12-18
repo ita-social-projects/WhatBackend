@@ -129,14 +129,26 @@ namespace CharlieBackend.Business.Services
         {
             var secretary = await _unitOfWork.SecretaryRepository.GetByIdAsync(secretaryId);
 
-            return secretary?.Id;
+            return secretary?.AccountId;
         }
 
-        public async Task<Result<IList<SecretaryDto>>> GetAllSecretariesAsync()
+        public async Task<IList<SecretaryDto>> GetAllSecretariesAsync()
         {
             var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
 
-            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<IList<SecretaryDto>>(secretaries));
+            if (secretaries == null)
+            {
+                return new List<SecretaryDto>();
+            }
+
+            return _mapper.Map<IList<SecretaryDto>>(secretaries);
+        }
+
+        public async Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync()
+        {
+            var secretaries = await _unitOfWork.SecretaryRepository.GetActiveAsync();
+
+            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<List<SecretaryDto>>(secretaries));
         }
 
         public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
@@ -148,15 +160,14 @@ namespace CharlieBackend.Business.Services
                 return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var isDisabled = await _accountService.DisableAccountAsync((long)accountId);
+            var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
 
-            if (isDisabled)
+            if (!await _accountService.DisableAccountAsync((long)accountId))
             {
-                return Result<SecretaryDto>.GetSuccess(null);
+                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsry account is already disabled.");
             }
 
-            return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
-                "Error occurred while trying to disable secretary account.");
+            return Result<SecretaryDto>.GetSuccess(secretary.Data);
         }
     }
 }

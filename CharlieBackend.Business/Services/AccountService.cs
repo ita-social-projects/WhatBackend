@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
@@ -16,7 +17,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
 
-        public AccountService(IUnitOfWork unitOfWork, 
+        public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
                               INotificationService notification)
         {
@@ -63,7 +64,7 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<AccountDto> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
+        public async Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
         {
             var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
 
@@ -73,10 +74,10 @@ namespace CharlieBackend.Business.Services
 
                 var foundAccount = _mapper.Map<AccountDto>(await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel));
 
-                return foundAccount;
+                return Result<AccountDto>.GetSuccess(foundAccount);
             }
 
-            return null;
+            return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
         }
 
         public async Task<IList<AccountDto>> GetAllAccountsAsync()
@@ -128,7 +129,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return true;
+                return isSucceeded;
             }
             catch
             {
@@ -169,6 +170,60 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<AccountDto>.GetError(ErrorCode.InternalServerError, "Salt for this account does not exist.");
+        }
+
+        public async Task<Result<ForgotPasswordDto>> GenerateForgotPasswordToken(ForgotPasswordDto forgotPassword)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(forgotPassword.Email);
+
+            if (user == null)
+            {
+                return Result<ForgotPasswordDto>.GetError(ErrorCode.NotFound,
+                        $"Account with email {forgotPassword.Email} does not exist!");
+            }
+
+            user.ForgotPasswordToken = Guid.NewGuid().ToString();
+            user.ForgotTokenGenDate = DateTime.Now;
+
+            await _unitOfWork.CommitAsync();
+
+            string callbackUrl = forgotPassword.FormUrl + "?token=" + user.ForgotPasswordToken;
+
+            await _notification.ForgotPasswordNotify(forgotPassword.Email, callbackUrl);
+
+            return Result<ForgotPasswordDto>.GetSuccess(forgotPassword);
+        }
+
+        public async Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword)
+        {
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(resetPassword.Email);
+
+            if (user == null)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            }
+
+            if (user.ForgotPasswordToken != guid)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.ValidationError, "Invalid forgot password token");
+            }
+
+            DateTime tokenGenDate = (DateTime)user.ForgotTokenGenDate;
+
+            if (DateTime.Now > tokenGenDate.AddDays(1) || !user.ForgotTokenGenDate.HasValue)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.ForgotPasswordExpired,
+                                                   $"Forgot password token for {user.Email} is expired");
+            }
+
+            user.Salt = PasswordHelper.GenerateSalt();
+            user.Password = PasswordHelper.HashPassword(resetPassword.NewPassword, user.Salt);
+            user.ForgotPasswordToken = null;
+            user.ForgotTokenGenDate = null;
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
         }
     }
 }

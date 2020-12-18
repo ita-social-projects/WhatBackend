@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
                 return BadRequest();
             }
 
-            var foundAccount = await _accountService.GetAccountCredentialsAsync(authenticationModel);
+            var foundAccount = (await _accountService.GetAccountCredentialsAsync(authenticationModel)).Data;
 
             if (foundAccount == null)
             {
@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (foundAccount.Role == UserRole.Student)
             {
-                var foundStudent = await _studentService.GetStudentByAccountIdAsync(foundAccount.Id);
+                var foundStudent = (await _studentService.GetStudentByAccountIdAsync(foundAccount.Id)).Data;
 
                 if (foundStudent == null)
                 {
@@ -96,7 +96,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (foundAccount.Role == UserRole.Mentor)
             {
-                var foundMentor = await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id);
+                var foundMentor = (await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id)).Data;
 
                 if (foundMentor == null)
                 {
@@ -108,14 +108,14 @@ namespace CharlieBackend.Api.Controllers
 
             if (foundAccount.Role == UserRole.Secretary)
             {
-                var foundSecretary = await _secretaryService.GetSecretaryByAccountIdAsync(foundAccount.Id);
+                var foundSecretary = (await _secretaryService.GetSecretaryByAccountIdAsync(foundAccount.Id)).Data;
 
                 if (foundSecretary == null)
                 {
                     return BadRequest();
                 }
 
-                entityId = foundSecretary.Data.Id;
+                entityId = foundSecretary.Id;
             }
 
             if (foundAccount.Role == UserRole.NotAssigned)
@@ -206,12 +206,40 @@ namespace CharlieBackend.Api.Controllers
         /// Returns an updated account
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
-        [Route("ChangePassword")]
+        [Route("password")]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpPost]
-        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePasswd)
+        [HttpPut]
+        public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
-            var updatedAccount = await _accountService.ChangePasswordAsync(changePasswd);
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
+
+            return updatedAccount.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns a result of generating a forgot password token
+        /// </summary>
+        /// <response code="200">Successful returns a forgot password DTO</response>
+        [Route("password/forgot")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto changeForgotPassword)
+        {
+            var generatedForgotTokenResult = await _accountService.GenerateForgotPasswordToken(changeForgotPassword);
+
+            return generatedForgotTokenResult.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns a result of confirmed password change
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("password/reset/{guid}")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> ResetForgotPassword(string guid, ResetPasswordDto resetPassword)
+        {
+            var updatedAccount = await _accountService.ResetPasswordAsync(guid, resetPassword);
 
             return updatedAccount.ToActionResult();
         }

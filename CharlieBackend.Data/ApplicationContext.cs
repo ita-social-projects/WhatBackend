@@ -128,6 +128,18 @@ namespace CharlieBackend.Data
                     .HasComment("salt has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.ForgotPasswordToken)
+                    .HasColumnName("forgot_password_token")
+                    .HasColumnType("varchar(100)")
+                    .HasComment("token for resetting password")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.ForgotTokenGenDate)
+                    .HasColumnName("forgot_token_gen_date")
+                    .HasColumnType("datetime")
+                    .HasComment("date of generation for users forgot password token");
             });
 
             modelBuilder.Entity<Course>(entity =>
@@ -332,7 +344,6 @@ namespace CharlieBackend.Data
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.StudentGroup)
                     .HasForeignKey(d => d.CourseId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_course_of_student_group");
             });
 

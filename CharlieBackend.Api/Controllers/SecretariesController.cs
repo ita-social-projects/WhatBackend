@@ -54,9 +54,24 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Secretary")]
         [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
         [HttpGet]
-        public async Task<ActionResult> GetAllSecretaries()
+        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
         {
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
+
+            return Ok(secretariesDtos);
+        }
+
+        /// <summary>
+        /// Gets only active secretaries
+        /// </summary>
+        /// <response code="200">Returns list of active secretaries</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
+        [Route("active")]
+        [HttpGet]
+        public async Task<ActionResult> GetActiveSecretaries()
+        {
+            var secretariesDtos = await _secretaryService.GetActiveSecretariesAsync();
 
             return secretariesDtos.ToActionResult();
         }
