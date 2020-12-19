@@ -458,14 +458,28 @@ namespace CharlieBackend.Data
                 entity.ToTable("Attachment");
 
                 entity.HasIndex(e => e.ContainerName)
-                    .HasName("containerName_UNIQUE")
+                    .HasName("container_name_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.AddTime)
+                    .IsRequired()
+                    .HasColumnName("add_time")
+                    .HasColumnType("datetime")
+                    .HasComment("add_time has been set to not null");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
+
+                entity.Property(e => e.UserRole)
+                    .IsRequired()
+                    .HasColumnName("user_role");
+
                 entity.Property(e => e.ContainerName)
                     .IsRequired()
-                    .HasColumnName("containerName")
+                    .HasColumnName("container_name")
                     .HasColumnType("varchar(100)")
                     .HasComment("name has been set to not null and unique")
                     .HasCharSet("utf8mb4")
@@ -473,7 +487,7 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.FileName)
                     .IsRequired()
-                    .HasColumnName("fileName")
+                    .HasColumnName("file_name")
                     .HasColumnType("varchar(100)")
                     .HasComment("name has been set to not null")
                     .HasCharSet("utf8mb4")

@@ -3,6 +3,7 @@ using System.IO;
 using AutoMapper;
 using CharlieBackend.Core;
 using Azure.Storage.Blobs;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Azure.Storage.Blobs.Models;
@@ -13,6 +14,7 @@ using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -36,7 +38,10 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(IFormFileCollection fileCollection)
+        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
+                    IFormFileCollection fileCollection,
+                    ClaimsPrincipal claimsContext
+                    )
         {
             try
             {
@@ -44,10 +49,8 @@ namespace CharlieBackend.Business.Services
                 
                 foreach (var file in fileCollection) 
                 {
-                    // Container names must start or end with a letter or number, 
-                    // and can contain only letters, numbers, and the dash (-) character.
-                    // All letters in a container name must be lowercase.
-                    string containerName = "what-attachments-" + Guid.NewGuid().ToString();
+
+                    string containerName = Guid.NewGuid().ToString("N");
 
                     BlobContainerClient cloudBlobContainerClient = 
                                 new BlobContainerClient(_blobAccount.connectionString, containerName);
@@ -66,6 +69,10 @@ namespace CharlieBackend.Business.Services
 
                     Attachment attachment = new Attachment()
                     {
+                        UserId  = Convert.ToInt64(claimsContext.Claims
+                                .First(claim => claim.Type == "Id").Value),
+                        UserRole = (UserRole) Enum.Parse(typeof(UserRole), 
+                                claimsContext.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value),
                         ContainerName = containerName,
                         FileName = file.FileName
                     };

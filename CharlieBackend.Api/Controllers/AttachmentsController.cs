@@ -33,7 +33,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAttachments([FromForm] IFormFileCollection fileCollection)
         {
-            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection);
+            var userContext = HttpContext.User;
+
+            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection, userContext);
 
             return addedAttachments.ToActionResult();
         }
