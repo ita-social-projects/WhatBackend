@@ -61,6 +61,11 @@ namespace CharlieBackend.Api.Controllers
         {
             var attachment = await _attachmentService.DownloadAttachmentAsync(attachmentId);
 
+            if (attachment.Data == null)
+            {
+                return attachment.ToActionResult();
+            }
+
             return File
                 (
                 attachment.Data.DownloadInfo.Content, 

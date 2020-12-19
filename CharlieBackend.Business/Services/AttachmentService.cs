@@ -22,20 +22,17 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly AzureStorageBlobAccount  _blobAccount;
-        private readonly ILogger<AttachmentService> _logger;
+        private readonly IBlobService _blobService;
 
         public AttachmentService( 
                              IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             AzureStorageBlobAccount blobAccount,
-                             ILogger<AttachmentService> logger
+                             IBlobService blobService
                                 )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _blobAccount = blobAccount;
-            _logger = logger;
+            _blobService = blobService;
         }
 
         public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
@@ -50,22 +47,9 @@ namespace CharlieBackend.Business.Services
                 foreach (var file in fileCollection) 
                 {
 
-                    string containerName = Guid.NewGuid().ToString("N");
-
-                    BlobContainerClient container = 
-                                new BlobContainerClient(_blobAccount.connectionString, containerName);
-
-                    await container.CreateIfNotExistsAsync();
-
-                    BlobClient blob = container.GetBlobClient(file.FileName);
-
-
-                    _logger.LogInformation("FileName: " + file.FileName);
-                    _logger.LogInformation("Uri: " + blob.Uri);
-
                     using Stream uploadFileStream = file.OpenReadStream();
 
-                    await blob.UploadAsync(uploadFileStream);
+                    var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream);
 
                     Attachment attachment = new Attachment()
                     {
@@ -73,7 +57,7 @@ namespace CharlieBackend.Business.Services
                                 .First(claim => claim.Type == "Id").Value),
                         UserRole = (UserRole) Enum.Parse(typeof(UserRole), 
                                 claimsContext.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value),
-                        ContainerName = containerName,
+                        ContainerName = blob.Data.BlobContainerName,
                         FileName = file.FileName
                     };
 
@@ -112,18 +96,11 @@ namespace CharlieBackend.Business.Services
                      "Attachement with id: " + attachmentId + " is not found");
             }
 
-            BlobClient blob = new BlobClient
-                        (
-                        _blobAccount.connectionString,
-                        attachment.ContainerName,
-                        attachment.FileName
-                        );
-
-            BlobDownloadInfo download = await blob.DownloadAsync();
+            var download = await _blobService.DownloadAsync(attachment.ContainerName, attachment.FileName);
 
             DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
                         { 
-                           DownloadInfo = download,
+                           DownloadInfo = download.Data,
                            FileName = attachment.FileName
                         };
 
@@ -140,13 +117,7 @@ namespace CharlieBackend.Business.Services
                      "Attachement with id: " + attachmentId + " is not found");
             }
 
-            BlobContainerClient container = new BlobContainerClient
-                        (
-                        _blobAccount.connectionString, 
-                        attachment.ContainerName
-                        );
-
-            await container.DeleteIfExistsAsync();
+            await _blobService.DeleteAsync(attachment.ContainerName);
 
             await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
 
