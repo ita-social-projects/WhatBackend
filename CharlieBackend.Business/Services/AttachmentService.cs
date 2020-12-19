@@ -52,20 +52,20 @@ namespace CharlieBackend.Business.Services
 
                     string containerName = Guid.NewGuid().ToString("N");
 
-                    BlobContainerClient cloudBlobContainerClient = 
+                    BlobContainerClient container = 
                                 new BlobContainerClient(_blobAccount.connectionString, containerName);
 
-                    await cloudBlobContainerClient.CreateIfNotExistsAsync();
+                    await container.CreateIfNotExistsAsync();
 
-                    BlobClient blobClient = cloudBlobContainerClient.GetBlobClient(file.FileName);
+                    BlobClient blob = container.GetBlobClient(file.FileName);
 
 
                     _logger.LogInformation("FileName: " + file.FileName);
-                    _logger.LogInformation("Uri: " + blobClient.Uri);
+                    _logger.LogInformation("Uri: " + blob.Uri);
 
                     using Stream uploadFileStream = file.OpenReadStream();
 
-                    await blobClient.UploadAsync(uploadFileStream);
+                    await blob.UploadAsync(uploadFileStream);
 
                     Attachment attachment = new Attachment()
                     {
@@ -106,14 +106,20 @@ namespace CharlieBackend.Business.Services
         {
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
 
-            BlobClient blobClient = new BlobClient
+            if (attachment == null)
+            {
+                return Result<DownloadAttachmentDto>.GetError(ErrorCode.ValidationError,
+                     "Attachement with id: " + attachmentId + " is not found");
+            }
+
+            BlobClient blob = new BlobClient
                         (
                         _blobAccount.connectionString,
                         attachment.ContainerName,
                         attachment.FileName
                         );
 
-            BlobDownloadInfo download = await blobClient.DownloadAsync();
+            BlobDownloadInfo download = await blob.DownloadAsync();
 
             DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
                         { 
@@ -122,6 +128,31 @@ namespace CharlieBackend.Business.Services
                         };
 
             return Result<DownloadAttachmentDto>.GetSuccess(downloadedAttachment);
+        }
+
+        public async Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId)
+        {
+            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
+
+            if (attachment == null)
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
+                     "Attachement with id: " + attachmentId + " is not found");
+            }
+
+            BlobContainerClient container = new BlobContainerClient
+                        (
+                        _blobAccount.connectionString, 
+                        attachment.ContainerName
+                        );
+
+            await container.DeleteIfExistsAsync();
+
+            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
     }
 }

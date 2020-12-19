@@ -68,5 +68,17 @@ namespace CharlieBackend.Api.Controllers
                 attachment.Data.FileName 
                 );
         }
+
+        /// <summary>
+        /// DELETE: api/attachments/{id}
+        /// </summary>
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpDelete("{attachmentId}")]
+        public async Task<IActionResult> DeleteAttachment(long attachmentId)
+        {
+            var attachment = await _attachmentService.DeleteAttachmentAsync(attachmentId);
+
+            return attachment.ToActionResult();
+        }
     }
 }

@@ -18,5 +18,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync();
 
         Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId);
+
+        Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId);
     }
 }
