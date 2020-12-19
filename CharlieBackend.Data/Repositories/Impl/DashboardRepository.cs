@@ -161,7 +161,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Select(x => new
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentGroupId = x.Lesson.StudentGroupId,
                         StudentLessonMark = x.StudentMark,
                         StudentId = x.StudentId
                     })
