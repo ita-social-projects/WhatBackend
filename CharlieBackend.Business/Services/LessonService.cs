@@ -40,6 +40,24 @@ namespace CharlieBackend.Business.Services
                     createdLessonEntity.Theme = foundTheme;
                 }
 
+                var foundMentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(lessonDto.MentorId);
+              
+                if (foundMentor == null)
+                {
+                    throw new Exception("Mentor is not found"); // return Result<T>
+                }
+                
+                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(lessonDto.StudentGroupId);
+                
+                if (foundStudentGroup == null)
+                {
+                    throw new Exception("Student group is not found"); // 
+                }
+                if (foundStudentGroup.StudentsOfStudentGroups.Count != lessonDto.LessonVisits.Count)
+                {
+                    throw new Exception("something wromg with a Lesso Visits");
+                }
+
                 _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
                 if (lessonDto.LessonVisits != null)
@@ -56,11 +74,11 @@ namespace CharlieBackend.Business.Services
 
                 return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(createdLessonEntity));
             }
-            catch
+            catch(Exception ex)
             {
                 _unitOfWork.Rollback();
 
-                return null;
+                return Result<LessonDto>.GetError(ErrorCode., ex.Message);
             }
         }
 

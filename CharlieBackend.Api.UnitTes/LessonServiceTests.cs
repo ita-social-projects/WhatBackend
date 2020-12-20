@@ -81,7 +81,7 @@ namespace CharlieBackend.Api.UnitTest
             var themeRepositoryMock = new Mock<IThemeRepository>();
             themeRepositoryMock.Setup(x => x.Add(It.IsAny<Theme>()))
                 .Callback<Theme>(x =>
-                {
+                { 
                     x.Id = 5;
                     x.Name = "ExampleName";
                 });
