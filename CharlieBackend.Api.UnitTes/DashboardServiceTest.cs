@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -43,9 +44,47 @@ namespace CharlieBackend.Api.UnitTest
                 studentclassbookRequestWithData.StartDate,
                 studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 1, 5 });
 
-            dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync())
+            dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(
+                new List<long>() { 1, 5 })).ReturnsAsync(new List<long> { 5, 7, 15, 43 });
+
+            dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByStudentIds(
+                new List<long>() { 5, 7, 15, 43 })).ReturnsAsync(new List<StudentVisitDto>() 
+                {
+                    new StudentVisitDto()
+                    {
+                        CourseId = 5,
+                        LessonDate = new DateTime(2015, 01, 01),
+                        StudentId = 6,
+                        LessonId = 1,
+                        Presence = true,
+                        StudentGroupId = 1
+                    }
+                });
+
+            dashboardRepositoryMock.Setup(x => x
+                .GetStudentsMarksListByStudentIds(new List<long>() { 1, 5 }))
+                .ReturnsAsync(new List<StudentMarkDto>
+                {
+                    new StudentMarkDto()
+                    {
+                        CourseId = 5,
+                        LessonDate = new DateTime(2015, 01, 01),
+                        LessonId = 1,
+                        StudentGroupId = 1,
+                        StudentId = 6,
+                        StudentMark = 5
+                    }
+                });
+
+            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashboardRepositoryMock.Object);
+
+            var dashboardService = new DashboardService(
+                _unitOfWorkMock.Object
+                );
+
 
             //Act
+
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
