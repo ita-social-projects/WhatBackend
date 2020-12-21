@@ -71,6 +71,11 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course Not Found");
                 }
 
+                if (await _unitOfWork.CourseRepository.IsCourseHasGroupAsync(id))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Student group are included in this Course");
+                }
+
                 var updatedEntity = _mapper.Map<Course>(updateCourseDto);
 
                 updatedEntity.Id = id;
@@ -97,6 +102,19 @@ namespace CharlieBackend.Business.Services
         public Task<bool> IsCourseNameTakenAsync(string courseName)
         {
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
+        }
+
+        public async Task<Result<bool>> DisableCourceAsync(long id)
+        {
+            if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
+            {
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
+            }
+
+            Result<bool> course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return course;
         }
     }
 }
