@@ -9,13 +9,13 @@ namespace CharlieBackend.Core.Entities
 
         public string TaskText { get; set; }
 
-        public bool Common { get; set; }
+        public bool IsCommon { get; set; }
 
-        public long? ThemeId { get; set; }
+        public long ThemeId { get; set; }
 
         public Theme Theme { get; set; }
 
-        public long? MentorId { get; set; }
+        public long MentorId { get; set; }
 
         public Mentor Mentor { get; set; }
 

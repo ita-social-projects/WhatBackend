@@ -7,6 +7,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IHometaskRepository : IRepository<Hometask>
     {
-        Task<IList<Hometask>> GetHometasksByCourseId(long studentId);
+        Task<IList<Hometask>> GetHometasksByCourseId(long courseId);
     }
 }

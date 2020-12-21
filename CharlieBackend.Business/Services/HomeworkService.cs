@@ -45,7 +45,7 @@ namespace CharlieBackend.Business.Services
 
                 var newHometask = new Hometask
                 {
-                    Common = createHometaskDto.Common,
+                    IsCommon = createHometaskDto.IsCommon,
                     DeadlineDays = createHometaskDto.DeadlineDays,
                     MentorId = createHometaskDto.MentorId,
                     TaskText = createHometaskDto.TaskText,
@@ -54,14 +54,9 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.HometaskRepository.Add(newHometask);
 
-                if (createHometaskDto.AttachmentIds?.Count != null)
+                if (createHometaskDto.AttachmentIds?.Count > 0)
                 {
                     var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHometaskDto.AttachmentIds);
-
-                    if (attachments == default)
-                    {
-                        return Result<HometaskDto>.GetError(ErrorCode.ValidationError, "No such attachments found");
-                    }
 
                     newHometask.AttachmentOfHometasks = new List<AttachmentOfHometask>();
 
@@ -134,19 +129,41 @@ namespace CharlieBackend.Business.Services
             }
 
             var theme = await _unitOfWork.ThemeRepository
-                .CheckThemeExistenceByIdAsync(request.ThemeId);
+                .IsEntityExistAsync(request.ThemeId);
 
-            if (theme == default)
+            if (!theme)
             {
                 yield return "Given theme does not exist";
             }
 
             var mentor = await _unitOfWork.MentorRepository
-                .GetMentorByIdAsync(request.MentorId);
+                .IsEntityExistAsync(request.MentorId);
 
-            if (mentor == default)
+            if (!mentor)
             {
                 yield return "Given mentor does not exist";
+            }
+
+            if (request.AttachmentIds != default 
+                && request.AttachmentIds.Count() != 0)
+            {
+                var nonExistingAttachment = new List<long>();
+
+                foreach (var attachmentId in request.AttachmentIds)
+                {
+                    var doesAttachmentExist = await _unitOfWork.AttachmentRepository
+                        .IsEntityExistAsync(attachmentId);
+
+                    if (!doesAttachmentExist)
+                    {
+                        nonExistingAttachment.Add(attachmentId);
+                    }
+                }
+
+                if (nonExistingAttachment.Count != 0)
+                {
+                    yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
+                }
             }
         }
     }

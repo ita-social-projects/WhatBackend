@@ -54,7 +54,6 @@ namespace CharlieBackend.Root
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAttachmentService, AttachmentService>();
-            services.AddScoped<IHometaskRepository, HometaskRepository>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             #endregion
         }

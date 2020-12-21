@@ -13,16 +13,16 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to make operations with homework
     /// </summary>
-    [Route("api/homework")]
+    [Route("api/homeworks")]
     [ApiController]
-    public class HomeworkController : ControllerBase
+    public class HomeworksController : ControllerBase
     {
         private readonly IHomeworkService _homeworkService;
 
         /// <summary>
         /// Homework controllers constructor
         /// </summary>
-        public HomeworkController(IHomeworkService homeworkService)
+        public HomeworksController(IHomeworkService homeworkService)
         {
             _homeworkService = homeworkService;
         }
@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HometaskDto))]
         [Authorize(Roles = "Admin, Mentor")]
-        [HttpPost("addHometask")]
+        [HttpPost]
         public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
         {
             var results = await _homeworkService
@@ -46,7 +46,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(List<HometaskDto>))]
         [Authorize(Roles = "Admin, Mentor")]
-        [HttpGet("getHometaskOfCourse/{courseId}")]
+        [HttpGet("/api/courses/{id}/hometasks")]
         public async Task<ActionResult> GetHometaskOfCourse(long courseId)
         {
             var results = await _homeworkService
@@ -60,11 +60,11 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HometaskDto))]
         [Authorize(Roles = "Admin, Mentor, Student")]
-        [HttpGet("getHometask/{hometaskId}")]
-        public async Task<ActionResult> GetHometaskById(long hometaskId)
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetHometaskById(long id)
         {
             var results = await _homeworkService
-                        .GetHometaskByIdAsync(hometaskId);
+                        .GetHometaskByIdAsync(id);
 
             return results.ToActionResult();
         }

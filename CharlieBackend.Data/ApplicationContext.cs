@@ -494,8 +494,8 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Common)
-                    .HasColumnName("common")
+                entity.Property(e => e.IsCommon)
+                    .HasColumnName("is_common")
                     .HasDefaultValueSql("'1'")
                     .HasComment("common has been set to not null with true as a default value");
 

@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS `soft`.`hometask` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `deadline_days` SMALLINT(3) NULL DEFAULT NULL,
   `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
-  `common` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'presence default value has been set',
+  `is_common` TINYINT(1) NOT NULL DEFAULT '1',
   `theme_id` BIGINT(20) NULL DEFAULT NULL,
   `mentor_id` BIGINT(20) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -311,8 +311,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_hometask` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `hometask_id` BIGINT(20) NULL DEFAULT NULL,
-  `attachment_id` BIGINT(20) NULL DEFAULT NULL,
+  `hometask_id` BIGINT(20) NOT NULL,
+  `attachment_id` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `FK_hometasktask_id` (`hometask_id` ASC),
   INDEX `FK_attachment_id` (`attachment_id` ASC),

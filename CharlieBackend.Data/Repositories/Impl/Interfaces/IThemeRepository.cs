@@ -9,7 +9,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public Task<Theme> GetThemeByIdAsync(long themeId);
         Task<bool> IsThemeUsed(long themeId);
-
-        public Task<bool> CheckThemeExistenceByIdAsync(long themeId);
     }
 }

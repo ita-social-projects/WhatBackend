@@ -12,7 +12,7 @@ namespace CharlieBackend.Core.DTO.Homework
 
         public string TaskText { get; set; }
 
-        public bool Common { get; set; }
+        public bool IsCommon { get; set; }
 
         public long? ThemeId { get; set; }
 

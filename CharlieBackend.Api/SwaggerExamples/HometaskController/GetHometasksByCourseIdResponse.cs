@@ -16,7 +16,7 @@ namespace CharlieBackend.Api.SwaggerExamples.HometaskController
                 new HometaskDto()
                 {
                     Id = 24,
-                    Common = true,
+                    IsCommon = true,
                     AttachmentIds = new List<long> { 3, 12 },
                     DeadlineDays = 5,
                     MentorId = 7,
@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.SwaggerExamples.HometaskController
                 new HometaskDto()
                 {
                     Id = 32,
-                    Common = true,
+                    IsCommon = true,
                     AttachmentIds = new List<long> { 4, 7 },
                     DeadlineDays = 5,
                     MentorId = 7,
