@@ -14,17 +14,9 @@ namespace CharlieBackend.AdminPanel.Controllers
     {
         private readonly IStudentService _studentService;
 
-        private readonly IOptions<ApplicationSettings> _config;
-
-        private readonly IDataProtector _protector;
-
-        public StudentsController(IStudentService studentService,
-                                  IOptions<ApplicationSettings> config,
-                                  IDataProtectionProvider provider)
+        public StudentsController(IStudentService studentService)
         {
             _studentService = studentService;
-            _config = config;
-            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
 
         }
 

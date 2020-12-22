@@ -11,13 +11,10 @@ namespace CharlieBackend.AdminPanel.Controllers
     [Route("[controller]/[action]")]
     public class StudentGroupController : Controller
     {
-        private readonly ILogger<StudentGroupController> _logger;
         private readonly IStudentGroupService _studentGroupService;
 
-        public StudentGroupController(ILogger<StudentGroupController> logger,
-                                      IStudentGroupService studentGroupService)
+        public StudentGroupController(IStudentGroupService studentGroupService)
         {
-            _logger = logger;
             _studentGroupService = studentGroupService;
         }
 

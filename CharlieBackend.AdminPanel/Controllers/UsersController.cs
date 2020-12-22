@@ -14,20 +14,15 @@ namespace CharlieBackend.AdminPanel.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
-        private readonly ILogger<UsersController> _logger;
 
         private readonly IOptions<ApplicationSettings> _config;
-
         private readonly IApiUtil _apiUtil;
-
         private readonly IDataProtector _protector;
 
-        public UsersController(ILogger<UsersController> logger, 
-                               IOptions<ApplicationSettings> config, 
+        public UsersController(IOptions<ApplicationSettings> config, 
                                IApiUtil apiUtil,
                                IDataProtectionProvider provider)
         {
-            _logger = logger;
             _apiUtil = apiUtil;
 
             _config = config;
