@@ -9,14 +9,14 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 {
     public interface IMentorService
     {
-        Task<IList<MentorViewModel>> GetAllMentorsAsync(string accessToken);
+        Task<IList<MentorViewModel>> GetAllMentorsAsync();
 
-        Task<MentorEditViewModel> GetMentorByIdAsync(long id, string accessToken);
+        Task<MentorEditViewModel> GetMentorByIdAsync(long id);
 
-        Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto, string accessToken);
+        Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto);
 
-        Task<MentorDto> AddMentorAsync(long id, string accessToken);
+        Task<MentorDto> AddMentorAsync(long id);
 
-        Task<MentorDto> DisableMentorAsync(long id, string accessToken);
+        Task<MentorDto> DisableMentorAsync(long id);
     }
 }

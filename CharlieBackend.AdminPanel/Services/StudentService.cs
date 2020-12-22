@@ -17,10 +17,8 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
 
-
         private readonly IOptions<ApplicationSettings> _config;
         private readonly IDataProtector _protector;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _accessToken;
 
         public StudentService(IApiUtil apiUtil,
@@ -30,10 +28,9 @@ namespace CharlieBackend.AdminPanel.Services
         {
             _apiUtil = apiUtil;
             _config = config;
-            _httpContextAccessor = httpContextAccessor;
             _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
 
-            _accessToken = _protector.Unprotect(_httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
+            _accessToken = _protector.Unprotect(httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
         }
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()

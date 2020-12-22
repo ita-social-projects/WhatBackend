@@ -4,7 +4,6 @@ using CharlieBackend.Core.DTO.StudentGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {

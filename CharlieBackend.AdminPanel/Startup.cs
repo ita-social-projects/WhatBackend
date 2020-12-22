@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using CharlieBackend.AdminPanel.Middlewares;
 using CharlieBackend.AdminPanel.Models.Mapping;
