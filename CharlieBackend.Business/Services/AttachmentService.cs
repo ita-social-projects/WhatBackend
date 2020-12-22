@@ -43,6 +43,12 @@ namespace CharlieBackend.Business.Services
                             "Files are too big, max size is 50 MB");
             }
 
+            if (!AttachmentsExtentionValidation(fileCollection))
+            {
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError,
+                           "Some of files have dengerous extention");
+            }
+
             IList<Attachment> attachments = new List<Attachment>();
 
             foreach (var file in fileCollection)
@@ -118,7 +124,33 @@ namespace CharlieBackend.Business.Services
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
 
-        public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
+        public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
+        {
+            string[] dangerousExtentions = 
+            {
+                ".exe",".pif",".application",".gadget",".msi",".msp",".com",
+                ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
+                ".vbe",".js",".jse",".ws",".wsf",".wsc",".wsh",".ps1",".ps1xml",
+                ".ps2",".ps2xml",".psc1",".psc2",".msh",".msh1",".msh2",".mshxml",
+                ".msh1xml",".msh2xml",".scf",".lnk",".inf",".reg",".doc",".xls",
+                ".ppt",".docm",".dotm",".xlsm",".xltm",".xlam",".pptm",".potm",
+                ".ppam",".ppsm",".sldm",".dll"
+            };
+
+            foreach (var file in fileCollection)
+            {
+                foreach (var extention in dangerousExtentions)
+                {
+                    if(file.FileName.ToLower().EndsWith(extention))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+         }
+
+            public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
         {
             const int maxSize = 52428800;
             long currentSize = 0;
