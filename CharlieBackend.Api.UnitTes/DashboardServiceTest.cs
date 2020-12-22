@@ -238,7 +238,21 @@ namespace CharlieBackend.Api.UnitTest
 
             var mockPrincipal = new Mock<IPrincipal>();
             mockPrincipal.Setup(x => x.Identity).Returns(claimIdentity);
-            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(true);
+            mockPrincipal.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
+
+            var claimsWrong = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "Igor"),
+                new Claim(ClaimTypes.NameIdentifier , "1"),
+                new Claim(ClaimTypes.Role, UserRole.Student.ToString()),
+                new Claim("Id", "27")
+            };
+            var claimIdentityWrong = new ClaimsIdentity(claims, "TestAuthType");
+            var claimPrincipalWrong = new ClaimsPrincipal(claimIdentity);
+
+            var mockPrincipalWrong = new Mock<IPrincipal>();
+            mockPrincipalWrong.Setup(x => x.Identity).Returns(claimIdentityWrong);
+            mockPrincipalWrong.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(false);
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
