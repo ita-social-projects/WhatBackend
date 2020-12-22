@@ -8,6 +8,6 @@ namespace CharlieBackend.Core.Entities
 
         public string FileName { get; set; }
 
-        public virtual ICollection<AttachmentOfHometask> AttachmentOfHometasks { get; set; }
+        public virtual ICollection<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
     }
 }

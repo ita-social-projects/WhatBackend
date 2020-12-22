@@ -176,13 +176,13 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-            #region Hometask mapping
+            #region Homework mapping
 
-            CreateMap<Hometask, HometaskDto>()
+            CreateMap<Homework, HomeworkDto>()
                 .ForMember(dest => dest.AttachmentIds,
-                        opt => opt.MapFrom(src => src.AttachmentOfHometasks
+                        opt => opt.MapFrom(src => src.AttachmentsOfHomework
                                 .Select(y => y.AttachmentId).ToList()));
-            CreateMap<HometaskDto, Hometask>();
+            CreateMap<HomeworkDto, Homework>();
 
             #endregion
         }

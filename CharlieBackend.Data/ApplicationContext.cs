@@ -39,9 +39,9 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Attachment> Attachments { get; set; }
 
-        public virtual DbSet<Hometask> Hometasks { get; set; }
+        public virtual DbSet<Homework> Homeworks { get; set; }
 
-        public virtual DbSet<Hometask> AttachmentOfHometask { get; set; }
+        public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
@@ -484,9 +484,9 @@ namespace CharlieBackend.Data
                     .HasCollation("utf8mb4_0900_ai_ci");
             });
 
-            modelBuilder.Entity<Hometask>(entity =>
+            modelBuilder.Entity<Homework>(entity =>
             {
-                entity.ToTable("hometask");
+                entity.ToTable("homework");
 
                 entity.HasIndex(e =>
                     new { e.MentorId, e.ThemeId })
@@ -514,41 +514,41 @@ namespace CharlieBackend.Data
                 entity.Property(e => e.ThemeId).HasColumnName("theme_id");
 
                 entity.HasOne(e => e.Theme)
-                    .WithMany(p => p.Hometasks)
+                    .WithMany(p => p.Homeworks)
                     .HasForeignKey(d => d.ThemeId)
-                    .HasConstraintName("FK_theme_of_hometask");
+                    .HasConstraintName("FK_theme_of_homework");
 
                 entity.HasOne(d => d.Mentor)
-                    .WithMany(p => p.Hometasks)
+                    .WithMany(p => p.Homeworks)
                     .HasForeignKey(d => d.MentorId)
-                    .HasConstraintName("FK_mentor_of_hometask");
+                    .HasConstraintName("FK_mentor_of_homework");
             });
 
-            modelBuilder.Entity<AttachmentOfHometask>(entity =>
+            modelBuilder.Entity<AttachmentOfHomework>(entity =>
             {
-                entity.ToTable("attachment_of_hometask");
+                entity.ToTable("attachment_of_homework");
 
                 entity.HasIndex(e => e.AttachmentId)
-                    .HasName("FK_attachment_of_hometask_id");
+                    .HasName("FK_attachment_of_homework_id");
 
-                entity.HasIndex(e => e.HometaskId)
-                    .HasName("FK_hometask_of_attachment_id");
+                entity.HasIndex(e => e.HomeworkId)
+                    .HasName("FK_homework_of_attachment_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
 
-                entity.Property(e => e.HometaskId).HasColumnName("hometask_id");
+                entity.Property(e => e.HomeworkId).HasColumnName("homework_id");
 
                 entity.HasOne(d => d.Attachment)
-                    .WithMany(p => p.AttachmentOfHometasks)
+                    .WithMany(p => p.AttachmentsOfHomework)
                     .HasForeignKey(d => d.AttachmentId)
-                    .HasConstraintName("FK_attachment_of_hometask");
+                    .HasConstraintName("FK_attachment_of_homework");
 
-                entity.HasOne(d => d.Hometask)
-                    .WithMany(p => p.AttachmentOfHometasks)
-                    .HasForeignKey(d => d.HometaskId)
-                    .HasConstraintName("FK_hometask_of_attachment");
+                entity.HasOne(d => d.Homework)
+                    .WithMany(p => p.AttachmentsOfHomework)
+                    .HasForeignKey(d => d.HomeworkId)
+                    .HasConstraintName("FK_homework_of_attachment");
             });
 
             OnModelCreatingPartial(modelBuilder);

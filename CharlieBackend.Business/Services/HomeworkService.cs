@@ -26,11 +26,9 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<HometaskDto>> CreateHometaskAsync(CreateHometaskDto createHometaskDto)
+        public async Task<Result<HomeworkDto>> CreateHomeworkAsync(CreateHomeworkDto createHomeworkDto)
         {
-            try
-            {
-                var errors = ValidateCreateHometaskRequest(createHometaskDto);
+                var errors = ValidateCreateHomeworkRequest(createHomeworkDto);
                 
                 if (await errors.AnyAsync())
                 {
@@ -40,29 +38,31 @@ namespace CharlieBackend.Business.Services
                         errorsList.Add(error);
                     }
 
-                    return Result<HometaskDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errors));
+                    _logger.LogError("Homework create request has failed due to: " + string.Join(";\n", errorsList));
+
+                    return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errorsList));
                 }
 
-                var newHometask = new Hometask
+                var newHomework = new Homework
                 {
-                    IsCommon = createHometaskDto.IsCommon,
-                    DeadlineDays = createHometaskDto.DeadlineDays,
-                    MentorId = createHometaskDto.MentorId,
-                    TaskText = createHometaskDto.TaskText,
-                    ThemeId = createHometaskDto.ThemeId,
+                    IsCommon = createHomeworkDto.IsCommon,
+                    DeadlineDays = createHomeworkDto.DeadlineDays,
+                    MentorId = createHomeworkDto.MentorId,
+                    TaskText = createHomeworkDto.TaskText,
+                    ThemeId = createHomeworkDto.ThemeId,
                 };
 
-                _unitOfWork.HometaskRepository.Add(newHometask);
+                _unitOfWork.HomeworkRepository.Add(newHomework);
 
-                if (createHometaskDto.AttachmentIds?.Count > 0)
+                if (createHomeworkDto.AttachmentIds?.Count > 0)
                 {
-                    var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHometaskDto.AttachmentIds);
+                    var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHomeworkDto.AttachmentIds);
 
-                    newHometask.AttachmentOfHometasks = new List<AttachmentOfHometask>();
+                    newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
 
                     foreach (var attachment in attachments) 
                     {
-                        newHometask.AttachmentOfHometasks.Add(new AttachmentOfHometask
+                    newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
                         {
                             AttachmentId = attachment.Id,
                             Attachment = attachment,
@@ -72,55 +72,50 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<HometaskDto>.GetSuccess(_mapper.Map<HometaskDto>(newHometask));
-            }
-            catch
-            {
-                _unitOfWork.Rollback();
+                _logger.LogInformation($"Homework with id {newHomework.Id} has been added");
 
-                return Result<HometaskDto>.GetError(ErrorCode.InternalServerError, "Internal error");
-            }
+                return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
         }
 
-        public async Task<Result<IList<HometaskDto>>> GetHometaskOfCourseAsync(long courseId)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksOfCourseAsync(long courseId)
         {
             if (courseId == default)
             {
-                return Result<IList<HometaskDto>>
+                return Result<IList<HomeworkDto>>
                     .GetError(ErrorCode.ValidationError, "Wrong course id");
             }
 
-            var hometasks = await _unitOfWork.HometaskRepository
-                .GetHometasksByCourseId(courseId);
+            var homeworks = await _unitOfWork.HomeworkRepository
+                .GetHomeworksByCourseId(courseId);
 
-            if (hometasks == default)
+            if (homeworks == default)
             {
-                return Result<IList<HometaskDto>>.GetError(ErrorCode.NotFound, "Hometasks not found");
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Homework not found");
             }
 
-            return Result<IList<HometaskDto>>.GetSuccess(_mapper.Map<IList<HometaskDto>>(hometasks));
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
-        public async Task<Result<HometaskDto>> GetHometaskByIdAsync(long hometaskId)
+        public async Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId)
         {
-            if (hometaskId == default)
+            if (homeworkId == default)
             {
-                return Result<HometaskDto>
-                    .GetError(ErrorCode.ValidationError, "Wrong hometask id");
+                return Result<HomeworkDto>
+                    .GetError(ErrorCode.ValidationError, "Wrong homework id");
             }
 
-            var hometask = await _unitOfWork.HometaskRepository
-                .GetByIdAsync(hometaskId);
+            var homework = await _unitOfWork.HomeworkRepository
+                .GetByIdAsync(homeworkId);
 
-            if (hometask == default)
+            if (homework == default)
             {
-                return Result<HometaskDto>.GetError(ErrorCode.NotFound, "Hometask not found");
+                return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Homework not found");
             }
 
-            return Result<HometaskDto>.GetSuccess(_mapper.Map<HometaskDto>(hometask));
+            return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
         }
 
-        private async IAsyncEnumerable<string> ValidateCreateHometaskRequest(CreateHometaskDto request)
+        private async IAsyncEnumerable<string> ValidateCreateHomeworkRequest(CreateHomeworkDto request)
         {
             if (request == default)
             {

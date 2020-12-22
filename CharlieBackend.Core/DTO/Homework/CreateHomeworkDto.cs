@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace CharlieBackend.Core.DTO.Homework
 {
-    public class HometaskDto
+    public class CreateHomeworkDto
     {
-        public long Id { get; set; }
-
         public ushort? DeadlineDays { get; set; }
 
         public string TaskText { get; set; }
 
         public bool IsCommon { get; set; }
 
-        public long? ThemeId { get; set; }
+        [Required]
+        public long ThemeId { get; set; }
 
-        public long? MentorId { get; set; }
+        [Required]
+        public long MentorId { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
     }

@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Api.SwaggerExamples.HometaskController
+namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
 {
-    class GetHometasksByCourseIdResponse : IExamplesProvider<List<HometaskDto>>
+    class GetHomeworksByCourseIdResponse : IExamplesProvider<List<HomeworkDto>>
     {
-        public List<HometaskDto> GetExamples()
+        public List<HomeworkDto> GetExamples()
         {
-            return new List<HometaskDto>
+            return new List<HomeworkDto>
             {
-                new HometaskDto()
+                new HomeworkDto()
                 {
                     Id = 24,
                     IsCommon = true,
@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.SwaggerExamples.HometaskController
                     ThemeId = 3,
                     TaskText = "1. Please create new HTML page \n2. Page should contain 2 tables 2x2 in center",
                 },
-                new HometaskDto()
+                new HomeworkDto()
                 {
                     Id = 32,
                     IsCommon = true,

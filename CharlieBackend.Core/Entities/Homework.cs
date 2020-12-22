@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
-    public partial class Hometask : BaseEntity
+    public partial class Homework : BaseEntity
     {
         public ushort? DeadlineDays { get; set; }
 
@@ -19,6 +19,6 @@ namespace CharlieBackend.Core.Entities
 
         public Mentor Mentor { get; set; }
 
-        public virtual IList<AttachmentOfHometask> AttachmentOfHometasks { get; set; }
+        public virtual IList<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
     }
 }

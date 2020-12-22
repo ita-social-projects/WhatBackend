@@ -28,43 +28,43 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Adds hometask
+        /// Adds homework
         /// </summary>
-        [SwaggerResponse(200, type: typeof(HometaskDto))]
+        [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor")]
         [HttpPost]
-        public async Task<ActionResult> PostHometask([FromBody]CreateHometaskDto request)
+        public async Task<ActionResult> PostHomework([FromBody]CreateHomeworkDto request)
         {
             var results = await _homeworkService
-                        .CreateHometaskAsync(request);
+                        .CreateHomeworkAsync(request);
 
             return results.ToActionResult();
         }
 
         /// <summary>
-        /// Gets all hometasks of course
+        /// Gets all homeworks of course
         /// </summary>
-        [SwaggerResponse(200, type: typeof(List<HometaskDto>))]
+        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
         [Authorize(Roles = "Admin, Mentor")]
-        [HttpGet("/api/courses/{id}/hometasks")]
-        public async Task<ActionResult> GetHometaskOfCourse(long courseId)
+        [HttpGet("/api/courses/{id}/homeworks")]
+        public async Task<ActionResult> GetHomeworksOfCourse(long courseId)
         {
             var results = await _homeworkService
-                        .GetHometaskOfCourseAsync(courseId);
+                        .GetHomeworksOfCourseAsync(courseId);
 
             return results.ToActionResult();
         }
 
         /// <summary>
-        /// Gets hometask by id
+        /// Gets homework by id
         /// </summary>
-        [SwaggerResponse(200, type: typeof(HometaskDto))]
+        [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor, Student")]
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetHometaskById(long id)
+        public async Task<ActionResult> GetHomeworkById(long id)
         {
             var results = await _homeworkService
-                        .GetHometaskByIdAsync(id);
+                        .GetHomeworkByIdAsync(id);
 
             return results.ToActionResult();
         }

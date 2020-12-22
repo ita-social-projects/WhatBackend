@@ -5,8 +5,8 @@ using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
-    public interface IHometaskRepository : IRepository<Hometask>
+    public interface IHomeworkRepository : IRepository<Homework>
     {
-        Task<IList<Hometask>> GetHometasksByCourseId(long courseId);
+        Task<IList<Homework>> GetHomeworksByCourseId(long courseId);
     }
 }

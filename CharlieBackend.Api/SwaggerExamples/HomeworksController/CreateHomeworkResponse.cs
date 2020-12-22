@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Api.SwaggerExamples.HometaskController
+namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
 {
-    class CreateHometaskResponse : IExamplesProvider<HometaskDto>
+    class CreateHomeworkResponse : IExamplesProvider<HomeworkDto>
     {
-        public HometaskDto GetExamples()
+        public HomeworkDto GetExamples()
         {
-            return new HometaskDto
+            return new HomeworkDto
             {
                 Id = 24,
                 IsCommon = true,
