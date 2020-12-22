@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -12,5 +13,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<MentorCoursesDto>> GetMentorCourses(long id);
 
         Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
+        
+        Task<Result<bool>> DisableCourseByIdAsync(long id);
+
+        Task<bool> IsCourseHasGroupAsync(long id);
     }
 }
