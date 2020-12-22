@@ -128,7 +128,7 @@ namespace CharlieBackend.Business.Services
 
         public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
         {
-            string[] dangerousExtentions = 
+            const string[] dangerousExtentions = 
             {
                 ".exe",".pif",".application",".gadget",".msi",".msp",".com",
                 ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
@@ -143,7 +143,7 @@ namespace CharlieBackend.Business.Services
             {
                 foreach (var extention in dangerousExtentions)
                 {
-                    if(file.FileName.ToLower().EndsWith(extention))
+                    if (file.FileName.ToLower().EndsWith(extention))
                     {
                         return false;
                     }
