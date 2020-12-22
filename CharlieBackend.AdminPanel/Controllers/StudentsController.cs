@@ -38,7 +38,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         public async Task<IActionResult> AllStudents()
         {
-            var students = await _studentService.GetAllStudentsAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
+            var students = await _studentService.GetAllStudentsAsync();
 
             return View(students);
         }
@@ -46,7 +46,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateStudent(long id)
         {
-            var student = await _studentService.GetStudentByIdAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var student = await _studentService.GetStudentByIdAsync(id);
 
             ViewBag.Student = student;
 
@@ -56,7 +56,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudent(long id, UpdateStudentDto data)
         {
-            var updatedStudent = await _studentService.UpdateStudentAsync(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var updatedStudent = await _studentService.UpdateStudentAsync(id, data);
 
             return RedirectToAction("AllStudents", "Students");
         }
@@ -64,7 +64,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudent(long id)
         {
-            var addedStudent = await _studentService.AddStudentAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var addedStudent = await _studentService.AddStudentAsync(id);
 
             return RedirectToAction("AllStudents", "Students");
         }
@@ -72,7 +72,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> DisableStudent(long id)
         {
-            var disabledStudent = await _studentService.DisableStudentAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var disabledStudent = await _studentService.DisableStudentAsync(id);
 
             return RedirectToAction("AllStudents", "Students");
         }

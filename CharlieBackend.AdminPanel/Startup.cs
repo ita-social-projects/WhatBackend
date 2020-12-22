@@ -32,6 +32,7 @@ namespace CharlieBackend.AdminPanel
 
             services.Configure<ApplicationSettings>(Configuration);
 
+            services.AddHttpContextAccessor();
 
             services.AddTransient<IHttpUtil, HttpUtil>();
             services.AddTransient<IApiUtil, ApiUtil>();

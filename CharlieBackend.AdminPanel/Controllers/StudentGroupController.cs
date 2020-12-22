@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.AdminPanel.Models.StudentGroups;
+﻿using System.Threading.Tasks;
 using CharlieBackend.AdminPanel.Services.Interfaces;
-using CharlieBackend.AdminPanel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -22,29 +13,19 @@ namespace CharlieBackend.AdminPanel.Controllers
     public class StudentGroupController : Controller
     {
         private readonly ILogger<StudentGroupController> _logger;
-
-        private readonly IOptions<ApplicationSettings> _config;
-
         private readonly IStudentGroupService _studentGroupService;
 
-        private readonly IDataProtector _protector;
-
         public StudentGroupController(ILogger<StudentGroupController> logger,
-                                      IOptions<ApplicationSettings> config,
-                                      IStudentGroupService studentGroupService,
-                                      IDataProtectionProvider provider)
+                                      IStudentGroupService studentGroupService)
         {
             _logger = logger;
             _studentGroupService = studentGroupService;
-
-            _config = config;
-            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
         }
 
         [HttpGet]
         public async Task<IActionResult> AllStudentGroups()
         {
-            var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
+            var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
 
             return View(studentGroups);
         }
@@ -52,7 +33,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareStudentGroupForUpdate(long id)
         {
-            var studentGroup = await _studentGroupService.PrepareStudentGroupUpdateAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var studentGroup = await _studentGroupService.PrepareStudentGroupUpdateAsync(id);
 
             ViewBag.StudentGroup = studentGroup;
 
@@ -62,7 +43,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudentGroup(long id, StudentGroupDto data)
         {
-            var updatedStudentGroup = await _studentGroupService.UpdateStudentGroupAsync(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var updatedStudentGroup = await _studentGroupService.UpdateStudentGroupAsync(id, data);
 
             return RedirectToAction("AllStudentGroups", "StudentGroup");
         }
@@ -70,7 +51,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateStudentGroup()
         {
-            var studentGroupData = await _studentGroupService.PrepareStudentGroupAddAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
+            var studentGroupData = await _studentGroupService.PrepareStudentGroupAddAsync();
 
             ViewBag.StudentGroup = studentGroupData;
 
@@ -80,7 +61,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddStudentGroup(long id, CreateStudentGroupDto data)
         {
-            var updatedStudentGroup = await _studentGroupService.AddStudentGroupAsync(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var updatedStudentGroup = await _studentGroupService.AddStudentGroupAsync(id, data);
 
             return RedirectToAction("AllStudentGroups", "StudentGroup");
         }

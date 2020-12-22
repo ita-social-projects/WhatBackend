@@ -47,6 +47,7 @@ namespace CharlieBackend.AdminPanel.Utils
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
 
+
             return responseModel;
         }
 
