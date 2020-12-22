@@ -8,10 +8,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IBlobService
     {
-        Task<Result<BlobClient>> UploadAsync(string fileName, Stream fileStream);
+        Task<BlobClient> UploadAsync(string fileName, Stream fileStream);
 
-        Task<Result<BlobDownloadInfo>> DownloadAsync(string containerName, string fileName);
+        Task<BlobDownloadInfo> DownloadAsync(string containerName, string fileName);
 
-        Task<Result<bool>> DeleteAsync(string containerName);
+        Task<bool> DeleteAsync(string containerName);
     }
 }

@@ -1,14 +1,12 @@
-﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Models.ResultModel;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
+using Azure.Storage.Blobs;
+using CharlieBackend.Core;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs.Models;
+using Microsoft.Extensions.Logging;
+using CharlieBackend.Business.Services.Interfaces;
+
 
 namespace CharlieBackend.Business.Services
 {
@@ -26,7 +24,7 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<BlobClient>> UploadAsync(string fileName, Stream fileStream)
+        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream)
         {
             string containerName = Guid.NewGuid().ToString("N");
 
@@ -42,10 +40,10 @@ namespace CharlieBackend.Business.Services
 
             await blob.UploadAsync(fileStream);
 
-            return Result<BlobClient>.GetSuccess(blob);
+            return blob;
         }
 
-        public async Task<Result<BlobDownloadInfo>> DownloadAsync(string containerName, string fileName)
+        public async Task<BlobDownloadInfo> DownloadAsync(string containerName, string fileName)
         {
             BlobClient blob = new BlobClient
                        (
@@ -56,10 +54,10 @@ namespace CharlieBackend.Business.Services
 
             BlobDownloadInfo download = await blob.DownloadAsync();
 
-            return Result<BlobDownloadInfo>.GetSuccess(download);
+            return download;
         }
 
-        public async Task<Result<bool>> DeleteAsync(string containerName)
+        public async Task<bool> DeleteAsync(string containerName)
         {
             BlobContainerClient container = new BlobContainerClient
                         (
@@ -69,7 +67,7 @@ namespace CharlieBackend.Business.Services
 
             var response = await container.DeleteIfExistsAsync();
 
-            return Result<bool>.GetSuccess(response);
+            return response;
         }
     }
 }

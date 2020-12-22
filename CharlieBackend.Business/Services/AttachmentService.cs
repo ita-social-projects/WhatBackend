@@ -1,20 +1,17 @@
 ﻿using System;
 using System.IO;
 using AutoMapper;
-using CharlieBackend.Core;
-using Azure.Storage.Blobs;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Azure.Storage.Blobs.Models;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using Microsoft.Extensions.Logging;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Linq;
+
 
 namespace CharlieBackend.Business.Services
 {
@@ -40,43 +37,38 @@ namespace CharlieBackend.Business.Services
                     ClaimsPrincipal claimsContext
                     )
         {
-            try
+            if (!AttachmentsSizeValidation(fileCollection))
             {
-                IList<AttachmentDto> attachments = new List<AttachmentDto>();
-                
-                foreach (var file in fileCollection) 
-                {
-
-                    using Stream uploadFileStream = file.OpenReadStream();
-
-                    var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream);
-
-                    Attachment attachment = new Attachment()
-                    {
-                        UserId  = Convert.ToInt64(claimsContext.Claims
-                                .First(claim => claim.Type == "Id").Value),
-                        UserRole = (UserRole) Enum.Parse(typeof(UserRole), 
-                                claimsContext.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value),
-                        ContainerName = blob.Data.BlobContainerName,
-                        FileName = file.FileName
-                    };
-
-                    _unitOfWork.AttachmentRepository.Add(attachment);
-
-                    await _unitOfWork.CommitAsync();
-
-                    attachments.Add(_mapper.Map<AttachmentDto>(attachment));
-                }
-                    
-                return Result<IList<AttachmentDto>>.GetSuccess(attachments);
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError,
+                            "Files are too big, max size is 50 MB");
             }
-            catch
-            {
-                _unitOfWork.Rollback();
 
-                return Result<IList<AttachmentDto>>.GetError(ErrorCode.InternalServerError,
-                     "Cannot add attachments");
-            }          
+            IList<Attachment> attachments = new List<Attachment>();
+
+            foreach (var file in fileCollection)
+            {
+
+                using Stream uploadFileStream = file.OpenReadStream();
+
+                var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream);
+
+                Attachment attachment = new Attachment()
+                {
+                    CreatedByAccountId = Convert.ToInt64(claimsContext.Claims
+                            .First(claim => claim.Type == "AccountId").Value),
+                    ContainerName = blob.BlobContainerName,
+                    FileName = file.FileName
+                };
+
+                _unitOfWork.AttachmentRepository.Add(attachment);
+
+                attachments.Add(attachment);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.Map<IList<AttachmentDto>>(attachments));
+                
         }
 
         public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
@@ -100,7 +92,7 @@ namespace CharlieBackend.Business.Services
 
             DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
                         { 
-                           DownloadInfo = download.Data,
+                           DownloadInfo = download,
                            FileName = attachment.FileName
                         };
 
@@ -124,6 +116,24 @@ namespace CharlieBackend.Business.Services
             await _unitOfWork.CommitAsync();
 
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
+        }
+
+        public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
+        {
+            const int maxSize = 52428800;
+            long currentSize = 0;
+
+            foreach (var file in fileCollection)
+            {
+                currentSize += file.Length;
+            }
+
+            if (currentSize <= maxSize)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

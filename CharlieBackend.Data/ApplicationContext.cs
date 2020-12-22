@@ -463,25 +463,21 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.AddTime)
+                entity.Property(e => e.CreatedOn)
                     .IsRequired()
-                    .HasColumnName("add_time")
+                    .HasColumnName("created_on")
                     .HasColumnType("datetime")
-                    .HasComment("add_time has been set to not null");
+                    .HasComment("created_on has been set to not null");
 
-                entity.Property(e => e.UserId)
+                entity.Property(e => e.CreatedByAccountId)
                     .IsRequired()
-                    .HasColumnName("user_id");
-
-                entity.Property(e => e.UserRole)
-                    .IsRequired()
-                    .HasColumnName("user_role");
+                    .HasColumnName("created_by_account_id");
 
                 entity.Property(e => e.ContainerName)
                     .IsRequired()
                     .HasColumnName("container_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null and unique")
+                    .HasComment("container_name has been set to not null and unique")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
@@ -489,7 +485,7 @@ namespace CharlieBackend.Data
                     .IsRequired()
                     .HasColumnName("file_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null")
+                    .HasComment("file_name has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
             });

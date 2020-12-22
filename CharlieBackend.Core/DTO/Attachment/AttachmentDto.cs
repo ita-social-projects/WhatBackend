@@ -1,5 +1,4 @@
 ﻿using System;
-using CharlieBackend.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.DTO.Attachment
@@ -8,11 +7,9 @@ namespace CharlieBackend.Core.DTO.Attachment
     {
         public long Id { get; set; }
 
-        public DateTime AddTime { get; set; }
+        public DateTime CreatedOn { get; set; }
 
-        public long UserId { get; set; }
-
-        public UserRole UserRole { get; set; }
+        public long CreatedByAccountId { get; set; }
 
         [StringLength(100)]
         public string ContainerName { get; set; }
