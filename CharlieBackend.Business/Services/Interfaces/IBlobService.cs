@@ -1,6 +1,6 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+using System.IO;
 using Azure.Storage.Blobs;
+using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using CharlieBackend.Core.Models.ResultModel;
 
