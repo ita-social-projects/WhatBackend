@@ -7,7 +7,6 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Services.Interfaces;
 
-
 namespace CharlieBackend.Business.Services
 {
     public class BlobService : IBlobService

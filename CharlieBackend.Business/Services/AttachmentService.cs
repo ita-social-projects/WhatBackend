@@ -73,13 +73,15 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.Map<IList<AttachmentDto>>(attachments));
+            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.
+                        Map<IList<AttachmentDto>>(attachments));
                 
         }
 
         public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
         {
-            var attachments = _mapper.Map<IList<AttachmentDto>>(await _unitOfWork.AttachmentRepository.GetAllAsync());
+            var attachments = _mapper.Map<IList<AttachmentDto>>(
+                        await _unitOfWork.AttachmentRepository.GetAllAsync());
 
             return Result<IList<AttachmentDto>>.GetSuccess(attachments);
         }
@@ -147,10 +149,11 @@ namespace CharlieBackend.Business.Services
                     }
                 }
             }
-            return true;
-         }
 
-            public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
+            return true;
+        }
+
+        public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
         {
             const int maxSize = 52428800;
             long currentSize = 0;

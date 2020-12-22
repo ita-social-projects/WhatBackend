@@ -273,10 +273,10 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`attachment` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `created_on` DATETIME NOT NULL COMMENT 'add_time has been set to not null',
+  `created_on` DATETIME NOT NULL COMMENT 'created_on has been set to not null',
   `created_by_account_id` BIGINT(20) NOT NULL,
-  `container_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'containerName has been set to not null and unique',
-  `file_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'filerName has been set to not null',
+  `container_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'container_name has been set to not null and unique',
+  `file_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'file_name has been set to not null',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `container_name_UNIQUE` (`container_name` ASC))
 ENGINE = InnoDB
