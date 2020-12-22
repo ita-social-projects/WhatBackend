@@ -128,7 +128,7 @@ namespace CharlieBackend.Business.Services
 
         public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
         {
-            const string[] dangerousExtentions = 
+            readonly string[] dangerousExtentions = 
             {
                 ".exe",".pif",".application",".gadget",".msi",".msp",".com",
                 ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
