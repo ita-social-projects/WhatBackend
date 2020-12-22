@@ -28,19 +28,16 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(CreateHomeworkDto createHomeworkDto)
         {
-                var errors = ValidateCreateHomeworkRequest(createHomeworkDto);
+                var errors = await ValidateCreateHomeworkRequest(createHomeworkDto)
+                        .ToListAsync();
                 
-                if (await errors.AnyAsync())
+                if (errors.Any())
                 {
-                    var errorsList = new List<string>();
-                    await foreach (var error in errors)
-                    {
-                        errorsList.Add(error);
-                    }
+                    var errorsList = string.Join("; ", errors);
 
-                    _logger.LogError("Homework create request has failed due to: " + string.Join(";\n", errorsList));
+                    _logger.LogError("Homework create request has failed due to: " + errorsList);
 
-                    return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errorsList));
+                    return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, errorsList);
                 }
 
                 var newHomework = new Homework
