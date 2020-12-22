@@ -42,20 +42,6 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all homeworks of course
-        /// </summary>
-        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
-        [Authorize(Roles = "Admin, Mentor")]
-        [HttpGet("/api/courses/{id}/homeworks")]
-        public async Task<ActionResult> GetHomeworksOfCourse(long courseId)
-        {
-            var results = await _homeworkService
-                        .GetHomeworksOfCourseAsync(courseId);
-
-            return results.ToActionResult();
-        }
-
-        /// <summary>
         /// Gets homework by id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
@@ -65,6 +51,20 @@ namespace CharlieBackend.Api.Controllers
         {
             var results = await _homeworkService
                         .GetHomeworkByIdAsync(id);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Update homework
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkDto))]
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutSchedule(long id, [FromBody]HomeworkRequestDto updateHomeworkDto)
+        {
+            var results = await _homeworkService
+                        .UpdateHomeworkAsync(id, updateHomeworkDto);
 
             return results.ToActionResult();
         }

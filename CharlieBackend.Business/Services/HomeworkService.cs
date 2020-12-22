@@ -26,9 +26,9 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<HomeworkDto>> CreateHomeworkAsync(CreateHomeworkDto createHomeworkDto)
+        public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
         {
-                var errors = ValidateCreateHomeworkRequest(createHomeworkDto);
+                var errors = ValidateHomeworkRequest(createHomeworkDto);
                 
                 if (await errors.AnyAsync())
                 {
@@ -115,7 +115,45 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
         }
 
-        private async IAsyncEnumerable<string> ValidateCreateHomeworkRequest(CreateHomeworkDto request)
+        public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
+        {
+            var errors = ValidateHomeworkRequest(updateHomeworkDto);
+
+            if (await errors.AnyAsync())
+            {
+                var errorsList = new List<string>();
+                await foreach (var error in errors)
+                {
+                    errorsList.Add(error);
+                }
+
+                _logger.LogError("Homework create request has failed due to: " + string.Join(";\n", errorsList));
+
+                return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errorsList));
+            }
+
+            var foundHomework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkId);
+
+            if (foundHomework == null)
+            {
+                return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Given homework id not found");
+            }
+
+            if (updateHomeworkDto.DeadlineDays != default)
+            {
+                foundHomework.DeadlineDays = updateHomeworkDto.DeadlineDays;
+            }
+
+            
+            foundHomework.IsCommon = updateHomeworkDto.IsCommon;
+            
+
+            foundHomework.MentorId = 
+
+
+        }
+
+        private async IAsyncEnumerable<string> ValidateHomeworkRequest(HomeworkRequestDto request)
         {
             if (request == default)
             {
