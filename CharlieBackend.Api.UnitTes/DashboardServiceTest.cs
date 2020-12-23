@@ -124,7 +124,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentResult()
+        public async Task GetStudentsResult()
         {
             //Arrange
             var studentResultRequestWithData = new StudentsRequestDto<StudentResultType>()
@@ -236,11 +236,24 @@ namespace CharlieBackend.Api.UnitTest
                 new Claim(ClaimTypes.Role, UserRole.Student.ToString()),
                 new Claim("Id", "7")
             };
+
             var claimIdentity = new ClaimsIdentity(claims, "TestAuthType");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
 
+            var claimsForStudentWitoutGroup = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "Denys"),
+                new Claim(ClaimTypes.NameIdentifier , "1"),
+                new Claim(ClaimTypes.Role, UserRole.Student.ToString()),
+                new Claim("Id", "20")
+            };
+
+            var claimIdentityForStudentWitoutGroup = new ClaimsIdentity(claimsForStudentWitoutGroup, "TestAuthType");
+            var claimPrincipalForStudentWitoutGroup = new ClaimsPrincipal(claimIdentityForStudentWitoutGroup);
+
             var mockPrincipal = new Mock<IPrincipal>();
             mockPrincipal.Setup(x => x.Identity).Returns(claimIdentity);
+            mockPrincipal.Setup(x => x.Identity).Returns(claimIdentityForStudentWitoutGroup);
             mockPrincipal.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
             mockPrincipal.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(false);
 
@@ -268,7 +281,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<long> { 1 });
             
             dashbordRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
-                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
             dashbordRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(
@@ -286,7 +299,7 @@ namespace CharlieBackend.Api.UnitTest
                     }
                 }) ;
 
-            dashbordRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(studentIdWithGroup, new List<long> { }))
+            dashbordRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(studentIdWithoutGroup, new List<long> { }))
                 .ReturnsAsync(new List<StudentVisitDto>());
 
             dashbordRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(
@@ -304,7 +317,7 @@ namespace CharlieBackend.Api.UnitTest
                     }
                 });
            
-            dashbordRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(studentIdWithGroup, new List<long> { }))
+            dashbordRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(studentIdWithoutGroup, new List<long> { }))
                 .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbordRepositoryMock.Object);
@@ -315,7 +328,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithData = await dashbordService.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
             var resultWithoutClassbook = await dashbordService.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook, claimPrincipal);
             var requestWithStrangerCredentials = await dashbordService.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
-            var resultWithoutGrop = await dashbordService.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimPrincipal);
+            var resultWithoutGrop = await dashbordService.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipalForStudentWitoutGroup);
 
             //Assert
             Assert.Equal(ErrorCode.ValidationError, requestWithStrangerCredentials.Error.Code);
@@ -326,11 +339,11 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentResultAsync()
+        public async Task GetStudentResult()
         {
             //Arrange
             long studentIdWithGroup = 7;
-            long studentIdWithWrongClaim = 20;
+            long studentIdWithoutGroup = 20;
 
             var claims = new List<Claim>()
             {
@@ -339,13 +352,26 @@ namespace CharlieBackend.Api.UnitTest
                 new Claim(ClaimTypes.Role, UserRole.Student.ToString()),
                 new Claim("Id", "7")
             };
+
             var claimIdentity = new ClaimsIdentity(claims, "TestAuthType");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
 
+            var claimsForStudentWitoutGroup = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "Denys"),
+                new Claim(ClaimTypes.NameIdentifier , "1"),
+                new Claim(ClaimTypes.Role, UserRole.Student.ToString()),
+                new Claim("Id", "20")
+            };
+
+            var claimIdentityForStudentWitoutGroup = new ClaimsIdentity(claimsForStudentWitoutGroup, "TestAuthType");
+            var claimPrincipalForStudentWitoutGroup = new ClaimsPrincipal(claimIdentityForStudentWitoutGroup);
+
             var mockPrincipal = new Mock<IPrincipal>();
             mockPrincipal.Setup(x => x.Identity).Returns(claimIdentity);
+            mockPrincipal.Setup(x => x.Identity).Returns(claimIdentityForStudentWitoutGroup);
             mockPrincipal.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
-            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(false);
+            mockPrincipal.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(false); 
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
@@ -371,8 +397,8 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<long> { 1 });
 
             dashbordRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
-                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(default(List<long>));
+                studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long>());
 
             dashbordRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
                 new List<long> { studentIdWithGroup }, new List<long> { 1 }))
@@ -387,7 +413,7 @@ namespace CharlieBackend.Api.UnitTest
                     }
                 });
 
-            dashbordRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentIdWithGroup }, default(List<long>)))
+            dashbordRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentIdWithoutGroup },new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
             dashbordRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(
@@ -403,7 +429,7 @@ namespace CharlieBackend.Api.UnitTest
                     }
                 });
 
-            dashbordRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(studentIdWithGroup, default(List<long>)))
+            dashbordRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(studentIdWithoutGroup, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbordRepositoryMock.Object);
@@ -413,19 +439,19 @@ namespace CharlieBackend.Api.UnitTest
             //Act
             var resultWithData = await dashbordService.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
             var resultWithoutClassbook = await dashbordService.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook, claimPrincipal);
-            var resultWithoutGrop = await dashbordService.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimPrincipal);
-            var resultWithDataWithWrongClaim = await dashbordService.GetStudentResultAsync(studentIdWithWrongClaim, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
+            var resultWithoutGroup = await dashbordService.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipalForStudentWitoutGroup);
+            var resultWithDataWithWrongClaim = await dashbordService.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
 
             //Assert
             Assert.NotNull(resultWithData);
             Assert.Equal(ErrorCode.ValidationError, resultWithDataWithWrongClaim.Error.Code);
             Assert.Equal(ErrorCode.ValidationError, resultWithoutClassbook.Error.Code);
-            Assert.Empty(resultWithoutGrop.Data.AverageStudentsMarks);
-            Assert.Empty(resultWithoutGrop.Data.AverageStudentVisits);
+            Assert.Empty(resultWithoutGroup.Data.AverageStudentsMarks);
+            Assert.Empty(resultWithoutGroup.Data.AverageStudentVisits);
         }
 
         [Fact]
-        public async Task GetStudentGroupResultAsync()
+        public async Task GetStudentGroupResult()
         {
             ////Arrange
             long courseId = 1;
@@ -499,6 +525,7 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks);
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits);
         }
+
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
