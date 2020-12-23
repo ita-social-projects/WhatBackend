@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -17,14 +18,17 @@ namespace CharlieBackend.Api.Controllers
     public class ThemesController : ControllerBase
     {
         private readonly IThemeService _themeService;
+        private readonly IHomeworkService _homeworkService;
 
         /// <summary>
         /// Themes controllers constructor
         /// </summary>
         /// <param name="themeService"></param>
-        public ThemesController(IThemeService themeService)
+        /// <param name="homeworkService"></param>
+        public ThemesController(IThemeService themeService, IHomeworkService homeworkService)
         {
             _themeService = themeService;
+            _homeworkService = homeworkService;
         }
 
         /// <summary>
@@ -85,5 +89,18 @@ namespace CharlieBackend.Api.Controllers
             return themeResult.ToActionResult();
         }
 
+        /// <summary>
+        /// Gets homeworks by theme id
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpGet("{id}/hometasks")]
+        public async Task<ActionResult> GetHomeworksById(long id)
+        {
+            var results = await _homeworkService
+                        .GetHomeworksByThemeId(id);
+
+            return results.ToActionResult();
+        }
     }
 }

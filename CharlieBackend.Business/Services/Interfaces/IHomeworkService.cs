@@ -16,5 +16,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId);
 
         Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto);
+
+        Task<Result<IList<HomeworkDto>>> GetHomeworksByThemeId(long themeId);
     }
 }

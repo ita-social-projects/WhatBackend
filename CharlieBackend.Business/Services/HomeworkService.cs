@@ -141,13 +141,62 @@ namespace CharlieBackend.Business.Services
                 foundHomework.DeadlineDays = updateHomeworkDto.DeadlineDays;
             }
 
-            
             foundHomework.IsCommon = updateHomeworkDto.IsCommon;
-            
 
-            foundHomework.MentorId = 
+            if (foundHomework.MentorId != updateHomeworkDto.MentorId)
+            {
+                var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
 
+                if (mentor != default)
+                {
+                    foundHomework.MentorId = updateHomeworkDto.MentorId;
+                    foundHomework.Mentor = mentor;
+                }
+            }
 
+            if (foundHomework.TaskText != updateHomeworkDto.TaskText)
+            {
+                foundHomework.TaskText = updateHomeworkDto.TaskText;
+            }
+
+            if (foundHomework.ThemeId != updateHomeworkDto.ThemeId)
+            {
+                var theme = await _unitOfWork.ThemeRepository.GetByIdAsync(updateHomeworkDto.ThemeId);
+
+                if (theme != default)
+                {
+                    foundHomework.ThemeId = updateHomeworkDto.ThemeId;
+                    foundHomework.Theme = theme;
+                }
+            }
+
+            if (updateHomeworkDto.AttachmentIds != null)
+            {
+                var newAttachments = updateHomeworkDto.AttachmentIds.Select(x => new AttachmentOfHomework
+                {
+                    HomeworkId = foundHomework.Id,
+                    Homework = foundHomework,
+                    AttachmentId = x
+                });
+
+                _unitOfWork.HomeworkRepository.UpdateManyToMany(foundHomework.AttachmentsOfHomework, newAttachments);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(foundHomework));
+        }
+
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByThemeId(long themeId)
+        {
+            if (themeId == default)
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong theme id");
+            }
+
+            var homeworks = _unitOfWork.HomeworkRepository.GetHomeworksByThemeId(themeId);
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         private async IAsyncEnumerable<string> ValidateHomeworkRequest(HomeworkRequestDto request)
