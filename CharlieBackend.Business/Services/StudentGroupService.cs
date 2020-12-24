@@ -56,8 +56,23 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.StudentGroupRepository.Add(studentGroup);
 
-                if (studentGroupDto?.StudentIds.Count != 0)
+                if (studentGroupDto.StudentIds?.Count > 0)
                 {
+                    var existStudentsIds = await _unitOfWork.StudentRepository.GetExistEntitiesIdsAsync(studentGroupDto.StudentIds);
+
+                    var NotExistsStudentIds = existStudentsIds.Except(studentGroupDto.StudentIds);
+
+                    if (NotExistsStudentIds.Count() > 0)
+                    {
+                        var isMoreThenOne = NotExistsStudentIds.Count() > 1;
+
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: string.Format("Student{0} with id{0}: {2} do{1} not exist",
+                                                                                            arg0: isMoreThenOne ? "s" : null,
+                                                                                            arg1: isMoreThenOne ? "es" : null,
+                                                                                            arg2: string.Join(", ", NotExistsStudentIds)));
+                    }
+
                     var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupDto.StudentIds);
                     studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
 
@@ -71,8 +86,23 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
-                if (studentGroupDto?.MentorIds.Count != 0)
+                if (studentGroupDto.MentorIds?.Count > 0)
                 {
+                    var existMentorsIds = await _unitOfWork.MentorRepository.GetExistEntitiesIdsAsync(studentGroupDto.MentorIds);
+
+                    var NotExistsMentorsIds = existMentorsIds.Except(studentGroupDto.MentorIds);
+
+                    if (NotExistsMentorsIds.Count() > 0)
+                    {
+                        var isMoreThenOne = NotExistsMentorsIds.Count() > 1;
+
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: string.Format(format: "Mentor{0} with id{0}: {2} do{1} not exist",
+                                                                                            arg0: isMoreThenOne ? "s" : null,
+                                                                                            arg1: isMoreThenOne ? "es" : null,
+                                                                                            arg2: string.Join(", ", NotExistsMentorsIds)));
+                    }
+
                     var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupDto.MentorIds);
                     studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
 
