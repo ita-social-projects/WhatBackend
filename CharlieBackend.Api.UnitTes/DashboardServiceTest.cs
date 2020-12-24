@@ -62,12 +62,12 @@ namespace CharlieBackend.Api.UnitTest
             dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
                 studentclassbookCourseWithoutStudents.CourseId.Value,
                 studentclassbookCourseWithoutStudents.StartDate,
-                studentclassbookCourseWithoutStudents.FinishDate)).ReturnsAsync(default(List<long>));
+                studentclassbookCourseWithoutStudents.FinishDate)).ReturnsAsync(new List<long>());
 
             dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(
                 new List<long>() { 1, 5 })).ReturnsAsync(new List<long> { 5, 7, 15, 43 });
 
-            dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(default(List<long>))).ReturnsAsync(default(List<long>));
+            dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(new List<long>())).ReturnsAsync(new List<long>());
 
             dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByStudentIds(
                 new List<long>() { 5, 7, 15, 43 })).ReturnsAsync(new List<StudentVisitDto>()
@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.UnitTest
                 });
 
             dashboardRepositoryMock.Setup(x => x
-                .GetStudentsMarksListByStudentIds(new List<long>() { 1, 5 }))
+                .GetStudentsMarksListByStudentIds(new List<long>() { 5, 7, 15, 43 }))
                 .ReturnsAsync(new List<StudentMarkDto>
                 {
                     new StudentMarkDto()
@@ -98,11 +98,11 @@ namespace CharlieBackend.Api.UnitTest
                     }
                 });
 
-            dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByStudentIds(default(List<long>)))
+            dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByStudentIds(new List<long>()))
                 .ReturnsAsync(new List<StudentVisitDto>());
 
             dashboardRepositoryMock.Setup(x => x
-                .GetStudentsMarksListByStudentIds(default(List<long>)))
+                .GetStudentsMarksListByStudentIds(new List<long>()))
                 .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashboardRepositoryMock.Object);
@@ -117,7 +117,8 @@ namespace CharlieBackend.Api.UnitTest
             var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
-            Assert.NotNull(successResult.Data);
+            Assert.NotEmpty(successResult.Data.StudentsMarks);
+            Assert.NotEmpty(successResult.Data.StudentsPresences);
             Assert.Equal(ErrorCode.ValidationError, requestWithWrongParameters.Error.Code);
             Assert.Empty(requestForCourseWithoutStudents.Data.StudentsMarks);
             Assert.Empty(requestForCourseWithoutStudents.Data.StudentsPresences);
