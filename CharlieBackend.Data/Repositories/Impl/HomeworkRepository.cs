@@ -41,7 +41,10 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<IList<Homework>> GetHomeworksByThemeId(long themeId)
         {
+            var homeworks = await _applicationContext.Homeworks
+                .Where(x => x.ThemeId == themeId).ToListAsync();
 
+            return homeworks;
         }
     }
 }

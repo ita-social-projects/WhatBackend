@@ -11,5 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
                      IEnumerable<AttachmentOfHomework> newHomeworkAttachments);
+
+        Task<IList<Homework>> GetHomeworksByThemeId(long themeId);
     }
 }

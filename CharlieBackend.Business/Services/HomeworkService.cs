@@ -28,7 +28,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
         {
-                var errors = await ValidateCreateHomeworkRequest(createHomeworkDto)
+                var errors = await ValidateHomeworkRequest(createHomeworkDto)
                         .ToListAsync();
                 
                 if (errors.Any())
@@ -114,19 +114,15 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
         {
-            var errors = ValidateHomeworkRequest(updateHomeworkDto);
+            var errors = await ValidateHomeworkRequest(updateHomeworkDto).ToListAsync();
 
-            if (await errors.AnyAsync())
+            if (errors.Any())
             {
-                var errorsList = new List<string>();
-                await foreach (var error in errors)
-                {
-                    errorsList.Add(error);
-                }
+                var errorsList = string.Join("; ", errors);
 
-                _logger.LogError("Homework create request has failed due to: " + string.Join(";\n", errorsList));
+                _logger.LogError("Homework update request has failed due to: " + errorsList);
 
-                return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errorsList));
+                return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, errorsList);
             }
 
             var foundHomework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkId);
@@ -136,27 +132,17 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Given homework id not found");
             }
 
-            if (updateHomeworkDto.DeadlineDays != default)
-            {
-                foundHomework.DeadlineDays = updateHomeworkDto.DeadlineDays;
-            }
-
+            foundHomework.DeadlineDays = updateHomeworkDto.DeadlineDays;
             foundHomework.IsCommon = updateHomeworkDto.IsCommon;
+            foundHomework.TaskText = updateHomeworkDto.TaskText;
 
             if (foundHomework.MentorId != updateHomeworkDto.MentorId)
             {
                 var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
 
-                if (mentor != default)
-                {
-                    foundHomework.MentorId = updateHomeworkDto.MentorId;
-                    foundHomework.Mentor = mentor;
-                }
-            }
+                foundHomework.MentorId = updateHomeworkDto.MentorId;
+                foundHomework.Mentor = mentor;
 
-            if (foundHomework.TaskText != updateHomeworkDto.TaskText)
-            {
-                foundHomework.TaskText = updateHomeworkDto.TaskText;
             }
 
             if (foundHomework.ThemeId != updateHomeworkDto.ThemeId)
@@ -194,7 +180,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong theme id");
             }
 
-            var homeworks = _unitOfWork.HomeworkRepository.GetHomeworksByThemeId(themeId);
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByThemeId(themeId);
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
