@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +45,7 @@ namespace CharlieBackend.AdminPanel.Utils
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+
 
             return responseModel;
         }

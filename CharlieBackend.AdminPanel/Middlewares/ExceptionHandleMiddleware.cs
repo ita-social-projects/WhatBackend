@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CharlieBackend.AdminPanel.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace CharlieBackend.AdminPanel.Middlewares
 
@@ -12,7 +10,7 @@ namespace CharlieBackend.AdminPanel.Middlewares
     public class ExceptionHandleMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionHandleMiddleware> _logger = null;
+        private readonly ILogger<ExceptionHandleMiddleware> _logger;
 
         public ExceptionHandleMiddleware(RequestDelegate next, ILogger<ExceptionHandleMiddleware> logger)
         {
