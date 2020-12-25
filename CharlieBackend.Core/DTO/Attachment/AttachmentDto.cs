@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.DTO.Attachment
@@ -9,6 +9,7 @@ namespace CharlieBackend.Core.DTO.Attachment
         public long Id { get; set; }
 
         [Required]
+        [DataType(DataType.DateTime)]
         public DateTime CreatedOn { get; set; }
 
         [Required]
