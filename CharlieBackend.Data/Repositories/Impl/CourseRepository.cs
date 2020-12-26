@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Mentor;
+
+
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -27,6 +30,24 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Where(course => courseIds
                     .Contains(course.Id))
                     .ToListAsync();
+        }
+
+        public async Task<bool> IsCourseHasGroupAsync(long id)
+        {
+            return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
+        }
+
+        public async Task<Result<bool>> DisableCourseByIdAsync(long id)
+        {
+            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
+
+            if (course == null)
+            {
+                return Result<bool>.GetError(ErrorCode.NotFound, "Course is not found");
+            }
+            course.IsActive = false;
+
+            return Result<bool>.GetSuccess(true);
         }
 
         public async Task<List<MentorCoursesDto>> GetMentorCourses(long id)

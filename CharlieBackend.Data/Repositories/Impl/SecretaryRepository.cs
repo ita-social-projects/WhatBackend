@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -31,6 +33,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _applicationContext.Secretaries
                 .Include(secretary => secretary.Account)
                 .FirstOrDefaultAsync(secretary => secretary.Id == id);
+        }
+
+        public Task<List<Secretary>> GetActiveAsync()
+        {
+            return _applicationContext.Secretaries
+                .Include(secretary => secretary.Account)
+                .Where(sec => sec.Account.IsActive == true)
+                .Select(sec => sec)
+                .ToListAsync();
         }
     }
 }

@@ -5,9 +5,9 @@ using CharlieBackend.AdminPanel.Models.Students;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.StudentGroups;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,14 +19,19 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
         private readonly IOptions<ApplicationSettings> _config;
+        private readonly IDataProtector _protector;
 
         private readonly IMentorService _mentorService;
         private readonly IStudentService _studentService;
         private readonly ICourseService _courseService;
+        private readonly string _accessToken;
 
         public StudentGroupService(IApiUtil apiUtil,
                                    IMapper mapper,
                                    IOptions<ApplicationSettings> config,
+                                   IHttpContextAccessor httpContextAccessor,
+                                   IDataProtectionProvider provider,
+
                                    IMentorService mentorService,
                                    IStudentService studentService,
                                    ICourseService courseService)
@@ -34,18 +39,21 @@ namespace CharlieBackend.AdminPanel.Services
             _apiUtil = apiUtil;
             _config = config;
             _mapper = mapper;
+            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
+
+            _accessToken = _protector.Unprotect(httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
 
             _mentorService = mentorService;
             _studentService = studentService;
             _courseService = courseService;
         }
 
-        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync(string accessToken)
+        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync()
         {
-            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", accessToken);
-            var studentsTask = _studentService.GetAllStudentsAsync(accessToken);
-            var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
-            var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
+            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
+            var studentsTask = _studentService.GetAllStudentsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
 
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(await studentGroupsTask);
             var students = await studentsTask;
@@ -88,12 +96,12 @@ namespace CharlieBackend.AdminPanel.Services
             return studentGroups;
         }
 
-        public async Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id, string accessToken)
+        public async Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id)
         {
-            var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", accessToken);
-            var studentsTask = _studentService.GetAllStudentsAsync(accessToken);
-            var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
-            var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
+            var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _accessToken);
+            var studentsTask = _studentService.GetAllStudentsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
 
             var studentGroup = _mapper.Map<StudentGroupEditViewModel>(await studentGroupsTask);
             studentGroup.AllCourses = await coursesTask;
@@ -103,11 +111,11 @@ namespace CharlieBackend.AdminPanel.Services
             return studentGroup;
         }
 
-        public async Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync(string accessToken)
+        public async Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync()
         {
-            var studentsTask = _studentService.GetAllStudentsAsync(accessToken);
-            var mentorsTask = _mentorService.GetAllMentorsAsync(accessToken);
-            var coursesTask = _courseService.GetAllCoursesAsync(accessToken);
+            var studentsTask = _studentService.GetAllStudentsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
 
             var studentGroup = new StudentGroupEditViewModel
             {
@@ -119,9 +127,9 @@ namespace CharlieBackend.AdminPanel.Services
             return studentGroup;
         }
 
-        public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto, string accessToken)
+        public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto)
         {
-            var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(updateDto), accessToken);
+            var updateStudentGroupTask = _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _mapper.Map<UpdateStudentGroupDto>(updateDto), _accessToken);
 
 
             await updateStudentGroupTask;
@@ -129,9 +137,9 @@ namespace CharlieBackend.AdminPanel.Services
             return updateDto;
         }
 
-        public async Task<CreateStudentGroupDto> AddStudentGroupAsync(long id, CreateStudentGroupDto addDto, string accessToken)
+        public async Task<CreateStudentGroupDto> AddStudentGroupAsync(long id, CreateStudentGroupDto addDto)
         {
-            var createStudentGroup = await _apiUtil.CreateAsync($"{_config.Value.Urls.Api.Https}/api/student_groups", addDto, accessToken);
+            var createStudentGroup = await _apiUtil.CreateAsync($"{_config.Value.Urls.Api.Https}/api/student_groups", addDto, _accessToken);
 
             return createStudentGroup;
         }

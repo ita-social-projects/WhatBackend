@@ -16,7 +16,7 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-      
+
         private readonly ICourseService _coursesService;
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<IList<CourseDto>> GetAllCourses()
         {
-            var courses =  await _coursesService.GetAllCoursesAsync();
+            var courses = await _coursesService.GetAllCoursesAsync();
 
             return courses;
         }
@@ -69,6 +69,20 @@ namespace CharlieBackend.Api.Controllers
 
             return updatedCourse.ToActionResult();
 
+        }
+
+        /// <summary>
+        /// Delete course
+        /// </summary>
+        /// <response code="200">Successful delete  course</response>
+        /// <response code="HTTP: 400, API: 0">Bad request</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<CourseDto>> DisableCourse(long id)
+        {
+            var disableCourse = await _coursesService.DisableCourceAsync(id);
+
+            return disableCourse.ToActionResult();
         }
     }
 }

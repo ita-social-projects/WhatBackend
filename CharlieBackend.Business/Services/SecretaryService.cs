@@ -144,6 +144,13 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<SecretaryDto>>(secretaries);
         }
 
+        public async Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync()
+        {
+            var secretaries = await _unitOfWork.SecretaryRepository.GetActiveAsync();
+
+            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<List<SecretaryDto>>(secretaries));
+        }
+
         public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
         {
             var accountId = await GetAccountId(secretaryId);

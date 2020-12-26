@@ -155,6 +155,12 @@ namespace CharlieBackend.Data
                     .HasComment("name has been set to not null and unique")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnName("is_active")
+                    .HasDefaultValueSql("'1'")
+                    .HasComment("is_active has been set to not null with true as a default value");
             });
 
             modelBuilder.Entity<Lesson>(entity =>
@@ -340,7 +346,6 @@ namespace CharlieBackend.Data
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.StudentGroup)
                     .HasForeignKey(d => d.CourseId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_course_of_student_group");
             });
 
