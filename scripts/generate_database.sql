@@ -288,17 +288,16 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`homework` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `deadline_days` SMALLINT(3) NULL DEFAULT NULL,
+  `due_date` DATETIME NULL DEFAULT NULL,
   `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
-  `is_common` TINYINT(1) NOT NULL DEFAULT '1',
-  `theme_id` BIGINT(20) NULL DEFAULT NULL,
-  `mentor_id` BIGINT(20) NULL DEFAULT NULL,
+  `student_group_id` BIGINT(20) NOT NULL,
+  `mentor_id` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `FK_theme_of_homework` (`theme_id` ASC),
+  INDEX `FK_student_group_of_homework` (`student_group_id` ASC),
   INDEX `FK_mentor_of_homework` (`mentor_id` ASC),
-  CONSTRAINT `FK_theme_of_homework`
-    FOREIGN KEY (`theme_id`)
-    REFERENCES `soft`.`theme` (`id`),
+  CONSTRAINT `FK_student_group_of_homework`
+    FOREIGN KEY (`student_group_id`)
+    REFERENCES `soft`.`student_group` (`id`),
   CONSTRAINT `FK_mentor_of_homework`
     FOREIGN KEY (`mentor_id`)
     REFERENCES `soft`.`mentor` (`id`))

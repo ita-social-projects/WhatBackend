@@ -104,7 +104,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Any(x => studentIds.Contains(x.Student.Id)))
                     .Select(x => new StudentVisitDto
                     {
-                        CourseId = (long)x.Lesson.StudentGroup.CourseId,
+                        CourseId = x.Lesson.StudentGroup.CourseId,
                         StudentGroupId = (long)x.Lesson.StudentGroupId,
                         StudentId = (long)x.StudentId,
                         LessonId = x.LessonId,

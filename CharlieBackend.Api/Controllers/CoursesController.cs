@@ -86,19 +86,5 @@ namespace CharlieBackend.Api.Controllers
 
             return disableCourse.ToActionResult();
         }
-
-        /// <summary>
-        /// Gets all homeworks of course
-        /// </summary>
-        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
-        [Authorize(Roles = "Admin, Mentor")]
-        [HttpGet("{id}/homeworks")]
-        public async Task<ActionResult> GetHomeworksOfCourse(long id)
-        {
-            var results = await _homeworkService
-                        .GetHomeworksOfCourseAsync(id);
-
-            return results.ToActionResult();
-        }
     }
 }

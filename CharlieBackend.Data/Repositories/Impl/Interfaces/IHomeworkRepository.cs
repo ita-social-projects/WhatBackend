@@ -7,6 +7,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IHomeworkRepository : IRepository<Homework>
     {
-        Task<IList<Homework>> GetHomeworksByCourseId(long courseId);
     }
 }

@@ -495,18 +495,13 @@ namespace CharlieBackend.Data
                 entity.ToTable("homework");
 
                 entity.HasIndex(e =>
-                    new { e.MentorId, e.ThemeId })
-                    .HasName("mentor_and_theme_Id");
+                    new { e.MentorId, e.StudentGroupId })
+                    .HasName("mentor_and_student_group_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.IsCommon)
-                    .HasColumnName("is_common")
-                    .HasDefaultValueSql("'1'")
-                    .HasComment("common has been set to not null with true as a default value");
-
-                entity.Property(e => e.DeadlineDays)
-                    .HasColumnName("deadline_days")
+                entity.Property(e => e.DueDate)
+                    .HasColumnName("due_date")
                     .HasDefaultValue(null);
 
                 entity.Property(e => e.TaskText)
@@ -517,12 +512,12 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.MentorId).HasColumnName("mentor_id");
 
-                entity.Property(e => e.ThemeId).HasColumnName("theme_id");
+                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
 
-                entity.HasOne(e => e.Theme)
+                entity.HasOne(e => e.StudentGroup)
                     .WithMany(p => p.Homeworks)
-                    .HasForeignKey(d => d.ThemeId)
-                    .HasConstraintName("FK_theme_of_homework");
+                    .HasForeignKey(d => d.StudentGroupId)
+                    .HasConstraintName("FK_student_group_of_homework");
 
                 entity.HasOne(d => d.Mentor)
                     .WithMany(p => p.Homeworks)

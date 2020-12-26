@@ -15,15 +15,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<IList<Homework>> GetHomeworksByCourseId(long courseId)
-        {
-            return await (from task in _applicationContext.Homeworks
-                          .Include(x => x.AttachmentsOfHomework)
-                          from lessons in task.Theme.Lessons
-                          where lessons.StudentGroup.CourseId == courseId
-                          select task).ToListAsync();
-        }
-
         public async override Task<Homework> GetByIdAsync(long homeworkId)
         {
             return await _applicationContext.Homeworks

@@ -42,11 +42,10 @@ namespace CharlieBackend.Business.Services
 
                 var newHomework = new Homework
                 {
-                    IsCommon = createHomeworkDto.IsCommon,
-                    DeadlineDays = createHomeworkDto.DeadlineDays,
+                    DueDate = createHomeworkDto.DueDate,
                     MentorId = createHomeworkDto.MentorId,
                     TaskText = createHomeworkDto.TaskText,
-                    ThemeId = createHomeworkDto.ThemeId,
+                    StudentGroupId = createHomeworkDto.StudentGroupId,
                 };
 
                 _unitOfWork.HomeworkRepository.Add(newHomework);
@@ -72,25 +71,6 @@ namespace CharlieBackend.Business.Services
                 _logger.LogInformation($"Homework with id {newHomework.Id} has been added");
 
                 return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
-        }
-
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworksOfCourseAsync(long courseId)
-        {
-            if (courseId == default)
-            {
-                return Result<IList<HomeworkDto>>
-                    .GetError(ErrorCode.ValidationError, "Wrong course id");
-            }
-
-            var homeworks = await _unitOfWork.HomeworkRepository
-                .GetHomeworksByCourseId(courseId);
-
-            if (homeworks == default)
-            {
-                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Homework not found");
-            }
-
-            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         public async Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId)
@@ -120,12 +100,12 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            var theme = await _unitOfWork.ThemeRepository
-                .IsEntityExistAsync(request.ThemeId);
+            var studentGroup = await _unitOfWork.StudentGroupRepository
+                .IsEntityExistAsync(request.StudentGroupId);
 
-            if (!theme)
+            if (!studentGroup)
             {
-                yield return "Given theme does not exist";
+                yield return "Given student group does not exist";
             }
 
             var mentor = await _unitOfWork.MentorRepository

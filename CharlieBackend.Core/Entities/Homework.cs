@@ -5,15 +5,13 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Homework : BaseEntity
     {
-        public ushort? DeadlineDays { get; set; }
+        public DateTime? DueDate { get; set; }
 
         public string TaskText { get; set; }
 
-        public bool IsCommon { get; set; }
+        public long StudentGroupId { get; set; }
 
-        public long ThemeId { get; set; }
-
-        public Theme Theme { get; set; }
+        public StudentGroup StudentGroup { get; set; }
 
         public long MentorId { get; set; }
 

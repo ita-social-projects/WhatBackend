@@ -14,11 +14,10 @@ namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
             return new HomeworkDto
             {
                 Id = 24,
-                IsCommon = true,
                 AttachmentIds = new List<long> { 3, 12 },
-                DeadlineDays = 5,
+                DueDate = new DateTime(2021, 09, 15),
                 MentorId = 7,
-                ThemeId = 3,
+                StudentGroupId = 3,
                 TaskText = "1. Please create new HTML page \n2. Page should contain 2 tables 2x2 in center",
             };
         }
