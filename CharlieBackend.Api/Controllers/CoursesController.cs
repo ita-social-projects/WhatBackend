@@ -6,7 +6,6 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core;
-using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -17,16 +16,14 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-        private readonly IHomeworkService _homeworkService;
         private readonly ICourseService _coursesService;
 
         /// <summary>
         /// Courses controllers constructor
         /// </summary>
-        public CoursesController(ICourseService coursesService, IHomeworkService homeworkService)
+        public CoursesController(ICourseService coursesService)
         {
             _coursesService = coursesService;
-            _homeworkService = homeworkService;
         }
 
         /// <summary>
