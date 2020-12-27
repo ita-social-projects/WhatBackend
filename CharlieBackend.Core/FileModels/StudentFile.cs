@@ -14,7 +14,7 @@ namespace CharlieBackend.Core.FileModels
         public string FirstName { get; set; }
 
         [Required]
-        [StringLength(30)]
+        [StringLength(40)]
         public string LastName { get; set; }
     }
 }
