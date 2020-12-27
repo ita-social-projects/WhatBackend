@@ -12,5 +12,7 @@ namespace CharlieBackend.Core.Entities
         public string Name { get; set; }
 
         public virtual ICollection<Lesson> Lessons { get; set; }
+
+        public virtual ICollection<Homework> Homeworks { get; set; }
     }
 }

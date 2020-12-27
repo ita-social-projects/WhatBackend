@@ -6,6 +6,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -16,15 +17,16 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-
+        private readonly IHomeworkService _homeworkService;
         private readonly ICourseService _coursesService;
 
         /// <summary>
         /// Courses controllers constructor
         /// </summary>
-        public CoursesController(ICourseService coursesService)
+        public CoursesController(ICourseService coursesService, IHomeworkService homeworkService)
         {
             _coursesService = coursesService;
+            _homeworkService = homeworkService;
         }
 
         /// <summary>
@@ -83,6 +85,20 @@ namespace CharlieBackend.Api.Controllers
             var disableCourse = await _coursesService.DisableCourceAsync(id);
 
             return disableCourse.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets all homeworks of course
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpGet("{id}/homeworks")]
+        public async Task<ActionResult> GetHomeworksOfCourse(long id)
+        {
+            var results = await _homeworkService
+                        .GetHomeworksOfCourseAsync(id);
+
+            return results.ToActionResult();
         }
     }
 }

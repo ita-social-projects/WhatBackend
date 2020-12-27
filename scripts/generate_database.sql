@@ -282,6 +282,52 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
+
+-- -----------------------------------------------------
+-- Table `soft`.`homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`homework` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `deadline_days` SMALLINT(3) NULL DEFAULT NULL,
+  `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `is_common` TINYINT(1) NOT NULL DEFAULT '1',
+  `theme_id` BIGINT(20) NULL DEFAULT NULL,
+  `mentor_id` BIGINT(20) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_theme_of_homework` (`theme_id` ASC),
+  INDEX `FK_mentor_of_homework` (`mentor_id` ASC),
+  CONSTRAINT `FK_theme_of_homework`
+    FOREIGN KEY (`theme_id`)
+    REFERENCES `soft`.`theme` (`id`),
+  CONSTRAINT `FK_mentor_of_homework`
+    FOREIGN KEY (`mentor_id`)
+    REFERENCES `soft`.`mentor` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `soft`.`attachment_of_homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `homework_id` BIGINT(20) NOT NULL,
+  `attachment_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_homework_id` (`homework_id` ASC),
+  INDEX `FK_attachment_id` (`attachment_id` ASC),
+  CONSTRAINT `FK_homework_of_attachment`
+    FOREIGN KEY (`homework_id`)
+    REFERENCES `soft`.`homework` (`id`),
+  CONSTRAINT `FK_attachment_of_homework`
+    FOREIGN KEY (`attachment_id`)
+    REFERENCES `soft`.`attachment` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
