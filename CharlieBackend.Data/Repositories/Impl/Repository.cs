@@ -68,7 +68,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _entities.Where(entity => ids.Contains(entity.Id))
                                   .Select(entity => entity.Id)
-                                  .ToListAsync();
+                                  .ToListAsync(); 
         }
     }
 }

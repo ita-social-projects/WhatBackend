@@ -43,7 +43,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentclassbookRequestWithData.StartDate,
                 studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 1, 5 });
 
-            dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync())
+           
 
             //Act
         }
