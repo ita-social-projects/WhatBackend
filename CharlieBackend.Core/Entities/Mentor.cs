@@ -15,6 +15,8 @@ namespace CharlieBackend.Core.Entities
 
         public virtual Account Account { get; set; }
 
+        public virtual ICollection<Homework> Homeworks { get; set; }
+
         public virtual ICollection<Lesson> Lesson { get; set; }
 
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using System.Collections.Generic;
+
 namespace CharlieBackend.Core.Entities
 {
     public partial class Attachment : BaseEntity
@@ -11,5 +13,7 @@ namespace CharlieBackend.Core.Entities
         public string ContainerName { get; set; }
 
         public string FileName { get; set; }
+
+        public virtual ICollection<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
     }
 }
