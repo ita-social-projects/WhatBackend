@@ -134,7 +134,8 @@ namespace CharlieBackend.Api.Controllers
                             new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     foundAccount.Role.ToString()),
                             new Claim("Id", entityId.ToString()),
-                            new Claim("Email", foundAccount.Email)
+                            new Claim("Email", foundAccount.Email),
+                            new Claim("AccountId", foundAccount.Id.ToString())
                     },
                     expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
                     signingCredentials:
