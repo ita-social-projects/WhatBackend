@@ -64,11 +64,13 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _entities.AnyAsync(x => x.Id == id);
         }
 
-        public async Task<IList<long>> GetExistEntitiesIdsAsync(IEnumerable<long> ids)
+        public async Task<IEnumerable<long>> GetNotExistEntitiesIdsAsync(IEnumerable<long> ids)
         {
-            return await _entities.Where(entity => ids.Contains(entity.Id))
-                                  .Select(entity => entity.Id)
-                                  .ToListAsync();
+            var existIds = await _entities.Where(entity => ids.Contains(entity.Id))
+                                          .Select(entity => entity.Id)
+                                          .ToListAsync();
+
+            return ids.Except(existIds);
         }
     }
 }
