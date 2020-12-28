@@ -116,8 +116,7 @@ namespace CharlieBackend.Business.Services
                 yield return "Given mentor does not exist";
             }
 
-            if (request.AttachmentIds != default 
-                && request.AttachmentIds.Count() != 0)
+            if (request.AttachmentIds?.Count() > 0)
             {
                 var nonExistingAttachment = new List<long>();
 

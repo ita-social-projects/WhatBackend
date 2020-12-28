@@ -17,7 +17,7 @@ namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
                 DueDate = new DateTime(2021, 09, 15),
                 MentorId = 7,
                 StudentGroupId = 3,
-                TaskText = "1. Please create new HTML page \n2. Page should contain 2 tables 2x2 in center"
+                TaskText = "1. Please create new HTML page <br>2. Page should contain 2 tables 2x2 in center"
             };
         }
     }
