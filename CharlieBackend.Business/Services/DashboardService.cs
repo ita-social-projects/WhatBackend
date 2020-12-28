@@ -18,11 +18,11 @@ namespace CharlieBackend.Business.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly IDashboardRepository _dashboardRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DashboardService(IDashboardRepository dashboardRepository)
+        public DashboardService(IUnitOfWork unitOfWork)
         {
-            _dashboardRepository = dashboardRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request)
@@ -37,20 +37,20 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsClassbookResultDto();
             var studentGroupsIds = request.StudentGroupId.HasValue
                 ? new List<long> { request.StudentGroupId.Value }
-                : await _dashboardRepository
+                : await _unitOfWork.DashboardRepository
                     .GetGroupsIdsByCourseIdAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
 
-            var studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
+            var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
             {
-                result.StudentsPresences = await _dashboardRepository
+                result.StudentsPresences = await _unitOfWork.DashboardRepository
                     .GetStudentsPresenceListByStudentIds(studentsIds);
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentMarks))
             {
-                result.StudentsMarks = await _dashboardRepository
+                result.StudentsMarks = await _unitOfWork.DashboardRepository
                     .GetStudentsMarksListByStudentIds(studentsIds);
             }
 
@@ -69,20 +69,20 @@ namespace CharlieBackend.Business.Services
             var result = new StudentsResultsDto();
             var studentGroupsIds = request.StudentGroupId.HasValue
                 ? new List<long> { request.StudentGroupId.Value }
-                : await _dashboardRepository
+                : await _unitOfWork.DashboardRepository
                     .GetGroupsIdsByCourseIdAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
 
-            var studentsIds = await _dashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
+            var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
-                result.AverageStudentsMarks = await _dashboardRepository
+                result.AverageStudentsMarks = await _unitOfWork.DashboardRepository
                     .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(studentsIds, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
-                result.AverageStudentVisits = await _dashboardRepository
+                result.AverageStudentVisits = await _unitOfWork.DashboardRepository
                     .GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(studentsIds, studentGroupsIds);
             }
 
@@ -101,18 +101,18 @@ namespace CharlieBackend.Business.Services
             }
 
             var result = new StudentsClassbookResultDto();
-            var studentGroupsIds = await _dashboardRepository
+            var studentGroupsIds = await _unitOfWork.DashboardRepository
                 .GetGroupsIdsByStudentIdAndPeriodAsync(studentId, request.StartDate, request.FinishDate);
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
             {
-                result.StudentsPresences = await _dashboardRepository
+                result.StudentsPresences = await _unitOfWork.DashboardRepository
                     .GetStudentPresenceListByStudentIds(studentId, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentMarks))
             {
-                result.StudentsMarks = await _dashboardRepository
+                result.StudentsMarks = await _unitOfWork.DashboardRepository
                     .GetStudentMarksListByStudentIds(studentId, studentGroupsIds);
             }
 
@@ -130,18 +130,18 @@ namespace CharlieBackend.Business.Services
             }
 
             var result = new StudentsResultsDto();
-            var studentGroupsIds = await _dashboardRepository
+            var studentGroupsIds = await _unitOfWork.DashboardRepository
                 .GetGroupsIdsByStudentIdAndPeriodAsync(studentId, request.StartDate, request.FinishDate);
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
-                result.AverageStudentsMarks = await _dashboardRepository
+                result.AverageStudentsMarks = await _unitOfWork.DashboardRepository
                     .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentId }, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
-                result.AverageStudentVisits = await _dashboardRepository
+                result.AverageStudentVisits = await _unitOfWork.DashboardRepository
                     .GetStudentAverageVisitsPercentageByStudentIdsAsync(studentId, studentGroupsIds);
             }
 
@@ -160,7 +160,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var result = new StudentGroupsResultsDto();
-            var studentGroupsIds = await _dashboardRepository
+            var studentGroupsIds = await _unitOfWork.DashboardRepository
                     .GetGroupsIdsByCourseIdAsync(courseId, request.StartDate, request.FinishDate);
 
             if (studentGroupsIds == null)
@@ -171,13 +171,13 @@ namespace CharlieBackend.Business.Services
 
             if (request.IncludeAnalytics.Contains(StudentGroupResultType.AverageStudentGroupMark))
             {
-                result.AverageStudentGroupsMarks = await _dashboardRepository
+                result.AverageStudentGroupsMarks = await _unitOfWork.DashboardRepository
                     .GetStudentGroupsAverageMarks(studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentGroupResultType.AverageStudentGroupVisitsPercentage))
             {
-                result.AverageStudentGroupsVisits = await _dashboardRepository
+                result.AverageStudentGroupsVisits = await _unitOfWork.DashboardRepository
                     .GetStudentGroupsAverageVisits(studentGroupsIds);
             }
 

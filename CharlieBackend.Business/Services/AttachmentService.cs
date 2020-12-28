@@ -1,18 +1,17 @@
 ﻿using System;
 using System.IO;
 using AutoMapper;
-using CharlieBackend.Core;
-using Azure.Storage.Blobs;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Azure.Storage.Blobs.Models;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using Microsoft.Extensions.Logging;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+
 
 namespace CharlieBackend.Business.Services
 {
@@ -20,77 +19,69 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly AzureStorageBlobAccount  _blobAccount;
-        private readonly ILogger<AttachmentService> _logger;
+        private readonly IBlobService _blobService;
 
         public AttachmentService( 
                              IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             AzureStorageBlobAccount blobAccount,
-                             ILogger<AttachmentService> logger
+                             IBlobService blobService
                                 )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _blobAccount = blobAccount;
-            _logger = logger;
+            _blobService = blobService;
         }
 
-        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(IFormFileCollection fileCollection)
+        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
+                    IFormFileCollection fileCollection,
+                    ClaimsPrincipal claimsContext
+                    )
         {
-            try
+            if (!AttachmentsSizeValidation(fileCollection))
             {
-                IList<AttachmentDto> attachments = new List<AttachmentDto>();
-                
-                foreach (var file in fileCollection) 
-                {
-                    // Container names must start or end with a letter or number, 
-                    // and can contain only letters, numbers, and the dash (-) character.
-                    // All letters in a container name must be lowercase.
-                    string containerName = "what-attachments-" + Guid.NewGuid().ToString();
-
-                    BlobContainerClient cloudBlobContainerClient = 
-                                new BlobContainerClient(_blobAccount.connectionString, containerName);
-
-                    await cloudBlobContainerClient.CreateIfNotExistsAsync();
-
-                    BlobClient blobClient = cloudBlobContainerClient.GetBlobClient(file.FileName);
-
-
-                    _logger.LogInformation("FileName: " + file.FileName);
-                    _logger.LogInformation("Uri: " + blobClient.Uri);
-
-                    using Stream uploadFileStream = file.OpenReadStream();
-
-                    await blobClient.UploadAsync(uploadFileStream);
-
-                    Attachment attachment = new Attachment()
-                    {
-                        ContainerName = containerName,
-                        FileName = file.FileName
-                    };
-
-                    _unitOfWork.AttachmentRepository.Add(attachment);
-
-                    await _unitOfWork.CommitAsync();
-
-                    attachments.Add(_mapper.Map<AttachmentDto>(attachment));
-                }
-                    
-                return Result<IList<AttachmentDto>>.GetSuccess(attachments);
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError,
+                            "Files are too big, max size is 50 MB");
             }
-            catch
-            {
-                _unitOfWork.Rollback();
 
-                return Result<IList<AttachmentDto>>.GetError(ErrorCode.InternalServerError,
-                     "Cannot add attachments");
-            }          
+            if (!AttachmentsExtentionValidation(fileCollection))
+            {
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError,
+                           "Some of files have dengerous extention");
+            }
+
+            IList<Attachment> attachments = new List<Attachment>();
+
+            foreach (var file in fileCollection)
+            {
+
+                using Stream uploadFileStream = file.OpenReadStream();
+
+                var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream);
+
+                Attachment attachment = new Attachment()
+                {
+                    CreatedByAccountId = Convert.ToInt64(claimsContext.Claims
+                            .First(claim => claim.Type == "AccountId").Value),
+                    ContainerName = blob.BlobContainerName,
+                    FileName = file.FileName
+                };
+
+                _unitOfWork.AttachmentRepository.Add(attachment);
+
+                attachments.Add(attachment);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.
+                        Map<IList<AttachmentDto>>(attachments));
+                
         }
 
         public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
         {
-            var attachments = _mapper.Map<IList<AttachmentDto>>(await _unitOfWork.AttachmentRepository.GetAllAsync());
+            var attachments = _mapper.Map<IList<AttachmentDto>>(
+                        await _unitOfWork.AttachmentRepository.GetAllAsync());
 
             return Result<IList<AttachmentDto>>.GetSuccess(attachments);
         }
@@ -99,14 +90,13 @@ namespace CharlieBackend.Business.Services
         {
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
 
-            BlobClient blobClient = new BlobClient
-                        (
-                        _blobAccount.connectionString,
-                        attachment.ContainerName,
-                        attachment.FileName
-                        );
+            if (attachment == null)
+            {
+                return Result<DownloadAttachmentDto>.GetError(ErrorCode.ValidationError,
+                     "Attachement with id: " + attachmentId + " is not found");
+            }
 
-            BlobDownloadInfo download = await blobClient.DownloadAsync();
+            var download = await _blobService.DownloadAsync(attachment.ContainerName, attachment.FileName);
 
             DownloadAttachmentDto downloadedAttachment = new DownloadAttachmentDto()
                         { 
@@ -115,6 +105,70 @@ namespace CharlieBackend.Business.Services
                         };
 
             return Result<DownloadAttachmentDto>.GetSuccess(downloadedAttachment);
+        }
+
+        public async Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId)
+        {
+            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
+
+            if (attachment == null)
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
+                     "Attachement with id: " + attachmentId + " is not found");
+            }
+
+            await _blobService.DeleteAsync(attachment.ContainerName);
+
+            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
+        }
+
+        public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
+        {
+            string[] dangerousExtentions = 
+            {
+                ".exe",".pif",".application",".gadget",".msi",".msp",".com",
+                ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
+                ".vbe",".js",".jse",".ws",".wsf",".wsc",".wsh",".ps1",".ps1xml",
+                ".ps2",".ps2xml",".psc1",".psc2",".msh",".msh1",".msh2",".mshxml",
+                ".msh1xml",".msh2xml",".scf",".lnk",".inf",".reg",".doc",".xls",
+                ".ppt",".docm",".dotm",".xlsm",".xltm",".xlam",".pptm",".potm",
+                ".ppam",".ppsm",".sldm",".dll"
+            };
+
+            foreach (var file in fileCollection)
+            {
+                foreach (var extention in dangerousExtentions)
+                {
+                    if (file.FileName.ToLower().EndsWith(extention))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
+        {
+            const int maxSize = 52428800;
+            long currentSize = 0;
+
+            foreach (var file in fileCollection)
+            {
+                currentSize += file.Length;
+            }
+
+            if (currentSize <= maxSize)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
