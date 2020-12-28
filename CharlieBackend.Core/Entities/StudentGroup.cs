@@ -5,8 +5,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class StudentGroup : BaseEntity
     {
-
-        public long? CourseId { get; set; }
+        public long CourseId { get; set; }
 
         public string Name { get; set; }
 
@@ -23,5 +22,7 @@ namespace CharlieBackend.Core.Entities
         public virtual IList<Schedule> Schedule { get; set; }
         
         public virtual IList<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
+
+        public virtual IList<Homework> Homeworks { get; set; }
     }
 }

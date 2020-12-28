@@ -468,24 +468,34 @@ namespace CharlieBackend.Data
                 entity.ToTable("Attachment");
 
                 entity.HasIndex(e => e.ContainerName)
-                    .HasName("containerName_UNIQUE")
+                    .HasName("container_name_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.CreatedOn)
+                    .IsRequired()
+                    .HasColumnName("created_on")
+                    .HasColumnType("datetime")
+                    .HasComment("created_on has been set to not null");
+
+                entity.Property(e => e.CreatedByAccountId)
+                    .IsRequired()
+                    .HasColumnName("created_by_account_id");
+
                 entity.Property(e => e.ContainerName)
                     .IsRequired()
-                    .HasColumnName("containerName")
+                    .HasColumnName("container_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null and unique")
+                    .HasComment("container_name has been set to not null and unique")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
                 entity.Property(e => e.FileName)
                     .IsRequired()
-                    .HasColumnName("fileName")
+                    .HasColumnName("file_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null")
+                    .HasComment("file_name has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
             });
@@ -495,18 +505,13 @@ namespace CharlieBackend.Data
                 entity.ToTable("homework");
 
                 entity.HasIndex(e =>
-                    new { e.MentorId, e.ThemeId })
-                    .HasName("mentor_and_theme_Id");
+                    new { e.MentorId, e.StudentGroupId })
+                    .HasName("mentor_and_student_group_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.IsCommon)
-                    .HasColumnName("is_common")
-                    .HasDefaultValueSql("'1'")
-                    .HasComment("common has been set to not null with true as a default value");
-
-                entity.Property(e => e.DeadlineDays)
-                    .HasColumnName("deadline_days")
+                entity.Property(e => e.DueDate)
+                    .HasColumnName("due_date")
                     .HasDefaultValue(null);
 
                 entity.Property(e => e.TaskText)
@@ -517,12 +522,12 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.MentorId).HasColumnName("mentor_id");
 
-                entity.Property(e => e.ThemeId).HasColumnName("theme_id");
+                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
 
-                entity.HasOne(e => e.Theme)
+                entity.HasOne(e => e.StudentGroup)
                     .WithMany(p => p.Homeworks)
-                    .HasForeignKey(d => d.ThemeId)
-                    .HasConstraintName("FK_theme_of_homework");
+                    .HasForeignKey(d => d.StudentGroupId)
+                    .HasConstraintName("FK_student_group_of_homework");
 
                 entity.HasOne(d => d.Mentor)
                     .WithMany(p => p.Homeworks)

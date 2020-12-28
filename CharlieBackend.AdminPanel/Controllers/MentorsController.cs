@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -17,23 +12,16 @@ namespace CharlieBackend.AdminPanel.Controllers
     {
         private readonly IMentorService _mentorService;
 
-        private readonly IOptions<ApplicationSettings> _config;
 
-        private readonly IDataProtector _protector;
-
-        public MentorsController(IMentorService mentorService,
-                                  IOptions<ApplicationSettings> config,
-                                  IDataProtectionProvider provider)
+        public MentorsController(IMentorService mentorService)
         {
             _mentorService = mentorService;
-            _config = config;
-            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
 
         }
 
         public async Task<IActionResult> AllMentors()
         {
-            var mentor = await _mentorService.GetAllMentorsAsync(_protector.Unprotect(Request.Cookies["accessToken"]));
+            var mentor = await _mentorService.GetAllMentorsAsync();
 
             return View(mentor);
         }
@@ -41,7 +29,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateMentor(long id)
         {
-            var mentor = await _mentorService.GetMentorByIdAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var mentor = await _mentorService.GetMentorByIdAsync(id);
 
             ViewBag.Mentor = mentor;
 
@@ -51,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateMentor(long id, UpdateMentorDto data)
         {
-            var updatedStudent = await _mentorService.UpdateMentorAsync(id, data, _protector.Unprotect(Request.Cookies["accessToken"]));
+            var updatedStudent = await _mentorService.UpdateMentorAsync(id, data);
 
             return RedirectToAction("AllMentors", "Mentors");
         }
@@ -59,7 +47,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMentor(long id)
         {
-            await _mentorService.AddMentorAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            await _mentorService.AddMentorAsync(id);
 
             return RedirectToAction("AllMentors", "Mentors");
         }
@@ -67,7 +55,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> DisableMentor(long id)
         {
-            await _mentorService.DisableMentorAsync(id, _protector.Unprotect(Request.Cookies["accessToken"]));
+            await _mentorService.DisableMentorAsync(id);
 
             return RedirectToAction("AllMentors", "Mentors");
         }

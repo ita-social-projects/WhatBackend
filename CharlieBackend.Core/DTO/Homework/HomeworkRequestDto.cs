@@ -7,14 +7,12 @@ namespace CharlieBackend.Core.DTO.Homework
 {
     public class HomeworkRequestDto
     {
-        public ushort? DeadlineDays { get; set; }
+        public DateTime? DueDate { get; set; }
 
         public string TaskText { get; set; }
 
-        public bool IsCommon { get; set; }
-
         [Required]
-        public long ThemeId { get; set; }
+        public long StudentGroupId { get; set; }
 
         [Required]
         public long MentorId { get; set; }
