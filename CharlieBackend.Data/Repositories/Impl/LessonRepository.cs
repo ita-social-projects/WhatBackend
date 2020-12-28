@@ -23,6 +23,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
+        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentodId)
+        {
+            return await _applicationContext.Lessons
+                .Where(lesson => lesson.MentorId == mentodId)
+                .Select(lesson => lesson)
+                .ToListAsync();
+        }
+
         public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)
         {
             try

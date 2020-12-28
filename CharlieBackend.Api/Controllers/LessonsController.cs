@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -98,6 +98,21 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<List<StudentLessonDto>>> GetStudentLessons(long id)
         {
             var lessons = await _lessonService.GetStudentLessonsAsync(id);
+
+            return lessons.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons  for mentor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given student</response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("mentor/{id}")]
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        {
+            var lessons = await _lessonService.GetAllLessonsForMentor(id);
 
             return lessons.ToActionResult();
         }
