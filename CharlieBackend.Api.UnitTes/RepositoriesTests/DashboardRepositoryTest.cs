@@ -1,34 +1,25 @@
 ﻿using Moq;
 using Xunit;
-using AutoMapper;
-using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 {
     public class DashboardRepositoryTest : TestBase
     {
-        private readonly Mock<DbContextOptions<ApplicationContext>> _dbContextOptionsMock;
         private readonly Mock<ApplicationContext> _applicationContextMock;
         private readonly Mock<DbSet<StudentGroup>> _dbSetStudGroupMock;
 
         public DashboardRepositoryTest()
         {
-            _dbContextOptionsMock = new Mock<DbContextOptions<ApplicationContext>>();
-    
-            _applicationContextMock = new Mock<ApplicationContext>(_dbContextOptionsMock.Object);
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            _applicationContextMock = new Mock<ApplicationContext>(optionsBuilder.Options);
             _dbSetStudGroupMock = new Mock<DbSet<StudentGroup>>();
         }
 
@@ -118,7 +109,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 }
             };
 
-            _applicationContextMock.Setup(x => x.);
+            //_applicationContextMock.Setup(x => x.);
             _applicationContextMock.Setup(x => x.StudentGroups.AddRange(inRangeStdentGroupFirst, inRangeStdentGroupSecond, outOfRangeStdentGroup));
 
             DashboardRepository dashboardRepository = new DashboardRepository(_applicationContextMock.Object);

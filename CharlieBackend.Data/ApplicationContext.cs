@@ -8,7 +8,6 @@ namespace CharlieBackend.Data
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
