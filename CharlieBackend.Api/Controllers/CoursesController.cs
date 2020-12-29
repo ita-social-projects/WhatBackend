@@ -16,7 +16,6 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-
         private readonly ICourseService _coursesService;
 
         /// <summary>

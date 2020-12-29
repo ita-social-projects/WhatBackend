@@ -39,6 +39,10 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Attachment> Attachments { get; set; }
 
+        public virtual DbSet<Homework> Homeworks { get; set; }
+
+        public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
+
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
         //            if (!optionsBuilder.IsConfigured)
@@ -464,26 +468,98 @@ namespace CharlieBackend.Data
                 entity.ToTable("Attachment");
 
                 entity.HasIndex(e => e.ContainerName)
-                    .HasName("containerName_UNIQUE")
+                    .HasName("container_name_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.CreatedOn)
+                    .IsRequired()
+                    .HasColumnName("created_on")
+                    .HasColumnType("datetime")
+                    .HasComment("created_on has been set to not null");
+
+                entity.Property(e => e.CreatedByAccountId)
+                    .IsRequired()
+                    .HasColumnName("created_by_account_id");
+
                 entity.Property(e => e.ContainerName)
                     .IsRequired()
-                    .HasColumnName("containerName")
+                    .HasColumnName("container_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null and unique")
+                    .HasComment("container_name has been set to not null and unique")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
                 entity.Property(e => e.FileName)
                     .IsRequired()
-                    .HasColumnName("fileName")
+                    .HasColumnName("file_name")
                     .HasColumnType("varchar(100)")
-                    .HasComment("name has been set to not null")
+                    .HasComment("file_name has been set to not null")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
+            });
+
+            modelBuilder.Entity<Homework>(entity =>
+            {
+                entity.ToTable("homework");
+
+                entity.HasIndex(e =>
+                    new { e.MentorId, e.StudentGroupId })
+                    .HasName("mentor_and_student_group_id");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DueDate)
+                    .HasColumnName("due_date")
+                    .HasDefaultValue(null);
+
+                entity.Property(e => e.TaskText)
+                    .HasColumnName("task_text")
+                    .HasColumnType("varchar(4000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.Property(e => e.MentorId).HasColumnName("mentor_id");
+
+                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+
+                entity.HasOne(e => e.StudentGroup)
+                    .WithMany(p => p.Homeworks)
+                    .HasForeignKey(d => d.StudentGroupId)
+                    .HasConstraintName("FK_student_group_of_homework");
+
+                entity.HasOne(d => d.Mentor)
+                    .WithMany(p => p.Homeworks)
+                    .HasForeignKey(d => d.MentorId)
+                    .HasConstraintName("FK_mentor_of_homework");
+            });
+
+            modelBuilder.Entity<AttachmentOfHomework>(entity =>
+            {
+                entity.ToTable("attachment_of_homework");
+
+                entity.HasIndex(e => e.AttachmentId)
+                    .HasName("FK_attachment_of_homework_id");
+
+                entity.HasIndex(e => e.HomeworkId)
+                    .HasName("FK_homework_of_attachment_id");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
+
+                entity.Property(e => e.HomeworkId).HasColumnName("homework_id");
+
+                entity.HasOne(d => d.Attachment)
+                    .WithMany(p => p.AttachmentsOfHomework)
+                    .HasForeignKey(d => d.AttachmentId)
+                    .HasConstraintName("FK_attachment_of_homework");
+
+                entity.HasOne(d => d.Homework)
+                    .WithMany(p => p.AttachmentsOfHomework)
+                    .HasForeignKey(d => d.HomeworkId)
+                    .HasConstraintName("FK_homework_of_attachment");
             });
 
             OnModelCreatingPartial(modelBuilder);
