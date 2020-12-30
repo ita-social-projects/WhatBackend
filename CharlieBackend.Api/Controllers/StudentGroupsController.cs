@@ -1,14 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.StudentGroups;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Models.ResultModel;
-using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Homework;
+using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {

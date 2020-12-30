@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core;
-using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.Homework;
+using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -18,17 +18,14 @@ namespace CharlieBackend.Api.Controllers
     public class ThemesController : ControllerBase
     {
         private readonly IThemeService _themeService;
-        private readonly IHomeworkService _homeworkService;
 
         /// <summary>
         /// Themes controllers constructor
         /// </summary>
         /// <param name="themeService"></param>
-        /// <param name="homeworkService"></param>
-        public ThemesController(IThemeService themeService, IHomeworkService homeworkService)
+        public ThemesController(IThemeService themeService)
         {
             _themeService = themeService;
-            _homeworkService = homeworkService;
         }
 
         /// <summary>
