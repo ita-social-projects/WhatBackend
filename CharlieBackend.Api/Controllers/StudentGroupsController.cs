@@ -8,6 +8,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -20,13 +21,15 @@ namespace CharlieBackend.Api.Controllers
     {
 
         private readonly IStudentGroupService _studentGroupService;
+        private readonly IHomeworkService _homeworkService;
 
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService)
         {
             _studentGroupService = studentGroupService;
+            _homeworkService = homeworkService;
         }
 
         //[HttpDelete("{id}")]
@@ -101,6 +104,19 @@ namespace CharlieBackend.Api.Controllers
                     .GetStudentGroupByIdAsync(id);
 
             return foundStudentGroup.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets all homeworks of student group
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpGet("{id}/homeworks")]
+        public async Task<ActionResult> GetHomeworksOfStudentGroup(long id)
+        {
+            var results = await _homeworkService.GetHomeworksByStudentGroupId(id);
+
+            return results.ToActionResult();
         }
     }
 }

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
 {
-    class CreateHomeworkRequest : IExamplesProvider<CreateHomeworkDto>
+    class CreateHomeworkRequest : IExamplesProvider<HomeworkRequestDto>
     {
-        public CreateHomeworkDto GetExamples()
+        public HomeworkRequestDto GetExamples()
         {
-            return new CreateHomeworkDto
+            return new HomeworkRequestDto
             {
                 AttachmentIds = new List<long> { 3, 12 },
                 DueDate = new DateTime(2021, 09, 15),

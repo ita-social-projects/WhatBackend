@@ -73,6 +73,18 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
         }
 
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByStudentGroupId(long studentGroupId)
+        {
+            if (studentGroupId == default)
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong student group id");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByStudentGroupId(studentGroupId);
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
+        }
+
         public async Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId)
         {
             if (homeworkId == default)
@@ -112,57 +124,34 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Given homework id not found");
             }
 
-            foundHomework.DeadlineDays = updateHomeworkDto.DeadlineDays;
-            foundHomework.IsCommon = updateHomeworkDto.IsCommon;
+            foundHomework.DueDate = updateHomeworkDto.DueDate;
             foundHomework.TaskText = updateHomeworkDto.TaskText;
 
-            if (foundHomework.MentorId != updateHomeworkDto.MentorId)
+            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
+            foundHomework.MentorId = updateHomeworkDto.MentorId;
+            foundHomework.Mentor = mentor;
+
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(updateHomeworkDto.StudentGroupId);
+            foundHomework.StudentGroupId = updateHomeworkDto.StudentGroupId;
+            foundHomework.StudentGroup = studentGroup;
+
+            var newAttachments = new List<AttachmentOfHomework>();
+
+            if (updateHomeworkDto.AttachmentIds?.Count() > 0)
             {
-                var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
-
-                foundHomework.MentorId = updateHomeworkDto.MentorId;
-                foundHomework.Mentor = mentor;
-
-            }
-
-            if (foundHomework.ThemeId != updateHomeworkDto.ThemeId)
-            {
-                var theme = await _unitOfWork.ThemeRepository.GetByIdAsync(updateHomeworkDto.ThemeId);
-
-                if (theme != default)
-                {
-                    foundHomework.ThemeId = updateHomeworkDto.ThemeId;
-                    foundHomework.Theme = theme;
-                }
-            }
-
-            if (updateHomeworkDto.AttachmentIds != null)
-            {
-                var newAttachments = updateHomeworkDto.AttachmentIds.Select(x => new AttachmentOfHomework
+                newAttachments = updateHomeworkDto.AttachmentIds.Select(x => new AttachmentOfHomework
                 {
                     HomeworkId = foundHomework.Id,
                     Homework = foundHomework,
                     AttachmentId = x
-                });
-
-                _unitOfWork.HomeworkRepository.UpdateManyToMany(foundHomework.AttachmentsOfHomework, newAttachments);
+                }).ToList();
             }
+
+            _unitOfWork.HomeworkRepository.UpdateManyToMany(foundHomework.AttachmentsOfHomework, newAttachments);
 
             await _unitOfWork.CommitAsync();
 
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(foundHomework));
-        }
-
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByThemeId(long themeId)
-        {
-            if (themeId == default)
-            {
-                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong theme id");
-            }
-
-            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByThemeId(themeId);
-
-            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         private async IAsyncEnumerable<string> ValidateHomeworkRequest(HomeworkRequestDto request)

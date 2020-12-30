@@ -88,19 +88,5 @@ namespace CharlieBackend.Api.Controllers
 
             return themeResult.ToActionResult();
         }
-
-        /// <summary>
-        /// Gets homeworks by theme id
-        /// </summary>
-        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
-        [Authorize(Roles = "Admin, Mentor")]
-        [HttpGet("{id}/hometasks")]
-        public async Task<ActionResult> GetHomeworksById(long id)
-        {
-            var results = await _homeworkService
-                        .GetHomeworksByThemeId(id);
-
-            return results.ToActionResult();
-        }
     }
 }
