@@ -129,21 +129,14 @@ namespace CharlieBackend.Business.Services
                 foundStudent.Account.FirstName = studentModel.FirstName ?? foundStudent.Account.FirstName;
                 foundStudent.Account.LastName = studentModel.LastName ?? foundStudent.Account.LastName;
 
-                if (studentModel.StudentGroupIds != null)
+                if (studentModel.StudentGroupIds?.Count > 0)
                 {
-                    var currentStudentGroupsOfStudent = foundStudent.StudentsOfStudentGroups;
-                    var newStudentsOfStudentGroup = new List<StudentOfStudentGroup>();
-
-                    foreach (var newStudentGroupId in studentModel.StudentGroupIds)
-                    {
-                        newStudentsOfStudentGroup.Add(new StudentOfStudentGroup
-                        {
-                            StudentGroupId = newStudentGroupId,
-                            StudentId = foundStudent.Id
-                        });
-                    }
-
-                    _unitOfWork.StudentGroupRepository.UpdateManyToMany(currentStudentGroupsOfStudent, newStudentsOfStudentGroup);
+                    _unitOfWork.StudentGroupRepository.UpdateManyToMany(foundStudent.StudentsOfStudentGroups,
+                                                                        studentModel.StudentGroupIds.Select(x => new StudentOfStudentGroup
+                                                                        {
+                                                                            StudentGroupId = x,
+                                                                            StudentId = studentId
+                                                                        }));
                 }
 
                 await _unitOfWork.CommitAsync();
