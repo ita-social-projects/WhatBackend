@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
@@ -109,7 +110,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     }).ToListAsync();
         }
 
-        public async Task<IList<long?>> GetAllStudentInGroup(long id)
+        public async Task<IList<long?>> GetGroupStudentsIds(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
                 .Select(s => s.StudentId).ToListAsync();

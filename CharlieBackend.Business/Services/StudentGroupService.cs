@@ -111,7 +111,7 @@ namespace CharlieBackend.Business.Services
 
             return Result<bool>.GetSuccess(res);
         }
-
+       
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
@@ -218,5 +218,7 @@ namespace CharlieBackend.Business.Services
         {
             _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
         }
+
+        
     }
 }

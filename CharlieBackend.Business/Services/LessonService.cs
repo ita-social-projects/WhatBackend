@@ -10,6 +10,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -57,12 +58,14 @@ namespace CharlieBackend.Business.Services
 
                 if (foundStudentGroup.StudentsOfStudentGroups.Count != lessonDto.LessonVisits.Count)
                 {
-                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Something wrong with a Lesson Visits");
+                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, $"You sent Lesson Visit with {lessonDto.LessonVisits.Count} student(s)" +
+                        $" but in group included {foundStudentGroup.StudentsOfStudentGroups.Count} student(s). Please check your Lesson Visit");
                 }
-
-                if (!await CheckStudentsID(lessonDto.LessonVisits, lessonDto.StudentGroupId))
+                var checkStudentInGroup = await _unitOfWork.StudentGroupRepository.GetGroupStudentsIds(foundStudentGroup.Id);
+                var checkStudents = GetStudentsIDNotIncludeInGroup(lessonDto.LessonVisits, checkStudentInGroup);
+                if (checkStudents.Count > 0)
                 {
-                    return Result<LessonDto>.GetError(ErrorCode.NotFound, "Someone of student is not found or not included in this group");
+                    return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudents)} not included in this group({lessonDto.StudentGroupId})");
                 }
 
                 if (createdLessonEntity.LessonDate < DateTime.Now)
@@ -149,14 +152,25 @@ namespace CharlieBackend.Business.Services
                         foundLesson.Theme = theme;
                     }
                 }
+               
+                if (lessonModel.LessonDate < DateTime.Now)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
+                }
 
-                if (lessonModel.LessonDate != default(DateTime) && lessonModel.LessonDate < DateTime.Now)
+                if (lessonModel.LessonDate != default(DateTime) )
                 {
                     foundLesson.LessonDate = lessonModel.LessonDate;
                 }
 
-                if (lessonModel.LessonVisits != null && !await CheckStudentsID(lessonModel.LessonVisits, (long)foundLesson.StudentGroupId))
+                if (lessonModel.LessonVisits != null)
                 {
+                    var checkStudensId = GetStudentsIDNotIncludeInGroup(lessonModel.LessonVisits,
+                        await _unitOfWork.StudentGroupRepository.GetGroupStudentsIds((long)foundLesson.StudentGroupId));
+                    if (checkStudensId.Count > 0)
+                    {
+                        return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudensId)} not included in this group({foundLesson.StudentGroupId})");
+                    }
                     await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
                     for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
@@ -198,31 +212,20 @@ namespace CharlieBackend.Business.Services
             return Result<IList<StudentLessonDto>>.GetSuccess( _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
         }
 
-        private async Task<bool> CheckStudentsID(IList<VisitDto> visit, long groupId)
+        private List<long> GetStudentsIDNotIncludeInGroup(IList<VisitDto> visit, IList<long?> groupStudentsId)
         {
-            List<long> studentsId = new List<long>();
-
-            foreach (var item in visit)
-            {
-                studentsId.Add((long)item.StudentId);
-            }
-
-            var checkStudentInGroup = await _unitOfWork.StudentGroupRepository.GetAllStudentInGroup(groupId);
-
-            if (checkStudentInGroup.Count != studentsId.Count)
-            {
-                return false;
-            }
+            List<long> result = new List<long>();
+            var studentsId = visit.Select(x => x.StudentId).ToList();
 
             foreach (var item in studentsId)
             {
-                if (!checkStudentInGroup.Contains(item))
+                if (!groupStudentsId.Contains(item))
                 {
-                    return false;
+                    result.Add(item);
                 }
             }
 
-            return true;
+            return result;
         }
 
     }
