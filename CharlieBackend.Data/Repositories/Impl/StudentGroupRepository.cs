@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
-using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
