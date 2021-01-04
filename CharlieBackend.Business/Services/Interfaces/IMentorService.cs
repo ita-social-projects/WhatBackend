@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorIdAsync(long id);
 
         Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorIdAsync(long id);
+
+        Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId);
 
         Task<long?> GetAccountId(long mentorId);
 

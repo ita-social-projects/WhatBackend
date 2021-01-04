@@ -56,11 +56,13 @@ namespace CharlieBackend.Api.UnitTest
                 .Callback<Mentor>(x => x.Id = mentorExpectedId);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
 
+            var lessonServiceMock = new Mock<ILessonService>();
+
             var mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object, lessonServiceMock.Object);
 
             //Act
             var nonExistingIdResult = await mentorService.CreateMentorAsync(0);
@@ -139,11 +141,14 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
 
+            var lessonServiceMock = new Mock<ILessonService>();
+
             var mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                lessonServiceMock.Object);
 
             //Act
             var nonExistingIdResult = await mentorService

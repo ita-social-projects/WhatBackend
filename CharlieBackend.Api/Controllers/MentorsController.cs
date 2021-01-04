@@ -10,6 +10,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Api.SwaggerExamples.StudentsController;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -158,6 +159,21 @@ namespace CharlieBackend.Api.Controllers
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
             return disabledMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons  for mentor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given student</response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        {
+            var lessons = await _mentorService.GetAllLessonsForMentor(id);
+
+            return lessons.ToActionResult();
         }
     }
 }
