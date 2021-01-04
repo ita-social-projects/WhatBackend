@@ -28,92 +28,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         public async Task GetGroupsIdsByCourseIdAsync()
         {
             // Arrange
-            var groups = new List<StudentGroup>
-            {
 
-                 new StudentGroup()
-                 {
-                    CourseId = 1,
-                     StartDate = new DateTime(2000, 10, 1),
-                     FinishDate = new DateTime(2001, 1, 20),
-                     Id = 1,
-                     StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                     {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 10,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 11,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 12,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 13,
-                        }
-                     }
-                 },
-
-                 new StudentGroup()
-                 {
-                    CourseId = 1,
-                    StartDate = new DateTime(2000, 11, 4),
-                    FinishDate = new DateTime(2001, 1, 10),
-                    Id = 4,
-                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                    {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 4,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 5,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 6,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 20,
-                        }
-                    }
-                 },
-
-                 new StudentGroup()
-                 {
-                    CourseId = 1,
-                    StartDate = new DateTime(2003, 1, 1),
-                    FinishDate = new DateTime(2006, 10, 2),
-                    Id = 5,
-                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                    {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 10,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 11,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 12,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 13,
-                        }
-                    }
-                 }
-            };
-
-            var mock = groups.AsQueryable().BuildMockDbSet();
+            var mock = GetMockDbsetOfStudentGroup();
 
             _applicationContextMock.Setup(x => x.StudentGroups).Returns(mock.Object);
 
@@ -133,93 +49,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         {
             //Arrange
 
-
-            var groups = new List<StudentGroup>
-            {
-
-                 new StudentGroup()
-                 {
-                    CourseId = 2,
-                     StartDate = new DateTime(2000, 10, 1),
-                     FinishDate = new DateTime(2001, 1, 20),
-                     Id = 1,
-                     StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                     {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 10,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 11,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 12,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 13,
-                        }
-                     }
-                 },
-
-                 new StudentGroup()
-                 {
-                    CourseId = 1,
-                    StartDate = new DateTime(2000, 11, 4),
-                    FinishDate = new DateTime(2001, 1, 10),
-                    Id = 4,
-                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                    {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 4,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 5,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 6,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 20,
-                        }
-                    }
-                 },
-
-                 new StudentGroup()
-                 {
-                    CourseId = 3,
-                    StartDate = new DateTime(2000, 1, 1),
-                    FinishDate = new DateTime(2003, 10, 2),
-                    Id = 5,
-                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
-                    {
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 10,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 11,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 12,
-                        },
-                        new StudentOfStudentGroup()
-                        {
-                            StudentId = 13,
-                        }
-                    }
-                 }
-            };
-
-            var mock = groups.AsQueryable().BuildMockDbSet();
+            var mock = GetMockDbsetOfStudentGroup();
 
             _applicationContextMock.Setup(x => x.StudentGroups).Returns(mock.Object);
 
@@ -336,122 +166,6 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         {
             //Arrange
 
-            var visits = new List<Visit>
-            {
-                new Visit
-                {
-                    Lesson = new Lesson
-                    {
-                        StudentGroup = new StudentGroup
-                        {
-                            StudentsOfStudentGroups = new List<StudentOfStudentGroup>
-                            {
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 10
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 11
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 12
-                                    }
-                                }
-                            },
-                            CourseId = 2,
-                        },
-                        StudentGroupId = 1,
-                    },
-                    Presence = true,
-                    StudentId =10,
-
-                },
-                new Visit
-                {
-                    Lesson = new Lesson
-                    {
-                        StudentGroup = new StudentGroup
-                        {
-                            StudentsOfStudentGroups = new List<StudentOfStudentGroup>
-                            {
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 10
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 11
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 12
-                                    }
-                                }
-                            },
-                            CourseId = 2,
-                        },
-                        StudentGroupId = 1
-                    },
-                    Presence = false,
-                    StudentId =11,
-                },
-                new Visit
-                {
-                    Lesson = new Lesson
-                    {
-                        StudentGroup = new StudentGroup
-                        {
-                            StudentsOfStudentGroups = new List<StudentOfStudentGroup>
-                            {
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 10
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 11
-                                    }
-                                },
-                                new StudentOfStudentGroup
-                                {
-                                    Student = new Student
-                                    {
-                                        Id = 12
-                                    }
-                                }
-                            },
-                            CourseId = 2,
-                        },
-                        StudentGroupId = 1
-                    },
-                    Presence = true,
-                    StudentId =12,
-                }
-            };
-
             var expected = new List<AverageStudentVisitsDto>
             {
                 new AverageStudentVisitsDto
@@ -470,7 +184,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 }
             };
 
-            var mock = visits.AsQueryable().BuildMockDbSet();
+            var mock = GetMockDbSetOfVisits();
 
             _applicationContextMock.Setup(x => x.Visits).Returns(mock.Object);
 
@@ -482,12 +196,328 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             //Assert
 
             Assert.NotNull(result);
-            Assert.Equal(expected, result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentsPresenceListByStudentIds()
+        {
+            //Arrange
+
+            var expected = new List<StudentVisitDto>
+            {
+
+                new StudentVisitDto
+                {
+                    LessonDate = new DateTime(),
+                    CourseId =2,
+                    StudentId = 11,
+                    Presence =false,
+                    StudentGroupId =1
+                },
+                new StudentVisitDto
+                {
+                    LessonDate = new DateTime(),
+                    CourseId =2,
+                    StudentId = 12,
+                    Presence =true,
+                    StudentGroupId =1
+                },
+
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.Setup(X => X.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentsPresenceListByStudentIds(new List<long> { 11, 12 });
+
+            //Assert
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentsMarksListByStudentIds()
+        {
+            //Arrange
+
+            var expected = new List<StudentMarkDto>
+            {
+                new StudentMarkDto
+                {
+                    CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 10,
+                        LessonId = 10,
+                        LessonDate = new DateTime(),
+                        StudentMark = 100,
+                },
+                new StudentMarkDto
+                {
+                    CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 12,
+                        LessonId = 10,
+                        LessonDate = new DateTime(),
+                        StudentMark = 30,
+                },
+                new StudentMarkDto
+                {
+                    CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 12,
+                        LessonId = 10,
+                        LessonDate = new DateTime(),
+                        StudentMark = 90,
+                }
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.Setup(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentsMarksListByStudentIds(new List<long> { 10,12});
+
+            //Assert
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentAverageMarksByStudentIdsAndGropsIdsAsync()
+        {
+            //Arrange
+
+            var expected = new List<AverageStudentMarkDto>{
+                new AverageStudentMarkDto
+                {
+                    CourseId =2,
+                    StudentGroupId =1,
+                    StudentId =11,
+                    StudentAverageMark = 78
+                },
+                new AverageStudentMarkDto
+                {
+                    CourseId =2,
+                    StudentGroupId =1,
+                    StudentId =12,
+                    StudentAverageMark = 60
+                }
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.Setup(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
+            //Act
+
+            var result = await dashboardRepository.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { 11,12 },new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        private Mock<DbSet<Visit>> GetMockDbSetOfVisits()
+        {
+            var lesson = new Lesson
+            {
+                StudentGroup = new StudentGroup
+                {
+                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>
+                    {
+                        new StudentOfStudentGroup
+                        {
+                            Student = new Student
+                            {
+                                Id = 10
+                            }
+                        },
+                        new StudentOfStudentGroup
+                        {
+                            Student = new Student
+                            {
+                                Id = 11
+                            }
+                        },
+                        new StudentOfStudentGroup
+                        {
+                            Student = new Student
+                            {
+                                Id = 12
+                            }
+                        }
+                    },
+                    CourseId = 2,
+                    
+                },
+                StudentGroupId = 1,
+                Id = 10,
+            };
+
+            var visits = new List<Visit>
+            {
+                new Visit
+                {
+                    Lesson = lesson,
+                    Presence = true,
+                    StudentId =10,
+                    StudentMark = 100
+                },
+                new Visit
+                {
+                    Lesson = lesson,
+                    Presence = false,
+                    StudentId =11,
+                    StudentMark = 78
+                },
+                new Visit
+                {
+                    Lesson = lesson,
+                    Presence = true,
+                    StudentId =12,
+                    StudentMark = 30
+                },
+                new Visit
+                {
+                    Lesson = lesson,
+                    Presence = false,
+                    StudentId =12,
+                    StudentMark = 90,
+                    
+                }
+            };
+            var mock = visits.AsQueryable().BuildMockDbSet();
+
+            return mock;
+        }
+
+        private Mock<DbSet<StudentGroup>> GetMockDbsetOfStudentGroup()
+        {
+            var groups = new List<StudentGroup>
+            {
+
+                 new StudentGroup()
+                 {
+                    CourseId = 1,
+                     StartDate = new DateTime(2000, 10, 1),
+                     FinishDate = new DateTime(2001, 1, 20),
+                     Id = 1,
+                     StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
+                     {
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 10,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 11,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 12,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 13,
+                        }
+                     }
+                 },
+
+                 new StudentGroup()
+                 {
+                    CourseId = 1,
+                    StartDate = new DateTime(2000, 11, 4),
+                    FinishDate = new DateTime(2001, 1, 10),
+                    Id = 4,
+                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
+                    {
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 4,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 5,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 6,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 20,
+                        }
+                    }
+                 },
+
+                 new StudentGroup()
+                 {
+                    CourseId = 1,
+                    StartDate = new DateTime(2003, 1, 1),
+                    FinishDate = new DateTime(2006, 10, 2),
+                    Id = 5,
+                    StudentsOfStudentGroups = new List<StudentOfStudentGroup>()
+                    {
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 10,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 11,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 12,
+                        },
+                        new StudentOfStudentGroup()
+                        {
+                            StudentId = 13,
+                        }
+                    }
+                 }
+            };
+            var mock = groups.AsQueryable().BuildMockDbSet();
+
+            return mock;
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
+
             return mock;
         }
     }
