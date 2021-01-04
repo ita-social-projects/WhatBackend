@@ -14,6 +14,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id);
 
+        Task<IList<long?>> GetGroupStudentsIds(long id);
+
         Task<bool> IsGroupOnCourseAsync(long id);
 
         Task<bool> IsGroupNameExistAsync(string name);
