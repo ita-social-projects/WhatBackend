@@ -2,7 +2,7 @@
 {
     public partial class Visit : BaseEntity
     {
-        public long? StudentId { get; set; }
+        public long StudentId { get; set; }
 
         public long? LessonId { get; set; }
 

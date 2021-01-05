@@ -12,8 +12,8 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class StudentGroupRepository : Repository<StudentGroup>, IStudentGroupRepository
     {
-        public StudentGroupRepository(ApplicationContext applicationContext) 
-            : base(applicationContext) 
+        public StudentGroupRepository(ApplicationContext applicationContext)
+            : base(applicationContext)
         {
         }
 
@@ -29,8 +29,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             if (x == null)
             {
                 return false;
-            }    
-                
+            }
+
             else
             {
                 _applicationContext.StudentGroups.Remove(x);
@@ -52,8 +52,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups
                     .Include(group => group.StudentsOfStudentGroups)
                     .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == id))
-                    .Select(x => new StudentStudyGroupsDto 
-                    { 
+                    .Select(x => new StudentStudyGroupsDto
+                    {
                         Id = x.Id,
                         Name = x.Name
                     }).ToListAsync();
@@ -66,14 +66,14 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<bool> IsGroupOnCourseAsync(long id)
         {
-            return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) &&(group.FinishDate >= System.DateTime.Now));
+            return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) && (group.FinishDate >= System.DateTime.Now));
         }
 
         public StudentGroup SearchStudentGroup(long studentGroupId)
         {
             foreach (var x in _applicationContext.StudentGroups)
             {
-                if (x.Id == studentGroupId) 
+                if (x.Id == studentGroupId)
                 {
                     return x;
                 }
@@ -82,7 +82,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return null;
         }
 
-        public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup, 
+        public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup)
         {
             _applicationContext.StudentsOfStudentGroups.
@@ -107,6 +107,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Id = x.Id,
                         Name = x.Name
                     }).ToListAsync();
-                    }
+        }
+
+        public async Task<IList<long?>> GetGroupStudentsIds(long id)
+        {
+            return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
+                .Select(s => s.StudentId).ToListAsync();
+        }
     }
 }
