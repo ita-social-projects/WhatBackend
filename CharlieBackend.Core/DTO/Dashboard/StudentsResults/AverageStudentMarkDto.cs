@@ -12,6 +12,6 @@ namespace CharlieBackend.Core.DTO.Dashboard
 
         public long StudentId { get; set; }
 
-        public double? StudentAverageMark { get; set; }
+        public decimal? StudentAverageMark { get; set; }
     }
 }

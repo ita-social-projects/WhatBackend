@@ -162,7 +162,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
                         StudentGroupId = x.Lesson.StudentGroupId,
-                        StudentLessonMark = x.StudentMark,
+                        StudentLessonMark = (decimal)x.StudentMark,
                         StudentId = x.StudentId
                     })
                     .AsQueryable()
@@ -177,8 +177,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                         CourseId = x.Key.CourseId,
                         StudentGroupId = (long)x.Key.GroupId,
                         StudentId = (long)x.Key.StudentId,
-                        StudentAverageMark = Math.Round(x.Sum(x => (double)x.StudentLessonMark)
-                        / x.Count(), 2)
+                        StudentAverageMark = Math.Round(x.Sum(x => x.StudentLessonMark) / x.Count(), 2)
                     }
                     ).ToListAsync();
         }
@@ -211,7 +210,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     StudentId = x.Key.StudentId,
                     StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
-                      / (double)x.Count() * 100)
+                      / x.Count() * 100)
                 }).ToList();
 
             return StudentAverageVisitsPercentage;
@@ -277,7 +276,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     CourseId = x.Key.CourseId,
                     StudentGroupId = x.Key.GroupId,
-                    AverageMark = Math.Round(x.Average(x => (double)x.StudentMark), 2)
+                    AverageMark = Math.Round(x.Average(x => (decimal)x.StudentMark), 2)
                 }).ToListAsync();
 
             return studentGroupMarskList;
