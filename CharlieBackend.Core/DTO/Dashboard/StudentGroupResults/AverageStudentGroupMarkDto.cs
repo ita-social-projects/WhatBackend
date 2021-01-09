@@ -10,6 +10,6 @@ namespace CharlieBackend.Core.DTO.Dashboard
 
         public long StudentGroupId { get; set; }
 
-        public decimal? AverageMark { get; set; }
+        public double? AverageMark { get; set; }
     }
 }
