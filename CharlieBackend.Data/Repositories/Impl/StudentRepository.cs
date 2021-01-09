@@ -34,6 +34,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return _applicationContext.Students
                     .Include(student => student.Account)
+                    .Include(student => student.StudentsOfStudentGroups)
                     .FirstOrDefaultAsync(student => student.Id == id);
         }
 
