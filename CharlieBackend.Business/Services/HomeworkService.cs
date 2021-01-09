@@ -82,11 +82,6 @@ namespace CharlieBackend.Business.Services
 
             var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByStudentGroupId(studentGroupId);
 
-            if (homeworks.Count == 0)
-            {
-                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Homeworks not found");
-            }
-
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
