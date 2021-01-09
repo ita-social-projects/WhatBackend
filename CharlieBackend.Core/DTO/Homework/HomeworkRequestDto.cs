@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CharlieBackend.Core.DTO.Homework
 {
-    public class CreateHomeworkDto
+    public class HomeworkRequestDto
     {
         public DateTime? DueDate { get; set; }
 

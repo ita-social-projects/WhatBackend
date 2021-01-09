@@ -1,11 +1,12 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Homework;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
+using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -84,6 +85,5 @@ namespace CharlieBackend.Api.Controllers
 
             return themeResult.ToActionResult();
         }
-
     }
 }

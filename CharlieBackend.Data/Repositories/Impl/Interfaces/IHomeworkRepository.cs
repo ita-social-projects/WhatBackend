@@ -7,5 +7,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IHomeworkRepository : IRepository<Homework>
     {
+        void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
+                     IEnumerable<AttachmentOfHomework> newHomeworkAttachments);
+
+        Task<IList<Homework>> GetHomeworksByStudentGroupId(long studentGroupId);
     }
 }
