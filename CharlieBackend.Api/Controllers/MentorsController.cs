@@ -24,14 +24,16 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
+        private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, IAccountService accountService)
+        public MentorsController(IMentorService mentorService, IAccountService accountService, ILessonService lessonService)
         {
             _mentorService = mentorService;
             _accountService = accountService;
+            _lessonService = lessonService;
         }
 
         /// <summary>
@@ -165,13 +167,13 @@ namespace CharlieBackend.Api.Controllers
         /// Returns list of lessons  for mentor
         /// </summary>
         /// <param name="id"></param>
-        /// <response code="200">Successful return of lessons list of given student</response>
+        /// <response code="200">Successful return of lessons list of given mentor</response>
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}/lessons")]
         public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
         {
-            var lessons = await _mentorService.GetAllLessonsForMentor(id);
+            var lessons = await _lessonService.GetAllLessonsForMentor(id);
 
             return lessons.ToActionResult();
         }

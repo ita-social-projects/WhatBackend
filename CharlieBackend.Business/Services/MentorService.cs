@@ -17,17 +17,14 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-        private readonly ILessonService _lessonServise;
-
-
+       
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
-                             IMapper mapper, INotificationService notification, ILessonService lessonService)
+                             IMapper mapper, INotificationService notification)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
-            _lessonServise = lessonService;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -95,22 +92,6 @@ namespace CharlieBackend.Business.Services
             var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
 
             return mentors;
-        }
-
-        public async Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId)
-        {
-            if (mentorId == default)
-            {
-                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Mentod Id please");
-            }
-            if (await _unitOfWork.MentorRepository.GetByIdAsync(mentorId) == null)
-            {
-                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Mentod with id {mentorId} is not Found");
-            }
-
-            var lessons = await _lessonServise.GetAllLessonsForMentor(mentorId);
-
-            return lessons;
         }
 
         public async Task<Result<MentorDto>> UpdateMentorAsync(long mentorId, UpdateMentorDto mentorModel)
