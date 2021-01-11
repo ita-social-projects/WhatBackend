@@ -23,10 +23,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentodId)
+        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
         {
             return await _applicationContext.Lessons
-                .Where(lesson => lesson.MentorId == mentodId)
+                .Where(lesson => lesson.MentorId == mentorId)
                 .Select(lesson => lesson)
                 .ToListAsync();
         }
