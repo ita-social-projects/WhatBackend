@@ -25,6 +25,14 @@ namespace CharlieBackend.Data.Repositories.Impl
             return groupIdsbyCourseIdAndPeriod;
         }
 
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId) //ToDo: work here
+        {
+            return await _applicationContext.StudentGroups.AsNoTracking()
+                .Where(x => x.CourseId == courseId)
+                .Select(x => x.Id)
+                .ToListAsync();
+        }
+
         public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
             DateTime? startDate, DateTime? finishDate)
         {
@@ -100,8 +108,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)))
+                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups.Any(x => studentIds.Contains(x.Student.Id)))
                     .Select(x => new StudentVisitDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,

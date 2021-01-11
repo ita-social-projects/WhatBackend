@@ -35,11 +35,11 @@ namespace CharlieBackend.Business.Services
             }
 
             var result = new StudentsClassbookResultDto();
-            var studentGroupsIds = request.StudentGroupId.HasValue
+            var studentGroupsIds = request.StudentGroupId.HasValue && request.StudentGroupId.Value != 0
                 ? new List<long> { request.StudentGroupId.Value }
                 : await _unitOfWork.DashboardRepository
-                    .GetGroupsIdsByCourseIdAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
-
+                    .GetGroupsIdsByCourseIdAsync(request.CourseId.Value);
+            
             var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
