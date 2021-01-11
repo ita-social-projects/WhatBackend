@@ -181,7 +181,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     CourseId = 2,
                     StudentGroupId =1,
                     StudentAverageVisitsPercentage = 0
-                }
+                },
+
             };
 
             var mock = GetMockDbSetOfVisits();
@@ -289,12 +290,12 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             var mock = GetMockDbSetOfVisits();
 
-            _applicationContextMock.Setup(x => x.Visits).Returns(mock.Object);
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
             //Act
 
-            var result = await dashboardRepository.GetStudentsMarksListByStudentIds(new List<long> { 10,12});
+            var result = await dashboardRepository.GetStudentsMarksListByStudentIds(new List<long> { 10, 12 });
 
             //Assert
 
@@ -337,7 +338,197 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             //Act
 
-            var result = await dashboardRepository.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { 11,12 },new List<long> { 1 });
+            var result = await dashboardRepository.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { 11, 12 }, new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentAverageVisitsPercentageByStudentIdsAsync()
+        {
+            //Arrange
+
+            var expected = new List<AverageStudentVisitsDto>()
+            {
+                new AverageStudentVisitsDto
+                {
+                    CourseId =2,
+                    StudentId =12,
+                    StudentGroupId = 1,
+                    StudentAverageVisitsPercentage = 50
+                }
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentAverageVisitsPercentageByStudentIdsAsync(12, new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentPresenceListByStudentIds()
+        {
+            //Arrange
+
+            var expected = new List<StudentVisitDto>
+            {
+                new StudentVisitDto
+                {
+                    StudentGroupId =1,
+                    CourseId =2,
+                    Presence =false,
+                    StudentId =12,
+                    LessonId = 10
+                },
+                new StudentVisitDto
+                {
+                    StudentGroupId =1,
+                    CourseId =2,
+                    Presence =true,
+                    StudentId =12,
+                    LessonId = 10
+                }
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentPresenceListByStudentIds(12, new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentMarksListByStudentIds()
+        {
+            //Arrange
+            var expected = new List<StudentMarkDto>
+            {
+                new StudentMarkDto
+                {
+                    StudentGroupId = 1,
+                    CourseId =2,
+                    LessonId =10,
+                    StudentId = 12,
+                    StudentMark =0
+                },
+                new StudentMarkDto
+                {
+                    StudentGroupId = 1,
+                    CourseId =2,
+                    LessonId =10,
+                    StudentId = 12,
+                    StudentMark =90
+                }
+
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentMarksListByStudentIds(12, new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentGroupsAverageMarks()
+        {
+            //Arrange
+            var expected = new List<AverageStudentGroupMarkDto>
+            {
+                new AverageStudentGroupMarkDto
+                {
+                    CourseId =2,
+                    StudentGroupId =1,
+                    AverageMark = 47.5
+                }
+
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentGroupsAverageMarks(new List<long> { 1 });
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.Equal(expected.Count, result.Count);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].ToString(), result[i].ToString());
+            }
+        }
+
+        [Fact]
+        public async Task GetStudentGroupsAverageVisits()
+        {
+            //Arrange
+            var expected = new List<AverageStudentGroupVisitDto>
+            {
+                new AverageStudentGroupVisitDto
+                {
+                    CourseId =2,
+                    StudentGroupId =1,
+                    AverageVisitPercentage = 50
+                }
+            };
+
+            var mock = GetMockDbSetOfVisits();
+
+            _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
+
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+            //Act
+
+            var result = await dashboardRepository.GetStudentGroupsAverageVisits(new List<long> { 1 });
 
             //Assert
             Assert.NotNull(result);
@@ -375,12 +566,11 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                         {
                             Student = new Student
                             {
-                                Id = 12
+                                Id =12
                             }
                         }
                     },
                     CourseId = 2,
-                    
                 },
                 StudentGroupId = 1,
                 Id = 10,
@@ -400,22 +590,21 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     Lesson = lesson,
                     Presence = false,
                     StudentId =11,
-                    StudentMark = 78
-                },
-                new Visit
-                {
-                    Lesson = lesson,
-                    Presence = true,
-                    StudentId =12,
-                    StudentMark = 30
+                    StudentMark = 0
                 },
                 new Visit
                 {
                     Lesson = lesson,
                     Presence = false,
                     StudentId =12,
-                    StudentMark = 90,
-                    
+                    StudentMark = 0
+                },
+                 new Visit
+                {
+                    Lesson = lesson,
+                    Presence = true,
+                    StudentId =12,
+                    StudentMark = 90
                 }
             };
             var mock = visits.AsQueryable().BuildMockDbSet();
@@ -522,10 +711,3 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         }
     }
 }
-//Arrange
-
-
-//var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
-//Act
-
-//Assert
