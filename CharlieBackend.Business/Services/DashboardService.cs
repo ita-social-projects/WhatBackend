@@ -34,7 +34,7 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentsClassbookResultDto>.GetError(ErrorCode.ValidationError, string.Join(";\n", errors));
             }
 
-            var result = new StudentsClassbookResultDto();
+            StudentsClassbookResultDto result = new StudentsClassbookResultDto();
             var studentGroupsIds = request.StudentGroupId.HasValue && request.StudentGroupId.Value != 0
                 ? new List<long> { request.StudentGroupId.Value }
                 : await _unitOfWork.DashboardRepository
