@@ -64,11 +64,11 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsVisitsList = await _applicationContext.Visits
                 .AsNoTracking()
-                .Where(x => x.StudentId.HasValue && 
+                .Where(x => (x.StudentId != null) && 
                             studentIds.ToList().Contains(x.StudentId.Value))
                 .WhereIf(studentGroupIds != default && 
                          studentGroupIds.Any(), 
-                         x => x.Lesson.StudentGroupId.HasValue && 
+                         x => (x.Lesson.StudentGroupId != null) && 
                          studentGroupIds.ToList().Contains(x.Lesson.StudentGroupId.Value))
                 .Select(x => new StudentVisitDto
                 {
@@ -102,7 +102,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.StudentId.HasValue && 
+                    .Where(x => (x.StudentId != null) && 
                                 studentIds.ToList().Contains(x.StudentId.Value))
                     .Select(x => new StudentVisitDto
                     {
@@ -121,7 +121,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsMarksList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.StudentId.HasValue && 
+                    .Where(x => (x.StudentId != null) && 
                                 studentIds.ToList().Contains(x.StudentId.Value) && 
                                 x.StudentMark != null)
                     .Select(x => new StudentMarkDto
