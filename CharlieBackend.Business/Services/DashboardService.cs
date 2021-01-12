@@ -35,23 +35,28 @@ namespace CharlieBackend.Business.Services
             }
 
             StudentsClassbookResultDto result = new StudentsClassbookResultDto();
+
             var studentGroupsIds = request.StudentGroupId.HasValue && request.StudentGroupId.Value != 0
                 ? new List<long> { request.StudentGroupId.Value }
                 : await _unitOfWork.DashboardRepository
-                    .GetGroupsIdsByCourseIdAsync(request.CourseId.Value);
+                    .GetGroupsIdsByCourseIdAndPeriodAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
             
             var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
             {
-                result.StudentsPresences = await _unitOfWork.DashboardRepository
+                var studentPresence = await _unitOfWork.DashboardRepository
                     .GetStudentsPresenceListByStudentIds(studentsIds);
+
+                result.StudentsPresences = studentPresence.Where(x => studentGroupsIds.Contains(x.StudentGroupId));
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentMarks))
             {
-                result.StudentsMarks = await _unitOfWork.DashboardRepository
+                var studentMark = await _unitOfWork.DashboardRepository
                     .GetStudentsMarksListByStudentIds(studentsIds);
+
+                result.StudentsMarks = studentMark.Where(x => studentGroupsIds.Contains(x.StudentGroupId));
             }
 
             return Result<StudentsClassbookResultDto>.GetSuccess(result);
@@ -70,7 +75,7 @@ namespace CharlieBackend.Business.Services
             var studentGroupsIds = request.StudentGroupId.HasValue
                 ? new List<long> { request.StudentGroupId.Value }
                 : await _unitOfWork.DashboardRepository
-                    .GetGroupsIdsByCourseIdAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
+                    .GetGroupsIdsByCourseIdAndPeriodAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
 
             var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
 
@@ -161,7 +166,7 @@ namespace CharlieBackend.Business.Services
 
             var result = new StudentGroupsResultsDto();
             var studentGroupsIds = await _unitOfWork.DashboardRepository
-                    .GetGroupsIdsByCourseIdAsync(courseId, request.StartDate, request.FinishDate);
+                    .GetGroupsIdsByCourseIdAndPeriodAsync(courseId, request.StartDate, request.FinishDate);
 
             if (studentGroupsIds == null)
             {
@@ -198,7 +203,8 @@ namespace CharlieBackend.Business.Services
                 yield return "Please provide 'IncludeAnalytics' parameters";
             }
 
-            if (!request.CourseId.HasValue && !request.StudentGroupId.HasValue)
+            if ((!request.CourseId.HasValue || request.CourseId == default) 
+                && (!request.StudentGroupId.HasValue || request.StudentGroupId == default))
             {
                 yield return "Please provide course or student group id";
             }

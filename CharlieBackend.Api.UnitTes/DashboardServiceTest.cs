@@ -56,11 +56,15 @@ namespace CharlieBackend.Api.UnitTest
 
             var dashboardRepositoryMock = new Mock<IDashboardRepository>();
 
-            dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
-                studentclassbookRequestWithData.CourseId.Value)).ReturnsAsync(new List<long>() { 1, 5 });
+            dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
+                studentclassbookRequestWithData.CourseId.Value, 
+                studentclassbookRequestWithData.StartDate, 
+                studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 1, 5 });
 
-            dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
-                studentclassbookCourseWithoutStudents.CourseId.Value)).ReturnsAsync(new List<long>());
+            dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
+                studentclassbookCourseWithoutStudents.CourseId.Value,
+                studentclassbookCourseWithoutStudents.StartDate,
+                studentclassbookCourseWithoutStudents.FinishDate)).ReturnsAsync(new List<long>());
 
             dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(
                 new List<long>() { 1, 5 })).ReturnsAsync(new List<long> { 5, 7, 15, 43 });
@@ -158,11 +162,11 @@ namespace CharlieBackend.Api.UnitTest
 
             var dashbordrepositoryMock = new Mock<IDashboardRepository>();
 
-            dashbordrepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
+            dashbordrepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 (long)studentResultRequestWithData.CourseId, studentResultRequestWithData.StartDate, studentResultRequestWithData.FinishDate))
                 .ReturnsAsync(new List<long>() { 2 });
 
-            dashbordrepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
+            dashbordrepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 (long)studentResultRequestWithOutStudent.CourseId, 
                 studentResultRequestWithOutStudent.StartDate,
                 studentResultRequestWithOutStudent.FinishDate))
@@ -454,11 +458,11 @@ namespace CharlieBackend.Api.UnitTest
 
             var dashbortRepositoryMock = new Mock<IDashboardRepository>();
 
-            dashbortRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
+            dashbortRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long> { 1 });
 
-            dashbortRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAsync(
+            dashbortRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 courseIdWitoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
