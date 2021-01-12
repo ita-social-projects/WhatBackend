@@ -52,7 +52,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentsIdsBygroupsIds = await _applicationContext.Students
                 .AsNoTracking()
                 .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue 
-                && groupsIds.Contains(x.StudentGroupId.Value)))
+                && groupsIds.ToList().Contains(x.StudentGroupId.Value)))
                 .Select(x => x.Id)
                 .ToListAsync();
 
@@ -64,10 +64,12 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsVisitsList = await _applicationContext.Visits
                 .AsNoTracking()
-                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                        .Any(x => studentIds.Contains(x.Student.Id)))
-                .WhereIf(studentGroupIds != default && studentGroupIds.Any(), 
-                        x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Where(x => x.StudentId.HasValue && 
+                            studentIds.ToList().Contains(x.StudentId.Value))
+                .WhereIf(studentGroupIds != default && 
+                         studentGroupIds.Any(), 
+                         x => x.Lesson.StudentGroupId.HasValue && 
+                         studentGroupIds.ToList().Contains(x.Lesson.StudentGroupId.Value))
                 .Select(x => new StudentVisitDto
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
@@ -100,8 +102,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)))
+                    .Where(x => x.StudentId.HasValue && 
+                                studentIds.ToList().Contains(x.StudentId.Value))
                     .Select(x => new StudentVisitDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
@@ -119,9 +121,9 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsMarksList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)) 
-                    && x.StudentMark != null)
+                    .Where(x => x.StudentId.HasValue && 
+                                studentIds.ToList().Contains(x.StudentId.Value) && 
+                                x.StudentMark != null)
                     .Select(x => new StudentMarkDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,

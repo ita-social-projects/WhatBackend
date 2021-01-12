@@ -1,16 +1,16 @@
 ﻿using Moq;
 using Xunit;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using MockQueryable.Moq;
-using CharlieBackend.Core.DTO.Dashboard;
 
 namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 {
@@ -177,7 +177,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new AverageStudentVisitsDto
                 {
-                     StudentId = 11,
+                    StudentId = 11,
                     CourseId = 2,
                     StudentGroupId =1,
                     StudentAverageVisitsPercentage = 0
@@ -226,10 +226,17 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     LessonDate = new DateTime(),
                     CourseId =2,
                     StudentId = 12,
+                    Presence =false,
+                    StudentGroupId =1
+                },
+                new StudentVisitDto
+                {
+                    LessonDate = new DateTime(),
+                    CourseId =2,
+                    StudentId = 12,
                     Presence =true,
                     StudentGroupId =1
                 },
-
             };
 
             var mock = GetMockDbSetOfVisits();
@@ -599,7 +606,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentId =12,
                     StudentMark = 0
                 },
-                 new Visit
+                new Visit
                 {
                     Lesson = lesson,
                     Presence = true,
