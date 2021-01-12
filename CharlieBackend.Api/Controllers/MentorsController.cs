@@ -76,7 +76,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (mentorModelResult != null)
             {
-                return Ok(mentorModelResult);
+                return mentorModelResult.ToActionResult();
             }
             return NotFound("Cannot find mentor with such id.");
         }
@@ -107,7 +107,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{mentorId}")]
-        public async Task<ActionResult> PutMentor(long mentorId, [FromBody]UpdateMentorDto mentorModel)
+        public async Task<ActionResult> PutMentor(long mentorId, [FromBody] UpdateMentorDto mentorModel)
         {
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
