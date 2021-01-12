@@ -124,6 +124,47 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsPresenceList;
         }
 
+        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsandDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentVisitDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        Presence = x.Presence,
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime),
+                            x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime),
+                            x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentMarkDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        StudentMark = x.StudentMark,
+                    }).ToListAsync();
+        }
+
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds)
         {
             var studentsMarksList = await _applicationContext.Visits

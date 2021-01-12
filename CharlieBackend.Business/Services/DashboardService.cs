@@ -41,22 +41,18 @@ namespace CharlieBackend.Business.Services
                 : await _unitOfWork.DashboardRepository
                     .GetGroupsIdsByCourseIdAndPeriodAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
             
-            var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
+            //var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
             
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
             {
-                var studentPresence = await _unitOfWork.DashboardRepository
-                    .GetStudentsPresenceListByStudentIds(studentsIds);
-
-                result.StudentsPresences = studentPresence.Where(x => studentGroupsIds.Contains(x.StudentGroupId));
+                result.StudentsPresences = await _unitOfWork.DashboardRepository
+                    .GetStudentsPresenceListByGroupIdsandDate(studentGroupsIds, request.StartDate, request.FinishDate);
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentMarks))
             {
-                var studentMark = await _unitOfWork.DashboardRepository
-                    .GetStudentsMarksListByStudentIds(studentsIds);
-
-                result.StudentsMarks = studentMark.Where(x => studentGroupsIds.Contains(x.StudentGroupId));
+                result.StudentsMarks = await _unitOfWork.DashboardRepository
+                    .GetStudentsMarksListByGroupIdsAndDate(studentGroupsIds, request.StartDate, request.FinishDate);
             }
 
             return Result<StudentsClassbookResultDto>.GetSuccess(result);
