@@ -33,14 +33,16 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             _applicationContextMock.Setup(x => x.StudentGroups).Returns(mock.Object);
 
-            var dashboardRepositort = new DashboardRepository(_applicationContextMock.Object);
+            var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
 
             // Act
 
-            var result = await dashboardRepositort.GetGroupsIdsByCourseIdAsync(1, new DateTime(2000, 1, 1), new DateTime(2002, 1, 1));
+            var result = await dashboardRepository.GetGroupsIdsByCourseIdAsync(1, new DateTime(2000, 1, 1), new DateTime(2002, 1, 1));
 
             // Assert
+
             Assert.NotNull(result);
+            Assert.NotEmpty(result);
             Assert.Equal(new List<long> { 1, 4 }, result);
         }
 
@@ -54,6 +56,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.Setup(x => x.StudentGroups).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetGroupsIdsByStudentIdAndPeriodAsync(10, new DateTime(2000, 1, 1), new DateTime(2002, 1, 1));
@@ -190,6 +193,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.Setup(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(new List<long> { 10, 11 }, new List<long> { 1 });
@@ -244,6 +248,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.Setup(X => X.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentsPresenceListByStudentIds(new List<long> { 11, 12 });
@@ -300,6 +305,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentsMarksListByStudentIds(new List<long> { 10, 12 });
@@ -348,6 +354,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             var result = await dashboardRepository.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { 11, 12 }, new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
@@ -378,11 +385,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentAverageVisitsPercentageByStudentIdsAsync(12, new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
@@ -422,11 +431,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentPresenceListByStudentIds(12, new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
@@ -440,6 +451,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         public async Task GetStudentMarksListByStudentIds()
         {
             //Arrange
+
             var expected = new List<StudentMarkDto>
             {
                 new StudentMarkDto
@@ -466,11 +478,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentMarksListByStudentIds(12, new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
@@ -484,6 +498,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         public async Task GetStudentGroupsAverageMarks()
         {
             //Arrange
+
             var expected = new List<AverageStudentGroupMarkDto>
             {
                 new AverageStudentGroupMarkDto
@@ -500,11 +515,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentGroupsAverageMarks(new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
@@ -518,6 +535,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         public async Task GetStudentGroupsAverageVisits()
         {
             //Arrange
+
             var expected = new List<AverageStudentGroupVisitDto>
             {
                 new AverageStudentGroupVisitDto
@@ -538,6 +556,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             var result = await dashboardRepository.GetStudentGroupsAverageVisits(new List<long> { 1 });
 
             //Assert
+
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(expected.Count, result.Count);
