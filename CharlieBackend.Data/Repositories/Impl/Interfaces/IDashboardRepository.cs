@@ -12,7 +12,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         Task<List<long>> GetGroupsIdsByCourseIdAndPeriodAsync(long courseId, DateTime? startDate, DateTime? finishDate);
 
-        Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsandDate(IEnumerable<long> studentGroupIds,
+        Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
             DateTime? startDate, DateTime? finishDate);
 
         Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,

@@ -41,12 +41,10 @@ namespace CharlieBackend.Business.Services
                 : await _unitOfWork.DashboardRepository
                     .GetGroupsIdsByCourseIdAndPeriodAsync(request.CourseId.Value, request.StartDate, request.FinishDate);
             
-            //var studentsIds = await _unitOfWork.DashboardRepository.GetStudentsIdsByGroupIdsAsync(studentGroupsIds);
-            
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentPresence))
             {
                 result.StudentsPresences = await _unitOfWork.DashboardRepository
-                    .GetStudentsPresenceListByGroupIdsandDate(studentGroupsIds, request.StartDate, request.FinishDate);
+                    .GetStudentsPresenceListByGroupIdsAndDate(studentGroupsIds, request.StartDate, request.FinishDate);
             }
 
             if (request.IncludeAnalytics.Contains(ClassbookResultType.StudentMarks))

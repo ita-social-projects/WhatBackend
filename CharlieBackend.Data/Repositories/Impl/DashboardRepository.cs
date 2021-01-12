@@ -124,7 +124,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsPresenceList;
         }
 
-        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsandDate(IEnumerable<long> studentGroupIds,
+        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
             DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.Visits
