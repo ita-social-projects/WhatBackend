@@ -46,7 +46,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
-            return createdMentorModel.ToActionResult(); ;
+            return createdMentorModel.ToActionResult();
         }
 
         /// <summary>
@@ -72,11 +72,11 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MentorDto>> GetMentorById(long id)
         {
-            var mentorModel = await _mentorService.GetMentorByIdAsync(id);
+            var mentorModelResult = await _mentorService.GetMentorByIdAsync(id);
 
-            if (mentorModel != null)
+            if (mentorModelResult != null)
             {
-                return Ok(mentorModel);
+                return Ok(mentorModelResult);
             }
             return NotFound("Cannot find mentor with such id.");
         }
