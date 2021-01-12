@@ -75,6 +75,7 @@ namespace CharlieBackend.Api.Controllers
         /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
+        /// /// <response code="406">Error, request returned error</response>
         [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
@@ -83,13 +84,19 @@ namespace CharlieBackend.Api.Controllers
 
             var studentsModels = await _studentService.GetAllStudentsAsync();
 
-            return Ok(studentsModels);
+            if (studentsModels.Error != null)
+            {
+                return StatusCode(406, studentsModels.Error.Message);
+            }
+
+            return Ok(studentsModels.Data);
         }
 
         /// <summary>
         /// Get only active students
         /// </summary>
         /// <response code="200">Successful return of students list</response>
+        /// /// <response code="406">Error, request returned error</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
         public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
@@ -97,7 +104,12 @@ namespace CharlieBackend.Api.Controllers
 
             var studentsModels = await _studentService.GetAllActiveStudentsAsync();
 
-            return Ok(studentsModels);
+            if (studentsModels.Error != null)
+            {
+                return StatusCode(406, studentsModels.Error.Message);
+            }
+
+            return Ok(studentsModels.Data);
         }
 
         /// <summary>
