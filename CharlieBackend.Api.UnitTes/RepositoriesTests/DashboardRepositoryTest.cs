@@ -276,29 +276,29 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 new StudentMarkDto
                 {
                     CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 10,
-                        LessonId = 10,
-                        LessonDate = new DateTime(),
-                        StudentMark = 100,
+                    StudentGroupId = 1,
+                    StudentId = 10,
+                    LessonId = 10,
+                    LessonDate = new DateTime(),
+                    StudentMark = 100,
                 },
                 new StudentMarkDto
                 {
                     CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 12,
-                        LessonId = 10,
-                        LessonDate = new DateTime(),
-                        StudentMark = 30,
+                    StudentGroupId = 1,
+                    StudentId = 12,
+                    LessonId = 10,
+                    LessonDate = new DateTime(),
+                    StudentMark = 30,
                 },
                 new StudentMarkDto
                 {
                     CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 12,
-                        LessonId = 10,
-                        LessonDate = new DateTime(),
-                        StudentMark = 90,
+                    StudentGroupId = 1,
+                    StudentId = 12,
+                    LessonId = 10,
+                    LessonDate = new DateTime(),
+                    StudentMark = 90,
                 }
             };
 
@@ -328,7 +328,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         {
             //Arrange
 
-            var expected = new List<AverageStudentMarkDto>{
+            var expected = new List<AverageStudentMarkDto>
+            {
                 new AverageStudentMarkDto
                 {
                     CourseId =2,
@@ -509,7 +510,6 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentGroupId =1,
                     AverageMark = 47.5
                 }
-
             };
 
             var mock = GetMockDbSetOfVisits();
@@ -553,6 +553,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             _applicationContextMock.SetupGet(x => x.Visits).Returns(mock.Object);
 
             var dashboardRepository = new DashboardRepository(_applicationContextMock.Object);
+
             //Act
 
             var result = await dashboardRepository.GetStudentGroupsAverageVisits(new List<long> { 1 });
@@ -635,6 +636,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentMark = 90
                 }
             };
+
             var mock = visits.AsQueryable().BuildMockDbSet();
 
             return mock;
@@ -726,6 +728,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     }
                  }
             };
+
             var mock = groups.AsQueryable().BuildMockDbSet();
 
             return mock;
