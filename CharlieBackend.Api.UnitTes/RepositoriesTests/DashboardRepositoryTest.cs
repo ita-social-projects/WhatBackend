@@ -64,6 +64,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             //Assert
 
             Assert.NotNull(result);
+            Assert.NotEmpty(result);
             Assert.Equal(new List<long> { 1 }, result);
         }
 
@@ -161,6 +162,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             //Assert
 
             Assert.NotNull(result);
+            Assert.NotEmpty(result);
             Assert.Equal(new List<long> { 10, 6 }, result);
         }
 
