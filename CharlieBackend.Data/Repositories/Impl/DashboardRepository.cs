@@ -17,12 +17,21 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId,
+        public async Task<List<long>> GetGroupsIdsByCourseIdAndPeriodAsync(long courseId, 
             DateTime? startDate, DateTime? finishDate)
         {
             List<long> groupIdsbyCourseIdAndPeriod = await GetGroupIds(startDate, finishDate, courseId);
 
             return groupIdsbyCourseIdAndPeriod;
+        }
+
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId)
+        {
+            return await _applicationContext.StudentGroups
+                .AsNoTracking()
+                .Where(x => x.CourseId == courseId)
+                .Select(x => x.Id)
+                .ToListAsync();
         }
 
         public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
@@ -100,8 +109,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)))
+                    .Where(x => studentIds.Contains(x.StudentId))
                     .Select(x => new StudentVisitDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
@@ -110,18 +118,59 @@ namespace CharlieBackend.Data.Repositories.Impl
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
-                    }).ToListAsync();
+                    })
+                    .ToListAsync();
 
             return studentsPresenceList;
+        }
+
+        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentVisitDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        Presence = x.Presence,
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime),
+                            x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime),
+                            x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentMarkDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        StudentMark = x.StudentMark,
+                    }).ToListAsync();
         }
 
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds)
         {
             var studentsMarksList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)) 
-                    && x.StudentMark != null)
+                    .Where(x => (x.StudentId != default) &&
+                                studentIds.ToList().Contains((long)x.StudentId))
                     .Select(x => new StudentMarkDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,

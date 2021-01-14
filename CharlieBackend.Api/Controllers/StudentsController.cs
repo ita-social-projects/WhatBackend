@@ -61,11 +61,11 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<StudentDto>> GetStudentById(long id)
         {
 
-            var studentModel = await _studentService.GetStudentByIdAsync(id);
+            var studentModelResult = await _studentService.GetStudentByIdAsync(id);
 
-            if (studentModel != null)
+            if (studentModelResult != null)
             {
-                return Ok(studentModel); 
+                return studentModelResult.ToActionResult(); 
             }
 
             return StatusCode(409, "Cannot find student with such id.");
@@ -81,9 +81,9 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() 
         {
 
-            var studentsModels = await _studentService.GetAllStudentsAsync();
+            var studentsModelsResult = await _studentService.GetAllStudentsAsync();
 
-            return Ok(studentsModels);
+            return studentsModelsResult.ToActionResult();
         }
 
         /// <summary>
@@ -95,9 +95,9 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
         {
 
-            var studentsModels = await _studentService.GetAllActiveStudentsAsync();
+            var studentsModelsResult = await _studentService.GetAllActiveStudentsAsync();
 
-            return Ok(studentsModels);
+            return studentsModelsResult.ToActionResult();
         }
 
         /// <summary>

@@ -26,9 +26,9 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<Result<HomeworkDto>> CreateHomeworkAsync(CreateHomeworkDto createHomeworkDto)
+        public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
         {
-                var errors = await ValidateCreateHomeworkRequest(createHomeworkDto)
+                var errors = await ValidateHomeworkRequest(createHomeworkDto)
                         .ToListAsync();
                 
                 if (errors.Any())
@@ -73,6 +73,18 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
         }
 
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByStudentGroupId(long studentGroupId)
+        {
+            if (studentGroupId == default)
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong student group id");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByStudentGroupId(studentGroupId);
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
+        }
+
         public async Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId)
         {
             if (homeworkId == default)
@@ -92,7 +104,58 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
         }
 
-        private async IAsyncEnumerable<string> ValidateCreateHomeworkRequest(CreateHomeworkDto request)
+        public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
+        {
+            var errors = await ValidateHomeworkRequest(updateHomeworkDto).ToListAsync();
+
+            if (errors.Any())
+            {
+                var errorsList = string.Join("; ", errors);
+
+                _logger.LogError("Homework update request has failed due to: " + errorsList);
+
+                return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, errorsList);
+            }
+
+            var foundHomework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkId);
+
+            if (foundHomework == null)
+            {
+                return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Given homework id not found");
+            }
+
+            foundHomework.DueDate = updateHomeworkDto.DueDate;
+            foundHomework.TaskText = updateHomeworkDto.TaskText;
+
+            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
+            foundHomework.MentorId = updateHomeworkDto.MentorId;
+            foundHomework.Mentor = mentor;
+
+            var studentGroup = await _unitOfWork.StudentGroupRepository
+                    .GetByIdAsync(updateHomeworkDto.StudentGroupId);
+            foundHomework.StudentGroupId = updateHomeworkDto.StudentGroupId;
+            foundHomework.StudentGroup = studentGroup;
+
+            var newAttachments = new List<AttachmentOfHomework>();
+
+            if (updateHomeworkDto.AttachmentIds?.Count() > 0)
+            {
+                newAttachments = updateHomeworkDto.AttachmentIds.Select(x => new AttachmentOfHomework
+                {
+                    HomeworkId = foundHomework.Id,
+                    Homework = foundHomework,
+                    AttachmentId = x
+                }).ToList();
+            }
+
+            _unitOfWork.HomeworkRepository.UpdateManyToMany(foundHomework.AttachmentsOfHomework, newAttachments);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(foundHomework));
+        }
+
+        private async IAsyncEnumerable<string> ValidateHomeworkRequest(HomeworkRequestDto request)
         {
             if (request == default)
             {
