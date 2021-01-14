@@ -1,8 +1,10 @@
 ﻿using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Attachment;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
@@ -41,13 +43,17 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// GET: api/attachments
+        /// Gets relevant attachments
         /// </summary>
+        /// <param name="request"/>
+        /// Returns list of attachments depending on the user role i.e admin and secretary can see all attachemnts, mentors only for the related groups and students only for themselves
+        /// Mention course id/ group id/ student id or date range to sort the result (non required params)
+        [SwaggerResponse(200, type: typeof(AttachmentDto))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpGet]
-        public async Task<IActionResult> GetAttachments()
+        public async Task<IActionResult> GetAttachments([FromBody] AttachmentRequestDTO request)
         {
-            var attachments = await _attachmentService.GetAttachmentsListAsync();
+            var attachments = await _attachmentService.GetAttachmentsListAsync(request);
 
             return attachments.ToActionResult();
         }

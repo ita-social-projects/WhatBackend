@@ -78,7 +78,7 @@ namespace CharlieBackend.Business.Services
                 
         }
 
-        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
+        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDTO request)
         {
             var attachments = _mapper.Map<IList<AttachmentDto>>(
                         await _unitOfWork.AttachmentRepository.GetAllAsync());
