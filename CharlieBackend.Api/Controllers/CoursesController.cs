@@ -55,6 +55,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets all active cources
+        /// </summary>
+        /// <response code="200">Successful return of list of all active courses</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("active")]
+        public async Task<IList<CourseDto>> GetAllActiveCourses()
+        {
+            var courses = await _coursesService.GetAllActiveCoursesAsync();
+
+            return courses;
+        }
+
+        /// <summary>
         /// Update course
         /// </summary>
         /// <response code="200">Successful update of course</response>

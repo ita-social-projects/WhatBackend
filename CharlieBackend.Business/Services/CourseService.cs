@@ -58,6 +58,13 @@ namespace CharlieBackend.Business.Services
             return courses;
         }
 
+        public async Task<IList<CourseDto>> GetAllActiveCoursesAsync()
+        {
+            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllActiveCourses());
+
+            return courses;
+        }
+
         public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
         {
             try

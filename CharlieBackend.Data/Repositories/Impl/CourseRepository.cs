@@ -37,6 +37,14 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
         }
 
+        public async Task<IList<Course>> GetAllActiveCourses()
+        {
+            return await _applicationContext.Courses
+                .Where(x => x.IsActive == true)
+                .Select(x => x)
+                .ToListAsync();
+        }
+
         public async Task<Result<bool>> DisableCourseByIdAsync(long id)
         {
             var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
