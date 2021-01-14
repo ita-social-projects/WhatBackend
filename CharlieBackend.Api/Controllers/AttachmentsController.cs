@@ -33,7 +33,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAttachments([FromForm] IFormFileCollection fileCollection)
         {
-            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection);
+            var userContext = HttpContext.User;
+
+            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection, userContext);
 
             return addedAttachments.ToActionResult();
         }
@@ -59,12 +61,29 @@ namespace CharlieBackend.Api.Controllers
         {
             var attachment = await _attachmentService.DownloadAttachmentAsync(attachmentId);
 
+            if (attachment.Data == null)
+            {
+                return attachment.ToActionResult();
+            }
+
             return File
                 (
                 attachment.Data.DownloadInfo.Content, 
                 attachment.Data.DownloadInfo.ContentType, 
                 attachment.Data.FileName 
                 );
+        }
+
+        /// <summary>
+        /// DELETE: api/attachments/{id}
+        /// </summary>
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpDelete("{attachmentId}")]
+        public async Task<IActionResult> DeleteAttachment(long attachmentId)
+        {
+            var attachment = await _attachmentService.DeleteAttachmentAsync(attachmentId);
+
+            return attachment.ToActionResult();
         }
     }
 }

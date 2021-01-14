@@ -56,8 +56,16 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.StudentGroupRepository.Add(studentGroup);
 
-                if (studentGroupDto?.StudentIds.Count != 0)
+                if (studentGroupDto.StudentIds?.Count > 0)
                 {
+                    var notExistStudentIds = await _unitOfWork.MentorRepository.GetNotExistEntitiesIdsAsync(studentGroupDto.StudentIds);
+
+                    if (notExistStudentIds.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: GenerateErrorMessage("Student", notExistStudentIds));
+                    }
+
                     var students = await _unitOfWork.StudentRepository.GetStudentsByIdsAsync(studentGroupDto.StudentIds);
                     studentGroup.StudentsOfStudentGroups = new List<StudentOfStudentGroup>();
 
@@ -71,8 +79,16 @@ namespace CharlieBackend.Business.Services
                     }
                 }
 
-                if (studentGroupDto?.MentorIds.Count != 0)
+                if (studentGroupDto.MentorIds?.Count > 0)
                 {
+                    var notExistMentorsIds = await _unitOfWork.MentorRepository.GetNotExistEntitiesIdsAsync(studentGroupDto.MentorIds);
+
+                    if (notExistMentorsIds.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: GenerateErrorMessage("Mentor", notExistMentorsIds));
+                    }
+
                     var mentors = await _unitOfWork.MentorRepository.GetMentorsByIdsAsync(studentGroupDto.MentorIds);
                     studentGroup.MentorsOfStudentGroups = new List<MentorOfStudentGroup>();
 
@@ -85,7 +101,6 @@ namespace CharlieBackend.Business.Services
                         }); ;
                     }
                 }
-
 
                 await _unitOfWork.CommitAsync();
 
@@ -111,7 +126,7 @@ namespace CharlieBackend.Business.Services
 
             return Result<bool>.GetSuccess(res);
         }
-
+       
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
@@ -168,6 +183,14 @@ namespace CharlieBackend.Business.Services
 
                 if (updatedStudentGroupDto.StudentIds != null)
                 {
+                    var notExistStudentsIds = await _unitOfWork.StudentRepository.GetNotExistEntitiesIdsAsync(updatedStudentGroupDto.StudentIds);
+
+                    if (notExistStudentsIds.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: GenerateErrorMessage("Student", notExistStudentsIds));
+                    }
+
                     var newStudentsOfStudentGroup = updatedStudentGroupDto.StudentIds.Select(x => new StudentOfStudentGroup
                     {
                         StudentGroupId = foundStudentGroup.Id,
@@ -179,6 +202,14 @@ namespace CharlieBackend.Business.Services
 
                 if (updatedStudentGroupDto.MentorIds != null)
                 {
+                    var notExistMentorsIds = await _unitOfWork.MentorRepository.GetNotExistEntitiesIdsAsync(updatedStudentGroupDto.MentorIds);
+
+                    if (notExistMentorsIds.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(errorCode: ErrorCode.ValidationError,
+                                                                errorMessage: GenerateErrorMessage("Mentor", notExistMentorsIds));
+                    }
+
                     var newMentorsOfStudentGroup = updatedStudentGroupDto.MentorIds.Select(x => new MentorOfStudentGroup
                     {
                         StudentGroupId = foundStudentGroup.Id,
@@ -217,6 +248,17 @@ namespace CharlieBackend.Business.Services
         public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
         {
             _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
+        }
+
+        private string GenerateErrorMessage(string EntityName, IEnumerable<long> ids)
+        {
+            var isMoreThenOneId = ids.Count() > 1;
+
+            return string.Format("{0}{1} with id{1}: {3} do{2} not exist",
+                                 EntityName,
+                                 isMoreThenOneId ? "s" : null,
+                                 isMoreThenOneId ? null : "es",
+                                 string.Join(", ", ids));
         }
     }
 }

@@ -9,6 +9,8 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core.DTO.Visit;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -38,6 +40,37 @@ namespace CharlieBackend.Business.Services
                 else
                 {
                     createdLessonEntity.Theme = foundTheme;
+                }
+                
+                var foundMentor = await _unitOfWork.MentorRepository.GetMentorByIdAsync(lessonDto.MentorId);
+
+                if (foundMentor == null)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.NotFound, "Mentor is not found"); // return Result<T>
+                }
+
+                var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(lessonDto.StudentGroupId);
+
+                if (foundStudentGroup == null)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.NotFound, "Student group is not found");
+                }
+
+                if (foundStudentGroup.StudentsOfStudentGroups.Count != lessonDto.LessonVisits.Count)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, $"You sent Lesson Visit with {lessonDto.LessonVisits.Count} student(s)" +
+                        $" but in group included {foundStudentGroup.StudentsOfStudentGroups.Count} student(s). Please check your Lesson Visit");
+                }
+                var checkStudentInGroup = await _unitOfWork.StudentGroupRepository.GetGroupStudentsIds(foundStudentGroup.Id);
+                var checkStudents = GetStudentsIDNotIncludeInGroup(lessonDto.LessonVisits, checkStudentInGroup);
+                if (checkStudents.Count > 0)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudents)} not included in this group({lessonDto.StudentGroupId})");
+                }
+
+                if (createdLessonEntity.LessonDate < DateTime.Now)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
 
                 _unitOfWork.LessonRepository.Add(createdLessonEntity);
@@ -119,14 +152,25 @@ namespace CharlieBackend.Business.Services
                         foundLesson.Theme = theme;
                     }
                 }
+               
+                if (lessonModel.LessonDate < DateTime.Now)
+                {
+                    return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
+                }
 
-                if (lessonModel.LessonDate != default(DateTime))
+                if (lessonModel.LessonDate != default(DateTime) )
                 {
                     foundLesson.LessonDate = lessonModel.LessonDate;
                 }
 
                 if (lessonModel.LessonVisits != null)
                 {
+                    var checkStudensId = GetStudentsIDNotIncludeInGroup(lessonModel.LessonVisits,
+                        await _unitOfWork.StudentGroupRepository.GetGroupStudentsIds((long)foundLesson.StudentGroupId));
+                    if (checkStudensId.Count > 0)
+                    {
+                        return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudensId)} not included in this group({foundLesson.StudentGroupId})");
+                    }
                     await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
                     for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
@@ -166,6 +210,22 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<IList<StudentLessonDto>>.GetSuccess( _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
+        }
+
+        private List<long> GetStudentsIDNotIncludeInGroup(IList<VisitDto> visit, IList<long?> groupStudentsId)
+        {
+            List<long> result = new List<long>();
+            var studentsId = visit.Select(x => x.StudentId).ToList();
+
+            foreach (var item in studentsId)
+            {
+                if (!groupStudentsId.Contains(item))
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
 
     }

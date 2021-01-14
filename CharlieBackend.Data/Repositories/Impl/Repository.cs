@@ -29,7 +29,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _entities.ToListAsync();
         }
 
-        public Task<T> GetByIdAsync(long id)
+        public virtual Task<T> GetByIdAsync(long id)
         {
             return _entities.FirstOrDefaultAsync(entity => entity.Id == id);
         }
@@ -62,6 +62,15 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<bool> IsEntityExistAsync(long id)
         {
             return await _entities.AnyAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<long>> GetNotExistEntitiesIdsAsync(IEnumerable<long> ids)
+        {
+            var existIds = await _entities.Where(entity => ids.Contains(entity.Id))
+                                          .Select(entity => entity.Id)
+                                          .ToListAsync();
+
+            return ids.Except(existIds);
         }
     }
 }

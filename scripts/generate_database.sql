@@ -274,13 +274,60 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`attachment` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `containerName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'containerName has been set to not null and unique',
-  `fileName` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'filerName has been set to not null',
+  `created_on` DATETIME NOT NULL COMMENT 'created_on has been set to not null',
+  `created_by_account_id` BIGINT(20) NOT NULL,
+  `container_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'container_name has been set to not null and unique',
+  `file_name` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NOT NULL COMMENT 'file_name has been set to not null',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `containerName_UNIQUE` (`containerName` ASC))
+  UNIQUE INDEX `container_name_UNIQUE` (`container_name` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `soft`.`homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`homework` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `due_date` DATETIME NULL DEFAULT NULL,
+  `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `student_group_id` BIGINT(20) NOT NULL,
+  `mentor_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_student_group_of_homework` (`student_group_id` ASC),
+  INDEX `FK_mentor_of_homework` (`mentor_id` ASC),
+  CONSTRAINT `FK_student_group_of_homework`
+    FOREIGN KEY (`student_group_id`)
+    REFERENCES `soft`.`student_group` (`id`),
+  CONSTRAINT `FK_mentor_of_homework`
+    FOREIGN KEY (`mentor_id`)
+    REFERENCES `soft`.`mentor` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `soft`.`attachment_of_homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `homework_id` BIGINT(20) NOT NULL,
+  `attachment_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_homework_id` (`homework_id` ASC),
+  INDEX `FK_attachment_id` (`attachment_id` ASC),
+  CONSTRAINT `FK_homework_of_attachment`
+    FOREIGN KEY (`homework_id`)
+    REFERENCES `soft`.`homework` (`id`),
+  CONSTRAINT `FK_attachment_of_homework`
+    FOREIGN KEY (`attachment_id`)
+    REFERENCES `soft`.`attachment` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

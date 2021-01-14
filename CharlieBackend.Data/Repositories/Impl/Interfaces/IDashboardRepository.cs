@@ -10,7 +10,15 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IDashboardRepository
     {
-        Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, DateTime? startDate, DateTime? finishDate);
+        Task<List<long>> GetGroupsIdsByCourseIdAndPeriodAsync(long courseId, DateTime? startDate, DateTime? finishDate);
+
+        Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate);
+
+        Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate);
+
+        Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId);
 
         Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> studentGroupId);
 

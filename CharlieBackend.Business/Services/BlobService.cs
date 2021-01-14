@@ -1,0 +1,72 @@
+﻿using System;
+using System.IO;
+using Azure.Storage.Blobs;
+using CharlieBackend.Core;
+using System.Threading.Tasks;
+using Azure.Storage.Blobs.Models;
+using Microsoft.Extensions.Logging;
+using CharlieBackend.Business.Services.Interfaces;
+
+namespace CharlieBackend.Business.Services
+{
+    public class BlobService : IBlobService
+    {
+        private readonly AzureStorageBlobAccount _blobAccount;
+        private readonly ILogger<BlobService> _logger;
+
+        public BlobService(
+                        AzureStorageBlobAccount blobAccount,
+                        ILogger<BlobService> logger
+                           )
+        {
+            _blobAccount = blobAccount;
+            _logger = logger;
+        }
+
+        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream)
+        {
+            string containerName = Guid.NewGuid().ToString("N");
+
+            BlobContainerClient container =
+                        new BlobContainerClient(_blobAccount.connectionString, containerName);
+
+            await container.CreateIfNotExistsAsync();
+
+            BlobClient blob = container.GetBlobClient(fileName);
+
+            _logger.LogInformation("FileName: " + fileName);
+            _logger.LogInformation("Uri: " + blob.Uri);
+
+            await blob.UploadAsync(fileStream);
+
+            return blob;
+        }
+
+        public async Task<BlobDownloadInfo> DownloadAsync(string containerName, string fileName)
+        {
+            BlobClient blob = new BlobClient
+                       (
+                       _blobAccount.connectionString,
+                       containerName,
+                       fileName
+                       );
+
+            BlobDownloadInfo download = await blob.DownloadAsync();
+
+            return download;
+        }
+
+        public async Task<bool> DeleteAsync(string containerName)
+        {
+            BlobContainerClient container = new BlobContainerClient
+                        (
+                        _blobAccount.connectionString,
+                        containerName
+                        );
+
+            var response = await container.DeleteIfExistsAsync();
+
+            return response;
+        }
+    }
+}

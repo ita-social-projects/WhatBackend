@@ -11,7 +11,7 @@ namespace CharlieBackend.Core.DTO.Visit
         #nullable enable
 
         [Required]
-        public long? StudentId { get; set; }
+        public long StudentId { get; set; }
 
         public sbyte? StudentMark { get; set; }
 
