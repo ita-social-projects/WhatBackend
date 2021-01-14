@@ -25,7 +25,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetGroupsIdsByCourseIdAsync()
+        public async Task GetGroupsIdsByCourseIdAndPeriodAsync()
         {
             // Arrange
 
@@ -37,7 +37,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             // Act
 
-            var result = await dashboardRepository.GetGroupsIdsByCourseIdAsync(1, new DateTime(2000, 1, 1), new DateTime(2002, 1, 1));
+            var result = await dashboardRepository.GetGroupsIdsByCourseIdAndPeriodAsync(1, new DateTime(2000, 1, 1), new DateTime(2002, 1, 1));
 
             // Assert
 
