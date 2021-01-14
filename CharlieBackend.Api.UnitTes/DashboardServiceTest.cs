@@ -184,7 +184,7 @@ namespace CharlieBackend.Api.UnitTest
                         CourseId = 2,
                         StudentGroupId = 2,
                         StudentId = 6,
-                        StudentAverageMark = 5.1
+                        StudentAverageMark = (decimal)5.1
                     }
                 });
 
@@ -389,7 +389,7 @@ namespace CharlieBackend.Api.UnitTest
                         CourseId = 2,
                         StudentGroupId = 1,
                         StudentId = 5,
-                        StudentAverageMark = 5.1
+                        StudentAverageMark = (decimal)5.1
                     }
                 });
 

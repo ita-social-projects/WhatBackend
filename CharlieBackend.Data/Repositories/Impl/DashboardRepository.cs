@@ -17,7 +17,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, 
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId,
             DateTime? startDate, DateTime? finishDate)
         {
             List<long> groupIdsbyCourseIdAndPeriod = await GetGroupIds(startDate, finishDate, courseId);
@@ -51,7 +51,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsIdsBygroupsIds = await _applicationContext.Students
                 .AsNoTracking()
-                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue 
+                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue
                 && groupsIds.Contains(x.StudentGroupId.Value)))
                 .Select(x => x.Id)
                 .ToListAsync();
@@ -153,7 +153,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds, 
             IEnumerable<long> studentGroupsIds)
         {
-            return await _applicationContext.Visits
+              return await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
                     .Where(x => studentIds.Contains((long)x.StudentId))
@@ -177,7 +177,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                         CourseId = x.Key.CourseId,
                         StudentGroupId = (long)x.Key.GroupId,
                         StudentId = (long)x.Key.StudentId,
-                        StudentAverageMark = Math.Round(x.Sum(x => x.StudentLessonMark) / x.Count(), 2)
+                        StudentAverageMark = x.Average(s => s.StudentLessonMark)
                     }
                     ).ToListAsync();
         }
@@ -264,7 +264,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
                     StudentGroupId = (long)x.Lesson.StudentGroupId,
-                    StudentMark = x.StudentMark
+                    StudentMark = (decimal)x.StudentMark
                 })
                 .AsQueryable()
                 .GroupBy(x => new
@@ -276,7 +276,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     CourseId = x.Key.CourseId,
                     StudentGroupId = x.Key.GroupId,
-                    AverageMark = Math.Round(x.Average(x => (decimal)x.StudentMark), 2)
+                    AverageMark = x.Average(x => x.StudentMark)
                 }).ToListAsync();
 
             return studentGroupMarskList;
