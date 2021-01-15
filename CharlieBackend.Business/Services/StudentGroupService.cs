@@ -126,7 +126,7 @@ namespace CharlieBackend.Business.Services
 
             return Result<bool>.GetSuccess(res);
         }
-       
+
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
@@ -157,12 +157,20 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student Group not found");
                 }
 
-                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                if (string.IsNullOrWhiteSpace(updatedStudentGroupDto.Name))
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Student group name can not be empty");
                 }
 
-                foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
+                if (!updatedStudentGroupDto.Name.Equals(foundStudentGroup.Name))
+                {
+                    if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                    }
+
+                    foundStudentGroup.Name = updatedStudentGroupDto.Name;
+                }
 
                 if (updatedStudentGroupDto.StartDate != null)
                 {
