@@ -88,15 +88,16 @@ namespace CharlieBackend.Business.Services
             }
 
             long accountId = Convert.ToInt64(userData.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            var result = new List<AttachmentDto>();
 
             if (userData.IsInRole(UserRole.Student.ToString()))
             {
-                var result = await _unitOfWork.AttachmentRepository
+                result = await _unitOfWork.AttachmentRepository
                     .GetAttachmentList(accountId, null, null, accountId, request.StartDate, request.FinishDate);
             }
             else
             {
-                var result = await _unitOfWork.AttachmentRepository
+                result = await _unitOfWork.AttachmentRepository
                     .GetAttachmentList(accountId, request.CourseID, request.GroupID, accountId, request.StartDate, request.FinishDate);
             }
 
