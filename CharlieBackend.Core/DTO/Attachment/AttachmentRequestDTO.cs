@@ -9,7 +9,7 @@ namespace CharlieBackend.Core.DTO.Attachment
 
         public long? GroupID;
 
-        public long? StudentID;
+        public long? StudentAccountID;
 
         [DataType(DataType.DateTime)]
         public DateTime? StartDate;

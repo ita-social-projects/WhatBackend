@@ -14,7 +14,7 @@ namespace CharlieBackend.Api.SwaggerExamples.AttachmentController
             {
                 CourseID = 0,
                 GroupID = 0,
-                StudentID = 0,
+                StudentAccountID = 0,
                 StartDate = DateTime.Now,
                 FinishDate = DateTime.Now
             };

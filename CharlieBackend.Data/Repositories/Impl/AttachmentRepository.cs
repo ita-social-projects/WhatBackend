@@ -18,7 +18,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<AttachmentDto>> GetAttachmentList(long accountId, long? courseId, long? groupId, long? requestedStudentId, 
+        public async Task<List<AttachmentDto>> GetAttachmentList(long accountId, long? courseId, long? groupId, long? requestedStudentAccountId, 
                                                                 DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.Attachments
@@ -36,8 +36,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                         .Where(y => y.StudentGroupId == groupId)
                         .Select(y => y.Student.AccountId)
                         .Contains(x.CreatedByAccountId))
-                    .WhereIf(requestedStudentId != default && requestedStudentId != 0, x => _applicationContext.Students
-                        .Where(y => y.AccountId == requestedStudentId)
+                    .WhereIf(requestedStudentAccountId != default && requestedStudentAccountId != 0, x => _applicationContext.Students
+                        .Where(y => y.AccountId == requestedStudentAccountId)
                         .Select(y => y.AccountId)
                         .Contains(x.CreatedByAccountId))
                     .WhereIf(startDate != default, x => x.CreatedOn >= startDate)

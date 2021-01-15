@@ -47,7 +47,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <param name="request">
         /// Returns list of attachments depending on the user role i.e admin and secretary can see all attachemnts, mentors only for the related groups and students only for themselves
-        /// Mention course id/ group id/ student id or date range to sort the result (non required params)</param>
+        /// Mention course id/ group id/ account ID of a student or date range to sort the result (non required params)</param>
         [SwaggerResponse(200, type: typeof(AttachmentDto))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPost("attachments")]
