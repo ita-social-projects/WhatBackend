@@ -45,15 +45,17 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets relevant attachments
         /// </summary>
-        /// <param name="request"/>
+        /// <param name="request">
         /// Returns list of attachments depending on the user role i.e admin and secretary can see all attachemnts, mentors only for the related groups and students only for themselves
-        /// Mention course id/ group id/ student id or date range to sort the result (non required params)
+        /// Mention course id/ group id/ student id or date range to sort the result (non required params)</param>
         [SwaggerResponse(200, type: typeof(AttachmentDto))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpGet]
-        public async Task<IActionResult> GetAttachments([FromBody] AttachmentRequestDTO request)
+        [HttpPost("attachments")]
+        public async Task<IActionResult> GetAttachments([FromBody]AttachmentRequestDto request)
         {
-            var attachments = await _attachmentService.GetAttachmentsListAsync(request);
+            var userData = HttpContext.User;
+
+            var attachments = await _attachmentService.GetAttachmentsListAsync(request, userData);
 
             return attachments.ToActionResult();
         }

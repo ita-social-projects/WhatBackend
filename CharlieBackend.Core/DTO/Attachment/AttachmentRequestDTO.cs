@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.DTO.Attachment
 {
-    public class AttachmentRequestDTO
+    public class AttachmentRequestDto
     {
         public long? CourseID;
 
