@@ -60,7 +60,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<CourseDto>> GetAllActiveCoursesAsync()
         {
-            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllActiveCourses());
+            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllActiveCoursesAsync());
 
             return courses;
         }

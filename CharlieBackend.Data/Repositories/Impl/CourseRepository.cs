@@ -37,11 +37,10 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
         }
 
-        public async Task<IList<Course>> GetAllActiveCourses()
+        public async Task<IList<Course>> GetAllActiveCoursesAsync()
         {
             return await _applicationContext.Courses
-                .Where(x => x.IsActive == true)
-                .Select(x => x)
+                .Where(x => x.IsActive)
                 .ToListAsync();
         }
 

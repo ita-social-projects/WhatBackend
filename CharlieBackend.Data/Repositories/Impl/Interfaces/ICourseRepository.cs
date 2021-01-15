@@ -18,6 +18,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<bool> IsCourseHasGroupAsync(long id);
 
-        Task<IList<Course>> GetAllActiveCourses();
+        Task<IList<Course>> GetAllActiveCoursesAsync();
     }
 }
