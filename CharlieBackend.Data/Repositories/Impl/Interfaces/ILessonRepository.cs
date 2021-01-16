@@ -8,5 +8,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface ILessonRepository : IRepository<Lesson>
     {
         public Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
+
+        Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
     }
 }
