@@ -22,7 +22,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                                                                 DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.Attachments
-                    .WhereIf(_applicationContext.Accounts.Find(accountId).Role == UserRole.Mentor, x => _applicationContext.Mentors
+                    .WhereIf(_applicationContext.Accounts.Find(accountId) != default 
+                                    && _applicationContext.Accounts.Find(accountId).Role == UserRole.Mentor, x => _applicationContext.Mentors
                         .FirstOrDefault(y => y.AccountId == accountId).MentorsOfStudentGroups
                         .Select(f => f.StudentGroup)
                         .SelectMany(f => f.StudentsOfStudentGroups)
