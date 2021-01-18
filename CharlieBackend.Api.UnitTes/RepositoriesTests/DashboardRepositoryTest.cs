@@ -508,7 +508,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 {
                     CourseId =2,
                     StudentGroupId =1,
-                    AverageMark = 47.5
+                    AverageMark = (decimal)47.5
                 }
             };
 
