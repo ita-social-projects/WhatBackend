@@ -10,6 +10,8 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonModel);
 
+        Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId);
+
         Task<Result<IList<LessonDto>>> GetAllLessonsAsync();
 
         Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);

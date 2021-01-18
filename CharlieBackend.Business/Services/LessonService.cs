@@ -105,6 +105,22 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(listLessons);
         }
 
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId)
+        {
+            if (mentorId == default)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Mentor Id please");
+            }
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(mentorId) == null)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Mentor with id {mentorId} is not Found");
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentorId);
+
+            return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
+        }
+
         public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
             var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
