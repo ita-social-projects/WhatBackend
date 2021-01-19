@@ -1,4 +1,4 @@
-# WHAT backend
+<h1 align="center">WHAT backend</h1>
 
 ## 1. About the project
 
