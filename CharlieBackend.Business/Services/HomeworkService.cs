@@ -43,9 +43,8 @@ namespace CharlieBackend.Business.Services
                 var newHomework = new Homework
                 {
                     DueDate = createHomeworkDto.DueDate,
-                    MentorId = createHomeworkDto.MentorId,
-                    TaskText = createHomeworkDto.TaskText,
-                    StudentGroupId = createHomeworkDto.StudentGroupId,
+                    LessonId = createHomeworkDto.LessonId,
+                    TaskText = createHomeworkDto.TaskText
                 };
 
                 _unitOfWork.HomeworkRepository.Add(newHomework);
@@ -73,14 +72,14 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
         }
 
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByStudentGroupId(long studentGroupId)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long lessonId)
         {
-            if (studentGroupId == default)
+            if (lessonId == default)
             {
-                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong student group id");
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, "Wrong lesson id");
             }
 
-            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByStudentGroupId(studentGroupId);
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksByLessonId(lessonId);
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
@@ -127,14 +126,9 @@ namespace CharlieBackend.Business.Services
             foundHomework.DueDate = updateHomeworkDto.DueDate;
             foundHomework.TaskText = updateHomeworkDto.TaskText;
 
-            var mentor = await _unitOfWork.MentorRepository.GetByIdAsync(foundHomework.MentorId);
-            foundHomework.MentorId = updateHomeworkDto.MentorId;
-            foundHomework.Mentor = mentor;
-
-            var studentGroup = await _unitOfWork.StudentGroupRepository
-                    .GetByIdAsync(updateHomeworkDto.StudentGroupId);
-            foundHomework.StudentGroupId = updateHomeworkDto.StudentGroupId;
-            foundHomework.StudentGroup = studentGroup;
+            var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(foundHomework.LessonId);
+            foundHomework.LessonId = updateHomeworkDto.LessonId;
+            foundHomework.Lesson = lesson;
 
             var newAttachments = new List<AttachmentOfHomework>();
 
@@ -163,20 +157,12 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            var studentGroup = await _unitOfWork.StudentGroupRepository
-                .IsEntityExistAsync(request.StudentGroupId);
+            var lesson = await _unitOfWork.LessonRepository.IsEntityExistAsync(request.LessonId);
+               
 
-            if (!studentGroup)
+            if (!lesson)
             {
-                yield return "Given student group does not exist";
-            }
-
-            var mentor = await _unitOfWork.MentorRepository
-                .IsEntityExistAsync(request.MentorId);
-
-            if (!mentor)
-            {
-                yield return "Given mentor does not exist";
+                yield return "Given lesson does not exist";
             }
 
             if (request.AttachmentIds?.Count() > 0)

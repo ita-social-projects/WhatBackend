@@ -30,11 +30,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                     TryUpdateManyToMany(currentHomeworkAttachments, newHomeworkAttachments);
         }
 
-        public async Task<IList<Homework>> GetHomeworksByStudentGroupId(long studentGroupId)
+        public async Task<IList<Homework>> GetHomeworksByLessonId(long lessonId)
         {
             return await _applicationContext.Homeworks
                 .Include(x => x.AttachmentsOfHomework)
-                .Where(x => x.StudentGroupId == studentGroupId).ToListAsync();
+                .Where(x => x.LessonId == lessonId).ToListAsync();
         }
     }
 }
