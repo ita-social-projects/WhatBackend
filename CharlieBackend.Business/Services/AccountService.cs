@@ -72,14 +72,14 @@ namespace CharlieBackend.Business.Services
             {
                 authenticationModel.Password = PasswordHelper.HashPassword(authenticationModel.Password, salt);
 
-                var cred = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
+                var accountCredentials = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
 
-                if(cred == null)
+                if(accountCredentials == null)
                 {
-                    return Result<AccountDto>.GetError(ErrorCode.Unauthorized, "Email or password is incorrect.");
+                    return Result<AccountDto>.GetError(ErrorCode.NotFound, "Email or password is incorrect.");
                 }
 
-                var foundAccount = _mapper.Map<AccountDto>(cred);
+                var foundAccount = _mapper.Map<AccountDto>(accountCredentials);
 
                 return Result<AccountDto>.GetSuccess(foundAccount);
             }
