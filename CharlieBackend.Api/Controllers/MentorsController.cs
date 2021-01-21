@@ -58,12 +58,12 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
         [Authorize(Roles = "Mentor")]
         [HttpPost("lessons")]
-        public async Task<ActionResult> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
+        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
         {
             var context = HttpContext.User;
             var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel, context);
 
-            return lessons.ToActionResult();
+            return lessons;
         }
 
         /// <summary>
