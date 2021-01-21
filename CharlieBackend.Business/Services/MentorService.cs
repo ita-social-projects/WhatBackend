@@ -18,7 +18,7 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-       
+
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
                              IMapper mapper, INotificationService notification)
         {
@@ -106,16 +106,21 @@ namespace CharlieBackend.Business.Services
                     return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Mentor not found");
                 }
-                var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
-                if (dublicatesGroup.Count<long>() != 0)
+                if (mentorModel.StudentGroupIds != null)
                 {
-                    return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {dublicatesGroup.IEnumerableToString()} are not unique");
+                    var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
+                    if (dublicatesGroup.Count<long>() != 0)
+                    {
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {dublicatesGroup.IEnumerableToString()} are not unique");
+                    }
                 }
-
-                var dublicatesCourse = mentorModel.CourseIds.Dublicates();
-                if (dublicatesCourse.Count<long>() != 0)
+                if (mentorModel.CourseIds != null)
                 {
-                    return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {dublicatesCourse.IEnumerableToString()} are not unique");
+                    var dublicatesCourse = mentorModel.CourseIds.Dublicates();
+                    if (dublicatesCourse.Count<long>() != 0)
+                    {
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {dublicatesCourse.IEnumerableToString()} are not unique");
+                    }
                 }
                 var isEmailChangableTo = await _accountService
                         .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
