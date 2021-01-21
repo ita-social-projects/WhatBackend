@@ -245,6 +245,18 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime startDate, DateTime finishDate)
+        {
+            if (startDate > finishDate)
+            {
+                return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError,"Start date is later then finish date.");
+            }
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
+
+            return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
+        }
+
         public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
         {
             _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
