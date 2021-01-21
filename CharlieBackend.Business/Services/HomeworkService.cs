@@ -126,10 +126,6 @@ namespace CharlieBackend.Business.Services
             foundHomework.DueDate = updateHomeworkDto.DueDate;
             foundHomework.TaskText = updateHomeworkDto.TaskText;
 
-            var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(foundHomework.LessonId);
-            foundHomework.LessonId = updateHomeworkDto.LessonId;
-            foundHomework.Lesson = lesson;
-
             var newAttachments = new List<AttachmentOfHomework>();
 
             if (updateHomeworkDto.AttachmentIds?.Count() > 0)
