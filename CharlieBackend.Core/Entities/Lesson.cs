@@ -21,5 +21,7 @@ namespace CharlieBackend.Core.Entities
         public virtual Theme Theme { get; set; }
         
         public virtual IList<Visit> Visits { get; set; }
+
+        public virtual ScheduledEvent ScheduledEvent { get; set; }
     }
 }

@@ -7,23 +7,25 @@ using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public class CreateScheduleDto
+    public class EventOccurenceDTO
     {
+        [Required]
+        public long? Id { get; set; }
+
         [Required]
         public long StudentGroupId { get; set; }
 
         [Required]
-        [DataType(DataType.Time)]
-        public TimeSpan LessonStart { get; set; }
+        public DateTime EventStart { get; set; }
+
+        [Required]        
+        public DateTime EventFinish { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
-        public TimeSpan LessonEnd { get; set; }
+        [EnumDataType(typeof(PatternType))]
+        public PatternType RepeatRate { get; set; }   //ToDo: likely to be removed
 
-        [Required]
-        [EnumDataType(typeof(RepeatRate))]
-        public RepeatRate RepeatRate { get; set; }
-  
         [Range(1, 31)]   
         public uint? DayNumber { get; set; }
     }
