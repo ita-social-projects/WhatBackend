@@ -7,6 +7,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Linq;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Business.Services
@@ -105,7 +106,17 @@ namespace CharlieBackend.Business.Services
                     return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Mentor not found");
                 }
+                var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
+                if (dublicatesGroup.Count<long>() != 0)
+                {
+                    return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {dublicatesGroup.IEnumerableToString()} are not unique");
+                }
 
+                var dublicatesCourse = mentorModel.CourseIds.Dublicates();
+                if (dublicatesCourse.Count<long>() != 0)
+                {
+                    return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {dublicatesCourse.IEnumerableToString()} are not unique");
+                }
                 var isEmailChangableTo = await _accountService
                         .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
 
