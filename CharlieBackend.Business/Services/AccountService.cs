@@ -76,7 +76,7 @@ namespace CharlieBackend.Business.Services
 
                 if(accountCredentials == null)
                 {
-                    return Result<AccountDto>.GetError(ErrorCode.NotFound, "Email or password is incorrect.");
+                    return Result<AccountDto>.GetError(ErrorCode.Unauthorized, "Email or password is incorrect.");
                 }
 
                 var foundAccount = _mapper.Map<AccountDto>(accountCredentials);
