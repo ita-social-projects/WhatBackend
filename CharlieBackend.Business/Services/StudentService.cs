@@ -170,11 +170,9 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentDto>> GetStudentByIdAsync(long studentId)
         {
-            var allStudents = await GetAllStudentsAsync();
-            var maxId = allStudents.Data.Select(st => st.Id).Max();
-            if (studentId > maxId)
-                return Result<StudentDto>.GetError(ErrorCode.NotFound, $"This id = {studentId} is bigger than maximum student id = {maxId}");
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+            if(student == null)
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, $"This id = {studentId} does not exist in database");
             var studentDto = _mapper.Map<StudentDto>(student);
 
             return Result<StudentDto>.GetSuccess(studentDto);
