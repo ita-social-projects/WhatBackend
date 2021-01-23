@@ -9,13 +9,9 @@ namespace CharlieBackend.Core.Entities
 
         public string TaskText { get; set; }
 
-        public long StudentGroupId { get; set; }
+        public long LessonId { get; set; }
 
-        public StudentGroup StudentGroup { get; set; }
-
-        public long MentorId { get; set; }
-
-        public Mentor Mentor { get; set; }
+        public Lesson Lesson { get; set; }
 
         public virtual IList<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
     }
