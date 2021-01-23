@@ -78,12 +78,30 @@ namespace CharlieBackend.Business.Services
                 
         }
 
-        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync()
+        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request, ClaimsPrincipal userData)
         {
-            var attachments = _mapper.Map<IList<AttachmentDto>>(
-                        await _unitOfWork.AttachmentRepository.GetAllAsync());
+            string error = ValidateAttachmentRequest(request);
 
-            return Result<IList<AttachmentDto>>.GetSuccess(attachments);
+            if (error != null)
+            {
+                return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError, error);
+            }
+
+            long accountId = Convert.ToInt64(userData.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            var result = new List<AttachmentDto>();
+
+            if (userData.IsInRole(UserRole.Student.ToString()))
+            {
+                result = await _unitOfWork.AttachmentRepository
+                    .GetAttachmentList(accountId, null, null, accountId, request.StartDate, request.FinishDate);
+            }
+            else
+            {
+                result = await _unitOfWork.AttachmentRepository
+                    .GetAttachmentList(accountId, request.CourseID, request.GroupID, accountId, request.StartDate, request.FinishDate);
+            }
+
+            return Result<IList<AttachmentDto>>.GetSuccess(result);
         }
 
         public async Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId)
@@ -169,6 +187,17 @@ namespace CharlieBackend.Business.Services
             }
 
             return false;
+        }
+
+        private string ValidateAttachmentRequest(AttachmentRequestDto request)
+        {
+
+            if (request == default)
+            {
+                return "RequestDto is null";
+            }
+
+            return null;
         }
     }
 }
