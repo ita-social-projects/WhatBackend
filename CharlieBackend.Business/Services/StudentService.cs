@@ -171,8 +171,12 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentDto>> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
-            if(student == null)
+
+            if (student == null)
+            {
                 return Result<StudentDto>.GetError(ErrorCode.NotFound, $"This id = {studentId} does not exist in database");
+            }
+
             var studentDto = _mapper.Map<StudentDto>(student);
 
             return Result<StudentDto>.GetSuccess(studentDto);
