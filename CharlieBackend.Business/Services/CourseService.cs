@@ -51,16 +51,9 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<CourseDto>> GetAllCoursesAsync()
+        public async Task<IList<CourseDto>> GetCoursesAsync(bool? isActive)
         {
-            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllAsync());
-
-            return courses;
-        }
-
-        public async Task<IList<CourseDto>> GetAllActiveCoursesAsync()
-        {
-            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetAllActiveCoursesAsync());
+            var courses = _mapper.Map<List<CourseDto>>(await _unitOfWork.CourseRepository.GetCoursesAsync(isActive));
 
             return courses;
         }

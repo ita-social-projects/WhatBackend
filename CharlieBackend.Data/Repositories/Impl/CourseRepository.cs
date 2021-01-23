@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Mentor;
-
-
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -37,10 +36,10 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);
         }
 
-        public async Task<IList<Course>> GetAllActiveCoursesAsync()
+        public async Task<IList<Course>> GetCoursesAsync(bool? isActive)
         {
             return await _applicationContext.Courses
-                .Where(x => x.IsActive)
+                .WhereIf(isActive != null, x => x.IsActive == isActive)
                 .ToListAsync();
         }
 

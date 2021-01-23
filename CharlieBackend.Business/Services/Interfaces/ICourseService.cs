@@ -9,13 +9,12 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseModel);
 
-        Task<IList<CourseDto>> GetAllActiveCoursesAsync();
-
-        Task<IList<CourseDto>> GetAllCoursesAsync();
+        Task<IList<CourseDto>> GetCoursesAsync(bool? isActive);
 
         Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
 
         Task<bool> IsCourseNameTakenAsync(string courseName);
+
         Task<Result<bool>> DisableCourceAsync(long id);
     }
 
