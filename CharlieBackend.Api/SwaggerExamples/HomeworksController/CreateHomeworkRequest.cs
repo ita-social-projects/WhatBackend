@@ -15,8 +15,7 @@ namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
             {
                 AttachmentIds = new List<long> { 3, 12 },
                 DueDate = new DateTime(2021, 09, 15),
-                MentorId = 7,
-                StudentGroupId = 3,
+                LessonId = 7,
                 TaskText = "1. Please create new HTML page <br>2. Page should contain 2 tables 2x2 in center"
             };
         }

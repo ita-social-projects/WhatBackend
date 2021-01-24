@@ -292,17 +292,12 @@ CREATE TABLE IF NOT EXISTS `soft`.`homework` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `due_date` DATETIME NULL DEFAULT NULL,
   `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
-  `student_group_id` BIGINT(20) NOT NULL,
-  `mentor_id` BIGINT(20) NOT NULL,
+  `lesson_id` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `FK_student_group_of_homework` (`student_group_id` ASC),
-  INDEX `FK_mentor_of_homework` (`mentor_id` ASC),
-  CONSTRAINT `FK_student_group_of_homework`
-    FOREIGN KEY (`student_group_id`)
-    REFERENCES `soft`.`student_group` (`id`),
-  CONSTRAINT `FK_mentor_of_homework`
-    FOREIGN KEY (`mentor_id`)
-    REFERENCES `soft`.`mentor` (`id`))
+  INDEX `FK_lesson_of_homework` (`lesson_id` ASC),
+  CONSTRAINT `FK_lesson_of_homework`
+    FOREIGN KEY (`lesson_id`)
+    REFERENCES `soft`.`lesson` (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;

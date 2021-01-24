@@ -23,6 +23,5 @@ namespace CharlieBackend.Core.Entities
         
         public virtual IList<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
 
-        public virtual IList<Homework> Homeworks { get; set; }
     }
 }
