@@ -121,7 +121,7 @@ namespace CharlieBackend.Business.Services
                     var dublicates = studentModel.StudentGroupIds.Dublicates();
                     if (dublicates.Count<long>() != 0)
                     {
-                        return Result<StudentDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {dublicates.IEnumerableToString()} are not unique");
+                        return Result<StudentDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ",dublicates)} are not unique");
                     }
                 }
 

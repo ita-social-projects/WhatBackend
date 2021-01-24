@@ -111,7 +111,7 @@ namespace CharlieBackend.Business.Services
                     var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
                     if (dublicatesGroup.Count<long>() != 0)
                     {
-                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {dublicatesGroup.IEnumerableToString()} are not unique");
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ", dublicatesGroup)} are not unique");
                     }
                 }
                 if (mentorModel.CourseIds != null)
@@ -119,7 +119,7 @@ namespace CharlieBackend.Business.Services
                     var dublicatesCourse = mentorModel.CourseIds.Dublicates();
                     if (dublicatesCourse.Count<long>() != 0)
                     {
-                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {dublicatesCourse.IEnumerableToString()} are not unique");
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {string.Join(" ", dublicatesCourse)} are not unique");
                     }
                 }
                 var isEmailChangableTo = await _accountService

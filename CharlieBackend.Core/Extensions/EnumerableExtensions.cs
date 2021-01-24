@@ -7,19 +7,11 @@ namespace CharlieBackend.Core.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static IEnumerable<T> Dublicates<T>(this IEnumerable<T> list)
+        public static IEnumerable<T> Dublicates<T>(this IEnumerable<T> values)
         {
-            return list.GroupBy(x => x)
+            return values.GroupBy(x => x)
                  .Where(el => el.Count() > 1)
                  .Select(dubl => dubl.Key);
-        }
-
-        public static string IEnumerableToString<T>(this IEnumerable<T> list)
-        {
-            string result = "";
-            foreach (var el in list)
-                result += el + " ";
-            return result;
         }
     }
 }

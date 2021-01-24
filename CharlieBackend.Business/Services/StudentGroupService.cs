@@ -49,12 +49,12 @@ namespace CharlieBackend.Business.Services
                 var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
                 if (dublicatesStudent.Count<long>() != 0)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {dublicatesStudent.IEnumerableToString()} are not unique");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
                 }
                 var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
                 if (dublicatesMentor.Count<long>() != 0)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {dublicatesMentor.IEnumerableToString()} are not unique");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
                 }
 
                 var studentGroup = new StudentGroup
@@ -177,12 +177,12 @@ namespace CharlieBackend.Business.Services
                 var dublicatesStudent = updatedStudentGroupDto.StudentIds.Dublicates();
                 if (dublicatesStudent.Count<long>() != 0)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {dublicatesStudent.IEnumerableToString()} are not unique");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
                 }
                 var dublicatesMentor = updatedStudentGroupDto.MentorIds.Dublicates();
                 if (dublicatesMentor.Count<long>() != 0)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {dublicatesMentor.IEnumerableToString()} are not unique");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
                 }
 
                 foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
