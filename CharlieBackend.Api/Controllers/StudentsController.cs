@@ -3,6 +3,7 @@ using CharlieBackend.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Core.Models.ResultModel;
@@ -20,6 +21,7 @@ namespace CharlieBackend.Api.Controllers
     public class StudentsController : ControllerBase
     {
         #region
+        private readonly ILessonService _lessonService;
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
         #endregion
@@ -27,16 +29,17 @@ namespace CharlieBackend.Api.Controllers
         /// Students Controllers constructor
         /// </summary>
         public StudentsController(IStudentService studentService, 
-            IAccountService accountService)
+            IAccountService accountService, ILessonService lessonService)
         {
             _studentService = studentService;
             _accountService = accountService;
+            _lessonService = lessonService;
         }
 
         /// <summary>
         /// Addition of new student
         /// </summary>
-        /// <response code="200">Successful assing of account into student</response>
+        /// <response code="200">Successful passing of account into student</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(StudentDto))]
@@ -84,6 +87,21 @@ namespace CharlieBackend.Api.Controllers
             var studentsModelsResult = await _studentService.GetAllStudentsAsync();
 
             return studentsModelsResult.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons of exact student
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given student</response>
+        [SwaggerResponse(200, type: typeof(IList<StudentLessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<StudentLessonDto>>> GetStudentLessons(long id)
+        {
+            var lessons = await _lessonService.GetStudentLessonsAsync(id);
+
+            return lessons.ToActionResult();
         }
 
         /// <summary>
