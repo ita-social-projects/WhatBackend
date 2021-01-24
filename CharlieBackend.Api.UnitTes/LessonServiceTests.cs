@@ -141,7 +141,7 @@ namespace CharlieBackend.Api.UnitTest
             StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
 
             DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
-            DateTime lessonDateWrong = DateTime.Parse("2021-11-19T15:00:00.384Z");
+            DateTime lessonDateWrong = DateTime.Parse("2021-11-18T15:00:00.384Z");
 
             List<VisitDto> visitDto = new List<VisitDto>
             {
@@ -327,7 +327,7 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.ValidationError, resultWithWrongLessonVisitStudent.Error.Code);
             Assert.Equal(ErrorCode.ValidationError, resultWithEmptyLessonVisit.Error.Code);
             Assert.Equal(ErrorCode.ValidationError, resultWithWrongLessonDate.Error.Code);
-            Assert.NotEmpty(result.Data.LessonVisits);//ejjj
+            Assert.NotEmpty(result.Data.LessonVisits);
 
             Assert.Equal(createdLesson.Id, result.Data.Id);
             Assert.Equal(createdLesson.LessonDate, result.Data.LessonDate);
@@ -338,7 +338,7 @@ namespace CharlieBackend.Api.UnitTest
             {
                 Assert.Equal(createdLesson.LessonVisits[i]?.Comment, result.Data.LessonVisits[i]?.Comment);
                 Assert.Equal(createdLesson.LessonVisits[i]?.Presence, result.Data.LessonVisits[i]?.Presence);
-                Assert.Equal(createdLesson.LessonVisits[i]?.StudentId, result.Data.LessonVisits[i]?.StudentId);//jjjj
+                Assert.Equal(createdLesson.LessonVisits[i]?.StudentId, result.Data.LessonVisits[i]?.StudentId);
                 Assert.Equal(createdLesson.LessonVisits[i]?.StudentMark, result.Data.LessonVisits[i]?.StudentMark);
             }
 
