@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.UnitTest
                 ThemeName = "ExampleName",
                 MentorId = 2,
                 StudentGroupId = 3,
-                LessonDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
+                LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
                 LessonVisits = new List<VisitDto>
                 {
                     new VisitDto()
