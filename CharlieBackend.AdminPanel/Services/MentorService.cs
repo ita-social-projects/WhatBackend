@@ -63,16 +63,16 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id)
         {
-            var mentorTask = _apiUtil.GetAsync<Result<MentorEditViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", _accessToken);
+            var mentorTask = _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", _accessToken);
             var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>($"{_config.Value.Urls.Api.Https}/api/courses", _accessToken);
             var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
 
             var mentor = await mentorTask;
 
-            mentor.Data.AllGroups = await studentGroupTask;
-            mentor.Data.AllCourses = await coursesTask;
+            mentor.AllGroups = await studentGroupTask;
+            mentor.AllCourses = await coursesTask;
 
-            return mentor.Data;
+            return mentor;
         }
 
         public async Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto)
