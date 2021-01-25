@@ -38,8 +38,8 @@ namespace CharlieBackend.Api.UnitTest
                 Email = "test@example.com",
                 FirstName = "test",
                 LastName = "test",
-                Password = "qwerty",
-                ConfirmPassword = "qwerty"
+                Password = "qQwerty5",
+                ConfirmPassword = "qQwerty5"
             };
 
             var isEmailTakenAccountModel = new CreateAccountDto()
@@ -47,8 +47,8 @@ namespace CharlieBackend.Api.UnitTest
                 Email = accountExpectedEmail,
                 FirstName = "test",
                 LastName = "test",
-                Password = "qwerty",
-                ConfirmPassword = "qwerty"
+                Password = "qQwerty5",
+                ConfirmPassword = "qQwerty5"
             };
 
             var existingAccount = new Account()
