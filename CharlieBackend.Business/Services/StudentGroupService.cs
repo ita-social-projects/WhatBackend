@@ -59,6 +59,11 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
                 }
+                
+                if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
+                }
 
                 var studentGroup = new StudentGroup
                 {
@@ -176,7 +181,7 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
                 }
-
+                
                 var dublicatesStudent = updatedStudentGroupDto.StudentIds.Dublicates();
 
                 if (dublicatesStudent.Count<long>() != 0)
@@ -189,6 +194,11 @@ namespace CharlieBackend.Business.Services
                 if (dublicatesMentor.Count<long>() != 0)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                }
+                    
+                if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
                 }
 
                 foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
