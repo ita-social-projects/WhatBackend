@@ -116,13 +116,16 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
                 }
+
                 if (studentModel.StudentGroupIds != null)
                 {
                     var dublicates = studentModel.StudentGroupIds.Dublicates();
+
                     if (dublicates.Count<long>() != 0)
                     {
                         return Result<StudentDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ",dublicates)} are not unique");
                     }
+
                 }
 
                 var isEmailChangableTo = await _accountService

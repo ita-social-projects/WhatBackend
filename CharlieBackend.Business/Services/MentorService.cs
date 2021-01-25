@@ -106,22 +106,29 @@ namespace CharlieBackend.Business.Services
                     return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Mentor not found");
                 }
+
                 if (mentorModel.StudentGroupIds != null)
                 {
                     var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
+
                     if (dublicatesGroup.Count<long>() != 0)
                     {
                         return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ", dublicatesGroup)} are not unique");
                     }
+
                 }
+
                 if (mentorModel.CourseIds != null)
                 {
                     var dublicatesCourse = mentorModel.CourseIds.Dublicates();
+
                     if (dublicatesCourse.Count<long>() != 0)
                     {
                         return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {string.Join(" ", dublicatesCourse)} are not unique");
                     }
+
                 }
+
                 var isEmailChangableTo = await _accountService
                         .IsEmailChangableToAsync((long)foundMentor.AccountId, mentorModel.Email);
 

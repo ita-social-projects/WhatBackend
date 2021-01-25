@@ -47,11 +47,14 @@ namespace CharlieBackend.Business.Services
                 }
 
                 var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
+
                 if (dublicatesStudent.Count<long>() != 0)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
                 }
+
                 var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
+
                 if (dublicatesMentor.Count<long>() != 0)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
@@ -175,11 +178,14 @@ namespace CharlieBackend.Business.Services
                 }
 
                 var dublicatesStudent = updatedStudentGroupDto.StudentIds.Dublicates();
+
                 if (dublicatesStudent.Count<long>() != 0)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
                 }
+
                 var dublicatesMentor = updatedStudentGroupDto.MentorIds.Dublicates();
+
                 if (dublicatesMentor.Count<long>() != 0)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
