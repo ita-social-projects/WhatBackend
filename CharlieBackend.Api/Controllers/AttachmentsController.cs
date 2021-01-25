@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Downloads attachment
+        /// Gets attachment by id
         /// </summary>
         /// <param name="attachmentId">Id of an attachment to download.</param>
         /// <response code="200">File is ready for download.</response>
