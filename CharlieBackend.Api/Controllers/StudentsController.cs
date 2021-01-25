@@ -54,7 +54,7 @@ namespace CharlieBackend.Api.Controllers
         /// Get student information by student id
         /// </summary>
         /// <response code="200">Successful return of student</response>
-        /// <response code="409">Error, can not find student</response>
+        /// <response code="404">Error, can not find student</response>
         [SwaggerResponse(200, type: typeof(StudentMock))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}")]
@@ -63,12 +63,7 @@ namespace CharlieBackend.Api.Controllers
 
             var studentModelResult = await _studentService.GetStudentByIdAsync(id);
 
-            if (studentModelResult != null)
-            {
-                return studentModelResult.ToActionResult(); 
-            }
-
-            return StatusCode(409, "Cannot find student with such id.");
+            return studentModelResult.ToActionResult(); 
         }
 
         /// <summary>
