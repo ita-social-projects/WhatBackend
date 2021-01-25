@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace CharlieBackend.Business.Helpers
 {
@@ -55,6 +56,48 @@ namespace CharlieBackend.Business.Helpers
                         return (Int32)(minValue + (rand % diff));
                     }
                 }
+            }
+        }
+
+        public static string PasswordValidation(string password)
+        {
+            char[] symbols = new[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '+', '=', '[', ']', '{', '}', ';', ':', '<', '>', '|', '.', '/', '?', ',', '-', '>', '<', '+', '=', '~' };
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return "Password should not be empty";
+            }
+
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasLowerChar = new Regex(@"[a-z]+");
+
+
+
+            if (!hasNumber.IsMatch(password))
+            {
+                return "Password should contain at least one numeric value";
+            }
+
+            else if (!hasUpperChar.IsMatch(password))
+            {
+                return "Password should contain at least one upper case letter";
+            }
+            else if (!hasLowerChar.IsMatch(password))
+            {
+                return "Password should contain at least one lower case letter";
+            }
+            else if (password.IndexOfAny(symbols) != -1)
+            {
+                return "Password should contain only this thing '_'";
+            }
+            else if (password.Length < 8)
+            {
+                return "Password length must be more than 8";
+            }
+            else
+            {
+                return null;
             }
         }
     }
