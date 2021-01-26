@@ -194,12 +194,12 @@ namespace CharlieBackend.Business.Services
                 error = "Group does not exist";
             }
 
-            if (request.Context.MentorID.HasValue && await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
+            if (request.Context.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
             {
                 error = "Mentor does not exist";
             }
 
-            if (request.Context.ThemeID.HasValue && await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
+            if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
                 error = "Theme does not exist";
             }
@@ -228,6 +228,7 @@ namespace CharlieBackend.Business.Services
                     }
                     break;
                 default:
+                    error = "Pattern type not supported";
                     break;
             }
 

@@ -74,13 +74,13 @@ namespace CharlieBackend.Business.Services
 
                     if (details.IsMonthlyRelated)
                     {
-                        details.startDate.AddMonths(details.index * data.Interval);
-                        details.startDate.AddMonths(details.index * data.Interval);
+                        targetStartDate = targetStartDate.AddMonths(details.index * data.Interval);
+                        targetFinishDate = targetFinishDate.AddMonths(details.index * data.Interval);
                     }
                     else
                     {
-                        details.startDate.AddDays(details.index * data.Interval);
-                        details.startDate.AddDays(details.index * data.Interval);
+                        targetStartDate = targetStartDate.AddDays(details.index * data.Interval);
+                        targetFinishDate = targetFinishDate.AddDays(details.index * data.Interval);
                     }
                 }
             }
@@ -130,6 +130,7 @@ namespace CharlieBackend.Business.Services
         }
 
         private delegate DateTime GetFirstDateDelegate(DateTime startDate, int index, PatternForCreateScheduleDTO data);
+        
         private struct EventDetail
         {
             public GetFirstDateDelegate del;
