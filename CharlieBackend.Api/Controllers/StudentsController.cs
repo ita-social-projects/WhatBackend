@@ -55,7 +55,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return of student</response>
         /// <response code="404">Error, can not find student</response>
-        [SwaggerResponse(200, type: typeof(StudentMock))]
+        [SwaggerResponse(200, type: typeof(StudentDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentDto>> GetStudentById(long id)
