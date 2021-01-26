@@ -12,36 +12,15 @@ using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
-    class EventOccuranceStorageParser
+    static class EventOccuranceStorageParser
     {
+        private static int _daysInWeek = 7;
+        private static int _maxDaysInMonth = 31;
+        private static int _possibleMonthIndexOptionsNumber = 5;
+
         internal static long GetPatternStorageValue(PatternForCreateScheduleDTO source)
         {
             long result = 0;
-
-            switch (source.Type)
-            {               
-                case PatternType.Weekly:
-                    result = GetPatternStorageValueWeekly(source);
-                    break;
-                case PatternType.Daily:
-                    result = GetPatternStorageValueDaily(source);
-                    break;
-                case PatternType.AbsoluteMonthly:
-                    result = GetPatternStorageValueAbsoluteMonthly(source);
-                    break;
-                case PatternType.RelativeMonthly:
-                    result = GetPatternStorageValueRelativeMonthly(source);
-                    break;
-                default:
-                    break;
-            }
-
-            return result;
-        }
-
-        private static long GetPatternStorageValueWeekly(PatternForCreateScheduleDTO source)
-        {
-            long result = 0;
             long index = 1;
 
             foreach (DayOfWeek item in source.DaysOfWeek)
@@ -51,57 +30,105 @@ namespace CharlieBackend.Business.Services
                 index = 1;
             }
 
-            result |= index << (7 + source.Interval);
+            result |= index << (_daysInWeek + (int)source.Index);
 
-            return result;
-        }
+            index <<= _daysInWeek + _possibleMonthIndexOptionsNumber;
 
-        private static long GetPatternStorageValueAbsoluteMonthly(PatternForCreateScheduleDTO source)
-        {
-            long result = 0;
-            long index = 1;
-
-            foreach (DayOfWeek item in source.DaysOfWeek)
+            foreach (int item in source.Dates)
             {
-                index <<= (int)item;
+                index <<= item;
                 result |= index;
-                index = 1;
+                index = _daysInWeek + _possibleMonthIndexOptionsNumber;
             }
 
-            result |= index << (31 + source.Interval);
+            result |= index << (_daysInWeek + _possibleMonthIndexOptionsNumber + _maxDaysInMonth + (int)source.Interval);
 
             return result;
         }
 
-        private static long GetPatternStorageValueDaily(PatternForCreateScheduleDTO source)
-        {
-            return source.Interval;
-        }
+        //internal static (int , IList<DayOfWeek>) GetDataForWeekly(long source)
+        //{
+        //    string check = Convert.ToString(source, 2);
 
-        private static long GetPatternStorageValueRelativeMonthly(PatternForCreateScheduleDTO source)
-        {
-            long result = 0;
-            long index = 1;
+        //    string daysString = check.Substring(check.Length - 7);
 
-            foreach (DayOfWeek item in source.DaysOfWeek)
-            {
-                index <<= (int)item;
-                result |= index;
-                index = 1;
-            }
+        //    IList<DayOfWeek> daysCollection = new List<DayOfWeek>();
 
-            result |= index << (7 + (int)source.Index);
+        //    for (int i = daysString.Length - 1; i >= 0; i--)
+        //    {
+        //        if (daysString[i] == '1')
+        //        {
+        //            daysCollection.Add((DayOfWeek)(daysString.Length - i - 1));
+        //        }
+        //    }
 
-            result |= index << (7 + 5 + (int)source.Interval);
+        //    string intervalString = check.Substring(0, check.Length - 7);
 
-            return result;
-        }
+        //    int interval = intervalString.Length - intervalString.LastIndexOf('1') - 1;
 
-        internal static (int , IList<DayOfWeek>) GetDataForWeekly(long source)
+        //    return (interval, daysCollection);
+        //}
+
+        //internal static (int, IList<int>) GetDataForAbsoluteMonthly(long source)
+        //{
+        //    string check = Convert.ToString(source, 2);
+
+        //    string daysString = check.Substring(check.Length - 31);
+
+        //    IList<int> daysCollection = new List<int>();
+
+        //    for (int i = daysString.Length - 1; i >= 0; i--)
+        //    {
+        //        if (daysString[i] == '1')
+        //        {
+        //            daysCollection.Add(i - 1);
+        //        }
+        //    }
+
+        //    string intervalString = check.Substring(0, check.Length - 31);
+
+        //    int interval = intervalString.Length - intervalString.LastIndexOf('1') - 1;
+
+        //    return (interval, daysCollection);
+        //}
+
+        //internal static int GetDataForDaily(long source)
+        //{
+        //    return (int)source;
+        //}
+
+        //internal static (int interval, MonthIndex index, IList<DayOfWeek> daysCollection) GetDataForRelativeMonthly(long source)
+        //{
+        //    string check = Convert.ToString(source, 2);
+
+        //    string daysString = check.Substring(check.Length - 7);
+
+        //    IList<DayOfWeek> daysCollection = new List<DayOfWeek>();
+
+        //    for (int i = daysString.Length - 1; i >= 0; i--)
+        //    {
+        //        if (daysString[i] == '1')
+        //        {
+        //            daysCollection.Add((DayOfWeek)(daysString.Length - i - 1));
+        //        }
+        //    }
+
+        //    string indexString = check.Substring(check.Length - 7 - 5, check.Length - 7);
+
+        //    int index = indexString.Length - indexString.LastIndexOf('1') - 1;
+
+        //    string intervalString = check.Substring(0, check.Length - 7 - 5);
+
+        //    int interval = indexString.Length - indexString.LastIndexOf('1') - 1;
+
+        //    return (interval, (MonthIndex)index, daysCollection);
+        //}
+
+        internal static PatternForCreateScheduleDTO GetFullDataFromStorage(long source)
         {
             string check = Convert.ToString(source, 2);
 
-            string daysString = check.Substring(check.Length - 7);
+            string daysString = check.Substring(check.Length - _daysInWeek);
 
             IList<DayOfWeek> daysCollection = new List<DayOfWeek>();
 
@@ -113,66 +140,34 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            string intervalString = check.Substring(0, check.Length - 7);
+            string indexString = check.Substring(check.Length - _daysInWeek - _possibleMonthIndexOptionsNumber, check.Length - _daysInWeek);
 
-            int interval = intervalString.Length - intervalString.LastIndexOf('1') - 1;
+            MonthIndex index = (MonthIndex)indexString.Length - indexString.LastIndexOf('1') - 1;
 
-            return (interval, daysCollection);
-        }
+            string datesString = check.Substring(check.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth, 
+                check.Length - _daysInWeek - _possibleMonthIndexOptionsNumber);
 
-        internal static (int, IList<int>) GetDataForAbsoluteMonthly(long source)
-        {
-            string check = Convert.ToString(source, 2);
+            IList<int> datesCollection = new List<int>();
 
-            string daysString = check.Substring(check.Length - 31);
-
-            IList<int> daysCollection = new List<int>();
-
-            for (int i = daysString.Length - 1; i >= 0; i--)
+            for (int i = datesString.Length - 1; i >= 0; i--)
             {
-                if (daysString[i] == '1')
+                if (datesString[i] == '1')
                 {
-                    daysCollection.Add(i - 1);
+                    datesCollection.Add(i - 1);
                 }
             }
 
-            string intervalString = check.Substring(0, check.Length - 31);
+            string intervalString = check.Substring(0, check.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth);
 
             int interval = intervalString.Length - intervalString.LastIndexOf('1') - 1;
 
-            return (interval, daysCollection);
-        }
-
-        internal static int GetDataForDaily(long source)
-        {
-            return (int)source;
-        }
-
-        internal static (int interval, MonthIndex index, IList<DayOfWeek> daysCollection) GetDataForRelativeMonthly(long source)
-        {
-            string check = Convert.ToString(source, 2);
-
-            string daysString = check.Substring(check.Length - 7);
-
-            IList<DayOfWeek> daysCollection = new List<DayOfWeek>();
-
-            for (int i = daysString.Length - 1; i >= 0; i--)
+            return new PatternForCreateScheduleDTO
             {
-                if (daysString[i] == '1')
-                {
-                    daysCollection.Add((DayOfWeek)(daysString.Length - i - 1));
-                }
-            }
-
-            string indexString = check.Substring(check.Length - 7 - 5, check.Length - 7);
-
-            int index = indexString.Length - indexString.LastIndexOf('1') - 1;
-
-            string intervalString = check.Substring(0, check.Length - 7 - 5);
-
-            int interval = indexString.Length - indexString.LastIndexOf('1') - 1;
-
-            return (interval, (MonthIndex)index, daysCollection);
+                Interval = interval,
+                Index = index,
+                Dates = datesCollection,
+                DaysOfWeek = daysCollection
+            };
         }
     }
 }

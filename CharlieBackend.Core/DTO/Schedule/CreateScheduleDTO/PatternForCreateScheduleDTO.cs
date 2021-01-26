@@ -14,11 +14,11 @@ namespace CharlieBackend.Core.DTO.Schedule
         [Required]
         public int Interval { get; set; }
 
-        public List<DayOfWeek> DaysOfWeek { get; set; }
+        public IList<DayOfWeek> DaysOfWeek { get; set; }
 
         public MonthIndex? Index { get; set; }
 
         [Range(1, 31)]
-        public List<int?> Dates { get; set; }
+        public IList<int> Dates { get; set; }
     }
 }

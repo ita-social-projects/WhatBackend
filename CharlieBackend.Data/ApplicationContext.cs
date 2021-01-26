@@ -572,10 +572,10 @@ namespace CharlieBackend.Data
 
                 entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
 
-                entity.HasOne(e => e.StudentGroup)
-                    .WithMany(p => p.Homeworks)
-                    .HasForeignKey(d => d.StudentGroupId)
-                    .HasConstraintName("FK_student_group_of_homework");
+                //entity.HasOne(e => e.StudentGroup)
+                //    .WithMany(p => p.Homeworks)
+                //    .HasForeignKey(d => d.StudentGroupId)
+                //    .HasConstraintName("FK_student_group_of_homework");
 
                 entity.HasOne(d => d.Mentor)
                     .WithMany(p => p.Homeworks)

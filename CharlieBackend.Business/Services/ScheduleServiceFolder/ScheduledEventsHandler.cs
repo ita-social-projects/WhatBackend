@@ -5,6 +5,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -12,154 +13,127 @@ using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services
 {
-    class ScheduledEventsHandler
+    static class ScheduledEventsHandler
     {
         public static IEnumerable<ScheduledEvent> GetEvents(EventOccurence source, ContextForCreateScheduleDTO context)
         {
+            PatternForCreateScheduleDTO data = EventOccuranceStorageParser.GetFullDataFromStorage(source.Storage);
+
+            EventDetail details = new EventDetail();
+
             switch (source.Pattern)
-            {                
-                case PatternType.Weekly:
-                    return GetRelatedEventsWeekly(source, context);
+            {
                 case PatternType.Daily:
-                    return GetRelatedEventsDaily(source, context);               
+                    details.index = 1;
+                    details.IsMonthlyRelated = false;
+                    details.del = GetStartDateDaily;
+                    break;
+                case PatternType.Weekly:
+                    details.count = data.DaysOfWeek.Count;
+                    details.index = 7;
+                    details.IsMonthlyRelated = false;
+                    details.del = GetStartDateWeekly;
+                    break;
                 case PatternType.AbsoluteMonthly:
-                    return GetRelatedEventsAbsoluteMonthly(source, context);
+                    details.count = data.Dates.Count;
+                    details.index = 1;
+                    details.IsMonthlyRelated = true;
+                    details.del = GetStartDateAbsoluteMonthly;
+                    break;
                 case PatternType.RelativeMonthly:
-                    return GetRelatedEventsRelativeMonthly(source, context);
+                    details.count = data.DaysOfWeek.Count;
+                    details.index = 1;
+                    details.IsMonthlyRelated = true;
+                    details.del = GetStartDateRelativeMonthly;
+                    details.startDate = new DateTime(source.EventStart.Year, source.EventStart.Month, 7 * (int)data.Index,
+                source.EventStart.Hour, source.EventStart.Minute, source.EventStart.Second);
+                    break;
                 default:
                     break;
             }
 
-            return null;
+            return GetEventsCollection(data, details, source, context);
         }
 
-        private static IEnumerable<ScheduledEvent> GetRelatedEventsWeekly(EventOccurence source, ContextForCreateScheduleDTO context)
+        private static IEnumerable<ScheduledEvent> GetEventsCollection(PatternForCreateScheduleDTO data, EventDetail details, 
+            EventOccurence source, ContextForCreateScheduleDTO context)
         {
-            (int interval, IList<DayOfWeek> daysCollection) data = EventOccuranceStorageParser.GetDataForWeekly(source.Storage);
-
-            for (int i = 0; i < data.daysCollection.Count; i++)
+            for (int i = 0; i < details.count; i++)
             {
-                DateTime targetStartDate = source.EventStart
-                    + new TimeSpan(source.EventStart.DayOfWeek <= data.daysCollection[i]
-                    ? data.daysCollection[i] - source.EventStart.DayOfWeek
-                    : 7 - (int)source.EventStart.DayOfWeek + (int)data.daysCollection[i], 0, 0, 0);
+                DateTime targetStartDate = details.del(details.startDate, i, data);
 
                 DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
                     source.EventFinish.Value.Hour, source.EventFinish.Value.Minute, source.EventFinish.Value.Second);
 
                 while (targetFinishDate <= source.EventFinish)
                 {
-                    yield return new ScheduledEvent
-                    {
-                        EventOccurence = source,
-                        EventOccurenceId = source.Id,
-                        StudentGroupId = source.StudentGroupId,
-                        EventStart = targetStartDate,
-                        EventFinish = targetFinishDate,
-                        MentorId = context.MentorID,
-                        ThemeId = context.ThemeID
-                    };
+                    yield return CreateEvent(targetStartDate, targetFinishDate, source, context);
 
-                    targetStartDate += new TimeSpan(7 * data.interval, 0, 0, 0);
-                    targetFinishDate += new TimeSpan(7 * data.interval, 0, 0, 0);
+                    if (details.IsMonthlyRelated)
+                    {
+                        details.startDate.AddMonths(details.index * data.Interval);
+                        details.startDate.AddMonths(details.index * data.Interval);
+                    }
+                    else
+                    {
+                        details.startDate.AddDays(details.index * data.Interval);
+                        details.startDate.AddDays(details.index * data.Interval);
+                    }
                 }
             }
         }
 
-        private static IEnumerable<ScheduledEvent> GetRelatedEventsDaily(EventOccurence source, ContextForCreateScheduleDTO context)
+        private static ScheduledEvent CreateEvent(DateTime targetStartDate, DateTime targetFinishDate, 
+            EventOccurence source, ContextForCreateScheduleDTO context)
         {
-            int interval = EventOccuranceStorageParser.GetDataForDaily(source.Storage);
-
-            DateTime targetStartDate = source.EventStart;
-
-            DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
-                source.EventFinish.Value.Hour, source.EventFinish.Value.Minute, source.EventFinish.Value.Second);
-
-            while (targetFinishDate <= source.EventFinish)
+            return new ScheduledEvent
             {
-                yield return new ScheduledEvent
-                {
-                    EventOccurence = source,
-                    EventOccurenceId = source.Id,
-                    StudentGroupId = source.StudentGroupId,
-                    EventStart = targetStartDate,
-                    EventFinish = targetFinishDate,
-                    MentorId = context.MentorID,
-                    ThemeId = context.ThemeID
-                };
-
-                targetStartDate += new TimeSpan(interval, 0, 0, 0);
-                targetFinishDate += new TimeSpan(interval, 0, 0, 0);
-            }
+                EventOccurence = source,
+                EventOccurenceId = source.Id,
+                StudentGroupId = source.StudentGroupId,
+                EventStart = targetStartDate,
+                EventFinish = targetFinishDate,
+                MentorId = context.MentorID,
+                ThemeId = context.ThemeID
+            };
         }
 
-        private static IEnumerable<ScheduledEvent> GetRelatedEventsAbsoluteMonthly(EventOccurence source, ContextForCreateScheduleDTO context)
+        private static DateTime GetStartDateWeekly(DateTime startDate, int i, PatternForCreateScheduleDTO data)
         {
-            (int interval, IList<int> daysCollection) data = EventOccuranceStorageParser.GetDataForAbsoluteMonthly(source.Storage);
-
-            for (int i = 0; i < data.daysCollection.Count; i++)
-            {
-                DateTime targetStartDate = source.EventStart
-                    + new TimeSpan(source.EventStart.Day <= data.daysCollection[i]
-                    ? data.daysCollection[i] - source.EventStart.Day
-                    : 7 - (int)source.EventStart.DayOfWeek + (int)data.daysCollection[i], 0, 0, 0);
-
-                DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
-                    source.EventFinish.Value.Hour, source.EventFinish.Value.Minute, source.EventFinish.Value.Second);
-
-                while (targetFinishDate <= source.EventFinish)
-                {
-                    yield return new ScheduledEvent
-                    {
-                        EventOccurence = source,
-                        EventOccurenceId = source.Id,
-                        StudentGroupId = source.StudentGroupId,
-                        EventStart = targetStartDate,
-                        EventFinish = targetFinishDate,
-                        MentorId = context.MentorID,
-                        ThemeId = context.ThemeID
-                    };
-
-                    targetStartDate.AddMonths(data.interval);
-                    targetFinishDate.AddMonths(data.interval);
-                }
-            }
+            return startDate.AddDays(startDate.DayOfWeek <= data.DaysOfWeek[i]
+                    ? data.DaysOfWeek[i] - startDate.DayOfWeek
+                    : 7 - (int)startDate.DayOfWeek + (int)data.DaysOfWeek[i]);
         }
 
-        private static IEnumerable<ScheduledEvent> GetRelatedEventsRelativeMonthly(EventOccurence source, ContextForCreateScheduleDTO context)
+        private static DateTime GetStartDateAbsoluteMonthly(DateTime startDate, int i, PatternForCreateScheduleDTO data)
         {
-            (int interval, MonthIndex index, IList<DayOfWeek> daysCollection) data 
-                = EventOccuranceStorageParser.GetDataForRelativeMonthly(source.Storage);
+            return startDate.Day <= data.Dates[i] ?
+                    new DateTime(startDate.Year, startDate.Month, data.Dates[i],
+                    startDate.Hour, startDate.Minute, startDate.Second) :
+                    new DateTime(startDate.Year, startDate.Month, data.Dates[i],
+                    startDate.Hour, startDate.Minute, startDate.Second).AddMonths(1);
+        }
 
-            DateTime relativeDate = new DateTime(source.EventStart.Year, source.EventStart.Month, 7 * (int)data.index, 
-                source.EventStart.Hour, source.EventStart.Minute, source.EventStart.Second); 
+        private static DateTime GetStartDateRelativeMonthly(DateTime startDate, int i, PatternForCreateScheduleDTO data)
+        {
+            return startDate.AddDays(startDate.DayOfWeek <= data.DaysOfWeek[i]
+                       ? data.DaysOfWeek[i] - startDate.DayOfWeek
+                       : 7 - (int)startDate.DayOfWeek + (int)data.DaysOfWeek[i]);
+        }
 
-            for (int i = 0; i < data.daysCollection.Count; i++)
-            {
-                DateTime targetStartDate = relativeDate.AddDays(relativeDate.DayOfWeek <= data.daysCollection[i]
-                       ? data.daysCollection[i] - relativeDate.DayOfWeek
-                       : 7 - (int)relativeDate.DayOfWeek + (int)data.daysCollection[i]);
+        private static DateTime GetStartDateDaily(DateTime startDate, int i, PatternForCreateScheduleDTO data)
+        {
+            return startDate;
+        }
 
-                DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
-                    source.EventFinish.Value.Hour, source.EventFinish.Value.Minute, source.EventFinish.Value.Second);
-
-                while (targetFinishDate <= source.EventFinish)
-                {
-                    yield return new ScheduledEvent
-                    {
-                        EventOccurence = source,
-                        EventOccurenceId = source.Id,
-                        StudentGroupId = source.StudentGroupId,
-                        EventStart = targetStartDate,
-                        EventFinish = targetFinishDate,
-                        MentorId = context.MentorID,
-                        ThemeId = context.ThemeID
-                    };                    
-                }
-
-                relativeDate.AddMonths(data.interval);
-                relativeDate.AddMonths(data.interval);
-            }
+        private delegate DateTime GetFirstDateDelegate(DateTime startDate, int index, PatternForCreateScheduleDTO data);
+        private struct EventDetail
+        {
+            public GetFirstDateDelegate del;
+            public DateTime startDate;
+            public bool IsMonthlyRelated;
+            public int index;
+            public int count;
         }
     }
 }
