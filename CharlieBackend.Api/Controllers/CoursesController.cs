@@ -46,7 +46,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return of list of courses</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
-        [HttpGet("isAvtive")]
+        [HttpGet("isActive")]
         public async Task<IList<CourseDto>> GetCourses(bool? isActive)
         {
             var courses = await _coursesService.GetCoursesAsync(isActive);
