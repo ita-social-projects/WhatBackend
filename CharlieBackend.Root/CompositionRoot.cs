@@ -56,6 +56,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IAttachmentService, AttachmentService>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             services.AddScoped<IBlobService, BlobService>();
+            services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             #endregion
         }
     }

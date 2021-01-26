@@ -28,48 +28,51 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
         {
-                var errors = await ValidateHomeworkRequest(createHomeworkDto)
-                        .ToListAsync();
+            var errors = await ValidateHomeworkRequest(createHomeworkDto)
+                    .ToListAsync();
                 
-                if (errors.Any())
+            if (errors.Any())
+            {
+                var errorsList = string.Join("; ", errors);
+
+                _logger.LogError("Homework create request has failed due to: " + errorsList);
+
+                return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, errorsList);
+            }
+
+            var lesson = _unitOfWork.LessonRepository.GetByIdAsync(createHomeworkDto.LessonId);
+
+            var newHomework = new Homework
+            {
+                DueDate = createHomeworkDto.DueDate,
+                LessonId = createHomeworkDto.LessonId,
+                TaskText = createHomeworkDto.TaskText,
+                Lesson = lesson.Result
+            };
+
+            _unitOfWork.HomeworkRepository.Add(newHomework);
+
+            if (createHomeworkDto.AttachmentIds?.Count > 0)
+            {
+                var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHomeworkDto.AttachmentIds);
+
+                newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
+
+                foreach (var attachment in attachments) 
                 {
-                    var errorsList = string.Join("; ", errors);
-
-                    _logger.LogError("Homework create request has failed due to: " + errorsList);
-
-                    return Result<HomeworkDto>.GetError(ErrorCode.ValidationError, errorsList);
-                }
-
-                var newHomework = new Homework
-                {
-                    DueDate = createHomeworkDto.DueDate,
-                    LessonId = createHomeworkDto.LessonId,
-                    TaskText = createHomeworkDto.TaskText
-                };
-
-                _unitOfWork.HomeworkRepository.Add(newHomework);
-
-                if (createHomeworkDto.AttachmentIds?.Count > 0)
-                {
-                    var attachments = await _unitOfWork.AttachmentRepository.GetAttachmentsByIdsAsync(createHomeworkDto.AttachmentIds);
-
-                    newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
-
-                    foreach (var attachment in attachments) 
+                newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
                     {
-                    newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
-                        {
-                            AttachmentId = attachment.Id,
-                            Attachment = attachment,
-                        });
-                    }
+                        AttachmentId = attachment.Id,
+                        Attachment = attachment,
+                    });
                 }
+            }
 
-                await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
-                _logger.LogInformation($"Homework with id {newHomework.Id} has been added");
+            _logger.LogInformation($"Homework with id {newHomework.Id} has been added");
 
-                return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
+            return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(newHomework));
         }
 
         public async Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long lessonId)

@@ -13,6 +13,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -176,11 +177,23 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
+
             #region Homework mapping
 
             CreateMap<Homework, HomeworkDto>()
                 .ForMember(dest => dest.AttachmentIds,
                         opt => opt.MapFrom(src => src.AttachmentsOfHomework
+                                .Select(y => y.AttachmentId).ToList()));
+            CreateMap<HomeworkDto, Homework>();
+
+            #endregion
+
+
+            #region HomeworkStudent mapping
+
+            CreateMap<HomeworkStudent, HomeworkStudentDto>()
+                .ForMember(dest => dest.AttachmentIds,
+                        opt => opt.MapFrom(src => src.AttachmentOfHomeworkStudents
                                 .Select(y => y.AttachmentId).ToList()));
             CreateMap<HomeworkDto, Homework>();
 

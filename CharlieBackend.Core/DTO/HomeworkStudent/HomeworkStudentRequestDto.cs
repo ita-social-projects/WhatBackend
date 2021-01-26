@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CharlieBackend.Core.DTO.Homework
+namespace CharlieBackend.Core.DTO.HomeworkStudent
 {
-    public class HomeworkRequestDto
+    public class HomeworkStudentRequestDto
     {
-        public DateTime? DueDate { get; set; }
-
         [Required]
-        public string TaskText { get; set; }
-
+        public long HomeworkId { get; set; }
+       
         [Required]
-        public long LessonId { get; set; }
+        public string HomeworkText { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
     }

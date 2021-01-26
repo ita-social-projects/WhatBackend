@@ -10,5 +10,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
 
         Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
+
+        Task<Lesson> GetLessonByHomeworkId(long homeworkId);
     }
 }
