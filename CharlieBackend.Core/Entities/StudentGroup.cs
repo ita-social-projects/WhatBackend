@@ -23,8 +23,8 @@ namespace CharlieBackend.Core.Entities
         
         public virtual IList<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
 
-        public virtual IList<Homework> Homeworks { get; set; }
-
         public virtual ICollection<ScheduledEvent> ScheduledEvents { get; set; }
+
+        public virtual IList<Homework> Homeworks { get; set; }
     }
 }
