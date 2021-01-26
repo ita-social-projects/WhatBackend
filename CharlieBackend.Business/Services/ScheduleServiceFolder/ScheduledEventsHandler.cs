@@ -19,7 +19,10 @@ namespace CharlieBackend.Business.Services
         {
             PatternForCreateScheduleDTO data = EventOccuranceStorageParser.GetFullDataFromStorage(source.Storage);
 
-            EventDetail details = new EventDetail();
+            EventDetail details = new EventDetail()
+            {
+                startDate = source.EventStart
+            };
 
             switch (source.Pattern)
             {
