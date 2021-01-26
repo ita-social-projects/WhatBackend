@@ -43,11 +43,11 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPost]
-        public async Task<ActionResult<EventOccurenceDTO>> PostSchedule([FromBody]CreateScheduleDto scheduleDTO)
+        public async Task<ActionResult<EventOccurenceDTO>> PostSchedule([FromBody] CreateScheduleDto scheduleDTO)
         {
             var resSchedule = await _scheduleService
                 .CreateScheduleAsync(scheduleDTO);
-                
+
             return resSchedule.ToActionResult();
         }
 
@@ -80,6 +80,18 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Кeturns all events that start or end in the given interval
+        /// </summary>
+        /// <response code="200">Successful return of schedules list</response>
+        /// <response code="HTTP: 404, API: 0">Error, start date is later than finish date</response>
+        public async Task<ActionResult<List<EventOccurenceDTO>>> GetEventsByDateAsunc(DateTime startTime, DateTime finishTime)
+        {
+            var foundSchedules = await _scheduleService.GetEventsByDateAsync(startTime, finishTime);
+
+            return foundSchedules.ToActionResult();
+        }
+
+        /// <summary>
         /// Updates shedule
         /// </summary>
         /// <response code="200">Successful update of schedule</response>
@@ -88,7 +100,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("{scheduleId}")]
-        public async Task<ActionResult<EventOccurenceDTO>> PutSchedule(long scheduleId, [FromBody]UpdateScheduleDto updateScheduleDto)
+        public async Task<ActionResult<EventOccurenceDTO>> PutSchedule(long scheduleId, [FromBody] UpdateScheduleDto updateScheduleDto)
         {
             var foundSchedules = await _scheduleService.UpdateStudentGroupAsync(scheduleId, updateScheduleDto);
 

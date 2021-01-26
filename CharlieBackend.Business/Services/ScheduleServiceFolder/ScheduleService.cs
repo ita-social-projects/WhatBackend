@@ -61,7 +61,7 @@ namespace CharlieBackend.Business.Services
             IEnumerable<ScheduledEvent> result = ScheduledEventsHandler.GetEvents(source, context);
 
             _unitOfWork.ScheduledEventRepository.AddRange(result);
-        }        
+        }
 
         public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id)
         {
@@ -153,6 +153,18 @@ namespace CharlieBackend.Business.Services
             }
         }
 
+        public async Task<Result<IList<EventOccurenceDTO>>> GetEventsByDateAsync(DateTime startTime, DateTime finishTime)
+        {
+            if (startTime > finishTime)
+            {
+                return Result<IList<EventOccurenceDTO>>.GetError(ErrorCode.ValidationError, "Start date is later then finish date.");
+            }
+
+            var events = await _unitOfWork.EventOccurenceRepository.GetEventOccurenceByDateAsync(startTime, finishTime);
+
+            return Result<IList<EventOccurenceDTO>>.GetSuccess(_mapper.Map<List<EventOccurenceDTO>>(events));
+        }
+
         private bool IsNotValidRepeating(EventOccurence entity)
         {
             return entity.Pattern != PatternType.Daily &&
@@ -221,7 +233,7 @@ namespace CharlieBackend.Business.Services
                     }
                     break;
                 case PatternType.RelativeMonthly:
-                    if ((request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0) 
+                    if ((request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0)
                         || (request.Pattern.Index != null ? request.Pattern.Index <= 0 : false))
                     {
                         error = "Target days not provided";

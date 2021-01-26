@@ -11,5 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public new Task<List<EventOccurence>> GetAllAsync();
 
         Task<List<EventOccurence>> GetSchedulesByStudentGroupIdAsync(long id);
+
+        Task<List<EventOccurence>> GetEventOccurenceByDateAsync(DateTime startTime, DateTime finishTime);
     }
 }

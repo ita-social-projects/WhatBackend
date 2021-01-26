@@ -18,5 +18,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         public Task<Result<IList<EventOccurenceDTO>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId);
 
         public Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long studentGroupId);
+
+        Task<Result<IList<EventOccurenceDTO>>> GetEventsByDateAsync(DateTime startTime, DateTime finishTime);
     }
 }
