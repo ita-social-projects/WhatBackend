@@ -25,7 +25,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<EventOccurenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
         {
-            string error = ValidateCreateScheduleRequest(createScheduleRequest);
+            string error = await ValidateCreateScheduleRequestAsync(createScheduleRequest);
 
             if (error != null)
             {
@@ -42,13 +42,14 @@ namespace CharlieBackend.Business.Services
 
         private EventOccurence CreateEventOccurence(CreateScheduleDto createScheduleRequest)
         {
-            EventOccurence result = new EventOccurence();
-
-            result.Pattern = createScheduleRequest.Pattern.Type;
-            result.StudentGroupId = createScheduleRequest.Context.GroupID;
-            result.EventStart = createScheduleRequest.Range.StartDate;
-            result.EventFinish = createScheduleRequest.Range.FinishDate.Value;
-            result.Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern);
+            EventOccurence result = new EventOccurence
+            {
+                Pattern = createScheduleRequest.Pattern.Type,
+                StudentGroupId = createScheduleRequest.Context.GroupID,
+                EventStart = createScheduleRequest.Range.StartDate,
+                EventFinish = createScheduleRequest.Range.FinishDate.Value,
+                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern)
+            };
 
             _unitOfWork.EventOccurenceRepository.Add(result);
 
@@ -115,10 +116,9 @@ namespace CharlieBackend.Business.Services
         {
             try
             {
-
                 if (scheduleDTO == null)
                 {
-                    return Result<EventOccurenceDTO>.GetError(ErrorCode.NotFound, "UpdateScheduleDto is null");
+                    return Result<EventOccurenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
                 }
                 var foundSchedule = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(scheduleId);
 
@@ -138,10 +138,8 @@ namespace CharlieBackend.Business.Services
 
                 foundSchedule.Pattern = updatedEntity.Pattern;
 
-                if (updatedEntity.Storage != null)
-                {
-                    foundSchedule.Storage = updatedEntity.Storage;
-                }
+                foundSchedule.Storage = updatedEntity.Storage;
+
                 await _unitOfWork.CommitAsync();
 
                 return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(foundSchedule));
@@ -158,8 +156,7 @@ namespace CharlieBackend.Business.Services
         private bool IsNotValidRepeating(EventOccurence entity)
         {
             return entity.Pattern != PatternType.Daily &&
-                entity.Pattern != default &&
-                      entity.Storage == null;
+                entity.Pattern != default;
         }
 
         private string Validate(EventOccurence schedule)
@@ -178,10 +175,63 @@ namespace CharlieBackend.Business.Services
             return null;
         }
 
-        private string ValidateCreateScheduleRequest(CreateScheduleDto request)
+        private async Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto request)
         {
-            //TODO: validation for createScheduleDTO here
-            return null;
+            if (request == null)
+            {
+                return "Request must not be null";
+            }
+
+            string error = null;
+
+            if (request.Pattern.Interval <= 0)
+            {
+                error = "Interval value out of range";
+            }
+
+            if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.Context.GroupID))
+            {
+                error = "Group does not exist";
+            }
+
+            if (request.Context.MentorID.HasValue && await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
+            {
+                error = "Mentor does not exist";
+            }
+
+            if (request.Context.ThemeID.HasValue && await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
+            {
+                error = "Theme does not exist";
+            }
+
+            switch (request.Pattern.Type)
+            {
+                case PatternType.Daily:
+                    break;
+                case PatternType.Weekly:
+                    if (request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0)
+                    {
+                        error = "Target days not provided";
+                    }
+                    break;
+                case PatternType.AbsoluteMonthly:
+                    if (request.Pattern.Dates == null || request.Pattern.Dates.Count == 0)
+                    {
+                        error = "Target dates not provided";
+                    }
+                    break;
+                case PatternType.RelativeMonthly:
+                    if ((request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0) 
+                        || (request.Pattern.Index != null ? request.Pattern.Index <= 0 : false))
+                    {
+                        error = "Target days not provided";
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            return error;
         }
     }
 }

@@ -24,10 +24,7 @@ namespace CharlieBackend.Core.DTO.Schedule
         [Required]
         [DataType(DataType.Time)]
         [EnumDataType(typeof(PatternType))]
-        public PatternType RepeatRate { get; set; }   //ToDo: likely to be removed
-
-        [Range(1, 31)]   
-        public uint? DayNumber { get; set; }
+        public PatternType Pattern { get; set; }   
     }
 }
 

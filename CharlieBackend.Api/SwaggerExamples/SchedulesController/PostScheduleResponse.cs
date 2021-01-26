@@ -18,8 +18,7 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                 StudentGroupId = 31,
                 EventStart = new DateTime(2020, 10, 12, 10, 15, 00),
                 EventFinish = new DateTime(2020, 10, 12, 10, 15, 00),
-                DayNumber = 2,
-                RepeatRate = PatternType.Weekly
+                Pattern = PatternType.Weekly
             };
         }
     }
