@@ -42,7 +42,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets cources
+        /// Gets courses
         /// </summary>
         /// <response code="200">Successful return of list of courses</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
