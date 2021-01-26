@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core;
+using System;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -32,7 +33,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, System.DateTime? startDate, System.DateTime? finishDate, long mentorId)
+        public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
         {
             return await _applicationContext.Lessons
                 .Where(x=> x.MentorId == mentorId)

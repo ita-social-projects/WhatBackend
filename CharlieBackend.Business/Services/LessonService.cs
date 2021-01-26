@@ -127,8 +127,6 @@ namespace CharlieBackend.Business.Services
             long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
                       
-            // question about 
-            // validation for student Group ???
             if (filterModel == default)
             {
                 return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentor.Id));

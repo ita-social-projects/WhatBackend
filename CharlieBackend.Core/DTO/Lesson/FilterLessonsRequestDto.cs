@@ -9,10 +9,10 @@ namespace CharlieBackend.Core.DTO.Lesson
     {
         public long? StudentGroupId { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime? StartDate { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime? FinishDate { get; set; }
     }
 }
