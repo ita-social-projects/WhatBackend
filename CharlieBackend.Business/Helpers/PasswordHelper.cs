@@ -61,8 +61,6 @@ namespace CharlieBackend.Business.Helpers
 
         public static string PasswordValidation(string password)
         {
-            char[] symbols = new[] { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '+', '=', '[', ']', '{', '}', ';', ':', '<', '>', '|', '.', '/', '?', ',', '-', '>', '<', '+', '=', '~' };
-
             if (string.IsNullOrWhiteSpace(password))
             {
                 return "Password should not be empty";
@@ -71,10 +69,13 @@ namespace CharlieBackend.Business.Helpers
             var hasNumber = new Regex(@"[0-9]+");
             var hasUpperChar = new Regex(@"[A-Z]+");
             var hasLowerChar = new Regex(@"[a-z]+");
+            var hasSpecialSymbol = new Regex(@"[#?!@$%^&*-]+");
 
-
-
-            if (!hasNumber.IsMatch(password))
+            if (password.Length < 8)
+            {
+                return "Password length must be more than 8";
+            }
+            else if (!hasNumber.IsMatch(password))
             {
                 return "Password should contain at least one numeric value";
             }
@@ -87,13 +88,9 @@ namespace CharlieBackend.Business.Helpers
             {
                 return "Password should contain at least one lower case letter";
             }
-            else if (password.IndexOfAny(symbols) != -1)
+            else if (hasSpecialSymbol.IsMatch(password))
             {
-                return "Password should contain only this thing '_'";
-            }
-            else if (password.Length < 8)
-            {
-                return "Password length must be more than 8";
+                return "Password can't contain any special character apart from underscore symbol";
             }
             else
             {
