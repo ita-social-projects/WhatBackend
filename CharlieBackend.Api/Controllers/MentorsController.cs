@@ -10,6 +10,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Api.SwaggerExamples.StudentsController;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,14 +24,16 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
+        private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, IAccountService accountService)
+        public MentorsController(IMentorService mentorService, IAccountService accountService, ILessonService lessonService)
         {
             _mentorService = mentorService;
             _accountService = accountService;
+            _lessonService = lessonService;
         }
 
         /// <summary>
@@ -46,7 +49,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
-            return createdMentorModel.ToActionResult(); ;
+            return createdMentorModel.ToActionResult();
         }
 
         /// <summary>
@@ -72,11 +75,11 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MentorDto>> GetMentorById(long id)
         {
-            var mentorModel = await _mentorService.GetMentorByIdAsync(id);
+            var mentorModelResult = await _mentorService.GetMentorByIdAsync(id);
 
-            if (mentorModel != null)
+            if (mentorModelResult != null)
             {
-                return Ok(mentorModel);
+                return mentorModelResult.ToActionResult();
             }
             return NotFound("Cannot find mentor with such id.");
         }
@@ -107,7 +110,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(MentorDto))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{mentorId}")]
-        public async Task<ActionResult> PutMentor(long mentorId, [FromBody]UpdateMentorDto mentorModel)
+        public async Task<ActionResult> PutMentor(long mentorId, [FromBody] UpdateMentorDto mentorModel)
         {
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
@@ -158,6 +161,21 @@ namespace CharlieBackend.Api.Controllers
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
             return disabledMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons  for mentor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given mentor</response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        {
+            var lessons = await _lessonService.GetAllLessonsForMentor(id);
+
+            return lessons.ToActionResult();
         }
     }
 }

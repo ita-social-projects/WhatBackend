@@ -112,7 +112,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}/homeworks")]
         public async Task<ActionResult> GetHomeworksOfStudentGroup(long id)
         {
-            var results = await _homeworkService.GetHomeworksByStudentGroupId(id);
+            var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
         }

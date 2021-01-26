@@ -22,6 +22,7 @@ using CharlieBackend.Business.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Data;
 
 namespace CharlieBackend.Api
 {
@@ -142,8 +143,10 @@ namespace CharlieBackend.Api
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dbContext)
         {
+            dbContext.Database.EnsureCreated();
+
             app.UseCors(builder =>
             {
                 builder
