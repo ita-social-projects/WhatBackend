@@ -17,12 +17,21 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId, 
+        public async Task<List<long>> GetGroupsIdsByCourseIdAndPeriodAsync(long courseId,
             DateTime? startDate, DateTime? finishDate)
         {
             List<long> groupIdsbyCourseIdAndPeriod = await GetGroupIds(startDate, finishDate, courseId);
 
             return groupIdsbyCourseIdAndPeriod;
+        }
+
+        public async Task<List<long>> GetGroupsIdsByCourseIdAsync(long courseId)
+        {
+            return await _applicationContext.StudentGroups
+                .AsNoTracking()
+                .Where(x => x.CourseId == courseId)
+                .Select(x => x.Id)
+                .ToListAsync();
         }
 
         public async Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId,
@@ -51,23 +60,24 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsIdsBygroupsIds = await _applicationContext.Students
                 .AsNoTracking()
-                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue 
-                && groupsIds.Contains(x.StudentGroupId.Value)))
+                .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentGroupId.HasValue
+                && groupsIds.ToList().Contains(x.StudentGroupId.Value)))
                 .Select(x => x.Id)
                 .ToListAsync();
 
             return studentsIdsBygroupsIds;
         }
 
-        public async Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(IEnumerable<long> studentIds, 
+        public async Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupIds)
         {
             var studentsVisitsList = await _applicationContext.Visits
                 .AsNoTracking()
-                .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                        .Any(x => studentIds.Contains(x.Student.Id)))
-                .WhereIf(studentGroupIds != default && studentGroupIds.Any(), 
-                        x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
+                .Where(x => studentIds.ToList().Contains((long)x.StudentId))
+                .WhereIf(studentGroupIds != default &&
+                         studentGroupIds.Any(),
+                         x => (x.Lesson.StudentGroupId != null) &&
+                         studentGroupIds.ToList().Contains((long)x.Lesson.StudentGroupId))
                 .Select(x => new StudentVisitDto
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
@@ -85,13 +95,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                 })
                 .Select(x => new AverageStudentVisitsDto
                 {
-                     CourseId = x.Key.CourseId,
-                     StudentGroupId = x.Key.GroupId,
-                     StudentId = x.Key.StudentId,
-                     StudentAverageVisitsPercentage = (int)((double)x
+                    CourseId = x.Key.CourseId,
+                    StudentGroupId = x.Key.GroupId,
+                    StudentId = x.Key.StudentId,
+                    StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
                       / (double)x.Count() * 100)
-                 }).ToList();
+                }).ToList();
 
             return studentsAverageVisitsList;
         }
@@ -100,8 +110,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             var studentsPresenceList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)))
+                    .Where(x => studentIds.ToList().Contains((long)x.StudentId))
                     .Select(x => new StudentVisitDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
@@ -110,18 +119,59 @@ namespace CharlieBackend.Data.Repositories.Impl
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
-                    }).ToListAsync();
+                    })
+                    .ToListAsync();
 
             return studentsPresenceList;
+        }
+
+        public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentVisitDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        Presence = x.Presence,
+                    })
+                    .ToListAsync();
+        }
+
+        public async Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
+            DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.Visits
+                    .AsNoTracking()
+                    .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
+                    .WhereIf(startDate != null && startDate != default(DateTime),
+                            x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime),
+                            x => x.Lesson.LessonDate <= finishDate)
+                    .Select(x => new StudentMarkDto
+                    {
+                        CourseId = x.Lesson.StudentGroup.CourseId,
+                        StudentGroupId = (long)x.Lesson.StudentGroupId,
+                        StudentId = (long)x.StudentId,
+                        LessonId = x.LessonId,
+                        LessonDate = x.Lesson.LessonDate,
+                        StudentMark = x.StudentMark,
+                    }).ToListAsync();
         }
 
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds)
         {
             var studentsMarksList = await _applicationContext.Visits
                     .AsNoTracking()
-                    .Where(x => x.Lesson.StudentGroup.StudentsOfStudentGroups
-                    .Any(x => studentIds.Contains(x.Student.Id)) 
-                    && x.StudentMark != null)
+                    .Where(x => (x.StudentId != default) &&
+                                studentIds.ToList().Contains((long)x.StudentId))
                     .Select(x => new StudentMarkDto
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
@@ -135,7 +185,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
-        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds, 
+        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
             if (!studentGroupsIds.Any())
@@ -150,10 +200,10 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds, 
+        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
-            return await _applicationContext.Visits
+              return await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
                     .Where(x => studentIds.Contains((long)x.StudentId))
@@ -162,7 +212,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         CourseId = x.Lesson.StudentGroup.CourseId,
                         StudentGroupId = x.Lesson.StudentGroupId,
-                        StudentLessonMark = x.StudentMark,
+                        StudentLessonMark = (decimal)x.StudentMark,
                         StudentId = x.StudentId
                     })
                     .AsQueryable()
@@ -177,8 +227,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                         CourseId = x.Key.CourseId,
                         StudentGroupId = (long)x.Key.GroupId,
                         StudentId = (long)x.Key.StudentId,
-                        StudentAverageMark = Math.Round(x.Sum(x => (double)x.StudentLessonMark)
-                        / x.Count(), 2)
+                        StudentAverageMark = x.Average(s => s.StudentLessonMark)
                     }
                     ).ToListAsync();
         }
@@ -211,7 +260,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     StudentId = x.Key.StudentId,
                     StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
-                      / (double)x.Count() * 100)
+                      / x.Count() * 100)
                 }).ToList();
 
             return StudentAverageVisitsPercentage;
@@ -261,11 +310,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .AsNoTracking()
                 .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
                 .Where(x => x.StudentMark != null)
-                .Select( x => new
+                .Select(x => new
                 {
                     CourseId = x.Lesson.StudentGroup.CourseId,
                     StudentGroupId = (long)x.Lesson.StudentGroupId,
-                    StudentMark = x.StudentMark
+                    StudentMark = (decimal)x.StudentMark
                 })
                 .AsQueryable()
                 .GroupBy(x => new
@@ -277,7 +326,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     CourseId = x.Key.CourseId,
                     StudentGroupId = x.Key.GroupId,
-                    AverageMark = Math.Round(x.Average(x => (double)x.StudentMark), 2)
+                    AverageMark = x.Average(x => x.StudentMark)
                 }).ToListAsync();
 
             return studentGroupMarskList;

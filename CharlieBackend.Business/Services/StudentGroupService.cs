@@ -45,6 +45,11 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
+                if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
+                }
+
                 var studentGroup = new StudentGroup
                 {
                     Name = studentGroupDto.Name,
@@ -160,6 +165,11 @@ namespace CharlieBackend.Business.Services
                 if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                }
+
+                if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
                 }
 
                 foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;

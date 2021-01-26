@@ -22,7 +22,7 @@ namespace CharlieBackend.Core.Entities
         public virtual IList<EventOccurence> EventOccurances { get; set; }
         
         public virtual IList<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
-
+        
         public virtual ICollection<ScheduledEvent> ScheduledEvents { get; set; }
     }
 }

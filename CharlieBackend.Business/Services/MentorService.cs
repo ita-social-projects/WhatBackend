@@ -7,6 +7,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Linq;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Business.Services
 {
@@ -16,7 +17,7 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-
+       
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
                              IMapper mapper, INotificationService notification)
         {

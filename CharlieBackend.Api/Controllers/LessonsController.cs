@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -102,6 +102,7 @@ namespace CharlieBackend.Api.Controllers
             return lessons.ToActionResult();
         }
 
+        
         /// <summary>
         /// Updates given lesson
         /// </summary>

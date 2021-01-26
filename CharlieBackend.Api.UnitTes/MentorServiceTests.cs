@@ -56,6 +56,8 @@ namespace CharlieBackend.Api.UnitTest
                 .Callback<Mentor>(x => x.Id = mentorExpectedId);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
 
+            var lessonServiceMock = new Mock<ILessonService>();
+
             var mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
@@ -138,6 +140,8 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(alreadyExistingEmailMentor);
 
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
+
+            var lessonServiceMock = new Mock<ILessonService>();
 
             var mentorService = new MentorService(
                 _accountServiceMock.Object,

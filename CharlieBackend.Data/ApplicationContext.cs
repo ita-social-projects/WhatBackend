@@ -8,7 +8,6 @@ namespace CharlieBackend.Data
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
@@ -553,8 +552,8 @@ namespace CharlieBackend.Data
                 entity.ToTable("homework");
 
                 entity.HasIndex(e =>
-                    new { e.MentorId, e.StudentGroupId })
-                    .HasName("mentor_and_student_group_id");
+                    new { e.LessonId })
+                    .HasName("lesson");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -568,19 +567,12 @@ namespace CharlieBackend.Data
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_0900_ai_ci");
 
-                entity.Property(e => e.MentorId).HasColumnName("mentor_id");
+                entity.Property(e => e.LessonId).HasColumnName("lesson_id");
 
-                entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
-
-                entity.HasOne(e => e.StudentGroup)
+                entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Homeworks)
-                    .HasForeignKey(d => d.StudentGroupId)
-                    .HasConstraintName("FK_student_group_of_homework");
-
-                entity.HasOne(d => d.Mentor)
-                    .WithMany(p => p.Homeworks)
-                    .HasForeignKey(d => d.MentorId)
-                    .HasConstraintName("FK_mentor_of_homework");
+                    .HasForeignKey(d => d.LessonId)
+                    .HasConstraintName("FK_lesson_of_homework");
             });
 
             modelBuilder.Entity<AttachmentOfHomework>(entity =>
