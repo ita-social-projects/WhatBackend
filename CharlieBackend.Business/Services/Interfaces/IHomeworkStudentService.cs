@@ -13,5 +13,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId, ClaimsPrincipal userContext);
 
         Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent(ClaimsPrincipal userContext);
+
+        Task<Result<HomeworkStudentDto>> UpdateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, ClaimsPrincipal userContext, long homeworkId);
     }
 }

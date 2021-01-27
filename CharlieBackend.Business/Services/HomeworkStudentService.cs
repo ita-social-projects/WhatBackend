@@ -29,8 +29,13 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, ClaimsPrincipal userContext)
         {
-            var errors = await ValidateHomeworStudentRequest(homeworkStudent).ToListAsync();
+            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
 
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
+
+            var errors = await ValidateHomeworStudentRequest(homeworkStudent, student, homework).ToListAsync();
+            
             if (errors.Any())
             {
                 var errorsList = string.Join("; ", errors);
@@ -38,24 +43,6 @@ namespace CharlieBackend.Business.Services
                 _logger.LogError("Homework create request has failed due to: " + errorsList);
 
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, errorsList);
-            }
-
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
-
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
-            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
-
-            if (!studentGroups.Contains(lesson.StudentGroupId.Value))
-            {
-                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Student with {accountId} Id number not include in student group which have been lesson with {lesson.Id} Id number");
-            }
-
-            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
-
-            if (homework.DueDate < DateTime.Now)
-            {
-                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Due date already finished. Due date {homework.DueDate}");
             }
 
             var newHomework = new HomeworkStudent
@@ -91,6 +78,61 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(newHomework));
         }
 
+        public async Task<Result<HomeworkStudentDto>> UpdateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, ClaimsPrincipal userContext, long homeworkId)
+        {
+            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
+           
+            var errors = await ValidateHomeworStudentRequest(homeworkStudent, student, homework).ToListAsync();
+
+            if (errors.Any())
+            {
+                var errorsList = string.Join("; ", errors);
+
+                _logger.LogError("Homework create request has failed due to: " + errorsList);
+
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, errorsList);
+            }
+
+            var foundStudentHomework = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(homeworkId);
+
+            if (foundStudentHomework == null)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not Found");
+            }
+            if (foundStudentHomework.StudentId != student.Id)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Sorry, but homework with id{foundStudentHomework.HomeworkId} not yours, choose correct homework");
+            }
+
+            if (homework.DueDate < DateTime.Now)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Due date already finished. Due date {homework.DueDate}");
+            }
+
+            foundStudentHomework.HomeworkText = homeworkStudent.HomeworkText;
+           
+            var newAttachments = new List<AttachmentOfHomeworkStudent>();
+
+            if (homeworkStudent.AttachmentIds?.Count() > 0)
+            {
+                newAttachments = homeworkStudent.AttachmentIds.Select(x => new AttachmentOfHomeworkStudent
+                {
+                    HomeworkStudentId = foundStudentHomework.HomeworkId,
+                    HomeworkStudent = foundStudentHomework,
+                    AttachmentId = x
+
+                }).ToList();
+
+                _unitOfWork.HomeworkStudentRepository.UpdateManyToMany(foundStudentHomework.AttachmentOfHomeworkStudents, newAttachments);
+            }
+            
+            await _unitOfWork.CommitAsync();
+
+            return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(foundStudentHomework));
+        }
+
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent(ClaimsPrincipal userContext)
         {
             long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
@@ -111,19 +153,32 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        private async IAsyncEnumerable<string> ValidateHomeworStudentRequest(HomeworkStudentRequestDto request)
+        private async IAsyncEnumerable<string> ValidateHomeworStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
         {
-            if (request == default)
+            if (homeworkStudent == default)
             {
                 yield return "Please provide request data";
                 yield break;
             }
-            
-            if (request.AttachmentIds?.Count() > 0)
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
+
+            if (!studentGroups.Contains(lesson.StudentGroupId.Value))
+            {
+                yield return  $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
+            }
+
+            if (homework.DueDate < DateTime.Now)
+            {
+                yield return $"Due date already finished. Due date {homework.DueDate}";
+            }
+
+            if (homeworkStudent.AttachmentIds?.Count() > 0)
             {
                 var nonExistingAttachment = new List<long>();
 
-                foreach (var attachmentId in request.AttachmentIds)
+                foreach (var attachmentId in homeworkStudent.AttachmentIds)
                 {
                     var doesAttachmentExist = await _unitOfWork.AttachmentRepository
                         .IsEntityExistAsync(attachmentId);

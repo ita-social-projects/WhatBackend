@@ -33,6 +33,10 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Adds homework from student
         /// </summary>
+        /// <param name="request">
+        /// 1.HomeworkId -  it is id homework which one student done 
+        /// 2.HomeworkTest - here Student can write his Homework or something else
+        /// 3.Attacment(LIst) -   here must be Id of Attachment where student uploaded materials for his Homework</param>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")] //?? admin 
         [HttpPost]
@@ -63,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
         /// Gets student homework for Mentor by homework id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
-        [Authorize(Roles = "mentor")]
+        [Authorize(Roles = "Mentor")]
         [HttpGet("{homeworkId}")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForMentorByHomeworkId(long homeworkId)
         {
@@ -71,6 +75,20 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkStudentService.GetHomeworkStudentForMentorByHomeworkId(homeworkId, userContext);
 
             return results;
+        }
+
+        /// <summary>
+        /// Update student homework
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Student")]
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutHomework(long id, [FromBody] HomeworkStudentRequestDto updateHomeworkDto)
+        {
+            var userContext = HttpContext.User;
+            var results = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(updateHomeworkDto, userContext, id);
+
+            return results.ToActionResult();
         }
     }
 }

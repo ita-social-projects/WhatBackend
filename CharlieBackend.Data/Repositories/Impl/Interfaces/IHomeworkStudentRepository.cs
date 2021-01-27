@@ -11,5 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<IList<HomeworkStudent>> GetHomeworkStudentForStudentByStudentId(long id);
 
         Task<IList<HomeworkStudent>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId);
+
+        void UpdateManyToMany(IEnumerable<AttachmentOfHomeworkStudent> currentHomeworkAttachments,
+                            IEnumerable<AttachmentOfHomeworkStudent> newHomeworkAttachments);
     }
 }
