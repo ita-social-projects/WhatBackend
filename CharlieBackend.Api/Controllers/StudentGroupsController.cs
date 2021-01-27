@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Business.Services.Interfaces;
+using System;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -115,6 +116,20 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets student groups between dates
+        /// </summary>
+        /// <returns>List of Student groups sorted by date</returns>
+        [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
+        [Authorize(Roles ="Admin, Secretary")]
+        [HttpGet("dates")]
+        public async Task<ActionResult> GetStudentGroupsByDate(DateTime startDate,DateTime finishDate)
+        {
+            var resultStudenetGroupDtos = await _studentGroupService.GetStudentGroupsByDateAsyns(startDate,finishDate);
+
+            return resultStudenetGroupDtos.ToActionResult();
         }
     }
 }
