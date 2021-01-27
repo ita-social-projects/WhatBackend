@@ -46,7 +46,7 @@ namespace CharlieBackend.Business.Services
                 };
                 string answerFromPasswordValidation = PasswordHelper.PasswordValidation(accountModel.Password);
 
-                if (answerFromPasswordValidation != null)
+                if (answerFromPasswordValidation.Length!=0)
                 {
                     return Result<AccountDto>.GetError(ErrorCode.ValidationError, answerFromPasswordValidation);
                 }
