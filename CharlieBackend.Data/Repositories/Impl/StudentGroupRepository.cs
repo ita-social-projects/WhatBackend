@@ -121,8 +121,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.StudentGroups
                 .AsNoTracking()
-                .Where(x => x.StartDate < finishDate && x.StartDate >= startDate || 
-                       x.FinishDate > startDate && x.FinishDate <= finishDate)
+                .Where(x => (x.StartDate < finishDate && x.StartDate >= startDate) || 
+                       (x.FinishDate > startDate && x.FinishDate <= finishDate))
                 .Where(x => x.Course.IsActive)
                 .OrderBy(x => x.StartDate)
                 .ToListAsync();
