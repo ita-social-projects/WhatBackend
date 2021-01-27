@@ -7,6 +7,7 @@ using CharlieBackend.Data.Repositories.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Business.Services.FileServices;
 
 namespace CharlieBackend.Root
 {
@@ -37,9 +38,6 @@ namespace CharlieBackend.Root
             services.AddScoped<IMentorService, MentorService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
-            services.AddScoped<IStudentImportService, StudentImportService>();
-            services.AddScoped<IThemeImportService, ThemeImportService>();
-            services.AddScoped<IStudentGroupImportService, StudentGroupImportService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IThemeRepository, ThemeRepository>();
@@ -56,6 +54,8 @@ namespace CharlieBackend.Root
             services.AddScoped<IAttachmentService, AttachmentService>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             services.AddScoped<IBlobService, BlobService>();
+            services.AddScoped<IBaseFileService, BaseFileService>();
+            services.AddScoped<IXLSFileService, XLSFileService>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             #endregion
         }
