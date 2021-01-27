@@ -45,9 +45,9 @@ namespace CharlieBackend.Api.Controllers
         /// Gets courses
         /// </summary>
         /// <param name="isActive">
-        /// 1. If IsActive true method return all active Courses.
-        /// 2. If IsActive false method return all not active Courses.
-        /// 3. If IsActive null method return all courses. </param>
+        /// 1. If IsActive is true – endpoint returns all active Courses.
+        /// 2. If IsActive is false – endpoint returns all not active Courses.
+        /// 3. If IsActive is null – endpoint returns all courses. </param>
         /// <response code="200">Successful return of list of courses</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("isActive")]
