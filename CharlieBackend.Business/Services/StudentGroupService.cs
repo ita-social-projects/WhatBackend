@@ -45,6 +45,11 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
+                if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
+                }
+
                 var studentGroup = new StudentGroup
                 {
                     Name = studentGroupDto.Name,
@@ -172,6 +177,11 @@ namespace CharlieBackend.Business.Services
                     foundStudentGroup.Name = updatedStudentGroupDto.Name;
                 }
 
+                if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
+                }
+                
                 if (updatedStudentGroupDto.StartDate != null)
                 {
                     foundStudentGroup.StartDate = (DateTime?)(updatedStudentGroupDto.StartDate) ?? foundStudentGroup.StartDate;
@@ -251,6 +261,18 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+        }
+
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime startDate, DateTime finishDate)
+        {
+            if (startDate > finishDate)
+            {
+                return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError,"Start date is later then finish date.");
+            }
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
+
+            return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
         }
 
         public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)

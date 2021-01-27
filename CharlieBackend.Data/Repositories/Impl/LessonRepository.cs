@@ -5,6 +5,8 @@ using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core;
+using System;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -21,6 +23,23 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Include(lesson => lesson.Visits)
                     .Include(lesson => lesson.Theme)
                     .ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
+        {
+            return await _applicationContext.Lessons
+                .Where(lesson => lesson.MentorId == mentorId)
+                .Select(lesson => lesson)
+                .ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
+        {
+            return await _applicationContext.Lessons
+                .Where(x=> x.MentorId == mentorId)
+                .WhereIf(studentGroupId != default, x => x.StudentGroupId == studentGroupId)
+                .WhereIf((startDate != default) && (finishDate != default), x => (startDate < x.LessonDate) && (x.LessonDate < finishDate))
+                .ToListAsync();
         }
 
         public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)

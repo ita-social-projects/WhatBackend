@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.DTO;
 using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
@@ -10,6 +9,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Api.SwaggerExamples.StudentsController;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,20 +23,22 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly IAccountService _accountService;
+        private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, IAccountService accountService)
+        public MentorsController(IMentorService mentorService, IAccountService accountService, ILessonService lessonService)
         {
             _mentorService = mentorService;
             _accountService = accountService;
+            _lessonService = lessonService;
         }
 
         /// <summary>
-        /// Assign account to mentor
+        /// Assign account to mentor 
         /// </summary>
-        /// <response code="200">Successful assigning of account to mentor</response>
+        /// <response code="200">Successful assigning of account to mentor </response>
         /// <response code="HTTP: 404, API: 3">Can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(MentorDto))]
@@ -47,6 +49,21 @@ namespace CharlieBackend.Api.Controllers
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             return createdMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Get filter list of lessons for mentor
+        /// </summary>
+        /// <response code="200">Returned filtered list of lessons for mentor </response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Mentor")]
+        [HttpPost("lessons")]
+        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
+        {
+            var context = HttpContext.User;
+            var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel, context);
+
+            return lessons;
         }
 
         /// <summary>
@@ -61,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
 
             return mentors;
         }
-
+        
         /// <summary>
         /// Get mentor information by mentor id
         /// </summary>
@@ -158,6 +175,21 @@ namespace CharlieBackend.Api.Controllers
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
             return disabledMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons  for mentor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given mentor</response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        {
+            var lessons = await _lessonService.GetAllLessonsForMentor(id);
+
+            return lessons.ToActionResult();
         }
     }
 }

@@ -12,10 +12,7 @@ namespace CharlieBackend.Core.DTO.Homework
         public string TaskText { get; set; }
 
         [Required]
-        public long StudentGroupId { get; set; }
-
-        [Required]
-        public long MentorId { get; set; }
+        public long LessonId { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
     }

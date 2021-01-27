@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
 using System.Linq;
+using System.Security.Claims;
 
 namespace CharlieBackend.Business.Services
 {
@@ -105,6 +106,37 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(listLessons);
         }
 
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId)
+        {
+            if (mentorId == default)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Mentor Id please");
+            }
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(mentorId) == null)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Mentor with id {mentorId} is not Found");
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentorId);
+
+            return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
+        }
+
+        public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel, ClaimsPrincipal userContext)
+        {
+            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
+                      
+            if (filterModel == default)
+            {
+                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentor.Id));
+            }
+
+            var lessonsForMentro = await _unitOfWork.LessonRepository.GetLessonsForMentorAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, mentor.Id);
+
+            return _mapper.Map<IList<LessonDto>>(lessonsForMentro);
+        }
+         
         public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
             var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
