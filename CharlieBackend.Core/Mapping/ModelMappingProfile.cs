@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
