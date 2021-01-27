@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using CharlieBackend.Core.DTO;
 using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
@@ -37,9 +36,9 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Assign account to mentor
+        /// Assign account to mentor 
         /// </summary>
-        /// <response code="200">Successful assigning of account to mentor</response>
+        /// <response code="200">Successful assigning of account to mentor </response>
         /// <response code="HTTP: 404, API: 3">Can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(MentorDto))]
@@ -50,6 +49,21 @@ namespace CharlieBackend.Api.Controllers
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             return createdMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Get filter list of lessons for mentor
+        /// </summary>
+        /// <response code="200">Returned filtered list of lessons for mentor </response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Mentor")]
+        [HttpPost("lessons")]
+        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
+        {
+            var context = HttpContext.User;
+            var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel, context);
+
+            return lessons;
         }
 
         /// <summary>
@@ -64,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
 
             return mentors;
         }
-
+        
         /// <summary>
         /// Get mentor information by mentor id
         /// </summary>
