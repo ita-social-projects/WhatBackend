@@ -34,16 +34,6 @@ namespace CharlieBackend.Business.Services
                 return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
             }
 
-            var result = CreateEventOccurence(createScheduleRequest);
-            CreateSceduledEvents(result, createScheduleRequest.Context, createScheduleRequest.Pattern);
-
-            await _unitOfWork.CommitAsync();
-
-            return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(result));
-        }
-
-        private EventOccurence CreateEventOccurence(CreateScheduleDto createScheduleRequest)
-        {
             EventOccurence result = new EventOccurence
             {
                 Pattern = createScheduleRequest.Pattern.Type,
@@ -55,15 +45,14 @@ namespace CharlieBackend.Business.Services
 
             _unitOfWork.EventOccurenceRepository.Add(result);
 
-            return result;
-        }
-
-        private void CreateSceduledEvents(EventOccurence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
-        {
-            IScheduledEventHandler creator = new ScheduledEventHandler(source, context, pattern);;
+            IScheduledEventHandler creator = new ScheduledEventHandler(result, createScheduleRequest.Context, createScheduleRequest.Pattern); ;
 
             _unitOfWork.ScheduledEventRepository.AddRange(creator.GetEvents());
-        }        
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(result));
+        }       
 
         public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id)
         {
