@@ -9,14 +9,16 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IScheduleService
     {
-        public Task<Result<ScheduleDto>> CreateScheduleAsync(CreateScheduleDto scheduleModel);
+        public Task<Result<EventOccurenceDTO>> CreateScheduleAsync(CreateScheduleDto scheduleModel);
 
-        public Task<Result<IList<ScheduleDto>>> GetAllSchedulesAsync();
+        public Task<Result<IList<EventOccurenceDTO>>> GetAllSchedulesAsync();
 
-        public Task<Result<ScheduleDto>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleModel);
+        public Task<Result<EventOccurenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleModel);
 
-        public Task<Result<IList<ScheduleDto>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId);
+        public Task<Result<IList<EventOccurenceDTO>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId);
 
-        public Task<Result<ScheduleDto>> DeleteScheduleByIdAsync(long studentGroupId);
+        public Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long studentGroupId);
+
+        Task<Result<IList<EventOccurenceDTO>>> GetEventsByDateAsync(DateTime startTime, DateTime finishTime);
     }
 }

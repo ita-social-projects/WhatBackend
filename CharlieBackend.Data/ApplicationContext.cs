@@ -34,7 +34,9 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Visit> Visits { get; set; }
         
-        public virtual DbSet<Schedule> Schedules { get; set; }
+        public virtual DbSet<EventOccurence> EventOccurences { get; set; }
+
+        public virtual DbSet<ScheduledEvent> ScheduledEvents { get; set; }
 
         public virtual DbSet<Attachment> Attachments { get; set; }
 
@@ -437,30 +439,76 @@ namespace CharlieBackend.Data
                     .HasConstraintName("FK_student_of_visit");
             });
 
-            modelBuilder.Entity<Schedule>(entity =>
+            modelBuilder.Entity<EventOccurence>(entity =>
             {
-                entity.ToTable("schedule");
+                entity.ToTable("event_occurence");
                 
                 entity.HasIndex(e => e.StudentGroupId)
-                    .HasName("FK_student_group_of_schedule");
+                    .HasName("fk_scheduled_events_student_group1");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.LessonStart).HasColumnName("lesson_start");
+                entity.Property(e => e.EventStart).HasColumnName("event_start");
 
-                entity.Property(e => e.LessonEnd).HasColumnName("lesson_end");
+                entity.Property(e => e.EventFinish).HasColumnName("event_finish");
 
                 entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
 
-                entity.Property(e => e.RepeatRate).HasColumnName("repeat_rate");
+                entity.Property(e => e.Pattern).HasColumnName("pattern");
 
-                entity.Property(e => e.DayNumber).HasColumnName("day_number");
+                entity.Property(e => e.Storage).HasColumnName("storage");
 
                 entity.HasOne(d => d.StudentGroup)
-                    .WithMany(p => p.Schedule)
+                    .WithMany(p => p.EventOccurances)
                     .HasForeignKey(d => d.StudentGroupId)
-                    .HasConstraintName("FK_student_group_of_schedule");
+                    .HasConstraintName("fk_scheduled_events_student_group1");
             });
+
+            modelBuilder.Entity<ScheduledEvent>(entity =>
+            {
+                entity.ToTable("scheduled_event");
+
+                entity.Property(x => x.Id).HasColumnName("id");
+
+                entity.Property(x => x.EventOccurenceId).HasColumnName("event_occurence_id").HasColumnType("bigint(20)");                       
+
+                entity.HasOne(x => x.EventOccurence)
+                    .WithMany(x => x.ScheduledEvents)
+                    .HasForeignKey(x => x.EventOccurenceId)
+                    .HasConstraintName("fk_scheduled_events_event_occurence1");
+
+                entity.Property(x => x.StudentGroupId).HasColumnName("student_group_id").HasColumnType("bigint(20)");
+
+                entity.HasOne(x => x.StudentGroup)
+                    .WithMany(x => x.ScheduledEvents)
+                    .HasForeignKey(x => x.StudentGroupId)
+                    .HasConstraintName("fk_scheduled_events_student_group1");
+                
+                entity.Property(x => x.ThemeId).HasColumnName("theme_id").HasColumnType("bigint(20)");
+
+                entity.HasOne(x => x.Theme)
+                    .WithMany(x => x.ScheduledEvents)
+                    .HasForeignKey(x => x.ThemeId)
+                    .HasConstraintName("fk_scheduled_events_theme1");
+
+                entity.Property(x => x.MentorId).HasColumnName("mentor_id").HasColumnType("bigint(20)");
+
+                entity.HasOne(x => x.Mentor)
+                    .WithMany(x => x.ScheduledEvents)
+                    .HasForeignKey(x => x.MentorId)
+                    .HasConstraintName("fk_scheduled_events_mentor1");
+
+                entity.Property(x => x.LessonId).HasColumnName("lesson_id").HasColumnType("bigint(20)");
+
+                entity.HasOne(x => x.Lesson)
+                    .WithOne(x => x.ScheduledEvent)
+                    .HasConstraintName("fk_scheduled_events_lesson1");
+
+                entity.Property(x => x.EventStart).HasColumnName("event_start").HasColumnType("datetime");
+
+                entity.Property(x => x.EventFinish).HasColumnName("event_finish").HasColumnType("datetime");
+            }
+            );
 
             modelBuilder.Entity<Attachment>(entity =>
             {
