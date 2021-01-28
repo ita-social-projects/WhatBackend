@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Services.ScheduleServiceFolder;
 
 namespace CharlieBackend.Business.Services
 {
@@ -33,7 +35,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var result = CreateEventOccurence(createScheduleRequest);
-            CreateSceduledEvents(result, createScheduleRequest.Context);
+            CreateSceduledEvents(result, createScheduleRequest.Context, createScheduleRequest.Pattern);
 
             await _unitOfWork.CommitAsync();
 
@@ -56,11 +58,11 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        private void CreateSceduledEvents(EventOccurence source, ContextForCreateScheduleDTO context)
+        private void CreateSceduledEvents(EventOccurence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
         {
-            IEnumerable<ScheduledEvent> result = ScheduledEventsHandler.GetEvents(source, context);
+            IScheduledEventHandler creator = new ScheduledEventHandler(source, context, pattern);;
 
-            _unitOfWork.ScheduledEventRepository.AddRange(result);
+            _unitOfWork.ScheduledEventRepository.AddRange(creator.GetEvents());
         }        
 
         public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id)

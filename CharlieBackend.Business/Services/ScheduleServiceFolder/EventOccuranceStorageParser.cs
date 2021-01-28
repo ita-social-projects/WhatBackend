@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 
-namespace CharlieBackend.Business.Services
+namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
-    static class EventOccuranceStorageParser
+    public static  class EventOccuranceStorageParser
     {
         private static int _daysInWeek = 7;
         private static int _maxDaysInMonth = 31;
         private static int _possibleMonthIndexOptionsNumber = 5;
 
-        internal static long GetPatternStorageValue(PatternForCreateScheduleDTO source)
+        public static long GetPatternStorageValue(PatternForCreateScheduleDTO source)
         {
             (long result, long position) data = (0, 1);
 
