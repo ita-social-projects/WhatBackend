@@ -66,25 +66,26 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> GetAccountCredentialsAsync(AuthenticationDto authenticationModel)
         {
-            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(authenticationModel.Email);
+            var account = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(authenticationModel.Email);
 
-            if (salt != "")
+            if (account != null)
             {
-                authenticationModel.Password = PasswordHelper.HashPassword(authenticationModel.Password, salt);
+                string password = PasswordHelper.HashPassword(authenticationModel.Password, account.Salt);
 
-                var accountCredentials = await _unitOfWork.AccountRepository.GetAccountCredentials(authenticationModel);
-
-                if(accountCredentials == null)
+                if(password != account.Password)
                 {
                     return Result<AccountDto>.GetError(ErrorCode.Unauthorized, "Email or password is incorrect.");
                 }
+                else
+                {
+                    var foundAccount = _mapper.Map<AccountDto>(account);
 
-                var foundAccount = _mapper.Map<AccountDto>(accountCredentials);
-
-                return Result<AccountDto>.GetSuccess(foundAccount);
+                    return Result<AccountDto>.GetSuccess(foundAccount);
+                }
             }
 
             return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
+
         }
 
         public async Task<IList<AccountDto>> GetAllAccountsAsync()
