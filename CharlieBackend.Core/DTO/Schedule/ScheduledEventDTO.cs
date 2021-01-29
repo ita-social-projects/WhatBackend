@@ -20,6 +20,8 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public long? ThemeId { get; set; }
 
+        public string ThemeName { get; set; }
+
         public long? MentorId { get; set; }
 
         public long? LessonId { get; set; }
