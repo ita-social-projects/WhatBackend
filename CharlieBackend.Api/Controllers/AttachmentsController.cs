@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
-    /// Controller to manupulate with attachments
+    /// Controller to manipulate attachments
     /// </summary>
     [Route("api/attachments")]
     [ApiController]
     public class AttachmentsController : ControllerBase
     {
-
         private readonly IAttachmentService _attachmentService;
 
         /// <summary>
@@ -28,9 +28,12 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// POST api/attachments
+        /// Adds attachments
         /// </summary>
-        /// <response code="200">Successful attachment</response>
+        /// <param name="fileCollection">Collection of files to add as attachments.</param>
+        /// <response code="200">Files are successfully attached.</response>
+        /// <response code="HTTP: 400, API: 0">Some of the files exceed 50 MB or some of the files' extensions are prohibited.</response>
+        [SwaggerResponse(200, type: typeof(IList<AttachmentDto>))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPost]
         public async Task<IActionResult> PostAttachments([FromForm] IFormFileCollection fileCollection)
@@ -45,10 +48,14 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets relevant attachments
         /// </summary>
-        /// <param name="request">
-        /// Returns list of attachments depending on the user role i.e admin and secretary can see all attachemnts, mentors only for the related groups and students only for themselves
-        /// Mention course id/ group id/ account ID of a student or date range to sort the result (non required params)</param>
-        [SwaggerResponse(200, type: typeof(AttachmentDto))]
+        /// <param name="request">Set of optional parameters to filter the attachments.</param>
+        /// <remarks>
+        /// Returns a list of attachments depending on the user role. So admin and secretary can see all attachemnts, mentors only for the related groups, and students only for themselves.
+        /// Specify course id, group id, account id of a student, or date range to filter the result.
+        /// </remarks>
+        /// <response code="200">A list of attachments returned successfully.</response>
+        /// <response code="HTTP: 400, API: 0">Invalid filters object.</response>
+        [SwaggerResponse(200, type: typeof(IList<AttachmentDto>))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPost("attachments")]
         public async Task<IActionResult> GetAttachments([FromBody]AttachmentRequestDto request)
@@ -61,8 +68,11 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// GET: api/attachments/{id}
+        /// Gets attachment by id
         /// </summary>
+        /// <param name="attachmentId">Id of an attachment to download.</param>
+        /// <response code="200">File is ready for download.</response>
+        /// <response code="HTTP: 400, API: 0">Invalid attachment id.</response>
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpGet("{attachmentId}")]
         public async Task<IActionResult> GetAttachment(long attachmentId)
@@ -83,8 +93,12 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// DELETE: api/attachments/{id}
+        /// Deletes attachment
         /// </summary>
+        /// <param name="attachmentId">Id of an attachment to delete.</param>
+        /// <response code="200">Info of a file that was successfully deleted.</response>
+        /// <response code="HTTP: 400, API: 0">Invalid attachment id.</response>
+        [SwaggerResponse(200, type: typeof(AttachmentDto))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpDelete("{attachmentId}")]
         public async Task<IActionResult> DeleteAttachment(long attachmentId)
