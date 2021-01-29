@@ -123,7 +123,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, can not find student</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(UpdateStudentDto))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpPut("{studentId}")]
         public async Task<ActionResult> PutStudent(long studentId, [FromBody]UpdateStudentDto studentModel)
         {
