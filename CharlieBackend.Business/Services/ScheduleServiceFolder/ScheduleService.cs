@@ -79,7 +79,7 @@ namespace CharlieBackend.Business.Services
                 _mapper.Map<IList<EventOccurrenceDTO>>(scheduleEntities));
         }
 
-        public async Task<Result<EventOccurrenceDTO>> GetScheduleByIdAsync(long id)
+        public async Task<Result<EventOccurenceDTO>> GetEventOccurrenceByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
 
