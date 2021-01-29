@@ -166,7 +166,6 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<ScheduledEventDTO, ScheduledEvent>();
             CreateMap<ScheduledEvent, ScheduledEventDTO>()
-                .ForMember(x => x.ThemeName, y => y.MapFrom(map => map.Theme.Name))
                 .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurenceId));
 
             #endregion
