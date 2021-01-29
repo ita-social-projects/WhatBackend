@@ -25,7 +25,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                     _content = new ScheduledEventHandlerDaily(source, context, pattern);
                     break;
                 case PatternType.Weekly:
-                    _content = new ScheduledEventHandlerDaily(source, context, pattern);
+                    _content = new ScheduledEventHandlerWeekly(source, context, pattern);
                     break;
                 case PatternType.AbsoluteMonthly:
                     _content = new ScheduledEventHandlerAbsoluteMonthly(source, context, pattern);
