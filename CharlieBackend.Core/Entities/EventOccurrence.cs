@@ -10,12 +10,14 @@ namespace CharlieBackend.Core.Entities
         [Required]
         public long StudentGroupId { get; set; }
 
+        [Required]
         public virtual StudentGroup StudentGroup { get; set; }
 
         [Required]
         public DateTime EventStart { get; set; }
 
-        public DateTime? EventFinish { get; set; }
+        [Required]
+        public DateTime EventFinish { get; set; }
 
         [Required]
         [EnumDataType(typeof(PatternType))]

@@ -88,18 +88,19 @@ namespace CharlieBackend.Business.Services
                 Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(scheduleEntity));
         }
 
-        public async Task<Result<IList<EventOccurrenceDTO>>> GetSchedulesByStudentGroupIdAsync(long id)
+        public async Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
         {
-            var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            string error = await ValidateGetEventsFilteredRequest(request);
 
-            if (groupEntity == null)
+            if (error != null)
             {
-                return null;
+                return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
-            var schedulesOfGroup = await _unitOfWork.EventOccurenceRepository.GetSchedulesByStudentGroupIdAsync(id);
 
-            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
-                _mapper.Map<IList<EventOccurrenceDTO>>(schedulesOfGroup));
+            var schedulesOfGroup = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(request);
+
+            return Result<IList<ScheduledEventDTO>>.GetSuccess(
+                _mapper.Map<IList<ScheduledEventDTO>>(schedulesOfGroup));
         }
 
         public async Task<Result<EventOccurrenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
@@ -222,6 +223,24 @@ namespace CharlieBackend.Business.Services
                     break;
             }
 
+            return error;
+        }
+
+        private async Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request)
+        {
+            if (request == null)
+            {
+                return "Request must not be null";
+            }
+
+            string error = null;
+
+            if (request.CourseID.HasValue && !await _unitOfWork.ScheduledEventRepository.IsEntityExistAsync(request.CourseID.Value))
+            {
+                error = "Course does not exist";
+            }
+
+            //ToDo: add the rest
             return error;
         }
     }
