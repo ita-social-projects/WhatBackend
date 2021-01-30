@@ -107,7 +107,11 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorReposutoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-            var lessonService = new LessonService(_unitOfWorkMock.Object, _mapper);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object, 
+                mapper: _mapper,
+                currentUserService: null);
 
             //Act
             var result = await lessonService.CreateLessonAsync(createLessonDTO);
@@ -307,11 +311,11 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorReposutoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-            var lessonService = new LessonService(
-                _unitOfWorkMock.Object,
-                _mapper
-                );
 
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: null);
 
             #endregion
             //Act 
@@ -455,9 +459,9 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(foundLesson);
 
             var lessonService = new LessonService(
-                _unitOfWorkMock.Object,
-                _mapper
-                );
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: null);
 
             //Act
             var result = (await lessonService.UpdateLessonAsync(7, updateLessonDto)).Data;

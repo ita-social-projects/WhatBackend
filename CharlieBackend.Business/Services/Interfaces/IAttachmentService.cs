@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.Interfaces
                     ClaimsPrincipal claimsContext
                     );
 
-        Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request, ClaimsPrincipal userdata);
+        Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request);
 
         Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId);
 
