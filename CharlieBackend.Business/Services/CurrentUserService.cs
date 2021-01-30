@@ -12,6 +12,10 @@ namespace CharlieBackend.Business.Services
     /// </summary>
     public class CurrentUserService : ICurrentUserService
     {
+        long _accountId;
+        long _entityId;
+        string _email;
+
         readonly IHttpContextAccessor _httpContextAccessor;
 
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
@@ -23,21 +27,22 @@ namespace CharlieBackend.Business.Services
         {
             get
             {
-                string accountIdString = _httpContextAccessor
-                    .HttpContext
-                    .User
-                    ?.Claims
-                    ?.SingleOrDefault(claim => claim.Type == "AccountId")
-                    ?.Value;
-
-                long accountId;
-
-                if (!long.TryParse(accountIdString, out accountId))
+                if (_accountId == default)
                 {
-                    throw new UnauthorizedAccessException("Not authorized!");
+                    string accountIdString = _httpContextAccessor
+                        .HttpContext
+                        .User
+                        ?.Claims
+                        ?.SingleOrDefault(claim => claim.Type == "AccountId")
+                        ?.Value;
+
+                    if (!long.TryParse(accountIdString, out _accountId))
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
                 }
 
-                return accountId;
+                return _accountId;
             }
         }
 
@@ -54,21 +59,22 @@ namespace CharlieBackend.Business.Services
         {
             get
             {
-                string entityIdString = _httpContextAccessor
-                    .HttpContext
-                    .User
-                    ?.Claims
-                    ?.SingleOrDefault(claim => claim.Type == "Id")
-                    ?.Value;
-
-                long entityId;
-
-                if (!long.TryParse(entityIdString, out entityId))
+                if (_entityId == default)
                 {
-                    throw new UnauthorizedAccessException("Not authorized!");
+                    string entityIdString = _httpContextAccessor
+                        .HttpContext
+                        .User
+                        ?.Claims
+                        ?.SingleOrDefault(claim => claim.Type == "Id")
+                        ?.Value;
+
+                    if (!long.TryParse(entityIdString, out _entityId))
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
                 }
 
-                return entityId;
+                return _entityId;
             }
         }
 
@@ -76,19 +82,22 @@ namespace CharlieBackend.Business.Services
         {
             get
             {
-                string email = _httpContextAccessor
-                    .HttpContext
-                    .User
-                    ?.Claims
-                    ?.SingleOrDefault(claim => claim.Type == "Email")
-                    ?.Value;
-
-                if (email is null)
+                if (_email is null)
                 {
-                    throw new UnauthorizedAccessException("Not authorized!");
+                    _email = _httpContextAccessor
+                        .HttpContext
+                        .User
+                        ?.Claims
+                        ?.SingleOrDefault(claim => claim.Type == "Email")
+                        ?.Value;
+
+                    if (_email is null)
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
                 }
 
-                return email;
+                return _email;
             }
         }
 
