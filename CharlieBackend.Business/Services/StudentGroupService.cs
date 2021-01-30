@@ -131,7 +131,7 @@ namespace CharlieBackend.Business.Services
 
             return Result<bool>.GetSuccess(res);
         }
-       
+
         public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
         {
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
@@ -162,18 +162,26 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student Group not found");
                 }
 
-                if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                if (string.IsNullOrWhiteSpace(updatedStudentGroupDto.Name))
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Student group name can not be empty");
+                }
+
+                if (!updatedStudentGroupDto.Name.Equals(foundStudentGroup.Name))
+                {
+                    if (await _unitOfWork.StudentGroupRepository.IsGroupNameExistAsync(updatedStudentGroupDto.Name))
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.UnprocessableEntity, "Group name already exists");
+                    }
+
+                    foundStudentGroup.Name = updatedStudentGroupDto.Name;
                 }
 
                 if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
                 }
-
-                foundStudentGroup.Name = updatedStudentGroupDto.Name ?? foundStudentGroup.Name;
-
+                
                 if (updatedStudentGroupDto.StartDate != null)
                 {
                     foundStudentGroup.StartDate = (DateTime?)(updatedStudentGroupDto.StartDate) ?? foundStudentGroup.StartDate;
@@ -253,6 +261,18 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
+        }
+
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime startDate, DateTime finishDate)
+        {
+            if (startDate > finishDate)
+            {
+                return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError,"Start date is later then finish date.");
+            }
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
+
+            return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
         }
 
         public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
