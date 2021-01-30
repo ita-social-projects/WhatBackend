@@ -41,6 +41,37 @@ namespace CharlieBackend.Business.Services
             }
         }
 
+        /// <summary>
+        /// Property that provides access to entity id of the current user.
+        /// Corresponds to one of the following entities: 
+        /// <list type="bullet">
+        /// <item><see cref="Student"/></item>
+        /// <item><see cref="Secretary"/></item>
+        /// <item><see cref="Mentor"/></item>
+        /// </list>
+        /// </summary>
+        public long EntityId
+        {
+            get
+            {
+                string entityIdString = _httpContextAccessor
+                    .HttpContext
+                    .User
+                    ?.Claims
+                    ?.SingleOrDefault(claim => claim.Type == "Id")
+                    ?.Value;
+
+                long entityId;
+
+                if (!long.TryParse(entityIdString, out entityId))
+                {
+                    throw new UnauthorizedAccessException("Not authorized!");
+                }
+
+                return entityId;
+            }
+        }
+
         public string Email
         {
             get
@@ -49,7 +80,7 @@ namespace CharlieBackend.Business.Services
                     .HttpContext
                     .User
                     ?.Claims
-                    ?.SingleOrDefault(claim => claim.Type == ClaimTypes.Email)
+                    ?.SingleOrDefault(claim => claim.Type == "Email")
                     ?.Value;
 
                 if (email is null)

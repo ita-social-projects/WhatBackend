@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Linq;
-using CharlieBackend.Core;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
-using System.Security.Cryptography.X509Certificates;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services
@@ -19,10 +14,14 @@ namespace CharlieBackend.Business.Services
     public class DashboardService : IDashboardService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public DashboardService(IUnitOfWork unitOfWork)
+        public DashboardService(
+            IUnitOfWork unitOfWork,
+            ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentsClassbookAsync(StudentsRequestDto<ClassbookResultType> request)
@@ -89,9 +88,9 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId,
-            DashboardAnalyticsRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext)
+            DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
-            var error = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId, userContext));
+            var error = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId));
 
             if (error.Any())
             {
@@ -119,9 +118,9 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId,
-            DashboardAnalyticsRequestDto<StudentResultType> request, ClaimsPrincipal userContext)
+            DashboardAnalyticsRequestDto<StudentResultType> request)
         {
-            var errors = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId, userContext));
+            var errors = ValidateGenericRequest(request).Concat(ValidateStudentRights(studentId));
 
             if (errors.Any())
             {
@@ -204,14 +203,14 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private IEnumerable<string> ValidateStudentRights(long studentId, ClaimsPrincipal claimsContext)
+        private IEnumerable<string> ValidateStudentRights(long studentId)
         {
             if (studentId == default)
             {
                 yield return "Please provide student id";
             }
 
-            if (!IsRequestAllowedForStudent(studentId, claimsContext))
+            if (!IsRequestAllowedForStudent(studentId))
             {
                 yield return "Not allowed to request other student results";
             }
@@ -231,16 +230,15 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private bool IsRequestAllowedForStudent(long studentId, ClaimsPrincipal claimsContext)
+        private bool IsRequestAllowedForStudent(long studentId)
         {
-            var isStudentRole = claimsContext.IsInRole(UserRole.Student.ToString());
+            var isStudentRole = _currentUserService.Role == UserRole.Student;
 
             if (isStudentRole)
             {
-                var studentIdFromContext = Convert.ToInt64(claimsContext.Claims
-                    .First(claim => claim.Type == "Id").Value);
+                var currentUserEntityId = _currentUserService.EntityId;
 
-                if (studentId != studentIdFromContext)
+                if (studentId != currentUserEntityId)
                 {
                     return false;
                 }

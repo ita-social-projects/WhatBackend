@@ -20,16 +20,18 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IBlobService _blobService;
+        private readonly ICurrentUserService _currentUserService;
 
         public AttachmentService( 
                              IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             IBlobService blobService
-                                )
+                             IBlobService blobService,
+                             ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _blobService = blobService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
@@ -60,8 +62,7 @@ namespace CharlieBackend.Business.Services
 
                 Attachment attachment = new Attachment()
                 {
-                    CreatedByAccountId = Convert.ToInt64(claimsContext.Claims
-                            .First(claim => claim.Type == "AccountId").Value),
+                    CreatedByAccountId = _currentUserService.AccountId,
                     ContainerName = blob.BlobContainerName,
                     FileName = file.FileName
                 };

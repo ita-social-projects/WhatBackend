@@ -13,6 +13,11 @@ namespace CharlieBackend.Business.Services.Interfaces
         public long AccountId { get; }
 
         /// <summary>
+        /// Property that reflects the entity Id of the current user.
+        /// </summary>
+        public long EntityId { get; }
+
+        /// <summary>
         /// Property that reflects the Email of the current user.
         /// </summary>
         public string Email { get; }
