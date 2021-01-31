@@ -5,6 +5,8 @@ using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -29,6 +31,34 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(lesson => lesson.MentorId == mentorId)
                 .Select(lesson => lesson)
                 .ToListAsync();
+        }
+        public async Task<List<Lesson>> GetAllLessonsForStudent(long studentId)
+        {
+            return await (from ssg in _applicationContext.StudentsOfStudentGroups
+                          join sg in _applicationContext.StudentGroups on ssg.StudentGroupId equals sg.Id
+                          join s in _applicationContext.Students on ssg.StudentId equals s.Id
+                          where ssg.StudentId == studentId
+                          join l in _applicationContext.Lessons on sg.Id equals l.StudentGroupId
+                          select l).ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId)
+        {
+            return await (from ssg in _applicationContext.StudentsOfStudentGroups
+                          join sg in _applicationContext.StudentGroups on ssg.StudentGroupId equals sg.Id
+                          join s in _applicationContext.Students on ssg.StudentId equals s.Id
+                          where ssg.StudentId == studentId
+                          join l in _applicationContext.Lessons on sg.Id equals l.StudentGroupId
+                          where l.StudentGroupId == studentGroupId
+                          where (startDate < l.LessonDate) && (l.LessonDate < finishDate)
+                          select new Lesson
+                          {
+                              Id = l.Id,
+                              MentorId = l.MentorId,
+                              StudentGroupId = l.StudentGroupId,
+                              ThemeId = l.ThemeId,
+                              LessonDate = l.LessonDate
+                          }).ToListAsync();
         }
 
         public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)

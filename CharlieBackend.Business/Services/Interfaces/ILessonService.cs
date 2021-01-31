@@ -2,6 +2,7 @@
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
@@ -12,6 +13,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId);
 
+        Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel, ClaimsPrincipal userContext);
+       
         Task<Result<IList<LessonDto>>> GetAllLessonsAsync();
 
         Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);

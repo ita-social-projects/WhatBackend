@@ -9,6 +9,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Api.SwaggerExamples.StudentsController;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -22,15 +23,17 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IStudentService _studentService;
         private readonly IAccountService _accountService;
+        private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Students Controllers constructor
         /// </summary>
         public StudentsController(IStudentService studentService, 
-            IAccountService accountService)
+            IAccountService accountService, ILessonService lessonService)
         {
             _studentService = studentService;
             _accountService = accountService;
+            _lessonService = lessonService;
         }
 
         /// <summary>
@@ -144,6 +147,21 @@ namespace CharlieBackend.Api.Controllers
             var disabledStudentModel = await _studentService.DisableStudentAsync(id);
 
             return disabledStudentModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Get filter list of lessons for student
+        /// </summary>
+        /// <response code="200">Returned filtered list of lessons for student </response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPost("lessons")]
+        public async Task<IList<LessonDto>> GetLessonsForStudent([FromBody] FilterLessonsRequestDto filterModel)
+        {
+            var context = HttpContext.User;
+            var lessons = await _lessonService.GetLessonsForStudentAsync(filterModel, context);
+
+            return lessons;
         }
     }
 }

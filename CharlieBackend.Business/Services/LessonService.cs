@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
 using System.Linq;
+using System.Security.Claims;
 
 namespace CharlieBackend.Business.Services
 {
@@ -244,5 +245,19 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
+        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel, ClaimsPrincipal userContext)
+        {
+            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+
+            if (filterModel == default)
+            {
+                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForStudent(student.Id));
+            }
+
+            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, student.Id);
+
+            return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
+        }
     }
 }
