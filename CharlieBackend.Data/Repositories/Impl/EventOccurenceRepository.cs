@@ -29,5 +29,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(schedule => schedule.StudentGroup)
                 .ToListAsync();
         }
+
+        public new Task<EventOccurence> GetByIdAsync(long id)
+        {
+            return _applicationContext.EventOccurences
+                .Include(x => x.ScheduledEvents)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
