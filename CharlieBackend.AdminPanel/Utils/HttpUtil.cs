@@ -6,6 +6,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Newtonsoft.Json;
 using CharlieBackend.AdminPanel.Exceptions;
 using CharlieBackend.Core.DTO.Result;
+using System.Net.Http.Headers;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
@@ -13,34 +14,36 @@ namespace CharlieBackend.AdminPanel.Utils
     {
         private readonly HttpClient _client;
 
-        public HttpUtil()
+        public HttpUtil(string baseUrl, string token)
         {
-            _client = new HttpClient();
+            _client = new HttpClient() 
+            { 
+                BaseAddress = new Uri(baseUrl) 
+            };
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string url, string accessToken = null)
+        public HttpUtil(string baseUrl)
+        {
+            _client = new HttpClient() 
+            { 
+                BaseAddress = new Uri(baseUrl) 
+            };
+        }
+
+        public async Task<HttpResponseMessage> GetAsync(string url)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-
-            if (!String.IsNullOrEmpty(accessToken))
-            {
-                requestMessage.Headers.Add("Authorization", accessToken);
-            }
 
             HttpResponseMessage httpResponse = await _client.SendAsync(requestMessage);
 
             return httpResponse;
         }
 
-        public async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T postData, string accessToken = null)
+        public async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T postData)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
 
-            if (!String.IsNullOrEmpty(accessToken))
-            {
-                requestMessage.Headers.Add("Authorization", accessToken);
-            }
-
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
 
             var responseMessage = await _client.SendAsync(requestMessage);
@@ -48,15 +51,10 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseMessage;
         }
 
-        public async Task<HttpResponseMessage> PutJsonAsync<T>(string url, T postData, string accessToken = null)
+        public async Task<HttpResponseMessage> PutJsonAsync<T>(string url, T postData)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, url);
 
-            if (!String.IsNullOrEmpty(accessToken))
-            {
-                requestMessage.Headers.Add("Authorization", accessToken);
-            }
-
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
 
             var responseMessage = await _client.SendAsync(requestMessage);
@@ -64,13 +62,9 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseMessage;
         }
 
-        public async Task<HttpResponseMessage> DeleteAsync(string url, string accessToken = null)
+        public async Task<HttpResponseMessage> DeleteAsync(string url)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, url);
-            if (!String.IsNullOrEmpty(accessToken))
-            {
-                requestMessage.Headers.Add("Authorization", accessToken);
-            }
 
             var responseMessage = await _client.SendAsync(requestMessage);
 

@@ -7,6 +7,7 @@ using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,28 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddTransient<IHttpUtil, HttpUtil>();
+            services.AddScoped<IHttpUtil, HttpUtil>((ctx) =>
+            {
+                IHttpContextAccessor httpContext = ctx.GetService<IHttpContextAccessor>();
+
+                string accessToken = httpContext.HttpContext.Request.Cookies["accessToken"];
+
+                if (accessToken != null)
+                {
+                    IDataProtectionProvider provider = ctx.GetService<IDataProtectionProvider>();
+
+                    IDataProtector protector = provider.CreateProtector(config.Cookies.SecureKey);
+
+                    string unprotectedToken = protector.Unprotect(accessToken);
+
+                    return new HttpUtil(config.Urls.Api.Https, unprotectedToken);
+                }
+                else
+                {
+                    return new HttpUtil(config.Urls.Api.Https);
+                }
+            });
+
             services.AddTransient<IApiUtil, ApiUtil>();
 
             services.AddTransient<IStudentService, StudentService>(); 

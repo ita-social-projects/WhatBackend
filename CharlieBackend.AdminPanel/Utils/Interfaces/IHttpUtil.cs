@@ -6,13 +6,13 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
 {
     public interface IHttpUtil
     {
-        Task<HttpResponseMessage> GetAsync(string url, string accessToken = null);
+        Task<HttpResponseMessage> GetAsync(string url);
 
-        Task<HttpResponseMessage> PostJsonAsync<T>(string url, T postData, string accessToken = null);
+        Task<HttpResponseMessage> PostJsonAsync<T>(string url, T postData);
 
-        Task<HttpResponseMessage> PutJsonAsync<T>(string url, T postData, string accessToken = null);
+        Task<HttpResponseMessage> PutJsonAsync<T>(string url, T postData);
 
-        Task<HttpResponseMessage> DeleteAsync(string url, string accessToken = null);
+        Task<HttpResponseMessage> DeleteAsync(string url);
 
         Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
 
