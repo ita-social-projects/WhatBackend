@@ -235,12 +235,36 @@ namespace CharlieBackend.Business.Services
 
             string error = null;
 
-            if (request.CourseID.HasValue && !await _unitOfWork.ScheduledEventRepository.IsEntityExistAsync(request.CourseID.Value))
+            if (request.CourseID.HasValue && !await _unitOfWork.CourseRepository.IsEntityExistAsync(request.CourseID.Value))
             {
                 error = "Course does not exist";
             }
 
-            //ToDo: add the rest
+            if (request.GroupID.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.GroupID.Value))
+            {
+                error = "Group does not exist";
+            }
+
+            if (request.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorID.Value))
+            {
+                error = "Mentor does not exist";
+            }
+
+            if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
+            {
+                error = "Student does not exist";
+            }
+
+            if (request.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeID.Value))
+            {
+                error = "Theme does not exist";
+            }
+
+            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate < request.FinishDate))
+            {
+                error = $"StartDate must be less then FinisDate";
+            }
+
             return error;
         }
     }
