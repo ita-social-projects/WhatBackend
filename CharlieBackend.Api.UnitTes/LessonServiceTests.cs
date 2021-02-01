@@ -141,7 +141,7 @@ namespace CharlieBackend.Api.UnitTest
             StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
 
             DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
-            DateTime lessonDateWrong = DateTime.Parse("2021-11-18T15:00:00.384Z");
+            DateTime lessonDateWrong = DateTime.Now.AddDays(1);
 
             List<VisitDto> visitDto = new List<VisitDto>
             {
@@ -405,7 +405,7 @@ namespace CharlieBackend.Api.UnitTest
             var updateLessonDtoWithWrongDate = new UpdateLessonDto
             {
                 ThemeName = null,
-                LessonDate = DateTime.Parse("2021-11-18T15:30:00.384Z"),
+                LessonDate = DateTime.Now.AddDays(1),
                 LessonVisits = null
             };
 
