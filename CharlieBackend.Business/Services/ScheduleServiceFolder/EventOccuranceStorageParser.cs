@@ -73,7 +73,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 }
             }
 
-            data.index <<= _maxDaysInMonth;
+            data.index <<= _maxDaysInMonth + 1;
 
             return data;
         }
@@ -97,17 +97,17 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber, _possibleMonthIndexOptionsNumber);
 
             string datesString = stringRepresentationOfStorage
-                .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth, _maxDaysInMonth);
+                .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth - 1, _maxDaysInMonth);
 
             string intervalString = stringRepresentationOfStorage
-                .Substring(0, stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth);
+                .Substring(0, stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth - 1);
 
             return new PatternForCreateScheduleDTO
             {
                 Interval = GetInterval(intervalString),
                 Index = GetMonthIndex(indexString),
-                Dates = GetDatesList(datesString),
-                DaysOfWeek = GetDaysList(daysString)
+                Dates = GetDatesList(datesString).Count > 0 ? GetDatesList(datesString) : null,
+                DaysOfWeek = GetDaysList(daysString).Count > 0 ? GetDaysList(daysString) : null
             };
         }
 
@@ -139,7 +139,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             {
                 if (datesString[i] == '1')
                 {
-                    datesCollection.Add(i - 1);
+                    datesCollection.Add(_maxDaysInMonth - i);
                 }
             }
 
