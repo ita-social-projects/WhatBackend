@@ -8,13 +8,13 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
     public abstract class ScheduledEventHandlerBase : IScheduledEventHandler
     {
-        protected EventOccurence _source;
+        protected EventOccurrence _source;
         protected ContextForCreateScheduleDTO _context;
         protected PatternForCreateScheduleDTO _pattern;
         protected int _index = 1;
 
 
-        public ScheduledEventHandlerBase(EventOccurence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
+        public ScheduledEventHandlerBase(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
         {
             _source = source;
             _context = context;
@@ -42,7 +42,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         }
 
         public ScheduledEvent CreateEvent(DateTime targetStartDate, DateTime targetFinishDate,
-            EventOccurence source, ContextForCreateScheduleDTO context)
+            EventOccurrence source, ContextForCreateScheduleDTO context)
         {
             return new ScheduledEvent
             {

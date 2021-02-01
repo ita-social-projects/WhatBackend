@@ -8,7 +8,7 @@ namespace CharlieBackend.Core.Entities
     {
         public long EventOccurenceId { get; set; }
 
-        public EventOccurence EventOccurence { get; set; }
+        public EventOccurrence EventOccurence { get; set; }
 
         public long? StudentGroupId { get; set; }
 

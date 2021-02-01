@@ -17,7 +17,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
     {
         private IScheduledEventHandler _content;
 
-        public ScheduledEventHandler(EventOccurence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
+        public ScheduledEventHandler(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
         {
             switch (source.Pattern)
             {

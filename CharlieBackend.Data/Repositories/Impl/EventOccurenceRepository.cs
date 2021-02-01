@@ -8,21 +8,21 @@ using System.Linq;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
-    public class EventOccurenceRepository : Repository<EventOccurence>, IEventOccurenceRepository
+    public class EventOccurenceRepository : Repository<EventOccurrence>, IEventOccurenceRepository
     {
         public EventOccurenceRepository(ApplicationContext applicationContext) 
                 : base(applicationContext)
         {
         }
 
-        public new Task<List<EventOccurence>> GetAllAsync()
+        public new Task<List<EventOccurrence>> GetAllAsync()
         {
             return _applicationContext.EventOccurences
                 .Include(schedule => schedule.StudentGroup)
                 .ToListAsync();
         }
 
-        public Task<List<EventOccurence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
+        public Task<List<EventOccurrence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
            return _applicationContext.EventOccurences
                 .Where(schedule => schedule.StudentGroupId == studentGroupId)

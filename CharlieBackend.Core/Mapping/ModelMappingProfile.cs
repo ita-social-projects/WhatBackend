@@ -162,9 +162,9 @@ namespace CharlieBackend.Core.Mapping
 
             #region Schedules mapping
 
-            CreateMap<CreateScheduleDto, EventOccurence>();
-            CreateMap<UpdateScheduleDto, EventOccurence>();
-            CreateMap<EventOccurence, EventOccurenceDTO>();
+            CreateMap<CreateScheduleDto, EventOccurrence>();
+            CreateMap<UpdateScheduleDto, EventOccurrence>();
+            CreateMap<EventOccurrence, EventOccurrenceDTO>();
 
             #endregion
 

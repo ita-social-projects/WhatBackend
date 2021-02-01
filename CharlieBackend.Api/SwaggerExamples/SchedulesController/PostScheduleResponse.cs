@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
 {
-    internal class PostScheduleResponse : IExamplesProvider<EventOccurenceDTO>
+    internal class PostScheduleResponse : IExamplesProvider<EventOccurrenceDTO>
     {
-        public EventOccurenceDTO GetExamples()
+        public EventOccurrenceDTO GetExamples()
         {
-            return new EventOccurenceDTO()
+            return new EventOccurrenceDTO()
             {
                 Id = 12,
                 StudentGroupId = 31,

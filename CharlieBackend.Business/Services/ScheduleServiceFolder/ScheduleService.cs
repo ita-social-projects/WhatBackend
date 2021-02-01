@@ -25,16 +25,16 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<EventOccurenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
+        public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
         {
             string error = await ValidateCreateScheduleRequestAsync(createScheduleRequest);
 
             if (error != null)
             {
-                return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
+                return Result<EventOccurrenceDTO>.GetError(ErrorCode.ValidationError, error);
             }
 
-            EventOccurence result = new EventOccurence
+            EventOccurrence result = new EventOccurrence
             {
                 Pattern = createScheduleRequest.Pattern.Type,
                 StudentGroupId = createScheduleRequest.Context.GroupID,
@@ -51,45 +51,45 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(result));
+            return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(result));
         }       
 
-        public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id)
+        public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
 
             if (scheduleEntity != null)
             {
-                var mappedSchedule = _mapper.Map<EventOccurenceDTO>(scheduleEntity);
+                var mappedSchedule = _mapper.Map<EventOccurrenceDTO>(scheduleEntity);
                 await _unitOfWork.EventOccurenceRepository.DeleteAsync(id);
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<EventOccurenceDTO>.GetSuccess(mappedSchedule);
+                return Result<EventOccurrenceDTO>.GetSuccess(mappedSchedule);
             }
 
-            return Result<EventOccurenceDTO>.GetError(ErrorCode.NotFound,
+            return Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound,
                 $"Schedule with id={id} does not exist");
         }
 
-        public async Task<Result<IList<EventOccurenceDTO>>> GetAllSchedulesAsync()
+        public async Task<Result<IList<EventOccurrenceDTO>>> GetAllSchedulesAsync()
         {
             var scheduleEntities = await _unitOfWork.EventOccurenceRepository.GetAllAsync();
 
-            return Result<IList<EventOccurenceDTO>>.GetSuccess(
-                _mapper.Map<IList<EventOccurenceDTO>>(scheduleEntities));
+            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
+                _mapper.Map<IList<EventOccurrenceDTO>>(scheduleEntities));
         }
 
-        public async Task<Result<EventOccurenceDTO>> GetScheduleByIdAsync(long id)
+        public async Task<Result<EventOccurrenceDTO>> GetScheduleByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
 
             return scheduleEntity == null ?
-                Result<EventOccurenceDTO>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
-                Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(scheduleEntity));
+                Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
+                Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(scheduleEntity));
         }
 
-        public async Task<Result<IList<EventOccurenceDTO>>> GetSchedulesByStudentGroupIdAsync(long id)
+        public async Task<Result<IList<EventOccurrenceDTO>>> GetSchedulesByStudentGroupIdAsync(long id)
         {
             var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
 
@@ -99,32 +99,32 @@ namespace CharlieBackend.Business.Services
             }
             var schedulesOfGroup = await _unitOfWork.EventOccurenceRepository.GetSchedulesByStudentGroupIdAsync(id);
 
-            return Result<IList<EventOccurenceDTO>>.GetSuccess(
-                _mapper.Map<IList<EventOccurenceDTO>>(schedulesOfGroup));
+            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
+                _mapper.Map<IList<EventOccurrenceDTO>>(schedulesOfGroup));
         }
 
-        public async Task<Result<EventOccurenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
+        public async Task<Result<EventOccurrenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
         {
             try
             {
                 if (scheduleDTO == null)
                 {
-                    return Result<EventOccurenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
+                    return Result<EventOccurrenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
                 }
                 var foundSchedule = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(scheduleId);
 
                 if (foundSchedule == null)
                 {
-                    return Result<EventOccurenceDTO>.GetError(ErrorCode.NotFound,
+                    return Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound,
                         $"Schedule with id={scheduleId} does not exist");
                 }
-                var updatedEntity = _mapper.Map<EventOccurence>(scheduleDTO);
+                var updatedEntity = _mapper.Map<EventOccurrence>(scheduleDTO);
 
                 var errorMessage = Validate(updatedEntity);
 
                 if (errorMessage != null)
                 {
-                    Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, errorMessage);
+                    Result<EventOccurrenceDTO>.GetError(ErrorCode.ValidationError, errorMessage);
                 }
 
                 foundSchedule.Pattern = updatedEntity.Pattern;
@@ -133,24 +133,24 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(foundSchedule));
+                return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(foundSchedule));
 
             }
             catch
             {
                 _unitOfWork.Rollback();
 
-                return Result<EventOccurenceDTO>.GetError(ErrorCode.InternalServerError, "Internal error");
+                return Result<EventOccurrenceDTO>.GetError(ErrorCode.InternalServerError, "Internal error");
             }
         }
 
-        private bool IsNotValidRepeating(EventOccurence entity)
+        private bool IsNotValidRepeating(EventOccurrence entity)
         {
             return entity.Pattern != PatternType.Daily &&
                 entity.Pattern != default;
         }
 
-        private string Validate(EventOccurence schedule)
+        private string Validate(EventOccurrence schedule)
         {
 
             if (IsNotValidRepeating(schedule))

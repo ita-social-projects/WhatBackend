@@ -6,9 +6,9 @@ using System.Text;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
-    class ScheduledEventHandlerWeekly : ScheduledEventHandlerBase
+    public class ScheduledEventHandlerWeekly : ScheduledEventHandlerBase
     {
-        public ScheduledEventHandlerWeekly(EventOccurence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern) 
+        public ScheduledEventHandlerWeekly(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern) 
             : base(source, context, pattern)
         {
             _index = 7;

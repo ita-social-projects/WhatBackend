@@ -34,7 +34,7 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Visit> Visits { get; set; }
         
-        public virtual DbSet<EventOccurence> EventOccurences { get; set; }
+        public virtual DbSet<EventOccurrence> EventOccurences { get; set; }
 
         public virtual DbSet<ScheduledEvent> ScheduledEvents { get; set; }
 
@@ -439,7 +439,7 @@ namespace CharlieBackend.Data
                     .HasConstraintName("FK_student_of_visit");
             });
 
-            modelBuilder.Entity<EventOccurence>(entity =>
+            modelBuilder.Entity<EventOccurrence>(entity =>
             {
                 entity.ToTable("event_occurence");
                 
