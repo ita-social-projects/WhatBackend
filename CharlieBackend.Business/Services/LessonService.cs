@@ -250,11 +250,6 @@ namespace CharlieBackend.Business.Services
             long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-            if (filterModel == default)
-            {
-                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForStudent(student.Id));
-            }
-
             var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, student.Id);
 
             return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
