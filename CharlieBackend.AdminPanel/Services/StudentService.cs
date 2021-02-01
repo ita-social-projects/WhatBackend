@@ -35,31 +35,31 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()
         {
-            var allStudentsTask =  _apiUtil.GetAsync<Result<IList<StudentViewModel>>>($"{_config.Value.Urls.Api.Https}/api/students", _accessToken);
-            var activeStudentsTask = _apiUtil.GetAsync< Result<IList<StudentViewModel>>>($"{_config.Value.Urls.Api.Https}/api/students/active", _accessToken);
+            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students", _accessToken);
+            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students/active", _accessToken);
 
             var allStudents = await allStudentsTask;
             var activeStudents = await activeStudentsTask;
 
-            foreach (var student in allStudents.Data)
+            foreach (var student in allStudents)
             {
-                student.IsActive = activeStudents.Data.Any(x => x.Id == student.Id);
+                student.IsActive = activeStudents.Any(x => x.Id == student.Id);
             }
 
-            return allStudents.Data;
+            return allStudents;
         }
 
         public async Task<StudentEditViewModel> GetStudentByIdAsync(long id)
         {
-            var studentTask =  _apiUtil.GetAsync< Result<StudentEditViewModel>>($"{_config.Value.Urls.Api.Https}/api/students/{id}", _accessToken);
+            var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>($"{_config.Value.Urls.Api.Https}/api/students/{id}", _accessToken);
             var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
 
             var student = await studentTask;
             var studentGroup = await studentGroupsTask;
 
-            student.Data.AllGroups = studentGroup;
+            student.AllGroups = studentGroup;
 
-            return student.Data;
+            return student;
         }
 
         public async Task<UpdateStudentDto> UpdateStudentAsync(long id, UpdateStudentDto UpdateDto)

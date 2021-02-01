@@ -5,8 +5,6 @@ using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -49,6 +47,15 @@ namespace CharlieBackend.Data.Repositories.Impl
                               ThemeId = l.ThemeId,
                               LessonDate = l.LessonDate
                           }).ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
+        {
+            return await _applicationContext.Lessons
+                .Where(x=> x.MentorId == mentorId)
+                .WhereIf(studentGroupId != default, x => x.StudentGroupId == studentGroupId)
+                .WhereIf((startDate != default) && (finishDate != default), x => (startDate < x.LessonDate) && (x.LessonDate < finishDate))
+                .ToListAsync();
         }
 
         public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)
