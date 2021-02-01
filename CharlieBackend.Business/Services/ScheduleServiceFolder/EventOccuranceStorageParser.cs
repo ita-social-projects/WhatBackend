@@ -86,7 +86,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return data.result;
         }
 
-        internal static PatternForCreateScheduleDTO GetFullDataFromStorage(long source)
+        public static PatternForCreateScheduleDTO GetFullDataFromStorage(long source)
         {
             string stringRepresentationOfStorage = Convert.ToString(source, 2);
 
