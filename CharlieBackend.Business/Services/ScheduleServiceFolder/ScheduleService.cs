@@ -53,30 +53,58 @@ namespace CharlieBackend.Business.Services
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(result));
         }       
 
-        public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id)
+        public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
         {
-            var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
+            string error = null;
 
-            if (scheduleEntity != null)
+            error ??= await ValidateEventOccuranceId(id);
+
+            if (error != null)
             {
-                var mappedSchedule = _mapper.Map<EventOccurrenceDTO>(scheduleEntity);
-                await _unitOfWork.EventOccurrenceRepository.DeleteAsync(id);
-
-                await _unitOfWork.CommitAsync();
-
-                return Result<EventOccurrenceDTO>.GetSuccess(mappedSchedule);
+                return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
             }
 
-            return Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound,
-                $"Schedule with id={id} does not exist");
-        }
+            var eventOccurrenceResult = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
 
-        public async Task<Result<IList<EventOccurrenceDTO>>> GetAllSchedulesAsync()
-        {
-            var scheduleEntities = await _unitOfWork.EventOccurrenceRepository.GetAllAsync();
+            var everyValue = eventOccurrenceResult
+                .ScheduledEvents
+                .Where(x => startDate.HasValue && x.EventFinish <= startDate.Value)
+                .Where(x => finishDate.HasValue && x.EventStart >= finishDate.Value);
 
-            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
-                _mapper.Map<IList<EventOccurrenceDTO>>(scheduleEntities));
+            var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
+
+            var result = everyValue.Where(x => x.LessonId == null);
+
+            if (eventOccurrenceResult.ScheduledEvents.Except(everyValue).Any() || everyValueWithLesson.Any())
+            {
+                DateTime actualFinish = eventOccurrenceResult.EventFinish;
+
+                if (!finishDate.HasValue || finishDate.Value >= eventOccurrenceResult.EventFinish)
+                {
+                    if (everyValueWithLesson.Any() && everyValueWithLesson.Last().EventFinish >= startDate.Value)
+                    {
+                        actualFinish = everyValueWithLesson.Last().EventFinish;
+                    }
+                    else
+                    {
+                        actualFinish = startDate.Value;
+                    }
+
+                    eventOccurrenceResult.EventFinish = actualFinish;
+
+                    _unitOfWork.EventOccurenceRepository.Update(eventOccurrenceResult);
+                }
+
+                _unitOfWork.ScheduledEventRepository.RemoveRange(result);
+            }
+            else
+            {
+                await _unitOfWork.EventOccurenceRepository.DeleteAsync(id);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(eventOccurrenceResult));
         }
 
         public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
@@ -103,67 +131,72 @@ namespace CharlieBackend.Business.Services
                 _mapper.Map<IList<ScheduledEventDTO>>(schedulesOfGroup));
         }
 
-        public async Task<Result<EventOccurrenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
+        public async Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEventId, UpdateScheduledEventDto request)
         {
-            try
+            string error = null;
+
+            error ??= await ValidateScheduledEventId(scheduledEventId);
+
+            error ??= await ValidateUpdateScheduleDTO(request);
+
+            if (error != null)
             {
-                if (scheduleDTO == null)
-                {
-                    return Result<EventOccurrenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
-                }
-                var foundSchedule = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(scheduleId);
-
-                if (foundSchedule == null)
-                {
-                    return Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound,
-                        $"Schedule with id={scheduleId} does not exist");
-                }
-                var updatedEntity = _mapper.Map<EventOccurrence>(scheduleDTO);
-
-                var errorMessage = Validate(updatedEntity);
-
-                if (errorMessage != null)
-                {
-                    Result<EventOccurrenceDTO>.GetError(ErrorCode.ValidationError, errorMessage);
-                }
-
-                foundSchedule.Pattern = updatedEntity.Pattern;
-
-                foundSchedule.Storage = updatedEntity.Storage;
-
-                await _unitOfWork.CommitAsync();
-
-                return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(foundSchedule));
-
+                return Result<ScheduledEventDTO>.GetError(ErrorCode.ValidationError, error);
             }
-            catch
-            {
-                _unitOfWork.Rollback();
 
-                return Result<EventOccurrenceDTO>.GetError(ErrorCode.InternalServerError, "Internal error");
-            }
+            ScheduledEvent item = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(scheduledEventId);
+
+            item = UpdateFields(item, request);
+
+            _unitOfWork.ScheduledEventRepository.Update(item);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(item));
         }
 
-        private bool IsNotValidRepeating(EventOccurrence entity)
+        public async Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(long eventOccuranceID, DateTime? startDate, DateTime? finishDate, UpdateScheduledEventDto request)
         {
-            return entity.Pattern != PatternType.Daily &&
-                entity.Pattern != default;
+            string error = null;
+
+            error ??= await ValidateUpdateScheduleDTO(request);
+
+            error ??= await ValidateEventOccuranceId(eventOccuranceID);
+
+            if (error != null)
+            {
+                return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
+            }
+
+            var result = _unitOfWork.EventOccurenceRepository
+                .GetByIdAsync(eventOccuranceID).Result.ScheduledEvents
+                .Where(x => startDate.HasValue && x.EventFinish >= startDate)
+                .Where(x => finishDate.HasValue && x.EventStart <= finishDate)
+                .Where(x => x.LessonId is null);
+
+            foreach (ScheduledEvent item in result)
+            {
+                UpdateFields(item, request);
+            }
+
+            _unitOfWork.ScheduledEventRepository.UpdateRange(result);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<IList<ScheduledEventDTO>>.GetSuccess(_mapper.Map<IList<ScheduledEventDTO>>(result));
         }
 
-        private string Validate(EventOccurrence schedule)
+        public ScheduledEvent UpdateFields(ScheduledEvent item, UpdateScheduledEventDto request)
         {
+            item.MentorId = request.MentorId ?? item.MentorId;
+            item.StudentGroupId = request.StudentGroupId ?? item.StudentGroupId;
+            item.ThemeId = request.ThemeId ?? item.ThemeId;
+            item.EventStart = request.EventStart.HasValue ? new DateTime(item.EventStart.Year, item.EventStart.Month, item.EventStart.Day,
+                request.EventStart.Value.Hour, request.EventStart.Value.Minute, request.EventStart.Value.Second) : item.EventStart;
+            item.EventFinish = request.EventEnd.HasValue ? new DateTime(item.EventFinish.Year, item.EventFinish.Month, item.EventFinish.Day,
+                request.EventEnd.Value.Hour, request.EventEnd.Value.Minute, request.EventEnd.Value.Second) : item.EventFinish;
 
-            if (IsNotValidRepeating(schedule))
-            {
-                return "DayNumber can`t be null because RepeatRate is not either 0 or 1";
-            }
-
-            if (schedule.EventFinish <= schedule.EventStart)
-            {
-                return "LessonEnd can`t be less than or equal to LessonStart";
-            }
-
-            return null;
+            return item;
         }
 
         private async Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto request)
@@ -224,6 +257,62 @@ namespace CharlieBackend.Business.Services
             }
 
             return error;
+        }
+
+        private async Task<string> ValidateUpdateScheduleDTO(UpdateScheduledEventDto request)
+        {         
+            if (request == null)
+            {
+                return "requestDTO body must not be null";
+            }
+
+            string error = null;
+
+            if (request.StudentGroupId.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId.Value))
+            {
+                error = $"No such theme id={request.StudentGroupId.Value}";
+            }
+
+            if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
+            {
+                error = $"No such mentor id={request.MentorId.Value}";
+            }
+
+            if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
+            {
+                error = $"No such theme id={request.ThemeId.Value}";
+            }
+
+            if (request.EventEnd.HasValue && request.EventStart.HasValue && (request.EventEnd < request.EventStart))
+            {
+                error = $"StartDate must be less then FinisDate";
+            }
+
+            return error;
+        }
+
+        private async Task<string> ValidateEventOccuranceId(long id)
+        {
+            string result = null;
+
+            if (!await _unitOfWork.EventOccurenceRepository.IsEntityExistAsync(id))
+            {
+                result = $"EventOccurance id={id} does not exist";
+            }
+
+            return result;
+        }
+
+        private async Task<string> ValidateScheduledEventId(long id)
+        {
+            string result = null;
+
+            if (!await _unitOfWork.ScheduledEventRepository.IsEntityExistAsync(id))
+            {
+                result = $"ScheduledEvent id={id} does not exist";
+            }
+
+            return result;
         }
 
         private async Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request)
