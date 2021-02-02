@@ -12,9 +12,9 @@ namespace CharlieBackend.Business.Services
     /// </summary>
     public class CurrentUserService : ICurrentUserService
     {
-        long _accountId;
-        long _entityId;
-        string _email;
+        private long _accountId;
+        private long _entityId;
+        private string _email;
 
         readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -29,12 +29,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_accountId == default)
                 {
-                    string accountIdString = _httpContextAccessor
-                        .HttpContext
-                        .User
-                        ?.Claims
-                        ?.SingleOrDefault(claim => claim.Type == "AccountId")
-                        ?.Value;
+                    string accountIdString = GetClaimValue("AccountId");
 
                     if (!long.TryParse(accountIdString, out _accountId))
                     {
@@ -61,12 +56,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_entityId == default)
                 {
-                    string entityIdString = _httpContextAccessor
-                        .HttpContext
-                        .User
-                        ?.Claims
-                        ?.SingleOrDefault(claim => claim.Type == "Id")
-                        ?.Value;
+                    string entityIdString = GetClaimValue("Id");
 
                     if (!long.TryParse(entityIdString, out _entityId))
                     {
@@ -84,12 +74,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_email is null)
                 {
-                    _email = _httpContextAccessor
-                        .HttpContext
-                        .User
-                        ?.Claims
-                        ?.SingleOrDefault(claim => claim.Type == "Email")
-                        ?.Value;
+                    _email = GetClaimValue(claimType: "Email");
 
                     if (_email is null)
                     {
@@ -105,12 +90,7 @@ namespace CharlieBackend.Business.Services
         {
             get
             {
-                string roleString = _httpContextAccessor
-                    .HttpContext
-                    .User
-                    ?.Claims
-                    ?.SingleOrDefault(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType)
-                    ?.Value;
+                string roleString = GetClaimValue(ClaimsIdentity.DefaultRoleClaimType);
 
                 UserRole role;
 
@@ -121,6 +101,16 @@ namespace CharlieBackend.Business.Services
 
                 return role;
             }
+        }
+
+        private string GetClaimValue(string claimType)
+        {
+            return _httpContextAccessor
+                .HttpContext
+                .User
+                ?.Claims
+                ?.SingleOrDefault(claim => claim.Type == claimType)
+                ?.Value;
         }
     }
 }
