@@ -80,10 +80,11 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashboardRepositoryMock.Object);
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
 
             var dashboardService = new DashboardService(
                 unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: null);
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
@@ -445,9 +446,11 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<AverageStudentGroupVisitDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbortRepositoryMock.Object);
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
             var dashbordService = new DashboardService(
                 unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: null);
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
