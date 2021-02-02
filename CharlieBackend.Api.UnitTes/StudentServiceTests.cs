@@ -7,11 +7,9 @@ using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -75,7 +73,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentByIdAsync_ExistingStudentId_ShouldReturnNotNullAndSuccess()
+        public async Task GetStudentByIdAsync_ExistingStudentId_ShouldReturnStudent()
         {
             //Arrange
             var existingId = 1;
@@ -109,7 +107,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             Assert.NotNull(successResult.Data);
-            Assert.Equal(existingId, successResult.Data.Id);
+            successResult.Data.Should().BeEquivalentTo(_mapper.Map<StudentDto>(student));
         }
 
         [Fact]
@@ -119,21 +117,9 @@ namespace CharlieBackend.Api.UnitTest
             var existingId = 1;
             var nonExistingId = 0;
 
-            var student = new Student()
-            {
-                Id = 1,
-                AccountId = 10,
-                Account = new Account()
-                {
-                    Id = 10,
-                    Email = "student@example.com"
-                }
-            };
-
             var studentRepositoryMock = new Mock<IStudentRepository>();
 
-            studentRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(student);
+            studentRepositoryMock.Setup(x => x.GetByIdAsync(existingId));
 
             _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(studentRepositoryMock.Object);
 
