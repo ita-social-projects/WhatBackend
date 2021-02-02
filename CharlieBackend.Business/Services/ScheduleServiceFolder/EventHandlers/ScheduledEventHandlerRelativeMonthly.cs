@@ -24,7 +24,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
                     _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
 
-                while (targetFinishDate <= _source.EventFinish)
+                while (targetFinishDate <= _source.EventFinish && targetStartDate >= _source.EventStart)
                 {
                     yield return CreateEvent(targetStartDate, targetFinishDate, _source, _context);
 
@@ -36,25 +36,31 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         public override DateTime GetStartDate(int index)
         {
             DateTime startDate = new DateTime(_source.EventStart.Year, _source.EventStart.Month, 7 * (int)_pattern.Index,
-                _source.EventStart.Hour, _source.EventStart.Minute, _source.EventStart.Second); 
+                _source.EventStart.Hour, _source.EventStart.Minute, _source.EventStart.Second);
 
-            return startDate.AddDays(startDate.DayOfWeek <= _pattern.DaysOfWeek[index]
-                       ? _pattern.DaysOfWeek[index] - startDate.DayOfWeek
-                       : 7 - (int)startDate.DayOfWeek + (int)_pattern.DaysOfWeek[index]);
+            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
+            int startDay = (int)startDate.DayOfWeek;
+
+            return startDate.AddDays(startDay <= offset
+                       ? -1 * (startDay + 7 - offset)
+                       : -1 * (startDay - offset));
         }
 
-        public void UpdateTime(ref DateTime startTime, ref DateTime finishDate, int index)
+        public void UpdateTime(ref DateTime startDate, ref DateTime finishDate, int index)
         {
-            startTime = startTime.AddMonths(_pattern.Interval);
+            startDate = startDate.AddMonths(_pattern.Interval);
 
-            startTime = new DateTime(startTime.Year, startTime.Month, 7 * (int)_pattern.Index,
-                startTime.Hour, startTime.Minute, startTime.Second);
+            startDate = new DateTime(startDate.Year, startDate.Month, 7 * (int)_pattern.Index,
+                startDate.Hour, startDate.Minute, startDate.Second);
 
-            startTime = startTime.AddDays(startTime.DayOfWeek <= _pattern.DaysOfWeek[index]
-                       ? _pattern.DaysOfWeek[index] - startTime.DayOfWeek
-                       : 7 - (int)startTime.DayOfWeek + (int)_pattern.DaysOfWeek[index]);
+            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
+            int startDay = (int)startDate.DayOfWeek;
 
-            finishDate = new DateTime(startTime.Year, startTime.Month, startTime.Day,
+            startDate = startDate.AddDays(startDay <= offset
+                       ? -1 * (startDay + 7 - offset)
+                       : -1 * (startDay - offset));
+
+            finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
                     _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
         }
 
