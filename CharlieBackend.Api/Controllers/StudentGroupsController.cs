@@ -78,15 +78,17 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all student groups
+        /// Gets all student groups, if dates was specifie, then return all groups in given period
         /// </summary>
         /// <response code="200">Successful return of students of student group</response>
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
+        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
         {
-            return Ok(await _studentGroupService.GetAllStudentGroupsAsync());
+            var groups = await _studentGroupService.GetAllStudentGroupsAsync(startDate, finishDate);
+
+            return groups.ToActionResult();
         }
 
         /// <summary>
@@ -116,20 +118,6 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
-        }
-
-        /// <summary>
-        /// Gets student groups between dates
-        /// </summary>
-        /// <returns>List of Student groups sorted by date</returns>
-        [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
-        [Authorize(Roles ="Admin, Secretary")]
-        [HttpGet("dates")]
-        public async Task<ActionResult> GetStudentGroupsByDate(DateTime startDate,DateTime finishDate)
-        {
-            var resultStudenetGroupDtos = await _studentGroupService.GetStudentGroupsByDateAsyns(startDate,finishDate);
-
-            return resultStudenetGroupDtos.ToActionResult();
         }
     }
 }
