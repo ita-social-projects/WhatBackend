@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_accountId == default)
                 {
-                    string accountIdString = GetClaimValue("AccountId");
+                    string accountIdString = GetClaimValue(claimType: "AccountId");
 
                     if (!long.TryParse(accountIdString, out _accountId))
                     {
@@ -56,7 +56,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_entityId == default)
                 {
-                    string entityIdString = GetClaimValue("Id");
+                    string entityIdString = GetClaimValue(claimType: "Id");
 
                     if (!long.TryParse(entityIdString, out _entityId))
                     {
@@ -90,7 +90,7 @@ namespace CharlieBackend.Business.Services
         {
             get
             {
-                string roleString = GetClaimValue(ClaimsIdentity.DefaultRoleClaimType);
+                string roleString = GetClaimValue(claimType: ClaimsIdentity.DefaultRoleClaimType);
 
                 UserRole role;
 
@@ -103,6 +103,11 @@ namespace CharlieBackend.Business.Services
             }
         }
 
+        /// <summary>
+        /// Gets claim value by the given claim type.
+        /// </summary>
+        /// <returns>string representation of claim value,
+        /// or null if user is not authentified</returns>
         private string GetClaimValue(string claimType)
         {
             return _httpContextAccessor
