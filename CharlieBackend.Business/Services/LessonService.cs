@@ -1,17 +1,14 @@
 ﻿using System;
 using AutoMapper;
-using CharlieBackend.Core;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using Microsoft.AspNetCore.Diagnostics;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
 using System.Linq;
-using System.Security.Claims;
 
 namespace CharlieBackend.Business.Services
 {
@@ -19,11 +16,16 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
+        public LessonService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonDto)
@@ -122,9 +124,9 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
 
-        public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel, ClaimsPrincipal userContext)
+        public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel)
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
                       
             if (filterModel == default)
@@ -260,9 +262,9 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel, ClaimsPrincipal userContext)
+        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
             var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, student.Id);
