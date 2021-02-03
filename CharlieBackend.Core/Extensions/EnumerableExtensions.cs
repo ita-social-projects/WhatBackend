@@ -10,8 +10,8 @@ namespace CharlieBackend.Core.Extensions
         public static IEnumerable<T> Dublicates<T>(this IEnumerable<T> values)
         {
             return values.GroupBy(x => x)
-                 .Where(el => el.Count() > 1)
-                 .Select(dubl => dubl.Key);
+                 .Where(element => element.Count() > 1)
+                 .Select(dublicate => dublicate.Key);
         }
     }
 }
