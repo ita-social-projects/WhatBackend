@@ -31,7 +31,6 @@ namespace CharlieBackend.Api.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext context, IAccountService accountService)
         {
-           
             if (context.Request.Path.Value.Contains("accounts")
                 || context.Request.Path.Value.Contains("swagger"))
             {
