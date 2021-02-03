@@ -159,7 +159,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<IList<LessonDto>> GetLessonsForStudent([FromBody] FilterLessonsRequestDto filterModel)
         {
             var context = HttpContext.User;
-            var lessons = await _lessonService.GetLessonsForStudentAsync(filterModel, context);
+            var lessons = await _lessonService.GetLessonsForStudentAsync(filterModel, context);//getMetog
 
             return lessons;
         }
