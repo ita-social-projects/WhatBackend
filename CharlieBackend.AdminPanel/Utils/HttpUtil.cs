@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using CharlieBackend.AdminPanel.Exceptions;
 using CharlieBackend.Core.DTO.Result;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace CharlieBackend.AdminPanel.Utils
 {
