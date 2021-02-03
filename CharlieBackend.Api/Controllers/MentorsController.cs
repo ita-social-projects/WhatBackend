@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Mentor;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Api.SwaggerExamples.StudentsController;
 using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
@@ -60,8 +57,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("lessons")]
         public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
         {
-            var context = HttpContext.User;
-            var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel, context);
+            var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel);
 
             return lessons;
         }

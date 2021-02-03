@@ -73,6 +73,8 @@ namespace CharlieBackend.Api
 
             services.AddCors();
 
+            services.AddHttpContextAccessor();
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                     {
