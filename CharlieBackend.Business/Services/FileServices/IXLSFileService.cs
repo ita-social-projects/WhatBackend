@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public interface IXLSFileService
+    public interface IXLSFileService : IGroupFileImporter, IStudentFileImporter, IThemeFileImporter
     {
-        Task<Result<IEnumerable<ImportStudentGroupDto>>> ImportGroupsAsync(long coursId, IFormFile file);
+        //Task<Result<IEnumerable<ImportStudentGroupDto>>> ImportGroupsAsync(long coursId, IFormFile file);
 
-        Task<Result<IEnumerable<StudentDto>>> ImportStudentsAsync(long groupId, IFormFile file);
+        //Task<Result<IEnumerable<StudentDto>>> ImportStudentsAsync(long groupId, IFormFile file);
 
-        Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(IFormFile file);
+        //Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(IFormFile file);
     }
 }
