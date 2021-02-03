@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             _index = 7;
         }
 
-        public override DateTime GetStartDate(int index)
+        protected override DateTime GetStartDate(int index)
         {
             DateTime result = _source.EventStart;
             
@@ -23,7 +23,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                     : 7 - (int)result.DayOfWeek + (int)_pattern.DaysOfWeek[index]);
         }
 
-        public override int GetIterationCount()
+        protected override int GetIterationCount()
         {
             return _pattern.DaysOfWeek.Count;
         }

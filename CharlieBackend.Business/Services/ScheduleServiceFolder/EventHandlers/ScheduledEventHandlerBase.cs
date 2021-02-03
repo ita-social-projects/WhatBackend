@@ -41,7 +41,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             }
         }
 
-        public ScheduledEvent CreateEvent(DateTime targetStartDate, DateTime targetFinishDate,
+        protected ScheduledEvent CreateEvent(DateTime targetStartDate, DateTime targetFinishDate,
             EventOccurrence source, ContextForCreateScheduleDTO context)
         {
             return new ScheduledEvent
@@ -56,17 +56,17 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             };
         }
 
-        public virtual int GetIterationCount()
+        protected virtual int GetIterationCount()
         {
             return 1;
         }
 
-        public virtual DateTime GetStartDate(int index)
+        protected virtual DateTime GetStartDate(int index)
         {
             return _source.EventStart;
         }
 
-        public virtual void UpdateTime(ref DateTime starttime, ref DateTime finishDate)
+        protected virtual void UpdateTime(ref DateTime starttime, ref DateTime finishDate)
         {
             starttime = starttime.AddDays(_pattern.Interval * _index);
             finishDate = finishDate.AddDays(_pattern.Interval * _index);

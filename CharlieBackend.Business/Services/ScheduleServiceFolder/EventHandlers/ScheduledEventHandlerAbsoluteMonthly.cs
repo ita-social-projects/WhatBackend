@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             
         }
 
-        public override DateTime GetStartDate(int index)
+        protected override DateTime GetStartDate(int index)
         {
             DateTime startDate = _source.EventStart;
 
@@ -25,7 +25,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                     startDate.Hour, startDate.Minute, startDate.Second).AddMonths(1);
         }
 
-        public override void UpdateTime(ref DateTime starttime, ref DateTime finishDate)
+        protected override void UpdateTime(ref DateTime starttime, ref DateTime finishDate)
         {
             starttime = starttime.AddDays(_pattern.Interval);
             finishDate = finishDate.AddDays(_pattern.Interval);

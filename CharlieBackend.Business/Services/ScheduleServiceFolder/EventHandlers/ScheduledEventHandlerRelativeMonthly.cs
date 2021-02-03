@@ -33,7 +33,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             }
         }
 
-        public override DateTime GetStartDate(int index)
+        protected override DateTime GetStartDate(int index)
         {
             DateTime startDate = new DateTime(_source.EventStart.Year, _source.EventStart.Month, 7 * (int)_pattern.Index,
                 _source.EventStart.Hour, _source.EventStart.Minute, _source.EventStart.Second);
@@ -46,7 +46,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                        : -1 * (startDay - offset));
         }
 
-        public void UpdateTime(ref DateTime startDate, ref DateTime finishDate, int index)
+        protected void UpdateTime(ref DateTime startDate, ref DateTime finishDate, int index)
         {
             startDate = startDate.AddMonths(_pattern.Interval);
 
@@ -64,7 +64,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                     _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
         }
 
-        public override int GetIterationCount()
+        protected override int GetIterationCount()
         {
             return _pattern.DaysOfWeek.Count;
         }
