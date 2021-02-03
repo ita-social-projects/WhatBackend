@@ -44,9 +44,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
-            var httpResponseToken = await _apiUtil.SignInAsync($"api/accounts/auth", authDto);
-
-            httpResponseToken = httpResponseToken.Replace("Bearer ", "");
+            var httpResponseToken = (await _apiUtil.SignInAsync($"api/accounts/auth", authDto)).Replace("Bearer ", "");
 
             if (httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
             {
