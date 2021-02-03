@@ -169,7 +169,6 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-
             #region Homework mapping
 
             CreateMap<Homework, HomeworkDto>().ForMember(dest => dest.AttachmentIds,
@@ -179,14 +178,13 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-
             #region HomeworkStudent mapping
 
             CreateMap<HomeworkStudent, HomeworkStudentDto>()
                 .ForMember(dest => dest.AttachmentIds,
                         opt => opt.MapFrom(src => src.AttachmentOfHomeworkStudents
-                                .Select(y => y.AttachmentId).ToList()));
-            CreateMap<HomeworkDto, Homework>();
+                                .Select(y => y.AttachmentId).ToList()));  
+            CreateMap<HomeworkStudentDto, HomeworkStudent>();
 
             #endregion
         }

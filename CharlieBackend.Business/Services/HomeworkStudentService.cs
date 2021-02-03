@@ -139,30 +139,55 @@ namespace CharlieBackend.Business.Services
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudentByStudentId(student.Id);
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(homework);
 
-            return _mapper.Map<IList<HomeworkStudentDto>>(homework);
+            //foreach (var item in result)
+            //{
+            //    item.StudentName = $"{student.Account.LastName} {student.Account.FirstName}"; // change for mentor ??
+            //} 
+
+            return result;
         }
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId ,ClaimsPrincipal userContext)
         {
             long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
-
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentorByHomeworkId(homeworkId);
+            var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
+            if (homework == null)
+            {
+                ;
+            }
+            
+            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentorByHomeworkId(homeworkId);
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
 
-            return _mapper.Map<IList<HomeworkStudentDto>>(homework);
+            return result;
         }
 
         private async IAsyncEnumerable<string> ValidateHomeworStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
         {
+            
             if (homeworkStudent == default)
             {
                 yield return "Please provide request data";
                 yield break;
             }
-
+          
             var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
             var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
+
+            if (lesson == null)
+            {
+                yield return $"Lesson not created yet";
+                yield break;
+            }
+
+            if (await _unitOfWork.HomeworkStudentRepository.IsStudentHasHomeworkAsync(student.Id, homeworkStudent.HomeworkId))
+            {
+                yield return $"You already add homework for this Hometask {homeworkStudent.HomeworkId}";
+                yield break;
+            }
 
             if (!studentGroups.Contains(lesson.StudentGroupId.Value))
             {

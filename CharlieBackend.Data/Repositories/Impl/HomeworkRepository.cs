@@ -38,5 +38,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.AttachmentsOfHomework)
                 .Where(x => x.LessonId == lessonId).ToListAsync();
         }
+
+        public async Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId)
+        {
+            return await _applicationContext.Homeworks
+                .Include(x => x.Lesson)
+                .FirstOrDefaultAsync(x => (x.Id == homeworkId) && (x.Lesson.MentorId == mentorId));
+        }
+
     }
 }

@@ -324,6 +324,43 @@ DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
+-- -----------------------------------------------------
+-- Table `soft`.`homework_from_student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`homework_from_student` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) not null,
+  `homework_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `homework_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_student_homework` (`homework_id` ASC),
+  CONSTRAINT `FK_student_homework`
+    FOREIGN KEY (`homework_id`)
+    REFERENCES `soft`.`homework` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
+-- Table `soft`.`attachment_of_homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework_student` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `attachment_id` BIGINT(20) NOT NULL,
+  `homework_student_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_homework_student_of_attachment_id` (`homework_student_id` ASC),
+  INDEX `FK_attachment_of_homework_student_id` (`attachment_id` ASC),
+  CONSTRAINT `FK_homework_student_of_attachment_id`
+    FOREIGN KEY (`homework_student_id`)
+    REFERENCES `soft`.`homework_from_student` (`id`),
+  CONSTRAINT `"FK_attachment_of_homework_student_id"`
+    FOREIGN KEY (`attachment_id`)
+    REFERENCES `soft`.`attachment` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

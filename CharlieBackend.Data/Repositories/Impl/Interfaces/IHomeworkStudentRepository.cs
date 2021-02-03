@@ -8,6 +8,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IHomeworkStudentRepository : IRepository<HomeworkStudent>
     {
+        Task<bool> IsStudentHasHomeworkAsync(long studentId, long homeworkId);
+
         Task<IList<HomeworkStudent>> GetHomeworkStudentForStudentByStudentId(long id);
 
         Task<IList<HomeworkStudent>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId);

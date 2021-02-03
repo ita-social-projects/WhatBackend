@@ -10,6 +10,8 @@ namespace CharlieBackend.Core.DTO.HomeworkStudent
 
         public long StudentId { get; set; }
 
+        public string StudentName { get; set; }
+
         public long HomeworkId { get; set; }
 
         public string HomeworkText { get; set; }

@@ -80,6 +80,8 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Update student homework
         /// </summary>
+        /// <param name="id">
+        ///  Id - it is Student homework id </param>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
         [HttpPut("{id}")]

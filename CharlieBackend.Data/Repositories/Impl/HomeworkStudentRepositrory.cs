@@ -26,6 +26,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        //this method check if the student has already done homework for task(homeworkId)
+        public async Task<bool> IsStudentHasHomeworkAsync(long studentId, long homeworkId)
+        {
+            return await _applicationContext.HomeworkStudents.AnyAsync(x => (x.StudentId == studentId) && (x.HomeworkId == homeworkId));
+        }
+
+        
         public async Task<IList<HomeworkStudent>> GetHomeworkStudentForStudentByStudentId(long id)
         {
             return await _applicationContext.HomeworkStudents
