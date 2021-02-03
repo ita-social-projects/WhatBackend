@@ -1,4 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Api.Extensions;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -29,6 +31,7 @@ namespace CharlieBackend.Api.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext context, IAccountService accountService)
         {
+           
             if (context.Request.Path.Value.Contains("accounts")
                 || context.Request.Path.Value.Contains("swagger"))
             {
@@ -59,17 +62,18 @@ namespace CharlieBackend.Api.Middlewares
 
                     if ((bool)!isActive)
                     {
-                        context.Response.StatusCode = 401;
+                        context.Response.StatusCode = 403;
 
-                        await context.Response.WriteAsync("Account is not active!");
+                        await context.Response.WriteAsync("Account is not active(i.e. you don't have proper role). You need to authorize!");
                     }
 
                     if (context.Request.Path.Value.Contains("lessons"))
                     {
                         var role = tokenS.Claims
                                 .First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+                        UserRole userRole = UserRoleExtension.ToEnum<UserRole>(role);
 
-                        if (role == "2")
+                        if (userRole == UserRole.Mentor)
                         {
                             var id = tokenS.Claims.First(claim => claim.Type == "Id").Value;
 
