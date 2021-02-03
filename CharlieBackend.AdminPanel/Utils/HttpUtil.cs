@@ -14,21 +14,25 @@ namespace CharlieBackend.AdminPanel.Utils
     {
         private readonly HttpClient _client;
 
-        public HttpUtil(string baseUrl, string token)
+        public HttpUtil(IOptions<ApplicationSettings> config,
+                        IHttpContextAccessor httpContextAccessor,
+                        IDataProtectionProvider provider)
         {
-            _client = new HttpClient() 
-            { 
-                BaseAddress = new Uri(baseUrl) 
+            _client = new HttpClient()
+            {
+                BaseAddress = new Uri(config.Value.Urls.Api.Https)
             };
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
 
-        public HttpUtil(string baseUrl)
-        {
-            _client = new HttpClient() 
-            { 
-                BaseAddress = new Uri(baseUrl) 
-            };
+            string protectedToken = httpContextAccessor.HttpContext.Request.Cookies["accessToken"];
+
+            if(!string.IsNullOrEmpty(protectedToken))
+            {
+                IDataProtector protector = provider.CreateProtector(config.Value.Cookies.SecureKey);
+
+                string token = protector.Unprotect(protectedToken);
+
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
         }
 
         public async Task<HttpResponseMessage> GetAsync(string url)
