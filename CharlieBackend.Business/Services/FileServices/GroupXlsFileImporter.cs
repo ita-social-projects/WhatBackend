@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class GroupFileImporter : IGroupFileImporter
+    public class GroupXlsFileImporter : IGroupXlsFileImporter
     {
         private readonly IBaseFileService _baseFileService;
         private readonly IMapper _mapper;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GroupFileImporter(IBaseFileService baseFileService, IMapper mapper, IStudentGroupService studentGroupService, IUnitOfWork unitOfWork)
+        public GroupXlsFileImporter(IBaseFileService baseFileService, IMapper mapper, IStudentGroupService studentGroupService, IUnitOfWork unitOfWork)
         {
             _baseFileService = baseFileService;
             _mapper = mapper;

@@ -10,13 +10,13 @@ namespace CharlieBackend.Business.Services.FileServices
 {
     public class XLSFileService : IXLSFileService
     {
-        private readonly IGroupFileImporter _groupFileImporter;
-        private readonly IStudentFileImporter _studentFileImporter;
-        private readonly IThemeFileImporter _themeFileImporter;
+        private readonly IGroupXlsFileImporter _groupFileImporter;
+        private readonly IStudentXlsFileImporter _studentFileImporter;
+        private readonly IThemeXlsFileImporter _themeFileImporter;
 
-        public XLSFileService(IGroupFileImporter groupFileImporter,
-                              IStudentFileImporter studentFileImporter,
-                              IThemeFileImporter themeFileImporter)
+        public XLSFileService(IGroupXlsFileImporter groupFileImporter,
+                              IStudentXlsFileImporter studentFileImporter,
+                              IThemeXlsFileImporter themeFileImporter)
         {
             _groupFileImporter = groupFileImporter;
             _studentFileImporter = studentFileImporter;

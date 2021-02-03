@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class ThemeFileImporter : IThemeFileImporter
+    public class ThemeXlsFileImporter : IThemeXlsFileImporter
     {
         private readonly IBaseFileService _baseFileService;
         private readonly IThemeService _themeService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ThemeFileImporter(IBaseFileService baseFileService,
+        public ThemeXlsFileImporter(IBaseFileService baseFileService,
                                  IThemeService themeService,
                                  IUnitOfWork unitOfWork)
         {

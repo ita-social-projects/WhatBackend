@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class StudentFileImporter : IStudentFileImporter
+    public class StudentXlsFileImporter : IStudentXlsFileImporter
     {
         private readonly string _tempPassword = "changeYourPassword";
 
@@ -23,7 +23,7 @@ namespace CharlieBackend.Business.Services.FileServices
         private readonly IStudentService _studentService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public StudentFileImporter(IAccountService accountService,
+        public StudentXlsFileImporter(IAccountService accountService,
                                    IBaseFileService baseFileService,
                                    IStudentGroupService studentGroupService,
                                    IStudentService studentService,
