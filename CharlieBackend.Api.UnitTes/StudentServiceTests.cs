@@ -7,11 +7,9 @@ using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -73,6 +71,71 @@ namespace CharlieBackend.Api.UnitTest
 
             Assert.Equal(ErrorCode.ValidationError, alreadyAssignedResult.Error.Code);
         }
+
+        [Fact]
+        public async Task GetStudentByIdAsync_ExistingStudentId_ShouldReturnStudent()
+        {
+            //Arrange
+            var existingId = 1;
+
+            var student = new Student()
+            {
+                Id = 1,
+                AccountId = 10,
+                Account = new Account()
+                {
+                    Id = 10,
+                    Email = "student@example.com"
+                }
+            };
+
+            var studentRepositoryMock = new Mock<IStudentRepository>();
+
+            studentRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
+                .ReturnsAsync(student);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(studentRepositoryMock.Object);
+
+            var studentService = new StudentService(
+                _accountServiceMock.Object,
+                _unitOfWorkMock.Object,
+                _mapper,
+                _notificationServiceMock.Object);
+
+            //Act
+            var successResult = await studentService.GetStudentByIdAsync(existingId);
+
+            //Assert
+            Assert.NotNull(successResult.Data);
+            successResult.Data.Should().BeEquivalentTo(_mapper.Map<StudentDto>(student));
+        }
+
+        [Fact]
+        public async Task GetStudentByIdAsync_NonExistingStudentId_ShouldReturnNotFound()
+        {
+            //Arrange
+            var existingId = 1;
+            var nonExistingId = 0;
+
+            var studentRepositoryMock = new Mock<IStudentRepository>();
+
+            studentRepositoryMock.Setup(x => x.GetByIdAsync(existingId));
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(studentRepositoryMock.Object);
+
+            var studentService = new StudentService(
+                _accountServiceMock.Object,
+                _unitOfWorkMock.Object,
+                _mapper,
+                _notificationServiceMock.Object);
+
+            //Act
+            var nonExistingIdResult = await studentService.GetStudentByIdAsync(nonExistingId);
+
+            //Assert
+            Assert.Equal(ErrorCode.NotFound, nonExistingIdResult.Error.Code);
+        }
+
 
         [Fact]
         public async Task StudentUpdate()
