@@ -34,30 +34,9 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddScoped<IHttpUtil, HttpUtil>((ctx) =>
-            {
-                IHttpContextAccessor httpContext = ctx.GetService<IHttpContextAccessor>();
-
-                string accessToken = httpContext.HttpContext.Request.Cookies["accessToken"];
-
-                if (accessToken != null)
-                {
-                    IDataProtectionProvider provider = ctx.GetService<IDataProtectionProvider>();
-
-                    IDataProtector protector = provider.CreateProtector(config.Cookies.SecureKey);
-
-                    string unprotectedToken = protector.Unprotect(accessToken);
-
-                    return new HttpUtil(config.Urls.Api.Https, unprotectedToken);
-                }
-                else
-                {
-                    return new HttpUtil(config.Urls.Api.Https);
-                }
-            });
-
-            services.AddTransient<IApiUtil, ApiUtil>();
-
+            services.AddScoped<IHttpUtil, HttpUtil>();
+            services.AddScoped<IApiUtil, ApiUtil>();
+            
             services.AddTransient<IStudentService, StudentService>(); 
             services.AddTransient<IStudentGroupService, StudentGroupService>();
             services.AddTransient<ICourseService, CourseService>();
