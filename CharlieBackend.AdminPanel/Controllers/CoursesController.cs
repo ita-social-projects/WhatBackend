@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Core.DTO.Course;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,22 @@ namespace CharlieBackend.AdminPanel.Controllers
             var mentor = await _courseService.GetAllCoursesAsync();
 
             return View(mentor);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> UpdateCourse(long id, UpdateCourseDto updateCourseDto)
+        {
+            await _courseService.UpdateCourse(id, updateCourseDto);
+
+            return RedirectToAction("AllCourses", "Courses");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DisableCourse(long id)
+        {
+            await _courseService.DisableCourseAsync(id);
+
+            return RedirectToAction("AllCourses", "Courses");
         }
     }
 }
