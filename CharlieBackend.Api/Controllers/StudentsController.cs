@@ -157,7 +157,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get filter list of lessons for student
+        /// Gets filtered list of lessons for student
         /// </summary>
         /// <response code="200">Returned filtered list of lessons for student </response>
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
