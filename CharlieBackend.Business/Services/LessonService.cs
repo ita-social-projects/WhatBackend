@@ -71,7 +71,7 @@ namespace CharlieBackend.Business.Services
                     return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudents)} not included in this group({lessonDto.StudentGroupId})");
                 }
 
-                if (createdLessonEntity.LessonDate < DateTime.Now)
+                if (createdLessonEntity.LessonDate > DateTime.Now)
                 {
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
@@ -187,7 +187,7 @@ namespace CharlieBackend.Business.Services
                     }
                 }
                
-                if (lessonModel.LessonDate < DateTime.Now)
+                if (lessonModel.LessonDate > DateTime.Now)
                 {
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
