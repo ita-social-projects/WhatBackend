@@ -218,7 +218,7 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "AAA"
             };
 
-            var studentGroupWithoutCourseID = new CreateStudentGroupDto()
+            var studentGroupWithoutCourseID = new UpdateStudentGroupDto()
             {
                 Name = "New_test_name",
                 CourseId = -1,
@@ -228,7 +228,7 @@ namespace CharlieBackend.Api.UnitTest
                 MentorIds = new List<long>() { 8, 9 }
             };
 
-            var studentGroupWithoutValidStudentIDs = new CreateStudentGroupDto()
+            var studentGroupWithoutValidStudentIDs = new UpdateStudentGroupDto()
             {
                 Name = "New_test_name",
                 CourseId = 1,
@@ -287,8 +287,10 @@ namespace CharlieBackend.Api.UnitTest
             var groupNameExistResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, existingNameStudentGroupDto);
             var groupNotExistResult = await studentGroupService.UpdateStudentGroupAsync(notExistingGroupId, updateStudentGroupDto);
             var nullGroupResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, null);
-            var withNotExistCoursIdResult = await studentGroupService.CreateStudentGroupAsync(studentGroupWithoutCourseID);
-            var withNotExistStrudentIdResult = await studentGroupService.CreateStudentGroupAsync(studentGroupWithoutValidStudentIDs);
+            var withNotExistCoursIdResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, studentGroupWithoutCourseID);
+            var withNotExistStrudentIdResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, studentGroupWithoutValidStudentIDs);
+            var groupNameIsNullResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, new UpdateStudentGroupDto() { Name = null });
+            var groupNameIsEmptyResult = await studentGroupService.UpdateStudentGroupAsync(existingStudentGroup.Id, new UpdateStudentGroupDto() { Name = string.Empty });
 
             //Assert
 
@@ -304,6 +306,11 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.ValidationError, nullGroupResult.Error.Code);
 
             Assert.Equal(ErrorCode.ValidationError, withNotExistStrudentIdResult.Error.Code);
+
+            Assert.Equal(ErrorCode.ValidationError, groupNameIsNullResult.Error.Code);
+
+            Assert.Equal(ErrorCode.ValidationError, groupNameIsEmptyResult.Error.Code);
+
 
         }
 

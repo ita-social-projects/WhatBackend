@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
@@ -83,8 +80,11 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashboardRepositoryMock.Object);
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
 
-            var dashboardService = new DashboardService(_unitOfWorkMock.Object);
+            var dashboardService = new DashboardService(
+                unitOfWork: _unitOfWorkMock.Object,
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
@@ -183,8 +183,9 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbordrepositoryMock.Object);
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
 
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object);
+            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
 
             //Act
             var resultWithData = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithData);
@@ -205,22 +206,6 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             long studentIdWithGroup = 7;
             long studentIdWithoutGroup = 20;
-            string firstName = "Denys";
-            string secondName = "Igor";
-
-            var claimPrincipal = GetClaimsPrincipal(UserRole.Student, studentIdWithGroup, firstName);
-            var claimPrincipalForStudentWitoutGroup = GetClaimsPrincipal(UserRole.Student, studentIdWithoutGroup, secondName);
-            
-            var mockPrincipal = new Mock<IPrincipal>();
-            var mockPrincipalForStudentWitoutGroup = new Mock<IPrincipal>();
-            mockPrincipal.Setup(x => x.Identity).Returns(claimPrincipal.Identity);
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.Identity).Returns(claimPrincipalForStudentWitoutGroup.Identity);
-           
-            mockPrincipal.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
-            mockPrincipal.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(false);
-
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(false);
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
@@ -286,14 +271,19 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbordRepositoryMock.Object);
+            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+            var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
+            var currentUserServiceAsStrangerStudent = GetCurrentUserAsExistingStudent(entityId: long.MaxValue);
 
-            var dashbordService = new DashboardService(_unitOfWorkMock.Object);
+            var dashbordServiceWithStrangerCredentials = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStrangerStudent.Object);
+            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+            var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
-            var resultWithData = await dashbordService.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
-            var resultWithoutClassbook = await dashbordService.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook, claimPrincipal);
-            var requestWithStrangerCredentials = await dashbordService.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipal); // вопрос о третьем параметре 
-            var resultWithoutGrop = await dashbordService.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimPrincipalForStudentWitoutGroup);
+            var resultWithData = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+            var resultWithoutClassbook = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook);
+            var requestWithStrangerCredentials = await dashbordServiceWithStrangerCredentials.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
+            var resultWithoutGrop = await dashbordServiceWithoutGroup.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
             Assert.Equal(ErrorCode.ValidationError, requestWithStrangerCredentials.Error.Code);
@@ -310,23 +300,6 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             long studentIdWithGroup = 7;
             long studentIdWithoutGroup = 20;
-            string firstName = "Denys";
-            string secondName = "Igor";
-
-            var claimsPrincipalWithGroup = GetClaimsPrincipal(UserRole.Student, studentIdWithGroup, firstName);
-            var claimsPrincipalWithoutGroup = GetClaimsPrincipal(UserRole.Student, studentIdWithoutGroup, secondName);
-           
-            var mockPrincipal = new Mock<IPrincipal>();
-            var mockPrincipalForStudentWitoutGroup = new Mock<IPrincipal>();
-
-            mockPrincipal.Setup(x => x.Identity).Returns(claimsPrincipalWithGroup.Identity);
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.Identity).Returns(claimsPrincipalWithoutGroup.Identity);
-
-            mockPrincipal.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
-            mockPrincipal.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(false);
-
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.IsInRole(UserRole.Student.ToString())).Returns(true);
-            mockPrincipalForStudentWitoutGroup.Setup(x => x.IsInRole(UserRole.Mentor.ToString())).Returns(true);
             
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
@@ -388,14 +361,19 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbordRepositoryMock.Object);
+            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+            var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
+            var currentUserServiceAsStrangerStudent = GetCurrentUserAsExistingStudent(entityId: long.MaxValue);
 
-            var dashbordService = new DashboardService(_unitOfWorkMock.Object);
+            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+            var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
+            var dashbordServiceWithStrangerCredentials = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStrangerStudent.Object);
 
             //Act
-            var resultWithData = await dashbordService.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData, claimsPrincipalWithGroup); // вопрос о третьем параметре 
-            var resultWithoutClassbook = await dashbordService.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook, claimsPrincipalWithGroup);
-            var resultWithoutGroup = await dashbordService.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimsPrincipalWithoutGroup);
-            var resultWithDataWithWrongClaim = await dashbordService.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData, claimsPrincipalWithGroup); // вопрос о третьем параметре 
+            var resultWithData = await dashbordServiceWithGroup.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+            var resultWithoutClassbook = await dashbordServiceWithGroup.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook);
+            var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
+            var resultWithDataWithWrongClaim = await dashbordServiceWithStrangerCredentials.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
 
             //Assert
             Assert.NotEmpty(resultWithData.Data.AverageStudentsMarks);
@@ -468,7 +446,11 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<AverageStudentGroupVisitDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(dashbortRepositoryMock.Object);
-            var dashbordService = new DashboardService(_unitOfWorkMock.Object);
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
+            var dashbordService = new DashboardService(
+                unitOfWork: _unitOfWorkMock.Object,
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
