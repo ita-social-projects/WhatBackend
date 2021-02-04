@@ -155,14 +155,14 @@ namespace CharlieBackend.Core.Mapping
 
             #region Schedules mapping
 
-            CreateMap<CreateScheduleDto, EventOccurence>();
-            CreateMap<UpdateScheduleDto, EventOccurence>();
-            CreateMap<EventOccurence, EventOccurenceDTO>()
+            CreateMap<CreateScheduleDto, EventOccurrence>();
+            CreateMap<UpdateScheduleDto, EventOccurrence>();
+            CreateMap<EventOccurrence, EventOccurrenceDTO>()
                 .ForMember(x => x.Events, y => y.MapFrom(map => map.ScheduledEvents.ToList()));
 
             CreateMap<ScheduledEventDTO, ScheduledEvent>();
             CreateMap<ScheduledEvent, ScheduledEventDTO>()
-                .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurenceId));
+                .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurrenceId));
 
             #endregion
 

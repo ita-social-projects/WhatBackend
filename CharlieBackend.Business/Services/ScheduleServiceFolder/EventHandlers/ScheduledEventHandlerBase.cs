@@ -36,7 +36,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 {
                     yield return new ScheduledEvent
                     {
-                        EventOccurenceId = _source.Id,
+                        EventOccurrenceId = _source.Id,
                         StudentGroupId = _source.StudentGroupId,
                         EventStart = targetStartDate,
                         EventFinish = targetFinishDate,

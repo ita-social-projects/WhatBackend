@@ -44,7 +44,7 @@ namespace CharlieBackend.Business.Services
                 Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern)
             };
 
-            _unitOfWork.EventOccurenceRepository.Add(result);
+            _unitOfWork.EventOccurrenceRepository.Add(result);
 
             _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
 
@@ -55,12 +55,12 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id)
         {
-            var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
+            var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
 
             if (scheduleEntity != null)
             {
                 var mappedSchedule = _mapper.Map<EventOccurrenceDTO>(scheduleEntity);
-                await _unitOfWork.EventOccurenceRepository.DeleteAsync(id);
+                await _unitOfWork.EventOccurrenceRepository.DeleteAsync(id);
 
                 await _unitOfWork.CommitAsync();
 
@@ -73,15 +73,15 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<EventOccurrenceDTO>>> GetAllSchedulesAsync()
         {
-            var scheduleEntities = await _unitOfWork.EventOccurenceRepository.GetAllAsync();
+            var scheduleEntities = await _unitOfWork.EventOccurrenceRepository.GetAllAsync();
 
             return Result<IList<EventOccurrenceDTO>>.GetSuccess(
                 _mapper.Map<IList<EventOccurrenceDTO>>(scheduleEntities));
         }
 
-        public async Task<Result<EventOccurenceDTO>> GetEventOccurrenceByIdAsync(long id)
+        public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
         {
-            var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
+            var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
 
             return scheduleEntity == null ?
                 Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
@@ -111,7 +111,7 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<EventOccurrenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
                 }
-                var foundSchedule = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(scheduleId);
+                var foundSchedule = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(scheduleId);
 
                 if (foundSchedule == null)
                 {
