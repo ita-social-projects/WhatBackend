@@ -37,6 +37,10 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Add new schedule
         /// </summary>
+        /// <remarks>
+        /// Creates new EventOccurance instance and related ScheduledEvents
+        /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
+        /// </remarks>
         /// <response code="200">Successful add of schedule</response>
         /// <response code="HTTP: 400, API: 0">Can not create schedule due to wrong request data</response>
         /// <response code="HTTP: 404, API: 3">Can not create schedule due to missing request data</response>
