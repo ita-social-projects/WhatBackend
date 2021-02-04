@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Business.Services.FileServices;
+using FluentValidation.AspNetCore;
 
 namespace CharlieBackend.Root
 {
@@ -22,9 +23,11 @@ namespace CharlieBackend.Root
                   b => b.MigrationsAssembly("CharlieBackend.Api"));
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-                    options.SerializerSettings.ReferenceLoopHandling
-                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers()
+                    .AddNewtonsoftJson(options =>
+                        options.SerializerSettings.ReferenceLoopHandling
+                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                    .AddFluentValidation();
 
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 

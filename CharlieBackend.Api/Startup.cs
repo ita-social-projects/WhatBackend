@@ -104,11 +104,11 @@ namespace CharlieBackend.Api
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-               c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments(xmlPath);
 
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
-                c.IncludeXmlComments(xmlPath); 
+                c.IncludeXmlComments(xmlPath);
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
@@ -138,7 +138,7 @@ namespace CharlieBackend.Api
             });
 
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
-            
+
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
@@ -187,7 +187,7 @@ namespace CharlieBackend.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>
