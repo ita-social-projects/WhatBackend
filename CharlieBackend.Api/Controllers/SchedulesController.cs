@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
 using Swashbuckle.AspNetCore.Annotations;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -90,10 +91,10 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
+        [SwaggerResponse(200, type: typeof(EventOccurrence))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/updateRange")]
-        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
+        public async Task<ActionResult<EventOccurrence>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
         {
             var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
@@ -109,7 +110,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/{scheduledEventID}")]
-        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto updateScheduleDto)
+        public async Task<ActionResult<EventOccurrence>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto updateScheduleDto)
         {
             var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, updateScheduleDto);
 
@@ -122,10 +123,10 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
+        [SwaggerResponse(200, type: typeof(EventOccurrence))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("scheduledEvents/{eventOccurrenceID}")]
-        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody]CreateScheduleDto updateOccurrenceRequest)
+        public async Task<ActionResult<EventOccurrence>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody]CreateScheduleDto updateOccurrenceRequest)
         {
             var foundSchedules = await _scheduleService.UpdateEventOccurrenceById(eventOccurrenceID, updateOccurrenceRequest);
 
@@ -139,7 +140,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
         [Authorize(Roles = "Secretary, Admin")]
         [HttpDelete("{eventOccurrenceID}")]
-        public async Task<ActionResult<EventOccurenceDTO>> DeleteSchedule(long scheduleId, DateTime? startDate, DateTime? finishDate)
+        public async Task<ActionResult<EventOccurrence>> DeleteSchedule(long scheduleId, DateTime? startDate, DateTime? finishDate)
         {
             var foundSchedules = await _scheduleService.DeleteScheduleByIdAsync(scheduleId, startDate, finishDate);
 
