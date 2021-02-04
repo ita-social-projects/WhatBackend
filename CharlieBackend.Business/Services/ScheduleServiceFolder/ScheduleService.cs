@@ -53,16 +53,16 @@ namespace CharlieBackend.Business.Services
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(result));
         }       
 
-        public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
+        public async Task<Result<EventOccurrence>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
         {
             string error = await ValidateEventOccuranceId(id);
 
             if (error != null)
             {
-                return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
+                return Result<EventOccurrence>.GetError(ErrorCode.ValidationError, error);
             }
 
-            var eventOccurrenceResult = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
+            var eventOccurrenceResult = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
 
             var everyValue = eventOccurrenceResult
                 .ScheduledEvents                
@@ -90,19 +90,19 @@ namespace CharlieBackend.Business.Services
 
                     eventOccurrenceResult.EventFinish = actualFinish;
 
-                    _unitOfWork.EventOccurenceRepository.Update(eventOccurrenceResult);
+                    _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
                 }
 
                 _unitOfWork.ScheduledEventRepository.RemoveRange(result);
             }
             else
             {
-                await _unitOfWork.EventOccurenceRepository.DeleteAsync(id);
+                await _unitOfWork.EventOccurrenceRepository.DeleteAsync(id);
             }
 
             await _unitOfWork.CommitAsync();
 
-            return Result<EventOccurenceDTO>.GetSuccess(_mapper.Map<EventOccurenceDTO>(eventOccurrenceResult));
+            return Result<EventOccurrence>.GetSuccess(_mapper.Map<EventOccurrence>(eventOccurrenceResult));
         }
 
         public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
@@ -175,14 +175,14 @@ namespace CharlieBackend.Business.Services
             return Result<IList<ScheduledEventDTO>>.GetSuccess(_mapper.Map<IList<ScheduledEventDTO>>(result));
         }
 
-        public async Task<Result<EventOccurenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request)
+        public async Task<Result<EventOccurrence>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request)
         {
             string error = await ValidateCreateScheduleRequestAsync(request);
             error ??= await ValidateEventOccuranceId(eventOccurrenceId);
 
             if (error != null)
             {
-                return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
+                return Result<EventOccurrence>.GetError(ErrorCode.ValidationError, error);
             }
 
             
@@ -299,7 +299,7 @@ namespace CharlieBackend.Business.Services
         {
             string result = null;
 
-            if (!await _unitOfWork.EventOccurenceRepository.IsEntityExistAsync(id))
+            if (!await _unitOfWork.EventOccurrenceRepository.IsEntityExistAsync(id))
             {
                 result = $"EventOccurance id={id} does not exist";
             }
