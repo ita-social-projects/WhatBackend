@@ -92,10 +92,10 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpPut("{eventRangeUpdate}")]
-        public async Task<ActionResult<EventOccurenceDTO>> PutScheduleRange(long eventOccuranceId, DateTime? startDate, DateTime? finishDate, [FromBody]UpdateScheduledEventDto updateScheduleDto)
+        [HttpPut("events/updateRange")]
+        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
         {
-            var foundSchedules = await _scheduleService.UpdateScheduledEventByID(eventOccuranceId, updateScheduleDto);
+            var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
             return foundSchedules.ToActionResult();
         }
@@ -108,10 +108,26 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpPut("{eventUpdate}")]
-        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventById(long scheduledEventID, [FromBody] UpdateScheduledEventDto updateScheduleDto)
+        [HttpPut("events/{scheduledEventID}")]
+        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto updateScheduleDto)
         {
             var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, updateScheduleDto);
+
+            return foundSchedules.ToActionResult();
+        }
+
+        /// <summary>
+        /// Updates a single event
+        /// </summary>
+        /// <response code="200">Successful update of schedule</response>
+        /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
+        /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
+        [SwaggerResponse(200, type: typeof(EventOccurenceDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpPut("scheduledEvents/{eventOccurrenceID}")]
+        public async Task<ActionResult<EventOccurenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody]CreateScheduleDto updateOccurrenceRequest)
+        {
+            var foundSchedules = await _scheduleService.UpdateEventOccurrenceById(eventOccurrenceID, updateOccurrenceRequest);
 
             return foundSchedules.ToActionResult();
         }
@@ -122,7 +138,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code = "200" > Successful delete of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpDelete("{scheduleId}")]
+        [HttpDelete("{eventOccurrenceID}")]
         public async Task<ActionResult<EventOccurenceDTO>> DeleteSchedule(long scheduleId, DateTime? startDate, DateTime? finishDate)
         {
             var foundSchedules = await _scheduleService.DeleteScheduleByIdAsync(scheduleId, startDate, finishDate);
