@@ -13,16 +13,16 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         protected PatternForCreateScheduleDTO _pattern;
         protected int _index = 1;
 
-
-        public ScheduledEventHandlerBase(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern)
+        public ScheduledEventHandlerBase(PatternForCreateScheduleDTO pattern)
         {
-            _source = source;
-            _context = context;
             _pattern = pattern;
         }
 
-        public virtual IEnumerable<ScheduledEvent> GetEvents()
+        public virtual IEnumerable<ScheduledEvent> GetEvents(EventOccurrence source, ContextForCreateScheduleDTO context)
         {
+            _context = context;
+            _source = source;
+
             int count = GetIterationCount();
 
             for (int i = 0; i < count; i++)
@@ -34,26 +34,19 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
                 while (targetFinishDate <= _source.EventFinish)
                 {
-                    yield return CreateEvent(targetStartDate, targetFinishDate, _source, _context);
+                    yield return new ScheduledEvent
+                    {
+                        EventOccurenceId = _source.Id,
+                        StudentGroupId = _source.StudentGroupId,
+                        EventStart = targetStartDate,
+                        EventFinish = targetFinishDate,
+                        MentorId = _context.MentorID,
+                        ThemeId = _context.ThemeID
+                    };
 
                     UpdateTime(ref targetStartDate, ref targetFinishDate);
                 }
             }
-        }
-
-        protected ScheduledEvent CreateEvent(DateTime targetStartDate, DateTime targetFinishDate,
-            EventOccurrence source, ContextForCreateScheduleDTO context)
-        {
-            return new ScheduledEvent
-            {
-                EventOccurence = source,
-                EventOccurenceId = source.Id,
-                StudentGroupId = source.StudentGroupId,
-                EventStart = targetStartDate,
-                EventFinish = targetFinishDate,
-                MentorId = context.MentorID,
-                ThemeId = context.ThemeID
-            };
         }
 
         protected virtual int GetIterationCount()

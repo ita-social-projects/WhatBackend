@@ -15,6 +15,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
     public interface IScheduledEventHandler
     {
-        IEnumerable<ScheduledEvent> GetEvents();
+        IEnumerable<ScheduledEvent> GetEvents(EventOccurrence source, ContextForCreateScheduleDTO context);
     }
 }

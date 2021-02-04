@@ -8,13 +8,16 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
     public class ScheduledEventHandlerRelativeMonthly : ScheduledEventHandlerBase
     {
-        public ScheduledEventHandlerRelativeMonthly(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern) 
-            : base(source, context, pattern)
+        public ScheduledEventHandlerRelativeMonthly(PatternForCreateScheduleDTO pattern) 
+            : base(pattern)
         {
         }
 
-        public override IEnumerable<ScheduledEvent> GetEvents()
+        public override IEnumerable<ScheduledEvent> GetEvents(EventOccurrence source, ContextForCreateScheduleDTO context)
         {
+            _context = context;
+            _source = source;
+
             int count = GetIterationCount();
 
             for (int i = 0; i < count; i++)
@@ -26,7 +29,16 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
                 while (targetFinishDate <= _source.EventFinish && targetStartDate >= _source.EventStart)
                 {
-                    yield return CreateEvent(targetStartDate, targetFinishDate, _source, _context);
+                    yield return new ScheduledEvent
+                    {
+                        EventOccurence = _source,
+                        EventOccurenceId = _source.Id,
+                        StudentGroupId = _source.StudentGroupId,
+                        EventStart = targetStartDate,
+                        EventFinish = targetFinishDate,
+                        MentorId = _context.MentorID,
+                        ThemeId = _context.ThemeID
+                    }; ;
 
                     UpdateTime(ref targetStartDate, ref targetFinishDate, i);
                 }

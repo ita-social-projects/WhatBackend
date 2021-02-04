@@ -8,8 +8,8 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
     public class ScheduledEventHandlerWeekly : ScheduledEventHandlerBase
     {
-        public ScheduledEventHandlerWeekly(EventOccurrence source, ContextForCreateScheduleDTO context, PatternForCreateScheduleDTO pattern) 
-            : base(source, context, pattern)
+        public ScheduledEventHandlerWeekly(PatternForCreateScheduleDTO pattern)
+            : base(pattern)
         {
             _index = 7;
         }

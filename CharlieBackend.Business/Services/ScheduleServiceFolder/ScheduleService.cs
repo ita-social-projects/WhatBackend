@@ -45,9 +45,7 @@ namespace CharlieBackend.Business.Services
 
             _unitOfWork.EventOccurenceRepository.Add(result);
 
-            IScheduledEventHandler creator = new ScheduledEventHandler(result, createScheduleRequest.Context, createScheduleRequest.Pattern); ;
-
-            _unitOfWork.ScheduledEventRepository.AddRange(creator.GetEvents());
+            _unitOfWork.ScheduledEventRepository.AddRange(new ScheduledEventHandlerFactory().Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
 
             await _unitOfWork.CommitAsync();
 
