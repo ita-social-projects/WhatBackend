@@ -18,11 +18,13 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
 
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _scheduledEventFactory = scheduledEventHandlerFactory;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
@@ -45,7 +47,7 @@ namespace CharlieBackend.Business.Services
 
             _unitOfWork.EventOccurenceRepository.Add(result);
 
-            _unitOfWork.ScheduledEventRepository.AddRange(new ScheduledEventHandlerFactory().Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
+            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
 
             await _unitOfWork.CommitAsync();
 
