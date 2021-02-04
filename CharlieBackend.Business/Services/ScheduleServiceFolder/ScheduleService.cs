@@ -53,13 +53,13 @@ namespace CharlieBackend.Business.Services
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(result));
         }       
 
-        public async Task<Result<EventOccurrence>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
+        public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
         {
             string error = await ValidateEventOccuranceId(id);
 
             if (error != null)
             {
-                return Result<EventOccurrence>.GetError(ErrorCode.ValidationError, error);
+                return Result<EventOccurrenceDTO>.GetError(ErrorCode.ValidationError, error);
             }
 
             var eventOccurrenceResult = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
@@ -102,7 +102,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            return Result<EventOccurrence>.GetSuccess(_mapper.Map<EventOccurrence>(eventOccurrenceResult));
+            return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
 
         public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
@@ -175,19 +175,29 @@ namespace CharlieBackend.Business.Services
             return Result<IList<ScheduledEventDTO>>.GetSuccess(_mapper.Map<IList<ScheduledEventDTO>>(result));
         }
 
-        public async Task<Result<EventOccurrence>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request)
+        public async Task<Result<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request)
         {
             string error = await ValidateCreateScheduleRequestAsync(request);
             error ??= await ValidateEventOccuranceId(eventOccurrenceId);
 
             if (error != null)
             {
-                return Result<EventOccurrence>.GetError(ErrorCode.ValidationError, error);
+                return Result<EventOccurrenceDTO>.GetError(ErrorCode.ValidationError, error);
             }
 
-            
+            var eventOccurrenceResult = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(eventOccurrenceId);
 
-            return null;
+            eventOccurrenceResult.Pattern = request.Pattern.Type;
+            eventOccurrenceResult.StudentGroupId = request.Context.GroupID;
+            eventOccurrenceResult.EventStart = request.Range.StartDate;
+            eventOccurrenceResult.EventFinish = request.Range.FinishDate.Value;
+            eventOccurrenceResult.Storage = EventOccuranceStorageParser.GetPatternStorageValue(request.Pattern);
+
+            _unitOfWork.ScheduledEventRepository.RemoveRange(eventOccurrenceResult.ScheduledEvents.Where(x => x.LessonId is null));
+            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(request.Pattern).GetEvents(eventOccurrenceResult, request.Context));
+            _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
+
+            return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
 
         private ScheduledEvent UpdateFields(ScheduledEvent item, UpdateScheduledEventDto request)
