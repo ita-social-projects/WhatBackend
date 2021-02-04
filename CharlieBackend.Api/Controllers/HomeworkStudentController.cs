@@ -42,9 +42,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostHomework([FromBody] HomeworkStudentRequestDto request)
         {
-            var context = HttpContext.User;
-
-            var results = await _homeworkStudentService.CreateHomeworkFromStudentAsync(request, context);
+            var results = await _homeworkStudentService.CreateHomeworkFromStudentAsync(request);
 
             return results.ToActionResult();
         }
@@ -57,8 +55,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForStudentByStudentId()
         {
-            var userContext = HttpContext.User;
-            var results = await _homeworkStudentService.GetHomeworkStudentForStudent(userContext);
+            var results = await _homeworkStudentService.GetHomeworkStudentForStudent();
 
             return results;
         }
@@ -71,8 +68,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{homeworkId}")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForMentorByHomeworkId(long homeworkId)
         {
-            var userContext = HttpContext.User;
-            var results = await _homeworkStudentService.GetHomeworkStudentForMentorByHomeworkId(homeworkId, userContext);
+            var results = await _homeworkStudentService.GetHomeworkStudentForMentorByHomeworkId(homeworkId);
 
             return results;
         }
@@ -87,8 +83,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutHomework(long id, [FromBody] HomeworkStudentRequestDto updateHomeworkDto)
         {
-            var userContext = HttpContext.User;
-            var results = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(updateHomeworkDto, userContext, id);
+            
+            var results = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(updateHomeworkDto, id);
 
             return results.ToActionResult();
         }

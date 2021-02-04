@@ -336,7 +336,11 @@ CREATE TABLE IF NOT EXISTS `soft`.`homework_from_student` (
   INDEX `FK_student_homework` (`homework_id` ASC),
   CONSTRAINT `FK_student_homework`
     FOREIGN KEY (`homework_id`)
-    REFERENCES `soft`.`homework` (`id`))
+    REFERENCES `soft`.`homework` (`id`),
+  CONSTRAINT `FK_homework_of_student`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `soft`.`student` (`id`))
+    
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;

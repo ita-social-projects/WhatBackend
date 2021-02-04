@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
+                .Include(x => x.Student)
+                .Include(x => x.Student.Account)
                 .Where(x => x.StudentId == id)
                 .ToListAsync();
         }
@@ -47,6 +50,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
+                .Include(x => x.Student)
+                .Include(x => x.Student.Account)
                 .Where(x => x.HomeworkId == homeworkId)
                 .ToListAsync();
 

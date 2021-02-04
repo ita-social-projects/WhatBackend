@@ -181,6 +181,9 @@ namespace CharlieBackend.Core.Mapping
             #region HomeworkStudent mapping
 
             CreateMap<HomeworkStudent, HomeworkStudentDto>()
+                .ForMember(hom => hom.StudentName,
+                        opt => opt.MapFrom(src => $"{ src.Student.Account.LastName}  {src.Student.Account.FirstName}"
+                ))
                 .ForMember(dest => dest.AttachmentIds,
                         opt => opt.MapFrom(src => src.AttachmentOfHomeworkStudents
                                 .Select(y => y.AttachmentId).ToList()));  

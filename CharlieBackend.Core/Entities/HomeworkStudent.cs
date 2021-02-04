@@ -12,6 +12,8 @@ namespace CharlieBackend.Core.Entities
 
         public string HomeworkText { get; set; }
 
+        public Student Student { get; set; }
+
         public Homework Homework { get; set; }
 
         public ICollection<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }

@@ -19,17 +19,19 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkStudentService> _logger;
+        private readonly ICurrentUserService _currentUserService;
 
-        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger)
+        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _currentUserService = currentUserService;
         }
 
-        public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, ClaimsPrincipal userContext)
+        public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent)
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
@@ -78,9 +80,9 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(newHomework));
         }
 
-        public async Task<Result<HomeworkStudentDto>> UpdateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, ClaimsPrincipal userContext, long homeworkId)
+        public async Task<Result<HomeworkStudentDto>> UpdateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, long homeworkId)
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
            
@@ -133,36 +135,25 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(foundStudentHomework));
         }
 
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent(ClaimsPrincipal userContext)
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent()
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudentByStudentId(student.Id);
-            var result = _mapper.Map<IList<HomeworkStudentDto>>(homework);
 
-            //foreach (var item in result)
-            //{
-            //    item.StudentName = $"{student.Account.LastName} {student.Account.FirstName}"; // change for mentor ??
-            //} 
-
-            return result;
+            return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId ,ClaimsPrincipal userContext)
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId)
         {
-            long accountId = Convert.ToInt32(userContext.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
+        
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
-            if (homework == null)
-            {
-                ;
-            }
-            
-            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentorByHomeworkId(homeworkId);
-            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
-
-            return result;
+            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentorByHomeworkId(homework.Id);
+        
+            return _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
         }
 
         private async IAsyncEnumerable<string> ValidateHomeworStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)

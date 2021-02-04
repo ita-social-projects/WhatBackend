@@ -581,6 +581,10 @@ namespace CharlieBackend.Data
                     .HasForeignKey(h => h.HomeworkId)
                     .HasConstraintName("FK_student_homework");
 
+                entity.HasOne(h => h.Student)
+                    .WithMany(s => s.HomeworkStudents)
+                    .HasForeignKey(h => h.StudentId)
+                    .HasConstraintName("FK_homework_of_student");
             });
 
             modelBuilder.Entity<AttachmentOfHomeworkStudent>(entity =>
