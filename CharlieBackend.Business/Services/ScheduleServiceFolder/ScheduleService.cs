@@ -55,9 +55,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
         {
-            string error = null;
-
-            error ??= await ValidateEventOccuranceId(id);
+            string error = await ValidateEventOccuranceId(id);
 
             if (error != null)
             {
@@ -67,7 +65,7 @@ namespace CharlieBackend.Business.Services
             var eventOccurrenceResult = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
 
             var everyValue = eventOccurrenceResult
-                .ScheduledEvents
+                .ScheduledEvents                
                 .Where(x => startDate.HasValue && x.EventFinish <= startDate.Value)
                 .Where(x => finishDate.HasValue && x.EventStart >= finishDate.Value);
 
@@ -133,9 +131,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEventId, UpdateScheduledEventDto request)
         {
-            string error = null;
-
-            error ??= await ValidateScheduledEventId(scheduledEventId);
+            string error = await ValidateScheduledEventId(scheduledEventId);
 
             error ??= await ValidateUpdateScheduleDTO(request);
 
@@ -155,24 +151,17 @@ namespace CharlieBackend.Business.Services
             return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(item));
         }
 
-        public async Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(long eventOccuranceID, DateTime? startDate, DateTime? finishDate, UpdateScheduledEventDto request)
+        public async Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request)
         {
-            string error = null;
-
-            error ??= await ValidateUpdateScheduleDTO(request);
-
-            error ??= await ValidateEventOccuranceId(eventOccuranceID);
+            string error = await ValidateUpdateScheduleDTO(request);
+            error ??= await ValidateGetEventsFilteredRequest(filter);
 
             if (error != null)
             {
                 return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            var result = _unitOfWork.EventOccurenceRepository
-                .GetByIdAsync(eventOccuranceID).Result.ScheduledEvents
-                .Where(x => startDate.HasValue && x.EventFinish >= startDate)
-                .Where(x => finishDate.HasValue && x.EventStart <= finishDate)
-                .Where(x => x.LessonId is null);
+            var result = _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(filter).Result.Where(x => !x.LessonId.HasValue);
 
             foreach (ScheduledEvent item in result)
             {
@@ -186,7 +175,22 @@ namespace CharlieBackend.Business.Services
             return Result<IList<ScheduledEventDTO>>.GetSuccess(_mapper.Map<IList<ScheduledEventDTO>>(result));
         }
 
-        public ScheduledEvent UpdateFields(ScheduledEvent item, UpdateScheduledEventDto request)
+        public async Task<Result<EventOccurenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request)
+        {
+            string error = await ValidateCreateScheduleRequestAsync(request);
+            error ??= await ValidateEventOccuranceId(eventOccurrenceId);
+
+            if (error != null)
+            {
+                return Result<EventOccurenceDTO>.GetError(ErrorCode.ValidationError, error);
+            }
+
+            
+
+            return null;
+        }
+
+        private ScheduledEvent UpdateFields(ScheduledEvent item, UpdateScheduledEventDto request)
         {
             item.MentorId = request.MentorId ?? item.MentorId;
             item.StudentGroupId = request.StudentGroupId ?? item.StudentGroupId;

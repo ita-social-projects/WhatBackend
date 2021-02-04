@@ -15,10 +15,12 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEvendID, UpdateScheduledEventDto scheduleModel);
 
-        public Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(long eventOccuranceID, DateTime? startDate, DateTime? finishDate, UpdateScheduledEventDto request);
+        public Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request);
 
         public Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request);
 
         public Task<Result<EventOccurenceDTO>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
+
+        public Task<Result<EventOccurenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
     }
 }
