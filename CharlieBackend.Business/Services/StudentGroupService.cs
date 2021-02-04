@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.Extensions.Logging;
+using CharlieBackend.Core.Extensions;
 
 namespace CharlieBackend.Business.Services
 {
@@ -45,6 +46,20 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
+                var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
+
+                if (dublicatesStudent.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                }
+
+                var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
+
+                if (dublicatesMentor.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                }
+                
                 if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
@@ -176,7 +191,21 @@ namespace CharlieBackend.Business.Services
 
                     foundStudentGroup.Name = updatedStudentGroupDto.Name;
                 }
+                
+                var dublicatesStudent = updatedStudentGroupDto.StudentIds.Dublicates();
 
+                if (dublicatesStudent.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                }
+
+                var dublicatesMentor = updatedStudentGroupDto.MentorIds.Dublicates();
+
+                if (dublicatesMentor.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                }
+                    
                 if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
