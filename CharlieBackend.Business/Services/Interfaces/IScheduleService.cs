@@ -20,8 +20,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request);
 
-        public Task<Result<EventOccurrence>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
+        public Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
 
-        public Task<Result<EventOccurrence>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
+        public Task<Result<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
     }
 }

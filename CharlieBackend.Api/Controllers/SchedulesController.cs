@@ -88,13 +88,17 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Updates range of events
         /// </summary>
+        /// <remarks>
+        /// Event date could not changed via this method.
+        /// Event start and Finish could only be used to change event start and finish time.
+        /// </remarks>
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(EventOccurrence))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/updateRange")]
-        public async Task<ActionResult<EventOccurrence>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
+        public async Task<ActionResult<EventOccurrenceDTO>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
         {
             var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
@@ -110,9 +114,9 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/{scheduledEventID}")]
-        public async Task<ActionResult<EventOccurrence>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto updateScheduleDto)
+        public async Task<ActionResult<EventOccurrence>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto request)
         {
-            var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, updateScheduleDto);
+            var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, request);
 
             return foundSchedules.ToActionResult();
         }
@@ -120,13 +124,18 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Updates a single event
         /// </summary>
+        /// <remarks>
+        /// Old instance os event occurance is replaced with the new one (id is the same). 
+        /// Scheduled events are recreated accordingly. 
+        /// Any events with lessons attached are not removed
+        /// </remarks>
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
         [SwaggerResponse(200, type: typeof(EventOccurrence))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("scheduledEvents/{eventOccurrenceID}")]
-        public async Task<ActionResult<EventOccurrence>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody]CreateScheduleDto updateOccurrenceRequest)
+        public async Task<ActionResult<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody]CreateScheduleDto updateOccurrenceRequest)
         {
             var foundSchedules = await _scheduleService.UpdateEventOccurrenceById(eventOccurrenceID, updateOccurrenceRequest);
 
@@ -136,11 +145,17 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Deletes exact schedule
         /// </summary>
+        /// <remarks>
+        /// Removes cheduled events related to specified EventOccurrence, updates start and finish date accordingle
+        /// If no events are left, event occurrence is deleted completely
+        /// Start and finish dates input is optional. Leave blanc to remove all related events
+        /// Events with lessons attached are not deleted
+        /// </remarks>
         /// <response code = "200" > Successful delete of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
         [Authorize(Roles = "Secretary, Admin")]
         [HttpDelete("{eventOccurrenceID}")]
-        public async Task<ActionResult<EventOccurrence>> DeleteSchedule(long scheduleId, DateTime? startDate, DateTime? finishDate)
+        public async Task<ActionResult<EventOccurrenceDTO>> DeleteSchedule(long scheduleId, DateTime? startDate, DateTime? finishDate)
         {
             var foundSchedules = await _scheduleService.DeleteScheduleByIdAsync(scheduleId, startDate, finishDate);
 
