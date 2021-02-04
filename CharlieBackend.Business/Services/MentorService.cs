@@ -111,7 +111,7 @@ namespace CharlieBackend.Business.Services
                 {
                     var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
 
-                    if (dublicatesGroup.Count<long>() != 0)
+                    if (dublicatesGroup.Any())
                     {
                         return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ", dublicatesGroup)} are not unique");
                     }
