@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 

@@ -59,9 +59,9 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return _source.EventStart;
         }
 
-        protected virtual void UpdateTime(ref DateTime starttime, ref DateTime finishDate)
+        protected virtual void UpdateTime(ref DateTime startDate, ref DateTime finishDate)
         {
-            starttime = starttime.AddDays(_pattern.Interval * _index);
+            startDate = startDate.AddDays(_pattern.Interval * _index);
             finishDate = finishDate.AddDays(_pattern.Interval * _index);
         }
 
