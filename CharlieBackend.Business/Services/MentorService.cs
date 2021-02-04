@@ -122,7 +122,7 @@ namespace CharlieBackend.Business.Services
                 {
                     var dublicatesCourse = mentorModel.CourseIds.Dublicates();
 
-                    if (dublicatesCourse.Count<long>() != 0)
+                    if (dublicatesCourse.Any())
                     {
                         return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {string.Join(" ", dublicatesCourse)} are not unique");
                     }
