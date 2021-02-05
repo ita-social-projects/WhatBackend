@@ -9,6 +9,9 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Business.Services.FileServices;
 using FluentValidation.AspNetCore;
+using FluentValidation;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.Validators.AccountDTOValidators;
 
 namespace CharlieBackend.Root
 {
@@ -59,6 +62,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IBlobService, BlobService>();
             services.AddScoped<IBaseFileService, BaseFileService>();
             services.AddScoped<IXLSFileService, XLSFileService>();
+            services.AddTransient<IValidator<AuthenticationDto>, AuthenticationDTOValidator>();
             #endregion
         }
     }
