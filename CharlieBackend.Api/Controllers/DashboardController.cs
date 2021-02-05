@@ -79,10 +79,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentClassbook/{studentId}")]
         public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
-            var userContext = HttpContext.User;
-
             var results = await _dashboardService
-            .GetStudentClassbookAsync(studentId, request, userContext);
+                .GetStudentClassbookAsync(studentId, request);
 
             return results.ToActionResult();
         }
@@ -98,10 +96,8 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentResults/{studentId}")]
         public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]DashboardAnalyticsRequestDto<StudentResultType> request)
         {
-            var userContext = HttpContext.User;
-
             var results = await _dashboardService
-            .GetStudentResultAsync(studentId, request, userContext);
+                .GetStudentResultAsync(studentId, request);
 
             return results.ToActionResult();
         }

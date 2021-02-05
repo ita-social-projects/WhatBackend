@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using AutoMapper;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -20,16 +18,18 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IBlobService _blobService;
+        private readonly ICurrentUserService _currentUserService;
 
         public AttachmentService( 
                              IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             IBlobService blobService
-                                )
+                             IBlobService blobService,
+                             ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _blobService = blobService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
@@ -60,8 +60,7 @@ namespace CharlieBackend.Business.Services
 
                 Attachment attachment = new Attachment()
                 {
-                    CreatedByAccountId = Convert.ToInt64(claimsContext.Claims
-                            .First(claim => claim.Type == "AccountId").Value),
+                    CreatedByAccountId = _currentUserService.AccountId,
                     ContainerName = blob.BlobContainerName,
                     FileName = file.FileName
                 };
@@ -78,7 +77,7 @@ namespace CharlieBackend.Business.Services
                 
         }
 
-        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request, ClaimsPrincipal userData)
+        public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request)
         {
             string error = ValidateAttachmentRequest(request);
 
@@ -87,10 +86,12 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            long accountId = Convert.ToInt64(userData.Claims.First(x => x.Type.EndsWith("AccountId")).Value);
+            long accountId = _currentUserService.AccountId;
+            UserRole userRole = _currentUserService.Role;
+
             var result = new List<AttachmentDto>();
 
-            if (userData.IsInRole(UserRole.Student.ToString()))
+            if (userRole == UserRole.Student)
             {
                 result = await _unitOfWork.AttachmentRepository
                     .GetAttachmentList(accountId, null, null, accountId, request.StartDate, request.FinishDate);

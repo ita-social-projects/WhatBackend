@@ -29,7 +29,7 @@ namespace CharlieBackend.Root
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
-
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ILessonService, LessonService>();
@@ -58,6 +58,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IGroupXlsFileImporter, GroupXlsFileImporter>();
             services.AddScoped<IStudentXlsFileImporter, StudentXlsFileImporter>();
             services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
+            services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             #endregion
         }
     }

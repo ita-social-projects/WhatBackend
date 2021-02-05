@@ -60,9 +60,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("attachments")]
         public async Task<IActionResult> GetAttachments([FromBody]AttachmentRequestDto request)
         {
-            var userData = HttpContext.User;
-
-            var attachments = await _attachmentService.GetAttachmentsListAsync(request, userData);
+            var attachments = await _attachmentService.GetAttachmentsListAsync(request);
 
             return attachments.ToActionResult();
         }

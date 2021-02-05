@@ -11,7 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public ISecretaryRepository SecretaryRepository { get; }
 
-        public IScheduleRepository ScheduleRepository { get; }
+        public IEventOccurenceRepository EventOccurenceRepository { get; }
 
         public ILessonRepository LessonRepository { get; }
 
@@ -32,6 +32,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public IDashboardRepository DashboardRepository { get; }
 
         public IHomeworkRepository HomeworkRepository { get; }
+
+        public IScheduledEventRepository ScheduledEventRepository { get; }
 
         Task CommitAsync();
 

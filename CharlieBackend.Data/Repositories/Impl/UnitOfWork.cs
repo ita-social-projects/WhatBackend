@@ -21,10 +21,10 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IStudentGroupRepository _studentGroupRepository;
         private IVisitRepository _visitRepository;
         private IDashboardRepository _dashboardRepository;
-        private IScheduleRepository _scheduleRepository;
+        private IEventOccurenceRepository _scheduleRepository;
         private IAttachmentRepository _attachmentRepository;
         private IHomeworkRepository _homeworkRepository;
-
+        private IScheduledEventRepository _scheduledEventRepository;
         #endregion 
 
         public UnitOfWork(ApplicationContext applicationContext)
@@ -130,12 +130,12 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public IScheduleRepository ScheduleRepository
+        public IEventOccurenceRepository EventOccurenceRepository
         {
             get
             {
                 return _scheduleRepository = _scheduleRepository
-                        ?? new ScheduleRepository(_applicationContext);
+                        ?? new EventOccurenceRepository(_applicationContext);
             }
         }
 
@@ -148,6 +148,14 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
+        public IScheduledEventRepository ScheduledEventRepository 
+        {
+            get
+            {
+                return _scheduledEventRepository = _scheduledEventRepository
+                        ?? new ScheduledEventRepository(_applicationContext);
+            } 
+        }
 
         public Task CommitAsync()
         {

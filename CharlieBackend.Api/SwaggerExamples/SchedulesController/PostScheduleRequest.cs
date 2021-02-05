@@ -14,11 +14,33 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
         {
             return new CreateScheduleDto
             {
-                StudentGroupId = 123,
-                LessonStart = new TimeSpan(9, 15, 00),
-                LessonEnd = new TimeSpan(10, 00, 00),
-                DayNumber = 2,
-                RepeatRate = RepeatRate.Weekly
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.RelativeMonthly,
+
+                    Interval = 2,
+
+                    DaysOfWeek = new List<DayOfWeek>
+                    {
+                        DayOfWeek.Monday,
+                        DayOfWeek.Friday
+                    },
+
+                    Index = MonthIndex.Second,
+                },
+
+                Range = new OccurenceRange
+                {
+                    StartDate = DateTime.Now,
+                    FinishDate = DateTime.Now
+                },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 1,
+                    MentorID = 5,
+                    ThemeID = 6
+                }
             };
         }
     }

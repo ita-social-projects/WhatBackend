@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.UnitTest
                 ThemeName = "ExampleName",
                 MentorId = 2,
                 StudentGroupId = 3,
-                LessonDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
+                LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
                 LessonVisits = new List<VisitDto>
                 {
                     new VisitDto()
@@ -107,7 +107,13 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorReposutoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-            var lessonService = new LessonService(_unitOfWorkMock.Object, _mapper);
+
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object, 
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var result = await lessonService.CreateLessonAsync(createLessonDTO);
@@ -115,7 +121,6 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Data.LessonVisits);
-
         }
 
         [Fact]
@@ -141,8 +146,8 @@ namespace CharlieBackend.Api.UnitTest
             StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
             StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
 
-            DateTime lessonDate = DateTime.Parse("2021-11-18T15:00:00.384Z");
-            DateTime lessonDateWrong = DateTime.Parse("2020-11-18T15:00:00.384Z");
+            DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
+            DateTime lessonDateWrong = DateTime.Now.AddDays(1);
 
             List<VisitDto> visitDto = new List<VisitDto>
             {
@@ -307,11 +312,13 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorReposutoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-            var lessonService = new LessonService(
-                _unitOfWorkMock.Object,
-                _mapper
-                );
 
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
 
             #endregion
             //Act 
@@ -386,7 +393,7 @@ namespace CharlieBackend.Api.UnitTest
             var updateLessonDto = new UpdateLessonDto
             {
                 ThemeName = "new theme",
-                LessonDate = DateTime.Parse("2021-11-18T15:30:00.384Z"),
+                LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
                 LessonVisits = new List<VisitDto> 
                 {
                     new VisitDto()
@@ -406,7 +413,7 @@ namespace CharlieBackend.Api.UnitTest
             var updateLessonDtoWithWrongDate = new UpdateLessonDto
             {
                 ThemeName = null,
-                LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
+                LessonDate = DateTime.Now.AddDays(1),
                 LessonVisits = null
             };
 
@@ -416,7 +423,7 @@ namespace CharlieBackend.Api.UnitTest
                 ThemeName = "ExampleName",
                 MentorId = 2,
                 StudentGroupId = 3,
-                LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
+                LessonDate = DateTime.Parse("2020-11-19T15:00:00.384Z"),
                 LessonVisits = null
             };
 
@@ -426,7 +433,7 @@ namespace CharlieBackend.Api.UnitTest
                 ThemeName = "new theme",
                 MentorId = 2,
                 StudentGroupId = 3,
-                LessonDate = DateTime.Parse("2021-11-18T15:30:00.384Z"),
+                LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
                 LessonVisits = visitsDto
             };
 
@@ -454,10 +461,12 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.LessonRepository.GetByIdAsync(7))
                 .ReturnsAsync(foundLesson);
 
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
             var lessonService = new LessonService(
-                _unitOfWorkMock.Object,
-                _mapper
-                );
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
 
             //Act
             var result = (await lessonService.UpdateLessonAsync(7, updateLessonDto)).Data;

@@ -13,9 +13,9 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<StudentsResultsDto>> GetStudentsResultAsync(StudentsRequestDto<StudentResultType> request);
 
-        Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request, ClaimsPrincipal userContext);
+        Task<Result<StudentsClassbookResultDto>> GetStudentClassbookAsync(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request);
 
-        Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request, ClaimsPrincipal userContext);
+        Task<Result<StudentsResultsDto>> GetStudentResultAsync(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request);
 
         Task<Result<StudentGroupsResultsDto>> GetStudentGroupResultAsync(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request);
     }
