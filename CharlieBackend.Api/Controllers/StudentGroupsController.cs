@@ -78,8 +78,11 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all student groups, if dates was specifie, then return all groups in given period
+        /// Gets all student groups
         /// </summary>
+        /// <remarks>
+        /// Returns all groups of students in the active course for the specified period (if no dates are specified, returns all groups)
+        /// </remarks>
         /// <response code="200">Successful return of students of student group</response>
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
