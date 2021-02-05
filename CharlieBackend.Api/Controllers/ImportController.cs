@@ -19,14 +19,20 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly IXLSFileService _xlsFileService;
+        private readonly IGroupXlsFileImporter _groupXlsFileImporter;
+        private readonly IStudentXlsFileImporter _studentXlsFileImporter;
+        private readonly IThemeXlsFileImporter _themeXlsFileImporter;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IXLSFileService xlsFileService)
+        public ImportController(IGroupXlsFileImporter groupXlsFileImporter,
+                                IStudentXlsFileImporter studentXlsFileImporter,
+                                IThemeXlsFileImporter themeXlsFileImporter)
         {
-            _xlsFileService = xlsFileService;
+            _groupXlsFileImporter = groupXlsFileImporter;
+            _studentXlsFileImporter = studentXlsFileImporter;
+            _themeXlsFileImporter = themeXlsFileImporter;
         }
 
         /// <summary>
@@ -40,7 +46,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ImportGroupDataFromFile(long coursId, IFormFile file)
         {
-            var groups = await _xlsFileService.ImportGroupsAsync(coursId, file);
+            var groups = await _groupXlsFileImporter.ImportGroupsAsync(coursId, file);
 
             return groups.ToActionResult();
         }
@@ -56,7 +62,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ImportStudentDataFromFile(long groupId, IFormFile file)
         {
-            var students = await _xlsFileService.ImportStudentsAsync(groupId, file);
+            var students = await _studentXlsFileImporter.ImportStudentsAsync(groupId, file);
 
             return students.ToActionResult();
         }
@@ -72,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ImportThemeDataFromFile(IFormFile file)
         {
-            var themes = await _xlsFileService.ImportThemesAsync(file);
+            var themes = await _themeXlsFileImporter.ImportThemesAsync(file);
 
             return themes.ToActionResult();
         }
