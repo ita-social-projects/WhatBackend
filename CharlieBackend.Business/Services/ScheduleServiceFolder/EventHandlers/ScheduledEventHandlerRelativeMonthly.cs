@@ -25,14 +25,14 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 DateTime targetStartDate = GetStartDate(i);
 
                 DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
-                    _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
+                    _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
 
                 while (targetFinishDate <= _source.EventFinish && targetStartDate >= _source.EventStart)
                 {
                     yield return new ScheduledEvent
                     {
-                        EventOccurence = _source,
-                        EventOccurenceId = _source.Id,
+                        EventOccurrence = _source,
+                        EventOccurrenceId = _source.Id,
                         StudentGroupId = _source.StudentGroupId,
                         EventStart = targetStartDate,
                         EventFinish = targetFinishDate,
@@ -73,7 +73,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                        : -1 * (startDay - offset));
 
             finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
-                    _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
+                    _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
         }
 
         protected override int GetIterationCount()

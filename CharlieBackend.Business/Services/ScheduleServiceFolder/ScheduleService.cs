@@ -44,7 +44,7 @@ namespace CharlieBackend.Business.Services
                 Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern)
             };
 
-            _unitOfWork.EventOccurenceRepository.Add(result);
+            _unitOfWork.EventOccurrenceRepository.Add(result);
 
             _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
 
@@ -55,12 +55,12 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id)
         {
-            var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
+            var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
 
             if (scheduleEntity != null)
             {
                 var mappedSchedule = _mapper.Map<EventOccurrenceDTO>(scheduleEntity);
-                await _unitOfWork.EventOccurenceRepository.DeleteAsync(id);
+                await _unitOfWork.EventOccurrenceRepository.DeleteAsync(id);
 
                 await _unitOfWork.CommitAsync();
 
@@ -73,33 +73,34 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<EventOccurrenceDTO>>> GetAllSchedulesAsync()
         {
-            var scheduleEntities = await _unitOfWork.EventOccurenceRepository.GetAllAsync();
+            var scheduleEntities = await _unitOfWork.EventOccurrenceRepository.GetAllAsync();
 
             return Result<IList<EventOccurrenceDTO>>.GetSuccess(
                 _mapper.Map<IList<EventOccurrenceDTO>>(scheduleEntities));
         }
 
-        public async Task<Result<EventOccurrenceDTO>> GetScheduleByIdAsync(long id)
+        public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
         {
-            var scheduleEntity = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(id);
+            var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
 
             return scheduleEntity == null ?
                 Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
                 Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(scheduleEntity));
         }
 
-        public async Task<Result<IList<EventOccurrenceDTO>>> GetSchedulesByStudentGroupIdAsync(long id)
+        public async Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
         {
-            var groupEntity = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            string error = await ValidateGetEventsFilteredRequest(request);
 
-            if (groupEntity == null)
+            if (error != null)
             {
-                return null;
+                return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
-            var schedulesOfGroup = await _unitOfWork.EventOccurenceRepository.GetSchedulesByStudentGroupIdAsync(id);
 
-            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
-                _mapper.Map<IList<EventOccurrenceDTO>>(schedulesOfGroup));
+            var schedulesOfGroup = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(request);
+
+            return Result<IList<ScheduledEventDTO>>.GetSuccess(
+                _mapper.Map<IList<ScheduledEventDTO>>(schedulesOfGroup));
         }
 
         public async Task<Result<EventOccurrenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleDTO)
@@ -110,7 +111,7 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<EventOccurrenceDTO>.GetError(ErrorCode.UnprocessableEntity, "UpdateScheduleDto is null");
                 }
-                var foundSchedule = await _unitOfWork.EventOccurenceRepository.GetByIdAsync(scheduleId);
+                var foundSchedule = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(scheduleId);
 
                 if (foundSchedule == null)
                 {
@@ -220,6 +221,48 @@ namespace CharlieBackend.Business.Services
                 default:
                     error = "Pattern type not supported";
                     break;
+            }
+
+            return error;
+        }
+
+        private async Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request)
+        {
+            if (request == null)
+            {
+                return "Request must not be null";
+            }
+
+            string error = null;
+
+            if (request.CourseID.HasValue && !await _unitOfWork.CourseRepository.IsEntityExistAsync(request.CourseID.Value))
+            {
+                error = "Course does not exist";
+            }
+
+            if (request.GroupID.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.GroupID.Value))
+            {
+                error = "Group does not exist";
+            }
+
+            if (request.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorID.Value))
+            {
+                error = "Mentor does not exist";
+            }
+
+            if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
+            {
+                error = "Student does not exist";
+            }
+
+            if (request.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeID.Value))
+            {
+                error = "Theme does not exist";
+            }
+
+            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate < request.FinishDate))
+            {
+                error = $"StartDate must be less then FinisDate";
             }
 
             return error;

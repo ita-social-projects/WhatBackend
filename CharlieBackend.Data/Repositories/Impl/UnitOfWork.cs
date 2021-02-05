@@ -21,7 +21,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IStudentGroupRepository _studentGroupRepository;
         private IVisitRepository _visitRepository;
         private IDashboardRepository _dashboardRepository;
-        private IEventOccurenceRepository _scheduleRepository;
+        private IEventOccurrenceRepository _scheduleRepository;
         private IAttachmentRepository _attachmentRepository;
         private IHomeworkRepository _homeworkRepository;
         private IScheduledEventRepository _scheduledEventRepository;
@@ -130,12 +130,12 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public IEventOccurenceRepository EventOccurenceRepository
+        public IEventOccurrenceRepository EventOccurrenceRepository
         {
             get
             {
                 return _scheduleRepository = _scheduleRepository
-                        ?? new EventOccurenceRepository(_applicationContext);
+                        ?? new EventOccurrenceRepository(_applicationContext);
             }
         }
 

@@ -56,6 +56,21 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get event occurance by id
+        /// </summary>
+        /// <response code="200">Successful add of schedule</response>        
+        /// <response code="HTTP: 404, API: 3">No such event occurence</response>
+        [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceByID(long id)
+        {
+            var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
+
+            return resSchedule.ToActionResult();
+        }
+
+        /// <summary>
         /// Gets all schedules
         /// </summary>
         /// <response code="200">Successful return of schedules list</response>
@@ -69,16 +84,15 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Returns schedules of exact student group
+        /// Returns the list of events depending on the filtering rules set
         /// </summary>
-        /// <response code="200">Successful return of schedules list</response>
-        /// <response code="HTTP: 404, API: 3">Error, student group not found</response>
-        [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
-        [Authorize(Roles = "Secretary, Admin")]
-        [HttpGet("{studentGroupId}/groupSchedule")]
-        public async Task<ActionResult<List<EventOccurrenceDTO>>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
+        /// <response code="200">Successful return event list</response>
+        [SwaggerResponse(200, type: typeof(IList<ScheduledEventDTO>))]
+        [Authorize(Roles = "Secretary, Admin, Mentor, Student")]
+        [HttpPost("events")]
+        public async Task<ActionResult<List<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
         {
-            var foundSchedules = await _scheduleService.GetSchedulesByStudentGroupIdAsync(studentGroupId);
+            var foundSchedules = await _scheduleService.GetEventsFiltered(request);
 
             return foundSchedules.ToActionResult();
         }

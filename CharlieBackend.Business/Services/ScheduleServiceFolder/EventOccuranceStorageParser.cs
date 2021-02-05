@@ -12,7 +12,7 @@ using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
-    public static  class EventOccuranceStorageParser
+    public static class EventOccuranceStorageParser
     {
         private static int _daysInWeek = 7;
         private static int _maxDaysInMonth = 31;

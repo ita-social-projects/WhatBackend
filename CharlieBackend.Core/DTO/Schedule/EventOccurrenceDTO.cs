@@ -25,6 +25,8 @@ namespace CharlieBackend.Core.DTO.Schedule
         [DataType(DataType.Time)]
         [EnumDataType(typeof(PatternType))]
         public PatternType Pattern { get; set; }   
+
+        public IList<ScheduledEventDTO> Events { get; set; }
     }
 }
 

@@ -11,7 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public ISecretaryRepository SecretaryRepository { get; }
 
-        public IEventOccurenceRepository EventOccurenceRepository { get; }
+        public IEventOccurrenceRepository EventOccurrenceRepository { get; }
 
         public ILessonRepository LessonRepository { get; }
 

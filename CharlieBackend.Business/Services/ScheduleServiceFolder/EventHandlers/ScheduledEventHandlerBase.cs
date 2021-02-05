@@ -30,13 +30,13 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 DateTime targetStartDate = GetStartDate(i);
 
                 DateTime targetFinishDate = new DateTime(targetStartDate.Year, targetStartDate.Month, targetStartDate.Day,
-                    _source.EventFinish.Value.Hour, _source.EventFinish.Value.Minute, _source.EventFinish.Value.Second);
+                    _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
 
                 while (targetFinishDate <= _source.EventFinish)
                 {
                     yield return new ScheduledEvent
                     {
-                        EventOccurenceId = _source.Id,
+                        EventOccurrenceId = _source.Id,
                         StudentGroupId = _source.StudentGroupId,
                         EventStart = targetStartDate,
                         EventFinish = targetFinishDate,
