@@ -197,6 +197,8 @@ namespace CharlieBackend.Business.Services
             _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(request.Pattern).GetEvents(eventOccurrenceResult, request.Context));
             _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
 
+            await _unitOfWork.CommitAsync();
+
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
 
