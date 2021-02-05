@@ -147,12 +147,16 @@ namespace CharlieBackend.Business.Services
             return Result<bool>.GetSuccess(res);
         }
 
-        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
+        public async Task<Result<IList<StudentGroupDto>>> GetAllStudentGroupsAsync(DateTime? startDate = null, DateTime? finishDate=null)
         {
+            if (!(startDate is null) || !(finishDate is null))
+            {
+                return await GetStudentGroupsByDateAsyns(startDate, finishDate);
+            }
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
             var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
-            return studentGroupDto;
+            return Result < IList < StudentGroupDto >>.GetSuccess(studentGroupDto);
         }
 
         public bool DeleteStudentGrop(long StudentGroupId)
@@ -292,7 +296,7 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
-        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime startDate, DateTime finishDate)
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime? startDate, DateTime? finishDate)
         {
             if (startDate > finishDate)
             {
