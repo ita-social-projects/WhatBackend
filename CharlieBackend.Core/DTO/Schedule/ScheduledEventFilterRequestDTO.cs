@@ -15,6 +15,8 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public long? StudentAccountID;
 
+        public long? EventOccurrenceID;
+
         [DataType(DataType.DateTime)]
         public DateTime? StartDate;
 

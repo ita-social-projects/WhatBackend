@@ -22,6 +22,10 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<IList<ScheduledEvent>> GetEventsFilteredAsync(ScheduledEventFilterRequestDTO request)
         {
             return await _applicationContext.ScheduledEvents
+                    .WhereIf(request.EventOccurrenceID.HasValue, x => _applicationContext.ScheduledEvents
+                        .Where(y => y.EventOccurrenceId == request.EventOccurrenceID)
+                        .Select(y => y.Id)
+                        .Contains(x.Id))
                     .WhereIf(request.CourseID.HasValue, x => _applicationContext.StudentGroups
                         .Where(y => y.CourseId == request.CourseID.Value)
                         .SelectMany(y => y.ScheduledEvents)

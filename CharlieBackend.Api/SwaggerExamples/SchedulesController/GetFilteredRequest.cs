@@ -26,6 +26,7 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                 MentorID = 0,
                 StudentAccountID = 0,
                 GroupID = 0,
+                EventOccurrenceID = 0,
                 StartDate = DateTime.Now,
                 FinishDate = DateTime.Now.AddHours(1)
             };
