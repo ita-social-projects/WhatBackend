@@ -87,6 +87,8 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.CourseRepository.Update(updatedEntity);
 
+                updatedEntity.IsActive = true;
+
                 await _unitOfWork.CommitAsync();
 
                 return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
