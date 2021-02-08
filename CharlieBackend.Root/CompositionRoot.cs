@@ -59,7 +59,6 @@ namespace CharlieBackend.Root
             services.AddScoped<IStudentXlsFileImporter, StudentXlsFileImporter>();
             services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
-            services.AddScoped<IXLSFileService, XLSFileService>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             #endregion
         }
