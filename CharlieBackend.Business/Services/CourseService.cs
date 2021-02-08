@@ -85,13 +85,19 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Сourse name \"{updatedEntity.Name}\"is already taken");
                 }
 
-                _unitOfWork.CourseRepository.Update(updatedEntity);
+                if (await _unitOfWork.CourseRepository.IsCourseActive(id))
+                {
+                    _unitOfWork.CourseRepository.Update(updatedEntity);
+                
+                    updatedEntity.IsActive = true;
+                
+                    await _unitOfWork.CommitAsync();
 
-                updatedEntity.IsActive = true;
+                    return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
+                }
 
-                await _unitOfWork.CommitAsync();
-
-                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
+               return Result<CourseDto>.GetError(ErrorCode.Conflict, "Inactive course cannot be updated");
+                
             }
             catch
             {
@@ -117,6 +123,11 @@ namespace CharlieBackend.Business.Services
             await _unitOfWork.CommitAsync();
 
             return course;
+        }
+
+        public async Task<bool> IsCourseActive(long id)
+        {
+            return await _unitOfWork.CourseRepository.IsCourseActive(id);
         }
     }
 }
