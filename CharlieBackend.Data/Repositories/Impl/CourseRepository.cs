@@ -69,7 +69,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<bool> IsCourseActive(long id)
         {
-            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            var course = await _applicationContext.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
             return course.IsActive;
         }

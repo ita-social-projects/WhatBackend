@@ -76,6 +76,11 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Student group are included in this Course");
                 }
 
+                if (!await _unitOfWork.CourseRepository.IsCourseActive(id))
+                {
+                    return Result<CourseDto>.GetError(ErrorCode.Conflict, "Inactive course cannot be updated");
+                }
+
                 var updatedEntity = _mapper.Map<Course>(updateCourseDto);
 
                 updatedEntity.Id = id;
@@ -85,19 +90,13 @@ namespace CharlieBackend.Business.Services
                     return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Сourse name \"{updatedEntity.Name}\"is already taken");
                 }
 
-                if (await _unitOfWork.CourseRepository.IsCourseActive(id))
-                {
-                    _unitOfWork.CourseRepository.Update(updatedEntity);
-                
-                    updatedEntity.IsActive = true;
-                
-                    await _unitOfWork.CommitAsync();
+                updatedEntity.IsActive = true;
 
-                    return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
-                }
-
-               return Result<CourseDto>.GetError(ErrorCode.Conflict, "Inactive course cannot be updated");
+                _unitOfWork.CourseRepository.Update(updatedEntity);
                 
+                await _unitOfWork.CommitAsync();
+
+                return Result<CourseDto>.GetSuccess(_mapper.Map<CourseDto>(updatedEntity));
             }
             catch
             {
