@@ -53,7 +53,7 @@ namespace CharlieBackend.AdminPanel.Services
             var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupDto>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
             var studentsTask = _studentService.GetAllStudentsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
-            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
+            var coursesTask = _courseService.GetAllCoursesAsync();
 
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(await studentGroupsTask);
             var students = await studentsTask;
@@ -101,7 +101,7 @@ namespace CharlieBackend.AdminPanel.Services
             var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>($"{_config.Value.Urls.Api.Https}/api/student_groups/{id}", _accessToken);
             var studentsTask = _studentService.GetAllStudentsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
-            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
+            var coursesTask = _courseService.GetAllCoursesAsync();
 
             var studentGroup = _mapper.Map<StudentGroupEditViewModel>(await studentGroupsTask);
             studentGroup.AllCourses = await coursesTask;
@@ -115,7 +115,7 @@ namespace CharlieBackend.AdminPanel.Services
         {
             var studentsTask = _studentService.GetAllStudentsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
-            var coursesTask = _courseService.GetAllCoursesAsync(_accessToken);
+            var coursesTask = _courseService.GetAllCoursesAsync();
 
             var studentGroup = new StudentGroupEditViewModel
             {
