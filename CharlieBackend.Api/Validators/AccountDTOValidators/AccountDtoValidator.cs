@@ -5,7 +5,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using FluentValidation;
 
-namespace CharlieBackend.Core.Validators.AccountDTOValidators
+namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
     public class AccountDtoValidator : AbstractValidator<AccountDto>
     {

@@ -4,7 +4,7 @@ using System.Text;
 using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
 
-namespace CharlieBackend.Core.Validators.AccountDTOValidators
+namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
     public class CreateAccountDtoValidator : AbstractValidator<CreateAccountDto>
     {

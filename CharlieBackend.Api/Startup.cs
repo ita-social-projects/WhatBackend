@@ -23,6 +23,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CharlieBackend.Data;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace CharlieBackend.Api
 {
@@ -77,9 +79,14 @@ namespace CharlieBackend.Api
 
             services.AddControllers()
                 .AddJsonOptions(options =>
-                    {
+                {
                         options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-                    });
+                })
+                .AddFluentValidation(options =>
+                {
+                        options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+                        options.RegisterValidatorsFromAssemblyContaining<Startup>();
+                });
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
