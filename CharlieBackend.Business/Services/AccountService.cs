@@ -44,6 +44,12 @@ namespace CharlieBackend.Business.Services
                     FirstName = accountModel.FirstName,
                     LastName = accountModel.LastName
                 };
+                string answerFromPasswordValidation = PasswordHelper.PasswordValidation(accountModel.Password);
+
+                if (!string.IsNullOrEmpty(answerFromPasswordValidation))
+                {
+                    return Result<AccountDto>.GetError(ErrorCode.ValidationError, answerFromPasswordValidation);
+                }
 
                 account.Salt = PasswordHelper.GenerateSalt();
                 account.Password = PasswordHelper.HashPassword(accountModel.ConfirmPassword, account.Salt);
