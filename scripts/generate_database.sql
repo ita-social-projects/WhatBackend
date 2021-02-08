@@ -187,29 +187,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-
--- -----------------------------------------------------
--- Table `soft`.`schedule`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `soft`.`schedule` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `student_group_id` BIGINT(20) NOT NULL,
-  `lesson_start` TIME NOT NULL,
-  `lesson_end` TIME NOT NULL,
-  `repeat_rate` int NOT NULL,
-  `day_number` INT UNSIGNED NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_student_group_of_schedule` (`student_group_id` ASC),
-  CONSTRAINT `FK_student_group_of_schedule`
-    FOREIGN KEY (`student_group_id`)
-    REFERENCES `soft`.`student_group` (`id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
+----------------------
 -- Table `soft`.`student`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `soft`.`student` (
@@ -223,7 +201,6 @@ CREATE TABLE IF NOT EXISTS `soft`.`student` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
-
 
 -- -----------------------------------------------------
 -- Table `soft`.`student_of_student_group`
@@ -364,6 +341,56 @@ CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework_student` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `event_occurence`
+--
+DROP TABLE IF EXISTS `event_occurence`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `event_occurence` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `student_group_id` bigint NOT NULL,
+  `event_start` datetime NOT NULL,
+  `event_finish` datetime NOT NULL,
+  `pattern` int NOT NULL,
+  `storage` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_student_group_of_schedule` (`student_group_id`),
+  CONSTRAINT `FK_student_group_of_schedule` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `scheduled_event`
+--
+
+DROP TABLE IF EXISTS `scheduled_event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `scheduled_event` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `event_occurence_id` bigint NOT NULL,
+  `student_group_id` bigint DEFAULT NULL,
+  `theme_id` bigint DEFAULT NULL,
+  `mentor_id` bigint DEFAULT NULL,
+  `lesson_id` bigint DEFAULT NULL,
+  `event_start` datetime NOT NULL,
+  `event_finish` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_scheduled_events_event_occurence1_idx` (`event_occurence_id`),
+  KEY `fk_scheduled_events_student_group1_idx` (`student_group_id`),
+  KEY `fk_scheduled_events_theme1_idx` (`theme_id`),
+  KEY `fk_scheduled_events_mentor1_idx` (`mentor_id`),
+  KEY `fk_scheduled_events_lesson1_idx` (`lesson_id`),
+  CONSTRAINT `fk_scheduled_events_event_occurence1` FOREIGN KEY (`event_occurence_id`) REFERENCES `event_occurence` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_scheduled_events_lesson1` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`),
+  CONSTRAINT `fk_scheduled_events_mentor1` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`),
+  CONSTRAINT `fk_scheduled_events_student_group1` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`),
+  CONSTRAINT `fk_scheduled_events_theme1` FOREIGN KEY (`theme_id`) REFERENCES `theme` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
