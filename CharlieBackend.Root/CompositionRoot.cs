@@ -12,6 +12,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Validators.AccountDTOValidators;
+using System.Reflection;
 
 namespace CharlieBackend.Root
 {
@@ -30,7 +31,11 @@ namespace CharlieBackend.Root
                     .AddNewtonsoftJson(options =>
                         options.SerializerSettings.ReferenceLoopHandling
                         = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-                    .AddFluentValidation();
+                    .AddFluentValidation(options =>
+                    {
+                        options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+                        options.RegisterValidatorsFromAssemblyContaining<AccountDto>();
+                    });
 
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
@@ -62,7 +67,6 @@ namespace CharlieBackend.Root
             services.AddScoped<IBlobService, BlobService>();
             services.AddScoped<IBaseFileService, BaseFileService>();
             services.AddScoped<IXLSFileService, XLSFileService>();
-            services.AddTransient<IValidator<AuthenticationDto>, AuthenticationDTOValidator>();
             #endregion
         }
     }
