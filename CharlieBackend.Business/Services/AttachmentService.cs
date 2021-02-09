@@ -9,6 +9,7 @@ using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 
 namespace CharlieBackend.Business.Services
@@ -89,20 +90,25 @@ namespace CharlieBackend.Business.Services
             long accountId = _currentUserService.AccountId;
             UserRole userRole = _currentUserService.Role;
 
-            var result = new List<AttachmentDto>();
-
-            if (userRole == UserRole.Student)
+            switch (userRole)
             {
-                result = await _unitOfWork.AttachmentRepository
-                    .GetAttachmentList(accountId, null, null, accountId, request.StartDate, request.FinishDate);
-            }
-            else
-            {
-                result = await _unitOfWork.AttachmentRepository
-                    .GetAttachmentList(accountId, request.CourseID, request.GroupID, accountId, request.StartDate, request.FinishDate);
+                case UserRole.Student:
+                    request.StudentAccountID = _unitOfWork.StudentRepository.GetAllAsync().Result.Find(x => x.AccountId == accountId).Id;
+                    break;
+                case UserRole.Mentor:
+                    request.MentorID = _unitOfWork.MentorRepository.GetAllAsync().Result.Find(x => x.AccountId == accountId).Id;
+                    break;
+                case UserRole.Secretary:
+                case UserRole.Admin:
+                    break;
+                case UserRole.NotAssigned:
+                default:
+                    throw new InvalidDataException($"Provided role {userRole} is not supported");
             }
 
-            return Result<IList<AttachmentDto>>.GetSuccess(result);
+            var result = await _unitOfWork.AttachmentRepository.GetAttachmentListFiltered(request);
+
+            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.Map<IList<AttachmentDto>>(result));
         }
 
         public async Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId)
