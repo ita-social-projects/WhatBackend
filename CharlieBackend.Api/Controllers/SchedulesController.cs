@@ -50,8 +50,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<EventOccurrenceDTO>> PostSchedule([FromBody]CreateScheduleDto scheduleDTO)
         {
-            var resSchedule = await _scheduleService
-                .CreateScheduleAsync(scheduleDTO);
+            var resSchedule = await _scheduleService.CreateScheduleAsync(scheduleDTO);
                 
             return resSchedule.ToActionResult();
         }
@@ -78,7 +77,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<ScheduledEventDTO>))]
         [Authorize(Roles = "Secretary, Admin, Mentor, Student")]
         [HttpPost("events")]
-        public async Task<ActionResult<List<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
+        public async Task<ActionResult<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
         {
             var foundSchedules = await _scheduleService.GetEventsFiltered(request);
 
@@ -98,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrence))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/updateRange")]
-        public async Task<ActionResult<EventOccurrenceDTO>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
+        public async Task<ActionResult<IList<ScheduledEventDTO>>> UpdateEventRange([FromBody]EventUpdateRangeDTO request)
         {
             var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
@@ -114,7 +113,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/{scheduledEventID}")]
-        public async Task<ActionResult<EventOccurrence>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto request)
+        public async Task<ActionResult<ScheduledEventDTO>> UpdateEventById(long scheduledEventID, [FromBody]UpdateScheduledEventDto request)
         {
             var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, request);
 

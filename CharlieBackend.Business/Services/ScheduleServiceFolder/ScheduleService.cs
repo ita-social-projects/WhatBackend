@@ -161,7 +161,9 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            var result = _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(filter).Result.Where(x => !x.LessonId.HasValue);
+            var allRelatedEvents = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(filter);
+                
+            var result = allRelatedEvents.Where(x => x.LessonId is null);
 
             foreach (ScheduledEvent item in result)
             {
