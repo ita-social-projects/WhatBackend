@@ -27,18 +27,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         .SelectMany(y => y.ScheduledEvents)
                         .Select(y => y.Id)
                         .Contains(x.Id))
-                    .WhereIf(request.MentorID.HasValue, x => _applicationContext.ScheduledEvents
-                        .Where(y => y.MentorId == request.MentorID.Value)                        
-                        .Select(y => y.Id)
-                        .Contains(x.Id))
-                    .WhereIf(request.GroupID.HasValue, x => _applicationContext.ScheduledEvents
-                        .Where(y => y.StudentGroupId == request.GroupID.Value)
-                        .Select(y => y.Id)
-                        .Contains(x.Id))
-                    .WhereIf(request.ThemeID.HasValue, x => _applicationContext.ScheduledEvents
-                        .Where(y => y.ThemeId == request.ThemeID.Value)
-                        .Select(y => y.Id)
-                        .Contains(x.Id))
+                    .WhereIf(request.MentorID.HasValue, x => x.MentorId == request.MentorID.Value)
+                    .WhereIf(request.GroupID.HasValue, x => x.StudentGroupId == request.GroupID.Value)
+                    .WhereIf(request.ThemeID.HasValue, x => x.ThemeId == request.ThemeID.Value)
                     .WhereIf(request.StudentAccountID.HasValue, x => _applicationContext.StudentsOfStudentGroups
                         .Where(y => y.StudentId == request.StudentAccountID)
                         .Select(y => y.StudentGroup)
