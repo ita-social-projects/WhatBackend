@@ -17,9 +17,14 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
             RuleFor(x => x.FormUrl)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                //check url
-                .MaximumLength(200).WithMessage("Url cannot be greateh than {MaxLength} symbols");
+                .MaximumLength(200).WithMessage("Url cannot be greateh than {MaxLength} symbols")
+                .Must(BeValidURL);
         }
 
+        protected bool BeValidURL(string URL)
+        {
+            Uri uriResult;
+            return Uri.TryCreate(URL, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
+        }
     }
 }

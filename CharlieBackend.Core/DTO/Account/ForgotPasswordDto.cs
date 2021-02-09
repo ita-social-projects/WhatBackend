@@ -6,7 +6,6 @@ namespace CharlieBackend.Core.DTO.Account
     {
         public string Email { get; set; }
 
-        [Url]
         public string FormUrl { get; set; }
     }
 }
