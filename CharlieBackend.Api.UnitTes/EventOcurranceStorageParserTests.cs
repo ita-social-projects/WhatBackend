@@ -24,7 +24,8 @@ namespace CharlieBackend.Api.UnitTest
                 Index = MonthIndex.First,
                 DaysOfWeek = new List<DayOfWeek>()
                 {
-                    DayOfWeek.Monday, DayOfWeek.Tuesday
+                    DayOfWeek.Monday,
+                    DayOfWeek.Tuesday
                 }
             };
 
