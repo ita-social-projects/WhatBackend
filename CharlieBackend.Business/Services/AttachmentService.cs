@@ -93,10 +93,10 @@ namespace CharlieBackend.Business.Services
             switch (userRole)
             {
                 case UserRole.Student:
-                    request.StudentAccountID = _unitOfWork.StudentRepository.GetAllAsync().Result.Find(x => x.AccountId == accountId).Id;
+                    request.StudentAccountID = _currentUserService.EntityId;
                     break;
                 case UserRole.Mentor:
-                    request.MentorID = _unitOfWork.MentorRepository.GetAllAsync().Result.Find(x => x.AccountId == accountId).Id;
+                    request.MentorID = _currentUserService.EntityId;
                     break;
                 case UserRole.Secretary:
                 case UserRole.Admin:
