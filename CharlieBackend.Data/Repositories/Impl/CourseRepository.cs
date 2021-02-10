@@ -68,14 +68,18 @@ namespace CharlieBackend.Data.Repositories.Impl
         }
 
         /// <summary>
-        /// This method return true if course is active, return false if course doesn't active
-        /// and return null if course doesn't exist.
+        /// This method return true if course is active, return false if course doesn't active or doesn't exist.
         /// </summary>
-        public async Task<bool?> IsCourseActive(long id)
+        public async Task<bool> IsCourseActive(long id)
         {
             var course = await _applicationContext.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-            return course?.IsActive;
+            if (course is null)
+            {
+                return false;
+            }
+
+            return course.IsActive;
         }
     }
 }
