@@ -87,10 +87,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            long accountId = _currentUserService.AccountId;
-            UserRole userRole = _currentUserService.Role;
-
-            switch (userRole)
+            switch (_currentUserService.Role)
             {
                 case UserRole.Student:
                     request.StudentAccountID = _currentUserService.EntityId;
@@ -103,7 +100,7 @@ namespace CharlieBackend.Business.Services
                     break;
                 case UserRole.NotAssigned:
                 default:
-                    throw new InvalidDataException($"Provided role {userRole} is not supported");
+                    throw new InvalidDataException($"Provided role {_currentUserService.Role} is not supported");
             }
 
             var result = await _unitOfWork.AttachmentRepository.GetAttachmentListFiltered(request);
