@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.Models.ResultModel;
+using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -18,13 +19,79 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
 
+        private readonly Mock<ILessonRepository> _lessonRepositoryMock;
+        private readonly Mock<IThemeRepository> _themeRepositoryMock;
+        private readonly Mock<IMentorRepository> _mentorRepositoryMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly Mock<IVisitRepository> _visitRepositoryMock;
+
         public LessonServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
+            _lessonRepositoryMock = new Mock<ILessonRepository>();
+            _themeRepositoryMock = new Mock<IThemeRepository>();
+            _mentorRepositoryMock = new Mock<IMentorRepository>();
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            _visitRepositoryMock = new Mock<IVisitRepository>();
+        }
+        private static StudentGroup CreateLessonStudentGroup(out List<VisitDto> visitDto, out LessonDto createdLesson, out CreateLessonDto createLessonDto)
+        {
+            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
+            {
+                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
+                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
+            };
+            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
+            DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
+            visitDto = new List<VisitDto>
+            {
+                new VisitDto()
+                {
+                    StudentId = 11,
+                    Presence = true
+                },
+
+                new VisitDto()
+                {
+                    StudentId = 14,
+                    Presence = false
+                }
+            };
+            createdLesson = new LessonDto()
+            {
+                Id = 7,
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonDate = lessonDate,
+                LessonVisits = visitDto
+            };
+            createLessonDto = new CreateLessonDto
+            {
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonDate = lessonDate,
+                LessonVisits = visitDto
+            };
+            return studentGroup;
+        }
+        private void MockEntities(StudentGroup studentGroup)
+        {
+            _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(studentGroup.Id)).ReturnsAsync(studentGroup);
+            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(studentGroup.Id)).ReturnsAsync(new List<long?> { 11, 14 });
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(_visitRepositoryMock.Object);
+
+            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
         }
 
         [Fact]
-        public async Task CreateLesson_ReturnLessonDTo_NotEmpty()
+        public async Task CreateLesson_LessonDTO_ShouldBeNotNull()
         {
             //Arrange
             var createLessonDTO = new CreateLessonDto
@@ -92,23 +159,9 @@ namespace CharlieBackend.Api.UnitTest
                     x.Name = "ExampleName";
                 });
 
-            var mentorReposutoryMock = new Mock<IMentorRepository>();
-            mentorReposutoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(studentGroup.Id)).ReturnsAsync(studentGroup);
-            studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(studentGroup.Id)).ReturnsAsync(new List<long?> { 11, 14 });
-
-            var visitRepositoryMock = new Mock<IVisitRepository>();
-
-
-            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorReposutoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-
-            _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+            MockEntities(studentGroup);
 
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object, 
@@ -119,10 +172,107 @@ namespace CharlieBackend.Api.UnitTest
             var result = await lessonService.CreateLessonAsync(createLessonDTO);
 
             //Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Data.LessonVisits);
+            result.Should().NotBeNull();
+        }
+        
+        [Fact]
+        public async Task CreateLessonAsync_NonExistingMentorId_ShouldReturnNotFound()
+        {
+            //Arrange
+            #region DATA
+            List<VisitDto> visitDto;
+            LessonDto createdLesson;
+            CreateLessonDto createLessonDto;
+            StudentGroup studentGroup = CreateLessonStudentGroup(out visitDto, out createdLesson, out createLessonDto);
+
+            Mentor mentor = new Mentor() { Id = 2 };
+            Mentor mentorWrong = new Mentor() { Id = 31 };
+            var createLessonDtoWrongMentor = new CreateLessonDto
+            {
+                ThemeName = "ExampleName",
+                MentorId = mentorWrong.Id,
+                StudentGroupId = 3,
+                LessonVisits = visitDto
+            };
+            #endregion
+
+            #region MOCK
+            _lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
+                .Callback<Lesson>(x => {
+                    x.Id = 7;
+                    x.MentorId = 2;
+                    x.Mentor = mentor;
+                });
+
+            var mentorReposutoryMockWrong = new Mock<IMentorRepository>();
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentor.Id)).ReturnsAsync(mentor);
+            mentorReposutoryMockWrong.Setup(x => x.GetMentorByIdAsync(mentorWrong.Id)).ReturnsAsync(default(Mentor));
+
+            MockEntities(studentGroup);
+
+            var lessonService = new LessonService(
+               unitOfWork: _unitOfWorkMock.Object,
+               mapper: _mapper,
+               currentUserService: _currentUserServiceMock.Object);
+
+            #endregion
+            //Act 
+            var result = await lessonService.CreateLessonAsync(createLessonDto);
+            var resultWihtWrongMentor = await lessonService.CreateLessonAsync(createLessonDtoWrongMentor);
+
+            //Assert
+            resultWihtWrongMentor.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            createdLesson.MentorId.Should().Equals(result.Data.MentorId);
         }
 
+        [Fact]
+        public async Task CreateLessonAsync_WrongLessonDate_ShouldReturnValidationError()
+        {
+            //Arrange
+            #region DATA
+            List<VisitDto> visitDto;
+            LessonDto createdLesson;
+            CreateLessonDto createLessonDto;
+            StudentGroup studentGroup = CreateLessonStudentGroup(out visitDto, out createdLesson, out createLessonDto);
+
+            Mentor mentor = new Mentor() { Id = 2 };
+            DateTime lessonDateWrong = DateTime.Now.AddDays(1);
+
+            var createLessonDtoWrongLessonDate = new CreateLessonDto
+            {
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonDate = lessonDateWrong,
+                LessonVisits = visitDto
+            };
+            #endregion
+
+            #region MOCK
+            _lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
+                .Callback<Lesson>(x => {
+                    x.Id = 7;
+                    x.LessonDate = createdLesson.LessonDate;
+                });
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentor.Id)).ReturnsAsync(mentor);
+
+            MockEntities(studentGroup);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            #endregion
+            //Act 
+            var result = await lessonService.CreateLessonAsync(createLessonDto);
+            var resultWithWrongLessonDate = await lessonService.CreateLessonAsync(createLessonDtoWrongLessonDate);
+
+            //Assert
+            resultWithWrongLessonDate.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            createdLesson.LessonDate.Should().Equals(result.Data.LessonDate);
+        }
         [Fact]
         public async Task CreateLessonAsync()
         {
