@@ -334,6 +334,30 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
+        private async Task<string> ValidateEventOccuranceId(long id)
+        {
+            string result = null;
+
+            if (!await _unitOfWork.EventOccurrenceRepository.IsEntityExistAsync(id))
+            {
+                result = $"EventOccurance id={id} does not exist";
+            }
+
+            return result;
+        }
+
+        private async Task<string> ValidateScheduledEventId(long id)
+        {
+            string result = null;
+
+            if (!await _unitOfWork.ScheduledEventRepository.IsEntityExistAsync(id))
+            {
+                result = $"ScheduledEvent id={id} does not exist";
+            }
+
+            return result;
+        }
+
         private async Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request)
         {
             if (request == null)
