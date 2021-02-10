@@ -54,7 +54,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             int startDay = (int)startDate.DayOfWeek;
 
             return startDate.AddDays(startDay <= offset
-                       ? -1 * (startDay + 7 - offset)
+                       ? -1 * (startDay + DAYS_IN_WEEK - offset)
                        : -1 * (startDay - offset));
         }
 
@@ -69,7 +69,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             int startDay = (int)startDate.DayOfWeek;
 
             startDate = startDate.AddDays(startDay <= offset
-                       ? -1 * (startDay + 7 - offset)
+                       ? -1 * (startDay + DAYS_IN_WEEK - offset)
                        : -1 * (startDay - offset));
 
             finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
