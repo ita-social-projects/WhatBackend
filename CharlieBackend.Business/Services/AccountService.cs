@@ -162,7 +162,7 @@ namespace CharlieBackend.Business.Services
                 return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
             }
 
-            var salt = await _unitOfWork.AccountRepository.GetAccountSaltByEmail(changePassword.Email);
+            var salt = user.Salt;
 
             if (!string.IsNullOrEmpty(salt))
             {
