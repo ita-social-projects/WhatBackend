@@ -12,6 +12,8 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         protected ContextForCreateScheduleDTO _context;
         protected PatternForCreateScheduleDTO _pattern;
         protected int _index = 1;
+        protected const int DAYS_IN_WEEK = 7;
+        protected const int MAX_DAYS_IN_MONTH = 31;
 
         public ScheduledEventHandlerBase(PatternForCreateScheduleDTO pattern)
         {

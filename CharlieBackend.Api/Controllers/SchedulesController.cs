@@ -124,7 +124,7 @@ namespace CharlieBackend.Api.Controllers
         /// Updates a single event
         /// </summary>
         /// <remarks>
-        /// Old instance os event occurance is replaced with the new one (id is the same). 
+        /// Old instance of event occurrence is replaced with the new one (id is the same). 
         /// Scheduled events are recreated accordingly. 
         /// Any events with lessons attached are not removed
         /// </remarks>
@@ -145,7 +145,7 @@ namespace CharlieBackend.Api.Controllers
         /// Deletes exact schedule
         /// </summary>
         /// <remarks>
-        /// Removes cheduled events related to specified EventOccurrence, updates start and finish date accordingle
+        /// Removes scheduled events related to specified EventOccurrence, updates start and finish date accordingly
         /// If no events are left, event occurrence is deleted completely
         /// Start and finish dates input is optional. Leave blanc to remove all related events
         /// Events with lessons attached are not deleted

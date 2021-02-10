@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using System.Text;
 
 namespace CharlieBackend.Business.Services
 {
@@ -224,26 +225,26 @@ namespace CharlieBackend.Business.Services
                 return "Request must not be null";
             }
 
-            string error = null;
+            StringBuilder error = new StringBuilder(string.Empty);
 
             if (request.Pattern.Interval <= 0)
             {
-                error = "Interval value out of range";
+                error.Append(" Interval value out of range");
             }
 
             if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.Context.GroupID))
             {
-                error = "Group does not exist";
+                error.Append(" Group does not exist");
             }
 
             if (request.Context.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
             {
-                error = "Mentor does not exist";
+                error.Append(" Mentor does not exist");
             }
 
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
-                error = "Theme does not exist";
+                error.Append(" Theme does not exist");
             }
 
             switch (request.Pattern.Type)
@@ -253,28 +254,28 @@ namespace CharlieBackend.Business.Services
                 case PatternType.Weekly:
                     if (request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0)
                     {
-                        error = "Target days not provided";
+                        error.Append(" Target days not provided");
                     }
                     break;
                 case PatternType.AbsoluteMonthly:
                     if (request.Pattern.Dates == null || request.Pattern.Dates.Count == 0)
                     {
-                        error = "Target dates not provided";
+                        error.Append(" Target dates not provided");
                     }
                     break;
                 case PatternType.RelativeMonthly:
                     if ((request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0) 
                         || (request.Pattern.Index != null ? request.Pattern.Index <= 0 : false))
                     {
-                        error = "Target days not provided";
+                        error.Append(" Target days not provided");
                     }
                     break;
                 default:
-                    error = "Pattern type not supported";
+                    error.Append(" Pattern type not supported");
                     break;
             }
 
-            return error;
+            return error.Length > 0 ? error.ToString() : null;
         }
 
         private async Task<string> ValidateUpdateScheduleDTO(UpdateScheduledEventDto request)
@@ -284,29 +285,29 @@ namespace CharlieBackend.Business.Services
                 return "requestDTO body must not be null";
             }
 
-            string error = null;
+            StringBuilder error = new StringBuilder(string.Empty);
 
             if (request.StudentGroupId.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId.Value))
             {
-                error = $"No such theme id={request.StudentGroupId.Value}";
+                error.Append($" No such theme id={request.StudentGroupId.Value}");
             }
 
             if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
             {
-                error = $"No such mentor id={request.MentorId.Value}";
+                error.Append($" No such mentor id={request.MentorId.Value}");
             }
 
             if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
             {
-                error = $"No such theme id={request.ThemeId.Value}";
+                error.Append($" No such theme id={request.ThemeId.Value}");
             }
 
             if (request.EventEnd.HasValue && request.EventStart.HasValue && (request.EventEnd < request.EventStart))
             {
-                error = $"StartDate must be less then FinisDate";
+                error.Append($" StartDate must be less then FinisDate");
             }
 
-            return error;
+            return error.Length > 0 ? error.ToString() : null;
         }
 
         private async Task<string> ValidateEventOccuranceId(long id)
@@ -340,39 +341,39 @@ namespace CharlieBackend.Business.Services
                 return "Request must not be null";
             }
 
-            string error = null;
+            StringBuilder error = new StringBuilder(string.Empty);
 
             if (request.CourseID.HasValue && !await _unitOfWork.CourseRepository.IsEntityExistAsync(request.CourseID.Value))
             {
-                error = "Course does not exist";
+                error.Append(" Course does not exist");
             }
 
             if (request.GroupID.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.GroupID.Value))
             {
-                error = "Group does not exist";
+                error.Append(" Group does not exist");
             }
 
             if (request.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorID.Value))
             {
-                error = "Mentor does not exist";
+                error.Append(" Mentor does not exist");
             }
 
             if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
             {
-                error = "Student does not exist";
+                error.Append(" Student does not exist");
             }
 
             if (request.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeID.Value))
             {
-                error = "Theme does not exist";
+                error.Append(" Theme does not exist");
             }
 
             if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate < request.FinishDate))
             {
-                error = $"StartDate must be less then FinisDate";
+                error.Append($" StartDate must be less then FinisDate");
             }
 
-            return error;
+            return error.Length > 0 ? error.ToString() : null;
         }
     }
 }

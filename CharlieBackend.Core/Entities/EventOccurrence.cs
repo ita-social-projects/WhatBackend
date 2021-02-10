@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.Entities
 {
-    public partial class EventOccurrence : BaseEntity
+    public class EventOccurrence : BaseEntity
     {
         [Required]
         public long StudentGroupId { get; set; }
