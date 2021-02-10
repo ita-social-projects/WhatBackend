@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -13,12 +14,14 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id);
 
-        public Task<Result<IList<EventOccurrenceDTO>>> GetAllSchedulesAsync();
+        public Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEvendID, UpdateScheduledEventDto scheduleModel);
 
-        public Task<Result<EventOccurrenceDTO>> UpdateStudentGroupAsync(long scheduleId, UpdateScheduleDto scheduleModel);
+        public Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request);
 
         public Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request);
 
-        public Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long studentGroupId);
+        public Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
+
+        public Task<Result<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
     }
 }
