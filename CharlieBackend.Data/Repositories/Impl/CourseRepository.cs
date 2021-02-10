@@ -1,12 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -67,11 +67,15 @@ namespace CharlieBackend.Data.Repositories.Impl
                     }).ToListAsync();
         }
 
-        public async Task<bool> IsCourseActive(long id)
+        /// <summary>
+        /// This method return true if course is active, return false if course doesn't active
+        /// and return null if course doesn't exist.
+        /// </summary>
+        public async Task<bool?> IsCourseActive(long id)
         {
             var course = await _applicationContext.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-            return course.IsActive;
+            return course?.IsActive;
         }
     }
 }
