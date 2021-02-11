@@ -36,7 +36,7 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
 
-            var errors = await ValidateHomeworStudentRequest(homeworkStudent, student, homework).ToListAsync();
+            var errors = await ValidateHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
             
             if (errors.Any())
             {
@@ -86,7 +86,7 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
            
-            var errors = await ValidateHomeworStudentRequest(homeworkStudent, student, homework).ToListAsync();
+            var errors = await ValidateHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
 
             if (errors.Any())
             {
