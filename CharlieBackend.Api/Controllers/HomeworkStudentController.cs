@@ -35,10 +35,10 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <param name="request">
         /// 1.HomeworkId -  it is id homework which one student done 
-        /// 2.HomeworkTest - here Student can write his Homework or something else
+        /// 2.HomeworkText - here Student can write his Homework or something else
         /// 3.Attacment(LIst) -   here must be Id of Attachment where student uploaded materials for his Homework</param>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
-        [Authorize(Roles = "Student")] //?? admin 
+        [Authorize(Roles = "Student")]
         [HttpPost]
         public async Task<ActionResult> PostHomework([FromBody] HomeworkStudentRequestDto request)
         {
