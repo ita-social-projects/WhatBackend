@@ -124,8 +124,7 @@ namespace CharlieBackend.Api.UnitTest
             };
             StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
 
-            var lessonRepositoryMock = new Mock<ILessonRepository>();
-            lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
+            _lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
                 .Callback<Lesson>(x => {
                     x.Id = 7;
                     x.LessonDate = createLessonDTO.LessonDate;
@@ -149,14 +148,6 @@ namespace CharlieBackend.Api.UnitTest
                             Presence = false
                         }
                     };
-                });
-
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.Add(It.IsAny<Theme>()))
-                .Callback<Theme>(x =>
-                {
-                    x.Id = 5;
-                    x.Name = "ExampleName";
                 });
 
             _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
@@ -273,6 +264,70 @@ namespace CharlieBackend.Api.UnitTest
             resultWithWrongLessonDate.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
             createdLesson.LessonDate.Should().Equals(result.Data.LessonDate);
         }
+
+        [Fact]
+        public async Task CreateLessonAsync_WrongLessonVisitsWithoutStudent_ShouldReturnValidationError()
+        {
+            //Arrange
+            #region DATA
+            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
+            {
+                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
+                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
+            };
+            Mentor mentor = new Mentor() { Id = 2 };
+
+            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
+            StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
+
+            List<VisitDto> visitDtoWithoutStudent = new List<VisitDto>
+            {
+                new VisitDto()
+                {
+                    StudentId = 11,
+                    Presence = true
+                },
+            };
+
+           
+            var createLessonDtoWrongLessonVisitsWithoutStudent = new CreateLessonDto
+            {
+                ThemeName = "ExampleName",
+                MentorId = 2,
+                StudentGroupId = 3,
+                LessonVisits = visitDtoWithoutStudent
+            };
+            #endregion
+
+            #region MOCK
+            var lessonRepositoryMock = new Mock<ILessonRepository>();
+            lessonRepositoryMock.Setup(x => x.Add(It.IsAny<Lesson>()))
+                .Callback<Lesson>(x =>
+                {
+                    x.Id = 7;
+                    x.MentorId = 2;
+                    x.StudentGroupId = 3;
+                    x.ThemeId = 5;
+                    x.Mentor = mentor;
+                    x.StudentGroup = studentGroup;
+                });
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentor.Id)).ReturnsAsync(mentor);
+
+            MockEntities(studentGroup);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+            #endregion
+
+            //Act 
+            var resultWithWrongLessonVisitStudent = await lessonService.CreateLessonAsync(createLessonDtoWrongLessonVisitsWithoutStudent);
+            //Assert
+            resultWithWrongLessonVisitStudent.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
         [Fact]
         public async Task CreateLessonAsync()
         {
