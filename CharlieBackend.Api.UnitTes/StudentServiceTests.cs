@@ -51,7 +51,7 @@ namespace CharlieBackend.Api.UnitTest
                .ReturnsAsync(successExistingAccount);
 
             InitializeForCreateStudentAsync();
-
+            
             var studentService = new StudentService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
