@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -6,16 +7,19 @@ using System.Threading.Tasks;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Moq;
 using Xunit;
+using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {
     public class DashboardServiceTest : TestBase
     {
         private readonly Mock<IDashboardRepository> _dashboardRepositoryMock;
+        private readonly IMapper _mapper;
         private static long studentIdWithGroup = 7;
         private static long studentIdWithoutGroup = 20;
         private static long courseId = 1;
@@ -24,6 +28,7 @@ namespace CharlieBackend.Api.UnitTest
         public DashboardServiceTest()
         {
             _dashboardRepositoryMock = new Mock<IDashboardRepository>();
+            _mapper = GetMapper(new ModelMappingProfile());
         }
 
         private void InitializeForDashboardRepository()
@@ -33,7 +38,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_NotEmptyStudentsMarks_ShouldReturnCurrentStudentsMarks()
+        public async Task GetStudentsClassbook_ExistingGroupIdWithExistingClassbook_ShouldReturnCurrentStudentsMarks()
         {
             //Arrange
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
@@ -68,11 +73,11 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
 
             //Assert
-            Assert.NotEmpty(successResult.Data.StudentsMarks);
+            successResult.Data.StudentsMarks.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_NotEmptyStudentsPresence_ShouldReturnCurrentStudentsPresence()
+        public async Task GetStudentsClassbook_ExistingGroupIdWithExistingClassbook_ShouldReturnCurrentStudentsPresence()
         {
             //Arrange
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
@@ -107,11 +112,11 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
 
             //Assert
-            Assert.NotEmpty(successResult.Data.StudentsPresences);
+            successResult.Data.StudentsPresences.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_WrongDataWithoutCourseId_ShouldReturnValidationError()
+        public async Task GetStudentsClassbook_NotExistingCourseId_ShouldReturnValidationError()
         {
             //Arrange
             var studentClassbookWrongRequest = new StudentsRequestDto<ClassbookResultType>()
@@ -130,11 +135,11 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithWrongParameters = await dashboardService.GetStudentsClassbookAsync(studentClassbookWrongRequest);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, requestWithWrongParameters.Error.Code);
+            requestWithWrongParameters.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_RequestForCourseWithoutStudents_ShouldReturnEmptyStudentPresences()
+        public async Task GetStudentsClassbook_NotExistingGroupId_ShouldReturnEmptyStudentPresences()
         {
             //Arrange
             var studentclassbookCourseWithoutStudents = new StudentsRequestDto<ClassbookResultType>()
@@ -169,11 +174,11 @@ namespace CharlieBackend.Api.UnitTest
             var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
-            Assert.Empty(requestForCourseWithoutStudents.Data.StudentsPresences);
+            requestForCourseWithoutStudents.Data.StudentsPresences.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_RequestForCourseWithoutStudents_ShouldReturnEmptyStudentMarks()
+        public async Task GetStudentsClassbook_NotExistingGroupId__ShouldReturnEmptyStudentMarks()
         {
             //Arrange
             var studentclassbookCourseWithoutStudents = new StudentsRequestDto<ClassbookResultType>()
@@ -208,11 +213,11 @@ namespace CharlieBackend.Api.UnitTest
             var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
-            Assert.Empty(requestForCourseWithoutStudents.Data.StudentsMarks);
+            requestForCourseWithoutStudents.Data.StudentsMarks.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetStudentsResult_NotEmptyResultsForStudents_ShouldReturnStudentsAverageMarks()
+        public async Task GetStudentsResult_ExistingResultsForStudents_ShouldReturnStudentsAverageMarks()
         {
             //Arrange
             var studentResultRequestWithData = new StudentsRequestDto<StudentResultType>()
@@ -256,11 +261,11 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithData = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithData);
 
             //Assert
-            Assert.NotEmpty(resultWithData.Data.AverageStudentsMarks);
+            resultWithData.Data.AverageStudentsMarks.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task GetStudentsResult_NotEmptyResultsForStudents_ShouldReturnStudentsAverageVisits()
+        public async Task GetStudentsResult_ExisitingResultsForStudents_ShouldReturnStudentsAverageVisits()
         {
             //Arrange
             var studentResultRequestWithData = new StudentsRequestDto<StudentResultType>()
@@ -303,11 +308,11 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithData = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithData);
 
             //Assert
-            Assert.NotEmpty(resultWithData.Data.AverageStudentVisits);
+            resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task GetStudentsResult_WrongDataOfStudents_ShouldReturnValidationError()
+        public async Task GetStudentsResult_NotExistingGroupIdNotExistingStudents_ShouldReturnValidationError()
         {
             //Arrange
             var studentResultWrongRequest = new StudentsRequestDto<StudentResultType>()
@@ -327,11 +332,11 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithWrongData = await dashbordservice.GetStudentsResultAsync(studentResultWrongRequest);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, resultWithWrongData.Error.Code);
+            resultWithWrongData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
-        public async Task GetStudentsResult_EmptyResultsForStudents_ShouldReturnEmptyStudentsAverageMarks()
+        public async Task GetStudentsResult_NotExistingCourseId_ShouldReturnEmptyStudentsAverageMarks()
         {
             //Arrange
             var studentResultRequestWithOutStudent = new StudentsRequestDto<StudentResultType>()
@@ -366,11 +371,11 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
-            Assert.Empty(resultWithoutStudent.Data.AverageStudentsMarks);
+            resultWithoutStudent.Data.AverageStudentsMarks.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetStudentsResult_EmptyResultsForStudents_ShouldReturnEmptyStudentsAverageVisits()
+        public async Task GetStudentsResult_NotExistingCourseId_ShouldReturnEmptyStudentsAverageVisits()
         {
             //Arrange
             var studentResultRequestWithOutStudent = new StudentsRequestDto<StudentResultType>()
@@ -405,7 +410,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
-            Assert.Empty(resultWithoutStudent.Data.AverageStudentVisits);
+            resultWithoutStudent.Data.AverageStudentVisits.Should().BeNull();
         }
 
         [Fact]
@@ -466,8 +471,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithData = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.NotEmpty(resultWithData.Data.StudentsMarks);
-            Assert.NotEmpty(resultWithData.Data.StudentsPresences);
+            resultWithData.Data.StudentsMarks.Should().NotBeNull();
+            resultWithData.Data.StudentsPresences.Should().NotBeNull();
         }
 
         [Fact]
@@ -504,8 +509,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.Empty(resultWithoutGroup.Data.StudentsMarks);
-            Assert.Empty(resultWithoutGroup.Data.StudentsPresences);
+            resultWithoutGroup.Data.StudentsMarks.Should().BeNull();
+            resultWithoutGroup.Data.StudentsPresences.Should().BeNull();
         }
 
         [Fact]
@@ -532,7 +537,7 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithStrangerCredentials = await dashbordServiceWithStrangerCredentials.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, requestWithStrangerCredentials.Error.Code);
+            requestWithStrangerCredentials.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -554,7 +559,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutClassbook = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, resultWithoutClassbook.Error.Code);
+            resultWithoutClassbook.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -611,8 +616,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithData = await dashbordServiceWithGroup.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.NotEmpty(resultWithData.Data.AverageStudentsMarks);
-            Assert.NotEmpty(resultWithData.Data.AverageStudentVisits);
+            resultWithData.Data.AverageStudentsMarks.Should().NotBeNull();
+            resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
         }
 
         [Fact]
@@ -649,8 +654,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.Empty(resultWithoutGroup.Data.AverageStudentsMarks);
-            Assert.Empty(resultWithoutGroup.Data.AverageStudentVisits);
+            resultWithoutGroup.Data.AverageStudentsMarks.Should().BeNull();
+            resultWithoutGroup.Data.AverageStudentVisits.Should().BeNull();
         }
 
         [Fact]
@@ -677,7 +682,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithDataWithWrongClaim = await dashbordServiceWithStrangerCredentials.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, resultWithDataWithWrongClaim.Error.Code);
+            resultWithDataWithWrongClaim.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -699,7 +704,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutClassbook = await dashbordServiceWithGroup.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithoutClassbook);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, resultWithoutClassbook.Error.Code);
+            resultWithoutClassbook.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -753,8 +758,8 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.NotEmpty(requestWithData.Data.AverageStudentGroupsMarks);
-            Assert.NotEmpty(requestWithData.Data.AverageStudentGroupsVisits);
+            requestWithData.Data.AverageStudentGroupsMarks.Should().NotBeNull();
+            requestWithData.Data.AverageStudentGroupsVisits.Should().NotBeNull();
         }
 
         [Fact]
@@ -793,12 +798,12 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithoutGroupOnCourse = await dashbordService.GetStudentGroupResultAsync(courseIdWitoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks);
-            Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits);
+            requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks.Should().BeNull();
+            requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetStudentGroupResult()
+        public async Task GetStudentGroupResult_NotExistingAnalitics_ShouldReturnValidationError()
         {
             //Arrang
             var dashbordAnaliticRequstWithoutData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
@@ -817,7 +822,7 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithoutData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithoutData);
 
             //Assert
-            Assert.Equal(ErrorCode.ValidationError, requestWithoutData.Error.Code);
+            requestWithoutData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
