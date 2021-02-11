@@ -117,7 +117,7 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
                 }
 
-                if (studentModel.StudentGroupIds != null)
+                if (studentModel.StudentGroupIds != null && studentModel.StudentGroupIds.Any())
                 {
                     var dublicates = studentModel.StudentGroupIds.Dublicates();
 
