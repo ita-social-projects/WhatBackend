@@ -156,7 +156,7 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
         }
 
-        private async IAsyncEnumerable<string> ValidateHomeworStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
+        private async IAsyncEnumerable<string> ValidateHomeworkStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
         {
             
             if (homeworkStudent == default)
