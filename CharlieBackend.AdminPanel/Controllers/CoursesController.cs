@@ -21,7 +21,8 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             _courseService = courseService;
         }
-
+        
+        [HttpGet]
         public async Task<IActionResult> AllCourses()
         {
             var mentor = await _courseService.GetAllCoursesAsync();
