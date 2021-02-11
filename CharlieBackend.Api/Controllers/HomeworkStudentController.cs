@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{homeworkId}")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForMentorByHomeworkId(long homeworkId)
         {
-            var results = await _homeworkStudentService.GetHomeworkStudentForMentorByHomeworkId(homeworkId);
+            var results = await _homeworkStudentService.GetHomeworkStudentForMentor(homeworkId);
 
             return results;
         }

@@ -27,25 +27,25 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        //this method check if the student has already done homework for task(homeworkId)
+      
         public async Task<bool> IsStudentHasHomeworkAsync(long studentId, long homeworkId)
         {
             return await _applicationContext.HomeworkStudents.AnyAsync(x => (x.StudentId == studentId) && (x.HomeworkId == homeworkId));
         }
 
         
-        public async Task<IList<HomeworkStudent>> GetHomeworkStudentForStudentByStudentId(long id)
+        public async Task<IList<HomeworkStudent>> GetHomeworkStudentForStudent(long studentId)
         {
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
                 .Include(x => x.Student)
                 .Include(x => x.Student.Account)
-                .Where(x => x.StudentId == id)
+                .Where(x => x.StudentId == studentId)
                 .ToListAsync();
         }
 
-        public async Task<IList<HomeworkStudent>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId)
+        public async Task<IList<HomeworkStudent>> GetHomeworkStudentForMentor(long homeworkId)
         {
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)

@@ -140,18 +140,18 @@ namespace CharlieBackend.Business.Services
             long accountId = _currentUserService.AccountId;
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudentByStudentId(student.Id);
+            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(student.Id);
 
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentorByHomeworkId(long homeworkId)
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId)
         {
             long accountId = _currentUserService.AccountId;
         
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
-            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentorByHomeworkId(homework.Id);
+            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
         
             return _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
         }
@@ -166,19 +166,14 @@ namespace CharlieBackend.Business.Services
             }
           
             var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
-            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
-
-            if (lesson == null)
-            {
-                yield return $"Lesson not created yet";
-                yield break;
-            }
-
+           
             if (await _unitOfWork.HomeworkStudentRepository.IsStudentHasHomeworkAsync(student.Id, homeworkStudent.HomeworkId))
             {
                 yield return $"You already add homework for this Hometask {homeworkStudent.HomeworkId}";
                 yield break;
             }
+            
+            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
 
             if (!studentGroups.Contains(lesson.StudentGroupId.Value))
             {

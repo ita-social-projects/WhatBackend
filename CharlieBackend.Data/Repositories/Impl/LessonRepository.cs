@@ -35,8 +35,10 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<Lesson> GetLessonByHomeworkId(long homeworkId)
         {
+            var homework = await _applicationContext.Homeworks.FirstOrDefaultAsync(x => x.Id == homeworkId);
+
             return await _applicationContext.Lessons
-                .FirstOrDefaultAsync(l => l.Id == _applicationContext.Homeworks.FirstOrDefault(h => h.Id == homeworkId).LessonId);
+                .FirstOrDefaultAsync(l => l.Id == homework.LessonId);
         }
 
         public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
