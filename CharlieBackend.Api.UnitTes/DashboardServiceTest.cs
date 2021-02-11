@@ -174,7 +174,7 @@ namespace CharlieBackend.Api.UnitTest
             var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
-            requestForCourseWithoutStudents.Data.StudentsPresences.Should().BeNull();
+            requestForCourseWithoutStudents.Data.StudentsPresences.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -213,7 +213,7 @@ namespace CharlieBackend.Api.UnitTest
             var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
-            requestForCourseWithoutStudents.Data.StudentsMarks.Should().BeNull();
+            requestForCourseWithoutStudents.Data.StudentsMarks.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -371,7 +371,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
-            resultWithoutStudent.Data.AverageStudentsMarks.Should().BeNull();
+            resultWithoutStudent.Data.AverageStudentsMarks.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -410,7 +410,7 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
-            resultWithoutStudent.Data.AverageStudentVisits.Should().BeNull();
+            resultWithoutStudent.Data.AverageStudentVisits.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -509,8 +509,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            resultWithoutGroup.Data.StudentsMarks.Should().BeNull();
-            resultWithoutGroup.Data.StudentsPresences.Should().BeNull();
+            resultWithoutGroup.Data.StudentsMarks.Should().BeNullOrEmpty();
+            resultWithoutGroup.Data.StudentsPresences.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -654,8 +654,8 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            resultWithoutGroup.Data.AverageStudentsMarks.Should().BeNull();
-            resultWithoutGroup.Data.AverageStudentVisits.Should().BeNull();
+            resultWithoutGroup.Data.AverageStudentsMarks.Should().BeNullOrEmpty();
+            resultWithoutGroup.Data.AverageStudentVisits.Should().BeNullOrEmpty();
         }
 
         [Fact]
@@ -798,8 +798,8 @@ namespace CharlieBackend.Api.UnitTest
             var requestWithoutGroupOnCourse = await dashbordService.GetStudentGroupResultAsync(courseIdWitoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks.Should().BeNull();
-            requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits.Should().BeNull();
+            requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks.Should().BeNullOrEmpty();
+            requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits.Should().BeNullOrEmpty();
         }
 
         [Fact]
