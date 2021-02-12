@@ -7,6 +7,7 @@ using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -33,9 +34,9 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddTransient<IHttpUtil, HttpUtil>();
-            services.AddTransient<IApiUtil, ApiUtil>();
-
+            services.AddScoped<IHttpUtil, HttpUtil>();
+            services.AddScoped<IApiUtil, ApiUtil>();
+            
             services.AddTransient<IStudentService, StudentService>(); 
             services.AddTransient<IStudentGroupService, StudentGroupService>();
             services.AddTransient<ICourseService, CourseService>();

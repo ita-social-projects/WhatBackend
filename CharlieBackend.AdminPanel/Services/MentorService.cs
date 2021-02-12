@@ -17,41 +17,31 @@ namespace CharlieBackend.AdminPanel.Services
     public class MentorService : IMentorService
     {
         private readonly IApiUtil _apiUtil;
-        private readonly IOptions<ApplicationSettings> _config;
-        private readonly IDataProtector _protector;
-        private readonly string _accessToken;
 
-        public MentorService(IApiUtil apiUtil, 
-                             IOptions<ApplicationSettings> config, 
-                             IHttpContextAccessor httpContextAccessor,
-                             IDataProtectionProvider provider)
+        public MentorService(IApiUtil apiUtil)
         {
-            _apiUtil = apiUtil;
-            _config = config;
-            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
-
-            _accessToken = _protector.Unprotect(httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
+            _apiUtil = apiUtil;    
         }
 
         public async Task<MentorDto> AddMentorAsync(long id)
         {
             return await
-                _apiUtil.CreateAsync<MentorDto>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", null, _accessToken);
+                _apiUtil.CreateAsync<MentorDto>($"api/mentors/{id}", null);
         }
 
         public async Task<MentorDto> DisableMentorAsync(long id)
         {
             return await 
-                _apiUtil.DeleteAsync<MentorDto>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", _accessToken);
+                _apiUtil.DeleteAsync<MentorDto>($"api/mentors/{id}");
         }
 
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
         {
             var allMentors = await 
-                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors", _accessToken);
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"api/mentors");
 
             var activeMentors = await 
-                _apiUtil.GetAsync<IList<MentorViewModel>>($"{_config.Value.Urls.Api.Https}/api/mentors/active", _accessToken);
+                _apiUtil.GetAsync<IList<MentorViewModel>>($"api/mentors/active");
 
             foreach (var mentor in allMentors)
             {
@@ -63,11 +53,9 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id)
         {
-            var mentorTask = _apiUtil.GetAsync<MentorEditViewModel>($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", _accessToken);
-            var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>($"{_config.Value.Urls.Api.Https}/api/courses", _accessToken);
-            var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
-
-            var mentor = await mentorTask;
+            var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>($"api/courses/isActive");
+            var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"api/student_groups");
+            var mentor = await _apiUtil.GetAsync<MentorEditViewModel>($"api/mentors/{id}");
 
             mentor.AllGroups = await studentGroupTask;
             mentor.AllCourses = await coursesTask;
@@ -78,7 +66,7 @@ namespace CharlieBackend.AdminPanel.Services
         public async Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto)
         {
             return await 
-                _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/mentors/{id}", UpdateDto, _accessToken);
+                _apiUtil.PutAsync($"api/mentors/{id}", UpdateDto);
         }
     }
 }

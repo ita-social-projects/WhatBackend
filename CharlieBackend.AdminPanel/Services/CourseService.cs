@@ -17,26 +17,17 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
 
-        private readonly IOptions<ApplicationSettings> _config;
-
         private readonly IMapper _mapper;
 
-        private readonly string _accessToken;
-
-        public CourseService(IApiUtil apiUtil, IOptions<ApplicationSettings> config, IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor, IDataProtectionProvider provider)
+        public CourseService(IApiUtil apiUtil, IMapper mapper)
         {
             _apiUtil = apiUtil;
-            _config = config;
             _mapper = mapper;
-
-            IDataProtector protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
-            _accessToken = protector.Unprotect(httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
         }
 
         public async Task<IList<CourseViewModel>> GetAllCoursesAsync()
         {
-            var courses =  _mapper.Map<IList<CourseViewModel>>(await _apiUtil.GetAsync<IList<CourseDto>>($"{_config.Value.Urls.Api.Https}/api/courses", _accessToken));
+            var courses =  _mapper.Map<IList<CourseViewModel>>(await _apiUtil.GetAsync<IList<CourseDto>>($"api/courses/isActive"));
 
             return courses;
         }
