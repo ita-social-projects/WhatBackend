@@ -13,6 +13,10 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
+
+    /// <summary>
+    /// this service is for creating homework from mentor for student 
+    /// </summary>
     public class HomeworkService : IHomeworkService
     {
         private readonly IUnitOfWork _unitOfWork;
