@@ -45,28 +45,17 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId)
         {
             return await _applicationContext.StudentsOfStudentGroups
-                 .Where(studentGroup => studentGroup.Id == studentGroupId)
-                 .Join(_applicationContext.Lessons,
-                 studentOfGroup => studentOfGroup.StudentGroupId,
-                 l => l.StudentGroupId,
-                 (students_of_student_group, lesson) => new
-                 {
-                     Id = lesson.Id,
-                     StudentGroupId = students_of_student_group.StudentGroupId,
-                     Theme = lesson.Theme,
-                     MentorId = lesson.MentorId,
-                     LessonDate = lesson.LessonDate,
-                     StudentId = students_of_student_group.StudentId
-                 })
-                 .Where(student => student.StudentId == studentId)
-                 .Select(lesson => new Lesson
-                 {
-                     Id = lesson.Id,
-                     MentorId = lesson.MentorId,
-                     Theme = lesson.Theme,
-                     StudentGroupId = lesson.StudentGroupId,
-                     LessonDate = lesson.LessonDate
-                 }).ToListAsync();
+                .Where(
+                    studentsOfGroup => studentsOfGroup.StudentId == studentId &&
+                    studentsOfGroup.StudentGroupId == studentGroupId
+                )
+                .Join(
+                    _applicationContext.Lessons,
+                    studentOfGroup => studentOfGroup.StudentGroupId,
+                    l => l.StudentGroupId,
+                    (students_of_student_group, lesson) => lesson
+                )
+                .ToListAsync();
         }
 
         public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)
