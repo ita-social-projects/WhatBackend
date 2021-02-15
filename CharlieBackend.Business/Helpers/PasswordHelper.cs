@@ -104,14 +104,15 @@ namespace CharlieBackend.Business.Helpers
 
         public static string GeneratePassword()
         {
-            bool validPassword = false;
+            var validPassword = false;
             var password = new StringBuilder();
             var random = new Random();
 
             while (!validPassword)
             {
-                password.Clear();
+                _ = password.Clear();
                 var passwordLength = _minLength;
+
                 while (passwordLength-- > 0)
                 {
                     _ = password.Append(_allowedSymbols[random.Next(_allowedSymbols.Length)]);
