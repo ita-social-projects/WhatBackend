@@ -20,19 +20,20 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
+        private Mock<IScheduledEventRepository> _scheduleRepositoryMock;
 
         public ScheduleServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
             _scheduledEventFactory = new ScheduledEventHandlerFactory();
+            _scheduleRepositoryMock = new Mock<IScheduledEventRepository>();
+            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_scheduleRepositoryMock.Object);
         }
 
         private void Initialize(CreateScheduleDto createScheduleDto, Mock<IThemeRepository> themeRepositoryMock = null,
             Mock<IMentorRepository> mentorRepositoryMock = null, Mock<IStudentGroupRepository> studentGroupRepositoryMock = null)
         {
-            var scheduleRepositoryMock = new Mock<IScheduledEventRepository>();
-
-            scheduleRepositoryMock.Setup(x => x.AddRange(new List<ScheduledEvent>()
+            _scheduleRepositoryMock.Setup(x => x.AddRange(new List<ScheduledEvent>()
             {
                 new ScheduledEvent
                 {
@@ -54,7 +55,6 @@ namespace CharlieBackend.Api.UnitTest
                 }
                 ));
 
-            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(scheduleRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(eventOccuranceRepositoryMock.Object);
 
             if (themeRepositoryMock != null)
