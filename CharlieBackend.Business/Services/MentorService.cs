@@ -233,7 +233,7 @@ namespace CharlieBackend.Business.Services
 
             if (!await _accountService.DisableAccountAsync(accountId.Value))
             {
-                return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
+                return Result<MentorDto>.GetError(ErrorCode.Conflict, "This account is already disabled.");
             }
 
             return mentorDto;
@@ -253,7 +253,7 @@ namespace CharlieBackend.Business.Services
 
             if (!await _accountService.EnableAccountAsync(accountId.Value))
             {
-                return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already enabled.");
+                return Result<MentorDto>.GetError(ErrorCode.Conflict, "This account is already enabled.");
             }
 
             return mentorDto;

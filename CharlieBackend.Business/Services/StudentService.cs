@@ -216,7 +216,27 @@ namespace CharlieBackend.Business.Services
 
             if (!isActive)
             {
-                return Result<StudentDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
+                return Result<StudentDto>.GetError(ErrorCode.Conflict, "This account is already disabled.");
+            }
+
+            return Result<StudentDto>.GetSuccess(student.Data);
+        }
+
+        public async Task<Result<StudentDto>> EnableStudentAsync(long id)
+        {
+            var accountId = await GetAccountId(id);
+
+            if (accountId == null)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Unknown student id.");
+            }
+
+            var student = await GetStudentByAccountIdAsync((long)accountId);
+            var isActive = await _accountService.EnableAccountAsync((long)accountId);
+
+            if (!isActive)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.Conflict, "This account is already enabled.");
             }
 
             return Result<StudentDto>.GetSuccess(student.Data);
