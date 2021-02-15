@@ -107,7 +107,7 @@ namespace CharlieBackend.Business.Services
                         "Mentor not found");
                 }
 
-                if (mentorModel.StudentGroupIds != null)
+                if (mentorModel.StudentGroupIds != null && mentorModel.StudentGroupIds.Any())
                 {
                     var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
 
@@ -118,7 +118,7 @@ namespace CharlieBackend.Business.Services
 
                 }
 
-                if (mentorModel.CourseIds != null)
+                if (mentorModel.CourseIds != null && mentorModel.CourseIds.Any())
                 {
                     var dublicatesCourse = mentorModel.CourseIds.Dublicates();
 
