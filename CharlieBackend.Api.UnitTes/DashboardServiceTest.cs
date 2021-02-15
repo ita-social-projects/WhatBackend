@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_ExistingGroupIdWithExistingClassbook_ShouldReturnCurrentStudentsMarks()
+        public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnCurrentStudentsMarks()
         {
             //Arrange
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
@@ -54,6 +54,19 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
+            var expectedStudentsMarks = new List<StudentMarkDto>
+            {
+                new StudentMarkDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 5,
+                        LessonId = 2,
+                        LessonDate = new DateTime(2015,4,12),
+                        StudentMark = 5
+                    }
+            };
+
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 studentclassbookRequestWithData.CourseId.Value,
                 studentclassbookRequestWithData.StartDate,
@@ -61,7 +74,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsMarksListByGroupIdsAndDate(
                 new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
-                .ReturnsAsync(new List<StudentMarkDto>() { new StudentMarkDto() { StudentGroupId = 1 } });
+                .ReturnsAsync(expectedStudentsMarks);
 
             InitializeForDashboardRepository();
 
@@ -74,10 +87,11 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             successResult.Data.StudentsMarks.Should().NotBeNull();
+            successResult.Data.StudentsMarks.Should().BeEquivalentTo(expectedStudentsMarks);
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_ExistingGroupIdWithExistingClassbook_ShouldReturnCurrentStudentsPresence()
+        public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnCurrentStudentsPresence()
         {
             //Arrange
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
@@ -93,6 +107,19 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
+            var expectedStudentsVisits = new List<StudentVisitDto>
+            {
+                new StudentVisitDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 5,
+                        LessonId = 2,
+                        LessonDate = new DateTime(2015,4,12),
+                        Presence = true
+                    }
+            };
+
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 studentclassbookRequestWithData.CourseId.Value,
                 studentclassbookRequestWithData.StartDate,
@@ -100,7 +127,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByGroupIdsAndDate(
                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
-               .ReturnsAsync(new List<StudentVisitDto>() { new StudentVisitDto() { StudentGroupId = 1 } });
+               .ReturnsAsync(expectedStudentsVisits);
 
             InitializeForDashboardRepository();
 
@@ -113,6 +140,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             successResult.Data.StudentsPresences.Should().NotBeNull();
+            successResult.Data.StudentsPresences.Should().BeEquivalentTo(expectedStudentsVisits);
         }
 
         [Fact]
@@ -232,6 +260,17 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
+            var expectedStudentsMarks = new List<AverageStudentMarkDto>
+            {
+                new AverageStudentMarkDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 2,
+                        StudentId = 6,
+                        StudentAverageMark = (decimal)5.1
+                    }
+            };
+
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 (long)studentResultRequestWithData.CourseId, 
                 studentResultRequestWithData.StartDate, 
@@ -243,15 +282,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
               new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
-               .ReturnsAsync(new List<AverageStudentMarkDto>() {
-                    new AverageStudentMarkDto()
-                    {
-                        CourseId = 2,
-                        StudentGroupId = 2,
-                        StudentId = 6,
-                        StudentAverageMark = (decimal)5.1
-                    }
-               });
+               .ReturnsAsync(expectedStudentsMarks);
 
             InitializeForDashboardRepository();
 
@@ -262,6 +293,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             resultWithData.Data.AverageStudentsMarks.Should().NotBeNull();
+            resultWithData.Data.AverageStudentsMarks.Should().Equal(expectedStudentsMarks);
         }
 
         [Fact]
@@ -280,6 +312,17 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
+            var expectedAverageStudentVisits = new List<AverageStudentVisitsDto>
+            {
+                new AverageStudentVisitsDto()
+                    {
+                        CourseId = 5,
+                        StudentGroupId = 2,
+                        StudentId = 6,
+                        StudentAverageVisitsPercentage = 15
+                    }
+            };
+
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 (long)studentResultRequestWithData.CourseId, studentResultRequestWithData.StartDate, studentResultRequestWithData.FinishDate))
                 .ReturnsAsync(new List<long>() { 2 });
@@ -289,16 +332,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(
                  new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
-                .ReturnsAsync(new List<AverageStudentVisitsDto>()
-                {
-                    new AverageStudentVisitsDto()
-                    {
-                        CourseId = 5,
-                        StudentGroupId = 2,
-                        StudentId = 6,
-                        StudentAverageVisitsPercentage = 15
-                    }
-                });
+                .ReturnsAsync(expectedAverageStudentVisits);
 
             InitializeForDashboardRepository();
 
@@ -309,6 +343,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
+            resultWithData.Data.AverageStudentVisits.Should().Equal(expectedAverageStudentVisits);
         }
 
         [Fact]
@@ -414,7 +449,105 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentClassbook_StudentIdWithExistingGroup_ShouldReturnCurrentStudentResult()
+        public async Task GetStudentClassbook_ValidDataPassed_ShouldReturnCurrentStudentMarks()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new ClassbookResultType[]
+                {
+                    ClassbookResultType.StudentMarks,
+                    ClassbookResultType.StudentPresence
+                }
+            };
+
+            var expectedStudentMarks = new List<StudentMarkDto>
+            {
+                new StudentMarkDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 5,
+                        LessonId = 2,
+                        LessonDate = new DateTime(2015,4,12),
+                        StudentMark = 5
+                    }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
+                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(
+                studentIdWithGroup, new List<long> { 1 }))
+                .ReturnsAsync(expectedStudentMarks);
+
+            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
+            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+
+            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+
+            //Act
+            var resultWithData = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+
+            //Assert
+            resultWithData.Data.StudentsMarks.Should().NotBeNull();
+            resultWithData.Data.StudentsMarks.Should().Equal(expectedStudentMarks);
+        }
+
+        [Fact]
+        public async Task GetStudentClassbook_ValidDataPassed_ShouldReturnCurrentStudentVisits()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new ClassbookResultType[]
+                {
+                    ClassbookResultType.StudentMarks,
+                    ClassbookResultType.StudentPresence
+                }
+            };
+
+            var expectedStudentVisits = new List<StudentVisitDto>
+            {
+                new StudentVisitDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 5,
+                        LessonId = 2,
+                        LessonDate = new DateTime(2015,4,12),
+                        Presence = true
+                    }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
+                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(
+                studentIdWithGroup, new List<long>() { 1 }))
+                .ReturnsAsync(expectedStudentVisits);
+
+            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
+            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+
+            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+
+            //Act
+            var resultWithData = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+
+            //Assert
+            resultWithData.Data.StudentsPresences.Should().NotBeNull();
+            resultWithData.Data.StudentsPresences.Should().Equal(expectedStudentVisits);
+        }
+
+        [Fact]
+        public async Task GetStudentClassbook_NotExistingGroup_ShouldReturnEmptyStudentMarks()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
@@ -429,54 +562,26 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
-                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
+                studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long>());
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(
-                studentIdWithGroup, new List<long>() { 1 }))
-                .ReturnsAsync(new List<StudentVisitDto>
-                {
-                    new StudentVisitDto()
-                    {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
-                        LessonDate = new DateTime(2015,4,12),
-                        Presence = true
-                    }
-                });
-
-            _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(
-                studentIdWithGroup, new List<long> { 1 }))
-                .ReturnsAsync(new List<StudentMarkDto>
-                {
-                    new StudentMarkDto()
-                    {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
-                        LessonDate = new DateTime(2015,4,12),
-                        StudentMark = 5
-                    }
-                });
+            _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(studentIdWithoutGroup, new List<long> { }))
+               .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
-            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+            var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
 
-            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+            var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
-            var resultWithData = await dashbordServiceWithGroup.GetStudentClassbookAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+            var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            resultWithData.Data.StudentsMarks.Should().NotBeNull();
-            resultWithData.Data.StudentsPresences.Should().NotBeNull();
+            resultWithoutGroup.Data.StudentsMarks.Should().BeNullOrEmpty();
         }
 
         [Fact]
-        public async Task GetStudentClassbook_StudentIdNotExistingGroup_ShouldReturnEmptyStudentResult()
+        public async Task GetStudentClassbook_NotExistingGroup_ShouldReturnEmptyStudentResult()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
@@ -497,8 +602,6 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(studentIdWithoutGroup, new List<long> { }))
                 .ReturnsAsync(new List<StudentVisitDto>());
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(studentIdWithoutGroup, new List<long> { }))
-               .ReturnsAsync(new List<StudentMarkDto>());
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
@@ -509,7 +612,6 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentClassbookAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            resultWithoutGroup.Data.StudentsMarks.Should().BeNullOrEmpty();
             resultWithoutGroup.Data.StudentsPresences.Should().BeNullOrEmpty();
         }
 
@@ -541,7 +643,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentClassbook_ExistingStudentIdNotExistingStudentClassbook_ShouldReturnValidationError()
+        public async Task GetStudentClassbook_NotExistingStudentClassbook_ShouldReturnValidationError()
         {
             //Arrange
             var dashbordAnaliticRequstWithoutClassbook = new DashboardAnalyticsRequestDto<ClassbookResultType>()
@@ -563,7 +665,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentResult_ExistingStudentIdExistingStudentResult_ShouldReturnCurrentStudentResult()
+        public async Task GetStudentResult_ValidDataPassed_ShouldReturnCurrentStudentAverageMarks()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
@@ -577,35 +679,24 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
-                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
-
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
-                new List<long> { studentIdWithGroup }, new List<long> { 1 }))
-                .ReturnsAsync(new List<AverageStudentMarkDto>
-                {
-                    new AverageStudentMarkDto()
+            var expectedAverageStudentMark = new List<AverageStudentMarkDto>
+            {
+                new AverageStudentMarkDto()
                     {
                         CourseId = 2,
                         StudentGroupId = 1,
                         StudentId = 5,
                         StudentAverageMark = (decimal)5.1
                     }
-                });
+            };
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(
-                studentIdWithGroup, new List<long> { 1 }))
-                .ReturnsAsync(new List<AverageStudentVisitsDto>
-                {
-                    new AverageStudentVisitsDto()
-                    {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        StudentAverageVisitsPercentage = 15
-                    }
-                });
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
+                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
+                new List<long> { studentIdWithGroup }, new List<long> { 1 }))
+                .ReturnsAsync(expectedAverageStudentMark);
 
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
@@ -617,11 +708,58 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             resultWithData.Data.AverageStudentsMarks.Should().NotBeNull();
-            resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
+            resultWithData.Data.AverageStudentsMarks.Should().BeEquivalentTo(expectedAverageStudentMark);
         }
 
         [Fact]
-        public async Task GetStudentResult_ExistingStudentIdNotExistingGroup_ShouldReturnEmptyStudentResult()
+        public async Task GetStudentResult_ValidDataPassed_ShouldReturnCurrentStudentAverageVisits()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new StudentResultType[]
+                {
+                    StudentResultType.AverageStudentMark,
+                    StudentResultType.AverageStudentVisits
+                }
+            };
+
+            var expectedAverageStudentVisits = new List<AverageStudentVisitsDto>
+            {
+                 new AverageStudentVisitsDto()
+                    {
+                        CourseId = 2,
+                        StudentGroupId = 1,
+                        StudentId = 5,
+                        StudentAverageVisitsPercentage = 15
+                    }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
+                studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(
+                studentIdWithGroup, new List<long> { 1 }))
+                .ReturnsAsync(expectedAverageStudentVisits);
+
+            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
+            var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
+
+            var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
+
+            //Act
+            var resultWithData = await dashbordServiceWithGroup.GetStudentResultAsync(studentIdWithGroup, dashbordAnaliticRequstWithData);
+
+            //Assert
+            resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
+            resultWithData.Data.AverageStudentVisits.Should().BeEquivalentTo(expectedAverageStudentVisits);
+        }
+
+        [Fact]
+        public async Task GetStudentResult_NotExistingGroup_ShouldReturnEmptyStudentMarks()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
@@ -642,6 +780,37 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentIdWithoutGroup }, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
+            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
+            var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
+
+            var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
+
+            //Act
+            var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
+
+            //Assert
+            resultWithoutGroup.Data.AverageStudentsMarks.Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task GetStudentResult_NotExistingGroup_ShouldReturnEmptyStudentVisits()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new StudentResultType[]
+                {
+                    StudentResultType.AverageStudentMark,
+                    StudentResultType.AverageStudentVisits
+                }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
+                studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long>());
+
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(studentIdWithoutGroup, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
@@ -654,7 +823,6 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithoutGroup = await dashbordServiceWithoutGroup.GetStudentResultAsync(studentIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
-            resultWithoutGroup.Data.AverageStudentsMarks.Should().BeNullOrEmpty();
             resultWithoutGroup.Data.AverageStudentVisits.Should().BeNullOrEmpty();
         }
 
@@ -686,7 +854,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentResult_ExistingStudentIdNotExistingStudentResult_ShouldReturnValidationError()
+        public async Task GetStudentResult_NotExistingStudentResult_ShouldReturnValidationError()
         {
             //Arrange
             var dashbordAnaliticRequstWithoutClassbook = new DashboardAnalyticsRequestDto<StudentResultType>()
@@ -708,7 +876,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentGroupResult_ExistingGroupIdExistingStudentIds_ShouldReturnCurrentStudentsGroupResults()
+        public async Task GetStudentGroupResult_ValidDataPassed_ShouldReturnCurrentStudentsAverageGroupMark()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
@@ -722,31 +890,22 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
-                courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
-
-            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(new List<long> { 1 }))
-                .ReturnsAsync(new List<AverageStudentGroupMarkDto>
-                {
-                    new AverageStudentGroupMarkDto()
+            var expectedAverageStudentGroupMark = new List<AverageStudentGroupMarkDto>
+            {
+                new AverageStudentGroupMarkDto()
                     {
                         CourseId = 1,
                         StudentGroupId = 1,
                         AverageMark = (decimal)4.5
                     }
-                });
+            };
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(new List<long> { 1 }))
-                .ReturnsAsync(new List<AverageStudentGroupVisitDto>
-                {
-                    new AverageStudentGroupVisitDto()
-                    {
-                        CourseId = 1,
-                        StudentGroupId = 1,
-                        AverageVisitPercentage = 15
-                    }
-                });
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
+                courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(new List<long> { 1 }))
+                .ReturnsAsync(expectedAverageStudentGroupMark);
 
             InitializeForDashboardRepository();
 
@@ -759,11 +918,57 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             requestWithData.Data.AverageStudentGroupsMarks.Should().NotBeNull();
-            requestWithData.Data.AverageStudentGroupsVisits.Should().NotBeNull();
+            requestWithData.Data.AverageStudentGroupsMarks.Should().BeEquivalentTo(expectedAverageStudentGroupMark);
         }
 
         [Fact]
-        public async Task GetStudentGroupResult_ExistingStudentIdsNotExistingGroup_ShouldReturnEmptyStudentsResults()
+        public async Task GetStudentGroupResult_ValidDataPassed_ShouldReturnCurrentStudentsGroupAverageVisits()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new StudentGroupResultType[]
+                {
+                    StudentGroupResultType.AverageStudentGroupMark,
+                    StudentGroupResultType.AverageStudentGroupVisitsPercentage
+                }
+            };
+
+            var expectedAverageGroupVisits = new List<AverageStudentGroupVisitDto>
+            {
+                new AverageStudentGroupVisitDto()
+                    {
+                        CourseId = 1,
+                        StudentGroupId = 1,
+                        AverageVisitPercentage = 15
+                    }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
+                courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long> { 1 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(new List<long> { 1 }))
+                .ReturnsAsync(expectedAverageGroupVisits);
+
+            InitializeForDashboardRepository();
+
+            var dashbordService = new DashboardService(
+                unitOfWork: _unitOfWorkMock.Object,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+
+            //Assert
+            requestWithData.Data.AverageStudentGroupsVisits.Should().NotBeNull();
+            requestWithData.Data.AverageStudentGroupsVisits.Should().BeEquivalentTo(expectedAverageGroupVisits);
+        }
+
+        [Fact]
+        public async Task GetStudentGroupResult_NotExistingGroup_ShouldReturnEmptyStudentsResults()
         {
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
@@ -805,7 +1010,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task GetStudentGroupResult_NotExistingAnalitics_ShouldReturnValidationError()
         {
-            //Arrang
+            //Arrange
             var dashbordAnaliticRequstWithoutData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
                 StartDate = new DateTime(2011, 1, 1),
