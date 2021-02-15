@@ -164,7 +164,26 @@ namespace CharlieBackend.Business.Services
 
             if (!await _accountService.DisableAccountAsync((long)accountId))
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsry account is already disabled.");
+                return Result<SecretaryDto>.GetError(ErrorCode.Conflict,"This secretsry account is already disabled.");
+            }
+
+            return Result<SecretaryDto>.GetSuccess(secretary.Data);
+        }
+
+        public async Task<Result<SecretaryDto>> EnableSecretaryAsync(long secretaryId)
+        {
+            var accountId = await GetAccountId(secretaryId);
+
+            if (accountId == null)
+            {
+                return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
+            }
+
+            var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
+
+            if (!await _accountService.EnableAccountAsync((long)accountId))
+            {
+                return Result<SecretaryDto>.GetError(ErrorCode.Conflict, "This secretsry account is already enabled.");
             }
 
             return Result<SecretaryDto>.GetSuccess(secretary.Data);

@@ -105,5 +105,19 @@ namespace CharlieBackend.Api.Controllers
 
             return isDisabled.ToActionResult();
         }
+
+        /// <summary>
+        /// Enable secretary entity
+        /// </summary>
+        /// <response code="200">Secretary successfully enabled</response>
+        /// <response code="HTTP: 404, API: 3">Secretary not found</response>
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{secretaryId}")]
+        public async Task<ActionResult> EnableSecretary(long secretaryId)
+        {
+            var isDisabled = await _secretaryService.EnableSecretaryAsync(secretaryId);
+
+            return isDisabled.ToActionResult();
+        }
     }
 }
