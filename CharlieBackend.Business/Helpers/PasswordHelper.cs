@@ -71,27 +71,27 @@ namespace CharlieBackend.Business.Helpers
 
             if (password.Length < 8)
             {
-                allWarnings.AppendLine("Password length must be more than 8");
+                allWarnings.Append("Password length must be more than 8. ");
             }
 
             if (!Regex.IsMatch(password, @"[A-Z]+"))
             {
-                allWarnings.AppendLine("Password should contain at least one upper case letter");
+                allWarnings.Append("Password should contain at least one upper case letter. ");
             }
 
             if (!Regex.IsMatch(password, @"[0-9]+"))
             {
-                allWarnings.AppendLine("Password should contain at least one numeric value");
+                allWarnings.Append("Password should contain at least one numeric value. ");
             }
 
             if (!Regex.IsMatch(password, @"[a-z]+"))
             {
-                allWarnings.AppendLine("Password should contain at least one lower case letter");
+                allWarnings.AppendLine("Password should contain at least one lower case letter. ");
             }
 
             if (Regex.IsMatch(password, @"[#?!@$%^&*-]+"))
             {
-                allWarnings.Append("Password can't contain any special character apart from underscore symbol");
+                allWarnings.Append("Password can't contain any special character apart from underscore symbol. ");
             }
 
             return allWarnings.ToString();
