@@ -11,7 +11,7 @@ namespace CharlieBackend.Api.UnitTest
     public class EventOcurranceStorageParserTests
     {
         [Fact]
-        public void GetPatternStorageValue_ValidPattern_ShouldReturnSuccessResult()
+        public void GetPatternStorageValue_ValidPattern_ShouldReturnExpectedModel()
         {
             PatternForCreateScheduleDTO patternForCreateScheduleDTO = new PatternForCreateScheduleDTO
             {
