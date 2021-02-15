@@ -124,6 +124,19 @@ namespace CharlieBackend.Business.Services
             return course;
         }
 
+        public async Task<Result<bool>> EnableCourceAsync(long id)
+        {
+            if (await _unitOfWork.CourseRepository.IsCourseActive(id))
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, "Course is already active.");
+            }
+
+            Result<bool> course = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return course;
+        }
+
         public async Task<bool> IsCourseActive(long id)
         {
             return await _unitOfWork.CourseRepository.IsCourseActive(id);

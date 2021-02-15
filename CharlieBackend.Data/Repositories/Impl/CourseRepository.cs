@@ -56,6 +56,19 @@ namespace CharlieBackend.Data.Repositories.Impl
             return Result<bool>.GetSuccess(true);
         }
 
+        public async Task<Result<bool>> EnableCourseByIdAsync(long id)
+        {
+            var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                return Result<bool>.GetError(ErrorCode.NotFound, "Course is not found");
+            }
+            course.IsActive = true;
+
+            return Result<bool>.GetSuccess(true);
+        }
+
         public async Task<List<MentorCoursesDto>> GetMentorCourses(long id)
         {
             return await _applicationContext.Courses
