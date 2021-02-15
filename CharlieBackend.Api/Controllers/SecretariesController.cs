@@ -93,7 +93,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable secretary entity
+        /// Disable secretary
         /// </summary>
         /// <response code="200">Secretary successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>
@@ -107,7 +107,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Enable secretary entity
+        /// Enable secretary
         /// </summary>
         /// <response code="200">Secretary successfully enabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>

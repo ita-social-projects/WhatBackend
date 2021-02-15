@@ -146,7 +146,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disabling of student
+        /// Disable student
         /// </summary>
         /// <response code="204">Successful deletion of student</response>
         /// <response code="400">Error, student not found</response>
@@ -160,7 +160,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Enabling of student
+        /// Enable student
         /// </summary>
         /// <response code="204">Successful enabling of student</response>
         /// <response code="400">Error, student not found</response>
