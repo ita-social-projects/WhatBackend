@@ -240,6 +240,26 @@ namespace CharlieBackend.Business.Services
 
         }
 
+        public async Task<Result<MentorDto>> EnableMentorAsync(long mentorId)
+        {
+            var accountId = await GetAccountId(mentorId);
+
+            if (accountId == null)
+            {
+                return Result<MentorDto>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
+            }
+
+            var mentorDto = await GetMentorByAccountIdAsync(accountId.Value);
+
+            if (!await _accountService.EnableAccountAsync(accountId.Value))
+            {
+                return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already enabled.");
+            }
+
+            return mentorDto;
+
+        }
+
         public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorIdAsync(long id)
         {
             var foundGroups = await _unitOfWork.StudentGroupRepository.GetMentorStudyGroups(id);

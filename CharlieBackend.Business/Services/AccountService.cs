@@ -153,6 +153,24 @@ namespace CharlieBackend.Business.Services
             }
         }
 
+        public async Task<bool> EnableAccountAsync(long id)
+        {
+            try
+            {
+                var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id);
+
+                await _unitOfWork.CommitAsync();
+
+                return isSucceeded;
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+
+                return false;
+            }
+        }
+
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);

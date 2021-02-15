@@ -174,6 +174,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Enabling of mentor account
+        /// </summary>
+        /// <response code="204">Successful enabling of mentor</response>
+        /// <response code="HTTP: 400, API: 3">Can not find mentor</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> EnableMentor(long id)
+        {
+            var disabledMentorModel = await _mentorService.EnableMentorAsync(id);
+
+            return disabledMentorModel.ToActionResult();
+        }
+
+        /// <summary>
         /// Returns list of lessons  for mentor
         /// </summary>
         /// <param name="id"></param>
