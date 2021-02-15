@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.UnitTest
         private static long studentIdWithGroup = 7;
         private static long studentIdWithoutGroup = 20;
         private static long courseId = 1;
-        private static long courseIdWitoutGroup = 2;
+        private static long courseIdWithoutGroup = 2;
 
         public DashboardServiceTest()
         {
@@ -983,7 +983,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
-                courseIdWitoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                courseIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
 
@@ -1000,7 +1000,7 @@ namespace CharlieBackend.Api.UnitTest
                 currentUserService: _currentUserServiceMock.Object);
 
             //Act
-            var requestWithoutGroupOnCourse = await dashbordService.GetStudentGroupResultAsync(courseIdWitoutGroup, dashbordAnaliticRequstWithData);
+            var requestWithoutGroupOnCourse = await dashbordService.GetStudentGroupResultAsync(courseIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
             requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks.Should().BeNullOrEmpty();
@@ -1028,6 +1028,38 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             requestWithoutData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task GetStudentGroupResult_NullStudentGroupId_ShouldReturnNotFound()
+        {
+            //Arrange
+            var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
+            {
+                StartDate = new DateTime(2011, 1, 1),
+                FinishDate = new DateTime(2017, 5, 20),
+                IncludeAnalytics = new StudentGroupResultType[]
+                {
+                    StudentGroupResultType.AverageStudentGroupMark,
+                    StudentGroupResultType.AverageStudentGroupVisitsPercentage
+                }
+            };
+
+            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
+                courseIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                .ReturnsAsync(new List<long>());
+
+            InitializeForDashboardRepository();
+
+            var dashbordService = new DashboardService(
+                unitOfWork: _unitOfWorkMock.Object,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            var requesWithoutStudentGroupId = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+
+            //Assert
+            requesWithoutStudentGroupId.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
         }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
