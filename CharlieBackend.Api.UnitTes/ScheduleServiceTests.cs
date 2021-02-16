@@ -13,6 +13,7 @@ using Xunit;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using FluentAssertions;
 using CharlieBackend.Business.Services.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -244,6 +245,80 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task GetEventsFiltered_ValidScheduledEventFilterRequest_ShouldReturnFilteredListOfScheduleEventDTO()
+        {
+            //Arrange
+            var validRequest = new ScheduledEventFilterRequestDTO
+            {
+                MentorID = 1,
+                GroupID = 3
+            };
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.Daily,
+                    Interval = 1,
+                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
+                },
+
+                Range = new OccurenceRange
+                {
+                    StartDate = DateTime.Parse("Jan 1, 2021"),
+                    FinishDate = DateTime.Parse("Feb 1, 2021")
+                },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 3,
+                    MentorID = 1,
+                    ThemeID = 5
+                }
+            };
+
+            var expectedFilteredList = new List<ScheduledEventDTO>()
+            {
+            new ScheduledEventDTO
+            {
+                StudentGroupId = 3,
+                ThemeId = 5,
+                MentorId = 1,
+                EventStart = DateTime.Parse("Jan 1, 2021"),
+                EventFinish = DateTime.Parse("Feb 1, 2021"),
+                EventOccuranceId = 0,
+                Id = 0
+            } };
+
+            _scheduleRepositoryMock.Setup(x => x.GetEventsFilteredAsync(validRequest)).ReturnsAsync(new List<ScheduledEvent>()
+            {
+            new ScheduledEvent
+            {
+                StudentGroupId = 3,
+                ThemeId = 5,
+                MentorId = 1,
+                EventStart = DateTime.Parse("Jan 1, 2021"),
+                EventFinish = DateTime.Parse("Feb 1, 2021"),
+            } });
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
+
+            Initialize(createScheduleDto, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.GetEventsFiltered(validRequest);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Data.ElementAt(0).Should().BeEquivalentTo(expectedFilteredList.ElementAt(0));
+        }
+
+        [Fact]
         public async Task GetEventsFiltered_NonValidScheduledEventFilterRequest_ShouldReturnValidationError()
         {
             //Arrange
@@ -320,6 +395,89 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             result.Should().NotBeNull();
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task DeleteScheduleByIdAsync_ExistingId_ShouldReturn()
+        {
+            //Arrange
+            var existingId = 1;
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.Daily,
+                    Interval = 1,
+                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
+                },
+
+                Range = new OccurenceRange
+                {
+                    StartDate = DateTime.Parse("Jan 1, 2021"),
+                    FinishDate = DateTime.Parse("Feb 1, 2021")
+                },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 3,
+                    MentorID = 1,
+                    ThemeID = 5
+                }
+            };
+
+            var eventOccurrence = new EventOccurrence
+            {
+                Pattern = createScheduleDto.Pattern.Type,
+                StudentGroupId = createScheduleDto.Context.GroupID,
+                EventStart = createScheduleDto.Range.StartDate,
+                EventFinish = createScheduleDto.Range.FinishDate.Value,
+                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern),
+                ScheduledEvents = new List<ScheduledEvent>()
+                {
+                    new ScheduledEvent
+                    {
+                        StudentGroupId = 3,
+                        ThemeId = 5,
+                        MentorId = 1,
+                        EventStart = DateTime.Parse("Jan 1, 2021"),
+                        EventFinish = DateTime.Parse("Feb 1, 2021"),
+                        EventOccurrenceId = 1
+                    }
+                }
+            };
+
+            var expected = new EventOccurrenceDTO
+            {
+                StudentGroupId = 3,
+                EventStart = DateTime.Parse("Jan 1, 2021"),
+                EventFinish = DateTime.Parse("Jan 1, 2021"),
+                Events = new List<ScheduledEventDTO>()
+                {
+                    new ScheduledEventDTO()
+                {
+                        StudentGroupId = 3,
+                        ThemeId = 5,
+                        MentorId = 1,
+                        EventStart = DateTime.Parse("Jan 1, 2021"),
+                        EventFinish = DateTime.Parse("Feb 1, 2021"),
+                        EventOccuranceId = 1
+                } },
+                Id = 0
+            };
+            var startDate = DateTime.Parse("Jan 1, 2021");
+            var finishDate = DateTime.Parse("Feb 1, 2021");
+
+            _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
+            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(eventOccurrence);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.DeleteScheduleByIdAsync(existingId, startDate, finishDate);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Data.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
