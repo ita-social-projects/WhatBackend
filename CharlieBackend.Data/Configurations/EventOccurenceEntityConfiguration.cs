@@ -12,7 +12,7 @@ namespace CharlieBackend.Data.Configurations
             entity.ToTable("event_occurence");
 
             entity.HasIndex(e => e.StudentGroupId)
-                .HasName("fk_scheduled_events_student_group1");
+                .HasName("FK_student_group_of_schedule");
 
             entity.Property(e => e.Id).HasColumnName("id");
 
@@ -29,7 +29,7 @@ namespace CharlieBackend.Data.Configurations
             entity.HasOne(d => d.StudentGroup)
                 .WithMany(p => p.EventOccurances)
                 .HasForeignKey(d => d.StudentGroupId)
-                .HasConstraintName("fk_scheduled_events_student_group1");
+                .HasConstraintName("FK_student_group_of_schedule");
         }
     }
 }
