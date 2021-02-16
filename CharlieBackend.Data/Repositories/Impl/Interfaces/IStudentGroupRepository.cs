@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -28,5 +29,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
+
+        Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
     }
 }

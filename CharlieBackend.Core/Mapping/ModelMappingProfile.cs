@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
-using System.Linq;
 using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Core.DTO.Mentor;
-using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.DTO.Attachment;
+using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.DTO.Secretary;
+using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core.DTO.Secretary;
-using CharlieBackend.Core.DTO.StudentGroups;
-using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Core.DTO.Course;
-using CharlieBackend.Core.DTO.Attachment;
-using CharlieBackend.Core.DTO.Homework;
+using System.Linq;
 
 namespace CharlieBackend.Core.Mapping
 {
@@ -33,7 +33,6 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-
             #region Courses mapping
 
             CreateMap<CreateCourseDto, Course>();
@@ -49,7 +48,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CourseDto, UpdateCourseDto>();
 
             #endregion
-            
 
             #region Lessons mapping
 
@@ -58,9 +56,10 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<Lesson, CreateLessonDto>();
             CreateMap<CreateLessonDto, Lesson>()
-                  .ForMember(destination => destination.Theme, conf => conf.MapFrom(x =>new Theme() { Name = x.ThemeName}))
+                  .ForMember(destination => destination.Theme,
+                             conf => conf.MapFrom(x => new Theme { Name = x.ThemeName }))
                   .ForMember(destination => destination.Visits,
-                             conf => conf.MapFrom(x => x.LessonVisits.Select(y => new Visit()
+                             conf => conf.MapFrom(x => x.LessonVisits.Select(y => new Visit
                              {
                                  StudentId = y.StudentId,
                                  StudentMark = y.StudentMark,
@@ -68,15 +67,14 @@ namespace CharlieBackend.Core.Mapping
                                  Comment = y.Comment
                              }).ToList()));
 
-            CreateMap<Lesson, LessonDto>()
-                .ForMember(destination => destination.LessonVisits, conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto()
-                            {
-                                 StudentId = y.StudentId,
-                                 StudentMark = y.StudentMark,
-                                 Presence = y.Presence,
-                                 Comment = y.Comment
-                            }).ToList()));
-
+            CreateMap<Lesson, LessonDto>().ForMember(destination => destination.LessonVisits,
+                                                     conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto
+                                                     {
+                                                         StudentId = y.StudentId,
+                                                         StudentMark = y.StudentMark,
+                                                         Presence = y.Presence,
+                                                         Comment = y.Comment
+                                                     }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, Lesson>();
@@ -84,7 +82,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<LessonDto, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, LessonDto>();
             #endregion
-
 
             #region Mentors mapping
 
@@ -102,7 +99,6 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-
             #region Students mapping
 
             CreateMap<StudentDto, Student>();
@@ -118,18 +114,17 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<StudentDto, UpdateStudentDto>();
             #endregion
 
-
             #region StudentGroups mapping
 
-            CreateMap<StudentGroup, StudentGroupDto>()
-                  .ForMember(source => source.MentorIds, 
-                             conf => conf.MapFrom(x => x.MentorsOfStudentGroups.
-                                          Select(y => y.MentorId).ToList()))
-                   .ForMember(source => source.StudentIds,
-                              conf => conf.MapFrom(x => x.StudentsOfStudentGroups.
-                                          Select(y => y.StudentId).ToList()));
-            #endregion
+            CreateMap<StudentGroup, StudentGroupDto>().ForMember(source => source.MentorIds,
+                                                                 conf => conf.MapFrom(x => x.MentorsOfStudentGroups.Select(y => y.MentorId)
+                                                                                                                   .ToList()))
+                                                      .ForMember(source => source.StudentIds,
+                                                                 conf => conf.MapFrom(x => x.StudentsOfStudentGroups.Select(y => y.StudentId)
+                                                                                                                    .ToList()));
+            CreateMap<ImportStudentGroupDto, StudentGroupDto>().ReverseMap();
 
+            #endregion
 
             #region Themes mapping
 
@@ -141,7 +136,6 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<UpdateThemeDto, Theme>();
 
             #endregion
-
 
             #region Secretaries mapping
 
@@ -159,15 +153,18 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-
             #region Schedules mapping
 
-            CreateMap<CreateScheduleDto, Schedule>();
-            CreateMap<UpdateScheduleDto, Schedule>();
-            CreateMap<Schedule, ScheduleDto>();
+            CreateMap<CreateScheduleDto, EventOccurrence>();
+            CreateMap<UpdateScheduleDto, EventOccurrence>();
+            CreateMap<EventOccurrence, EventOccurrenceDTO>()
+                .ForMember(x => x.Events, y => y.MapFrom(map => map.ScheduledEvents.ToList()));
+
+            CreateMap<ScheduledEventDTO, ScheduledEvent>();
+            CreateMap<ScheduledEvent, ScheduledEventDTO>()
+                .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurrenceId));
 
             #endregion
-
 
             #region Attachments mapping
 
@@ -178,10 +175,9 @@ namespace CharlieBackend.Core.Mapping
 
             #region Homework mapping
 
-            CreateMap<Homework, HomeworkDto>()
-                .ForMember(dest => dest.AttachmentIds,
-                        opt => opt.MapFrom(src => src.AttachmentsOfHomework
-                                .Select(y => y.AttachmentId).ToList()));
+            CreateMap<Homework, HomeworkDto>().ForMember(dest => dest.AttachmentIds,
+                                                         opt => opt.MapFrom(src => src.AttachmentsOfHomework.Select(y => y.AttachmentId)
+                                                                                                            .ToList()));
             CreateMap<HomeworkDto, Homework>();
 
             #endregion

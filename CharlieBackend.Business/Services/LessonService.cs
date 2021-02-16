@@ -1,10 +1,8 @@
 ﻿using System;
 using AutoMapper;
-using CharlieBackend.Core;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
-using Microsoft.AspNetCore.Diagnostics;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
@@ -18,11 +16,16 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
+        public LessonService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonDto)
@@ -68,7 +71,7 @@ namespace CharlieBackend.Business.Services
                     return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudents)} not included in this group({lessonDto.StudentGroupId})");
                 }
 
-                if (createdLessonEntity.LessonDate < DateTime.Now)
+                if (createdLessonEntity.LessonDate > DateTime.Now)
                 {
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
@@ -121,6 +124,21 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
 
+        public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel)
+        {
+            long accountId = _currentUserService.AccountId;
+            var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
+                      
+            if (filterModel == default)
+            {
+                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentor.Id));
+            }
+
+            var lessonsForMentro = await _unitOfWork.LessonRepository.GetLessonsForMentorAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, mentor.Id);
+
+            return _mapper.Map<IList<LessonDto>>(lessonsForMentro);
+        }
+         
         public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
             var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
@@ -169,7 +187,7 @@ namespace CharlieBackend.Business.Services
                     }
                 }
                
-                if (lessonModel.LessonDate < DateTime.Now)
+                if (lessonModel.LessonDate > DateTime.Now)
                 {
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }

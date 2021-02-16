@@ -19,6 +19,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<LessonDto>> UpdateLessonAsync(long id, UpdateLessonDto lessonModel);
 
         Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId);
-        
+
+        Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel);
     }
 }

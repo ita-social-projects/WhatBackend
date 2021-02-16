@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.Extensions;
 using System.Linq;
 
 namespace CharlieBackend.Business.Services
@@ -116,6 +117,17 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
                 }
 
+                if (studentModel.StudentGroupIds != null && studentModel.StudentGroupIds.Any())
+                {
+                    var dublicates = studentModel.StudentGroupIds.Dublicates();
+
+                    if (dublicates.Any())
+                    {
+                        return Result<StudentDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ",dublicates)} are not unique");
+                    }
+
+                }
+
                 var isEmailChangableTo = await _accountService
                     .IsEmailChangableToAsync((long)foundStudent.AccountId, studentModel.Email);
 
@@ -171,6 +183,12 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentDto>> GetStudentByIdAsync(long studentId)
         {
             var student = await _unitOfWork.StudentRepository.GetByIdAsync(studentId);
+
+            if (student == null)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, $"This id = {studentId} does not exist in database");
+            }
+
             var studentDto = _mapper.Map<StudentDto>(student);
 
             return Result<StudentDto>.GetSuccess(studentDto);

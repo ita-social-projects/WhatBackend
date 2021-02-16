@@ -1,12 +1,14 @@
-﻿using CharlieBackend.Core.DTO.Mentor;
+﻿using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -22,6 +24,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             _applicationContext.StudentsOfStudentGroups
                    .AddRange(items);
         }
+
         public bool DeleteStudentGroup(long StudentGroupModelId)
         {
             var x = SearchStudentGroup(StudentGroupModelId);
@@ -66,7 +69,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<bool> IsGroupOnCourseAsync(long id)
         {
-            return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) && (group.FinishDate >= System.DateTime.Now));
+            return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) && (group.FinishDate >= DateTime.Now));
         }
 
         public StudentGroup SearchStudentGroup(long studentGroupId)
@@ -113,6 +116,21 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
                 .Select(s => s.StudentId).ToListAsync();
+        }
+
+        public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.StudentGroups
+                .AsNoTracking()
+                .Include(group => group.StudentsOfStudentGroups)
+                .Include(group => group.MentorsOfStudentGroups)
+                .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
+                                                        group.FinishDate > startDate)
+                .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate || 
+                                                         group.StartDate < finishDate)
+                .Where(group => group.Course.IsActive)
+                .OrderBy(group => group.StartDate)
+                .ToListAsync();
         }
     }
 }

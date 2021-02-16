@@ -1,13 +1,14 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using CharlieBackend.Core.FileModels;
+﻿using CharlieBackend.Business.Services.FileServices;
+using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.DTO.Theme;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Business.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -18,20 +19,20 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly IStudentImportService _studentImportService;
-        private readonly IThemeImportService _themeImportService;
-        private readonly IStudentGroupImportService _groupImportService;
+        private readonly IGroupXlsFileImporter _groupXlsFileImporter;
+        private readonly IStudentXlsFileImporter _studentXlsFileImporter;
+        private readonly IThemeXlsFileImporter _themeXlsFileImporter;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IStudentImportService studentImportService,
-                                IStudentGroupImportService groupImportService,
-                                IThemeImportService themeImportService)
+        public ImportController(IGroupXlsFileImporter groupXlsFileImporter,
+                                IStudentXlsFileImporter studentXlsFileImporter,
+                                IThemeXlsFileImporter themeXlsFileImporter)
         {
-            _studentImportService = studentImportService;
-            _groupImportService = groupImportService;
-            _themeImportService = themeImportService;
+            _groupXlsFileImporter = groupXlsFileImporter;
+            _studentXlsFileImporter = studentXlsFileImporter;
+            _themeXlsFileImporter = themeXlsFileImporter;
         }
 
         /// <summary>
@@ -39,24 +40,15 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(List<StudentGroupFile>))]
+        [SwaggerResponse(200, type: typeof(IEnumerable<ImportStudentGroupDto>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("groups")]
+        [Route("groups/{coursId}")]
         [HttpPost]
-        public async Task<ActionResult> ImportGroupDataFromFile(IFormFile file)
+        public async Task<ActionResult> ImportGroupDataFromFile(long coursId, IFormFile file)
         {
-            var listOfImportedGroups = new Result<List<StudentGroupFile>>();
+            var groups = await _groupXlsFileImporter.ImportGroupsAsync(coursId, file);
 
-            if (_groupImportService.CheckIfExcelFile(file))
-            {
-                listOfImportedGroups = await _groupImportService.ImportFileAsync(file);
-            }
-            else
-            {
-                return BadRequest(new { message = "Invalid file extension" });
-            }
-
-            return listOfImportedGroups.ToActionResult();
+            return groups.ToActionResult();
         }
 
         /// <summary>
@@ -64,24 +56,15 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(List<StudentFile>))]
+        [SwaggerResponse(200, type: typeof(IEnumerable<StudentDto>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("students/{groupId}")]
         [HttpPost]
         public async Task<ActionResult> ImportStudentDataFromFile(long groupId, IFormFile file)
         {
-            var listOfImportedStudents = new Result<List<StudentFile>>();
+            var students = await _studentXlsFileImporter.ImportStudentsAsync(groupId, file);
 
-            if (_groupImportService.CheckIfExcelFile(file))
-            {
-                listOfImportedStudents = await _studentImportService.ImportFileAsync(groupId, file);
-            }
-            else
-            {
-                return BadRequest(new { message = "Invalid file extension" });
-            }
-
-            return listOfImportedStudents.ToActionResult();
+            return students.ToActionResult();
         }
 
         /// <summary>
@@ -89,24 +72,15 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(List<ThemeFile>))]
+        [SwaggerResponse(200, type: typeof(IEnumerable<ThemeDto>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("themes")]
         [HttpPost]
         public async Task<ActionResult> ImportThemeDataFromFile(IFormFile file)
         {
-            var listOfImportedThemes = new Result<List<ThemeFile>>();
+            var themes = await _themeXlsFileImporter.ImportThemesAsync(file);
 
-            if (_themeImportService.CheckIfExcelFile(file))
-            {
-                listOfImportedThemes = await _themeImportService.ImportFileAsync(file);
-            }
-            else
-            {
-                return BadRequest(new { message = "Invalid file extension" });
-            }
-
-            return listOfImportedThemes.ToActionResult();
+            return themes.ToActionResult();
         }
     }
 }

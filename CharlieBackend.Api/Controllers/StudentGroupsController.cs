@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Business.Services.Interfaces;
+using System;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -79,13 +80,18 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets all student groups
         /// </summary>
+        /// <remarks>
+        /// Returns all groups of students in the active course for the specified period (if no dates are specified, returns all groups)
+        /// </remarks>
         /// <response code="200">Successful return of students of student group</response>
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups()
+        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
         {
-            return Ok(await _studentGroupService.GetAllStudentGroupsAsync());
+            var groups = await _studentGroupService.GetAllStudentGroupsAsync(startDate, finishDate);
+
+            return groups.ToActionResult();
         }
 
         /// <summary>

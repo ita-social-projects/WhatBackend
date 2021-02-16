@@ -29,7 +29,7 @@ namespace CharlieBackend.Api.Middlewares
         /// <summary>
         /// 
         /// </summary>
-        public async Task InvokeAsync(HttpContext context, IAccountService accountService)
+        public async Task InvokeAsync(HttpContext context, IAccountService accountService, ICurrentUserService currentUserService)
         {
             if (context.Request.Path.Value.Contains("accounts")
                 || context.Request.Path.Value.Contains("swagger"))
@@ -38,19 +38,9 @@ namespace CharlieBackend.Api.Middlewares
             }
             else
             {
-                string authHeader = context.Request.Headers["Authorization"];
+                var currentEmail = currentUserService.Email;
 
-                if (authHeader != null)
-                {
-                    var handler = new JwtSecurityTokenHandler();
-                    authHeader = authHeader.ToString().Replace("Bearer ", "");
-
-                    var jsonToken = handler.ReadToken(authHeader);
-                    var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-
-                    var email = tokenS.Claims.First(claim => claim.Type == "Email").Value;
-
-                    var isActive = await accountService.IsAccountActiveAsync(email);
+                var isActive = await accountService.IsAccountActiveAsync(currentEmail);
 
                     if (isActive == null)
                     {
@@ -61,33 +51,24 @@ namespace CharlieBackend.Api.Middlewares
 
                     if ((bool)!isActive)
                     {
-                        context.Response.StatusCode = 403;
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
                         await context.Response.WriteAsync("Account is not active(i.e. you don't have proper role). You need to authorize!");
                     }
 
                     if (context.Request.Path.Value.Contains("lessons"))
                     {
-                        var role = tokenS.Claims
-                                .First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-                        UserRole userRole = UserRoleExtension.ToEnum<UserRole>(role);
+                        var role = currentUserService.Role;
 
-                        if (userRole == UserRole.Mentor)
+                        if (role == UserRole.Mentor)
                         {
-                            var id = tokenS.Claims.First(claim => claim.Type == "Id").Value;
+                            var id = currentUserService.EntityId;
 
                             context.Items["mentorId"] = id;
                         }
                     }
 
                     await _next.Invoke(context);
-                }
-                else
-                {
-                    context.Response.StatusCode = 400;
-
-                    await context.Response.WriteAsync("Bad token.");
-                }
             }
         }
     }
