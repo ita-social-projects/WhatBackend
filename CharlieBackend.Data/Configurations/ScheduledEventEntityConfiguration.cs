@@ -13,11 +13,11 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(x => x.Id).HasColumnName("id");
 
-            entity.Property(x => x.EventOccurenceId).HasColumnName("event_occurence_id").HasColumnType("bigint(20)");
+            entity.Property(x => x.EventOccurrenceId).HasColumnName("event_occurence_id").HasColumnType("bigint(20)");
 
-            entity.HasOne(x => x.EventOccurence)
+            entity.HasOne(x => x.EventOccurrence)
                 .WithMany(x => x.ScheduledEvents)
-                .HasForeignKey(x => x.EventOccurenceId)
+                .HasForeignKey(x => x.EventOccurrenceId)
                 .HasConstraintName("fk_scheduled_events_event_occurence1");
 
             entity.Property(x => x.StudentGroupId).HasColumnName("student_group_id").HasColumnType("bigint(20)");

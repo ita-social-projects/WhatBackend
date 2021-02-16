@@ -12,7 +12,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.HasIndex(e =>
                 new { e.LessonId })
-                .HasName("lesson");
+                .HasName("FK_lesson_for_homework");
 
             entity.Property(e => e.Id).HasColumnName("id");
 
@@ -31,7 +31,7 @@ namespace CharlieBackend.Data.Configurations
             entity.HasOne(d => d.Lesson)
                 .WithMany(p => p.Homeworks)
                 .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_of_homework");
+                .HasConstraintName("FK_lesson_homework");
         }
     }
 }

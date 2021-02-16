@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 
-namespace CharlieBackend.Business.Services
+namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
-    static class EventOccuranceStorageParser
+    public static class EventOccuranceStorageParser
     {
         private static int _daysInWeek = 7;
         private static int _maxDaysInMonth = 31;
         private static int _possibleMonthIndexOptionsNumber = 5;
 
-        internal static long GetPatternStorageValue(PatternForCreateScheduleDTO source)
+        public static long GetPatternStorageValue(PatternForCreateScheduleDTO source)
         {
             (long result, long position) data = (0, 1);
 
@@ -73,7 +73,7 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            data.index <<= _maxDaysInMonth;
+            data.index <<= _maxDaysInMonth + 1;
 
             return data;
         }
@@ -86,7 +86,7 @@ namespace CharlieBackend.Business.Services
             return data.result;
         }
 
-        internal static PatternForCreateScheduleDTO GetFullDataFromStorage(long source)
+        public static PatternForCreateScheduleDTO GetFullDataFromStorage(long source)
         {
             string stringRepresentationOfStorage = Convert.ToString(source, 2);
 
@@ -97,17 +97,17 @@ namespace CharlieBackend.Business.Services
                 .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber, _possibleMonthIndexOptionsNumber);
 
             string datesString = stringRepresentationOfStorage
-                .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth, _maxDaysInMonth);
+                .Substring(stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth - 1, _maxDaysInMonth);
 
             string intervalString = stringRepresentationOfStorage
-                .Substring(0, stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth);
+                .Substring(0, stringRepresentationOfStorage.Length - _daysInWeek - _possibleMonthIndexOptionsNumber - _maxDaysInMonth - 1);
 
             return new PatternForCreateScheduleDTO
             {
                 Interval = GetInterval(intervalString),
                 Index = GetMonthIndex(indexString),
-                Dates = GetDatesList(datesString),
-                DaysOfWeek = GetDaysList(daysString)
+                Dates = GetDatesList(datesString).Count > 0 ? GetDatesList(datesString) : null,
+                DaysOfWeek = GetDaysList(daysString).Count > 0 ? GetDaysList(daysString) : null
             };
         }
 
@@ -139,7 +139,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (datesString[i] == '1')
                 {
-                    datesCollection.Add(i - 1);
+                    datesCollection.Add(_maxDaysInMonth - i);
                 }
             }
 

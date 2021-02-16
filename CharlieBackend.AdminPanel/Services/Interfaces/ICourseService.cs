@@ -8,6 +8,6 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 {
     public interface ICourseService
     {
-        public Task<IList<CourseViewModel>> GetAllCoursesAsync(string accessToken);
+        public Task<IList<CourseViewModel>> GetAllCoursesAsync();
     }
 }

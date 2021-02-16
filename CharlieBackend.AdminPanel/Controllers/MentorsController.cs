@@ -16,7 +16,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         public MentorsController(IMentorService mentorService)
         {
             _mentorService = mentorService;
-
         }
 
         public async Task<IActionResult> AllMentors()

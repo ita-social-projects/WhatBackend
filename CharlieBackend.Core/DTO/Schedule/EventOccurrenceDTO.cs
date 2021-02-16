@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public class EventOccurenceDTO
+    public class EventOccurrenceDTO
     {
         [Required]
         public long? Id { get; set; }
@@ -25,6 +25,8 @@ namespace CharlieBackend.Core.DTO.Schedule
         [DataType(DataType.Time)]
         [EnumDataType(typeof(PatternType))]
         public PatternType Pattern { get; set; }   
+
+        public IList<ScheduledEventDTO> Events { get; set; }
     }
 }
 

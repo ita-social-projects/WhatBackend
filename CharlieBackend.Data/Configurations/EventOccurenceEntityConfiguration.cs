@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CharlieBackend.Data.Configurations
 {
     class EventOccurenceEntityConfiguration 
-        : IEntityTypeConfiguration<EventOccurence>
+        : IEntityTypeConfiguration<EventOccurrence>
     {
-        public void Configure(EntityTypeBuilder<EventOccurence> entity)
+        public void Configure(EntityTypeBuilder<EventOccurrence> entity)
         {
             entity.ToTable("event_occurence");
 

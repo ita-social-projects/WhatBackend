@@ -108,6 +108,9 @@ namespace CharlieBackend.Api.UnitTest
             courseRepositoryMock.Setup(x => x.IsEntityExistAsync(existingCourse.Id))
                .ReturnsAsync(true);
 
+            courseRepositoryMock.Setup(x => x.IsCourseActive(existingCourse.Id))
+              .ReturnsAsync(true);
+
             courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(updateCourseDto.Name))
                   .ReturnsAsync(false);
 

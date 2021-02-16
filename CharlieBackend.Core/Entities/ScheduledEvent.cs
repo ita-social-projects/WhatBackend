@@ -6,9 +6,9 @@ namespace CharlieBackend.Core.Entities
 {
     public class ScheduledEvent : BaseEntity
     {
-        public long EventOccurenceId { get; set; }
+        public long EventOccurrenceId { get; set; }
 
-        public EventOccurence EventOccurence { get; set; }
+        public EventOccurrence EventOccurrence { get; set; }
 
         public long? StudentGroupId { get; set; }
 

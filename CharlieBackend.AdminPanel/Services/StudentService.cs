@@ -17,26 +17,15 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
 
-        private readonly IOptions<ApplicationSettings> _config;
-        private readonly IDataProtector _protector;
-        private readonly string _accessToken;
-
-        public StudentService(IApiUtil apiUtil,
-                              IOptions<ApplicationSettings> config,
-                              IHttpContextAccessor httpContextAccessor,
-                              IDataProtectionProvider provider)
+        public StudentService(IApiUtil apiUtil)
         {
             _apiUtil = apiUtil;
-            _config = config;
-            _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
-
-            _accessToken = _protector.Unprotect(httpContextAccessor.HttpContext.Request.Cookies["accessToken"]);
         }
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()
         {
-            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students", _accessToken);
-            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>($"{_config.Value.Urls.Api.Https}/api/students/active", _accessToken);
+            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>($"api/students");
+            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>($"api/students/active");
 
             var allStudents = await allStudentsTask;
             var activeStudents = await activeStudentsTask;
@@ -51,8 +40,8 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<StudentEditViewModel> GetStudentByIdAsync(long id)
         {
-            var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>($"{_config.Value.Urls.Api.Https}/api/students/{id}", _accessToken);
-            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"{_config.Value.Urls.Api.Https}/api/student_groups", _accessToken);
+            var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>($"api/students/{id}");
+            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"api/student_groups");
 
             var student = await studentTask;
             var studentGroup = await studentGroupsTask;
@@ -64,21 +53,21 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<UpdateStudentDto> UpdateStudentAsync(long id, UpdateStudentDto UpdateDto)
         {
-            var updatedStudent = await _apiUtil.PutAsync($"{_config.Value.Urls.Api.Https}/api/students/{id}", UpdateDto, _accessToken);
+            var updatedStudent = await _apiUtil.PutAsync($"api/students/{id}", UpdateDto);
             
             return updatedStudent;
         }
 
         public async Task<StudentDto> AddStudentAsync(long id)
         {
-            var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>($"{_config.Value.Urls.Api.Https}/api/students/{id}", null, _accessToken);
+            var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>($"api/students/{id}", null);
 
             return addedStudentTask;
         }
 
         public async Task<StudentDto> DisableStudentAsync(long id)
         {
-            var disabledStudent = await _apiUtil.DeleteAsync<StudentDto>($"{_config.Value.Urls.Api.Https}/api/students/{id}", _accessToken);
+            var disabledStudent = await _apiUtil.DeleteAsync<StudentDto>($"api/students/{id}");
 
             return disabledStudent;
         }

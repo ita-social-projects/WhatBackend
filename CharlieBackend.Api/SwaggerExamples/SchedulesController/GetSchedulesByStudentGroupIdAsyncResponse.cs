@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
 {
-    internal class GetSchedulesByStudentGroupIdAsyncResponse : IExamplesProvider<IList<EventOccurenceDTO>>
+    internal class GetSchedulesByStudentGroupIdAsyncResponse : IExamplesProvider<IList<EventOccurrenceDTO>>
     {
-        public IList<EventOccurenceDTO> GetExamples()
+        public IList<EventOccurrenceDTO> GetExamples()
         {
-            return new List<EventOccurenceDTO>()
+            return new List<EventOccurrenceDTO>()
             {
-                new EventOccurenceDTO
+                new EventOccurrenceDTO
                 {
                     Id = 14,
                     StudentGroupId = 24,
@@ -22,7 +22,7 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                     EventFinish = new DateTime(2020, 10, 12, 10, 15, 00),
                     Pattern = PatternType.Daily
                 },
-                new EventOccurenceDTO
+                new EventOccurrenceDTO
                 {
                     Id = 15,
                     StudentGroupId = 24,

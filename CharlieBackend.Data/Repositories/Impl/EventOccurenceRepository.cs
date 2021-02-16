@@ -9,36 +9,33 @@ using System.Linq;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
-    public class EventOccurenceRepository : Repository<EventOccurence>, IEventOccurenceRepository
+    public class EventOccurrenceRepository : Repository<EventOccurrence>, IEventOccurrenceRepository
     {
-        public EventOccurenceRepository(ApplicationContext applicationContext)
+        public EventOccurrenceRepository(ApplicationContext applicationContext) 
                 : base(applicationContext)
         {
         }
 
-        public new async Task<List<EventOccurence>> GetAllAsync()
+        public new Task<List<EventOccurrence>> GetAllAsync()
         {
-            return await _applicationContext.EventOccurences
+            return _applicationContext.EventOccurrences
                 .Include(schedule => schedule.StudentGroup)
                 .ToListAsync();
         }
 
-        public async Task<List<EventOccurence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
+        public Task<List<EventOccurrence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
-            return await _applicationContext.EventOccurences
-                 .Where(schedule => schedule.StudentGroupId == studentGroupId)
-                 .Include(schedule => schedule.StudentGroup)
-                 .ToListAsync();
+           return _applicationContext.EventOccurrences
+                .Where(schedule => schedule.StudentGroupId == studentGroupId)
+                .Include(schedule => schedule.StudentGroup)
+                .ToListAsync();
         }
 
-        public async Task<List<EventOccurence>> GetEventOccurenceByDateAsync(DateTime startTime, DateTime finishTime)
+        public new Task<EventOccurrence> GetByIdAsync(long id)
         {
-            return await _applicationContext.EventOccurences
-                .AsNoTracking()
-                .Where(x => x.EventStart < finishTime && x.EventStart >= startTime ||
-                       x.EventFinish > startTime && x.EventFinish <= finishTime)
-                .OrderBy(x => x.EventStart)
-                .ToListAsync();
+            return _applicationContext.EventOccurrences
+                .Include(x => x.ScheduledEvents)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

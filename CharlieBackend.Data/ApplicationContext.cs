@@ -34,7 +34,7 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Visit> Visits { get; set; }
         
-        public virtual DbSet<EventOccurence> EventOccurences { get; set; }
+        public virtual DbSet<EventOccurrence> EventOccurrences { get; set; }
 
         public virtual DbSet<ScheduledEvent> ScheduledEvents { get; set; }
 
@@ -44,14 +44,20 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
+        public virtual DbSet<HomeworkStudent> HomeworkStudents { get; set; }
+
+        public virtual DbSet<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new AccountEntityConfiguration())
                 .ApplyConfiguration(new AttachmentEntityConfiguration())
                 .ApplyConfiguration(new AttachmentOfHomeworkEntityConfiguration())
+                .ApplyConfiguration(new AttachmentOfHomeworkStudentEntityConfiguration())
                 .ApplyConfiguration(new CourseEntityConfiguration())
                 .ApplyConfiguration(new EventOccurenceEntityConfiguration())
                 .ApplyConfiguration(new HomeworkEntityConfiguration())
+                .ApplyConfiguration(new HomeworkStudentEntityConfiguration())
                 .ApplyConfiguration(new LessonEntityConfiguration())
                 .ApplyConfiguration(new MentorEntityConfiguration())
                 .ApplyConfiguration(new MentorOfCourseEntityConfiguration())
