@@ -14,5 +14,7 @@ namespace CharlieBackend.Core.Entities
         public Lesson Lesson { get; set; }
 
         public virtual IList<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
+
+        public virtual IList<HomeworkStudent> HomeworkStudents { get; set; }
     }
 }

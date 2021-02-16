@@ -44,6 +44,10 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
+        public virtual DbSet<HomeworkStudent> HomeworkStudents { get; set; }
+
+        public virtual DbSet<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
+
         //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //        {
         //            if (!optionsBuilder.IsConfigured)
@@ -553,14 +557,14 @@ namespace CharlieBackend.Data
 
                 entity.HasIndex(e =>
                     new { e.LessonId })
-                    .HasName("lesson");
+                    .HasName("FK_lesson_for_homework");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DueDate)
                     .HasColumnName("due_date")
                     .HasDefaultValue(null);
-
+                
                 entity.Property(e => e.TaskText)
                     .HasColumnName("task_text")
                     .HasColumnType("varchar(4000)")
@@ -572,7 +576,7 @@ namespace CharlieBackend.Data
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Homeworks)
                     .HasForeignKey(d => d.LessonId)
-                    .HasConstraintName("FK_lesson_of_homework");
+                    .HasConstraintName("FK_lesson_homework");
             });
 
             modelBuilder.Entity<AttachmentOfHomework>(entity =>
@@ -600,6 +604,62 @@ namespace CharlieBackend.Data
                     .WithMany(p => p.AttachmentsOfHomework)
                     .HasForeignKey(d => d.HomeworkId)
                     .HasConstraintName("FK_homework_of_attachment");
+            });
+
+            modelBuilder.Entity<HomeworkStudent>(entity =>
+            {
+                entity.ToTable("homework_from_student");
+
+                entity.HasIndex(e => new { e.HomeworkId }).HasName("homework_id");
+
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.StudentId).HasColumnName("student_id");
+
+                entity.Property(e => e.HomeworkId).HasColumnName("homework_id");
+
+                entity.Property(e => e.HomeworkText)
+                    .HasColumnName("homework_text")
+                    .HasColumnType("varchar(4000)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_0900_ai_ci");
+
+                entity.HasOne(h => h.Homework)
+                    .WithMany(h => h.HomeworkStudents)
+                    .HasForeignKey(h => h.HomeworkId)
+                    .HasConstraintName("FK_student_homework");
+
+                entity.HasOne(h => h.Student)
+                    .WithMany(s => s.HomeworkStudents)
+                    .HasForeignKey(h => h.StudentId)
+                    .HasConstraintName("FK_homework_of_student");
+            });
+
+            modelBuilder.Entity<AttachmentOfHomeworkStudent>(entity =>
+            {
+                entity.ToTable("attachment_of_homework_student");
+
+                entity.HasIndex(e => e.AttachmentId)
+                    .HasName("FK_attachment_of_homework_student_id");
+
+                entity.HasIndex(e => e.HomeworkStudentId)
+                    .HasName("FK_homework_student_of_attachment_id");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
+
+                entity.Property(e => e.HomeworkStudentId).HasColumnName("homework_student_id");
+
+                entity.HasOne(d => d.Attachment)
+                    .WithMany(p => p.AttachmentOfHomeworkStudents)
+                    .HasForeignKey(d => d.AttachmentId)
+                    .HasConstraintName("FK_attachment_of_homework_student");
+
+                entity.HasOne(d => d.HomeworkStudent)
+                    .WithMany(p => p.AttachmentOfHomeworkStudents)
+                    .HasForeignKey(d => d.HomeworkStudentId)
+                    .HasConstraintName("FK_homework_ student_of_attachment");
             });
 
             OnModelCreatingPartial(modelBuilder);
