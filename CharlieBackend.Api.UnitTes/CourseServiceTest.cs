@@ -142,6 +142,5 @@ namespace CharlieBackend.Api.UnitTest
 
             Assert.Equal(ErrorCode.ValidationError, nullCourseResult.Error.Code);
         }
-
     }
 }

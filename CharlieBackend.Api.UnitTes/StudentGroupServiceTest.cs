@@ -310,8 +310,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.ValidationError, groupNameIsNullResult.Error.Code);
 
             Assert.Equal(ErrorCode.ValidationError, groupNameIsEmptyResult.Error.Code);
-
-
         }
     }
 }

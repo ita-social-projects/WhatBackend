@@ -464,6 +464,7 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks);
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits);
         }
+
         private static ClaimsPrincipal GetClaimsPrincipal(UserRole role, long id, string name)
         {
             var claims = new List<Claim>()
@@ -479,6 +480,5 @@ namespace CharlieBackend.Api.UnitTest
 
             return claimPrincipal;
         }
-
     }
 }
