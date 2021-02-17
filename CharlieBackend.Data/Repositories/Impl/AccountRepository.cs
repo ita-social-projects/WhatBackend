@@ -117,6 +117,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return false;
             }
+            
             foundAccount.IsActive = true;
             return true;
         }
