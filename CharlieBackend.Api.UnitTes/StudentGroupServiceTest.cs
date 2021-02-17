@@ -313,12 +313,5 @@ namespace CharlieBackend.Api.UnitTest
 
 
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
-        }
     }
 }

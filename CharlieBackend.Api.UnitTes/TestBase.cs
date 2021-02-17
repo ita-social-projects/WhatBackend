@@ -22,7 +22,11 @@ namespace CharlieBackend.Api.UnitTest
             return new Mapper(configuration);
         }
 
-        protected abstract Mock<IUnitOfWork> GetUnitOfWorkMock();
+        protected virtual Mock<IUnitOfWork> GetUnitOfWorkMock()
+        {
+            var mock = new Mock<IUnitOfWork>();
+            return mock;
+        }
 
         protected Mock<ICurrentUserService> GetCurrentUserAsExistingStudent(
             long entityId = 1,

@@ -484,12 +484,5 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedLesson.StudentGroupId, result.StudentGroupId);
             Assert.Equal(updatedLesson.ThemeName, result.ThemeName);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
-        }
     }
 }

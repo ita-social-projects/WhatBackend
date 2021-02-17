@@ -464,13 +464,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks);
             Assert.Empty(requestWithoutGroupOnCourse.Data.AverageStudentGroupsVisits);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
-        }
-
         private static ClaimsPrincipal GetClaimsPrincipal(UserRole role, long id, string name)
         {
             var claims = new List<Claim>()
