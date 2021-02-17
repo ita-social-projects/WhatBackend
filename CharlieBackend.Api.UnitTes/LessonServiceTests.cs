@@ -25,6 +25,14 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<IVisitRepository> _visitRepositoryMock;
 
+        private static long visitStudentIdPresenceTrue = 11;
+        private static long visitStudentIdPresenceFalse = 14;
+        private static long mentorId = 2;
+        private static long mentorWrongId = 31;
+        private static long studentGroupId = 3;
+        private static string themeName = "ExampleName";
+        private static DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
+
         public LessonServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
@@ -36,54 +44,62 @@ namespace CharlieBackend.Api.UnitTest
 
             MockEntities();
         }
-        private static void CreateLesson(out List<VisitDto> visitDto, out LessonDto createdLesson, out CreateLessonDto createLessonDto)
+
+        private static List<VisitDto> CreateVisitDto()
         {
-            DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
-            visitDto = new List<VisitDto>
+            return  new List<VisitDto>
             {
                 new VisitDto()
                 {
-                    StudentId = 11,
+                    StudentId = visitStudentIdPresenceTrue,
                     Presence = true
                 },
 
                 new VisitDto()
                 {
-                    StudentId = 14,
+                    StudentId = visitStudentIdPresenceFalse,
                     Presence = false
                 }
             };
-            createdLesson = new LessonDto()
+        }
+
+        private static LessonDto AddLessonDto()
+        {
+            return new LessonDto()
             {
-                Id = 7,
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
                 LessonDate = lessonDate,
-                LessonVisits = visitDto
-            };
-            createLessonDto = new CreateLessonDto
-            {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
-                LessonDate = lessonDate,
-                LessonVisits = visitDto
+                LessonVisits = CreateVisitDto()
             };
         }
+
+        private static CreateLessonDto AddCreateLessonDto()
+        {
+            return new CreateLessonDto
+            {
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
+                LessonDate = lessonDate,
+                LessonVisits = CreateVisitDto()
+            };
+        }
+
         private static StudentGroup CreateStudentGroup()
         {
             List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
             {
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
+                new StudentOfStudentGroup { StudentGroupId = studentGroupId, StudentId = visitStudentIdPresenceTrue },
+                new StudentOfStudentGroup { StudentGroupId = studentGroupId, StudentId = visitStudentIdPresenceFalse }
             };
             return new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
         }
         private void MockEntities()
         {
             _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(CreateStudentGroup().Id)).ReturnsAsync(CreateStudentGroup());
-            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).ReturnsAsync(new List<long?> { 11, 14 });
+            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).ReturnsAsync(new List<long?> { visitStudentIdPresenceTrue, visitStudentIdPresenceFalse });
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
@@ -98,39 +114,11 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateLesson_ValidDataPassed_ShouldBeNotNull()
         {
             //Arrange
-            var createLessonDTO = new CreateLessonDto
-            {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
-                LessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"),
-                LessonVisits = new List<VisitDto>
-                {
-                    new VisitDto()
-                    {
-                        StudentId = 11,
-                        Presence = true
-                    },
-
-                    new VisitDto()
-                    {
-                        StudentId = 14,
-                        Presence = false
-                    }
-                }
-            };
-
-            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
-            {
-                new StudentOfStudentGroup(){ Id = 11 , StudentGroupId = 3 },
-                new StudentOfStudentGroup(){ Id = 14, StudentGroupId = 3 }
-
-            };
-            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
+            var createLessonDTO = AddCreateLessonDto();
 
             _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
-            _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(studentGroup.Id)).ReturnsAsync(studentGroup);
-            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(studentGroup.Id)).ReturnsAsync(new List<long?> { 11, 14 });
+            _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(CreateStudentGroup().Id)).ReturnsAsync(CreateStudentGroup());
+            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).ReturnsAsync(new List<long?> { 11, 14 });
 
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object, 
@@ -149,19 +137,17 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<VisitDto> visitDto;
-            LessonDto createdLesson;
-            CreateLessonDto createLessonDto;
-            CreateLesson(out visitDto, out createdLesson, out createLessonDto);
+            LessonDto createdLesson = AddLessonDto();
+            CreateLessonDto createLessonDto = AddCreateLessonDto();
 
-            Mentor mentor = new Mentor() { Id = 2 };
-            Mentor mentorWrong = new Mentor() { Id = 31 };
+            Mentor mentor = new Mentor() { Id = mentorId };
+            Mentor mentorWrong = new Mentor() { Id = mentorWrongId };
             var createLessonDtoWrongMentor = new CreateLessonDto
             {
-                ThemeName = "ExampleName",
+                ThemeName = themeName,
                 MentorId = mentorWrong.Id,
-                StudentGroupId = 3,
-                LessonVisits = visitDto
+                StudentGroupId = studentGroupId,
+                LessonVisits = CreateVisitDto()
             };
             #endregion
 
@@ -188,21 +174,19 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<VisitDto> visitDto;
-            LessonDto createdLesson;
-            CreateLessonDto createLessonDto;
-            CreateLesson(out visitDto, out createdLesson, out createLessonDto);
+            LessonDto createdLesson = AddLessonDto();
+            CreateLessonDto createLessonDto = AddCreateLessonDto();
 
-            Mentor mentor = new Mentor() { Id = 2 };
+            Mentor mentor = new Mentor() { Id = mentorId };
             DateTime lessonDateWrong = DateTime.Now.AddDays(1);
 
             var createLessonDtoWrongLessonDate = new CreateLessonDto
             {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
                 LessonDate = lessonDateWrong,
-                LessonVisits = visitDto
+                LessonVisits = CreateVisitDto()
             };
             #endregion
 
@@ -228,31 +212,25 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
-            {
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
-            };
-            Mentor mentor = new Mentor() { Id = 2 };
 
-            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
+            Mentor mentor = new Mentor() { Id = mentorId };
+
             StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
 
             List<VisitDto> visitDtoWithoutStudent = new List<VisitDto>
             {
                 new VisitDto()
                 {
-                    StudentId = 11,
+                    StudentId = visitStudentIdPresenceTrue,
                     Presence = true
                 },
             };
 
-           
             var createLessonDtoWrongLessonVisitsWithoutStudent = new CreateLessonDto
             {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
                 LessonVisits = visitDtoWithoutStudent
             };
             #endregion
@@ -278,20 +256,13 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
-            {
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
-            };
-            Mentor mentor = new Mentor() { Id = 2 };
-
-            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
+            Mentor mentor = new Mentor() { Id = mentorId };
 
             List<VisitDto> visitDtoWrongStudent = new List<VisitDto>
             {
                 new VisitDto()
                 {
-                    StudentId = 11,
+                    StudentId = visitStudentIdPresenceTrue,
                     Presence = true
                 },
 
@@ -304,9 +275,9 @@ namespace CharlieBackend.Api.UnitTest
             
             var createLessonDtoWrongLessonVisitsStudent = new CreateLessonDto
             {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
                 LessonVisits = visitDtoWrongStudent
             };
             
@@ -337,23 +308,15 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<StudentOfStudentGroup> studentOfStudentGroup = new List<StudentOfStudentGroup>
-            {
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 11 },
-                new StudentOfStudentGroup { StudentGroupId =3 , StudentId = 14 }
-            };
             Mentor mentor = new Mentor() { Id = 2 };
-
-            StudentGroup studentGroup = new StudentGroup() { Id = 3, StudentsOfStudentGroups = studentOfStudentGroup };
 
             List<VisitDto> visitsDtoEmpty = new List<VisitDto>() { };
 
-           
             var createLessonDtoEmptyLessonVisit = new CreateLessonDto
             {
-                ThemeName = "ExampleName",
-                MentorId = 2,
-                StudentGroupId = 3,
+                ThemeName = themeName,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
                 LessonVisits = visitsDtoEmpty
             };
             #endregion
@@ -379,12 +342,10 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            List<VisitDto> visitDto;
-            LessonDto createdLesson;
-            CreateLessonDto createLessonDto;
-            CreateLesson(out visitDto, out createdLesson, out createLessonDto);
+            LessonDto createdLesson = AddLessonDto();
+            CreateLessonDto createLessonDto = AddCreateLessonDto();
 
-            Mentor mentor = new Mentor() { Id = 2 };
+            Mentor mentor = new Mentor() { Id = mentorId };
             #endregion
 
             #region MOCK
