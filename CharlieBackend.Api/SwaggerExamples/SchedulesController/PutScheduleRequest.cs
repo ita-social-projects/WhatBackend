@@ -17,7 +17,7 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                 LessonStart = new TimeSpan(09, 15, 00),
                 LessonEnd = new TimeSpan(10, 00, 00),
                 DayNumber = 3,
-                RepeatRate = RepeatRate.Daily
+                RepeatRate = PatternType.Daily
             };
         }
     }

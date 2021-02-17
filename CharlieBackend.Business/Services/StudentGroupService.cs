@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.Extensions.Logging;
+using CharlieBackend.Core.Extensions;
 
 namespace CharlieBackend.Business.Services
 {
@@ -45,6 +46,20 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
+                var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
+
+                if (dublicatesStudent.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                }
+
+                var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
+
+                if (dublicatesMentor.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                }
+                
                 if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
@@ -132,12 +147,16 @@ namespace CharlieBackend.Business.Services
             return Result<bool>.GetSuccess(res);
         }
 
-        public async Task<IList<StudentGroupDto>> GetAllStudentGroupsAsync()
+        public async Task<Result<IList<StudentGroupDto>>> GetAllStudentGroupsAsync(DateTime? startDate = null, DateTime? finishDate=null)
         {
+            if (!(startDate is null) || !(finishDate is null))
+            {
+                return await GetStudentGroupsByDateAsyns(startDate, finishDate);
+            }
             var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
             var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
-            return studentGroupDto;
+            return Result < IList < StudentGroupDto >>.GetSuccess(studentGroupDto);
         }
 
         public bool DeleteStudentGrop(long StudentGroupId)
@@ -176,7 +195,21 @@ namespace CharlieBackend.Business.Services
 
                     foundStudentGroup.Name = updatedStudentGroupDto.Name;
                 }
+                
+                var dublicatesStudent = updatedStudentGroupDto.StudentIds.Dublicates();
 
+                if (dublicatesStudent.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                }
+
+                var dublicatesMentor = updatedStudentGroupDto.MentorIds.Dublicates();
+
+                if (dublicatesMentor.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                }
+                    
                 if (updatedStudentGroupDto.StartDate > updatedStudentGroupDto.FinishDate)
                 {
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "Start date must be less than finish date");
@@ -263,7 +296,7 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
-        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime startDate, DateTime finishDate)
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime? startDate, DateTime? finishDate)
         {
             if (startDate > finishDate)
             {

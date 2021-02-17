@@ -7,6 +7,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Linq;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Business.Services
@@ -17,7 +18,7 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-       
+
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
                              IMapper mapper, INotificationService notification)
         {
@@ -104,6 +105,28 @@ namespace CharlieBackend.Business.Services
                 {
                     return Result<MentorDto>.GetError(ErrorCode.NotFound,
                         "Mentor not found");
+                }
+
+                if (mentorModel.StudentGroupIds != null && mentorModel.StudentGroupIds.Any())
+                {
+                    var dublicatesGroup = mentorModel.StudentGroupIds.Dublicates();
+
+                    if (dublicatesGroup.Any())
+                    {
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ", dublicatesGroup)} are not unique");
+                    }
+
+                }
+
+                if (mentorModel.CourseIds != null && mentorModel.CourseIds.Any())
+                {
+                    var dublicatesCourse = mentorModel.CourseIds.Dublicates();
+
+                    if (dublicatesCourse.Any())
+                    {
+                        return Result<MentorDto>.GetError(ErrorCode.ValidationError, $"Such course ids: {string.Join(" ", dublicatesCourse)} are not unique");
+                    }
+
                 }
 
                 var isEmailChangableTo = await _accountService

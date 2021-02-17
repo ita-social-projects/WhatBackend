@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.Extensions;
 using System.Linq;
 
 namespace CharlieBackend.Business.Services
@@ -114,6 +115,17 @@ namespace CharlieBackend.Business.Services
                 if (foundStudent == null)
                 {
                     return Result<StudentDto>.GetError(ErrorCode.NotFound, "Student not found");
+                }
+
+                if (studentModel.StudentGroupIds != null && studentModel.StudentGroupIds.Any())
+                {
+                    var dublicates = studentModel.StudentGroupIds.Dublicates();
+
+                    if (dublicates.Any())
+                    {
+                        return Result<StudentDto>.GetError(ErrorCode.ValidationError, $"Such student group ids: {string.Join(" ",dublicates)} are not unique");
+                    }
+
                 }
 
                 var isEmailChangableTo = await _accountService

@@ -8,29 +8,27 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
 {
-    internal class GetSchedulesByStudentGroupIdAsyncResponse : IExamplesProvider<IList<ScheduleDto>>
+    internal class GetSchedulesByStudentGroupIdAsyncResponse : IExamplesProvider<IList<EventOccurrenceDTO>>
     {
-        public IList<ScheduleDto> GetExamples()
+        public IList<EventOccurrenceDTO> GetExamples()
         {
-            return new List<ScheduleDto>()
+            return new List<EventOccurrenceDTO>()
             {
-                new ScheduleDto
+                new EventOccurrenceDTO
                 {
                     Id = 14,
                     StudentGroupId = 24,
-                    LessonStart = new TimeSpan(10, 15, 00),
-                    LessonEnd = new TimeSpan(11, 00, 00),
-                    DayNumber = 3,
-                    RepeatRate = RepeatRate.Daily
+                    EventStart = new DateTime(2020, 10, 12, 10, 15, 00),
+                    EventFinish = new DateTime(2020, 10, 12, 10, 15, 00),
+                    Pattern = PatternType.Daily
                 },
-                new ScheduleDto
+                new EventOccurrenceDTO
                 {
                     Id = 15,
                     StudentGroupId = 24,
-                    LessonStart = new TimeSpan(9, 15, 00),
-                    LessonEnd = new TimeSpan(10, 00, 00),
-                    DayNumber = 2,
-                    RepeatRate = RepeatRate.Weekly
+                    EventStart = new DateTime(2020, 10, 12, 10, 15, 00),
+                    EventFinish = new DateTime(2020, 10, 12, 10, 15, 00),
+                    Pattern = PatternType.Weekly
                 }
             };
         }

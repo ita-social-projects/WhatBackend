@@ -15,6 +15,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         void Add(T entity);
 
+        void AddRange(IEnumerable<T> entities);
+
         void Update(T entity);
 
         Task DeleteAsync(long id);
@@ -22,5 +24,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<bool> IsEntityExistAsync(long id);
 
         Task<IEnumerable<long>> GetNotExistEntitiesIdsAsync(IEnumerable<long> ids);
+
+        void UpdateRange(IEnumerable<T> entities);
+
+        void RemoveRange(IEnumerable<T> entities);
     }
 }
