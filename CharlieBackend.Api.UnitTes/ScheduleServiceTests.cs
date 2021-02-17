@@ -393,6 +393,101 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task UpdateScheduledEventByID_ExistingScheduledEventIdNotValidGroupId_ShouldReturnValidationError()
+        {
+            //Arrange
+            var existingId = 1;
+            var request = new UpdateScheduledEventDto
+            {
+                StudentGroupId = 2
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(false);
+
+            _scheduleRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
+
+            Initialize(validScheduleDTO, studentGroupRepositoryMock: studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.UpdateScheduledEventByID(existingId, request);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task UpdateScheduledEventByID_ExistingScheduledEventIdNotValidMentorId_ShouldReturnValidationError()
+        {
+            //Arrange
+            var existingId = 1;
+            var request = new UpdateScheduledEventDto
+            {
+                StudentGroupId = 2,
+                MentorId = 1
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(false);
+
+            _scheduleRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
+
+            Initialize(validScheduleDTO, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.UpdateScheduledEventByID(existingId, request);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task UpdateScheduledEventByID_ExistingScheduledEventIdNotValidDates_ShouldReturnValidationError()
+        {
+            //Arrange
+            var existingId = 1;
+            var request = new UpdateScheduledEventDto
+            {
+                StudentGroupId = 2,
+                MentorId = 1,
+                ThemeId = 4,
+                EventStart = DateTime.Parse("Feb 1, 2021"),
+                EventEnd = DateTime.Parse("Jan 1, 2021")
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(4)).ReturnsAsync(false);
+
+            _scheduleRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
+
+            Initialize(validScheduleDTO, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.UpdateScheduledEventByID(existingId, request);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
         public async Task UpdateScheduledEventByID_ExistingScheduledEventIdNullRequest_ShouldReturnValidationError()
         {
             //Arrange

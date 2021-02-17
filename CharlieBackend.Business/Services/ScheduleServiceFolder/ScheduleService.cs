@@ -289,7 +289,7 @@ namespace CharlieBackend.Business.Services
 
             if (request.StudentGroupId.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId.Value))
             {
-                error.Append($" No such theme id={request.StudentGroupId.Value}");
+                error.Append($" No such group id={request.StudentGroupId.Value}");
             }
 
             if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
