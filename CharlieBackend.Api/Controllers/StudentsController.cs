@@ -161,7 +161,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Returned filtered list of lessons for student </response>
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("lessons")]
         public async Task<IList<LessonDto>> GetLessonsForStudent([FromBody] FilterLessonsRequestDto filterModel)
         {

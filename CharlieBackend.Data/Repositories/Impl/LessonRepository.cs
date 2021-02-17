@@ -55,6 +55,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     l => l.StudentGroupId,
                     (students_of_student_group, lesson) => lesson
                 )
+                .Include(lesson => lesson.Theme)
                 .ToListAsync();
         }
 
