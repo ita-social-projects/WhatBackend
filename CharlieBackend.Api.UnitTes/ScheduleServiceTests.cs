@@ -46,14 +46,17 @@ namespace CharlieBackend.Api.UnitTest
 
             var eventOccuranceRepositoryMock = new Mock<IEventOccurrenceRepository>();
 
-            eventOccuranceRepositoryMock.Setup(x => x.Add(
-                new EventOccurrence
-                {
-                    StudentGroupId = 3,
-                    EventStart = createScheduleDto.Range.StartDate,
-                    Pattern = createScheduleDto.Pattern.Type
-                }
-                ));
+            if (createScheduleDto != null)
+            {
+                eventOccuranceRepositoryMock.Setup(x => x.Add(
+                    new EventOccurrence
+                    {
+                        StudentGroupId = 3,
+                        EventStart = createScheduleDto.Range.StartDate,
+                        Pattern = createScheduleDto.Pattern.Type
+                    }
+                    ));
+            }
 
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(eventOccuranceRepositoryMock.Object);
 
@@ -110,7 +113,6 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             var themeRepositoryMock = new Mock<IThemeRepository>();
-
             themeRepositoryMock.Setup(x => x.IsEntityExistAsync(5)).ReturnsAsync(true);
 
             var mentorRepositoryMock = new Mock<IMentorRepository>();
@@ -202,7 +204,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateScheduleAsync_PatternIntervalLessThanNull_ShouldReturnValidationError()
+        public async Task CreateScheduleAsync_NotValidMentorId_ShouldReturnValidationError()
         {
             //Arrange
             var createScheduleDto = new CreateScheduleDto
@@ -210,21 +212,25 @@ namespace CharlieBackend.Api.UnitTest
                 Pattern = new PatternForCreateScheduleDTO
                 {
                     Type = PatternType.Daily,
-                    Interval = -1
+                    Interval = 1
                 },
 
                 Range = new OccurenceRange { },
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1
+                    GroupID = 1,
+                    MentorID = 2
                 }
             };
 
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, studentGroupRepositoryMock: studentGroupRepositoryMock);
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(false);
+
+            Initialize(createScheduleDto, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -236,7 +242,179 @@ namespace CharlieBackend.Api.UnitTest
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
 
-        /*[Fact]
+        [Fact]
+        public async Task CreateScheduleAsync_NotValidThemeId_ShouldReturnValidationError()
+        {
+            //Arrange
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.Daily,
+                    Interval = 1
+                },
+
+                Range = new OccurenceRange { },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 1,
+                    MentorID = 2,
+                    ThemeID = 12
+                }
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(false);
+
+            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task CreateScheduleAsync_NotValidDaysOfWeekInWeekly_ShouldReturnValidationError()
+        {
+            //Arrange
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.Weekly,
+                    Interval = 1
+                },
+
+                Range = new OccurenceRange { },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 1,
+                    MentorID = 2,
+                    ThemeID = 12
+                }
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+
+            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task CreateScheduleAsync_NotValidDatesOfWeekInAbsoluteMonthly_ShouldReturnValidationError()
+        {
+            //Arrange
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.AbsoluteMonthly,
+                    Interval = 1
+                },
+
+                Range = new OccurenceRange { },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 1,
+                    MentorID = 2,
+                    ThemeID = 12
+                }
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+
+            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task CreateScheduleAsync_NotValidDaysOfWeekInRelativeMonthly_ShouldReturnValidationError()
+        {
+            //Arrange
+            var createScheduleDto = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.AbsoluteMonthly,
+                    Interval = 1
+                },
+
+                Range = new OccurenceRange { },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 1,
+                    MentorID = 2,
+                    ThemeID = 12
+                }
+            };
+
+            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+
+            var mentorRepositoryMock = new Mock<IMentorRepository>();
+            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+
+            var themeRepositoryMock = new Mock<IThemeRepository>();
+            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+
+            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
+
+            //Act
+            var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
         public async Task CreateScheduleAsync_NullRequest_ShouldReturnValidationError()
         {
             //Arrange
@@ -252,9 +430,7 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             result.Should().NotBeNull();
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
-        }*/
-
-
+        }
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
