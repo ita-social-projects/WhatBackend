@@ -99,7 +99,9 @@ namespace CharlieBackend.Api.UnitTest
         private void MockEntities()
         {
             _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(CreateStudentGroup().Id)).ReturnsAsync(CreateStudentGroup());
-            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).ReturnsAsync(new List<long?> { visitStudentIdPresenceTrue, visitStudentIdPresenceFalse });
+
+            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id))
+                .ReturnsAsync(new List<long?> { visitStudentIdPresenceTrue, visitStudentIdPresenceFalse });
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
@@ -116,9 +118,13 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var createLessonDTO = AddCreateLessonDto();
 
-            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).
+                ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
+
             _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(CreateStudentGroup().Id)).ReturnsAsync(CreateStudentGroup());
-            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).ReturnsAsync(new List<long?> { 11, 14 });
+            
+            _studentGroupRepositoryMock.Setup(x => x.GetGroupStudentsIds(CreateStudentGroup().Id)).
+                ReturnsAsync(new List<long?> { visitStudentIdPresenceTrue, visitStudentIdPresenceFalse });
 
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object, 
@@ -497,13 +503,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedLesson.MentorId, result.MentorId);
             Assert.Equal(updatedLesson.StudentGroupId, result.StudentGroupId);
             Assert.Equal(updatedLesson.ThemeName, result.ThemeName);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
         }
     }
 }
