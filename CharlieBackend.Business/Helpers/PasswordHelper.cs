@@ -86,7 +86,7 @@ namespace CharlieBackend.Business.Helpers
 
             if (!Regex.IsMatch(password, @"[a-z]+"))
             {
-                allWarnings.AppendLine("Password should contain at least one lower case letter. ");
+                allWarnings.Append("Password should contain at least one lower case letter. ");
             }
 
             if (Regex.IsMatch(password, @"[#?!@$%^&*-]+"))
