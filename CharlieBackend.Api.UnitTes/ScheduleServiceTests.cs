@@ -23,6 +23,8 @@ namespace CharlieBackend.Api.UnitTest
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
         private Mock<IScheduledEventRepository> _scheduleRepositoryMock;
         private Mock<IEventOccurrenceRepository> _eventOccuranceRepositoryMock;
+        private CreateScheduleDto validScheduleDTO;
+        private EventOccurrence validEventOccurrence;
 
         public ScheduleServiceTests()
         {
@@ -32,6 +34,37 @@ namespace CharlieBackend.Api.UnitTest
             _eventOccuranceRepositoryMock = new Mock<IEventOccurrenceRepository>();
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_scheduleRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(_eventOccuranceRepositoryMock.Object);
+            validScheduleDTO = new CreateScheduleDto
+            {
+                Pattern = new PatternForCreateScheduleDTO
+                {
+                    Type = PatternType.Daily,
+                    Interval = 1,
+                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
+                },
+
+                Range = new OccurenceRange
+                {
+                    StartDate = DateTime.Parse("Jan 1, 2021"),
+                    FinishDate = DateTime.Parse("Feb 1, 2021")
+                },
+
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = 3,
+                    MentorID = 1,
+                    ThemeID = 5
+                }
+            };
+
+            validEventOccurrence = new EventOccurrence
+            {
+                Pattern = validScheduleDTO.Pattern.Type,
+                StudentGroupId = validScheduleDTO.Context.GroupID,
+                EventStart = validScheduleDTO.Range.StartDate,
+                EventFinish = validScheduleDTO.Range.FinishDate.Value,
+                Storage = EventOccuranceStorageParser.GetPatternStorageValue(validScheduleDTO.Pattern)
+            };
         }
 
         private void Initialize(CreateScheduleDto createScheduleDto, Mock<IThemeRepository> themeRepositoryMock = null,
@@ -76,39 +109,6 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task CreateScheduleAsync_ValidScheduleRequest_ShouldReturnEventOccurrenceDTO()
         {
-            //Arrange
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
-            EventOccurrence expected = new EventOccurrence
-            {
-                Pattern = createScheduleDto.Pattern.Type,
-                StudentGroupId = createScheduleDto.Context.GroupID,
-                EventStart = createScheduleDto.Range.StartDate,
-                EventFinish = createScheduleDto.Range.FinishDate.Value,
-                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern)
-            };
-
             var themeRepositoryMock = new Mock<IThemeRepository>();
             themeRepositoryMock.Setup(x => x.IsEntityExistAsync(5)).ReturnsAsync(true);
 
@@ -118,16 +118,16 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(validScheduleDTO, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
             //Act
-            var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
+            var result = await scheduleService.CreateScheduleAsync(validScheduleDTO);
 
             //Assert
             result.Should().NotBeNull();
-            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(expected));
+            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(validEventOccurrence));
         }
 
         [Fact]
@@ -181,42 +181,9 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var existingId = 0;
 
-            //Arrange
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
+            Initialize(validScheduleDTO);
 
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
-            var expectedEventOccurrence = new EventOccurrence
-            {
-                Pattern = createScheduleDto.Pattern.Type,
-                StudentGroupId = createScheduleDto.Context.GroupID,
-                EventStart = createScheduleDto.Range.StartDate,
-                EventFinish = createScheduleDto.Range.FinishDate.Value,
-                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern)
-            };
-
-            Initialize(createScheduleDto);
-
-            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(expectedEventOccurrence);
+            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(validEventOccurrence);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -225,7 +192,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Should().NotBeNull();
-            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(expectedEventOccurrence));
+            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(validEventOccurrence));
         }
 
         [Fact]
@@ -252,28 +219,6 @@ namespace CharlieBackend.Api.UnitTest
             {
                 MentorID = 1,
                 GroupID = 3
-            };
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
             };
 
             var expectedFilteredList = new List<ScheduledEventDTO>()
@@ -306,7 +251,7 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
+            Initialize(validScheduleDTO, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -328,28 +273,6 @@ namespace CharlieBackend.Api.UnitTest
                 MentorID = -1,
                 GroupID = -1
             };
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
 
             var courseRepositoryMock = new Mock<ICourseRepository>();
             courseRepositoryMock.Setup(x => x.IsEntityExistAsync(-1)).ReturnsAsync(false);
@@ -363,7 +286,7 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(-1)).ReturnsAsync(false);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(validScheduleDTO, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
 
             _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(courseRepositoryMock.Object);
 
@@ -402,37 +325,8 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             var existingId = 1;
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
 
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
-            var eventOccurrence = new EventOccurrence
-            {
-                Pattern = createScheduleDto.Pattern.Type,
-                StudentGroupId = createScheduleDto.Context.GroupID,
-                EventStart = createScheduleDto.Range.StartDate,
-                EventFinish = createScheduleDto.Range.FinishDate.Value,
-                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern),
-                ScheduledEvents = new List<ScheduledEvent>()
+            validEventOccurrence.ScheduledEvents = new List<ScheduledEvent>()
                 {
                     new ScheduledEvent
                     {
@@ -443,8 +337,7 @@ namespace CharlieBackend.Api.UnitTest
                         EventFinish = DateTime.Parse("Feb 1, 2021"),
                         EventOccurrenceId = 1
                     }
-                }
-            };
+                };
 
             var expected = new EventOccurrenceDTO
             {
@@ -468,7 +361,7 @@ namespace CharlieBackend.Api.UnitTest
             var finishDate = DateTime.Parse("Feb 1, 2021");
 
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
-            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(eventOccurrence);
+            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(validEventOccurrence);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -524,29 +417,6 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var existingId = 1;
 
-            var createScheduleDto = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
             UpdateScheduledEventDto request = new UpdateScheduledEventDto
             {
                 StudentGroupId = 2,
@@ -580,7 +450,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _scheduleRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(expectedEvent);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(validScheduleDTO, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -595,38 +465,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task UpdateEventOccurrenceById_ExistingIdValidScheduleDTO_ShouldReturnExpectedEventOccurrenceDTO()
         {
-            CreateScheduleDto request = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
+            validEventOccurrence.ScheduledEvents = new List<ScheduledEvent>()
                 {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
-            var expectedEventOccurrence = new EventOccurrence
-            {
-                Pattern = request.Pattern.Type,
-                StudentGroupId = request.Context.GroupID,
-                EventStart = request.Range.StartDate,
-                EventFinish = request.Range.FinishDate.Value,
-                Storage = EventOccuranceStorageParser.GetPatternStorageValue(request.Pattern),
-                ScheduledEvents = new List<ScheduledEvent>()
-                { 
                     new ScheduledEvent
                     {
                         StudentGroupId = 2,
@@ -636,11 +476,10 @@ namespace CharlieBackend.Api.UnitTest
                         EventFinish = DateTime.Parse("Feb 1, 2021"),
                         EventOccurrenceId = 1
                     }
-                }
-            };
+                };
 
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
-            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(expectedEventOccurrence);
+            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(validEventOccurrence);
 
             _scheduleRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
@@ -653,44 +492,21 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
 
-            Initialize(request, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(validScheduleDTO, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
             //Act
-            var result = await scheduleService.UpdateEventOccurrenceById(1, request);
+            var result = await scheduleService.UpdateEventOccurrenceById(1, validScheduleDTO);
 
             //Assert
             result.Should().NotBeNull();
-            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(expectedEventOccurrence));
+            result.Data.Should().BeEquivalentTo(_mapper.Map<EventOccurrenceDTO>(validEventOccurrence));
         }
 
         [Fact]
         public async Task UpdateEventOccurrenceById_NonExistingIdValidRequestScheduleDTO_ShouldReturnValidationError()
         {
-            CreateScheduleDto request = new CreateScheduleDto
-            {
-                Pattern = new PatternForCreateScheduleDTO
-                {
-                    Type = PatternType.Daily,
-                    Interval = 1,
-                    DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-                },
-
-                Range = new OccurenceRange
-                {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
-                },
-
-                Context = new ContextForCreateScheduleDTO
-                {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
-                }
-            };
-
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(-1)).ReturnsAsync(false);
 
             var themeRepositoryMock = new Mock<IThemeRepository>();
@@ -702,12 +518,12 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
 
-            Initialize(request,themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(validScheduleDTO,themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
             //Act
-            var result = await scheduleService.UpdateEventOccurrenceById(-1, request);
+            var result = await scheduleService.UpdateEventOccurrenceById(-1, validScheduleDTO);
 
             //Assert
             result.Should().NotBeNull();
