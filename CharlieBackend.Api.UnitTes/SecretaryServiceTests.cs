@@ -76,12 +76,5 @@ namespace CharlieBackend.Api.UnitTest
 
             Assert.Equal(ErrorCode.ValidationError, alreadyAssignedResult.Error.Code);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
-        }
     }
 }
