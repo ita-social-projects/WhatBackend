@@ -131,7 +131,7 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.Conflict, "Course is already active.");
             }
 
-            Result<bool> course = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
+            var course = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
             await _unitOfWork.CommitAsync();
 
             return course;
