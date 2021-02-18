@@ -55,6 +55,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     l => l.StudentGroupId,
                     (students_of_student_group, lesson) => lesson
                 )
+                .Where(lesson=> (lesson.LessonDate > startDate) && (lesson.LessonDate < finishDate))
                 .Include(lesson => lesson.Theme)
                 .ToListAsync();
         }
