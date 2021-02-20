@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace CharlieBackend.Business.Services
 {
@@ -23,12 +26,39 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
+        public string GetUrl(Attachment attachment)
+        {
+            //StorageCredentials credentials = new StorageCredentials("csb10032000fbf86473", "3Naz0PXXBe0Lie7HV51jdZsSFCqThDMsqGWdENueI/d2OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==");
+            //CloudStorageAccount storageAccount = new CloudStorageAccount(credentials, "core.windows.net",true);
+
+            //var cloudBlobClient = storageAccount.CreateCloudBlobClient();
+            //var container = cloudBlobClient.GetContainerReference(attachment.ContainerName);
+            //var blob = container.GetBlockBlobReference(attachment.FileName);
+
+            //BlobContainerClient container2 =
+            //            new BlobContainerClient(_blobAccount.ConnectionString, attachment.ContainerName);
+
+            //var client = container2.GetBlobClient(attachment.FileName);
+            //client.
+
+            //return blob.Uri.AbsoluteUri;
+
+            BlobClient blob = new BlobClient
+                       (
+                       _blobAccount.ConnectionString,
+                       attachment.ContainerName,
+                       attachment.FileName
+                       );
+
+            return blob.Uri.AbsoluteUri;
+        }
+
         public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream)
         {
             string containerName = Guid.NewGuid().ToString("N");
 
             BlobContainerClient container =
-                        new BlobContainerClient(_blobAccount.connectionString, containerName);
+                        new BlobContainerClient(_blobAccount.ConnectionString, containerName);
 
             await container.CreateIfNotExistsAsync();
 
@@ -46,7 +76,7 @@ namespace CharlieBackend.Business.Services
         {
             BlobClient blob = new BlobClient
                        (
-                       _blobAccount.connectionString,
+                       _blobAccount.ConnectionString,
                        containerName,
                        fileName
                        );
@@ -60,7 +90,7 @@ namespace CharlieBackend.Business.Services
         {
             BlobContainerClient container = new BlobContainerClient
                         (
-                        _blobAccount.connectionString,
+                        _blobAccount.ConnectionString,
                         containerName
                         );
 

@@ -105,5 +105,14 @@ namespace CharlieBackend.Api.Controllers
 
             return attachment.ToActionResult();
         }
+
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpGet("{attachmentId}/url")]
+        public async Task<string> GetAttachmentUrl(long attachmentId)
+        {
+            var attachment = await _attachmentService.GetAttachmentUrl(attachmentId);
+
+            return attachment;
+        }
     }
 }

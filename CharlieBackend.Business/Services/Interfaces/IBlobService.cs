@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -13,5 +14,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<BlobDownloadInfo> DownloadAsync(string containerName, string fileName);
 
         Task<bool> DeleteAsync(string containerName);
+
+        public string GetUrl(Attachment attachment);
     }
 }

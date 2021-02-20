@@ -200,5 +200,14 @@ namespace CharlieBackend.Business.Services
 
             return null;
         }
+
+        public async Task<string> GetAttachmentUrl(long id)
+        {
+            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
+
+            var file = _blobService.GetUrl(attachment);
+
+            return file;
+        }
     }
 }
