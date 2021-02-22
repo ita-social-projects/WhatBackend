@@ -32,10 +32,7 @@ namespace CharlieBackend.Business.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(
-                    IFormFileCollection fileCollection,
-                    ClaimsPrincipal claimsContext
-                    )
+        public async Task<Result<IList<AttachmentDto>>> AddAttachmentsAsync(IFormFileCollection fileCollection, bool isPublic = false)
         {
             if (!AttachmentsSizeValidation(fileCollection))
             {
@@ -53,19 +50,7 @@ namespace CharlieBackend.Business.Services
 
             foreach (var file in fileCollection)
             {
-
-                using Stream uploadFileStream = file.OpenReadStream();
-
-                var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream);
-
-                Attachment attachment = new Attachment()
-                {
-                    CreatedByAccountId = _currentUserService.AccountId,
-                    ContainerName = blob.BlobContainerName,
-                    FileName = file.FileName
-                };
-
-                _unitOfWork.AttachmentRepository.Add(attachment);
+                var attachment = await AddAttachmentFileAsync(file, isPublic);
 
                 attachments.Add(attachment);
             }
@@ -75,6 +60,45 @@ namespace CharlieBackend.Business.Services
             return Result<IList<AttachmentDto>>.GetSuccess(_mapper.
                         Map<IList<AttachmentDto>>(attachments));
                 
+        }
+
+        public async Task<Result<AttachmentDto>> AddAttachmentAsync(IFormFile file, bool isPublic = false)
+        {
+            if (!AttachmentSizeValidation(file))
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
+                            "File is too big, max size is 50 MB");
+            }
+
+            if (!AttachmentExtentionValidation(file))
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
+                           "File has dengerous extention");
+            }
+
+            var attachment = await AddAttachmentFileAsync(file, isPublic);
+
+            await _unitOfWork.CommitAsync();
+
+            return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
+        }
+
+        private async Task<Attachment> AddAttachmentFileAsync(IFormFile file, bool isPublic = false)
+        {
+            using Stream uploadFileStream = file.OpenReadStream();
+
+            var blob = await _blobService.UploadAsync(file.FileName, uploadFileStream, isPublic);
+
+            Attachment attachment = new Attachment()
+            {
+                CreatedByAccountId = _currentUserService.AccountId,
+                ContainerName = blob.BlobContainerName,
+                FileName = file.FileName
+            };
+
+            _unitOfWork.AttachmentRepository.Add(attachment);
+
+            return attachment;
         }
 
         public async Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request)
@@ -145,36 +169,45 @@ namespace CharlieBackend.Business.Services
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
 
-        public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
+        public bool AttachmentExtentionValidation(IFormFile file)
         {
-            string[] dangerousExtentions = 
+            foreach (var extention in DangerousExtentions)
             {
-                ".exe",".pif",".application",".gadget",".msi",".msp",".com",
-                ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
-                ".vbe",".js",".jse",".ws",".wsf",".wsc",".wsh",".ps1",".ps1xml",
-                ".ps2",".ps2xml",".psc1",".psc2",".msh",".msh1",".msh2",".mshxml",
-                ".msh1xml",".msh2xml",".scf",".lnk",".inf",".reg",".doc",".xls",
-                ".ppt",".docm",".dotm",".xlsm",".xltm",".xlam",".pptm",".potm",
-                ".ppam",".ppsm",".sldm",".dll"
-            };
-
-            foreach (var file in fileCollection)
-            {
-                foreach (var extention in dangerousExtentions)
+                if (file.FileName.ToLower().EndsWith(extention))
                 {
-                    if (file.FileName.ToLower().EndsWith(extention))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
             return true;
         }
 
+        public bool AttachmentsExtentionValidation(IFormFileCollection fileCollection)
+        {
+            foreach (var file in fileCollection)
+            {
+                return AttachmentExtentionValidation(file);
+            }
+
+            return true;
+        }
+
+        public bool AttachmentSizeValidation(IFormFile file)
+        {
+            long currentSize = 0;
+
+            currentSize += file.Length;
+
+            if (currentSize <= FileMaxSize)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public bool AttachmentsSizeValidation(IFormFileCollection fileCollection)
         {
-            const int maxSize = 52428800;
             long currentSize = 0;
 
             foreach (var file in fileCollection)
@@ -182,7 +215,7 @@ namespace CharlieBackend.Business.Services
                 currentSize += file.Length;
             }
 
-            if (currentSize <= maxSize)
+            if (currentSize <= FileMaxSize)
             {
                 return true;
             }
@@ -209,5 +242,18 @@ namespace CharlieBackend.Business.Services
 
             return file;
         }
+
+        public readonly string[] DangerousExtentions =
+            {
+                ".exe",".pif",".application",".gadget",".msi",".msp",".com",
+                ".scr",".hta",".cpl",".msc",".jar",".bat",".cmd",".vb",".vbs",
+                ".vbe",".js",".jse",".ws",".wsf",".wsc",".wsh",".ps1",".ps1xml",
+                ".ps2",".ps2xml",".psc1",".psc2",".msh",".msh1",".msh2",".mshxml",
+                ".msh1xml",".msh2xml",".scf",".lnk",".inf",".reg",".doc",".xls",
+                ".ppt",".docm",".dotm",".xlsm",".xltm",".xlam",".pptm",".potm",
+                ".ppam",".ppsm",".sldm",".dll"
+            };
+
+        public const int FileMaxSize = 52428800;
     }
 }

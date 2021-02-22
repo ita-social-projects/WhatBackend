@@ -28,21 +28,6 @@ namespace CharlieBackend.Business.Services
 
         public string GetUrl(Attachment attachment)
         {
-            //StorageCredentials credentials = new StorageCredentials("csb10032000fbf86473", "3Naz0PXXBe0Lie7HV51jdZsSFCqThDMsqGWdENueI/d2OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==");
-            //CloudStorageAccount storageAccount = new CloudStorageAccount(credentials, "core.windows.net",true);
-
-            //var cloudBlobClient = storageAccount.CreateCloudBlobClient();
-            //var container = cloudBlobClient.GetContainerReference(attachment.ContainerName);
-            //var blob = container.GetBlockBlobReference(attachment.FileName);
-
-            //BlobContainerClient container2 =
-            //            new BlobContainerClient(_blobAccount.ConnectionString, attachment.ContainerName);
-
-            //var client = container2.GetBlobClient(attachment.FileName);
-            //client.
-
-            //return blob.Uri.AbsoluteUri;
-
             BlobClient blob = new BlobClient
                        (
                        _blobAccount.ConnectionString,
@@ -53,7 +38,7 @@ namespace CharlieBackend.Business.Services
             return blob.Uri.AbsoluteUri;
         }
 
-        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream)
+        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream, bool isPublic = false)
         {
             string containerName = Guid.NewGuid().ToString("N");
 
@@ -61,6 +46,9 @@ namespace CharlieBackend.Business.Services
                         new BlobContainerClient(_blobAccount.ConnectionString, containerName);
 
             await container.CreateIfNotExistsAsync();
+
+            if(isPublic)
+                container.SetAccessPolicy(PublicAccessType.BlobContainer);
 
             BlobClient blob = container.GetBlobClient(fileName);
 

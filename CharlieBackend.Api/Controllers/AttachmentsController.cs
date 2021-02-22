@@ -38,9 +38,23 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAttachments([FromForm] IFormFileCollection fileCollection)
         {
-            var userContext = HttpContext.User;
+            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection);
 
-            var addedAttachments = await _attachmentService.AddAttachmentsAsync(fileCollection, userContext);
+            return addedAttachments.ToActionResult();
+        }
+
+        /// <summary>
+        /// Adds avatar
+        /// </summary>
+        /// <param name="file">Files to add as attachment.</param>
+        /// <response code="200">File is successfully attached.</response>
+        /// <response code="HTTP: 400, API: 0">File exceed 50 MB or extension of file is prohibited.</response>
+        [SwaggerResponse(200, type: typeof(IList<AttachmentDto>))]
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpPost("avatar")]
+        public async Task<IActionResult> PostAvatar(IFormFile file)
+        {
+            var addedAttachments = await _attachmentService.AddAttachmentAsync(file, true);
 
             return addedAttachments.ToActionResult();
         }
@@ -106,6 +120,7 @@ namespace CharlieBackend.Api.Controllers
             return attachment.ToActionResult();
         }
 
+        [SwaggerResponse(200, type: typeof(string))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpGet("{attachmentId}/url")]
         public async Task<string> GetAttachmentUrl(long attachmentId)
