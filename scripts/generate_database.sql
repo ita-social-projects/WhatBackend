@@ -35,6 +35,7 @@ CREATE TABLE `account` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
   `forgot_password_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'token for resetting password',
   `forgot_token_gen_date` datetime DEFAULT NULL COMMENT 'date of generation for users forgot password token',
+  `avatar_id` bigint DEFAULT NULL COMMENT 'id of avatar attachment',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

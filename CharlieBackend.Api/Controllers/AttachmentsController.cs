@@ -62,12 +62,12 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets Avatar Url
         /// </summary>
-        /// /// <remarks>
+        /// <remarks>
         /// Attachment of avatar is taken from Authenticated user account
         /// </remarks>
         [SwaggerResponse(200, type: typeof(string))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpGet("{attachmentId}/url")]
+        [HttpGet("avatar/url")]
         public async Task<string> GetAvatarUrl()
         {
             var attachment = await _attachmentService.GetAvatarUrl();

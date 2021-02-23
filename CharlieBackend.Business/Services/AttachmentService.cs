@@ -90,13 +90,18 @@ namespace CharlieBackend.Business.Services
 
             if (account != null)
             {
+                if(account.AvatarId.HasValue)
+                {
+                    await DeleteAttachmentAsync(account.AvatarId.Value);
+                }
+
                 var attachment = await AddAttachmentAsync(file, true);
 
                 account.AvatarId = attachment.Data.Id;
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
+                return attachment;
             }
             else
                 return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "Account not found");
@@ -104,7 +109,9 @@ namespace CharlieBackend.Business.Services
 
         public async Task<string> GetAvatarUrl()
         {
-            return await GetAttachmentUrl(_currentUserService.AccountId);
+            var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
+
+            return await GetAttachmentUrl(account.AvatarId.Value);
         }
 
         public async Task<string> GetAttachmentUrl(long id)
