@@ -7,8 +7,6 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace CharlieBackend.Business.Services
 {
