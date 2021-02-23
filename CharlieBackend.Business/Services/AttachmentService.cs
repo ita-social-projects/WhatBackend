@@ -83,6 +83,39 @@ namespace CharlieBackend.Business.Services
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
 
+        public async Task<Result<AttachmentDto>> AddAttachmentAsAvatarAsync(IFormFile file)
+        {
+
+            var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
+
+            if (account != null)
+            {
+                var attachment = await AddAttachmentAsync(file, true);
+
+                account.AvatarId = attachment.Data.Id;
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
+            }
+            else
+                return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "Account not found");
+        }
+
+        public async Task<string> GetAvatarUrl()
+        {
+            return await GetAttachmentUrl(_currentUserService.AccountId);
+        }
+
+        public async Task<string> GetAttachmentUrl(long id)
+        {
+            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
+
+            var file = _blobService.GetUrl(attachment);
+
+            return file;
+        }
+
         private async Task<Attachment> AddAttachmentFileAsync(IFormFile file, bool isPublic = false)
         {
             using Stream uploadFileStream = file.OpenReadStream();
@@ -232,15 +265,6 @@ namespace CharlieBackend.Business.Services
             }
 
             return null;
-        }
-
-        public async Task<string> GetAttachmentUrl(long id)
-        {
-            var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
-
-            var file = _blobService.GetUrl(attachment);
-
-            return file;
         }
 
         public readonly string[] DangerousExtentions =

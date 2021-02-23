@@ -54,9 +54,25 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("avatar")]
         public async Task<IActionResult> PostAvatar(IFormFile file)
         {
-            var addedAttachments = await _attachmentService.AddAttachmentAsync(file, true);
+            var addedAttachments = await _attachmentService.AddAttachmentAsAvatarAsync(file);
 
             return addedAttachments.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets Avatar Url
+        /// </summary>
+        /// /// <remarks>
+        /// Attachment of avatar is taken from Authenticated user account
+        /// </remarks>
+        [SwaggerResponse(200, type: typeof(string))]
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [HttpGet("{attachmentId}/url")]
+        public async Task<string> GetAvatarUrl()
+        {
+            var attachment = await _attachmentService.GetAvatarUrl();
+
+            return attachment;
         }
 
         /// <summary>
@@ -118,16 +134,6 @@ namespace CharlieBackend.Api.Controllers
             var attachment = await _attachmentService.DeleteAttachmentAsync(attachmentId);
 
             return attachment.ToActionResult();
-        }
-
-        [SwaggerResponse(200, type: typeof(string))]
-        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [HttpGet("{attachmentId}/url")]
-        public async Task<string> GetAttachmentUrl(long attachmentId)
-        {
-            var attachment = await _attachmentService.GetAttachmentUrl(attachmentId);
-
-            return attachment;
         }
     }
 }

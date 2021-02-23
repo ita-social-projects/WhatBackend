@@ -23,6 +23,8 @@ namespace CharlieBackend.Core.Entities
         public string? ForgotPasswordToken { get; set; }
 
         public DateTime? ForgotTokenGenDate { get; set; }
+
+        public long? AvatarId { get; set; }
 #nullable disable
 
         public virtual ICollection<Mentor> Mentors { get; set; }
