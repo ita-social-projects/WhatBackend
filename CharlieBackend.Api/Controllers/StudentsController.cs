@@ -23,16 +23,13 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly ILessonService _lessonService;
         private readonly IStudentService _studentService;
-        private readonly IAccountService _accountService;
         #endregion
         /// <summary>
         /// Students Controllers constructor
         /// </summary>
-        public StudentsController(IStudentService studentService, 
-            IAccountService accountService, ILessonService lessonService)
+        public StudentsController(IStudentService studentService, ILessonService lessonService)
         {
             _studentService = studentService;
-            _accountService = accountService;
             _lessonService = lessonService;
         }
 
@@ -153,7 +150,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Student is already disabled</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableStudent(long id)
+        public async Task<ActionResult<bool>> DisableStudent(long id)
         {
             var disabledStudentModel = await _studentService.DisableStudentAsync(id);
 
@@ -168,7 +165,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Student is already active</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> EnableStudent(long id)
+        public async Task<ActionResult<bool>> EnableStudent(long id)
         {
             var disabledStudentModel = await _studentService.EnableStudentAsync(id);
 

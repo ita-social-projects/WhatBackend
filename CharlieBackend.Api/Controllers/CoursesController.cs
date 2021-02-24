@@ -81,7 +81,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 400, API: 0">Course has active student group</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CourseDto>> DisableCourse(long id)
+        public async Task<ActionResult<bool>> DisableCourse(long id)
         {
             var disableCourse = await _coursesService.DisableCourceAsync(id);
 
@@ -95,7 +95,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Course is already active</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult<CourseDto>> EnableCourse(long id)
+        public async Task<ActionResult<bool>> EnableCourse(long id)
         {
             var enableCourse = await _coursesService.EnableCourceAsync(id);
 

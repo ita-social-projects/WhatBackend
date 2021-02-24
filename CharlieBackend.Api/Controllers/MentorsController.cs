@@ -19,16 +19,14 @@ namespace CharlieBackend.Api.Controllers
     {
         #region
         private readonly IMentorService _mentorService;
-        private readonly IAccountService _accountService;
         private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, IAccountService accountService, ILessonService lessonService)
+        public MentorsController(IMentorService mentorService, ILessonService lessonService)
         {
             _mentorService = mentorService;
-            _accountService = accountService;
             _lessonService = lessonService;
         }
 
@@ -167,7 +165,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Mentor is already disabled</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableMentor(long id)
+        public async Task<ActionResult<bool>> DisableMentor(long id)
         {
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
 
@@ -182,7 +180,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Mentor is already enabled</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult> EnableMentor(long id)
+        public async Task<ActionResult<bool>> EnableMentor(long id)
         {
             var disabledMentorModel = await _mentorService.EnableMentorAsync(id);
 

@@ -202,44 +202,42 @@ namespace CharlieBackend.Business.Services
             return Result<StudentDto>.GetSuccess(studentDto);
         }
 
-        public async Task<Result<StudentDto>> DisableStudentAsync(long id)
+        public async Task<Result<bool>> DisableStudentAsync(long id)
         {
             var accountId = await GetAccountId(id);
 
             if (accountId == null)
             {
-                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Unknown student id.");
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown student id.");
             }
 
-            var student = await GetStudentByAccountIdAsync((long)accountId);
             var isActive = await _accountService.DisableAccountAsync((long)accountId);
 
             if (!isActive)
             {
-                return Result<StudentDto>.GetError(ErrorCode.Conflict, "This account is already disabled.");
+                return Result<bool>.GetError(ErrorCode.Conflict, "This account is already disabled.");
             }
 
-            return Result<StudentDto>.GetSuccess(student.Data);
+            return Result<bool>.GetSuccess(isActive);
         }
 
-        public async Task<Result<StudentDto>> EnableStudentAsync(long id)
+        public async Task<Result<bool>> EnableStudentAsync(long id)
         {
             var accountId = await GetAccountId(id);
 
             if (accountId == null)
             {
-                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Unknown student id.");
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown student id.");
             }
 
-            var student = await GetStudentByAccountIdAsync((long)accountId);
             var isActive = await _accountService.EnableAccountAsync((long)accountId);
 
             if (!isActive)
             {
-                return Result<StudentDto>.GetError(ErrorCode.Conflict, "This account is already enabled.");
+                return Result<bool>.GetError(ErrorCode.Conflict, "This account is already enabled.");
             }
 
-            return Result<StudentDto>.GetSuccess(student.Data);
+            return Result<bool>.GetSuccess(isActive);
         }
     }
 }

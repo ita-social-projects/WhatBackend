@@ -19,15 +19,13 @@ namespace CharlieBackend.Api.Controllers
     {
         #region
         private readonly ISecretaryService _secretaryService;
-        private readonly IAccountService _accountService;
         #endregion
         /// <summary>
         /// SecretariesController constructor to inject related services
         /// </summary>
-        public SecretariesController(ISecretaryService secretaryService, IAccountService accountService)
+        public SecretariesController(ISecretaryService secretaryService)
         {
             _secretaryService = secretaryService;
-            _accountService = accountService;
         }
 
         /// <summary>
@@ -100,7 +98,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Secretary is already disabled</response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
-        public async Task<ActionResult> DisableSecretary(long secretaryId)
+        public async Task<ActionResult<bool>> DisableSecretary(long secretaryId)
         {
             var isDisabled = await _secretaryService.DisableSecretaryAsync(secretaryId);
 
