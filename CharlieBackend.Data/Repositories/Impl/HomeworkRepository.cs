@@ -19,6 +19,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async override Task<Homework> GetByIdAsync(long homeworkId)
         {
             return await _applicationContext.Homeworks
+                        .Include(x => x.Lesson)
                         .Include(x => x.AttachmentsOfHomework)
                         .FirstOrDefaultAsync(x => x.Id == homeworkId);
         }
@@ -33,8 +34,17 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<IList<Homework>> GetHomeworksByLessonId(long lessonId)
         {
             return await _applicationContext.Homeworks
+                .Include(x => x.Lesson)
                 .Include(x => x.AttachmentsOfHomework)
                 .Where(x => x.LessonId == lessonId).ToListAsync();
         }
+
+        public async Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId)
+        {
+            return await _applicationContext.Homeworks
+                .Include(x => x.Lesson)
+                .FirstOrDefaultAsync(x => (x.Id == homeworkId) && (x.Lesson.MentorId == mentorId));
+        }
+
     }
 }
