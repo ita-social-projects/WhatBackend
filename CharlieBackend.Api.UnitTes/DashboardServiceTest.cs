@@ -19,6 +19,7 @@ namespace CharlieBackend.Api.UnitTest
     public class DashboardServiceTest : TestBase
     {
         private readonly Mock<IDashboardRepository> _dashboardRepositoryMock;
+        private readonly DashboardService _dashboardService;
         private readonly IMapper _mapper;
         private static long studentIdWithGroup = 7;
         private static long studentIdWithoutGroup = 20;
@@ -29,12 +30,11 @@ namespace CharlieBackend.Api.UnitTest
         {
             _dashboardRepositoryMock = new Mock<IDashboardRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
-        }
-
-        private void InitializeForDashboardRepository()
-        {
             _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             _currentUserServiceMock = GetCurrentUserAsExistingStudent();
+
+            _dashboardService = new DashboardService(_unitOfWorkMock.Object,
+                                                     _currentUserServiceMock.Object);
         }
 
         [Fact]
@@ -76,14 +76,8 @@ namespace CharlieBackend.Api.UnitTest
                 new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
                 .ReturnsAsync(expectedStudentsMarks);
 
-            InitializeForDashboardRepository();
-
-            var dashboardService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
+            var successResult = await _dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
 
             //Assert
             successResult.Data.StudentsMarks.Should().NotBeNull();
@@ -129,14 +123,8 @@ namespace CharlieBackend.Api.UnitTest
                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
                .ReturnsAsync(expectedStudentsVisits);
 
-            InitializeForDashboardRepository();
-
-            var dashboardService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var successResult = await dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
+            var successResult = await _dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
 
             //Assert
             successResult.Data.StudentsPresences.Should().NotBeNull();
@@ -153,14 +141,8 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = new DateTime(2021, 01, 01),
             };
 
-            InitializeForDashboardRepository();
-
-            var dashboardService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestWithWrongParameters = await dashboardService.GetStudentsClassbookAsync(studentClassbookWrongRequest);
+            var requestWithWrongParameters = await _dashboardService.GetStudentsClassbookAsync(studentClassbookWrongRequest);
 
             //Assert
             requestWithWrongParameters.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
@@ -192,14 +174,8 @@ namespace CharlieBackend.Api.UnitTest
                 new List<long>(), studentclassbookCourseWithoutStudents.StartDate, studentclassbookCourseWithoutStudents.FinishDate))
                 .ReturnsAsync(new List<StudentVisitDto>());
 
-            InitializeForDashboardRepository();
-
-            var dashboardService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
+            var requestForCourseWithoutStudents = await _dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
             requestForCourseWithoutStudents.Data.StudentsPresences.Should().BeNullOrEmpty();
@@ -231,14 +207,8 @@ namespace CharlieBackend.Api.UnitTest
                  new List<long>(), studentclassbookCourseWithoutStudents.StartDate, studentclassbookCourseWithoutStudents.FinishDate))
                  .ReturnsAsync(new List<StudentMarkDto>());
 
-            InitializeForDashboardRepository();
-
-            var dashboardService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestForCourseWithoutStudents = await dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
+            var requestForCourseWithoutStudents = await _dashboardService.GetStudentsClassbookAsync(studentclassbookCourseWithoutStudents);
 
             //Assert
             requestForCourseWithoutStudents.Data.StudentsMarks.Should().BeNullOrEmpty();
@@ -284,12 +254,8 @@ namespace CharlieBackend.Api.UnitTest
               new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
                .ReturnsAsync(expectedStudentsMarks);
 
-            InitializeForDashboardRepository();
-
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
-
             //Act
-            var resultWithData = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithData);
+            var resultWithData = await _dashboardService.GetStudentsResultAsync(studentResultRequestWithData);
 
             //Assert
             resultWithData.Data.AverageStudentsMarks.Should().NotBeNull();
@@ -334,12 +300,8 @@ namespace CharlieBackend.Api.UnitTest
                  new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
                 .ReturnsAsync(expectedAverageStudentVisits);
 
-            InitializeForDashboardRepository();
-
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
-
             //Act
-            var resultWithData = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithData);
+            var resultWithData = await _dashboardService.GetStudentsResultAsync(studentResultRequestWithData);
 
             //Assert
             resultWithData.Data.AverageStudentVisits.Should().NotBeNull();
@@ -359,12 +321,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(new List<long>()))
                 .ReturnsAsync(new List<long>());
 
-            InitializeForDashboardRepository();
-
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
-
             //Act
-            var resultWithWrongData = await dashbordservice.GetStudentsResultAsync(studentResultWrongRequest);
+            var resultWithWrongData = await _dashboardService.GetStudentsResultAsync(studentResultWrongRequest);
 
             //Assert
             resultWithWrongData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
@@ -398,12 +356,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long>(), new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
-            InitializeForDashboardRepository();
-
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
-
             //Act
-            var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
+            var resultWithoutStudent = await _dashboardService.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
             resultWithoutStudent.Data.AverageStudentsMarks.Should().BeNullOrEmpty();
@@ -437,12 +391,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(new List<long>(), new List<long>()))
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
-            InitializeForDashboardRepository();
-
-            var dashbordservice = new DashboardService(_unitOfWorkMock.Object, _currentUserServiceMock.Object);
-
             //Act
-            var resultWithoutStudent = await dashbordservice.GetStudentsResultAsync(studentResultRequestWithOutStudent);
+            var resultWithoutStudent = await _dashboardService.GetStudentsResultAsync(studentResultRequestWithOutStudent);
 
             //Assert
             resultWithoutStudent.Data.AverageStudentVisits.Should().BeNullOrEmpty();
@@ -484,9 +434,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithGroup, new List<long> { 1 }))
                 .ReturnsAsync(expectedStudentMarks);
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -533,9 +481,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithGroup, new List<long>() { 1 }))
                 .ReturnsAsync(expectedStudentVisits);
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -568,9 +514,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(studentIdWithoutGroup, new List<long> { }))
                .ReturnsAsync(new List<StudentMarkDto>());
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
-
             var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
@@ -602,10 +546,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(studentIdWithoutGroup, new List<long> { }))
                 .ReturnsAsync(new List<StudentVisitDto>());
 
-
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
-
             var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
@@ -630,9 +571,8 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
-            var currentUserServiceAsStrangerStudent = GetCurrentUserAsExistingStudent(entityId: long.MaxValue);
 
+            var currentUserServiceAsStrangerStudent = GetCurrentUserAsExistingStudent(entityId: long.MaxValue);
             var dashbordServiceWithStrangerCredentials = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStrangerStudent.Object);
 
             //Act
@@ -652,9 +592,7 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = new DateTime(2017, 5, 20),
             };
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -698,9 +636,7 @@ namespace CharlieBackend.Api.UnitTest
                 new List<long> { studentIdWithGroup }, new List<long> { 1 }))
                 .ReturnsAsync(expectedAverageStudentMark);
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -745,9 +681,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithGroup, new List<long> { 1 }))
                 .ReturnsAsync(expectedAverageStudentVisits);
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -780,9 +714,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentIdWithoutGroup }, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
-
             var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
@@ -814,9 +746,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(studentIdWithoutGroup, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);
-
             var dashbordServiceWithoutGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithoutGroup.Object);
 
             //Act
@@ -841,9 +771,7 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStrangerStudent = GetCurrentUserAsExistingStudent(entityId: long.MaxValue);
-
             var dashbordServiceWithStrangerCredentials = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStrangerStudent.Object);
 
             //Act
@@ -863,9 +791,7 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = new DateTime(2017, 5, 20),
             };
 
-            _unitOfWorkMock.Setup(x => x.DashboardRepository).Returns(_dashboardRepositoryMock.Object);
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
-
             var dashbordServiceWithGroup = new DashboardService(_unitOfWorkMock.Object, currentUserServiceAsStudentWithGroup.Object);
 
             //Act
@@ -907,14 +833,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(new List<long> { 1 }))
                 .ReturnsAsync(expectedAverageStudentGroupMark);
 
-            InitializeForDashboardRepository();
-
-            var dashbordService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+            var requestWithData = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
 
             //Assert
             requestWithData.Data.AverageStudentGroupsMarks.Should().NotBeNull();
@@ -953,14 +873,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(new List<long> { 1 }))
                 .ReturnsAsync(expectedAverageGroupVisits);
 
-            InitializeForDashboardRepository();
-
-            var dashbordService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestWithData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+            var requestWithData = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
 
             //Assert
             requestWithData.Data.AverageStudentGroupsVisits.Should().NotBeNull();
@@ -993,14 +907,8 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(new List<long>()))
                 .ReturnsAsync(new List<AverageStudentGroupVisitDto>());
 
-            InitializeForDashboardRepository();
-
-            var dashbordService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestWithoutGroupOnCourse = await dashbordService.GetStudentGroupResultAsync(courseIdWithoutGroup, dashbordAnaliticRequstWithData);
+            var requestWithoutGroupOnCourse = await _dashboardService.GetStudentGroupResultAsync(courseIdWithoutGroup, dashbordAnaliticRequstWithData);
 
             //Assert
             requestWithoutGroupOnCourse.Data.AverageStudentGroupsMarks.Should().BeNullOrEmpty();
@@ -1017,14 +925,8 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = new DateTime(2017, 5, 20),
             };
 
-            InitializeForDashboardRepository();
-
-            var dashbordService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requestWithoutData = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithoutData);
+            var requestWithoutData = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithoutData);
 
             //Assert
             requestWithoutData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
@@ -1049,14 +951,8 @@ namespace CharlieBackend.Api.UnitTest
                 courseIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
-            InitializeForDashboardRepository();
-
-            var dashbordService = new DashboardService(
-                unitOfWork: _unitOfWorkMock.Object,
-                currentUserService: _currentUserServiceMock.Object);
-
             //Act
-            var requesWithoutStudentGroupId = await dashbordService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+            var requesWithoutStudentGroupId = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
 
             //Assert
             requesWithoutStudentGroupId.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
