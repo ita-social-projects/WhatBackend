@@ -27,6 +27,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly long existentGroupId = 3;
         private readonly long existentMentorId = 1;
         private readonly long existentThemeId = 5;
+        private readonly long nonExistentId = -1;
 
         public ScheduleServiceTests()
         {
@@ -176,11 +177,11 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = existentGroupId
+                    GroupID = nonExistentId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(false);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
 
@@ -211,13 +212,13 @@ namespace CharlieBackend.Api.UnitTest
                 Context = new ContextForCreateScheduleDTO
                 {
                     GroupID = existentGroupId,
-                    MentorID = existentMentorId
+                    MentorID = nonExistentId
                 }
             };
 
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(false);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
 
@@ -249,7 +250,7 @@ namespace CharlieBackend.Api.UnitTest
                 {
                     GroupID = existentGroupId,
                     MentorID = existentMentorId,
-                    ThemeID = -1
+                    ThemeID = nonExistentId
                 }
             };
 
@@ -257,7 +258,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(-1)).ReturnsAsync(false);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
 
