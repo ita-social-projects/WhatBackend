@@ -78,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
         /// Disable course
         /// </summary>
         /// <response code="200">Course successfully disabled</response>
-        /// <response code="HTTP: 400, API: 0">Course not found</response>
+        /// <response code="HTTP: 400, API: 0">Course has active student group</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<CourseDto>> DisableCourse(long id)
@@ -92,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
         /// Enable course
         /// </summary>
         /// <response code="200">Course successfully enabled</response>
-        /// <response code="HTTP: 400, API: 0">Course not found</response>
+        /// <response code="HTTP: 400, API: 5">Course is already active</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<CourseDto>> EnableCourse(long id)
