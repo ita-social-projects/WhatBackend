@@ -17,11 +17,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
 
         Task<Lesson> GetLessonByHomeworkId(long homeworkId);
-        Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
->>>>>>>>> Temporary merge branch 2
-        Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
->>>>>>>>> Temporary merge branch 2
-        Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
->>>>>>>>> Temporary merge branch 2
     }
 }
