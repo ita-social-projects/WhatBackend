@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnCurrentStudentsMarks()
+        public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
@@ -56,49 +56,15 @@ namespace CharlieBackend.Api.UnitTest
 
             var expectedStudentsMarks = new List<StudentMarkDto>
             {
-                new StudentMarkDto()
-                    {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
-                        LessonDate = new DateTime(2015,4,12),
-                        StudentMark = 5
-                    }
-            };
-
-            _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
-                studentclassbookRequestWithData.CourseId.Value,
-                studentclassbookRequestWithData.StartDate,
-                studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 2 });
-
-            _dashboardRepositoryMock.Setup(x => x.GetStudentsMarksListByGroupIdsAndDate(
-                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
-                .ReturnsAsync(expectedStudentsMarks);
-
-            //Act
-            var successResult = await _dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
-
-            //Assert
-            successResult.Data.StudentsMarks.Should().NotBeNull();
-            successResult.Data.StudentsMarks.Should().BeEquivalentTo(expectedStudentsMarks);
-        }
-
-        [Fact]
-        public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnCurrentStudentsPresence()
-        {
-            //Arrange
-            var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
-            {
-                CourseId = 1,
-                StudentGroupId = 0,
-                StartDate = new DateTime(2000, 01, 01),
-                FinishDate = new DateTime(2030, 01, 01),
-                IncludeAnalytics = new ClassbookResultType[]
-                {
-                    ClassbookResultType.StudentPresence,
-                    ClassbookResultType.StudentMarks
-                }
+                new StudentMarkDto
+                        {
+                            CourseId = 2,
+                            StudentGroupId = 1,
+                            StudentId = 5,
+                            LessonId = 2,
+                            LessonDate = new DateTime(2015,4,12),
+                            StudentMark = 5
+                        }
             };
 
             var expectedStudentsVisits = new List<StudentVisitDto>
@@ -114,10 +80,22 @@ namespace CharlieBackend.Api.UnitTest
                     }
             };
 
+            var expectedStudentsClassbookResult = new StudentsClassbookResultDto()
+            {
+               StudentsMarks = expectedStudentsMarks,
+
+                StudentsPresences = expectedStudentsVisits
+
+            };
+
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 studentclassbookRequestWithData.CourseId.Value,
                 studentclassbookRequestWithData.StartDate,
                 studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 2 });
+
+            _dashboardRepositoryMock.Setup(x => x.GetStudentsMarksListByGroupIdsAndDate(
+                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
+                .ReturnsAsync(expectedStudentsMarks);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByGroupIdsAndDate(
                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
@@ -127,8 +105,8 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await _dashboardService.GetStudentsClassbookAsync(studentclassbookRequestWithData);
 
             //Assert
-            successResult.Data.StudentsPresences.Should().NotBeNull();
-            successResult.Data.StudentsPresences.Should().BeEquivalentTo(expectedStudentsVisits);
+            successResult.Data.Should().NotBeNull();
+            successResult.Data.Should().BeEquivalentTo(expectedStudentsClassbookResult);
         }
 
         [Fact]
