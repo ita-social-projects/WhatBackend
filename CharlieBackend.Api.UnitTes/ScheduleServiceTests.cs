@@ -20,18 +20,26 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
-        private Mock<IScheduledEventRepository> _scheduleRepositoryMock;
+        private readonly Mock<IScheduledEventRepository> _scheduleRepositoryMock;
+        private readonly Mock<IThemeRepository> _themeRepositoryMock;
+        private readonly Mock<IMentorRepository> _mentorRepositoryMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
 
         public ScheduleServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
             _scheduledEventFactory = new ScheduledEventHandlerFactory();
             _scheduleRepositoryMock = new Mock<IScheduledEventRepository>();
+            _themeRepositoryMock = new Mock<IThemeRepository>();
+            _mentorRepositoryMock = new Mock<IMentorRepository>();
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_scheduleRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
         }
 
-        private void Initialize(CreateScheduleDto createScheduleDto, Mock<IThemeRepository> themeRepositoryMock = null,
-            Mock<IMentorRepository> mentorRepositoryMock = null, Mock<IStudentGroupRepository> studentGroupRepositoryMock = null)
+        private void Initialize(CreateScheduleDto createScheduleDto)
         {
             _scheduleRepositoryMock.Setup(x => x.AddRange(new List<ScheduledEvent>()
             {
@@ -59,21 +67,6 @@ namespace CharlieBackend.Api.UnitTest
             }
 
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(eventOccuranceRepositoryMock.Object);
-
-            if (themeRepositoryMock != null)
-            {
-                _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-            }
-
-            if (mentorRepositoryMock != null)
-            {
-                _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(mentorRepositoryMock.Object);
-            }
-
-            if (studentGroupRepositoryMock != null)
-            {
-                _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(studentGroupRepositoryMock.Object);
-            }
         }
 
         [Fact]
@@ -112,16 +105,13 @@ namespace CharlieBackend.Api.UnitTest
                 Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern)
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(5)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(5)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -153,10 +143,9 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, studentGroupRepositoryMock: studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -188,10 +177,9 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(false);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(false);
 
-            Initialize(createScheduleDto, studentGroupRepositoryMock: studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -224,13 +212,11 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(false);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(false);
 
-            Initialize(createScheduleDto, mentorRepositoryMock: mentorRepositoryMock, studentGroupRepositoryMock: studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -264,16 +250,13 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(false);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(false);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -307,16 +290,13 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -350,16 +330,13 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
@@ -393,16 +370,13 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
 
-            var mentorRepositoryMock = new Mock<IMentorRepository>();
-            mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
 
-            Initialize(createScheduleDto, themeRepositoryMock, mentorRepositoryMock, studentGroupRepositoryMock);
+            Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
