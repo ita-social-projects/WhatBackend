@@ -62,7 +62,8 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                null);
 
             //Act
             var nonExistingIdResult = await mentorService.CreateMentorAsync(0);
@@ -147,7 +148,8 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                null);
 
             //Act
             var nonExistingIdResult = await mentorService
