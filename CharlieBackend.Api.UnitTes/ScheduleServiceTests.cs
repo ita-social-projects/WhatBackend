@@ -24,6 +24,9 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly long existentGroupId = 3;
+        private readonly long existentMentorId = 1;
+        private readonly long existentThemeId = 5;
 
         public ScheduleServiceTests()
         {
@@ -45,9 +48,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new ScheduledEvent
                 {
-                    ThemeId = 5,
-                    StudentGroupId = 3,
-                    MentorId = 1
+                    ThemeId = existentThemeId,
+                    StudentGroupId = existentGroupId,
+                    MentorId = existentMentorId
                 }
             }
             ));
@@ -59,7 +62,7 @@ namespace CharlieBackend.Api.UnitTest
                 eventOccuranceRepositoryMock.Setup(x => x.Add(
                     new EventOccurrence
                     {
-                        StudentGroupId = 3,
+                        StudentGroupId = existentGroupId,
                         EventStart = createScheduleDto.Range.StartDate,
                         Pattern = createScheduleDto.Pattern.Type
                     }
@@ -90,9 +93,9 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 3,
-                    MentorID = 1,
-                    ThemeID = 5
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId,
+                    ThemeID = existentThemeId
                 }
             };
 
@@ -105,11 +108,11 @@ namespace CharlieBackend.Api.UnitTest
                 Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleDto.Pattern)
             };
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(5)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(3)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
             Initialize(createScheduleDto);
 
@@ -139,11 +142,11 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1
+                    GroupID = existentGroupId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
             Initialize(createScheduleDto);
 
@@ -173,7 +176,7 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1
+                    GroupID = existentGroupId
                 }
             };
 
@@ -207,14 +210,14 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1,
-                    MentorID = 2
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(false);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
 
@@ -244,17 +247,17 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1,
-                    MentorID = 2,
-                    ThemeID = 12
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId,
+                    ThemeID = -1
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(false);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(-1)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
 
@@ -284,17 +287,17 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1,
-                    MentorID = 2,
-                    ThemeID = 12
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId,
+                    ThemeID = existentThemeId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
             Initialize(createScheduleDto);
 
@@ -324,17 +327,17 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1,
-                    MentorID = 2,
-                    ThemeID = 12
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId,
+                    ThemeID = existentThemeId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
             Initialize(createScheduleDto);
 
@@ -364,17 +367,17 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = 1,
-                    MentorID = 2,
-                    ThemeID = 12
+                    GroupID = existentGroupId,
+                    MentorID = existentMentorId,
+                    ThemeID = existentThemeId
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(1)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
-            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(2)).ReturnsAsync(true);
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
-            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(12)).ReturnsAsync(true);
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
             Initialize(createScheduleDto);
 
@@ -404,12 +407,6 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             result.Should().NotBeNull();
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
         }
     }
 }
