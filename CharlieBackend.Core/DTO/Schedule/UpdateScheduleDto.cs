@@ -18,8 +18,8 @@ namespace CharlieBackend.Core.DTO.Schedule
         public TimeSpan LessonEnd { get; set; }
 
         [Required]  
-        [EnumDataType(typeof(RepeatRate))]
-        public RepeatRate RepeatRate { get; set; }
+        [EnumDataType(typeof(PatternType))]
+        public PatternType RepeatRate { get; set; }
 
         [Range(1, 31)]   
         public uint? DayNumber { get; set; }

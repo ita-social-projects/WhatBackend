@@ -38,8 +38,8 @@ namespace CharlieBackend.Api.UnitTest
                 Email = "test@example.com",
                 FirstName = "test",
                 LastName = "test",
-                Password = "qwerty",
-                ConfirmPassword = "qwerty"
+                Password = "Qqwerty3_",
+                ConfirmPassword = "Qqwerty3_"
             };
 
             var isEmailTakenAccountModel = new CreateAccountDto()
@@ -47,8 +47,8 @@ namespace CharlieBackend.Api.UnitTest
                 Email = accountExpectedEmail,
                 FirstName = "test",
                 LastName = "test",
-                Password = "qwerty",
-                ConfirmPassword = "qwerty"
+                Password = "Qqwerty3_",
+                ConfirmPassword = "Qqwerty3_"
             };
 
             var existingAccount = new Account()
@@ -310,12 +310,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(successAccountDto.Email, successResult.Data.Email);
             Assert.Equal(successAccountDto.IsActive, successResult.Data.IsActive);
             Assert.Equal(successAccountDto.Role, successResult.Data.Role);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
         }
     }
 }

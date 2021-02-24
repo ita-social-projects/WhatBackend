@@ -108,6 +108,9 @@ namespace CharlieBackend.Api.UnitTest
             courseRepositoryMock.Setup(x => x.IsEntityExistAsync(existingCourse.Id))
                .ReturnsAsync(true);
 
+            courseRepositoryMock.Setup(x => x.IsCourseActive(existingCourse.Id))
+              .ReturnsAsync(true);
+
             courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(updateCourseDto.Name))
                   .ReturnsAsync(false);
 
@@ -138,13 +141,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(ErrorCode.NotFound, courseNotExistResult.Error.Code);
 
             Assert.Equal(ErrorCode.ValidationError, nullCourseResult.Error.Code);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
         }
     }
 }

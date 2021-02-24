@@ -36,9 +36,9 @@ namespace CharlieBackend.AdminPanel.Utils
             return token.FirstOrDefault();
         }
 
-        public async Task<T> GetAsync<T>(string url, string accessToken)
+        public async Task<T> GetAsync<T>(string url)
         {
-            var httpResponse = await _httpUtil.GetAsync(url, accessToken);
+            var httpResponse = await _httpUtil.GetAsync(url);
 
             await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
@@ -50,9 +50,9 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
-        public async Task<T> CreateAsync<T>(string url, T data, string accessToken)
+        public async Task<T> CreateAsync<T>(string url, T data)
         {
-            var httpResponse = await _httpUtil.PostJsonAsync(url, data, accessToken);
+            var httpResponse = await _httpUtil.PostJsonAsync(url, data);
 
             await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
@@ -63,9 +63,9 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
-        public async Task<T> PutAsync<T>(string url, T data, string accessToken)
+        public async Task<T> PutAsync<T>(string url, T data)
         {
-            var httpResponse = await _httpUtil.PutJsonAsync(url, data, accessToken);
+            var httpResponse = await _httpUtil.PutJsonAsync(url, data);
 
             await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
@@ -77,9 +77,9 @@ namespace CharlieBackend.AdminPanel.Utils
         }
 
 
-        public async Task<T> DeleteAsync<T>(string url, string accessToken)
+        public async Task<T> DeleteAsync<T>(string url)
         {
-            var httpResponse = await _httpUtil.DeleteAsync(url, accessToken);
+            var httpResponse = await _httpUtil.DeleteAsync(url);
 
             await _httpUtil.EnsureSuccessStatusCode(httpResponse);
 

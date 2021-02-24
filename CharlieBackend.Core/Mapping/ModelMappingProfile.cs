@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
@@ -155,9 +156,14 @@ namespace CharlieBackend.Core.Mapping
 
             #region Schedules mapping
 
-            CreateMap<CreateScheduleDto, Schedule>();
-            CreateMap<UpdateScheduleDto, Schedule>();
-            CreateMap<Schedule, ScheduleDto>();
+            CreateMap<CreateScheduleDto, EventOccurrence>();
+            CreateMap<UpdateScheduleDto, EventOccurrence>();
+            CreateMap<EventOccurrence, EventOccurrenceDTO>()
+                .ForMember(x => x.Events, y => y.MapFrom(map => map.ScheduledEvents.ToList()));
+
+            CreateMap<ScheduledEventDTO, ScheduledEvent>();
+            CreateMap<ScheduledEvent, ScheduledEventDTO>()
+                .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurrenceId));
 
             #endregion
 
@@ -174,6 +180,19 @@ namespace CharlieBackend.Core.Mapping
                                                          opt => opt.MapFrom(src => src.AttachmentsOfHomework.Select(y => y.AttachmentId)
                                                                                                             .ToList()));
             CreateMap<HomeworkDto, Homework>();
+
+            #endregion
+
+            #region HomeworkStudent mapping
+
+            CreateMap<HomeworkStudent, HomeworkStudentDto>()
+                .ForMember(hom => hom.StudentName,
+                        opt => opt.MapFrom(src => $"{ src.Student.Account.LastName}  {src.Student.Account.FirstName}"
+                ))
+                .ForMember(dest => dest.AttachmentIds,
+                        opt => opt.MapFrom(src => src.AttachmentOfHomeworkStudents
+                                .Select(y => y.AttachmentId).ToList()));  
+            CreateMap<HomeworkStudentDto, HomeworkStudent>();
 
             #endregion
         }

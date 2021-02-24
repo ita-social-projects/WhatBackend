@@ -19,9 +19,10 @@ namespace CharlieBackend.Core.Entities
 
         public virtual IList<MentorOfStudentGroup> MentorsOfStudentGroups { get; set; }
         
-        public virtual IList<Schedule> Schedule { get; set; }
+        public virtual IList<EventOccurrence> EventOccurances { get; set; }
         
         public virtual IList<StudentOfStudentGroup> StudentsOfStudentGroups { get; set; }
-
+        
+        public virtual ICollection<ScheduledEvent> ScheduledEvents { get; set; }
     }
 }

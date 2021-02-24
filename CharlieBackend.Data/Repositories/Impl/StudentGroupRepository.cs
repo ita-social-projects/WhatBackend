@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Mentor;
+﻿using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
@@ -117,14 +118,26 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Select(s => s.StudentId).ToListAsync();
         }
 
-        public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime startDate,DateTime finishDate)
+        public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.StudentGroups
                 .AsNoTracking()
-                .Where(x => (x.StartDate < finishDate && x.StartDate >= startDate) || 
-                       (x.FinishDate > startDate && x.FinishDate <= finishDate))
-                .Where(x => x.Course.IsActive)
-                .OrderBy(x => x.StartDate)
+                .Include(group => group.StudentsOfStudentGroups)
+                .Include(group => group.MentorsOfStudentGroups)
+                .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
+                                                        group.FinishDate > startDate)
+                .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate || 
+                                                         group.StartDate < finishDate)
+                .Where(group => group.Course.IsActive)
+                .OrderBy(group => group.StartDate)
+                .ToListAsync();
+        }
+
+        public async Task<IList<long?>> GetStudentGroupsByStudentId(long id)
+        {
+            return await _applicationContext.StudentsOfStudentGroups
+                .Where(s => s.StudentId == id)
+                .Select(s => s.StudentGroupId)
                 .ToListAsync();
         }
     }

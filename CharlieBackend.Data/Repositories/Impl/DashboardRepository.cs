@@ -215,7 +215,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentLessonMark = (decimal)x.StudentMark,
                         StudentId = x.StudentId
                     })
-                    .AsQueryable()
                     .GroupBy(x => new
                     {
                         GroupId = x.StudentGroupId,
@@ -316,7 +315,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                     StudentGroupId = (long)x.Lesson.StudentGroupId,
                     StudentMark = (decimal)x.StudentMark
                 })
-                .AsQueryable()
                 .GroupBy(x => new
                 {
                     GroupId = x.StudentGroupId,

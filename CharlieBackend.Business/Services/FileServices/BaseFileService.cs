@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.FileServices
     {
         private readonly string _basePath = @"Upload\Files";
 
-        public async Task<string> UploadFile(IFormFile file)
+        public async Task<string> UploadFileAsync(IFormFile file)
         {
             string generatedFileName = DateTime.Now.Ticks + Path.GetExtension(file.FileName);
 

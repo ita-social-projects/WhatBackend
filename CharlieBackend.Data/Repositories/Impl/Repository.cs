@@ -72,5 +72,20 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return ids.Except(existIds);
         }
+
+        public void AddRange(IEnumerable<T> entities)
+        {
+            _entities.AddRange(entities);
+        }
+
+        public void UpdateRange(IEnumerable<T> entities)
+        {
+            _entities.UpdateRange(entities);
+        }
+
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            _entities.RemoveRange(entities);
+        }
     }
 }

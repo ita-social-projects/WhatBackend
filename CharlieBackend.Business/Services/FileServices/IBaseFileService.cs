@@ -7,6 +7,6 @@ namespace CharlieBackend.Business.Services.FileServices
     {
         bool IsFileExtensionValid(IFormFile file);
 
-        Task<string> UploadFile(IFormFile file);
+        Task<string> UploadFileAsync(IFormFile file);
     }
 }
