@@ -95,9 +95,12 @@ namespace CharlieBackend.Api.UnitTest
                 }
             }
             ));
+
+            var eventOccuranceRepositoryMock = new Mock<IEventOccurrenceRepository>();
+
             if (createScheduleDto != null)
             {
-                _eventOccuranceRepositoryMock.Setup(x => x.Add(
+                eventOccuranceRepositoryMock.Setup(x => x.Add(
                     new EventOccurrence
                     {
                         StudentGroupId = existentGroupId,
@@ -411,7 +414,7 @@ namespace CharlieBackend.Api.UnitTest
             result.Should().NotBeNull();
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
-
+        
         [Fact]
         public async Task GetEventOccurrenceByIdAsync_ExistingId_ShouldReturnExpectedEventOccurrenceDTO()
         {
