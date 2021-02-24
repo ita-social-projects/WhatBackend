@@ -92,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
         /// Enable course
         /// </summary>
         /// <response code="200">Course successfully enabled</response>
-        /// <response code="HTTP: 400, API: 5">Course is already active</response>
+        /// <response code="HTTP: 409, API: 5">Course is already active</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<CourseDto>> EnableCourse(long id)
