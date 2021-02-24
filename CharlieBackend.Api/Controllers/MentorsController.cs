@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of mentors list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<IList<MentorDto>> GetAllActiveMentors()
+        public async Task<IList<MentorDetailsDto>> GetAllActiveMentors()
         {
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
@@ -101,7 +101,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorDto>))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
+        public async Task<ActionResult<IList<MentorDetailsDto>>> GetAllMentors()
         {
             var mentorsModels = await _mentorService.GetAllMentorsAsync();
 

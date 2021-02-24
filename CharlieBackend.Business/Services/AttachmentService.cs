@@ -85,6 +85,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AttachmentDto>> AddAttachmentAsAvatarAsync(IFormFile file)
         {
+            if (!ValidateAvatar(file))
+                return Result<AttachmentDto>.GetError(ErrorCode.Conflict, "File has inappropriate extension.");
 
             var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
 
@@ -107,20 +109,23 @@ namespace CharlieBackend.Business.Services
                 return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "Account not found");
         }
 
-        public async Task<string> GetAvatarUrl()
+        public async Task<Result<string>> GetAvatarUrl()
         {
             var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
 
-            return await GetAttachmentUrl(account.AvatarId.Value);
+            if (account.AvatarId.HasValue)
+                return await GetAttachmentUrl(account.AvatarId.Value);
+            else
+                return Result<string>.GetError(ErrorCode.Conflict, "Account doesn't have avatar.");
         }
 
-        public async Task<string> GetAttachmentUrl(long id)
+        public async Task<Result<string>> GetAttachmentUrl(long id)
         {
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
 
-            var file = _blobService.GetUrl(attachment);
+            var fileUrl = _blobService.GetUrl(attachment);
 
-            return file;
+            return Result<string>.GetSuccess(fileUrl);
         }
 
         private async Task<Attachment> AddAttachmentFileAsync(IFormFile file, bool isPublic = false)
@@ -273,6 +278,24 @@ namespace CharlieBackend.Business.Services
 
             return null;
         }
+
+        public bool ValidateAvatar(IFormFile file)
+        {
+            foreach (var extention in AvatarExtentions)
+            {
+                if (file.FileName.ToLower().EndsWith(extention))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public readonly string[] AvatarExtentions =
+            {
+                ".png", ".jpg", ".jped", ".gif", ".svg", ".bmp"
+            };
 
         public readonly string[] DangerousExtentions =
             {

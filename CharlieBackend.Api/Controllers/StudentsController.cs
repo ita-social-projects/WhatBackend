@@ -73,10 +73,10 @@ namespace CharlieBackend.Api.Controllers
         /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
-        [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
+        [SwaggerResponse(200, type: typeof(IList<StudentDetailsDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() 
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllStudents() 
         {
 
             var studentsModelsResult = await _studentService.GetAllStudentsAsync();
@@ -105,7 +105,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of students list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {
 
             var studentsModelsResult = await _studentService.GetAllActiveStudentsAsync();

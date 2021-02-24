@@ -9,9 +9,9 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<StudentDto>> CreateStudentAsync(long accountId);
 
-        Task<Result<IList<StudentDto>>> GetAllStudentsAsync();
+        Task<Result<IList<StudentDetailsDto>>> GetAllStudentsAsync();
 
-        Task<Result<IList<StudentDto>>> GetAllActiveStudentsAsync();
+        Task<Result<IList<StudentDetailsDto>>> GetAllActiveStudentsAsync();
 
         Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id);
 

@@ -68,11 +68,11 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(string))]
         [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpGet("avatar/url")]
-        public async Task<string> GetAvatarUrl()
+        public async Task<ActionResult<string>> GetAvatarUrl()
         {
             var attachment = await _attachmentService.GetAvatarUrl();
 
-            return attachment;
+            return attachment.ToActionResult();
         }
 
         /// <summary>

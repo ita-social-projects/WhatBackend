@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -15,14 +16,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly IAttachmentService _attachmentService;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
-                                IMapper mapper, INotificationService notification)
+                                IMapper mapper, INotificationService notification, IAttachmentService attachmentService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _attachmentService = attachmentService;
         }
 
         public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
@@ -132,23 +135,38 @@ namespace CharlieBackend.Business.Services
             return secretary?.AccountId;
         }
 
-        public async Task<IList<SecretaryDto>> GetAllSecretariesAsync()
+        public async Task<IList<SecretaryDetailsDto>> GetAllSecretariesAsync()
         {
-            var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
+            var secretaries = await GetSecretariesWithAvatarIncluded(await _unitOfWork.SecretaryRepository.GetAllAsync());
 
-            if (secretaries == null)
-            {
-                return new List<SecretaryDto>();
-            }
-
-            return _mapper.Map<IList<SecretaryDto>>(secretaries);
+            return secretaries;
         }
 
-        public async Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync()
+        private async Task<IList<SecretaryDetailsDto>> GetSecretariesWithAvatarIncluded(IList<Secretary> secretaries)
         {
-            var secretaries = await _unitOfWork.SecretaryRepository.GetActiveAsync();
+            var detailsDtos = await secretaries
+                .ToAsyncEnumerable()
+                .Select(async m =>
+                {
+                    var detailsDto = _mapper.Map<SecretaryDetailsDto>(m);
+                    if (m.Account.AvatarId.HasValue)
+                    {
+                        var url = await _attachmentService.GetAttachmentUrl((long)m.Account.AvatarId);
+                        detailsDto.AvatarUrl = url.Data;
+                    }
+                    return detailsDto;
+                })
+                .Select(x => x.Result)
+                .ToListAsync();
 
-            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<List<SecretaryDto>>(secretaries));
+            return detailsDtos;
+        }
+
+        public async Task<Result<IList<SecretaryDetailsDto>>> GetActiveSecretariesAsync()
+        {
+            var secretaries = await GetSecretariesWithAvatarIncluded(await _unitOfWork.SecretaryRepository.GetActiveAsync());
+
+            return Result<IList<SecretaryDetailsDto>>.GetSuccess(secretaries);
         }
 
         public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)

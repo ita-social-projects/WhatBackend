@@ -52,9 +52,9 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Returns list of all secretaries</response>
         [Authorize(Roles = "Admin, Secretary")]
-        [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
+        [SwaggerResponse(200, type: typeof(IList<SecretaryDetailsDto>))]
         [HttpGet]
-        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
+        public async Task<ActionResult<IList<SecretaryDetailsDto>>> GetAllSecretaries()
         {
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
@@ -66,7 +66,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Returns list of active secretaries</response>
         [Authorize(Roles = "Admin, Secretary")]
-        [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
+        [SwaggerResponse(200, type: typeof(IList<SecretaryDetailsDto>))]
         [Route("active")]
         [HttpGet]
         public async Task<ActionResult> GetActiveSecretaries()

@@ -17,14 +17,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly IAttachmentService _attachmentService;
 
         public StudentService(IAccountService accountService, IUnitOfWork unitOfWork,
-                              IMapper mapper, INotificationService notification)
+                              IMapper mapper, INotificationService notification, IAttachmentService attachmentService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _attachmentService = attachmentService;
         }
 
         public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
@@ -75,18 +77,38 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<StudentDto>>> GetAllStudentsAsync()
+        public async Task<Result<IList<StudentDetailsDto>>> GetAllStudentsAsync()
         {
-            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllAsync());
+            var students = await GetStudentsWithAvatarIncluded(await _unitOfWork.StudentRepository.GetAllAsync());
 
-            return Result<IList<StudentDto>>.GetSuccess(students);
+            return Result<IList<StudentDetailsDto>>.GetSuccess(students);
         }
 
-        public async Task<Result<IList<StudentDto>>> GetAllActiveStudentsAsync()
+        public async Task<Result<IList<StudentDetailsDto>>> GetAllActiveStudentsAsync()
         {
-            var students = _mapper.Map<IList<StudentDto>>(await _unitOfWork.StudentRepository.GetAllActiveAsync());
+            var students = await GetStudentsWithAvatarIncluded(await _unitOfWork.StudentRepository.GetAllActiveAsync());
 
-            return Result<IList<StudentDto>>.GetSuccess(students);
+            return Result<IList<StudentDetailsDto>>.GetSuccess(students);
+        }
+
+        private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> secretaries)
+        {
+            var detailsDtos = await secretaries
+                .ToAsyncEnumerable()
+                .Select(async m =>
+                {
+                    var detailsDto = _mapper.Map<StudentDetailsDto>(m);
+                    if (m.Account.AvatarId.HasValue)
+                    {
+                        var url = await _attachmentService.GetAttachmentUrl((long)m.Account.AvatarId);
+                        detailsDto.AvatarUrl = url.Data;
+                    }
+                    return detailsDto;
+                })
+                .Select(x => x.Result)
+                .ToListAsync();
+
+            return detailsDtos;
         }
 
         public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)

@@ -16,7 +16,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<AttachmentDto>> AddAttachmentAsAvatarAsync(IFormFile file);
 
-        Task<string> GetAvatarUrl();
+        Task<Result<string>> GetAvatarUrl();
 
         Task<Result<IList<AttachmentDto>>> GetAttachmentsListAsync(AttachmentRequestDto request);
 
@@ -24,6 +24,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId);
 
-        Task<string> GetAttachmentUrl(long id);
+        Task<Result<string>> GetAttachmentUrl(long id);
     }
 }

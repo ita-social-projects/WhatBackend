@@ -18,14 +18,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly IAttachmentService _attachmentService;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
-                             IMapper mapper, INotificationService notification)
+                             IMapper mapper, INotificationService notification, IAttachmentService attachmentService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _attachmentService = attachmentService;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -76,21 +78,36 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<MentorDto>> GetAllMentorsAsync()
+        public async Task<IList<MentorDetailsDto>> GetAllMentorsAsync()
         {
-            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
+            var mentors = await GetMentorsWithAvatarIncluded(await _unitOfWork.MentorRepository.GetAllAsync());
 
-            if (mentors == null)
-            {
-                return new List<MentorDto>();
-            }
-
-            return _mapper.Map<List<MentorDto>>(mentors);
+            return mentors;
         }
 
-        public async Task<IList<MentorDto>> GetAllActiveMentorsAsync()
+        private async Task<IList<MentorDetailsDto>> GetMentorsWithAvatarIncluded(IList<Mentor> mentors)
         {
-            var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
+            var detailsDtos = await mentors
+                .ToAsyncEnumerable()
+                .Select(async m => 
+                {
+                    var detailsDto = _mapper.Map<MentorDetailsDto>(m);
+                    if (m.Account.AvatarId.HasValue)
+                    {
+                        var url = await _attachmentService.GetAttachmentUrl((long)m.Account.AvatarId);
+                        detailsDto.AvatarUrl = url.Data;
+                    }
+                    return detailsDto;
+                })
+                .Select(x => x.Result)
+                .ToListAsync();
+
+            return detailsDtos;
+        }
+
+        public async Task<IList<MentorDetailsDto>> GetAllActiveMentorsAsync()
+        {
+            var mentors = await GetMentorsWithAvatarIncluded(await _unitOfWork.MentorRepository.GetAllActiveAsync());
 
             return mentors;
         }
