@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
@@ -15,8 +16,6 @@ namespace CharlieBackend.Business.Services.FileServices
 {
     public class StudentXlsFileImporter : IStudentXlsFileImporter
     {
-        private readonly string _tempPassword = "changeYourPassword";
-
         private readonly IAccountService _accountService;
         private readonly IBaseFileService _baseFileService;
         private readonly IStudentGroupService _studentGroupService;
@@ -63,6 +62,8 @@ namespace CharlieBackend.Business.Services.FileServices
             {
                 foreach (IXLRow row in book.Worksheet(1).RowsUsed().Skip(1))
                 {
+                    var _tempPassword = PasswordHelper.GeneratePassword();
+
                     var account = await _accountService.CreateAccountAsync(new CreateAccountDto
                     {
                         Email = row.Cell((int)StudentsWorksheetHeader.Email).GetValue<string>(),

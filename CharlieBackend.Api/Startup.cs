@@ -23,6 +23,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CharlieBackend.Data;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace CharlieBackend.Api
 {
@@ -77,9 +79,14 @@ namespace CharlieBackend.Api
 
             services.AddControllers()
                 .AddJsonOptions(options =>
-                    {
+                {
                         options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-                    });
+                })
+                .AddFluentValidation(options =>
+                {
+                        options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+                        options.RegisterValidatorsFromAssemblyContaining<Startup>();
+                });
 
             // EasyNetQ Congiguration through extension
             services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
@@ -104,11 +111,11 @@ namespace CharlieBackend.Api
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-               c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments(xmlPath);
 
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
-                c.IncludeXmlComments(xmlPath); 
+                c.IncludeXmlComments(xmlPath);
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
@@ -138,7 +145,7 @@ namespace CharlieBackend.Api
             });
 
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
-            
+
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
@@ -187,7 +194,7 @@ namespace CharlieBackend.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseMiddleware<IsAccountActiveMiddleware>();
 
             app.UseEndpoints(endpoints =>

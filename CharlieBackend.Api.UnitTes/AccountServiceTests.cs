@@ -311,11 +311,5 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(successAccountDto.IsActive, successResult.Data.IsActive);
             Assert.Equal(successAccountDto.Role, successResult.Data.Role);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
-        }
     }
 }

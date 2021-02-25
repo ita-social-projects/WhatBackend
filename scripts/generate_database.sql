@@ -120,18 +120,17 @@ CREATE TABLE `event_occurence` (
 DROP TABLE IF EXISTS `homework`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `homework` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `due_date` datetime DEFAULT NULL,
-  `task_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `student_group_id` bigint NOT NULL,
-  `mentor_id` bigint NOT NULL,
+CREATE TABLE IF NOT EXISTS `soft`.`homework` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `due_date` DATETIME NULL DEFAULT NULL,
+  `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `lesson_id` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_student_group_of_homework` (`student_group_id`),
-  KEY `FK_mentor_of_homework` (`mentor_id`),
-  CONSTRAINT `FK_mentor_of_homework` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`),
-  CONSTRAINT `FK_student_group_of_homework` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  INDEX `FK_lesson_of_homework` (`lesson_id` ASC),
+  CONSTRAINT `FK_lesson_of_homework`
+    FOREIGN KEY (`lesson_id`)
+    REFERENCES `soft`.`lesson` (`id`))
+ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,6 +347,46 @@ CREATE TABLE `visit` (
   CONSTRAINT `FK_student_of_visit` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=400 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+-- -----------------------------------------------------
+-- Table `soft`.`homework_from_student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`homework_from_student` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) not null,
+  `homework_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
+  `homework_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_student_homework` (`homework_id` ASC),
+  CONSTRAINT `FK_student_homework`
+    FOREIGN KEY (`homework_id`)
+    REFERENCES `soft`.`homework` (`id`),
+  CONSTRAINT `FK_homework_of_student`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `soft`.`student` (`id`))
+
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+-- -----------------------------------------------------
+-- Table `soft`.`attachment_of_homework`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework_student` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `attachment_id` BIGINT(20) NOT NULL,
+  `homework_student_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK_homework_student_of_attachment_id` (`homework_student_id` ASC),
+  INDEX `FK_attachment_of_homework_student_id` (`attachment_id` ASC),
+  CONSTRAINT `FK_homework_student_of_attachment_id`
+    FOREIGN KEY (`homework_student_id`)
+    REFERENCES `soft`.`homework_from_student` (`id`),
+  CONSTRAINT `"FK_attachment_of_homework_student_id"`
+    FOREIGN KEY (`attachment_id`)
+    REFERENCES `soft`.`attachment` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 --
 -- Dumping events for database 'soft'

@@ -828,6 +828,7 @@ namespace CharlieBackend.Api.UnitTest
                     StudentGroupResultType.AverageStudentGroupMark,
                     StudentGroupResultType.AverageStudentGroupVisitsPercentage
                 }
+
             };
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
@@ -840,12 +841,5 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             requesWithoutStudentGroupId.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
-        }
-
     }
 }

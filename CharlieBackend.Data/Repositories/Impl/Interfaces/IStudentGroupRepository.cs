@@ -31,5 +31,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
 
         Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
+        
+        Task<IList<long?>> GetStudentGroupsByStudentId(long id);
     }
 }

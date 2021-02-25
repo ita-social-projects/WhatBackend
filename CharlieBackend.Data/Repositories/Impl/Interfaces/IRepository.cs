@@ -24,5 +24,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<bool> IsEntityExistAsync(long id);
 
         Task<IEnumerable<long>> GetNotExistEntitiesIdsAsync(IEnumerable<long> ids);
+
+        void UpdateRange(IEnumerable<T> entities);
+
+        void RemoveRange(IEnumerable<T> entities);
     }
 }
