@@ -95,7 +95,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Secretary successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>
-        /// <response code="HTTP: 409, API: 5">Secretary is already disabled</response>
+        /// <response code="HTTP: 409, API: 5">Secretary's account is already disabled</response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
         public async Task<ActionResult<bool>> DisableSecretary(long secretaryId)
@@ -110,7 +110,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Secretary successfully enabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>
-        /// <response code="HTTP: 409, API: 5">Secretary is already enabled</response>
+        /// <response code="HTTP: 409, API: 5">Secretary's account is already enabled</response>
         [Authorize(Roles = "Admin")]
         [HttpPatch("{secretaryId}")]
         public async Task<ActionResult> EnableSecretary(long secretaryId)
