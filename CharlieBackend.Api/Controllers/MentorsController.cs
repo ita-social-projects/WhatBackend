@@ -162,7 +162,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="204">Mentor successfully disabled</response>
         /// <response code="HTTP: 400, API: 3">Mentor not found</response>
-        /// <response code="HTTP: 409, API: 5">Mentor is already disabled</response>
+        /// <response code="HTTP: 409, API: 5">Mentor's account is already disabled</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DisableMentor(long id)
@@ -177,7 +177,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="204">Mentor successfully enabled</response>
         /// <response code="HTTP: 400, API: 3">Mentor not found</response>
-        /// <response code="HTTP: 409, API: 5">Mentor is already enabled</response>
+        /// <response code="HTTP: 409, API: 5">Mentor's account is already enabled</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<bool>> EnableMentor(long id)
