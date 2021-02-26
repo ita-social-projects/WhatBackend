@@ -228,14 +228,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
             }
 
-            var disable = await _accountService.DisableAccountAsync(accountId.Value);
+            var changedToDisabled = await _accountService.DisableAccountAsync(accountId.Value);
 
-            if (!disable)
+            if (!changedToDisabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict, "This account is already disabled.");
             }
 
-            return Result<bool>.GetSuccess(disable);
+            return Result<bool>.GetSuccess(changedToDisabled);
 
         }
 
@@ -248,14 +248,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
             }
 
-            var enable = await _accountService.EnableAccountAsync(accountId.Value);
+            var changedToEnabled = await _accountService.EnableAccountAsync(accountId.Value);
 
-            if (!enable)
+            if (!changedToEnabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict, "This account is already enabled.");
             }
 
-            return Result<bool>.GetSuccess(enable);
+            return Result<bool>.GetSuccess(changedToEnabled);
 
         }
 
