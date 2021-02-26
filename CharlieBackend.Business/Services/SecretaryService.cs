@@ -179,14 +179,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var enable = await _accountService.EnableAccountAsync((long)accountId);
+            var changedToEnabled = await _accountService.EnableAccountAsync((long)accountId);
 
-            if (!enable)
+            if (!changedToEnabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict, "This secretsry account is already enabled.");
             }
 
-            return Result<bool>.GetSuccess(enable);
+            return Result<bool>.GetSuccess(changedToEnabled);
         }
     }
 }
