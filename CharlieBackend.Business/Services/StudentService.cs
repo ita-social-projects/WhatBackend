@@ -211,14 +211,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown student id.");
             }
 
-            var isActive = await _accountService.DisableAccountAsync((long)accountId);
+            var changedToDisabled = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!isActive)
+            if (!changedToDisabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict, "This account is already disabled.");
             }
 
-            return Result<bool>.GetSuccess(isActive);
+            return Result<bool>.GetSuccess(changedToDisabled);
         }
 
         public async Task<Result<bool>> EnableStudentAsync(long id)
@@ -230,14 +230,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown student id.");
             }
 
-            var isActive = await _accountService.EnableAccountAsync((long)accountId);
+            var changedToEnabled = await _accountService.EnableAccountAsync((long)accountId);
 
-            if (!isActive)
+            if (!changedToEnabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict, "This account is already enabled.");
             }
 
-            return Result<bool>.GetSuccess(isActive);
+            return Result<bool>.GetSuccess(changedToEnabled);
         }
     }
 }
