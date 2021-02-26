@@ -147,7 +147,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="204">Successful deletion of student</response>
         /// <response code="400">Error, student not found</response>
-        /// <response code="HTTP: 409, API: 5">Student is already disabled</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already disabled</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DisableStudent(long id)
@@ -162,7 +162,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="204">Successful enabling of student</response>
         /// <response code="400">Error, student not found</response>
-        /// <response code="HTTP: 409, API: 5">Student is already active</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already active</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<bool>> EnableStudent(long id)
