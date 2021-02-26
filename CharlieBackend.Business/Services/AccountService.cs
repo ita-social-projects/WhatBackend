@@ -137,38 +137,20 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> DisableAccountAsync(long id)
         {
-            try
-            {
-                var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
 
-                await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
-                return isSucceeded;
-            }
-            catch
-            {
-                _unitOfWork.Rollback();
-
-                return false;
-            }
+            return isSucceeded;
         }
 
         public async Task<bool> EnableAccountAsync(long id)
         {
-            try
-            {
-                var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id);
 
-                await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
-                return isSucceeded;
-            }
-            catch
-            {
-                _unitOfWork.Rollback();
-
-                return false;
-            }
+            return isSucceeded;
         }
 
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
