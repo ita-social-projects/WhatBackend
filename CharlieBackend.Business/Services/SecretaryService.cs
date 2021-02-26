@@ -160,14 +160,14 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var disable = await _accountService.DisableAccountAsync((long)accountId);
+            var changedToDisabled = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!disable)
+            if (!changedToDisabled)
             {
                 return Result<bool>.GetError(ErrorCode.Conflict,"This secretsry account is already disabled.");
             }
 
-            return Result<bool>.GetSuccess(disable);
+            return Result<bool>.GetSuccess(changedToDisabled);
         }
 
         public async Task<Result<bool>> EnableSecretaryAsync(long secretaryId)
