@@ -294,11 +294,5 @@ namespace CharlieBackend.Api.UnitTest
 
             alreadyExistingEmailResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
-        }
     }
 }
