@@ -9,8 +9,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,20 +17,36 @@ namespace CharlieBackend.Api.UnitTest
     public class StudentGroupServiceTest : TestBase
     {
         private readonly Mock<ILogger<StudentGroupService>> _loggerMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly Mock<IStudentRepository> _studentRepositoryMock;
+        private readonly Mock<IMentorRepository> _mentorRepositoryMock;
+        private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly IMapper _mapper;
 
-
+        private void MockEntities()
+        {
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(_courseRepositoryMock.Object);
+        }
         public StudentGroupServiceTest()
         {
             _loggerMock = new Mock<ILogger<StudentGroupService>>();
             _mapper = GetMapper(new ModelMappingProfile());
+
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            _studentRepositoryMock = new Mock<IStudentRepository>();
+            _mentorRepositoryMock = new Mock<IMentorRepository>();
+            _courseRepositoryMock = new Mock<ICourseRepository>();
+
+            MockEntities();
         }
 
         [Fact]
-        public async Task CreateStudentGroup()
+        public async Task CreateStudentGroupAsync_ExistingAccountStudentGroup_ShouldReturnStudentGroup()
         {
             //Arrange
-
             var newStudentGroup = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
@@ -41,7 +55,60 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = DateTime.Now.AddMonths(3).Date,
                 StudentIds = new List<long>() { 1, 2, 3, 4 },
                 MentorIds = new List<long>() { 8, 9 }
+            };
 
+            _studentRepositoryMock.Setup(x => x.GetStudentsByIdsAsync(newStudentGroup.StudentIds))
+               .ReturnsAsync(new List<Student>()
+               {
+                    new Student { Id = 1 },
+                    new Student { Id = 2 },
+                    new Student { Id = 3 },
+                    new Student { Id = 4 }
+               });
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorsByIdsAsync(newStudentGroup.MentorIds))
+                .ReturnsAsync(new List<Mentor>()
+                {
+                    new Mentor { Id = 18 },
+                    new Mentor { Id = 19 }
+                });
+
+            _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(newStudentGroup.Name))
+                    .ReturnsAsync(false);
+
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(newStudentGroup.CourseId))
+                                .ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetNotExistEntitiesIdsAsync(newStudentGroup.StudentIds))
+                                  .ReturnsAsync(new List<long>());
+            
+            var studentGroupService = new StudentGroupService(
+                _unitOfWorkMock.Object,
+                _mapper,
+                _loggerMock.Object
+                );
+
+            //Act
+            var successResult = await studentGroupService.CreateStudentGroupAsync(newStudentGroup);
+            
+            //Assert
+            Assert.NotNull(successResult.Data);
+            Assert.Equal(newStudentGroup.Name, successResult.Data.Name);
+            Assert.Equal(newStudentGroup.CourseId, successResult.Data.CourseId);
+            Assert.Equal(newStudentGroup.StudentIds, successResult.Data.StudentIds);
+        }
+        [Fact]
+        public async Task CreateStudentGroup()
+        {
+            //Arrange
+            var newStudentGroup = new CreateStudentGroupDto()
+            {
+                Name = "New_test_name",
+                CourseId = 2,
+                StartDate = DateTime.Now.Date,
+                FinishDate = DateTime.Now.AddMonths(3).Date,
+                StudentIds = new List<long>() { 1, 2, 3, 4 },
+                MentorIds = new List<long>() { 8, 9 }
             };
 
             var existingStudentGroup = new CreateStudentGroupDto()
@@ -52,7 +119,6 @@ namespace CharlieBackend.Api.UnitTest
                 FinishDate = DateTime.Now.AddMonths(6).Date,
                 StudentIds = new List<long>() { 5, 6, 7, 8 },
                 MentorIds = new List<long>() { 10, 11 }
-
             };
 
             var withoutMentorsAndStudentsStudentGroup = new CreateStudentGroupDto()
