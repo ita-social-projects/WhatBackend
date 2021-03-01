@@ -5,6 +5,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -44,33 +45,31 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateStudentGroupAsync_ExistingAccountStudentGroup_ShouldReturnStudentGroup()
+        public async Task CreateStudentGroupAsync_StudentGroup_ShouldReturnStudentGroup()
         {
             //Arrange
             var newStudentGroup = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
-                CourseId = 2,
+                CourseId = 1,
                 StartDate = DateTime.Now.Date,
                 FinishDate = DateTime.Now.AddMonths(3).Date,
-                StudentIds = new List<long>() { 1, 2, 3, 4 },
-                MentorIds = new List<long>() { 8, 9 }
+                StudentIds = new List<long>() { 1, 2 },
+                MentorIds = new List<long>() { 1, 2 }
             };
 
             _studentRepositoryMock.Setup(x => x.GetStudentsByIdsAsync(newStudentGroup.StudentIds))
                .ReturnsAsync(new List<Student>()
                {
                     new Student { Id = 1 },
-                    new Student { Id = 2 },
-                    new Student { Id = 3 },
-                    new Student { Id = 4 }
+                    new Student { Id = 2 }
                });
 
             _mentorRepositoryMock.Setup(x => x.GetMentorsByIdsAsync(newStudentGroup.MentorIds))
                 .ReturnsAsync(new List<Mentor>()
                 {
-                    new Mentor { Id = 18 },
-                    new Mentor { Id = 19 }
+                    new Mentor { Id = 1 },
+                    new Mentor { Id = 2 }
                 });
 
             _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(newStudentGroup.Name))
@@ -92,10 +91,39 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await studentGroupService.CreateStudentGroupAsync(newStudentGroup);
             
             //Assert
-            Assert.NotNull(successResult.Data);
-            Assert.Equal(newStudentGroup.Name, successResult.Data.Name);
-            Assert.Equal(newStudentGroup.CourseId, successResult.Data.CourseId);
-            Assert.Equal(newStudentGroup.StudentIds, successResult.Data.StudentIds);
+            successResult.Data.Should().NotBeNull();
+            successResult.Data.Name.Should().Be(newStudentGroup.Name);
+            successResult.Data.CourseId.Should().Be(newStudentGroup.CourseId);
+            successResult.Data.StudentIds.Should().BeEquivalentTo(newStudentGroup.StudentIds);
+        }
+
+        [Fact]
+        public async Task CreateStudentGroupAsync_ExistingStudentGroup_ShouldReturnNotBeUnprocessableEntity()
+        {
+            //Arrange
+            var existingStudentGroup = new CreateStudentGroupDto()
+            {
+                Name = "Exists_test_name",
+                CourseId = 1,
+                StartDate = DateTime.Now.AddMonths(1).Date,
+                FinishDate = DateTime.Now.AddMonths(3).Date,
+                StudentIds = new List<long>() { 1, 2 },
+                MentorIds = new List<long>() { 1,2 }
+            };
+            _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(existingStudentGroup.Name))
+                   .ReturnsAsync(true);
+
+            var studentGroupService = new StudentGroupService(
+                _unitOfWorkMock.Object,
+                _mapper,
+                _loggerMock.Object
+                );
+
+            //Act
+            var groupNameExistResult = await studentGroupService.CreateStudentGroupAsync(existingStudentGroup);
+            
+            //Assert
+            groupNameExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.UnprocessableEntity);
         }
         [Fact]
         public async Task CreateStudentGroup()
