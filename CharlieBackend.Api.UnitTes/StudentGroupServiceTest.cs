@@ -154,6 +154,27 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task CreateStudentGroupAsync_StudentGroupWithoutValidStudentIDs_ShouldReturnValidationError()
+        {
+            //Arrange
+            var studentGroupWithoutValidStudentIDs = new CreateStudentGroupDto()
+            {
+                Name = "New_test_name",
+                CourseId = 1,
+                StartDate = DateTime.Now.Date,
+                FinishDate = DateTime.Now.AddMonths(3).Date,
+                StudentIds = new List<long>() { 1, 2},
+                MentorIds = new List<long>() { 1,2 }
+            };
+
+            //Act
+            var withNotExistStrudentIdResult = await StudentGroupServiceMock().CreateStudentGroupAsync(studentGroupWithoutValidStudentIDs);
+
+            //Assert
+            withNotExistStrudentIdResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
         public async Task CreateStudentGroup()
         {
             //Arrange
