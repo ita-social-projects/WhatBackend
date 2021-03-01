@@ -24,6 +24,14 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly IMapper _mapper;
 
+        private StudentGroupService StudentGroupServiceMock()
+        {
+            return new StudentGroupService(
+               _unitOfWorkMock.Object,
+               _mapper,
+               _loggerMock.Object
+               );
+        }
         private void MockEntities()
         {
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
@@ -80,15 +88,9 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetNotExistEntitiesIdsAsync(newStudentGroup.StudentIds))
                                   .ReturnsAsync(new List<long>());
-            
-            var studentGroupService = new StudentGroupService(
-                _unitOfWorkMock.Object,
-                _mapper,
-                _loggerMock.Object
-                );
 
             //Act
-            var successResult = await studentGroupService.CreateStudentGroupAsync(newStudentGroup);
+            var successResult = await StudentGroupServiceMock().CreateStudentGroupAsync(newStudentGroup);
             
             //Assert
             successResult.Data.Should().NotBeNull();
@@ -98,7 +100,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateStudentGroupAsync_ExistingStudentGroup_ShouldReturnNotBeUnprocessableEntity()
+        public async Task CreateStudentGroupAsync_ExistingStudentGroup_ShouldReturnUnprocessableEntity()
         {
             //Arrange
             var existingStudentGroup = new CreateStudentGroupDto()
@@ -113,18 +115,23 @@ namespace CharlieBackend.Api.UnitTest
             _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(existingStudentGroup.Name))
                    .ReturnsAsync(true);
 
-            var studentGroupService = new StudentGroupService(
-                _unitOfWorkMock.Object,
-                _mapper,
-                _loggerMock.Object
-                );
-
             //Act
-            var groupNameExistResult = await studentGroupService.CreateStudentGroupAsync(existingStudentGroup);
+            var groupNameExistResult = await StudentGroupServiceMock().CreateStudentGroupAsync(existingStudentGroup);
             
             //Assert
             groupNameExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.UnprocessableEntity);
         }
+
+        [Fact]
+        public async Task CreateStudentGroupAsync_NullStudentGroup_ShouldReturnValidationError()
+        {
+            //Act
+            var nullGroupResult = await StudentGroupServiceMock().CreateStudentGroupAsync(null);
+
+            //Assert
+            nullGroupResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
         [Fact]
         public async Task CreateStudentGroup()
         {
