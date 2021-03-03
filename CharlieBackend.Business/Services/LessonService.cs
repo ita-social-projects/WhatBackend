@@ -264,10 +264,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
         {
-            long accountId = _currentUserService.AccountId;
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-
-            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, student.Id);
+            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, _currentUserService.EntityId);
 
             return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
         }
