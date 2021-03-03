@@ -3,12 +3,12 @@ namespace CharlieBackend.Business.Helpers
 {
     public static class ValidationConstants
     {
-        public const int _minLength = 8;
-        public const int _maxLengthPassword = 30;
-        public const int _maxLengthEmail = 50;
-        public const int _maxLengthName = 30;
-        public const int _maxLengthURL = 200;
-        public const string _passwordRule = "Password must have at least eight characters, at least one uppercase letter, one lowercase letter and one number";
-        public const string _passwordConfirmNotValid = "Passwords do not match";
+        public const int MinLength = 8;
+        public const int MaxLengthPassword = 30;
+        public const int MaxLengthEmail = 50;
+        public const int MaxLengthName = 30;
+        public const int MaxLengthURL = 200;
+        public const string PasswordRule = "Password must have at least eight characters, at least one uppercase letter, one lowercase letter and one number";
+        public const string PasswordConfirmNotValid = "Passwords do not match";
     }
 }

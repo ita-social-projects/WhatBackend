@@ -13,14 +13,14 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0");
             RuleFor(x => x.FirstName)
                  .NotEmpty().WithMessage("{PropertyName} is required")
-                 .MaximumLength(ValidationConstants._maxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                 .MaximumLength(ValidationConstants.MaxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(ValidationConstants._maxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants._maxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
             RuleFor(x => x.Role)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .IsInEnum().WithMessage("Invalid role");

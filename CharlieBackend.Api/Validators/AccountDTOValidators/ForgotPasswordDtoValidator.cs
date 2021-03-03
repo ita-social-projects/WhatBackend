@@ -12,10 +12,10 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants._maxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
             RuleFor(x => x.FormUrl)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(ValidationConstants._maxLengthURL).WithMessage("Url cannot be greater than {MaxLength} symbols")
+                .MaximumLength(ValidationConstants.MaxLengthURL).WithMessage("Url cannot be greater than {MaxLength} symbols")
                 .Must(BeValidURL);
         }
 

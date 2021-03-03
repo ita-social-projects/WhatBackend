@@ -10,22 +10,22 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         {
             RuleFor(x => x.FirstName)
                  .NotEmpty().WithMessage("{PropertyName} is required")
-                 .MaximumLength(ValidationConstants._maxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                 .MaximumLength(ValidationConstants.MaxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(ValidationConstants._maxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthName).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants._maxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MinimumLength(ValidationConstants._minLength)
-                .MaximumLength(ValidationConstants._maxLengthPassword)
-                .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants._passwordRule);
+                .MinimumLength(ValidationConstants.MinLength)
+                .MaximumLength(ValidationConstants.MaxLengthPassword)
+                .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .Equal(x => x.Password).WithMessage(ValidationConstants._passwordConfirmNotValid);
+                .Equal(x => x.Password).WithMessage(ValidationConstants.PasswordConfirmNotValid);
             
         }
     }

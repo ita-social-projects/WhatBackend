@@ -11,15 +11,15 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants._maxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
             RuleFor(x => x.NewPassword)
                .NotEmpty()
-               .MinimumLength(ValidationConstants._minLength)
-               .MaximumLength(ValidationConstants._maxLengthPassword)
-               .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants._passwordRule);
+               .MinimumLength(ValidationConstants.MinLength)
+               .MaximumLength(ValidationConstants.MaxLengthPassword)
+               .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
             RuleFor(x => x.ConfirmNewPassword)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .Equal(x => x.NewPassword).WithMessage(ValidationConstants._passwordConfirmNotValid);
+                .Equal(x => x.NewPassword).WithMessage(ValidationConstants.PasswordConfirmNotValid);
         }
     }
 }
