@@ -160,7 +160,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Disable mentor
         /// </summary>
-        /// <response code="204">Mentor successfully disabled</response>
+        /// <response code="204">Mentor's account successfully disabled</response>
         /// <response code="HTTP: 400, API: 3">Mentor not found</response>
         /// <response code="HTTP: 409, API: 5">Mentor's account is already disabled</response>
         [Authorize(Roles = "Admin, Secretary")]
