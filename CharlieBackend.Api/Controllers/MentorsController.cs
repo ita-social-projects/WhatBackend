@@ -175,7 +175,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Enable mentor
         /// </summary>
-        /// <response code="204">Mentor successfully enabled</response>
+        /// <response code="204">Mentor's account successfully enabled</response>
         /// <response code="HTTP: 400, API: 3">Mentor not found</response>
         /// <response code="HTTP: 409, API: 5">Mentor's account is already enabled</response>
         [Authorize(Roles = "Admin, Secretary")]
