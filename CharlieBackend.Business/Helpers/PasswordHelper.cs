@@ -79,7 +79,7 @@ namespace CharlieBackend.Business.Helpers
             while (!validPassword)
             {
                 _ = password.Clear();
-                var passwordLength = ValidationConstants._minLength;
+                var passwordLength = ValidationConstants.MinLength;
 
                 while (passwordLength-- > 0)
                 {
