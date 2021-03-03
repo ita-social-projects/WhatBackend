@@ -142,7 +142,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Disable student's account
         /// </summary>
-        /// <response code="204">Successful deletion of student</response>
+        /// <response code="204">Successful deletion of student's account</response>
         /// <response code="400">Error, student not found</response>
         /// <response code="HTTP: 409, API: 5">Student's account is already disabled</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
@@ -155,9 +155,9 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Enable student
+        /// Enable student's account
         /// </summary>
-        /// <response code="204">Successful enabling of student</response>
+        /// <response code="204">Successful enabling of student's account</response>
         /// <response code="400">Error, student not found</response>
         /// <response code="HTTP: 409, API: 5">Student's account is already active</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
