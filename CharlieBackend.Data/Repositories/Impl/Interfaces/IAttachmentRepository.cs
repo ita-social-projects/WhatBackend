@@ -9,8 +9,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IAttachmentRepository : IRepository<Attachment>
     {
-        Task<List<AttachmentDto>> GetAttachmentList(long accountId, long? courseId, long? groupId, long? requestedAccId,
-                                                                DateTime? startDate, DateTime? finishDate);
+        Task<List<Attachment>> GetAttachmentListFiltered(AttachmentRequestDto request);
         Task<List<Attachment>> GetAttachmentsByIdsAsync(IList<long> attachmentIds);
     }
 }

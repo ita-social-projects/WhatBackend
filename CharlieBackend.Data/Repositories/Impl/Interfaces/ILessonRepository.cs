@@ -8,11 +8,13 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface ILessonRepository : IRepository<Lesson>
     {
-        public Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
+        Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
 
         Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId);
 
         Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
+
+        Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
 
         Task<Lesson> GetLessonByHomeworkId(long homeworkId);
     }
