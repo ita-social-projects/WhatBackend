@@ -11,12 +11,12 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public AuthenticationDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email cannot be empty")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(50);
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password cannot be empty")
-                .MaximumLength(65).WithMessage("Password cannot be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .MaximumLength(65);
         }
     }
 }

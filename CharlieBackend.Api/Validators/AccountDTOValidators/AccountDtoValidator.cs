@@ -12,23 +12,23 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public AccountDtoValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0");
+                .NotEmpty()
+                .GreaterThan(0);
             RuleFor(x => x.FirstName)
-                 .NotEmpty().WithMessage("{PropertyName} is required")
-                 .MaximumLength(30).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                 .NotEmpty()
+                 .MaximumLength(30);
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(30).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .MaximumLength(30);
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(50);
             RuleFor(x => x.Role)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .IsInEnum().WithMessage("Invalid role");
+                .NotEmpty()
+                .IsInEnum();
             RuleFor(x => x.IsActive)
-                .NotEmpty().WithMessage("{PropertyName} is required");
+                .NotEmpty();
         }
     }
 }
