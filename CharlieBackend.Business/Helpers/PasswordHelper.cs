@@ -65,41 +65,9 @@ namespace CharlieBackend.Business.Helpers
             }
         }
 
-        public static string PasswordValidation(string password)
+        public static bool PasswordValidation(string password)
         {
-            StringBuilder allWarnings = new StringBuilder();
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                return "Password should not be empty";
-            }
-
-            if (password.Length < 8)
-            {
-                allWarnings.Append("Password length must be more than 8. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[A-Z]+"))
-            {
-                allWarnings.Append("Password should contain at least one upper case letter. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[0-9]+"))
-            {
-                allWarnings.Append("Password should contain at least one numeric value. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[a-z]+"))
-            {
-                allWarnings.Append("Password should contain at least one lower case letter. ");
-            }
-
-            if (Regex.IsMatch(password, @"[#?!@$%^&*-]+"))
-            {
-                allWarnings.Append("Password can't contain any special character apart from underscore symbol. ");
-            }
-
-            return allWarnings.ToString();
+            return Regex.IsMatch(password.ToString(), _pattern);
         }
 
         public static string GeneratePassword()

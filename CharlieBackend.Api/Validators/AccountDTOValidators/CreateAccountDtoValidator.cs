@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CharlieBackend.Core.DTO.Account;
+﻿using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -21,8 +19,10 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .EmailAddress().WithMessage("Incorrect email")
                 .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(65).WithMessage("Password cannot be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .MinimumLength(8)
+                .MaximumLength(30)
+                .Must(PasswordHelper.PasswordValidation).WithMessage("Password must have at least eight characters, at least one uppercase letter, one lowercase letter and one number");
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .Equal(x => x.Password).WithMessage("Passwords does not match");

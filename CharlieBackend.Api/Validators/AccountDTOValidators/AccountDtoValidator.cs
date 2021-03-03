@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
