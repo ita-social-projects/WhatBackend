@@ -20,16 +20,13 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly ILessonService _lessonService;
         private readonly IStudentService _studentService;
-        private readonly IAccountService _accountService;
         #endregion
         /// <summary>
         /// Students Controllers constructor
         /// </summary>
-        public StudentsController(IStudentService studentService, 
-            IAccountService accountService, ILessonService lessonService)
+        public StudentsController(IStudentService studentService, ILessonService lessonService)
         {
             _studentService = studentService;
-            _accountService = accountService;
             _lessonService = lessonService;
         }
 
@@ -143,19 +140,35 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disabling of student
+        /// Disable student's account
         /// </summary>
-        /// <response code="204">Successful update of student</response>
+        /// <response code="204">Successful deletion of student's account</response>
         /// <response code="400">Error, student not found</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already disabled</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableStudent(long id)
+        public async Task<ActionResult<bool>> DisableStudent(long id)
         {
             var disabledStudentModel = await _studentService.DisableStudentAsync(id);
 
             return disabledStudentModel.ToActionResult();
         }
 
+        /// <summary>
+        /// Enable student's account
+        /// </summary>
+        /// <response code="204">Successful enabling of student's account</response>
+        /// <response code="400">Error, student not found</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already active</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<bool>> EnableStudent(long id)
+        {
+            var disabledStudentModel = await _studentService.EnableStudentAsync(id);
+
+            return disabledStudentModel.ToActionResult();
+        }
+        
         /// <summary>
         /// Gets filtered list of lessons for student
         /// </summary>
