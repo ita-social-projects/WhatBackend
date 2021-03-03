@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentValidation;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -11,10 +12,10 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("{PropertyName} is required")
                 .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(50).WithMessage("Email cannot be greater than {MaxLength} symbols");
+                .MaximumLength(ValidationConstants._maxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
             RuleFor(x => x.FormUrl)
                 .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(200).WithMessage("Url cannot be greater than {MaxLength} symbols")
+                .MaximumLength(ValidationConstants._maxLengthURL).WithMessage("Url cannot be greater than {MaxLength} symbols")
                 .Must(BeValidURL);
         }
 
