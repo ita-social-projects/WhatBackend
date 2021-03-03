@@ -67,7 +67,7 @@ namespace CharlieBackend.Business.Helpers
 
         public static bool PasswordValidation(string password)
         {
-            return Regex.IsMatch(password.ToString(), _pattern);
+            return Regex.IsMatch(password, _pattern);
         }
 
         public static string GeneratePassword()
