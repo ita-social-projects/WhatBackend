@@ -93,7 +93,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Disable secretary
         /// </summary>
-        /// <response code="200">Secretary successfully disabled</response>
+        /// <response code="200">Secretary's account successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>
         /// <response code="HTTP: 409, API: 5">Secretary's account is already disabled</response>
         [Authorize(Roles = "Admin")]
