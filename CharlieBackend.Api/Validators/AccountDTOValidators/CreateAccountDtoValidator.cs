@@ -25,7 +25,7 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .MaximumLength(65);
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty()
-                .Equal(x => x.Password).WithMessage("Passwords does not match");
+                .Equal(x => x.Password).WithMessage("Passwords do not match");
             
         }
     }
