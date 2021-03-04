@@ -151,23 +151,42 @@ namespace CharlieBackend.Business.Services
             return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<List<SecretaryDto>>(secretaries));
         }
 
-        public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
+        public async Task<Result<bool>> DisableSecretaryAsync(long secretaryId)
         {
             var accountId = await GetAccountId(secretaryId);
 
             if (accountId == null)
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
+            var changedToDisabled = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!await _accountService.DisableAccountAsync((long)accountId))
+            if (!changedToDisabled)
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsry account is already disabled.");
+                return Result<bool>.GetError(ErrorCode.Conflict,"This secretsry account is already disabled.");
             }
 
-            return Result<SecretaryDto>.GetSuccess(secretary.Data);
+            return Result<bool>.GetSuccess(changedToDisabled);
+        }
+
+        public async Task<Result<bool>> EnableSecretaryAsync(long secretaryId)
+        {
+            var accountId = await GetAccountId(secretaryId);
+
+            if (accountId == null)
+            {
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
+            }
+
+            var changedToEnabled = await _accountService.EnableAccountAsync((long)accountId);
+
+            if (!changedToEnabled)
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, "This secretsry account is already enabled.");
+            }
+
+            return Result<bool>.GetSuccess(changedToEnabled);
         }
     }
 }

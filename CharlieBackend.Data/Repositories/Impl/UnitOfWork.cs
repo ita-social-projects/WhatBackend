@@ -25,6 +25,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IAttachmentRepository _attachmentRepository;
         private IHomeworkRepository _homeworkRepository;
         private IScheduledEventRepository _scheduledEventRepository;
+        private IHomeworkStudentRepository _homeworkStudentRepository;
+
         #endregion 
 
         public UnitOfWork(ApplicationContext applicationContext)
@@ -155,6 +157,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                 return _scheduledEventRepository = _scheduledEventRepository
                         ?? new ScheduledEventRepository(_applicationContext);
             } 
+        }
+        public IHomeworkStudentRepository HomeworkStudentRepository
+        {
+            get 
+            {
+                return _homeworkStudentRepository = _homeworkStudentRepository
+                        ?? new HomeworkStudentRepositrory(_applicationContext);
+            }
         }
 
         public Task CommitAsync()

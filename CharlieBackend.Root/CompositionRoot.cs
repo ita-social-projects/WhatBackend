@@ -22,8 +22,9 @@ namespace CharlieBackend.Root
                   b => b.MigrationsAssembly("CharlieBackend.Api"));
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-                    options.SerializerSettings.ReferenceLoopHandling
+            services.AddControllers()
+                    .AddNewtonsoftJson(options =>
+                        options.SerializerSettings.ReferenceLoopHandling
                         = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
@@ -59,6 +60,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IStudentXlsFileImporter, StudentXlsFileImporter>();
             services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
+            services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             #endregion
         }
     }
