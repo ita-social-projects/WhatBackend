@@ -11,21 +11,21 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public CreateAccountDtoValidator()
         {
             RuleFor(x => x.FirstName)
-                 .NotEmpty().WithMessage("{PropertyName} is required")
-                 .MaximumLength(30).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                 .NotEmpty()
+                 .MaximumLength(30);
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(30).WithMessage("{PropertyName} can't be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .MaximumLength(30);
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(50);
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(65).WithMessage("Password cannot be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .MaximumLength(65);
             RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .Equal(x => x.Password).WithMessage("Passwords does not match");
+                .NotEmpty()
+                .Equal(x => x.Password).WithMessage("Passwords do not match");
             
         }
     }
