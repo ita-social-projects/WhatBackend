@@ -374,7 +374,7 @@ namespace CharlieBackend.Business.Services
                 error.Append(" Theme does not exist");
             }
 
-            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate < request.FinishDate))
+            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate > request.FinishDate))
             {
                 error.Append($" StartDate must be less then FinisDate");
             }
