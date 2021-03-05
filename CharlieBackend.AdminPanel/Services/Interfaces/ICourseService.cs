@@ -9,7 +9,7 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
     {
         Task<IList<CourseViewModel>> GetAllCoursesAsync();
 
-        Task<CourseDto> DisableCourseAsync(long id);
+        Task<bool> DisableCourseAsync(long id);
 
         Task UpdateCourse(long id, UpdateCourseDto UpdateDto);
     }
