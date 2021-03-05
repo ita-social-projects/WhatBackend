@@ -20,10 +20,10 @@ namespace CharlieBackend.AdminPanel.Services
             _mapper = mapper;
         }
 
-        public async Task<CourseDto> DisableCourseAsync(long id)
+        public async Task<bool> DisableCourseAsync(long id)
         {
             return await
-                _apiUtil.DeleteAsync<CourseDto>($"api/courses/{id}");
+                _apiUtil.DeleteAsync<bool>($"api/courses/{id}");
         }
 
         public async Task UpdateCourse(long id, UpdateCourseDto UpdateDto)
