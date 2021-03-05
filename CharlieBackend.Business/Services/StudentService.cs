@@ -91,9 +91,9 @@ namespace CharlieBackend.Business.Services
             return Result<IList<StudentDetailsDto>>.GetSuccess(students);
         }
 
-        private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> secretaries)
+        private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> students)
         {
-            var detailsDtos = await secretaries
+            var detailsDtos = await students
                 .ToAsyncEnumerable()
                 .Select(async m =>
                 {
