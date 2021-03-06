@@ -47,11 +47,17 @@ namespace CharlieBackend.Business.Services
 
             _unitOfWork.EventOccurrenceRepository.Add(result);
 
-            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
-
             await _unitOfWork.CommitAsync();
 
+            await AddEventsAsync(result, createScheduleRequest);
+
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(result));
+        }
+
+        private async Task AddEventsAsync(EventOccurrence result, CreateScheduleDto createScheduleRequest)
+        {
+            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)

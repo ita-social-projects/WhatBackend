@@ -16,6 +16,8 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<bool> IsCourseNameTakenAsync(string courseName);
 
         Task<Result<bool>> DisableCourceAsync(long id);
+
+        Task<Result<bool>> EnableCourceAsync(long id);
     }
 
 }

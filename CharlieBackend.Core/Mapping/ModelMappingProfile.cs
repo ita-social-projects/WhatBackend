@@ -3,6 +3,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
@@ -179,6 +180,19 @@ namespace CharlieBackend.Core.Mapping
                                                          opt => opt.MapFrom(src => src.AttachmentsOfHomework.Select(y => y.AttachmentId)
                                                                                                             .ToList()));
             CreateMap<HomeworkDto, Homework>();
+
+            #endregion
+
+            #region HomeworkStudent mapping
+
+            CreateMap<HomeworkStudent, HomeworkStudentDto>()
+                .ForMember(hom => hom.StudentName,
+                        opt => opt.MapFrom(src => $"{ src.Student.Account.LastName}  {src.Student.Account.FirstName}"
+                ))
+                .ForMember(dest => dest.AttachmentIds,
+                        opt => opt.MapFrom(src => src.AttachmentOfHomeworkStudents
+                                .Select(y => y.AttachmentId).ToList()));  
+            CreateMap<HomeworkStudentDto, HomeworkStudent>();
 
             #endregion
         }
