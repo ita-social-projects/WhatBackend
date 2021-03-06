@@ -29,10 +29,9 @@ namespace CharlieBackend.AdminPanel.Services
                 _apiUtil.CreateAsync<MentorDto>($"api/mentors/{id}", null);
         }
 
-        public async Task<MentorDto> DisableMentorAsync(long id)
+        public async Task<bool> DisableMentorAsync(long id)
         {
-            return await 
-                _apiUtil.DeleteAsync<MentorDto>($"api/mentors/{id}");
+            return await _apiUtil.DeleteAsync<bool>($"api/mentors/{id}");
         }
 
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
