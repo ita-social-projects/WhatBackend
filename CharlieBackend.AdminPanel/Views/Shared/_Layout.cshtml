@@ -51,7 +51,7 @@
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" asp-action="AllStudents" asp-controller="Students">
-                    <i class="far fa-address-book"></i>
+                    <i class="fas fa-users"></i>
                     <span>Students</span>
                 </a>
 
@@ -61,13 +61,18 @@
                 </a>
 
                 <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
-                    <i class="far fa-address-book"></i>
+                    <i class="fas fa-address-book"></i>
                     <span>Students groups</span>
                 </a>
 
                 <a class="nav-link collapsed" asp-action="AllThemes" asp-controller="Themes">
-                    <i class="far fa-address-book"></i>
+                    <i class="fas fa-book-open"></i>
                     <span>Themes</span>
+                </a>
+
+                <a class="nav-link collapsed" asp-action="AllCourses" asp-controller="Courses">
+                    <i class="fab fa-cuttlefish"></i>
+                    <span>Courses</span>
                 </a>
 
             </li>
@@ -82,7 +87,6 @@
 
         </ul>
         <!-- End of Sidebar -->
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
@@ -140,7 +144,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Admin Panel WHAT Backend 2020</span>
+                        <span>Admin Panel WHAT Backend 2021</span>
                     </div>
                 </div>
             </footer>
@@ -151,8 +155,6 @@
 
     </div>
     <!-- End of Page Wrapper -->
-    
-
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -177,12 +179,12 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-   <!-- Page level plugins -->
-   <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-   <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 
-   <!-- Page level custom scripts -->
-   <script src="~/js/demo/datatables-demo.js"></script>
+    <!-- Page level custom scripts -->
+    <script src="~/js/demo/datatables-demo.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="~/js/sb-admin-2.min.js"></script>
