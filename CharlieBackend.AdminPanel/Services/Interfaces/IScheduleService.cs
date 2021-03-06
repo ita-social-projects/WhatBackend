@@ -12,7 +12,5 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
         Task<IList<ScheduledEventDTO>> GetEventsFiltered(ScheduledEventFilterRequestDTO request);
 
         Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences();
-
-        Task<CalendarViewModel> GetCalendarViewModel();
     }
 }
