@@ -27,5 +27,7 @@ namespace CharlieBackend.AdminPanel.Models.Calendar
         public IList<EventOccurenceViewModel> EventOccurences { get; set; }
 
         public IList<ScheduledEventDTO> ScheduledEvents { get; set; }
+
+        public ScheduledEventFilterRequestDTO ScheduledEventFilter { get; set; }
     }
 }

@@ -8,6 +8,7 @@
 
     .events button {
         margin-top: 2px;
+        width: 100%;
     }
 
     .badge {
@@ -28,61 +29,64 @@
                     <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
                 </div>
                 <div class="card-header py-3">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary" type="button">Update</button>
+                    <form method="post" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@ViewBag.Mentor.Id">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="submit">Update</button>
+                            </div>
+                            <select class="custom-select" id="groupSelect" aria-label="Example select with button addon">
+                                <option selected>Group</option>
+                                @foreach (var group in Model.StudentGroups)
+                                {
+                                    <option value="@group.Id">@group.FinishDate.ToString()</option>
+                                }
+                            </select>
+                            <select class="custom-select" id="themeSelect" aria-label="Example select with button addon">
+                                <option selected>Theme</option>
+                                @foreach (var theme in Model.Themes)
+                                {
+                                    <option value="@theme.Id">@theme.Name</option>
+                                }
+                            </select>
+                            <select class="custom-select" id="courseSelect" aria-label="Example select with button addon">
+                                <option selected>Course</option>
+                                @foreach (var course in Model.Courses)
+                                {
+                                    <option value="@course.Id">@course.Name</option>
+                                }
+                            </select>
+                            <select class="custom-select" id="mentorSelect" aria-label="Example select with button addon">
+                                <option selected>Mentor</option>
+                                @foreach (var mentor in Model.Mentors)
+                                {
+                                    <option value="@mentor.Id">@(mentor.FirstName+" "+mentor.LastName)</option>
+                                }
+                            </select>
+                            <select class="custom-select" id="accountSelect" aria-label="Example select with button addon">
+                                <option selected>Account</option>
+                                @foreach (var student in Model.Students)
+                                {
+                                    <option value="@student.Id">@(student.FirstName+" "+ student.LastName)</option>
+                                }
+                            </select>
+                            <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                                <option selected>Occurrence</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
                         </div>
-                        <select class="custom-select" id="groupSelect" aria-label="Example select with button addon">
-                            <option selected>Group</option>
-                            @foreach (var group in Model.StudentGroups)
-                            {
-                                <option value="@group.Id">@group.FinishDate.ToString()</option>
-                            }
-                        </select>
-                        <select class="custom-select" id="themeSelect" aria-label="Example select with button addon">
-                            <option selected>Theme</option>
-                            @foreach (var theme in Model.Themes)
-                            {
-                                <option value="@theme.Id">@theme.Name</option>
-                            }
-                        </select>
-                        <select class="custom-select" id="courseSelect" aria-label="Example select with button addon">
-                            <option selected>Course</option>
-                            @foreach (var course in Model.Courses)
-                            {
-                                <option value="@course.Id">@course.Name</option>
-                            }
-                        </select>
-                        <select class="custom-select" id="mentorSelect" aria-label="Example select with button addon">
-                            <option selected>Mentor</option>
-                            @foreach (var mentor in Model.Mentors)
-                            {
-                                <option value="@mentor.Id">@(mentor.FirstName+" "+mentor.LastName)</option>
-                            }
-                        </select>
-                        <select class="custom-select" id="accountSelect" aria-label="Example select with button addon">
-                            <option selected>Account</option>
-                            @foreach (var student in Model.Students)
-                            {
-                                <option value="@student.Id">@(student.FirstName+" "+ student.LastName)</option>
-                            }
-                        </select>
-                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
-                            <option selected>Occurrence</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="startDate">
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="startDate">
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="finishDate">
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="finishDate">
-                        </div>
-                    </div>
+                    </form>
                 </div>
+                
                 <div class="card-body">
                     <div class="row head">
                         <div class="col-1">Sunday</div>
