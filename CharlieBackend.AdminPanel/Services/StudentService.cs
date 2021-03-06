@@ -65,11 +65,9 @@ namespace CharlieBackend.AdminPanel.Services
             return addedStudentTask;
         }
 
-        public async Task<StudentDto> DisableStudentAsync(long id)
+        public async Task<bool> DisableStudentAsync(long id)
         {
-            var disabledStudent = await _apiUtil.DeleteAsync<StudentDto>($"api/students/{id}");
-
-            return disabledStudent;
+            return await _apiUtil.DeleteAsync<bool>($"api/students/{id}");
         }
     }
 
