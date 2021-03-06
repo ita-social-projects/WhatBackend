@@ -1,0 +1,172 @@
+﻿@model CharlieBackend.AdminPanel.Models.Calendar.CalendarViewModel
+@{
+    Layout = "_Layout";
+}
+<style type="text/css">
+    #calendar {
+    }
+
+    .events button {
+        margin-top: 2px;
+    }
+
+    .badge {
+        display: block;
+        width: fit-content;
+        margin-bottom: 2px;
+    }
+
+    div.head div {
+        text-align: center;
+    }
+</style>
+<div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
+                </div>
+                <div class="card-header py-3">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button">Update</button>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                            <option selected>Group</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                            <option selected>Theme</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <select class="custom-select" id="courseSelect" aria-label="Example select with button addon">
+                            <option selected>Course</option>
+                            @foreach(var course in Model.Courses)
+                            {
+
+                            }
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                            <option selected>Mentor</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                            <option selected>Account</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
+                            <option selected>Occurrence</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+                        </div>
+                        <div class="col-6">
+                            <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row head">
+                        <div class="col-1">Sunday</div>
+                        <div class="col-2">Monday</div>
+                        <div class="col-2">Tuesday</div>
+                        <div class="col-2">Wednesday</div>
+                        <div class="col-2">Thursday</div>
+                        <div class="col-2">Friday</div>
+                        <div class="col-1">Saturday</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                            </div>
+                        </div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-dark">event2</button>
+                            </div>
+                        </div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                                <button type="button" class="btn btn-outline-dark">event1</button>
+                            </div>
+                        </div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-dark">event2</button>
+                            </div>
+                        </div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                        </div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="events">
+                                <button type="button" class="btn btn-outline-success">Success</button>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <span class="badge badge-info">9</span>
+                            <div class="">
+                                <button type="button" class="btn btn-outline-primary">event2</button>
+                            </div>
+                        </div>
+                        <div class="col-2"><span class="badge badge-info">9</span></div>
+                        <div class="col-1"><span class="badge badge-info">9</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
