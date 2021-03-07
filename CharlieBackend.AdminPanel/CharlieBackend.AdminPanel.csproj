@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CharlieBackend.Business\CharlieBackend.Business.csproj" />
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
   </ItemGroup>
 
