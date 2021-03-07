@@ -27,6 +27,8 @@ namespace CharlieBackend.Core.DTO.Schedule
         public PatternType Pattern { get; set; }   
 
         public IList<ScheduledEventDTO> Events { get; set; }
+
+        public long Storage { get; set; }
     }
 }
 
