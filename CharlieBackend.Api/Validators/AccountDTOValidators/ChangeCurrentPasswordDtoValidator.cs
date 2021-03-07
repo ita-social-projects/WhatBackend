@@ -9,9 +9,9 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public ChangeCurrentPasswordDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email cannot be empty")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.CurrentPassword)
                 .NotEmpty()
                 .MinimumLength(ValidationConstants.MinLength)
@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .MaximumLength(ValidationConstants.MaxLengthPassword)
                 .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
             RuleFor(x => x.ConfirmNewPassword)
-                .NotEmpty().WithMessage("{PropertyName} is required")
+                .NotEmpty()
                 .Equal(x => x.NewPassword).WithMessage(ValidationConstants.PasswordConfirmNotValid);
         }
     }

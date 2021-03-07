@@ -18,39 +18,30 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public async Task<List<AttachmentDto>> GetAttachmentList(long accountId, long? courseId, long? groupId, long? requestedStudentAccountId, 
-                                                                DateTime? startDate, DateTime? finishDate)
+        public async Task<List<Attachment>> GetAttachmentListFiltered(AttachmentRequestDto request)
         {
             return await _applicationContext.Attachments
-                    .WhereIf(_applicationContext.Accounts.Find(accountId) != default 
-                                    && _applicationContext.Accounts.Find(accountId).Role == UserRole.Mentor, x => _applicationContext.Mentors
-                        .FirstOrDefault(y => y.AccountId == accountId).MentorsOfStudentGroups
+                    .WhereIf(request.MentorID.HasValue, x => _applicationContext.Mentors
+                        .FirstOrDefault(y => y.Id == request.MentorID)
+                        .MentorsOfStudentGroups
                         .Select(f => f.StudentGroup)
                         .SelectMany(f => f.StudentsOfStudentGroups)
                         .Select(f => f.Student.AccountId)
                         .Contains(x.CreatedByAccountId))
-                    .WhereIf(courseId != default && courseId != 0, x => _applicationContext.StudentsOfStudentGroups
-                        .Where(y => y.StudentGroup.CourseId == courseId)
+                    .WhereIf(request.CourseID.HasValue, x => _applicationContext.StudentsOfStudentGroups
+                        .Where(y => y.StudentGroup.CourseId == request.CourseID)
                         .Select(z => z.Student.AccountId)
                         .Contains(x.CreatedByAccountId))
-                    .WhereIf(groupId != default && groupId != 0, x => _applicationContext.StudentsOfStudentGroups
-                        .Where(y => y.StudentGroupId == groupId)
+                    .WhereIf(request.GroupID.HasValue, x => _applicationContext.StudentsOfStudentGroups
+                        .Where(y => y.StudentGroupId == request.GroupID)
                         .Select(y => y.Student.AccountId)
                         .Contains(x.CreatedByAccountId))
-                    .WhereIf(requestedStudentAccountId != default && requestedStudentAccountId != 0, x => _applicationContext.Students
-                        .Where(y => y.AccountId == requestedStudentAccountId)
+                    .WhereIf(request.StudentAccountID.HasValue, x => _applicationContext.Students
+                        .Where(y => y.Id == request.StudentAccountID)
                         .Select(y => y.AccountId)
                         .Contains(x.CreatedByAccountId))
-                    .WhereIf(startDate != default, x => x.CreatedOn >= startDate)
-                    .WhereIf(finishDate != default, x => x.CreatedOn <= finishDate)
-                    .Select(x => new AttachmentDto
-                    {
-                        Id = x.Id,
-                        CreatedOn = x.CreatedOn,
-                        CreatedByAccountId = x.CreatedByAccountId,
-                        ContainerName = x.ContainerName,
-                        FileName = x.FileName
-                    })
+                    .WhereIf(request.StartDate.HasValue, x => x.CreatedOn >= request.StartDate)
+                    .WhereIf(request.FinishDate.HasValue, x => x.CreatedOn <= request.FinishDate)
                     .ToListAsync(); 
         }
 

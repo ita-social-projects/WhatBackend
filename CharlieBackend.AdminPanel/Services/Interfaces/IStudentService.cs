@@ -17,6 +17,6 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 
         Task<StudentDto> AddStudentAsync(long id);
 
-        Task<StudentDto> DisableStudentAsync(long id);
+        Task<bool> DisableStudentAsync(long id);
     }
 }

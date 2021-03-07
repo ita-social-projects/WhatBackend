@@ -9,16 +9,16 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public ResetPasswordDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.NewPassword)
                .NotEmpty()
                .MinimumLength(ValidationConstants.MinLength)
                .MaximumLength(ValidationConstants.MaxLengthPassword)
                .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
             RuleFor(x => x.ConfirmNewPassword)
-                .NotEmpty().WithMessage("{PropertyName} is required")
+                .NotEmpty()
                 .Equal(x => x.NewPassword).WithMessage(ValidationConstants.PasswordConfirmNotValid);
         }
     }

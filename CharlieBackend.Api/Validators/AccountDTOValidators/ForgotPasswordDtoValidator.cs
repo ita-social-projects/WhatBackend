@@ -10,12 +10,12 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public ForgotPasswordDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greater than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.FormUrl)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(ValidationConstants.MaxLengthURL).WithMessage("Url cannot be greater than {MaxLength} symbols")
+                .NotEmpty()
+                .MaximumLength(ValidationConstants.MaxLengthURL)
                 .Must(BeValidURL);
         }
 

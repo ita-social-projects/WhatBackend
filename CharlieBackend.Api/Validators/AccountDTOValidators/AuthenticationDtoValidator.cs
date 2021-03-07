@@ -9,9 +9,9 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public AuthenticationDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email cannot be empty")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(ValidationConstants.MaxLengthEmail).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .MinimumLength(ValidationConstants.MinLength)

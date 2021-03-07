@@ -17,6 +17,6 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 
         Task<MentorDto> AddMentorAsync(long id);
 
-        Task<MentorDto> DisableMentorAsync(long id);
+        Task<bool> DisableMentorAsync(long id);
     }
 }
