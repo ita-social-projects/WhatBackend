@@ -28,10 +28,12 @@ namespace CharlieBackend.Api.UnitTest
         private static long visitStudentIdPresenceTrue = 11;
         private static long visitStudentIdPresenceFalse = 14;
         private static long mentorId = 2;
+        private static long studentId = 1;
         private static long mentorWrongId = 31;
         private static long studentGroupId = 3;
+        private static long studentGroupWr = 100;
         private static string themeName = "ExampleName";
-        private static DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z");
+        private static DateTime lessonDate = DateTime.Parse("2020-11-18T15:00:00.384Z"); 
 
         public LessonServiceTests()
         {
@@ -112,6 +114,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _currentUserServiceMock = GetCurrentUserAsExistingStudent();
         }
+
         [Fact]
         public async Task CreateLesson_ValidDataPassed_ShouldBeNotNull()
         {
@@ -221,7 +224,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Mentor mentor = new Mentor() { Id = mentorId };
 
-            StudentGroup studentGroupWrong = new StudentGroup() { Id = 100 };
+            StudentGroup studentGroupWrong = new StudentGroup() { Id = studentGroupWr };
 
             List<VisitDto> visitDtoWithoutStudent = new List<VisitDto>
             {
@@ -274,7 +277,7 @@ namespace CharlieBackend.Api.UnitTest
 
                 new VisitDto()
                 {
-                    StudentId = 1,
+                    StudentId = studentId,
                     Presence = false
                 },
             };
@@ -294,7 +297,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentor.Id)).ReturnsAsync(mentor);
 
             var studentGroupRepositoryMockWrong = new Mock<IStudentGroupRepository>();
-            studentGroupRepositoryMockWrong.Setup(x => x.GetGroupStudentsIds(createLessonDtoWrongLessonVisitsStudent.StudentGroupId)).ReturnsAsync(new List<long?> { 11 });
+            studentGroupRepositoryMockWrong.Setup(x => x.GetGroupStudentsIds(createLessonDtoWrongLessonVisitsStudent.StudentGroupId)).ReturnsAsync(new List<long?> { studentGroupId });
 
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
@@ -314,7 +317,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            Mentor mentor = new Mentor() { Id = 2 };
+            Mentor mentor = new Mentor() { Id = mentorId };
 
             List<VisitDto> visitsDtoEmpty = new List<VisitDto>() { };
 
