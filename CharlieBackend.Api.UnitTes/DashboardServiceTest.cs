@@ -41,6 +41,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
+            long expectedCourseId = 2;
+            long expectedStudentGroupId = 1;
+            long expectedStudentId = 5;
+            long expectedLessonId = 2;
+
+            var existentGroupIds = new List<long> { 2 };
+
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
             {
                 CourseId = 1,
@@ -58,10 +65,10 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentMarkDto
                         {
-                            CourseId = 2,
-                            StudentGroupId = 1,
-                            StudentId = 5,
-                            LessonId = 2,
+                            CourseId = expectedCourseId,
+                            StudentGroupId = expectedStudentGroupId,
+                            StudentId = expectedStudentId,
+                            LessonId = expectedLessonId,
                             LessonDate = new DateTime(2015,4,12),
                             StudentMark = 5
                         }
@@ -71,10 +78,10 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentVisitDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
+                        LessonId = expectedLessonId,
                         LessonDate = new DateTime(2015,4,12),
                         Presence = true
                     }
@@ -89,14 +96,14 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 studentclassbookRequestWithData.CourseId.Value,
                 studentclassbookRequestWithData.StartDate,
-                studentclassbookRequestWithData.FinishDate)).ReturnsAsync(new List<long>() { 2 });
+                studentclassbookRequestWithData.FinishDate)).ReturnsAsync(existentGroupIds);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsMarksListByGroupIdsAndDate(
-                new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
+                existentGroupIds, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
                 .ReturnsAsync(expectedStudentsMarks);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsPresenceListByGroupIdsAndDate(
-               new List<long> { 2 }, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
+               existentGroupIds, studentclassbookRequestWithData.StartDate, studentclassbookRequestWithData.FinishDate))
                .ReturnsAsync(expectedStudentsVisits);
 
             //Act
@@ -194,6 +201,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentsResult_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
+            long expectedCourseId = 2;
+            long expectedStudentGroupId = 1;
+            long expectedStudentId = 5;
+
+            var existentStudentIds = new List<long>() { 6, 7, 8, 9, 10 };
+            var existentGroupIds = new List<long>() { 2 };
+
             var studentResultRequestWithData = new StudentsRequestDto<StudentResultType>()
             {
                 CourseId = 3,
@@ -210,9 +224,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentMarkDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 2,
-                        StudentId = 6,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
                         StudentAverageMark = (decimal)5.1
                     }
             };
@@ -221,9 +235,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentVisitsDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 2,
-                        StudentId = 6,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
                         StudentAverageVisitsPercentage = 15
                     }
             };
@@ -239,17 +253,17 @@ namespace CharlieBackend.Api.UnitTest
                 (long)studentResultRequestWithData.CourseId,
                 studentResultRequestWithData.StartDate,
                 studentResultRequestWithData.FinishDate))
-                .ReturnsAsync(new List<long>() { 2 });
+                .ReturnsAsync(existentGroupIds);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(new List<long>() { 2 }))
-                .ReturnsAsync(new List<long>() { 6, 7, 8, 9, 10 });
+            _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(existentGroupIds))
+                .ReturnsAsync(existentStudentIds);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
-              new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
+              existentStudentIds, existentGroupIds))
                .ReturnsAsync(expectedStudentsMarks);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(
-                 new List<long>() { 6, 7, 8, 9, 10 }, new List<long>() { 2 }))
+                 existentStudentIds, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentVisits);
 
             //Act
@@ -354,6 +368,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentClassbook_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
+            long expectedCourseId = 2;
+            long expectedStudentGroupId = 1;
+            long expectedStudentId = 5;
+            long expectedLessonId = 2;
+
+            var existentGroupIds = new List<long>() { 1 };
+
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
                 StartDate = new DateTime(2011, 1, 1),
@@ -369,10 +390,10 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentMarkDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
+                        LessonId = expectedLessonId,
                         LessonDate = new DateTime(2015,4,12),
                         StudentMark = 5
                     }
@@ -382,10 +403,10 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentVisitDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
-                        LessonId = 2,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
+                        LessonId = expectedLessonId,
                         LessonDate = new DateTime(2015,4,12),
                         Presence = true
                     }
@@ -399,14 +420,14 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
                 studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
+                .ReturnsAsync(existentGroupIds);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentMarksListByStudentIds(
-                studentIdWithGroup, new List<long> { 1 }))
+                studentIdWithGroup, existentGroupIds))
                 .ReturnsAsync(expectedStudentMarks);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentPresenceListByStudentIds(
-                studentIdWithGroup, new List<long>() { 1 }))
+                studentIdWithGroup, existentGroupIds))
                 .ReturnsAsync(expectedStudentVisits);
 
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
@@ -534,6 +555,12 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentResult_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
+            long expectedCourseId = 1;
+            long expectedStudentGroupId = 1;
+            long expectedStudentId = 6;
+
+            var existentGroupIds = new List<long>() { 1 };
+
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
                 StartDate = new DateTime(2011, 1, 1),
@@ -549,9 +576,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentMarkDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
                         StudentAverageMark = (decimal)5.1
                     }
             };
@@ -560,9 +587,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                  new AverageStudentVisitsDto()
                     {
-                        CourseId = 2,
-                        StudentGroupId = 1,
-                        StudentId = 5,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
+                        StudentId = expectedStudentId,
                         StudentAverageVisitsPercentage = 15
                     }
             };
@@ -575,14 +602,14 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByStudentIdAndPeriodAsync(
                 studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
+                .ReturnsAsync(existentGroupIds);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
-                new List<long> { studentIdWithGroup }, new List<long> { 1 }))
+                new List<long> { studentIdWithGroup }, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentMark);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(
-                studentIdWithGroup, new List<long> { 1 }))
+                studentIdWithGroup, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentVisits);
 
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
@@ -709,6 +736,11 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentGroupResult_ValidDataPassed_ShouldReturnCurrentStudentsAverageGroupMark()
         {
             //Arrange
+            long expectedCourseId = 1;
+            long expectedStudentGroupId = 1;
+
+            var existentGroupIds = new List<long>() { 1 };
+
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
                 StartDate = new DateTime(2011, 1, 1),
@@ -724,8 +756,8 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentGroupMarkDto()
                     {
-                        CourseId = 1,
-                        StudentGroupId = 1,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
                         AverageMark = (decimal)4.5
                     }
             };
@@ -734,8 +766,8 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentGroupVisitDto()
                     {
-                        CourseId = 1,
-                        StudentGroupId = 1,
+                        CourseId = expectedCourseId,
+                        StudentGroupId = expectedStudentGroupId,
                         AverageVisitPercentage = 15
                     }
             };
@@ -748,12 +780,12 @@ namespace CharlieBackend.Api.UnitTest
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
                 courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
-                .ReturnsAsync(new List<long> { 1 });
+                .ReturnsAsync(existentGroupIds);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(new List<long> { 1 }))
+            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentGroupMark);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(new List<long> { 1 }))
+            _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageVisits(existentGroupIds))
                 .ReturnsAsync(expectedAverageGroupVisits);
 
             //Act
