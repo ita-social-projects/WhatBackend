@@ -14,6 +14,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id);
 
+        public Task<Result<IList<EventOccurrenceDTO>>> GetEventOccurrencesAsync();
+
         public Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEvendID, UpdateScheduledEventDto scheduleModel);
 
         public Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request);
