@@ -29,59 +29,60 @@
                     <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
                 </div>
                 <div class="card-header py-3">
-                    <form method="post" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@ViewBag.Mentor.Id">
+                    <form method="post" action="/Calendar/GetCalendar">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="submit">Update</button>
                             </div>
-                            <select class="custom-select" id="groupSelect" aria-label="Example select with button addon">
-                                <option selected>-Group-</option>
+                            <select class="custom-select" name="GroupID" id="groupSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Group-</option>
                                 @foreach (var group in Model.StudentGroups)
                                 {
                                     <option value="@group.Id">Group @group.FinishDate.ToString()</option>
                                 }
                             </select>
-                            <select class="custom-select" id="themeSelect" aria-label="Example select with button addon">
-                                <option selected>-Theme-</option>
+                            <select class="custom-select" name="ThemeID" id="themeSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Theme-</option>
                                 @foreach (var theme in Model.Themes)
                                 {
                                     <option value="@theme.Id">Theme @theme.Name</option>
                                 }
                             </select>
-                            <select class="custom-select" id="courseSelect" aria-label="Example select with button addon">
-                                <option selected>-Course-</option>
+                            <select class="custom-select" name="CourseID" id="courseSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Course-</option>
                                 @foreach (var course in Model.Courses)
                                 {
                                     <option value="@course.Id">Course @course.Name</option>
                                 }
                             </select>
-                            <select class="custom-select" id="mentorSelect" aria-label="Example select with button addon">
-                                <option selected>-Mentor-</option>
+                            <select class="custom-select" name="MentorID" id="mentorSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Mentor-</option>
                                 @foreach (var mentor in Model.Mentors)
                                 {
                                     <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+mentor.LastName)</option>
                                 }
                             </select>
-                            <select class="custom-select" id="accountSelect" aria-label="Example select with button addon">
-                                <option selected>-Account-</option>
+                            <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Account-</option>
                                 @foreach (var student in Model.Students)
                                 {
                                     <option value="@student.Id">Account @(student.FirstName+" "+ student.LastName)</option>
                                 }
                             </select>
-                            <select class="custom-select" id="occurenceSelect" aria-label="Example select with button addon">
-                                <option selected>-Occurrence-</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                            <select class="custom-select" name="EventOccurrenceID" id="occurenceSelect" aria-label="Example select with button addon">
+                                <option value="null" selected>-Occurrence-</option>
+                                @foreach (var occurence in Model.EventOccurences)
+                                {
+                                    <option value="@occurence.Id">Account @(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
+                                }
                             </select>
                         </div>
                         <div class="form-group row">
                             <div class="col-6">
-                                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="startDate">
+                                <input class="form-control" name="StartDate" type="datetime-local" value="null" id="startDate">
                             </div>
                             <div class="col-6">
-                                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="finishDate">
+                                <input class="form-control" name="FinishDate" type="datetime-local" value="null" id="finishDate">
                             </div>
                         </div>
                     </form>
