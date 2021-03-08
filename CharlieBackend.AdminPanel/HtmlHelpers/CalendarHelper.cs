@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.AdminPanel.Models.Calendar;
 using CharlieBackend.AdminPanel.Models.EventOccurence;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -14,40 +15,12 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 {
     public static class CalendarHelper
     {
-        public static TagBuilder CreateTagWithValueAndText(string tagName, string value, string text)
-        {
-            TagBuilder tag = new TagBuilder(tagName);
-            tag.Attributes.Add("value", value);
-            tag.InnerHtml.Append(text);
-
-            return tag;
-        }
-
-        public static HtmlString GroupSelect(this IHtmlHelper html, CalendarViewModel calendar)
-        {
-            TagBuilder select = new TagBuilder("select");
-            select.Attributes.Add("class", "custom-select");
-
-            if (calendar.ScheduledEventFilter.GroupID.HasValue)
-                foreach (var group in calendar.StudentGroups)
-                {
-
-                    var tag = CreateTagWithValueAndText("option", group.Id.ToString(), group.FinishDate.ToString());
-
-                    select.InnerHtml.AppendHtml(tag);
-                }
-
-            var writer = new System.IO.StringWriter();
-            select.WriteTo(writer, HtmlEncoder.Default);
-
-            return new HtmlString(writer.ToString());
-        }
 
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
         {
             DateTime start, finish;
 
-            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.Id));
+            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
 
             if (calendar.ScheduledEventFilter.FinishDate.HasValue)
             {
@@ -77,21 +50,27 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             double rowCount = daysCount / 7;
 
+            
+
             if (rowCount - (int)rowCount != 0)
                 rowCount = (int)rowCount + 1;
+
+            if(finish.DayOfWeek!=DayOfWeek.Saturday)
+                daysCount += 7-(int)finish.DayOfWeek;
 
             List<TagBuilder> dayContainers = new List<TagBuilder>();
 
             for (int day = 0; day < daysCount; day++)
             {
-                dayContainers.Add(GetDayContainerHtml(day, start, calendar.ScheduledEvents, eventOccurencesFiltered));
+                dayContainers.Add(GetDayContainerHtml(start.AddDays(day), calendar.ScheduledEvents));
             }
 
             int startDay = (int)start.DayOfWeek;
 
-            for (int i = 1; i <+ startDay; i++)
+            if(start.DayOfWeek!=DayOfWeek.Sunday)
+            for (int i = 1; i <= startDay; i++)
             {
-                dayContainers = dayContainers.Prepend(GetDayContainerHtml(-i, start)).ToList();
+                dayContainers = dayContainers.Prepend(GetDayContainerHtml(start.AddDays(-i))).ToList();
             }
 
             List<TagBuilder> rowContainers = new List<TagBuilder>();
@@ -130,48 +109,46 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             return rowBlock;
         }
 
-        public static TagBuilder GetDayContainerHtml(int day, DateTime start)
+        public static TagBuilder GetDayContainerHtml(DateTime date)
         {
-            start = start.AddDays(day);
-
-            int monthDay = start.Day;
-
-            return GetDateContainerHtml(start, null);
+            return GetDateContainerHtml(date);
         }
 
-        public static TagBuilder GetDayContainerHtml(int day, DateTime start, IEnumerable<ScheduledEventDTO> events, IEnumerable<EventOccurenceViewModel> occurences)
+        public static TagBuilder GetDayContainerHtml(
+            DateTime current, 
+            IList<CalendarScheduledEventViewModel> events = null)
         {
-            start = start.AddDays(day);
+            if(events==null)
+                return GetDateContainerHtml(current);
 
-            int monthDay = start.Day;
+            try
+            {
+                var eventsFiltered = events.Where(x => x.EventFinish.Date >= current.Date && x.EventStart.Date<=current.Date).ToList();
 
-            var eventsFiltered = events.Where(x => {
-
-                var storage = GetFullDataFromStorage(occurences.First(y=>y.Id==x.EventOccuranceId).Storage);
-
-                return storage.Dates.Contains(day);
-
-            });
-
-            return GetDateContainerHtml(start, eventsFiltered);
+                return GetDateContainerHtml(current, eventsFiltered);
+            }
+            catch
+            {
+                return GetDateContainerHtml(current);
+            }
         }
 
-        public static TagBuilder GetDateContainerHtml(DateTime day, IEnumerable<ScheduledEventDTO> events)
+        public static TagBuilder GetDateContainerHtml(DateTime day, IEnumerable<CalendarScheduledEventViewModel> events = null)
         {
             string btnClass = string.Empty;
             string rowClass = day.DayOfWeek == DayOfWeek.Sunday ||
                 day.DayOfWeek == DayOfWeek.Saturday ?
                 "col-1" : "col-2";
 
-            if (day == DateTime.Now)
+            if (day.Date == DateTime.Now.Date)
             {
                 btnClass = "btn btn-outline-success";
             }
-            if (day > DateTime.Now)
+            if (day.Date > DateTime.Now.Date)
             {
                 btnClass = "btn btn-outline-primary";
             }
-            if (day < DateTime.Now)
+            if (day.Date < DateTime.Now.Date)
             {
                 btnClass = "btn btn-outline-dark";
             }
@@ -179,21 +156,31 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             TagBuilder div = new TagBuilder("div");
             div.AddCssClass(rowClass);
 
+            TagBuilder divEvents = new TagBuilder("div");
+            divEvents.AddCssClass("events");
+
             TagBuilder span = new TagBuilder("span");
             span.AddCssClass("badge badge-info");
             span.InnerHtml.Append(day.Day.ToString());
 
             div.InnerHtml.AppendHtml(span);
 
-            if(events!=null)
-            foreach (var e in events)
+            try
             {
-                TagBuilder button = new TagBuilder("button");
-                button.AddCssClass(btnClass);
-                button.Attributes.Add("type", "button");
-                button.InnerHtml.Append(e.Id.ToString());
-                div.InnerHtml.AppendHtml(button);
+                foreach (var e in events)
+                {
+                    TagBuilder button = new TagBuilder("button");
+                    button.AddCssClass(btnClass);
+                    button.Attributes.Add("type", "button");
+                    button.InnerHtml.Append(e.Id.ToString());
+                    divEvents.InnerHtml.AppendHtml(button);
+                }
             }
+            catch
+            {
+
+            }
+            div.InnerHtml.AppendHtml(divEvents);
 
             return div;
         }
