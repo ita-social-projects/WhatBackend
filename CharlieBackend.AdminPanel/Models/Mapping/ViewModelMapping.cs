@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
+using CharlieBackend.AdminPanel.Models.Calendar;
 using CharlieBackend.AdminPanel.Models.Course;
 using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Models.Students;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
-using System;
-using System.Collections.Generic;
+using CharlieBackend.Core.DTO.Theme;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Models.Mapping
 {
@@ -36,6 +37,16 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
             CreateMap<MentorViewModel, MentorViewModel>();
 
             CreateMap<CourseDto, CourseViewModel>();
+
+            #region Calendar ViewModels mappings
+            CreateMap<CourseDto, CalendarCourseViewModel>();
+            CreateMap<MentorDto, CalendarMentorViewModel>();
+            CreateMap<StudentGroupDto, CalendarStudentGroupViewModel>();
+            CreateMap<StudentDto, CalendarStudentViewModel>();
+            CreateMap<ThemeDto, CalendarThemeViewModel>();
+            CreateMap<EventOccurrenceDTO, CalendarEventOccurrenceViewModel>();
+            CreateMap<ScheduledEventDTO, CalendarScheduledEventViewModel>();
+            #endregion
         }
     }
 }
