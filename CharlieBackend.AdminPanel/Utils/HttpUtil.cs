@@ -21,6 +21,7 @@ namespace CharlieBackend.AdminPanel.Utils
                         IHttpContextAccessor httpContextAccessor,
                         IDataProtectionProvider provider)
         {
+
             _client = new HttpClient()
             {
                 BaseAddress = new Uri(config.Value.Urls.Api.Https)
