@@ -47,14 +47,16 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
         {
             DateTime start, finish;
 
+            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.Id));
+
             if (calendar.ScheduledEventFilter.FinishDate.HasValue)
             {
                 finish = calendar.ScheduledEventFilter.FinishDate.Value;
             }
             else
             {
-                DateTime latestFinish = calendar.EventOccurences.Max(x => x.EventFinish);
-                DateTime latestStart = calendar.EventOccurences.Max(x => x.EventStart);
+                DateTime latestFinish = eventOccurencesFiltered.Max(x => x.EventFinish);
+                DateTime latestStart = eventOccurencesFiltered.Max(x => x.EventStart);
 
                 finish = latestFinish > latestStart ? latestFinish : latestStart;
             }
@@ -65,8 +67,8 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             }
             else
             {
-                DateTime earliestFinish = calendar.EventOccurences.Min(x => x.EventFinish);
-                DateTime earliestStart = calendar.EventOccurences.Min(x => x.EventStart);
+                DateTime earliestFinish = eventOccurencesFiltered.Min(x => x.EventFinish);
+                DateTime earliestStart = eventOccurencesFiltered.Min(x => x.EventStart);
 
                 start = earliestFinish > earliestStart ? earliestStart : earliestFinish;
             }
@@ -82,7 +84,7 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             for (int day = 0; day < daysCount; day++)
             {
-                dayContainers.Add(GetDayContainerHtml(day, start, calendar.ScheduledEvents, calendar.EventOccurences));
+                dayContainers.Add(GetDayContainerHtml(day, start, calendar.ScheduledEvents, eventOccurencesFiltered));
             }
 
             int startDay = (int)start.DayOfWeek;
@@ -137,7 +139,7 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             return GetDateContainerHtml(start, null);
         }
 
-        public static TagBuilder GetDayContainerHtml(int day, DateTime start, IList<ScheduledEventDTO> events, IList<EventOccurenceViewModel> occurences)
+        public static TagBuilder GetDayContainerHtml(int day, DateTime start, IEnumerable<ScheduledEventDTO> events, IEnumerable<EventOccurenceViewModel> occurences)
         {
             start = start.AddDays(day);
 
