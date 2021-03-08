@@ -25,7 +25,6 @@ namespace CharlieBackend.Api.UnitTest
         protected virtual Mock<IUnitOfWork> GetUnitOfWorkMock()
         {
             var mock = new Mock<IUnitOfWork>();
-
             return mock;
         }
 

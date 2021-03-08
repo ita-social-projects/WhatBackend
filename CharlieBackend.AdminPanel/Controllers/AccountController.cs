@@ -18,20 +18,16 @@ namespace CharlieBackend.AdminPanel.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly ILogger<AccountController> _logger;
-
         private readonly IOptions<ApplicationSettings> _config;
 
         private readonly IApiUtil _apiUtil;
 
         private readonly IDataProtector _protector;
 
-        public AccountController(ILogger<AccountController> logger,
-                                 IOptions<ApplicationSettings> config, 
+        public AccountController(IOptions<ApplicationSettings> config, 
                                  IApiUtil apiUtil, 
                                  IDataProtectionProvider provider)
         {
-            _logger = logger;
             _apiUtil = apiUtil;
 
             _config = config;
@@ -48,9 +44,9 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
-            var httpResponseToken = await _apiUtil.SignInAsync($"{_config.Value.Urls.Api.Https}/api/accounts/auth", authDto);
+            var httpResponseToken = (await _apiUtil.SignInAsync($"api/accounts/auth", authDto)).Replace("Bearer ", "");
 
-            if(httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
+            if (httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -71,8 +67,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         private async Task<bool> AuthenticateAdmin(string token)
         {
             var handler = new JwtSecurityTokenHandler();
-
-            token = token.ToString().Replace("Bearer ", "");
 
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
