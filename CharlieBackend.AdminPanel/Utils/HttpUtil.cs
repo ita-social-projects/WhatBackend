@@ -21,9 +21,8 @@ namespace CharlieBackend.AdminPanel.Utils
                         IHttpContextAccessor httpContextAccessor,
                         IDataProtectionProvider provider)
         {
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-            _client = new HttpClient(handler)
+
+            _client = new HttpClient()
             {
                 BaseAddress = new Uri(config.Value.Urls.Api.Https)
             };
