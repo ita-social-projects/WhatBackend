@@ -90,5 +90,13 @@ namespace CharlieBackend.AdminPanel.Utils
             }
         }
 
+        public async Task<HttpResponseMessage> PatchAsync(string url)
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Patch, url);
+
+            var responseMessage = await _client.SendAsync(requestMessage);
+
+            return responseMessage;
+        }
     }
 }

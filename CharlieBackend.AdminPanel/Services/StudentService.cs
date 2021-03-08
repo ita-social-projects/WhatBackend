@@ -69,6 +69,11 @@ namespace CharlieBackend.AdminPanel.Services
         {
             return await _apiUtil.DeleteAsync<bool>($"api/students/{id}");
         }
+
+        public async Task<bool> EnableStudentAsync(long id)
+        {
+            return await _apiUtil.EnableAsync<bool>($"api/students/{id}");
+        }
     }
 
 }

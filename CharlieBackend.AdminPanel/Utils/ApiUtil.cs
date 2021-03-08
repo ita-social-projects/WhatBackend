@@ -90,6 +90,17 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
+        public async Task<T> EnableAsync<T>(string url)
+        {
+            var httpResponse = await _httpUtil.PatchAsync(url);
 
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+
+            return responseModel;
+        }
     }
 }
