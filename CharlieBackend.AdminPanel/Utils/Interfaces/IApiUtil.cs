@@ -14,5 +14,7 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
         public Task<T> PutAsync<T>(string url, T data);
 
         public Task<T> DeleteAsync<T>(string url);
+
+        public Task<T> EnableAsync<T>(string url);
     }
 }

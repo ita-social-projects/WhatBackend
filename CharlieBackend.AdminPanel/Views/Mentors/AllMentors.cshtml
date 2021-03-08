@@ -113,7 +113,10 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
-
+                                                        <a class="dropdown-item text-dark js-enable-Mentor" data-toggle="modal" data-target="#enableMentorModalWindow" data-item-id="@item.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Enable </span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -142,6 +145,25 @@
 
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-primary" id="confirmDisableMentor" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enable Mentor modal window-->
+    <div class="modal fade" id="enableMentorModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Enable Mentor?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmEnableMentor" href="">Confirm</a>
                 </div>
             </div>
         </div>
@@ -214,6 +236,26 @@
             disableMentorId = _self.data('item-id');
 
             $("#confirmDisableMentor").attr("href", routeForDisableMentor + disableMentorId);
+
+        });
+
+    </script>
+    
+    <script type="text/javascript">
+
+        var routeForEnableMentor = "/Mentors/EnableMentor/";
+
+        var enableMentorId = null;
+
+        $(document).on("click", ".js-enable-Mentor", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            enableMentorId = _self.data('item-id');
+
+            $("#confirmEnableMentor").attr("href", routeForEnableMentor + enableMentorId);
 
         });
 

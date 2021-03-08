@@ -16,5 +16,7 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
 
         Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
 
+        public Task<HttpResponseMessage> PatchAsync(string url);
+
     }
 }

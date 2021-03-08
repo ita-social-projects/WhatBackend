@@ -34,6 +34,11 @@ namespace CharlieBackend.AdminPanel.Services
             return await _apiUtil.DeleteAsync<bool>($"api/mentors/{id}");
         }
 
+        public async Task<bool> EnableMentorAsync(long id)
+        {
+            return await _apiUtil.EnableAsync<bool>($"api/mentors/{id}");
+        }
+
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
         {
             var allMentors = await 
