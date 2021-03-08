@@ -14,19 +14,19 @@ namespace CharlieBackend.AdminPanel.Models.Calendar
 {
     public class CalendarViewModel
     {
-        public IList<CourseViewModel> Courses { get; set; }
+        public IList<CalendarCourseViewModel> Courses { get; set; }
 
-        public IList<MentorViewModel> Mentors { get; set; }
+        public IList<CalendarMentorViewModel> Mentors { get; set; }
 
-        public IList<StudentGroupViewModel> StudentGroups { get; set; }
+        public IList<CalendarStudentGroupViewModel> StudentGroups { get; set; }
 
-        public IList<StudentViewModel> Students { get; set; }
+        public IList<CalendarStudentViewModel> Students { get; set; }
 
-        public IList<ThemeViewModel> Themes { get; set; }
+        public IList<CalendarThemeViewModel> Themes { get; set; }
 
-        public IList<EventOccurenceViewModel> EventOccurences { get; set; }
+        public IList<CalendarEventOccurrenceViewModel> EventOccurences { get; set; }
 
-        public IList<ScheduledEventDTO> ScheduledEvents { get; set; }
+        public IList<CalendarScheduledEventViewModel> ScheduledEvents { get; set; }
 
         public ScheduledEventFilterRequestDTO ScheduledEventFilter { get; set; }
     }

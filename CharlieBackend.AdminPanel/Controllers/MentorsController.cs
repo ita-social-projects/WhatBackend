@@ -58,5 +58,13 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             return RedirectToAction("AllMentors", "Mentors");
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> EnableMentor(long id)
+        {
+            await _mentorService.EnableMentorAsync(id);
+
+            return RedirectToAction("AllMentors", "Mentors");
+        }
     }
 }

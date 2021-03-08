@@ -21,6 +21,7 @@ namespace CharlieBackend.AdminPanel.Utils
                         IHttpContextAccessor httpContextAccessor,
                         IDataProtectionProvider provider)
         {
+
             _client = new HttpClient()
             {
                 BaseAddress = new Uri(config.Value.Urls.Api.Https)
@@ -88,6 +89,15 @@ namespace CharlieBackend.AdminPanel.Utils
 
                 throw new HttpStatusException(httpResponse.StatusCode, apiResponseMessage);
             }
+        }
+
+        public async Task<HttpResponseMessage> PatchAsync(string url)
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Patch, url);
+
+            var responseMessage = await _client.SendAsync(requestMessage);
+
+            return responseMessage;
         }
 
     }
