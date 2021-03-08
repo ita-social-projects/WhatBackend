@@ -125,7 +125,6 @@ namespace CharlieBackend.Business.Services
 
             if (eventEntity != null)
             {
-                var mappedEvent = _mapper.Map<ScheduledEventDTO>(eventEntity);
                 await _unitOfWork.ScheduledEventRepository.DeleteAsync(eventId);
                 await _unitOfWork.CommitAsync();
 
