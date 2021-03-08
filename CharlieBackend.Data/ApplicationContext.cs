@@ -1,6 +1,14 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Interfaces;
 using CharlieBackend.Data.Configurations;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CharlieBackend.Data
 {
@@ -69,6 +77,36 @@ namespace CharlieBackend.Data
                 .ApplyConfiguration(new StudentOfStudentGroupEntityConfiguration())
                 .ApplyConfiguration(new ThemeEntityConfiguration())
                 .ApplyConfiguration(new VisitEntityConfiguration());
+
+            modelBuilder.Entity<ScheduledEvent>().Property<bool>("IsDeleted");
+            modelBuilder.Entity<ScheduledEvent>().HasQueryFilter(m => EF.Property<bool>(m, "IsDeleted") == false);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var entries = ChangeTracker.Entries().Where(x => x.Entity is ISoftDeletingModel).ToList();
+
+            if (entries.Any())
+            {
+                UpdateSoftDeletingStatuses(entries);
+            }
+
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void UpdateSoftDeletingStatuses(List<EntityEntry> entities)
+        {
+            foreach(var entry in entities)
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.CurrentValues["IsDeleted"] = false;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.CurrentValues["IsDeleted"] = true;
+                        break;
+                }
         }
     }
 }

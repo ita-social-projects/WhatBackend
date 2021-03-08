@@ -226,6 +226,7 @@ CREATE TABLE `scheduled_event` (
   `lesson_id` bigint DEFAULT NULL,
   `event_start` datetime NOT NULL,
   `event_finish` datetime NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is_deleted has been set to false as a default value',
   PRIMARY KEY (`id`),
   KEY `fk_scheduled_events_event_occurence1_idx` (`event_occurence_id`),
   KEY `fk_scheduled_events_student_group1_idx` (`student_group_id`),

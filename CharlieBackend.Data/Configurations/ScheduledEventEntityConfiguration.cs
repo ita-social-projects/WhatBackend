@@ -50,6 +50,8 @@ namespace CharlieBackend.Data.Configurations
             entity.Property(x => x.EventStart).HasColumnName("event_start").HasColumnType("datetime");
 
             entity.Property(x => x.EventFinish).HasColumnName("event_finish").HasColumnType("datetime");
+
+            entity.Property(x => x.IsDeleted).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
         }
     }
 }

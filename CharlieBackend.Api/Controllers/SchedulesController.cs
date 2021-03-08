@@ -160,5 +160,22 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
+
+        /// <summary>
+        /// Deletes concrete schedule by id
+        /// </summary>
+        /// <remarks>
+        /// Removes one concrete scheduled event related to specified EventOccurrence
+        /// </remarks>
+        /// <response code = "200" > Successful delete of schedule</response>
+        /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpDelete("events/{scheduledEventID}")]
+        public async Task<ActionResult<bool>> DeleteConcreteSchedule(long scheduledEventID)
+        {
+            var foundSchedule = await _scheduleService.DeleteConcreteScheduleByIdAsync(scheduledEventID);
+
+            return foundSchedule.ToActionResult();
+        }
     }
 }

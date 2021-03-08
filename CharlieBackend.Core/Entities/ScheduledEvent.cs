@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CharlieBackend.Core.Interfaces;
 
 namespace CharlieBackend.Core.Entities
 {
-    public class ScheduledEvent : BaseEntity
+    public class ScheduledEvent : BaseEntity, ISoftDeletingModel
     {
         public long EventOccurrenceId { get; set; }
 
@@ -29,5 +30,7 @@ namespace CharlieBackend.Core.Entities
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

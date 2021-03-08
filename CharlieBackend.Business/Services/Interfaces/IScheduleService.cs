@@ -22,6 +22,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
 
+        public Task<Result<bool>> DeleteConcreteScheduleByIdAsync(long eventId);
+
         public Task<Result<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
     }
 }
