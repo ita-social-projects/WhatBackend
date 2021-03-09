@@ -131,6 +131,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId)
         {
+
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
 
             if (attachment == null)
@@ -139,9 +140,28 @@ namespace CharlieBackend.Business.Services
                      "Attachement with id: " + attachmentId + " is not found");
             }
 
-            await _blobService.DeleteAsync(attachment.ContainerName);
-
-            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+            switch (_currentUserService.Role)
+            {
+                case UserRole.Student:
+                    {
+                        if (attachment.CreatedByAccountId == _currentUserService.AccountId)
+                        {
+                            await _blobService.DeleteAsync(attachment.ContainerName);
+                            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+                            break;
+                        }
+                        else
+                        {
+                            return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "You cannot delete another student's data");
+                        }
+                    }
+                default:
+                    {
+                        await _blobService.DeleteAsync(attachment.ContainerName);
+                        await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+                        break;
+                    }
+            }
 
             await _unitOfWork.CommitAsync();
 
