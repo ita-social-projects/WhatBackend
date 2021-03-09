@@ -30,6 +30,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(account => account.Id == id);
         }
 
+        public Task<Account> GetAccountWithAvatarById(long id)
+        {
+            return _applicationContext.Accounts.Include(x=>x.Avatar)
+                .FirstOrDefaultAsync(account => account.Id == id);
+        }
+
         public Task<List<Account>> GetAllNotAssignedAsync()
         {
             return _applicationContext.Accounts

@@ -17,16 +17,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
-        private readonly IAttachmentService _attachmentService;
+        private readonly IBlobService _blobService;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
-                             IMapper mapper, INotificationService notification, IAttachmentService attachmentService)
+                             IMapper mapper, INotificationService notification, IBlobService blobService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
-            _attachmentService = attachmentService;
+            _blobService = blobService;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -88,17 +88,15 @@ namespace CharlieBackend.Business.Services
         {
             var detailsDtos = await mentors
                 .ToAsyncEnumerable()
-                .Select(async m => 
+                .Select(m => 
                 {
                     var detailsDto = _mapper.Map<MentorDetailsDto>(m);
-                    if (m.Account.AvatarId.HasValue)
-                    {
-                        var url = await _attachmentService.GetAttachmentUrl((long)m.Account.AvatarId);
-                        detailsDto.AvatarUrl = url.Data;
-                    }
+
+                    detailsDto.AvatarUrl = m.Account.Avatar != null ? _blobService.GetUrl(m.Account.Avatar) : null;
+
                     return detailsDto;
                 })
-                .Select(x => x.Result)
+                .Select(x => x)
                 .ToListAsync();
 
             return detailsDtos;

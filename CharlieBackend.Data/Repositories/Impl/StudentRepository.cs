@@ -18,14 +18,14 @@ namespace CharlieBackend.Data.Repositories.Impl
         public new Task<List<Student>> GetAllAsync()
         {
             return _applicationContext.Students
-                    .Include(student => student.Account)
+                    .Include(student => student.Account).ThenInclude(x => x.Avatar)
                     .ToListAsync();
         }
 
         public Task<List<Student>> GetAllActiveAsync()
         {
             return _applicationContext.Students
-                    .Include(student => student.Account)
+                    .Include(student => student.Account).ThenInclude(x => x.Avatar)
                     .Where(student => student.Account.IsActive == true)
                     .ToListAsync();
         }

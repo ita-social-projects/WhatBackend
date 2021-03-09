@@ -112,10 +112,10 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<string>> GetAvatarUrl()
         {
-            var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
+            var account = await _unitOfWork.AccountRepository.GetAccountWithAvatarById(_currentUserService.AccountId);
 
-            if (account.AvatarId.HasValue)
-                return await GetAttachmentUrl(account.AvatarId.Value);
+            if (account.Avatar != null)
+                return Result<string>.GetSuccess(_blobService.GetUrl(account.Avatar));
             else
                 return Result<string>.GetError(ErrorCode.Conflict, "Account doesn't have avatar.");
         }
@@ -124,9 +124,9 @@ namespace CharlieBackend.Business.Services
         {
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
 
-            var fileUrl = _blobService.GetUrl(attachment);
-
-            return Result<string>.GetSuccess(fileUrl);
+            return attachment == null ?
+                Result<string>.GetSuccess(_blobService.GetUrl(attachment)) :
+                Result<string>.GetError(ErrorCode.NotFound, "Attachment not found");
         }
 
         private async Task<Attachment> AddAttachmentFileAsync(IFormFile file, bool isPublic = false)
