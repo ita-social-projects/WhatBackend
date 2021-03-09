@@ -78,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("events/{scheduledEventID}")]
-        public async Task<ActionResult<bool>> GetConcreteScheduleByID(long scheduledEventID)
+        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long scheduledEventID)
         {
             var foundScheduleEvent = await _scheduleService.GetConcreteScheduleByIdAsync(scheduledEventID);
 
