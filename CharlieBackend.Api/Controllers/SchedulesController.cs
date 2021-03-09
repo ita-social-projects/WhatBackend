@@ -71,6 +71,21 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get concrete single schedule event by id
+        /// </summary>
+        /// <response code = "200" > Successful getting of schedule</response>
+        /// <response code="HTTP: 404, API: 3">Error, given schedule event not found</response>
+        [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("events/{scheduledEventID}")]
+        public async Task<ActionResult<bool>> GetConcreteScheduleByID(long scheduledEventID)
+        {
+            var foundScheduleEvent = await _scheduleService.GetConcreteScheduleByIdAsync(scheduledEventID);
+
+            return foundScheduleEvent.ToActionResult();
+        }
+
+        /// <summary>
         /// Returns the list of events depending on the filtering rules set
         /// </summary>
         /// <response code="200">Successful return event list</response>
