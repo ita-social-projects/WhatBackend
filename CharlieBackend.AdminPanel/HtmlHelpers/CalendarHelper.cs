@@ -80,7 +80,7 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
                 {
                     row.WriteTo(writer, HtmlEncoder.Default);
 
-                    result += "<hr>" + writer.ToString();
+                    result += writer.ToString();
                 }
             }
 
@@ -93,9 +93,16 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             TagBuilder rowBlock = new TagBuilder("div");
             rowBlock.AddCssClass("row");
 
-            for (int i = row * 7; i < len; i++)
+            try
             {
-                rowBlock.InnerHtml.AppendHtml(days[i]);
+                for (int i = row * 7; i < len; i++)
+                {
+                    rowBlock.InnerHtml.AppendHtml(days[i]);
+                }
+            }
+            catch
+            {
+
             }
 
             return rowBlock;

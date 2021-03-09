@@ -15,10 +15,18 @@
         display: block;
         width: fit-content;
         margin-bottom: 2px;
+        margin-top: 12px;
     }
 
     div.head div {
         text-align: center;
+    }
+    .col-1:first-child, .col-2 {
+        border-right: 0.5px solid;
+    }
+    .col-2, .col-1 {
+        border-bottom: 0.5px solid grey;
+        min-height: 100px;
     }
 </style>
 @section Scripts{
