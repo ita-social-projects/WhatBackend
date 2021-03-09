@@ -73,8 +73,8 @@ namespace CharlieBackend.Business.Services
 
             var everyValue = eventOccurrenceResult
                 .ScheduledEvents
-                .Where(x => startDate.HasValue && x.EventFinish <= startDate.Value)
-                .Where(x => finishDate.HasValue && x.EventStart >= finishDate.Value);
+                .Where(x => startDate.HasValue && x.EventFinish >= startDate.Value)
+                .Where(x => finishDate.HasValue && x.EventStart <= finishDate.Value);
 
             var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
 
