@@ -131,7 +131,6 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AttachmentDto>> DeleteAttachmentAsync(long attachmentId)
         {
-
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(attachmentId);
 
             if (attachment == null)
@@ -145,13 +144,12 @@ namespace CharlieBackend.Business.Services
             {
                 await _blobService.DeleteAsync(attachment.ContainerName);
                 await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+                await _unitOfWork.CommitAsync();
             }
             else
             {
                 return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "You cannot delete another user's data");
             }
-
-            await _unitOfWork.CommitAsync();
 
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
