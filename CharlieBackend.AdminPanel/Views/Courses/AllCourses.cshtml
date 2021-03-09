@@ -71,8 +71,12 @@
                                                         <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@item.Name" data-item-id="@item.Id.Value">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
-                                                        </a>
-                                                    </div>
+                                                            </a>
+                                                            <a class="dropdown-item text-dark js-enable-Course" data-toggle="modal" data-target="#enableCourseModalWindow" data-item-id="@item.Id.Value">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Enable </span>
+                                                            </a>
+                                                        </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -85,6 +89,7 @@
             </div>
         </div>
     </div>
+
     <!-- Disable Course modal window-->
     <div class="modal fade" id="disableCourseModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -102,6 +107,25 @@
             </div>
         </div>
     </div>
+
+    <!--Enable Course modal window-->
+    <div class="modal fade" id="enableCourseModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Enable Course?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmEnableCourse" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="editCourseModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -122,6 +146,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts{
     <script type="text/javascript">
         var isOnlyActiveCourses = false;
@@ -154,6 +179,7 @@
             }, true)
         });
     </script>
+
     <script type="text/javascript">
         var routeForDisableCourse = "/Courses/DisableCourse/";
         var disableCourseId = null;
@@ -164,6 +190,18 @@
             $("#confirmDisableCourse").attr("href", routeForDisableCourse + disableCourseId);
         });
     </script>
+
+    <script type="text/javascript">
+        var routeForEnableCourse = "/Courses/EnableCourse/";
+        var enableCourseId = null;
+        $(document).on("click", ".js-enable-Course", function (e) {
+            e.preventDefault();
+            var _self = $(this);
+            enableCourseId = _self.data('item-id');
+            $("#confirmEnableCourse").attr("href", routeForEnableCourse + enableCourseId);
+        });
+    </script>
+
     <script type="text/javascript">
         var routeForEditCourse = "/Courses/UpdateCourse/";
         var editCourseId = null;

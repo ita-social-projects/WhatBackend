@@ -25,6 +25,11 @@ namespace CharlieBackend.AdminPanel.Services
             return await _apiUtil.DeleteAsync<bool>($"api/courses/{id}");
         }
 
+        public async Task<bool> EnableCourseAsync(long id)
+        {
+            return await _apiUtil.EnableAsync<bool>($"api/courses/{id}");
+        }
+
         public async Task UpdateCourse(long id, UpdateCourseDto UpdateDto)
         {
             await
