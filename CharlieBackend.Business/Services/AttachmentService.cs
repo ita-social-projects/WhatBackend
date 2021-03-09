@@ -139,28 +139,16 @@ namespace CharlieBackend.Business.Services
                 return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
                      "Attachement with id: " + attachmentId + " is not found");
             }
+            var role = _currentUserService.Role;
 
-            switch (_currentUserService.Role)
+            if ( (attachment.CreatedByAccountId == _currentUserService.AccountId) || (role == UserRole.Admin))
             {
-                case UserRole.Student:
-                    {
-                        if (attachment.CreatedByAccountId == _currentUserService.AccountId)
-                        {
-                            await _blobService.DeleteAsync(attachment.ContainerName);
-                            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
-                            break;
-                        }
-                        else
-                        {
-                            return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "You cannot delete another student's data");
-                        }
-                    }
-                default:
-                    {
-                        await _blobService.DeleteAsync(attachment.ContainerName);
-                        await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
-                        break;
-                    }
+                await _blobService.DeleteAsync(attachment.ContainerName);
+                await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+            }
+            else
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "You cannot delete another user's data");
             }
 
             await _unitOfWork.CommitAsync();
