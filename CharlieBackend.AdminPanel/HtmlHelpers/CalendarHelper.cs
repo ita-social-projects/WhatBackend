@@ -1,15 +1,10 @@
 ﻿using CharlieBackend.AdminPanel.Models.Calendar;
-using CharlieBackend.AdminPanel.Models.EventOccurence;
-using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Core.Entities;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using static CharlieBackend.Business.Services.ScheduleServiceFolder.EventOccuranceStorageParser;
 
 namespace CharlieBackend.AdminPanel.HtmlHelpers
 {
@@ -47,16 +42,13 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             }
 
             double daysCount = (finish - start).TotalDays;
-
             double rowCount = daysCount / 7;
-
-            
 
             if (rowCount - (int)rowCount != 0)
                 rowCount = (int)rowCount + 1;
 
-            if(finish.DayOfWeek!=DayOfWeek.Saturday)
-                daysCount += 7-(int)finish.DayOfWeek;
+            if (finish.DayOfWeek != DayOfWeek.Saturday)
+                daysCount += 7 - (int)finish.DayOfWeek;
 
             List<TagBuilder> dayContainers = new List<TagBuilder>();
 
@@ -67,11 +59,11 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             int startDay = (int)start.DayOfWeek;
 
-            if(start.DayOfWeek!=DayOfWeek.Sunday)
-            for (int i = 1; i <= startDay; i++)
-            {
-                dayContainers = dayContainers.Prepend(GetDayContainerHtml(start.AddDays(-i))).ToList();
-            }
+            if (start.DayOfWeek != DayOfWeek.Sunday)
+                for (int i = 1; i <= startDay; i++)
+                {
+                    dayContainers = dayContainers.Prepend(GetDateContainerHtml(start.AddDays(-i))).ToList();
+                }
 
             List<TagBuilder> rowContainers = new List<TagBuilder>();
 
@@ -82,7 +74,7 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             string result = string.Empty;
 
-            foreach(var row in rowContainers)
+            foreach (var row in rowContainers)
             {
                 using (var writer = new System.IO.StringWriter())
                 {
@@ -97,11 +89,11 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
         public static TagBuilder GetRowHtml(int row, List<TagBuilder> days)
         {
-            int len = row*7 + 7;
-
+            int len = row * 7 + 7;
             TagBuilder rowBlock = new TagBuilder("div");
             rowBlock.AddCssClass("row");
-            for(int i=row*7; i<len;i++)
+
+            for (int i = row * 7; i < len; i++)
             {
                 rowBlock.InnerHtml.AppendHtml(days[i]);
             }
@@ -109,21 +101,16 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             return rowBlock;
         }
 
-        public static TagBuilder GetDayContainerHtml(DateTime date)
-        {
-            return GetDateContainerHtml(date);
-        }
-
         public static TagBuilder GetDayContainerHtml(
-            DateTime current, 
+            DateTime current,
             IList<CalendarScheduledEventViewModel> events = null)
         {
-            if(events==null)
+            if (events == null)
                 return GetDateContainerHtml(current);
 
             try
             {
-                var eventsFiltered = events.Where(x => x.EventFinish.Date >= current.Date && x.EventStart.Date<=current.Date).ToList();
+                var eventsFiltered = events.Where(x => x.EventFinish.Date >= current.Date && x.EventStart.Date <= current.Date).ToList();
 
                 return GetDateContainerHtml(current, eventsFiltered);
             }
@@ -142,15 +129,15 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             if (day.Date == DateTime.Now.Date)
             {
-                btnClass = "btn btn-outline-success";
+                btnClass = "btn btn-outline-success btn-event";
             }
             if (day.Date > DateTime.Now.Date)
             {
-                btnClass = "btn btn-outline-primary";
+                btnClass = "btn btn-outline-primary btn-event";
             }
             if (day.Date < DateTime.Now.Date)
             {
-                btnClass = "btn btn-outline-dark";
+                btnClass = "btn btn-outline-dark btn-event";
             }
 
             TagBuilder div = new TagBuilder("div");
@@ -169,10 +156,8 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             {
                 foreach (var e in events)
                 {
-                    TagBuilder button = new TagBuilder("button");
-                    button.AddCssClass(btnClass);
-                    button.Attributes.Add("type", "button");
-                    button.InnerHtml.Append(e.Id.ToString());
+                    TagBuilder button = GetButtonContainerHtml(e, btnClass);
+                   
                     divEvents.InnerHtml.AppendHtml(button);
                 }
             }
@@ -180,9 +165,27 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             {
 
             }
+
             div.InnerHtml.AppendHtml(divEvents);
 
             return div;
+        }
+
+        public static TagBuilder GetButtonContainerHtml(CalendarScheduledEventViewModel model, string cssClass)
+        {
+            TagBuilder button = new TagBuilder("button");
+
+            button.AddCssClass(cssClass);
+            button.Attributes.Add("type", "button");
+            button.Attributes.Add("data-toggle", "modal");
+            button.Attributes.Add("data-target", "#seeSchedulEvent");
+            button.Attributes.Add("seGroupdID", model.StudentGroupId.ToString());
+            button.Attributes.Add("seMentorId", model.MentorId.ToString());
+            button.Attributes.Add("seLessonId", model.LessonId.ToString());
+            button.Attributes.Add("seThemeId", model.ThemeId.ToString());
+            button.InnerHtml.Append(model.Id.ToString());
+
+            return button;
         }
     }
 }
