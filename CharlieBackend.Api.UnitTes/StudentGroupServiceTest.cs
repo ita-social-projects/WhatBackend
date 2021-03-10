@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateStudentGroupAsync_StudentGroup_ShouldNotBeNull()
+        public async Task CreateStudentGroupAsync_StudentGroup_ShouldNotBeNullAndBeEquivalentToValidData()
         {
             //Arrange
             var newStudentGroup = new CreateStudentGroupDto()
@@ -121,6 +121,7 @@ namespace CharlieBackend.Api.UnitTest
             
             //Assert
             successResult.Data.Should().NotBeNull();
+            successResult.Data.Should().BeEquivalentTo(newStudentGroup);
         }
 
         [Fact]
