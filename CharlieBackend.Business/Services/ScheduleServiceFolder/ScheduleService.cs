@@ -79,28 +79,30 @@ namespace CharlieBackend.Business.Services
             var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
 
             var result = everyValue.Where(x => x.LessonId == null);
-
-            if (eventOccurrenceResult.ScheduledEvents.Except(everyValue).Any() || everyValueWithLesson.Any())
+            if (startDate.HasValue)
             {
-                DateTime actualFinish = eventOccurrenceResult.EventFinish;
-
-                if (!finishDate.HasValue || finishDate.Value >= eventOccurrenceResult.EventFinish)
+                if (eventOccurrenceResult.ScheduledEvents.Except(everyValue).Any() || everyValueWithLesson.Any())
                 {
-                    if (everyValueWithLesson.Any() && everyValueWithLesson.Last().EventFinish >= startDate.Value)
+                    DateTime actualFinish = eventOccurrenceResult.EventFinish;
+
+                    if (!finishDate.HasValue || finishDate.Value >= eventOccurrenceResult.EventFinish)
                     {
-                        actualFinish = everyValueWithLesson.Last().EventFinish;
-                    }
-                    else
-                    {
-                        actualFinish = startDate.Value;
+                        if (everyValueWithLesson.Any() && everyValueWithLesson.Last().EventFinish >= startDate.Value)
+                        {
+                            actualFinish = everyValueWithLesson.Last().EventFinish;
+                        }
+                        else
+                        {
+                            actualFinish = startDate.Value;
+                        }
+
+                        eventOccurrenceResult.EventFinish = actualFinish;
+
+                        _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
                     }
 
-                    eventOccurrenceResult.EventFinish = actualFinish;
-
-                    _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
+                    _unitOfWork.ScheduledEventRepository.RemoveRange(result);
                 }
-
-                _unitOfWork.ScheduledEventRepository.RemoveRange(result);
             }
             else
             {
