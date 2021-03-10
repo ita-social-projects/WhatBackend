@@ -108,7 +108,21 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return StatusCode(409, "Cannot update.");
+        }
 
+        /// <summary>
+        /// Get lesson information by lesson id
+        /// </summary>
+        /// <response code="200">Successful return of lesson</response>
+        /// <response code="404">Error, can not find lesson</response>
+        [SwaggerResponse(200, type: typeof(LessonDto))]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<LessonDto>> GetStudentById(long id)
+        {
+            var lessonModelResult = await _lessonService.GetLessonByIdAsync(id);
+
+            return lessonModelResult.ToActionResult();
         }
     }
 }
