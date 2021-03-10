@@ -157,6 +157,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets all event occurrences
+        /// </summary>
+        /// <response code="200">Successfully returned a collection of event occurrences.</response>
+        [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("event-occurrences")]
+        public async Task<ActionResult<IList<EventOccurrenceDTO>>> GetAllEventOccurrences()
+        {
+            var eventOccurrences = await _scheduleService.GetEventOccurrencesAsync();
+
+            return eventOccurrences.ToActionResult();
+        }
+
+        /// <summary>
         /// Deletes exact schedule
         /// </summary>
         /// <remarks>

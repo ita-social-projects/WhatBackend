@@ -1,13 +1,9 @@
 using AutoMapper;
+using CharlieBackend.AdminPanel.Extensions;
 using CharlieBackend.AdminPanel.Middlewares;
 using CharlieBackend.AdminPanel.Models.Mapping;
-using CharlieBackend.AdminPanel.Services;
-using CharlieBackend.AdminPanel.Services.Interfaces;
-using CharlieBackend.AdminPanel.Utils;
-using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +21,6 @@ namespace CharlieBackend.AdminPanel
             Configuration = configuration;
         }
 
-
         public void ConfigureServices(IServiceCollection services)
         {
             var config = Configuration.Get<ApplicationSettings>();
@@ -34,14 +29,7 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddScoped<IHttpUtil, HttpUtil>();
-            services.AddScoped<IApiUtil, ApiUtil>();
-            
-            services.AddTransient<IStudentService, StudentService>(); 
-            services.AddTransient<IStudentGroupService, StudentGroupService>();
-            services.AddTransient<ICourseService, CourseService>();
-            services.AddTransient<IMentorService, MentorService>();
-            services.AddTransient<IThemeService, ThemeService>();
+            services.AddServices();
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
