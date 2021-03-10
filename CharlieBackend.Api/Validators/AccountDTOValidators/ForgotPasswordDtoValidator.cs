@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -14,10 +12,10 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress()
-                .MaximumLength(50);
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.FormUrl)
                 .NotEmpty()
-                .MaximumLength(200)
+                .MaximumLength(ValidationConstants.MaxLengthURL)
                 .Must(BeValidURL);
         }
 

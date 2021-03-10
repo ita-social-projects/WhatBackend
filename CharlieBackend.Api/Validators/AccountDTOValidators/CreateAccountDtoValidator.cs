@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CharlieBackend.Core.DTO.Account;
+﻿using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -12,21 +10,22 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         {
             RuleFor(x => x.FirstName)
                  .NotEmpty()
-                 .MaximumLength(30);
+                 .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.LastName)
                 .NotEmpty()
-                .MaximumLength(30);
+                .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress()
-                .MaximumLength(50);
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MaximumLength(65);
+                .MinimumLength(ValidationConstants.MinLength)
+                .MaximumLength(ValidationConstants.MaxLengthPassword)
+                .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
             RuleFor(x => x.ConfirmPassword)
                 .NotEmpty()
-                .Equal(x => x.Password).WithMessage("Passwords do not match");
-            
+                .Equal(x => x.Password).WithMessage(ValidationConstants.PasswordConfirmNotValid);
         }
     }
 }

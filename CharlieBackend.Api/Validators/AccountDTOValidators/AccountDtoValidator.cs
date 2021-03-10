@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -16,14 +13,14 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .GreaterThan(0);
             RuleFor(x => x.FirstName)
                  .NotEmpty()
-                 .MaximumLength(30);
+                 .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.LastName)
                 .NotEmpty()
-                .MaximumLength(30);
+                .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress()
-                .MaximumLength(50);
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.Role)
                 .NotEmpty()
                 .IsInEnum();
