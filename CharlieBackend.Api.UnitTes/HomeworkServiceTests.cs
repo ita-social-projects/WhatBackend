@@ -24,6 +24,10 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private readonly HomeworkService _homeworkService;
+        private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
+        {
+            LessonId = 1
+        };
 
         public HomeworkServiceTests()
         {
@@ -48,18 +52,12 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
-
         }
 
         [Fact]
         public async Task CreateHomeworkAsync_NotExistingLessonId_ShouldReturnValidationError()
         {
             //Arrange
-            HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
-            {
-                LessonId = 1
-            };
-
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(false);
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
 
@@ -75,19 +73,14 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateHomeworkAsync_NotExistingAttachment_ShouldReturnValidationError()
         {
             //Arrange
-            HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
-            {
-                LessonId = 1,
-                AttachmentIds = new List<long> { 1, 2 }
-            };
+            homeworkRequestDto.AttachmentIds = new List<long> { 1, 2 };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(false);
-            //_homeworkRepositoryMock.Setup(x => x.Add(It.IsAny<Homework>()))
-            //        .Callback<Homework>(x => new Homework { LessonId = homeworkRequestDto.LessonId });
+
             _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(false);
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
-            // _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
             //Act
             var result = await _homeworkService.CreateHomeworkAsync(homeworkRequestDto);
@@ -101,12 +94,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateHomeworkAsync_ValidData_ShouldReturnHomeworkExemple()
         {
             //Arrange
-            HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
-            {
-                LessonId = 1,
-                AttachmentIds = new List<long> { 1, 2 },
-                DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z")
-            };
+            homeworkRequestDto.AttachmentIds = new List<long> { 1, 2 };
+            homeworkRequestDto.DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z");
 
             HomeworkDto homeworkDto = new HomeworkDto()
             {
@@ -118,9 +107,11 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);
-            _homeworkRepositoryMock.Setup(x => x.Add(It.IsAny<Homework>()))
-                    .Callback<Homework>(x => new Homework());
+
+            _homeworkRepositoryMock.Setup(x => x.Add(It.IsAny<Homework>())).Callback<Homework>(x => new Homework());
+
             _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>()))
                 .ReturnsAsync(new List<Attachment>()
                 {
@@ -129,8 +120,11 @@ namespace CharlieBackend.Api.UnitTest
                 });
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
             //Act
             var result = await _homeworkService.CreateHomeworkAsync(homeworkRequestDto);
 
@@ -160,11 +154,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateHomeworkAsync_NotExistingHomeworkId_ShouldReturnValidationError()
         {
             //Arrange
-            HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
-            {
-                LessonId = 1,
-                DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z")
-            };
+            homeworkRequestDto.DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z");
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(default(Homework));
@@ -184,11 +174,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateHomeworkAsync_ValidData_ShouldReturnValidationError()
         {
             //Arrange
-            HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
-            {
-                LessonId = 1,
-                DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z")
-            };
+            homeworkRequestDto.DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z");
 
             Homework homework = new Homework
             {
@@ -239,13 +225,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetHomeworkByLessonIdAsync_NotExistingLessonId_ShouldReturnEmptyListOfHomework()
         {
             //Arrange
-            long lessonId = 1;
+            long nonExistentLessonId = 1;
 
             _homeworkRepositoryMock.Setup(x => x.GetHomeworksByLessonId(It.IsAny<long>())).ReturnsAsync(new List<Homework>());
 
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
             //Act
-            var result = await _homeworkService.GetHomeworksByLessonId(lessonId);
+            var result = await _homeworkService.GetHomeworksByLessonId(nonExistentLessonId);
 
             //Assert
             result.Data.Should().BeEmpty();
@@ -271,13 +257,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetHomeworkByIdAsync_NotExistingHomeworkId_ShouldReturnEmptyHomework()
         {
             //Arrange
-            long homeworkId = 1;
+            long nonExistentHomeworkId = 1;
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(default(Homework));
 
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
             //Act
-            var result = await _homeworkService.GetHomeworkByIdAsync(homeworkId);
+            var result = await _homeworkService.GetHomeworkByIdAsync(nonExistentHomeworkId);
 
             //Assert
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
