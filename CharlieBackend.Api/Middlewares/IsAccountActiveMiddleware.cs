@@ -10,7 +10,7 @@ using System.Linq;
 namespace CharlieBackend.Api.Middlewares
 {
     /// <summary>
-    /// 
+    /// A helper class that determines whether the user is active or not
     /// </summary>
     public class IsAccountActiveMiddleware
     {
@@ -41,32 +41,20 @@ namespace CharlieBackend.Api.Middlewares
                 var currentEmail = currentUserService.Email;
 
                 var isActive = await accountService.IsAccountActiveAsync(currentEmail);
+                
+                if (isActive == null)
+                {
+                    context.Response.StatusCode = 401;
 
-                    if (isActive == null)
-                    {
-                        context.Response.StatusCode = 401;
+                    await context.Response.WriteAsync("Need to sign in.");
+                }
+                    
+                if ((bool)!isActive)
+                {
+                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
-                        await context.Response.WriteAsync("Need to sign in.");
-                    }
-
-                    if ((bool)!isActive)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-
-                        await context.Response.WriteAsync("Account is not active(i.e. you don't have proper role). You need to authorize!");
-                    }
-
-                    if (context.Request.Path.Value.Contains("lessons"))
-                    {
-                        var role = currentUserService.Role;
-
-                        if (role == UserRole.Mentor)
-                        {
-                            var id = currentUserService.EntityId;
-
-                            context.Items["mentorId"] = id;
-                        }
-                    }
+                     await context.Response.WriteAsync("Account is deactivated");
+                }    
 
                     await _next.Invoke(context);
             }
