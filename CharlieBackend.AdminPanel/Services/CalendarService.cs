@@ -23,14 +23,11 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
 
-        private IList<CourseDto> _activeCourseDtos;
-        private IList<MentorDto> _activeMetorDtos;
-        private IList<StudentGroupDto> _studentGroupDtos;
-        private IList<StudentDto> _activeStudentDtos;
-        private IList<ThemeDto> _themeDtos;
-        private IList<EventOccurrenceDTO> _eventOccurrenceDtos;
-        private IList<ScheduledEventDTO> _scheduledEventDtos;
-        private ScheduledEventFilterRequestDTO _scheduledEventFilter;
+        private const string _getActiveCoursesEndpoint = "api/courses/isActive";
+        private const string _getActiveMetorsEndpoint = "api/mentors/active";
+        private const string _getStudentGroupsEndpoint = "api/student_groups";
+        private const string _getActiveStudentsEndpoint = "api/students/active";
+        private const string _getThemesEndpoint = "api/themes";
 
         private const int defaultDateFilterOffset = 15;
 
@@ -44,23 +41,51 @@ namespace CharlieBackend.AdminPanel.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Makes parallel asynchronous HTTP calls to API service and returns obtained data in a form
+        /// of a ViewModel that is ready to be viewed in a calendar.
+        /// </summary>
+        /// <param name="scheduledEventFilter">DTO with an optional set of 
+        /// filters for scheduled events.</param>
+        /// <returns>>model with data required for viewing a calendar.</returns>
         public async Task<CalendarViewModel> GetCalendarDataAsync(
             ScheduledEventFilterRequestDTO scheduledEventFilter)
         {
-            ApplyEventFilter(scheduledEventFilter);
+            ApplyDefaultDateEventFilter(scheduledEventFilter);
 
-            await GetDataFromApiAsync();
+            var getCoursesTask = Task.Run(() => GetActiveCourseViewModelsAsync());
+            var getMentorsTask = Task.Run(() => GetActiveMetorViewModelsAsync());
+            var getStudentGroupsTask = Task.Run(() => GetStudentGroupViewModelsAsync());
+            var getStudentsTask = Task.Run(() => GetActiveStudentViewModelsAsync());
+            var getThemesTask = Task.Run(() => GetThemeViewModelsAsync());
+            var getEventOccurrencesTask = Task.Run(() => GetEventOccurrenceViewModelsAsync());
+            var getScheduledEventsTask = Task.Run(() => GetScheduledEventViewModelsAsync(scheduledEventFilter));
 
-            var calendarViewModel = InitCalendarViewModel();
+            await Task.WhenAll(
+                new Task[] { getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
+                    getThemesTask, getEventOccurrencesTask, getScheduledEventsTask
+                });
 
-            return calendarViewModel;
+            return new CalendarViewModel
+            {
+                Courses = getCoursesTask.Result,
+                Mentors = getMentorsTask.Result,
+                StudentGroups = getStudentGroupsTask.Result,
+                Students = getStudentsTask.Result,
+                Themes = getThemesTask.Result,
+                EventOccurences = getEventOccurrencesTask.Result,
+                ScheduledEvents = getScheduledEventsTask.Result,
+                ScheduledEventFilter = scheduledEventFilter
+            };
         }
 
         /// <summary>
         /// Applies default DateTime filter for scheduled events
         /// in case it wasn't specified.
         /// </summary>
-        private void ApplyEventFilter(
+        /// <param name="scheduledEventFilter">Object with a set of 
+        /// optional filtration parameters to add default values to.</param>
+        private void ApplyDefaultDateEventFilter(
             ScheduledEventFilterRequestDTO scheduledEventFilter)
         {
             if (!scheduledEventFilter.StartDate.HasValue)
@@ -72,47 +97,56 @@ namespace CharlieBackend.AdminPanel.Services
             {
                 scheduledEventFilter.FinishDate = DateTime.Now.AddDays(defaultDateFilterOffset);
             }
-
-            _scheduledEventFilter = scheduledEventFilter;
         }
 
-        /// <summary>
-        /// Makes HTTP calls to Web API and obtains required data.
-        /// </summary>
-        private async Task GetDataFromApiAsync()
+        private async Task<IList<CalendarCourseViewModel>> GetActiveCourseViewModelsAsync()
         {
-            _activeCourseDtos = await _apiUtil.GetAsync<IList<CourseDto>>("api/courses/isActive");
+            var activeCourseDtos = await _apiUtil.GetAsync<IList<CourseDto>>(_getActiveCoursesEndpoint);
 
-            _activeMetorDtos = await _apiUtil.GetAsync<IList<MentorDto>>("api/mentors/active");
-
-            _studentGroupDtos = await _apiUtil.GetAsync<IList<StudentGroupDto>>("api/student_groups");
-
-            _activeStudentDtos = await _apiUtil.GetAsync<IList<StudentDto>>("api/students/active");
-
-            _themeDtos = await _apiUtil.GetAsync<IList<ThemeDto>>("api/themes");
-
-            _eventOccurrenceDtos = await _scheduleService.GetAllEventOccurrences();
-
-            _scheduledEventDtos = await _scheduleService.GetEventsFiltered(_scheduledEventFilter);
+            return _mapper.Map<IList<CalendarCourseViewModel>>(activeCourseDtos);
         }
 
-        /// <summary>
-        /// Initializes and returns new <see cref="CalendarViewModel"/> instance
-        /// with data obtained from Web API service.
-        /// </summary>
-        private CalendarViewModel InitCalendarViewModel()
+        private async Task<IList<CalendarMentorViewModel>> GetActiveMetorViewModelsAsync()
         {
-            return new CalendarViewModel
-            {
-                Courses = _mapper.Map<IList<CalendarCourseViewModel>>(_activeCourseDtos),
-                Mentors = _mapper.Map<IList<CalendarMentorViewModel>>(_activeMetorDtos),
-                StudentGroups = _mapper.Map<IList<CalendarStudentGroupViewModel>>(_studentGroupDtos),
-                Students = _mapper.Map<IList<CalendarStudentViewModel>>(_activeStudentDtos),
-                Themes = _mapper.Map<IList<CalendarThemeViewModel>>(_themeDtos),
-                EventOccurences = _mapper.Map<IList<CalendarEventOccurrenceViewModel>>(_eventOccurrenceDtos),
-                ScheduledEvents = _mapper.Map<IList<CalendarScheduledEventViewModel>>(_scheduledEventDtos),
-                ScheduledEventFilter = _scheduledEventFilter
-            };
+            var activeMetorDtos = await _apiUtil.GetAsync<IList<MentorDto>>(_getActiveMetorsEndpoint);
+
+            return _mapper.Map<IList<CalendarMentorViewModel>>(activeMetorDtos);
+        }
+
+        private async Task<IList<CalendarStudentGroupViewModel>> GetStudentGroupViewModelsAsync()
+        {
+            var studentGroupDtos = await _apiUtil.GetAsync<IList<StudentGroupDto>>(_getStudentGroupsEndpoint);
+
+            return _mapper.Map<IList<CalendarStudentGroupViewModel>>(studentGroupDtos);
+        }
+
+        private async Task<IList<CalendarStudentViewModel>> GetActiveStudentViewModelsAsync()
+        {
+            var activeStudentDtos = await _apiUtil.GetAsync<IList<StudentDto>>(_getActiveStudentsEndpoint);
+
+            return _mapper.Map<IList<CalendarStudentViewModel>>(activeStudentDtos);
+        }
+
+        private async Task<IList<CalendarThemeViewModel>> GetThemeViewModelsAsync()
+        {
+            var themeDtos = await _apiUtil.GetAsync<IList<ThemeDto>>(_getThemesEndpoint);
+
+            return _mapper.Map<IList<CalendarThemeViewModel>>(themeDtos);
+        }
+
+        private async Task<IList<CalendarEventOccurrenceViewModel>> GetEventOccurrenceViewModelsAsync()
+        {
+            var eventOccurrenceDtos = await _scheduleService.GetAllEventOccurrences();
+
+            return _mapper.Map<IList<CalendarEventOccurrenceViewModel>>(eventOccurrenceDtos);
+        }
+
+        private async Task<IList<CalendarScheduledEventViewModel>> GetScheduledEventViewModelsAsync(
+            ScheduledEventFilterRequestDTO scheduledEventFilter)
+        {
+            var scheduledEventDtos = await _scheduleService.GetEventsFiltered(scheduledEventFilter);
+
+            return _mapper.Map<IList<CalendarScheduledEventViewModel>>(scheduledEventDtos);
         }
     }
 }
