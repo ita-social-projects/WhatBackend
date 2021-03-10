@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
+    [Route("[controller]/[action]")]
     public class CoursesController : Controller
     {
         private readonly ICourseService _courseService;
@@ -20,6 +21,14 @@ namespace CharlieBackend.AdminPanel.Controllers
             var courses = await _courseService.GetAllCoursesAsync();
 
             return View(courses);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCourse(CreateCourseDto courseDto)
+        {
+            await _courseService.AddCourseAsync(courseDto);
+
+            return RedirectToAction("AllCourses", "Courses");
         }
 
         [HttpGet("{id}")]
