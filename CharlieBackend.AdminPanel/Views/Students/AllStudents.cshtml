@@ -114,7 +114,10 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
-
+                                                        <a class="dropdown-item text-dark js-enable-Student" data-toggle="modal" data-target="#enableStudentModalWindow" data-item-id="@item.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Enable </span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -148,12 +151,30 @@
         </div>
     </div>
 
+
+    <!-- Enable Student modal window-->
+    <div class="modal fade" id="enableStudentModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Enable Student?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmEnableStudent" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts{
-    <script type="text/javascript">
-
-        var isOnlyActiveStudents = false;
+    <script type="text/javascript">var isOnlyActiveStudents = false;
 
         var switchButtons = document.querySelectorAll(".js-student-list-button");
 
@@ -195,14 +216,9 @@
                 isOnlyActiveStudents = !isOnlyActiveStudents;
 
             }, true)
-        });
+        });</script>
 
-
-    </script>
-
-    <script type="text/javascript">
-
-        var routeForDisableStudent = "/Students/DisableStudent/";
+    <script type="text/javascript">var routeForDisableStudent = "/Students/DisableStudent/";
 
         var disableStudentId = null;
 
@@ -216,7 +232,22 @@
 
             $("#confirmDisableStudent").attr("href", routeForDisableStudent + disableStudentId);
 
-        });
+        });</script>
 
-    </script>
+    <script type="text/javascript">var routeForEnableStudent = "/Students/EnableStudent/";
+
+        var enableStudentId = null;
+
+        $(document).on("click", ".js-enable-Student", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            enableStudentId = _self.data('item-id');
+
+            $("#confirmEnableStudent").attr("href", routeForEnableStudent + enableStudentId);
+
+        });</script>
+
 }

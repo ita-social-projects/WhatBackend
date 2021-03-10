@@ -75,17 +75,31 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Delete course
+        /// Disable course
         /// </summary>
-        /// <response code="200">Successful delete  course</response>
-        /// <response code="HTTP: 400, API: 0">Bad request</response>
+        /// <response code="200">Course successfully disabled</response>
+        /// <response code="HTTP: 400, API: 0">Course has active student group</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CourseDto>> DisableCourse(long id)
+        public async Task<ActionResult<bool>> DisableCourse(long id)
         {
             var disableCourse = await _coursesService.DisableCourceAsync(id);
 
             return disableCourse.ToActionResult();
+        }
+
+        /// <summary>
+        /// Enable course
+        /// </summary>
+        /// <response code="200">Course successfully enabled</response>
+        /// <response code="HTTP: 409, API: 5">Course is already active</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<bool>> EnableCourse(long id)
+        {
+            var enableCourse = await _coursesService.EnableCourceAsync(id);
+
+            return enableCourse.ToActionResult();
         }
     }
 }

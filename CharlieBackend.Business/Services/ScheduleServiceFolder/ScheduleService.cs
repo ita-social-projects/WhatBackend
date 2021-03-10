@@ -73,8 +73,8 @@ namespace CharlieBackend.Business.Services
 
             var everyValue = eventOccurrenceResult
                 .ScheduledEvents
-                .Where(x => startDate.HasValue && x.EventFinish <= startDate.Value)
-                .Where(x => finishDate.HasValue && x.EventStart >= finishDate.Value);
+                .Where(x => startDate.HasValue && x.EventFinish >= startDate.Value)
+                .Where(x => finishDate.HasValue && x.EventStart <= finishDate.Value);
 
             var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
 
@@ -112,6 +112,27 @@ namespace CharlieBackend.Business.Services
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
 
+        public async Task<Result<bool>> DeleteConcreteScheduleByIdAsync(long id)
+        {
+            if (id < 0)
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, 
+                    "Can not delete scheduled event due to wrong request data");
+            }
+
+            var scheduledEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
+
+            if (scheduledEvent is null)
+            {
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Scheduled event does not exist");
+            }
+
+            await _unitOfWork.ScheduledEventRepository.DeleteAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return Result<bool>.GetSuccess(true);
+        }
+
         public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);
@@ -119,6 +140,14 @@ namespace CharlieBackend.Business.Services
             return scheduleEntity == null ?
                 Result<EventOccurrenceDTO>.GetError(ErrorCode.NotFound, $"Schedule with id={id} does not exist") :
                 Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(scheduleEntity));
+        }
+
+        public async Task<Result<IList<EventOccurrenceDTO>>> GetEventOccurrencesAsync()
+        {
+            var eventOccurences = await _unitOfWork.EventOccurrenceRepository.GetAllAsync();
+
+            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
+                _mapper.Map<IList<EventOccurrenceDTO>>(eventOccurences));
         }
 
         public async Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
@@ -374,12 +403,21 @@ namespace CharlieBackend.Business.Services
                 error.Append(" Theme does not exist");
             }
 
-            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate < request.FinishDate))
+            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate > request.FinishDate))
             {
                 error.Append($" StartDate must be less then FinisDate");
             }
 
             return error.Length > 0 ? error.ToString() : null;
+        }
+
+        public async Task<Result<ScheduledEventDTO>> GetConcreteScheduleByIdAsync(long eventId)
+        {
+            var foundScheduleEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(eventId);
+
+            return foundScheduleEvent == null ?
+                Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Single schedule event with id={eventId} does not exist") :
+                Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(foundScheduleEvent));
         }
     }
 }
