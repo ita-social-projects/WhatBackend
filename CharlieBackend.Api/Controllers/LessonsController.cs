@@ -118,7 +118,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(LessonDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<LessonDto>> GetStudentById(long id)
+        public async Task<ActionResult<LessonDto>> GetLessonById(long id)
         {
             var lessonModelResult = await _lessonService.GetLessonByIdAsync(id);
 
