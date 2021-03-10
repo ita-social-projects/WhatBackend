@@ -60,10 +60,12 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             int startDay = (int)start.DayOfWeek;
 
             if (start.DayOfWeek != DayOfWeek.Sunday)
+            {
                 for (int i = 1; i <= startDay; i++)
                 {
                     dayContainers = dayContainers.Prepend(GetDateContainerHtml(start.AddDays(-i))).ToList();
                 }
+            }
 
             List<TagBuilder> rowContainers = new List<TagBuilder>();
 
