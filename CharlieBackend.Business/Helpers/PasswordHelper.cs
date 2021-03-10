@@ -12,7 +12,6 @@ namespace CharlieBackend.Business.Helpers
         /// At least eight characters, at least one uppercase letter, one lowercase letter and one number
         /// </summary>
         private const string _pattern = @"^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$_%^&+=]).*$";
-            //@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_])[a-zA-Z\d]{8,}";
         private static readonly string _allowedSymbols = "qa2zWSXe4dc6RF8Vtg0bYHNujmIKolPpLOk7iMJUn9hy3BGTvf_rCDE5xs1wZAQ";
         private static readonly string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
         private static readonly int _saltLen = 15;
