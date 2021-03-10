@@ -49,7 +49,7 @@ namespace CharlieBackend.Api.Middlewares
                         await context.Response.WriteAsync("Need to sign in.");
                     }
 
-                    if (!isActive)
+                    if ((bool)!isActive)
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
