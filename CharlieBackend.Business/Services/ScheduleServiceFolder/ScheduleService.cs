@@ -112,6 +112,27 @@ namespace CharlieBackend.Business.Services
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
 
+        public async Task<Result<bool>> DeleteConcreteScheduleByIdAsync(long id)
+        {
+            if (id < 0)
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, 
+                    "Can not delete scheduled event due to wrong request data");
+            }
+
+            var scheduledEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
+
+            if (scheduledEvent is null)
+            {
+                return Result<bool>.GetError(ErrorCode.ValidationError, "Scheduled event does not exist");
+            }
+
+            await _unitOfWork.ScheduledEventRepository.DeleteAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return Result<bool>.GetSuccess(true);
+        }
+
         public async Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id)
         {
             var scheduleEntity = await _unitOfWork.EventOccurrenceRepository.GetByIdAsync(id);

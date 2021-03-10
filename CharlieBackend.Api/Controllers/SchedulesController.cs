@@ -175,5 +175,24 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
+
+        /// <summary>
+        /// Deletes concrete scheduled event by id
+        /// </summary>
+        /// <remarks>
+        /// Removes one concrete scheduled event related to specified EventOccurrence
+        /// Returns true if deleting was done, false in case scheduled event doesn't exist and error after the wrong request
+        /// </remarks>
+        /// <response code = "200" > Successful delete of schedule</response>
+        /// /// <response code="HTTP: 400, API: 0">Scheduled event does not exist</response>
+        /// <response code="HTTP: 409, API: 5">Can not delete scheduled event due to wrong request data</response>
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpDelete("events/{scheduledEventID}")]
+        public async Task<ActionResult> DeleteConcreteSchedule(long scheduledEventID)
+        {
+            var result = await _scheduleService.DeleteConcreteScheduleByIdAsync(scheduledEventID);
+
+            return result.ToActionResult();
+        }
     }
 }
