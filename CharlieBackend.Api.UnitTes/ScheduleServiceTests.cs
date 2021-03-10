@@ -32,9 +32,14 @@ namespace CharlieBackend.Api.UnitTest
         private readonly long newThemeId = 3;
         private readonly long existingId = 1;
         private readonly long nonExistentId = -1;
+        private readonly long nonExistentEventOccuranceId = 0;
+        private readonly long existentEventOccuranceId = 1;
+        private readonly long id = 0;
         private Mock<IEventOccurrenceRepository> _eventOccuranceRepositoryMock;
         private CreateScheduleDto validScheduleDTO;
         private EventOccurrence validEventOccurrence;
+        private readonly DateTime startDate = DateTime.Parse("Jan 1, 2021");
+        private readonly DateTime finishDate = DateTime.Parse("Feb 1, 2021");
 
         public ScheduleServiceTests()
         {
@@ -61,8 +66,8 @@ namespace CharlieBackend.Api.UnitTest
 
                 Range = new OccurenceRange
                 {
-                    StartDate = DateTime.Parse("Jan 1, 2021"),
-                    FinishDate = DateTime.Parse("Feb 1, 2021")
+                    StartDate = startDate,
+                    FinishDate = finishDate
                 },
 
                 Context = new ContextForCreateScheduleDTO
@@ -114,6 +119,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task CreateScheduleAsync_ValidScheduleRequest_ShouldReturnEventOccurrenceDTO()
         {
+            //Arrange
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
@@ -419,16 +425,14 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetEventOccurrenceByIdAsync_ExistingId_ShouldReturnExpectedEventOccurrenceDTO()
         {
             //Arrange
-            var existingId = 0;
-
             Initialize(validScheduleDTO);
 
-            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(validEventOccurrence);
+            _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(validEventOccurrence);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
             //Act
-            var result = await scheduleService.GetEventOccurrenceByIdAsync(existingId);
+            var result = await scheduleService.GetEventOccurrenceByIdAsync(id);
 
             //Assert
             result.Should().NotBeNull();
@@ -461,16 +465,18 @@ namespace CharlieBackend.Api.UnitTest
 
             var expectedFilteredList = new List<ScheduledEventDTO>()
             {
+
             new ScheduledEventDTO
             {
                 StudentGroupId = existentGroupId,
                 ThemeId = existentThemeId,
                 MentorId = existentMentorId,
-                EventStart = DateTime.Parse("Jan 1, 2021"),
-                EventFinish = DateTime.Parse("Feb 1, 2021"),
-                EventOccuranceId = 0,
-                Id = 0
-            } };
+                EventStart = startDate,
+                EventFinish = finishDate,
+                EventOccuranceId = nonExistentEventOccuranceId,
+                Id = id
+            }
+            };
 
             _scheduleRepositoryMock.Setup(x => x.GetEventsFilteredAsync(validRequest)).ReturnsAsync(new List<ScheduledEvent>()
             {
@@ -479,8 +485,8 @@ namespace CharlieBackend.Api.UnitTest
                 StudentGroupId = existentGroupId,
                 ThemeId = existentThemeId,
                 MentorId = existentMentorId,
-                EventStart = DateTime.Parse("Jan 1, 2021"),
-                EventFinish = DateTime.Parse("Feb 1, 2021"),
+                EventStart = startDate,
+                EventFinish = finishDate
             } });
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
@@ -537,9 +543,6 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DeleteScheduleByIdAsync_NonExistingId_ShouldReturnValidationError()
         {
             //Arrange
-            var startDate = DateTime.Parse("Jan 1, 2021");
-            var finishDate = DateTime.Parse("Feb 1, 2021");
-
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
@@ -563,16 +566,16 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = existentGroupId,
                         ThemeId = existentThemeId,
                         MentorId = existentMentorId,
-                        EventStart = DateTime.Parse("Jan 1, 2021"),
-                        EventFinish = DateTime.Parse("Feb 1, 2021"),
-                        EventOccurrenceId = 1
+                        EventStart = startDate,
+                        EventFinish = finishDate,
+                        EventOccurrenceId = existentEventOccuranceId
                     }
                 };
 
             var expected = new EventOccurrenceDTO
             {
                 StudentGroupId = existentGroupId,
-                EventStart = DateTime.Parse("Jan 1, 2021"),
+                EventStart = startDate,
                 EventFinish = DateTime.Parse("Jan 1, 2021"),
                 Events = new List<ScheduledEventDTO>()
                 {
@@ -581,14 +584,12 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = existentGroupId,
                         ThemeId = existentThemeId,
                         MentorId = existentMentorId,
-                        EventStart = DateTime.Parse("Jan 1, 2021"),
-                        EventFinish = DateTime.Parse("Feb 1, 2021"),
-                        EventOccuranceId = 1
+                        EventStart = startDate,
+                        EventFinish = finishDate,
+                        EventOccuranceId = existentEventOccuranceId
                 } },
-                Id = 0
+                Id = id
             };
-            var startDate = DateTime.Parse("Jan 1, 2021");
-            var finishDate = DateTime.Parse("Feb 1, 2021");
 
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
             _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(validEventOccurrence);
@@ -683,8 +684,8 @@ namespace CharlieBackend.Api.UnitTest
                 StudentGroupId = existentGroupId,
                 MentorId = existentMentorId,
                 ThemeId = nonExistentId,
-                EventStart = DateTime.Parse("Feb 1, 2021"),
-                EventEnd = DateTime.Parse("Jan 1, 2021")
+                EventStart = startDate,
+                EventEnd = finishDate
             };
 
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
@@ -729,7 +730,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateScheduledEventByID_ExistingScheduledEventIdValidRequest_ShouldReturnUpdatedScheduleDTO()
         {
             //Arrange
-            UpdateScheduledEventDto request = new UpdateScheduledEventDto
+            UpdateScheduledEventDto updateScheduleEventDto = new UpdateScheduledEventDto
             {
                 StudentGroupId = newGroupId,
                 ThemeId = newThemeId
@@ -740,8 +741,8 @@ namespace CharlieBackend.Api.UnitTest
                 StudentGroupId = newGroupId,
                 ThemeId = newThemeId,
                 MentorId = existentMentorId,
-                EventStart = DateTime.Parse("Jan 1, 2021"),
-                EventFinish = DateTime.Parse("Feb 1, 2021"),
+                EventStart = startDate,
+                EventFinish = finishDate,
                 EventOccurrenceId = existingId
             };
 
@@ -764,7 +765,7 @@ namespace CharlieBackend.Api.UnitTest
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
 
             //Act
-            var result = await scheduleService.UpdateScheduledEventByID(existingId, request);
+            var result = await scheduleService.UpdateScheduledEventByID(existingId, updateScheduleEventDto);
 
             //Assert
             result.Should().NotBeNull();
@@ -774,6 +775,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task UpdateEventOccurrenceById_ExistingIdValidScheduleDTO_ShouldReturnExpectedEventOccurrenceDTO()
         {
+            //Arrange
             validEventOccurrence.ScheduledEvents = new List<ScheduledEvent>()
                 {
                     new ScheduledEvent
@@ -781,8 +783,8 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = newGroupId,
                         ThemeId = newThemeId,
                         MentorId = existentMentorId,
-                        EventStart = DateTime.Parse("Jan 1, 2021"),
-                        EventFinish = DateTime.Parse("Feb 1, 2021"),
+                        EventStart = startDate,
+                        EventFinish = finishDate,
                         EventOccurrenceId = existingId
                     }
                 };
@@ -813,6 +815,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task UpdateEventOccurrenceById_NonExistingIdValidRequestScheduleDTO_ShouldReturnValidationError()
         {
+            //Arrange
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
@@ -836,6 +839,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task UpdateEventOccurrenceById_ExistingIdNullRequestScheduleDTO_ShouldReturnValidationError()
         {
+            //Arrange
             CreateScheduleDto request = null;
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
