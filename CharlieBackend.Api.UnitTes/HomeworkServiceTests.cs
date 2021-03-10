@@ -174,6 +174,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateHomeworkAsync_ValidData_ShouldReturnValidationError()
         {
             //Arrange
+
             homeworkRequestDto.DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z");
 
             Homework homework = new Homework
@@ -194,13 +195,7 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _homeworkService.UpdateHomeworkAsync(1, homeworkRequestDto);
 
             //Assert
-            result.Data.Should().BeEquivalentTo(new HomeworkDto
-            {
-                Id = 1,
-                LessonId = 1,
-                DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
-                AttachmentIds = new List<long>()
-            });
+            result.Data.Should().BeEquivalentTo(_mapper.Map<HomeworkDto>(homework));
 
         }
 
