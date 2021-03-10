@@ -11,6 +11,8 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
 
         Task<bool> DisableCourseAsync(long id);
 
+        Task<bool> EnableCourseAsync(long id);
+
         Task UpdateCourse(long id, UpdateCourseDto UpdateDto);
     }
 }

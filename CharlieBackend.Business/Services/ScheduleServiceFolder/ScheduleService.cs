@@ -73,8 +73,8 @@ namespace CharlieBackend.Business.Services
 
             var everyValue = eventOccurrenceResult
                 .ScheduledEvents
-                .Where(x => startDate.HasValue && x.EventFinish <= startDate.Value)
-                .Where(x => finishDate.HasValue && x.EventStart >= finishDate.Value);
+                .Where(x => startDate.HasValue && x.EventFinish >= startDate.Value)
+                .Where(x => finishDate.HasValue && x.EventStart <= finishDate.Value);
 
             var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
 
@@ -388,6 +388,15 @@ namespace CharlieBackend.Business.Services
             }
 
             return error.Length > 0 ? error.ToString() : null;
+        }
+
+        public async Task<Result<ScheduledEventDTO>> GetConcreteScheduleByIdAsync(long eventId)
+        {
+            var foundScheduleEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(eventId);
+
+            return foundScheduleEvent == null ?
+                Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Single schedule event with id={eventId} does not exist") :
+                Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(foundScheduleEvent));
         }
     }
 }

@@ -99,6 +99,5 @@ namespace CharlieBackend.AdminPanel.Utils
 
             return responseMessage;
         }
-
     }
 }

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Business.Helpers
 {
@@ -11,7 +12,6 @@ namespace CharlieBackend.Business.Helpers
         /// At least eight characters, at least one uppercase letter, one lowercase letter and one number
         /// </summary>
         private const string _pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}";
-        private const int _minLength = 8;
         private static readonly string _allowedSymbols = "qa2zWSXe4dc6RF8Vtg0bYHNujmIKolPpLOk7iMJUn9hy3BGTvf_rCDE5xs1wZAQ";
         private static readonly string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
         private static readonly int _saltLen = 15;
@@ -65,41 +65,9 @@ namespace CharlieBackend.Business.Helpers
             }
         }
 
-        public static string PasswordValidation(string password)
+        public static bool PasswordValidation(string password)
         {
-            StringBuilder allWarnings = new StringBuilder();
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                return "Password should not be empty";
-            }
-
-            if (password.Length < 8)
-            {
-                allWarnings.Append("Password length must be more than 8. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[A-Z]+"))
-            {
-                allWarnings.Append("Password should contain at least one upper case letter. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[0-9]+"))
-            {
-                allWarnings.Append("Password should contain at least one numeric value. ");
-            }
-
-            if (!Regex.IsMatch(password, @"[a-z]+"))
-            {
-                allWarnings.Append("Password should contain at least one lower case letter. ");
-            }
-
-            if (Regex.IsMatch(password, @"[#?!@$%^&*-]+"))
-            {
-                allWarnings.Append("Password can't contain any special character apart from underscore symbol. ");
-            }
-
-            return allWarnings.ToString();
+            return Regex.IsMatch(password, _pattern);
         }
 
         public static string GeneratePassword()
@@ -111,7 +79,7 @@ namespace CharlieBackend.Business.Helpers
             while (!validPassword)
             {
                 _ = password.Clear();
-                var passwordLength = _minLength;
+                var passwordLength = ValidationConstants.MinLength;
 
                 while (passwordLength-- > 0)
                 {
