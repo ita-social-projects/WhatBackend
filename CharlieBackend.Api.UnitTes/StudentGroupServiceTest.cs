@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateStudentGroupAsync_StudentGroup_ShouldReturnStudentGroup()
+        public async Task CreateStudentGroupAsync_StudentGroup_ShouldNotBeNull()
         {
             //Arrange
             var newStudentGroup = new CreateStudentGroupDto()
@@ -121,9 +121,6 @@ namespace CharlieBackend.Api.UnitTest
             
             //Assert
             successResult.Data.Should().NotBeNull();
-            successResult.Data.Name.Should().Be(newStudentGroup.Name);
-            successResult.Data.CourseId.Should().Be(newStudentGroup.CourseId);
-            successResult.Data.StudentIds.Should().BeEquivalentTo(newStudentGroup.StudentIds);
         }
 
         [Fact]
@@ -313,7 +310,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task UpdateStudentGroup_WithNotExistCoursId_ShouldReturnValidationError()
+        public async Task UpdateStudentGroup_NonExistentCourseId_ShouldReturnValidationError()
         {
             //Arrange
             var studentGroupWithoutCourseID = new UpdateStudentGroupDto()
@@ -334,7 +331,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task UpdateStudentGroup_StudentGroupWithoutValidStudentIDs_ShouldReturnValidationError()
+        public async Task UpdateStudentGroup_NotValidStudentIDs_ShouldReturnValidationError()
         {
             //Arrange
             var studentGroupWithoutValidStudentIDs = new UpdateStudentGroupDto()
