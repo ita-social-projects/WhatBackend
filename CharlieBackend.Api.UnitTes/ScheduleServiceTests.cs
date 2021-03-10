@@ -502,7 +502,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Should().NotBeNull();
-            result.Data.ElementAt(0).Should().BeEquivalentTo(expectedFilteredList.ElementAt(0));
+            result.Data.First().Should().BeEquivalentTo(expectedFilteredList.First());
         }
 
         [Fact]
