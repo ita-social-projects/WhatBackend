@@ -98,6 +98,12 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<UpdateMentorDto, MentorDto>();
             CreateMap<MentorDto, UpdateMentorDto>();
 
+            CreateMap<MentorDetailsDto, Mentor>();
+            CreateMap<Mentor, MentorDetailsDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+
             #endregion
 
             #region Students mapping
@@ -113,6 +119,12 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<UpdateStudentDto, StudentDto>();
             CreateMap<StudentDto, UpdateStudentDto>();
+
+            CreateMap<StudentDetailsDto, Student>();
+            CreateMap<Student, StudentDetailsDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
             #endregion
 
             #region StudentGroups mapping
@@ -151,6 +163,12 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<UpdateSecretaryDto, SecretaryDto>();
             CreateMap<SecretaryDto, UpdateSecretaryDto>();
+
+            CreateMap<SecretaryDetailsDto, Secretary>();
+            CreateMap<Secretary, SecretaryDetailsDto>()
+                .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
+                .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
 
             #endregion
 

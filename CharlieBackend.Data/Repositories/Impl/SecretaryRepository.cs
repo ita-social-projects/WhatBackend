@@ -18,7 +18,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public new Task<List<Secretary>> GetAllAsync()
         {
             return _applicationContext.Secretaries
-                .Include(secretary => secretary.Account)
+                .Include(secretary => secretary.Account).ThenInclude(x => x.Avatar)
                 .ToListAsync();
         }
         public Task<Secretary> GetSecretaryByAccountIdAsync(long accountId)
@@ -38,7 +38,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public Task<List<Secretary>> GetActiveAsync()
         {
             return _applicationContext.Secretaries
-                .Include(secretary => secretary.Account)
+                .Include(secretary => secretary.Account).ThenInclude(x => x.Avatar)
                 .Where(sec => sec.Account.IsActive == true)
                 .Select(sec => sec)
                 .ToListAsync();
