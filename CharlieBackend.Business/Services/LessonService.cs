@@ -271,7 +271,9 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId)
         {
+            var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
             var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonId);
+            lessons.FirstOrDefault(entity => entity.Id == lessonId);
 
             if (lesson == null)
             {
