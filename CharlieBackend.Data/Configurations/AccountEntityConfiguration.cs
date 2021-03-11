@@ -75,6 +75,10 @@ namespace CharlieBackend.Data.Configurations
                 .HasComment("date of generation for users forgot password token");
 
             entity.Property(e => e.AvatarId).HasColumnName("avatar_id");
+
+            entity.HasOne(x => x.Avatar)
+                .WithOne(x => x.Account)
+                .HasForeignKey<Account>(x => x.AvatarId);
         }
     }
 }
