@@ -53,13 +53,13 @@ namespace CharlieBackend.AdminPanel.Services
         {
             ApplyDefaultDateEventFilter(scheduledEventFilter);
 
-            var getCoursesTask = Task.Run(() => GetActiveCourseViewModelsAsync());
-            var getMentorsTask = Task.Run(() => GetActiveMetorViewModelsAsync());
-            var getStudentGroupsTask = Task.Run(() => GetStudentGroupViewModelsAsync());
-            var getStudentsTask = Task.Run(() => GetActiveStudentViewModelsAsync());
-            var getThemesTask = Task.Run(() => GetThemeViewModelsAsync());
-            var getEventOccurrencesTask = Task.Run(() => GetEventOccurrenceViewModelsAsync());
-            var getScheduledEventsTask = Task.Run(() => GetScheduledEventViewModelsAsync(scheduledEventFilter));
+            var getCoursesTask = GetActiveCourseViewModelsAsync();
+            var getMentorsTask = GetActiveMetorViewModelsAsync();
+            var getStudentGroupsTask = GetStudentGroupViewModelsAsync();
+            var getStudentsTask = GetActiveStudentViewModelsAsync();
+            var getThemesTask = GetThemeViewModelsAsync();
+            var getEventOccurrencesTask = GetEventOccurrenceViewModelsAsync();
+            var getScheduledEventsTask = GetScheduledEventViewModelsAsync(scheduledEventFilter);
 
             await Task.WhenAll(
                 new Task[] { getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
