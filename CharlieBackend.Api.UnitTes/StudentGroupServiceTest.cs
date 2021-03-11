@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateStudentGroupAsync_StudentGroup_ShouldNotBeNullAndBeEquivalentToValidData()
+        public async Task CreateStudentGroupAsync_StudentGroup_ShouldReturnStudentGroup()
         {
             //Arrange
             var newStudentGroup = new CreateStudentGroupDto()
