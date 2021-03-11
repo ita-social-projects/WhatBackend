@@ -14,6 +14,8 @@ namespace CharlieBackend.Core.Entities
 
         public string FileName { get; set; }
 
+        public virtual Account Account { get; set; }
+
         public virtual ICollection<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         public virtual ICollection<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
