@@ -380,6 +380,101 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task AssignMentorToLessonAsync_NonExistentMentorId_ShouldReturnNotFound()
+        {
+            //Arrange
+            var nonExistentMentor = new AssignMentorToLessonDto()
+            {
+                MentorId = 10,
+                LessonId = 2
+            };
+
+            long mentorId = 10;
+            Mentor mentor = new Mentor() { Id = mentorId };
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(nonExistentMentor.MentorId)).ReturnsAsync(mentor);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            var nonExistingResult = await lessonService.AssignMentorToLessonAsync(nonExistentMentor);
+
+            //Assert
+            nonExistingResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        [Fact]
+        public async Task AssignMentorToLessonAsync_NonExistentLessonId_ShouldReturnNotFound()
+        {
+            //Arrange
+            var nonExistentLesson = new AssignMentorToLessonDto()
+            {
+                MentorId = 3,
+                LessonId = 20
+            };
+
+            long lessonId = 20;
+            Lesson lesson = new Lesson { Id = lessonId };
+
+            _lessonRepositoryMock.Setup(x => x.GetByIdAsync(nonExistentLesson.LessonId)).ReturnsAsync(lesson);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            var nonExistingResult = await lessonService.AssignMentorToLessonAsync(nonExistentLesson);
+
+            //Assert
+            nonExistingResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        [Fact]
+        public async Task AssignMentorToLessonAsync_ValidDataPassed_ShouldReturnExpectedData()
+        {
+            //Arrange
+            long lessonId = 2;
+
+            var expectedData = new AssignMentorToLessonDto()
+            {
+                MentorId = mentorId,
+                LessonId = 2
+            };
+
+            var expectedLesson = new Lesson()
+            {
+                Id = lessonId,
+                MentorId = mentorId,
+                StudentGroupId = studentGroupId,
+                ThemeId = 1,
+                LessonDate = lessonDate
+            };
+
+            Mentor mentor = new Mentor() { Id = mentorId };
+
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(expectedData.MentorId)).ReturnsAsync(mentor);
+
+            _lessonRepositoryMock.Setup(x => x.GetByIdAsync(expectedData.LessonId)).ReturnsAsync(expectedLesson);
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            var expectedResult = await lessonService.AssignMentorToLessonAsync(expectedData);
+
+            //Assert
+            expectedResult.Data.Should().NotBeNull();
+            expectedResult.Data.Should().BeEquivalentTo(expectedLesson);
+        }
+
+        [Fact]
         public async Task UpdateLessonAsync()
         {
             //Arrange
