@@ -71,6 +71,21 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get concrete single schedule event by id
+        /// </summary>
+        /// <response code = "200" > Successful getting of schedule</response>
+        /// <response code="HTTP: 404, API: 3">Error, given schedule event not found</response>
+        [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("events/{scheduledEventID}")]
+        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long scheduledEventID)
+        {
+            var foundScheduleEvent = await _scheduleService.GetConcreteScheduleByIdAsync(scheduledEventID);
+
+            return foundScheduleEvent.ToActionResult();
+        }
+
+        /// <summary>
         /// Returns the list of events depending on the filtering rules set
         /// </summary>
         /// <response code="200">Successful return event list</response>
@@ -142,6 +157,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets all event occurrences
+        /// </summary>
+        /// <response code="200">Successfully returned a collection of event occurrences.</response>
+        [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("event-occurrences")]
+        public async Task<ActionResult<IList<EventOccurrenceDTO>>> GetAllEventOccurrences()
+        {
+            var eventOccurrences = await _scheduleService.GetEventOccurrencesAsync();
+
+            return eventOccurrences.ToActionResult();
+        }
+
+        /// <summary>
         /// Deletes exact schedule
         /// </summary>
         /// <remarks>
@@ -159,6 +188,25 @@ namespace CharlieBackend.Api.Controllers
             var foundSchedules = await _scheduleService.DeleteScheduleByIdAsync(eventOccurrenceID, startDate, finishDate);
 
             return foundSchedules.ToActionResult();
+        }
+
+        /// <summary>
+        /// Deletes concrete scheduled event by id
+        /// </summary>
+        /// <remarks>
+        /// Removes one concrete scheduled event related to specified EventOccurrence
+        /// Returns true if deleting was done, false in case scheduled event doesn't exist and error after the wrong request
+        /// </remarks>
+        /// <response code = "200" > Successful delete of schedule</response>
+        /// /// <response code="HTTP: 400, API: 0">Scheduled event does not exist</response>
+        /// <response code="HTTP: 409, API: 5">Can not delete scheduled event due to wrong request data</response>
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpDelete("events/{scheduledEventID}")]
+        public async Task<ActionResult> DeleteConcreteSchedule(long scheduledEventID)
+        {
+            var result = await _scheduleService.DeleteConcreteScheduleByIdAsync(scheduledEventID);
+
+            return result.ToActionResult();
         }
     }
 }

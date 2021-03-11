@@ -61,5 +61,12 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllStudents", "Students");
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> EnableStudent(long id)
+        {
+            await _studentService.EnableStudentAsync(id);
+
+            return RedirectToAction("AllStudents", "Students");
+        }
     }
 }

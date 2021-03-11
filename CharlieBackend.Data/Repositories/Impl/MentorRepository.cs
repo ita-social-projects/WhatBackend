@@ -18,7 +18,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public new Task<List<Mentor>> GetAllAsync()
         {
             return _applicationContext.Mentors
-                .Include(mentor => mentor.Account)
+                .Include(mentor => mentor.Account).ThenInclude(x=>x.Avatar)
                 .Include(mentor => mentor.MentorsOfCourses)
                 .ToListAsync();
         }
@@ -26,7 +26,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public Task<List<Mentor>> GetAllActiveAsync()
         {
             return _applicationContext.Mentors
-                    .Include(mentor => mentor.Account)
+                    .Include(mentor => mentor.Account).ThenInclude(x => x.Avatar)
                     .Where(mentor => mentor.Account.IsActive == true)
                     .ToListAsync();
         }

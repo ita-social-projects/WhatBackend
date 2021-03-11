@@ -19,16 +19,14 @@ namespace CharlieBackend.Api.Controllers
     {
         #region
         private readonly IMentorService _mentorService;
-        private readonly IAccountService _accountService;
         private readonly ILessonService _lessonService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, IAccountService accountService, ILessonService lessonService)
+        public MentorsController(IMentorService mentorService, ILessonService lessonService)
         {
             _mentorService = mentorService;
-            _accountService = accountService;
             _lessonService = lessonService;
         }
 
@@ -68,7 +66,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of mentors list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<IList<MentorDto>> GetAllActiveMentors()
+        public async Task<IList<MentorDetailsDto>> GetAllActiveMentors()
         {
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
@@ -101,7 +99,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorDto>))]
         [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<List<MentorDto>>> GetAllMentors()
+        public async Task<ActionResult<IList<MentorDetailsDto>>> GetAllMentors()
         {
             var mentorsModels = await _mentorService.GetAllMentorsAsync();
 
@@ -160,15 +158,31 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disabling of mentor account
+        /// Disable mentor's account
         /// </summary>
-        /// <response code="204">Successful disabling of mentor</response>
-        /// <response code="HTTP: 400, API: 3">Can not find mentor</response>
+        /// <response code="204">Mentor's account successfully disabled</response>
+        /// <response code="HTTP: 400, API: 3">Mentor not found</response>
+        /// <response code="HTTP: 409, API: 5">Mentor's account is already disabled</response>
         [Authorize(Roles = "Admin, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableMentor(long id)
+        public async Task<ActionResult<bool>> DisableMentor(long id)
         {
             var disabledMentorModel = await _mentorService.DisableMentorAsync(id);
+
+            return disabledMentorModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Enable mentor's account
+        /// </summary>
+        /// <response code="204">Mentor's account successfully enabled</response>
+        /// <response code="HTTP: 400, API: 3">Mentor not found</response>
+        /// <response code="HTTP: 409, API: 5">Mentor's account is already enabled</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<bool>> EnableMentor(long id)
+        {
+            var disabledMentorModel = await _mentorService.EnableMentorAsync(id);
 
             return disabledMentorModel.ToActionResult();
         }

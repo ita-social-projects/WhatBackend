@@ -30,6 +30,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(account => account.Id == id);
         }
 
+        public override Task<Account> GetByIdAsync(long id)
+        {
+            return _applicationContext.Accounts.Include(x => x.Avatar)
+                .FirstOrDefaultAsync(account => account.Id == id);
+        }
+
         public Task<List<Account>> GetAllNotAssignedAsync()
         {
             return _applicationContext.Accounts
@@ -106,6 +112,19 @@ namespace CharlieBackend.Data.Repositories.Impl
                 return false;   
             }
             foundAccount.IsActive = false;
+            return true;
+        }
+
+        public async Task<bool> EnableAccountAsync(long id)
+        {
+            var foundAccount = await _applicationContext.Accounts
+                    .FirstOrDefaultAsync(account => account.Id == id);
+            if (foundAccount == null || (bool)foundAccount.IsActive)
+            {
+                return false;
+            }
+            
+            foundAccount.IsActive = true;
             return true;
         }
 

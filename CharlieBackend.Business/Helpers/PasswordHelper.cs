@@ -2,11 +2,17 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Business.Helpers
 {
     public static class PasswordHelper
     {
+        /// <summary>
+        /// At least eight characters, at least one uppercase letter, one lowercase letter and one number
+        /// </summary>
+        private const string _pattern = @"^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$_%^&+=]).*$";
+        private static readonly string _allowedSymbols = "qa2zWSXe4dc6RF8Vtg0bYHNujmIKolPpLOk7iMJUn9hy3BGTvf_rCDE5xs1wZAQ";
         private static readonly string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
         private static readonly int _saltLen = 15;
 
@@ -43,14 +49,14 @@ namespace CharlieBackend.Business.Helpers
             {
                 byte[] uint32Buffer = new byte[4];
                 Int64 diff = maxValue - minValue;
-                
+
                 while (true)
                 {
                     rng.GetBytes(uint32Buffer);
                     UInt32 rand = BitConverter.ToUInt32(uint32Buffer, 0);
                     Int64 max = (1 + (Int64)UInt32.MaxValue);
                     Int64 remainder = max % diff;
-                    
+
                     if (rand < max - remainder)
                     {
                         return (Int32)(minValue + (rand % diff));
@@ -58,43 +64,32 @@ namespace CharlieBackend.Business.Helpers
                 }
             }
         }
-        
-        
-        public static string PasswordValidation(string password)
+
+        public static bool PasswordValidation(string password)
         {
-            StringBuilder allWarnings = new StringBuilder();
+            return Regex.IsMatch(password, _pattern);
+        }
 
-            if (string.IsNullOrWhiteSpace(password))
+        public static string GeneratePassword()
+        {
+            var validPassword = false;
+            var password = new StringBuilder();
+            var random = new Random();
+
+            while (!validPassword)
             {
-                return "Password should not be empty";
+                _ = password.Clear();
+                var passwordLength = ValidationConstants.MinLength;
+
+                while (passwordLength-- > 0)
+                {
+                    _ = password.Append(_allowedSymbols[random.Next(_allowedSymbols.Length)]);
+                }
+
+                validPassword = Regex.IsMatch(password.ToString(), _pattern);
             }
 
-            if (password.Length < 8)
-            {
-                allWarnings.AppendLine("Password length must be more than 8");
-            }
-
-            if (!Regex.IsMatch(password, @"[A-Z]+"))
-            {
-                allWarnings.AppendLine("Password should contain at least one upper case letter");
-            }
-
-            if (!Regex.IsMatch(password, @"[0-9]+"))
-            {
-                allWarnings.AppendLine("Password should contain at least one numeric value");
-            }
-
-            if (!Regex.IsMatch(password, @"[a-z]+"))
-            {
-                allWarnings.AppendLine("Password should contain at least one lower case letter");
-            }
-
-            if (Regex.IsMatch(password, @"[#?!@$%^&*-]+"))
-            {
-                allWarnings.Append("Password can't contain any special character apart from underscore symbol");
-            }
-
-            return allWarnings.ToString();
+            return password.ToString();
         }
     }
 }

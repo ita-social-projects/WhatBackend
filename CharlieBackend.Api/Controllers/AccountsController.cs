@@ -63,11 +63,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> SignIn([FromBody]AuthenticationDto authenticationModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var foundAccount = (await _accountService.GetAccountCredentialsAsync(authenticationModel)).Data;
 
             if (foundAccount == null)

@@ -1,14 +1,13 @@
 using AutoMapper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Mentor;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Linq;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
-using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
@@ -18,14 +17,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly IBlobService _blobService;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
-                             IMapper mapper, INotificationService notification)
+                             IMapper mapper, INotificationService notification, IBlobService blobService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _blobService = blobService;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -76,21 +77,34 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<IList<MentorDto>> GetAllMentorsAsync()
+        public async Task<IList<MentorDetailsDto>> GetAllMentorsAsync()
         {
-            var mentors = await _unitOfWork.MentorRepository.GetAllAsync();
+            var mentors = await GetMentorsWithAvatarIncluded(await _unitOfWork.MentorRepository.GetAllAsync());
 
-            if (mentors == null)
-            {
-                return new List<MentorDto>();
-            }
-
-            return _mapper.Map<List<MentorDto>>(mentors);
+            return mentors;
         }
 
-        public async Task<IList<MentorDto>> GetAllActiveMentorsAsync()
+        private async Task<IList<MentorDetailsDto>> GetMentorsWithAvatarIncluded(IList<Mentor> mentors)
         {
-            var mentors = _mapper.Map<IList<MentorDto>>(await _unitOfWork.MentorRepository.GetAllActiveAsync());
+            var detailsDtos = await mentors
+                .ToAsyncEnumerable()
+                .Select(m => 
+                {
+                    var detailsDto = _mapper.Map<MentorDetailsDto>(m);
+
+                    detailsDto.AvatarUrl = m.Account.Avatar != null ? _blobService.GetUrl(m.Account.Avatar) : null;
+
+                    return detailsDto;
+                })
+                .Select(x => x)
+                .ToListAsync();
+
+            return detailsDtos;
+        }
+
+        public async Task<IList<MentorDetailsDto>> GetAllActiveMentorsAsync()
+        {
+            var mentors = await GetMentorsWithAvatarIncluded(await _unitOfWork.MentorRepository.GetAllActiveAsync());
 
             return mentors;
         }
@@ -220,23 +234,43 @@ namespace CharlieBackend.Business.Services
         }
 
 
-        public async Task<Result<MentorDto>> DisableMentorAsync(long mentorId)
+        public async Task<Result<bool>> DisableMentorAsync(long mentorId)
         {
             var accountId = await GetAccountId(mentorId);
 
             if (accountId == null)
             {
-                return Result<MentorDto>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
             }
 
-            var mentorDto = await GetMentorByAccountIdAsync(accountId.Value);
+            var changedToDisabled = await _accountService.DisableAccountAsync(accountId.Value);
 
-            if (!await _accountService.DisableAccountAsync(accountId.Value))
+            if (!changedToDisabled)
             {
-                return Result<MentorDto>.GetError(ErrorCode.NotFound, "This account is already disabled.");
+                return Result<bool>.GetError(ErrorCode.Conflict, "This account is already disabled.");
             }
 
-            return mentorDto;
+            return Result<bool>.GetSuccess(changedToDisabled);
+
+        }
+
+        public async Task<Result<bool>> EnableMentorAsync(long mentorId)
+        {
+            var accountId = await GetAccountId(mentorId);
+
+            if (accountId == null)
+            {
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown mentor id.");
+            }
+
+            var changedToEnabled = await _accountService.EnableAccountAsync(accountId.Value);
+
+            if (!changedToEnabled)
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, "This account is already enabled.");
+            }
+
+            return Result<bool>.GetSuccess(changedToEnabled);
 
         }
 

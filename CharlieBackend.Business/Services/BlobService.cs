@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services
 {
@@ -23,14 +24,29 @@ namespace CharlieBackend.Business.Services
             _logger = logger;
         }
 
-        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream)
+        public string GetUrl(Attachment attachment)
+        {
+            BlobClient blob = new BlobClient
+                       (
+                       _blobAccount.ConnectionString,
+                       attachment.ContainerName,
+                       attachment.FileName
+                       );
+
+            return blob.Uri.AbsoluteUri;
+        }
+
+        public async Task<BlobClient> UploadAsync(string fileName, Stream fileStream, bool isPublic = false)
         {
             string containerName = Guid.NewGuid().ToString("N");
 
             BlobContainerClient container =
-                        new BlobContainerClient(_blobAccount.connectionString, containerName);
+                        new BlobContainerClient(_blobAccount.ConnectionString, containerName);
 
             await container.CreateIfNotExistsAsync();
+
+            if(isPublic)
+                container.SetAccessPolicy(PublicAccessType.BlobContainer);
 
             BlobClient blob = container.GetBlobClient(fileName);
 
@@ -46,7 +62,7 @@ namespace CharlieBackend.Business.Services
         {
             BlobClient blob = new BlobClient
                        (
-                       _blobAccount.connectionString,
+                       _blobAccount.ConnectionString,
                        containerName,
                        fileName
                        );
@@ -60,7 +76,7 @@ namespace CharlieBackend.Business.Services
         {
             BlobContainerClient container = new BlobContainerClient
                         (
-                        _blobAccount.connectionString,
+                        _blobAccount.ConnectionString,
                         containerName
                         );
 

@@ -2,11 +2,11 @@
 {
     public class AzureStorageBlobAccount
     {
-        public readonly string connectionString;
+        public readonly string ConnectionString;
 
         public AzureStorageBlobAccount(string connectionString)
         {
-            this.connectionString = connectionString;
+            ConnectionString = connectionString;
         }
     }
 }

@@ -9,9 +9,9 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<StudentDto>> CreateStudentAsync(long accountId);
 
-        Task<Result<IList<StudentDto>>> GetAllStudentsAsync();
+        Task<Result<IList<StudentDetailsDto>>> GetAllStudentsAsync();
 
-        Task<Result<IList<StudentDto>>> GetAllActiveStudentsAsync();
+        Task<Result<IList<StudentDetailsDto>>> GetAllActiveStudentsAsync();
 
         Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id);
 
@@ -25,6 +25,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<StudentDto>> GetStudentByEmailAsync(string email);
 
-        Task<Result<StudentDto>> DisableStudentAsync(long studentId);
+        Task<Result<bool>> DisableStudentAsync(long studentId);
+
+        Task<Result<bool>> EnableStudentAsync(long studentId);
     }
 }

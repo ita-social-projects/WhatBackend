@@ -51,12 +51,14 @@ namespace CharlieBackend.Api.UnitTest
                .ReturnsAsync(successExistingAccount);
 
             InitializeForCreateStudentAsync();
-
+            
             var studentService = new StudentService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object, 
+                null
+                );
 
             //Act
             var successResult = await studentService.CreateStudentAsync(1);
@@ -75,7 +77,9 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                null
+                );
 
             //Act
             var nonExistingIdResult = await studentService.CreateStudentAsync(0);
@@ -103,7 +107,9 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object, 
+                null
+                );
 
             //Act
             var alreadyAssignedResult = await studentService.CreateStudentAsync(2);
@@ -138,7 +144,9 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object, 
+                null
+                );
 
             //Act
             var successResult = await studentService.GetStudentByIdAsync(existingId);
@@ -163,7 +171,9 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object, 
+                null
+                );
 
             //Act
             var nonExistingIdResult = await studentService.GetStudentByIdAsync(nonExistingId);
@@ -215,7 +225,8 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Object,
             _unitOfWorkMock.Object,
             _mapper,
-            _notificationServiceMock.Object
+            _notificationServiceMock.Object,
+            null
             );
 
             var successResult = await studentService
@@ -238,7 +249,8 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Object,
             _unitOfWorkMock.Object,
             _mapper,
-            _notificationServiceMock.Object
+            _notificationServiceMock.Object,
+            null
             );
 
             //Act
@@ -286,19 +298,14 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Object,
             _unitOfWorkMock.Object,
             _mapper,
-            _notificationServiceMock.Object
+            _notificationServiceMock.Object,
+            null
             );
 
             var alreadyExistingEmailResult = await studentService
                 .UpdateStudentAsync(6, alreadyExistingEmailUpdateStudentDto);
 
             alreadyExistingEmailResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
         }
     }
 }

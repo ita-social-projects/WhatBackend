@@ -61,7 +61,8 @@ namespace CharlieBackend.Api.UnitTest
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                null);
 
             //Act
             var nonExistingIdResult = await secretaryService.CreateSecretaryAsync(0);
@@ -75,13 +76,6 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(successResult.Data.Id, secretaryExpectedId);
 
             Assert.Equal(ErrorCode.ValidationError, alreadyAssignedResult.Error.Code);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-
-            return mock;
         }
     }
 }

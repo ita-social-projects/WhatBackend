@@ -262,5 +262,25 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
+        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
+        {
+            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, _currentUserService.EntityId);
+
+            return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
+        }
+
+        public async Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonId);
+
+            if (lesson == null)
+            {
+                return Result<LessonDto>.GetError(ErrorCode.NotFound, $"This id = {lessonId} does not exist in database");
+            }
+
+            var lessonDto = _mapper.Map<LessonDto>(lesson);
+
+            return Result<LessonDto>.GetSuccess(lessonDto);
+        }
     }
 }

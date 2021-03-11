@@ -25,6 +25,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly MentorService _mentorService;
         private readonly Mock<IMentorService> _mentorServiceMock;
+        private readonly Mock<IBlobService> _blobServiceMock;
 
         public MentorServiceTests()
         {
@@ -33,12 +34,14 @@ namespace CharlieBackend.Api.UnitTest
             _mapper = GetMapper(new ModelMappingProfile());
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _mentorServiceMock = new Mock<IMentorService>();
+            _blobServiceMock= new Mock<IBlobService>();
 
             _mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                _blobServiceMock.Object);
         }
 
         private void InitializeCreateMentorAsync(long mentorExpectedId = 5)
@@ -337,23 +340,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetAllMentorsAsync_NotExisingMentors_ShouldReturnNotFound()
-        {
-            //Arrange
-            var emptyListOfMentors = new List<MentorDto>();
-
-            _mentorRepositoryMock.Setup(x => x.GetAllAsync());
-
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
-
-            //Act
-            var emptyResult = await _mentorService.GetAllMentorsAsync();
-
-            //Assert
-            emptyListOfMentors.Should().BeEquivalentTo(emptyResult);
-        }
-
-        [Fact]
         public async Task DisableMentorAsync_NotExistingMentorId_ShouldReturnNotFound()
         {
             //Arrange
@@ -401,12 +387,6 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             notExistingIdResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
-        }
-
-        protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
-        {
-            var mock = new Mock<IUnitOfWork>();
-            return mock;
         }
     }
 }
