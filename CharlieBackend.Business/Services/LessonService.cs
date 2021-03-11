@@ -141,7 +141,7 @@ namespace CharlieBackend.Business.Services
          
         public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
-            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByIdAsync(ids.MentorId);
 
             if (mentorToAssign == null)
             {

@@ -392,7 +392,7 @@ namespace CharlieBackend.Api.UnitTest
             long mentorId = 10;
             Mentor mentor = new Mentor() { Id = mentorId };
 
-            _mentorRepositoryMock.Setup(x => x.GetMentorByAccountIdAsync(nonExistentMentor.MentorId)).ReturnsAsync(mentor);
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(nonExistentMentor.MentorId)).ReturnsAsync(mentor);
 
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
@@ -457,7 +457,7 @@ namespace CharlieBackend.Api.UnitTest
             Mentor mentor = new Mentor() { Id = mentorId };
 
 
-            _mentorRepositoryMock.Setup(x => x.GetMentorByAccountIdAsync(expectedData.MentorId)).ReturnsAsync(mentor);
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(expectedData.MentorId)).ReturnsAsync(mentor);
 
             _lessonRepositoryMock.Setup(x => x.GetByIdAsync(expectedData.LessonId)).ReturnsAsync(expectedLesson);
 
