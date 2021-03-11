@@ -43,5 +43,11 @@ namespace CharlieBackend.AdminPanel.Services
             return courses;
         }
 
+        public async Task AddCourseAsync(CreateCourseDto courseDto)
+        {
+            await
+                _apiUtil.CreateAsync<CreateCourseDto>($"api/courses", courseDto);
+        }
+
     }
 }

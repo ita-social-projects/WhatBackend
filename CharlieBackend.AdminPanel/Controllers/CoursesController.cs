@@ -23,6 +23,14 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(courses);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddCourse(CreateCourseDto courseDto)
+        {
+            await _courseService.AddCourseAsync(courseDto);
+
+            return RedirectToAction("AllCourses", "Courses");
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateCourse(long id, UpdateCourseDto updateCourseDto)
         {
