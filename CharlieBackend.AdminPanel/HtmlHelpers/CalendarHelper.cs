@@ -10,7 +10,7 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 {
     public static class CalendarHelper
     {
-
+        public const int DaysInOneWeek = 7;
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
         {
             DateTime start, finish;
@@ -42,13 +42,13 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             }
 
             double daysCount = (finish - start).TotalDays;
-            double rowCount = daysCount / 7;
+            double rowCount = daysCount / DaysInOneWeek;
 
             if (rowCount - (int)rowCount != 0)
                 rowCount = (int)rowCount + 1;
 
             if (finish.DayOfWeek != DayOfWeek.Saturday)
-                daysCount += 7 - (int)finish.DayOfWeek;
+                daysCount += DaysInOneWeek - (int)finish.DayOfWeek;
 
             List<TagBuilder> dayContainers = new List<TagBuilder>();
 
@@ -91,13 +91,13 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
         public static TagBuilder GetRowHtml(int row, List<TagBuilder> days)
         {
-            int len = row * 7 + 7;
+            int daysRangeLength = row * DaysInOneWeek + DaysInOneWeek;
             TagBuilder rowBlock = new TagBuilder("div");
             rowBlock.AddCssClass("row");
 
             try
             {
-                for (int i = row * 7; i < len; i++)
+                for (int i = row * DaysInOneWeek; i < daysRangeLength; i++)
                 {
                     rowBlock.InnerHtml.AppendHtml(days[i]);
                 }
