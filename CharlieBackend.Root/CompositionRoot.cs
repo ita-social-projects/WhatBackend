@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Business.Services.FileServices;
+using CharlieBackend.Business.Services.ScheduleServiceFolder;
 
 namespace CharlieBackend.Root
 {
@@ -61,6 +62,8 @@ namespace CharlieBackend.Root
             services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
+            services.AddScoped<IEventsService, EventsService>();
+
             #endregion
         }
     }
