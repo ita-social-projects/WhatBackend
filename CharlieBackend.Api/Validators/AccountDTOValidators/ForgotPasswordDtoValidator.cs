@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
@@ -12,12 +10,12 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         public ForgotPasswordDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .EmailAddress().WithMessage("Incorrect email")
-                .MaximumLength(50).WithMessage("Email cannot be greateh than {MaxLength} symbols");
+                .NotEmpty()
+                .EmailAddress()
+                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.FormUrl)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .MaximumLength(200).WithMessage("Url cannot be greateh than {MaxLength} symbols")
+                .NotEmpty()
+                .MaximumLength(ValidationConstants.MaxLengthURL)
                 .Must(BeValidURL);
         }
 
