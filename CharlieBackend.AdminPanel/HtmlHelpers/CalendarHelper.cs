@@ -57,10 +57,10 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
                 dayContainers.Add(GetDayContainerHtml(start.AddDays(day), calendar.ScheduledEvents));
             }
 
-            int startDay = (int)start.DayOfWeek;
-
             if (start.DayOfWeek != DayOfWeek.Sunday)
             {
+                int startDay = (int)start.DayOfWeek;
+
                 for (int i = 1; i <= startDay; i++)
                 {
                     dayContainers = dayContainers.Prepend(GetDateContainerHtml(start.AddDays(-i))).ToList();
