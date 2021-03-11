@@ -112,7 +112,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<string>> GetAvatarUrl()
         {
-            var account = await _unitOfWork.AccountRepository.GetAccountWithAvatarById(_currentUserService.AccountId);
+            var account = await _unitOfWork.AccountRepository.GetByIdAsync(_currentUserService.AccountId);
 
             if (account.Avatar != null)
                 return Result<string>.GetSuccess(_blobService.GetUrl(account.Avatar));

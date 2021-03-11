@@ -8,8 +8,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IAccountRepository : IRepository<Account>
     {
-        public Task<Account> GetAccountWithAvatarById(long id);
-
         public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel);
 
         public Task<Account> GetAccountCredentialsById(long id);
