@@ -26,7 +26,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
-            blobService = _blobService;
+            _blobService = blobService;
         }
 
         public async Task<Result<StudentDto>> CreateStudentAsync(long accountId)
@@ -93,6 +93,14 @@ namespace CharlieBackend.Business.Services
 
         private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> students)
         {
+            foreach(var s in students)
+            {
+                if(s.Account==null)
+                {
+
+                }
+            }
+
             var detailsDtos = await students
                 .ToAsyncEnumerable()
                 .Select(m =>

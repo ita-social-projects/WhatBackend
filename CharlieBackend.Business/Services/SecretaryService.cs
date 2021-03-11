@@ -25,7 +25,7 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
-            blobService = _blobService;
+            _blobService = blobService;
         }
 
         public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
