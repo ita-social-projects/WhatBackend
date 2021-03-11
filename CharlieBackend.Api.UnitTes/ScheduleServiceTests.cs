@@ -88,29 +88,6 @@ namespace CharlieBackend.Api.UnitTest
             };
         }
 
-        private ScheduledEventFilterRequestDTO Get_ScheduledEventFilterRequestDTO(
-            long? courseId = null,
-            long? mentorId = null,
-            long? groupId = null,
-            long? themeId = null,
-            long? studentAccountId = null,
-            long? EventOccurenceId = null,
-            DateTime? startDate = null,
-            DateTime? finishDate = null)
-        {
-            return new ScheduledEventFilterRequestDTO
-            {
-                CourseID = courseId,
-                MentorID = mentorId,
-                GroupID = groupId,
-                ThemeID = themeId,
-                StudentAccountID = studentAccountId,
-                EventOccurrenceID = EventOccurenceId,
-                StartDate = startDate,
-                FinishDate = finishDate
-            };
-        }
-
         private void Initialize(CreateScheduleDto createScheduleDto)
         {
             _scheduleRepositoryMock.Setup(x => x.AddRange(new List<ScheduledEvent>()
@@ -525,30 +502,9 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Should().NotBeNull();
-            result.Data.First().Should().BeEquivalentTo(expectedFilteredList.First());
+            result.Data.ElementAt(0).Should().BeEquivalentTo(expectedFilteredList.ElementAt(0));
         }
-        
-        [Fact]
-        public async Task GetEventsFiltered_StartDateBiggerThanFinishDate_ShouldReturnValidationError()
-        {
-            // Arrange
-            var finishDate =  DateTime.Now;
-            var invalidStartDate = finishDate.AddDays(1);
 
-            var scheduledEventFilterDTO = Get_ScheduledEventFilterRequestDTO(
-                startDate: (DateTime?) invalidStartDate,
-                finishDate: (DateTime?) finishDate);
-
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory);
-
-            // Act
-            var result = await scheduleService.GetEventsFiltered(scheduledEventFilterDTO);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
-        }
-        
         [Fact]
         public async Task GetEventsFiltered_NonValidScheduledEventFilterRequest_ShouldReturnValidationError()
         {
@@ -620,7 +576,7 @@ namespace CharlieBackend.Api.UnitTest
             {
                 StudentGroupId = existentGroupId,
                 EventStart = startDate,
-                EventFinish = DateTime.Parse("Jan 1, 2021"),
+                EventFinish = finishDate,
                 Events = new List<ScheduledEventDTO>()
                 {
                     new ScheduledEventDTO()
@@ -632,7 +588,8 @@ namespace CharlieBackend.Api.UnitTest
                         EventFinish = finishDate,
                         EventOccuranceId = existentEventOccuranceId
                 } },
-                Id = id
+                Id = id,
+                Storage = EventOccuranceStorageParser.GetPatternStorageValue(validScheduleDTO.Pattern)
             };
 
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
