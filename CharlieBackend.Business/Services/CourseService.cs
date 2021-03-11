@@ -118,10 +118,23 @@ namespace CharlieBackend.Business.Services
                 return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
             }
 
-            Result<bool> course = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
+            Result<bool> courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
             await _unitOfWork.CommitAsync();
 
-            return course;
+            return courseDisabled;
+        }
+
+        public async Task<Result<bool>> EnableCourceAsync(long id)
+        {
+            if (await _unitOfWork.CourseRepository.IsCourseActive(id))
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, "Course is already active.");
+            }
+
+            var courseEnabled = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+
+            return courseEnabled;
         }
 
         public async Task<bool> IsCourseActive(long id)

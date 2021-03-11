@@ -9,6 +9,7 @@ using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 
 namespace CharlieBackend.Business.Services
@@ -86,23 +87,25 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<AttachmentDto>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            long accountId = _currentUserService.AccountId;
-            UserRole userRole = _currentUserService.Role;
-
-            var result = new List<AttachmentDto>();
-
-            if (userRole == UserRole.Student)
+            switch (_currentUserService.Role)
             {
-                result = await _unitOfWork.AttachmentRepository
-                    .GetAttachmentList(accountId, null, null, accountId, request.StartDate, request.FinishDate);
-            }
-            else
-            {
-                result = await _unitOfWork.AttachmentRepository
-                    .GetAttachmentList(accountId, request.CourseID, request.GroupID, accountId, request.StartDate, request.FinishDate);
+                case UserRole.Student:
+                    request.StudentAccountID = _currentUserService.EntityId;
+                    break;
+                case UserRole.Mentor:
+                    request.MentorID = _currentUserService.EntityId;
+                    break;
+                case UserRole.Secretary:
+                case UserRole.Admin:
+                    break;
+                case UserRole.NotAssigned:
+                default:
+                    throw new InvalidDataException($"Provided role {_currentUserService.Role} is not supported");
             }
 
-            return Result<IList<AttachmentDto>>.GetSuccess(result);
+            var result = await _unitOfWork.AttachmentRepository.GetAttachmentListFiltered(request);
+
+            return Result<IList<AttachmentDto>>.GetSuccess(_mapper.Map<IList<AttachmentDto>>(result));
         }
 
         public async Task<Result<DownloadAttachmentDto>> DownloadAttachmentAsync(long attachmentId)
@@ -135,12 +138,18 @@ namespace CharlieBackend.Business.Services
                 return Result<AttachmentDto>.GetError(ErrorCode.ValidationError,
                      "Attachement with id: " + attachmentId + " is not found");
             }
+            var role = _currentUserService.Role;
 
-            await _blobService.DeleteAsync(attachment.ContainerName);
-
-            await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
-
-            await _unitOfWork.CommitAsync();
+            if ( (attachment.CreatedByAccountId == _currentUserService.AccountId) || (role == UserRole.Admin))
+            {
+                await _blobService.DeleteAsync(attachment.ContainerName);
+                await _unitOfWork.AttachmentRepository.DeleteAsync(attachmentId);
+                await _unitOfWork.CommitAsync();
+            }
+            else
+            {
+                return Result<AttachmentDto>.GetError(ErrorCode.NotFound, "You cannot delete another user's data");
+            }
 
             return Result<AttachmentDto>.GetSuccess(_mapper.Map<AttachmentDto>(attachment));
         }
