@@ -14,6 +14,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id);
 
+        public Task<Result<IList<EventOccurrenceDTO>>> GetEventOccurrencesAsync();
+
         public Task<Result<ScheduledEventDTO>> UpdateScheduledEventByID(long scheduledEvendID, UpdateScheduledEventDto scheduleModel);
 
         public Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request);
@@ -22,6 +24,10 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long studentGroupId, DateTime? startDate, DateTime? finishDate);
 
+        public Task<Result<bool>> DeleteConcreteScheduleByIdAsync(long id);
+
         public Task<Result<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceId, CreateScheduleDto request);
+
+        public Task<Result<ScheduledEventDTO>> GetConcreteScheduleByIdAsync(long eventId);
     }
 }
