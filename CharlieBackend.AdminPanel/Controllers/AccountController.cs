@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly IOptions<ApplicationSettings> _config;

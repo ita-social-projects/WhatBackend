@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 namespace CharlieBackend.AdminPanel.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("[controller]/[action]")]
     public class StudentGroupController : Controller
     {
         private readonly IStudentGroupService _studentGroupService;

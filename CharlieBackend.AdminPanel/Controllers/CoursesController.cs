@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Route("[controller]/[action]")]
     public class CoursesController : Controller
     {
         private readonly ICourseService _courseService;

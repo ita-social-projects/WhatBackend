@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CharlieBackend.AdminPanel.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("[controller]/[action]")]
     public class ThemesController : Controller
     {
         private readonly IThemeService _themeService;

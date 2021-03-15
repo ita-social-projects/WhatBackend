@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 namespace CharlieBackend.AdminPanel.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("[controller]/[action]")]
     public class StudentsController : Controller
     {
         private readonly IStudentService _studentService;
