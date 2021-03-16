@@ -225,7 +225,7 @@ CREATE TABLE `scheduled_event` (
   `student_group_id` bigint DEFAULT NULL,
   `theme_id` bigint DEFAULT NULL,
   `mentor_id` bigint DEFAULT NULL,
-  `lesson_id` bigint DEFAULT NULL,
+  `lesson_id` bigint DEFAULT NULL UNIQUE,
   `event_start` datetime NOT NULL,
   `event_finish` datetime NOT NULL,
   PRIMARY KEY (`id`),
