@@ -12,6 +12,8 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         public Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto scheduleModel);
 
+        public Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduleDto createSingleScheduleRequest);
+
         public Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id);
 
         public Task<Result<IList<EventOccurrenceDTO>>> GetEventOccurrencesAsync();

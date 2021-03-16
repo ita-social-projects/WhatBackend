@@ -189,6 +189,26 @@ namespace CharlieBackend.Business.Services
             return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(item));
         }
 
+        public async Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduleDto createSingleScheduleRequest)
+        {
+            string error = await ValidateCreateScheduleRequestAsync(createSingleScheduleRequest);
+
+            if (error != null)
+            {
+                return Result<ScheduledEventDTO>.GetError(ErrorCode.ValidationError, error);
+            }
+
+            EventOccurrence result = null;
+
+            _unitOfWork.EventOccurrenceRepository.Add(result);
+
+            await _unitOfWork.CommitAsync();
+
+            await AddEventsAsync(result, createSingleScheduleRequest);
+
+            return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(result));
+        }
+
         public async Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request)
         {
             string error = await ValidateUpdateScheduleDTO(request);
