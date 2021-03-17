@@ -10,7 +10,7 @@ using System.Linq;
 namespace CharlieBackend.Api.Middlewares
 {
     /// <summary>
-    /// A helper class that determines whether the user is active or not
+    /// Middleware that restricts requests from users with deactivated accounts.
     /// </summary>
     public class IsAccountActiveMiddleware
     {
