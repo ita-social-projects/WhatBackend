@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Api.Extensions;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,13 +42,6 @@ namespace CharlieBackend.Api.Middlewares
 
                 var isActive = await accountService.IsAccountActiveAsync(currentEmail);
                 
-                if (isActive == null)
-                {
-                    context.Response.StatusCode = 401;
-
-                    await context.Response.WriteAsync("Need to sign in.");
-                }
-                    
                 if ((bool)!isActive)
                 {
                      context.Response.StatusCode = StatusCodes.Status403Forbidden;
