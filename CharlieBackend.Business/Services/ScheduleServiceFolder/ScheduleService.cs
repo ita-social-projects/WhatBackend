@@ -11,6 +11,7 @@ using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using System.Text;
+using CharlieBackend.Core.DTO.Schedule.CreateScheduleDTO;
 
 namespace CharlieBackend.Business.Services
 {
@@ -189,9 +190,15 @@ namespace CharlieBackend.Business.Services
             return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(item));
         }
 
-        public async Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduleDto createSingleScheduleRequest)
+        public async Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduledEventDto createSingleScheduleRequest)
         {
-            string error = await ValidateCreateScheduleRequestAsync(createSingleScheduleRequest);
+            var singleScheduleRequest = new CreateScheduleDto()
+            {
+                Context = createSingleScheduleRequest.Context,
+                Range = createSingleScheduleRequest.Range
+            };
+
+            string error = await ValidateCreateScheduleEventRequestAsync(singleScheduleRequest);
 
             if (error != null)
             {
@@ -204,7 +211,7 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
-            await AddEventsAsync(result, createSingleScheduleRequest);
+            await AddEventsAsync(result, singleScheduleRequest);
 
             return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(result));
         }
@@ -273,6 +280,32 @@ namespace CharlieBackend.Business.Services
                 request.EventEnd.Value.Hour, request.EventEnd.Value.Minute, request.EventEnd.Value.Second) : item.EventFinish;
 
             return item;
+        }
+
+        private async Task<string> ValidateCreateScheduleEventRequestAsync(CreateScheduleDto request)
+        {
+            if (request == null)
+            {
+                return "Request must not be null";
+            }
+
+            StringBuilder error = new StringBuilder(string.Empty);
+
+            if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.Context.GroupID))
+            {
+                error.Append(" Group does not exist");
+            }
+
+            if (request.Context.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
+            {
+                error.Append(" Mentor does not exist");
+            }
+
+            if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
+            {
+                error.Append(" Theme does not exist");
+            }
+            return error.Length > 0 ? error.ToString() : null;
         }
 
         private async Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto request)

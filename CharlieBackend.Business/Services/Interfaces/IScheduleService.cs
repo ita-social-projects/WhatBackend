@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Schedule.CreateScheduleDTO;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -12,7 +13,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         public Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto scheduleModel);
 
-        public Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduleDto createSingleScheduleRequest);
+        public Task<Result<ScheduledEventDTO>> AddSingleScheduledEvent(CreateScheduledEventDto createSingleScheduleRequest);
 
         public Task<Result<EventOccurrenceDTO>> GetEventOccurrenceByIdAsync(long id);
 

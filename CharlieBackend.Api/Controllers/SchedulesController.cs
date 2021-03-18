@@ -11,6 +11,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.Models.ResultModel;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Schedule.CreateScheduleDTO;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -144,7 +145,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPost ("event1")]
-        public async Task<ActionResult<ScheduledEventDTO>> AddSingleEvent([FromBody] CreateScheduleDto request)
+        public async Task<ActionResult<ScheduledEventDTO>> AddSingleEvent([FromBody] CreateScheduledEventDto request)
         {
             var foundSchedules = await _scheduleService.AddSingleScheduledEvent(request);
 
