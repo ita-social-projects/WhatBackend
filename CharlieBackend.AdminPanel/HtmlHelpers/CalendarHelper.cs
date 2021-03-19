@@ -43,48 +43,13 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
 
             int daysCount = (int)(finish.Date - start.Date).TotalDays;
 
-            List<TagBuilder> dayContainers = new List<TagBuilder>();
+            IList<TagBuilder> dayContainers = GetDaysContainersList(
+                ref daysCount,
+                calendar.ScheduledEvents,
+                start,
+                finish);
 
-            for (int day = 1; day <= daysCount; day++)
-            {
-                dayContainers.Add(GetDayContainerHtml(start.AddDays(day), calendar.ScheduledEvents));
-            }
-
-            if (finish.DayOfWeek != DayOfWeek.Saturday)
-            {
-                int daysToAppendCount = DaysInOneWeek - (int)finish.DayOfWeek;
-
-                int daysRangeLength = daysCount + daysToAppendCount;
-
-                for (int day = daysCount + 1; day < daysRangeLength; day++)
-                {
-                    dayContainers.Add(GetDateContainerHtml(start.AddDays(day)));
-                }
-
-                daysCount += daysToAppendCount;
-            }
-
-            if (start.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
-            {
-                int daysToPrependCount = (int)start.DayOfWeek;
-
-                for (int i = 0; i <= daysToPrependCount; i++)
-                {
-                    dayContainers.Insert(0, GetDateContainerHtml(start.AddDays(-i)));
-                }
-            }
-
-            double rowCount = (double)daysCount / DaysInOneWeek;
-
-            if (rowCount - (int)rowCount != 0)
-                rowCount = (int)rowCount + 1;
-
-            List<TagBuilder> rowContainers = new List<TagBuilder>();
-
-            for (int i = 0; i < rowCount; i++)
-            {
-                rowContainers.Add(GetRowHtml(i, dayContainers));
-            }
+            IList<TagBuilder> rowContainers = GetRowContainersList(daysCount, dayContainers);
 
             string result = string.Empty;
 
@@ -101,14 +66,77 @@ namespace CharlieBackend.AdminPanel.HtmlHelpers
             return new HtmlString(result);
         }
 
-        public static TagBuilder GetRowHtml(int row, List<TagBuilder> days)
+        private static IList<TagBuilder> GetRowContainersList(
+            int daysCount,
+            IList<TagBuilder> dayContainers)
+        {
+            double rowCount = (double)daysCount / DaysInOneWeek;
+
+            if (rowCount - (int)rowCount != 0)
+            {
+                rowCount = (int)rowCount + 1;
+            }
+
+            List<TagBuilder> rowContainers = new List<TagBuilder>();
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                rowContainers.Add(GetRowHtml(i, dayContainers));
+            }
+
+            return rowContainers;
+        }
+
+        private static IList<TagBuilder> GetDaysContainersList(
+            ref int daysCount,
+            IList<CalendarScheduledEventViewModel> events,
+            DateTime startDate,
+            DateTime finishDate)
+        {
+            List<TagBuilder> dayContainers = new List<TagBuilder>();
+
+            for (int day = 1; day <= daysCount; day++)
+            {
+                dayContainers.Add(GetDayContainerHtml(startDate.AddDays(day), events));
+            }
+
+            if (finishDate.DayOfWeek != DayOfWeek.Saturday)
+            {
+                int daysToAppendCount = DaysInOneWeek - (int)finishDate.DayOfWeek;
+
+                int daysRangeLength = daysCount + daysToAppendCount;
+
+                for (int day = daysCount + 1; day < daysRangeLength; day++)
+                {
+                    dayContainers.Add(GetDateContainerHtml(startDate.AddDays(day)));
+                }
+
+                daysCount += daysToAppendCount;
+            }
+
+            if (startDate.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
+            {
+                int daysToPrependCount = (int)startDate.DayOfWeek;
+
+                for (int i = 0; i <= daysToPrependCount; i++)
+                {
+                    dayContainers.Insert(0, GetDateContainerHtml(startDate.AddDays(-i)));
+                }
+            }
+
+            return dayContainers;
+        }
+
+        public static TagBuilder GetRowHtml(int row, IList<TagBuilder> days)
         {
             int daysRangeLength = row * DaysInOneWeek + DaysInOneWeek;
             TagBuilder rowBlock = new TagBuilder("div");
             rowBlock.AddCssClass("row");
 
             if (daysRangeLength > days.Count)
+            {
                 daysRangeLength = days.Count;
+            }
 
             for (int i = row * DaysInOneWeek; i < daysRangeLength; i++)
             {

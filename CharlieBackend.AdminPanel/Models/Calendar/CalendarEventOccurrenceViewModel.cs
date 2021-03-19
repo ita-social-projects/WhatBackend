@@ -14,7 +14,5 @@ namespace CharlieBackend.AdminPanel.Models.Calendar
         public DateTime EventFinish { get; set; }
 
         public PatternType Pattern { get; set; }
-
-        public long Storage { get; set; }
     }
 }

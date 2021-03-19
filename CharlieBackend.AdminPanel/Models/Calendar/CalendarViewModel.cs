@@ -1,14 +1,5 @@
-﻿using CharlieBackend.AdminPanel.Models.Course;
-using CharlieBackend.AdminPanel.Models.EventOccurence;
-using CharlieBackend.AdminPanel.Models.Mentor;
-using CharlieBackend.AdminPanel.Models.StudentGroups;
-using CharlieBackend.AdminPanel.Models.Students;
-using CharlieBackend.AdminPanel.Models.Theme;
-using CharlieBackend.Core.DTO.Schedule;
-using System;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Models.Calendar
 {
