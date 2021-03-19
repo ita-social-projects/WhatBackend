@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Addition of new student
         /// </summary>
-        /// <response code="200">Successful passing of account into student</response>
+        /// <response code="200">New student is successfully added.</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(StudentDto))]
