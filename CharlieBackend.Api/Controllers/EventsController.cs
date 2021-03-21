@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
-    /// Controller to manage schedules data
+    /// Controller to manage scheduled events data
     /// </summary>
     [Route("api/events")]
     [ApiController]
@@ -24,7 +24,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Events controller constructor
         /// </summary>
-        /// <param name="scheduleService"></param>
+        /// <param name="eventsService"></param>
         public EventsController(IEventsService eventsService)
         {
             _eventsService = eventsService;
@@ -34,31 +34,27 @@ namespace CharlieBackend.Api.Controllers
         /// Get event by id
         /// </summary>
         /// <response code = "200" > Successful getting of schedule</response>
-        /// <response code="HTTP: 404, API: 3">Error, given schedule event not found</response>
+        /// <response code="HTTP: 404">Error, given scheduled event not found</response>
         [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpGet("{scheduledEventID}")]
-        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long scheduledEventID)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long id)
         {
-            var foundScheduleEvent = await _eventsService.GetConcreteScheduleByIdAsync(scheduledEventID);
-
-            return foundScheduleEvent.ToActionResult();
+            return await _eventsService.GetAsync(id);
         }
 
         /// <summary>
         /// Updates a single event
         /// </summary>
         /// <response code="200">Successful update of schedule</response>
-        /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
-        /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
+        /// <response code="HTTP: 400">Error, update data is wrong</response>
+        /// <response code="HTTP: 404">Error, scheduled event does not exist</response>
+        [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpPut("{scheduledEventID}")]
-        public async Task<ActionResult<ScheduledEventDTO>> UpdateEventById(long scheduledEventID, [FromBody] UpdateScheduledEventDto request)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ScheduledEventDTO>> UpdateEventById(long id, [FromBody] UpdateScheduledEventDto request)
         {
-            var foundSchedules = await _eventsService.UpdateScheduledEventByID(scheduledEventID, request);
-
-            return foundSchedules.ToActionResult();
+            return await _eventsService.UpdateAsync(id, request);
         }
 
         /// <summary>
@@ -69,13 +65,12 @@ namespace CharlieBackend.Api.Controllers
         /// Returns true if deleting was done, false in case scheduled event doesn't exist and error after the wrong request
         /// </remarks>
         /// <response code = "200" > Successful delete of schedule</response>
-        /// /// <response code="HTTP: 400, API: 0">Scheduled event does not exist</response>
-        /// <response code="HTTP: 409, API: 5">Can not delete scheduled event due to wrong request data</response>
+        /// /// <response code="HTTP: 404">Scheduled event does not exist</response>
         [Authorize(Roles = "Secretary, Admin")]
-        [HttpDelete("{scheduledEventID}")]
-        public async Task<ActionResult> DeleteConcreteSchedule(long scheduledEventID)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteConcreteSchedule(long id)
         {
-            var result = await _eventsService.DeleteConcreteScheduleByIdAsync(scheduledEventID);
+            var result = await _eventsService.DeleteAsync(id);
 
             return result.ToActionResult();
         }

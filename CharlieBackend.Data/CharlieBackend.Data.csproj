@@ -16,4 +16,8 @@
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Validators\" />
+  </ItemGroup>
+
 </Project>

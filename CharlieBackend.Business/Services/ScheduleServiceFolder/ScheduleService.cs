@@ -148,8 +148,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<ScheduledEventDTO>>> UpdateEventsRange(ScheduledEventFilterRequestDTO filter, UpdateScheduledEventDto request)
         {
-            string error = await _validator.ValidateUpdateScheduleDTO(request);
-            error ??= await _validator.ValidateGetEventsFilteredRequest(filter);
+            string error = await _validator.ValidateGetEventsFilteredRequest(filter);
 
             if (error != null)
             {

@@ -77,38 +77,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             return error.Length > 0 ? error.ToString() : null;
         }
 
-        public async Task<string> ValidateUpdateScheduleDTO(UpdateScheduledEventDto request)
-        {
-            if (request == null)
-            {
-                return "requestDTO body must not be null";
-            }
-
-            StringBuilder error = new StringBuilder(string.Empty);
-
-            if (request.StudentGroupId.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId.Value))
-            {
-                error.Append($" No such theme id={request.StudentGroupId.Value}");
-            }
-
-            if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
-            {
-                error.Append($" No such mentor id={request.MentorId.Value}");
-            }
-
-            if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
-            {
-                error.Append($" No such theme id={request.ThemeId.Value}");
-            }
-
-            if (request.EventEnd.HasValue && request.EventStart.HasValue && (request.EventEnd < request.EventStart))
-            {
-                error.Append($" StartDate must be less then FinisDate");
-            }
-
-            return error.Length > 0 ? error.ToString() : null;
-        }
-
         public async Task<string> ValidateEventOccuranceId(long id)
         {
             string result = null;
