@@ -102,5 +102,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                 return null; 
             }
         }
+
+        public async override Task<Lesson> GetByIdAsync(long id)
+        {
+            return await _applicationContext.Lessons
+                .Include(x => x.Visits)
+                .FirstOrDefaultAsync(entity => entity.Id == id);
+        }
     }
 }
