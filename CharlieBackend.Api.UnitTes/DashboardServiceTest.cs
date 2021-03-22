@@ -23,8 +23,13 @@ namespace CharlieBackend.Api.UnitTest
         private readonly IMapper _mapper;
         private static long studentIdWithGroup = 7;
         private static long studentIdWithoutGroup = 20;
-        private static long courseId = 1;
+        
         private static long courseIdWithoutGroup = 2;
+
+        private static long studentId = 2;
+        private static long id = 1;
+        private static sbyte mark = 5;
+        private static long month = 30;
 
         public DashboardServiceTest()
         {
@@ -41,19 +46,19 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentsClassbook_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
-            long expectedCourseId = 2;
-            long expectedStudentGroupId = 1;
-            long expectedStudentId = 5;
-            long expectedLessonId = 2;
+            long expectedCourseId = id;
+            long expectedStudentGroupId = id;
+            long expectedStudentId = id;
+            long expectedLessonId = id;
 
-            var existentGroupIds = new List<long> { 2 };
+            var existentGroupIds = new List<long> { id };
 
             var studentclassbookRequestWithData = new StudentsRequestDto<ClassbookResultType>()
             {
-                CourseId = 1,
-                StudentGroupId = 0,
-                StartDate = new DateTime(2000, 01, 01),
-                FinishDate = new DateTime(2030, 01, 01),
+                CourseId = id,
+                StudentGroupId = id,
+                StartDate =  DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentPresence,
@@ -69,8 +74,8 @@ namespace CharlieBackend.Api.UnitTest
                             StudentGroupId = expectedStudentGroupId,
                             StudentId = expectedStudentId,
                             LessonId = expectedLessonId,
-                            LessonDate = new DateTime(2015,4,12),
-                            StudentMark = 5
+                            LessonDate = DateTime.Now,
+                            StudentMark = mark
                         }
             };
 
@@ -82,7 +87,7 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = expectedStudentGroupId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
-                        LessonDate = new DateTime(2015,4,12),
+                        LessonDate = DateTime.Now,
                         Presence = true
                     }
             };
@@ -120,8 +125,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentClassbookWrongRequest = new StudentsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2010, 01, 01),
-                FinishDate = new DateTime(2021, 01, 01),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
             };
 
             //Act
@@ -137,10 +142,10 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentclassbookCourseWithoutStudents = new StudentsRequestDto<ClassbookResultType>()
             {
-                CourseId = 11,
-                StudentGroupId = 0,
-                StartDate = new DateTime(2010, 01, 01),
-                FinishDate = new DateTime(2021, 01, 01),
+                CourseId = id,
+                StudentGroupId = id,
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentPresence,
@@ -170,10 +175,10 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentclassbookCourseWithoutStudents = new StudentsRequestDto<ClassbookResultType>()
             {
-                CourseId = 11,
-                StudentGroupId = 0,
-                StartDate = new DateTime(2010, 01, 01),
-                FinishDate = new DateTime(2021, 01, 01),
+                CourseId = id,
+                StudentGroupId = id,
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentPresence,
@@ -201,18 +206,18 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentsResult_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
-            long expectedCourseId = 2;
-            long expectedStudentGroupId = 1;
-            long expectedStudentId = 5;
+            long expectedCourseId = id;
+            long expectedStudentGroupId = id;
+            long expectedStudentId = id;
 
-            var existentStudentIds = new List<long>() { 6, 7, 8, 9, 10 };
-            var existentGroupIds = new List<long>() { 2 };
+            var existentStudentIds = new List<long>() { id, studentId };
+            var existentGroupIds = new List<long>() { id };
 
             var studentResultRequestWithData = new StudentsRequestDto<StudentResultType>()
             {
-                CourseId = 3,
-                StartDate = new DateTime(2012, 1, 12),
-                FinishDate = new DateTime(2015, 4, 21),
+                CourseId = id,
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -280,8 +285,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentResultWrongRequest = new StudentsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2012, 1, 12),
-                FinishDate = new DateTime(2015, 4, 21)
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month)
             };
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(new List<long>()))
@@ -300,9 +305,9 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentResultRequestWithOutStudent = new StudentsRequestDto<StudentResultType>()
             {
-                CourseId = 5,
-                StartDate = new DateTime(2012, 1, 12),
-                FinishDate = new DateTime(2015, 4, 21),
+                CourseId = id,
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -335,9 +340,9 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentResultRequestWithOutStudent = new StudentsRequestDto<StudentResultType>()
             {
-                CourseId = 5,
-                StartDate = new DateTime(2012, 1, 12),
-                FinishDate = new DateTime(2015, 4, 21),
+                CourseId = id,
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -368,17 +373,17 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentClassbook_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
-            long expectedCourseId = 2;
-            long expectedStudentGroupId = 1;
-            long expectedStudentId = 5;
-            long expectedLessonId = 2;
+            long expectedCourseId = id;
+            long expectedStudentGroupId = id;
+            long expectedStudentId = id;
+            long expectedLessonId = id;
 
-            var existentGroupIds = new List<long>() { 1 };
+            var existentGroupIds = new List<long>() { id };
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentMarks,
@@ -394,8 +399,8 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = expectedStudentGroupId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
-                        LessonDate = new DateTime(2015,4,12),
-                        StudentMark = 5
+                        LessonDate = DateTime.Now,
+                        StudentMark = mark
                     }
             };
 
@@ -407,7 +412,7 @@ namespace CharlieBackend.Api.UnitTest
                         StudentGroupId = expectedStudentGroupId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
-                        LessonDate = new DateTime(2015,4,12),
+                        LessonDate = DateTime.Now,
                         Presence = true
                     }
             };
@@ -447,8 +452,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentMarks,
@@ -479,8 +484,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentMarks,
@@ -511,8 +516,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new ClassbookResultType[]
                 {
                     ClassbookResultType.StudentMarks,
@@ -537,8 +542,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithoutClassbook = new DashboardAnalyticsRequestDto<ClassbookResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
             };
 
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
@@ -555,16 +560,16 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentResult_ValidDataPassed_ShouldReturnExpectedData()
         {
             //Arrange
-            long expectedCourseId = 1;
-            long expectedStudentGroupId = 1;
-            long expectedStudentId = 6;
+            long expectedCourseId = id;
+            long expectedStudentGroupId = id;
+            long expectedStudentId = id;
 
-            var existentGroupIds = new List<long>() { 1 };
+            var existentGroupIds = new List<long>() { id };
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -629,8 +634,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -661,8 +666,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -693,8 +698,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
                 {
                     StudentResultType.AverageStudentMark,
@@ -718,8 +723,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithoutClassbook = new DashboardAnalyticsRequestDto<StudentResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
             };
 
             var currentUserServiceAsStudentWithGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithGroup);
@@ -736,15 +741,15 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentGroupResult_ValidDataPassed_ShouldReturnCurrentStudentsAverageGroupMark()
         {
             //Arrange
-            long expectedCourseId = 1;
-            long expectedStudentGroupId = 1;
+            long expectedCourseId = id;
+            long expectedStudentGroupId = id;
 
-            var existentGroupIds = new List<long>() { 1 };
+            var existentGroupIds = new List<long>() { id };
 
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentGroupResultType[]
                 {
                     StudentGroupResultType.AverageStudentGroupMark,
@@ -779,7 +784,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _dashboardRepositoryMock.Setup(x => x.GetGroupsIdsByCourseIdAndPeriodAsync(
-                courseId, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
+                id, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(existentGroupIds);
 
             _dashboardRepositoryMock.Setup(x => x.GetStudentGroupsAverageMarks(existentGroupIds))
@@ -789,7 +794,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(expectedAverageGroupVisits);
 
             //Act
-            var requestWithData = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+            var requestWithData = await _dashboardService.GetStudentGroupResultAsync(id, dashbordAnaliticRequstWithData);
 
             //Assert
             requestWithData.Data.Should().NotBeNull();
@@ -802,8 +807,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentGroupResultType[]
                 {
                     StudentGroupResultType.AverageStudentGroupMark,
@@ -836,12 +841,12 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithoutData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
             };
 
             //Act
-            var requestWithoutData = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithoutData);
+            var requestWithoutData = await _dashboardService.GetStudentGroupResultAsync(id, dashbordAnaliticRequstWithoutData);
 
             //Assert
             requestWithoutData.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
@@ -853,8 +858,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var dashbordAnaliticRequstWithData = new DashboardAnalyticsRequestDto<StudentGroupResultType>()
             {
-                StartDate = new DateTime(2011, 1, 1),
-                FinishDate = new DateTime(2017, 5, 20),
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentGroupResultType[]
                 {
                     StudentGroupResultType.AverageStudentGroupMark,
@@ -868,7 +873,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<long>());
 
             //Act
-            var requesWithoutStudentGroupId = await _dashboardService.GetStudentGroupResultAsync(courseId, dashbordAnaliticRequstWithData);
+            var requesWithoutStudentGroupId = await _dashboardService.GetStudentGroupResultAsync(id, dashbordAnaliticRequstWithData);
 
             //Assert
             requesWithoutStudentGroupId.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
