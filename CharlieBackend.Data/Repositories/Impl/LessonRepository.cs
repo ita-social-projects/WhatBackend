@@ -103,9 +103,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public override Task<Lesson> GetByIdAsync(long id)
+        public async override Task<Lesson> GetByIdAsync(long id)
         {
-            return _applicationContext.Lessons
+            return await _applicationContext.Lessons
                 .Include(x => x.Visits)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
         }
