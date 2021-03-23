@@ -1,15 +1,12 @@
-﻿using System;
-using CharlieBackend.Core;
+﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Api.SwaggerExamples.StudentsController;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,23 +20,20 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly ILessonService _lessonService;
         private readonly IStudentService _studentService;
-        private readonly IAccountService _accountService;
         #endregion
         /// <summary>
         /// Students Controllers constructor
         /// </summary>
-        public StudentsController(IStudentService studentService, 
-            IAccountService accountService, ILessonService lessonService)
+        public StudentsController(IStudentService studentService, ILessonService lessonService)
         {
             _studentService = studentService;
-            _accountService = accountService;
             _lessonService = lessonService;
         }
 
         /// <summary>
         /// Addition of new student
         /// </summary>
-        /// <response code="200">Successful passing of account into student</response>
+        /// <response code="200">New student is successfully added.</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(StudentDto))]
@@ -73,10 +67,10 @@ namespace CharlieBackend.Api.Controllers
         /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
-        [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
+        [SwaggerResponse(200, type: typeof(IList<StudentDetailsDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() 
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllStudents() 
         {
 
             var studentsModelsResult = await _studentService.GetAllStudentsAsync();
@@ -105,7 +99,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of students list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {
 
             var studentsModelsResult = await _studentService.GetAllActiveStudentsAsync();
@@ -146,17 +140,47 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disabling of student
+        /// Disable student's account
         /// </summary>
-        /// <response code="204">Successful update of student</response>
+        /// <response code="204">Successful deletion of student's account</response>
         /// <response code="400">Error, student not found</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already disabled</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DisableStudent(long id)
+        public async Task<ActionResult<bool>> DisableStudent(long id)
         {
             var disabledStudentModel = await _studentService.DisableStudentAsync(id);
 
             return disabledStudentModel.ToActionResult();
+        }
+
+        /// <summary>
+        /// Enable student's account
+        /// </summary>
+        /// <response code="204">Successful enabling of student's account</response>
+        /// <response code="400">Error, student not found</response>
+        /// <response code="HTTP: 409, API: 5">Student's account is already active</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<bool>> EnableStudent(long id)
+        {
+            var disabledStudentModel = await _studentService.EnableStudentAsync(id);
+
+            return disabledStudentModel.ToActionResult();
+        }
+        
+        /// <summary>
+        /// Gets filtered list of lessons for student
+        /// </summary>
+        /// <response code="200">Returned filtered list of lessons for student </response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Student")]
+        [HttpPost("lessons")]
+        public async Task<IList<LessonDto>> GetLessonsForStudent([FromBody] FilterLessonsRequestDto filterModel)
+        {
+            var lessons = await _lessonService.GetLessonsForStudentAsync(filterModel);
+
+            return lessons;
         }
     }
 }

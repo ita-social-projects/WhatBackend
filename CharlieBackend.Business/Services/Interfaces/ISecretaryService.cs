@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId);
 
-        Task<IList<SecretaryDto>> GetAllSecretariesAsync();
+        Task<IList<SecretaryDetailsDto>> GetAllSecretariesAsync();
 
         Task<long?> GetAccountId(long secretaryId);
 
@@ -18,9 +18,11 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<SecretaryDto>> GetSecretaryByAccountIdAsync(long accountId);
 
         Task<Result<SecretaryDto>> GetSecretaryByIdAsync(long secretaryId);
-
-        Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId);
        
-        Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync();
+        Task<Result<IList<SecretaryDetailsDto>>> GetActiveSecretariesAsync();
+      
+        Task<Result<bool>> DisableSecretaryAsync(long secretaryId);
+
+        Task<Result<bool>> EnableSecretaryAsync(long secretaryId);
     }
 }

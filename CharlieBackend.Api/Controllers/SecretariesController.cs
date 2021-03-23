@@ -19,15 +19,13 @@ namespace CharlieBackend.Api.Controllers
     {
         #region
         private readonly ISecretaryService _secretaryService;
-        private readonly IAccountService _accountService;
         #endregion
         /// <summary>
         /// SecretariesController constructor to inject related services
         /// </summary>
-        public SecretariesController(ISecretaryService secretaryService, IAccountService accountService)
+        public SecretariesController(ISecretaryService secretaryService)
         {
             _secretaryService = secretaryService;
-            _accountService = accountService;
         }
 
         /// <summary>
@@ -52,9 +50,9 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Returns list of all secretaries</response>
         [Authorize(Roles = "Admin, Secretary")]
-        [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
+        [SwaggerResponse(200, type: typeof(IList<SecretaryDetailsDto>))]
         [HttpGet]
-        public async Task<ActionResult<List<SecretaryDto>>> GetAllSecretaries()
+        public async Task<ActionResult<IList<SecretaryDetailsDto>>> GetAllSecretaries()
         {
             var secretariesDtos = await _secretaryService.GetAllSecretariesAsync();
 
@@ -66,7 +64,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Returns list of active secretaries</response>
         [Authorize(Roles = "Admin, Secretary")]
-        [SwaggerResponse(200, type: typeof(List<SecretaryDto>))]
+        [SwaggerResponse(200, type: typeof(IList<SecretaryDetailsDto>))]
         [Route("active")]
         [HttpGet]
         public async Task<ActionResult> GetActiveSecretaries()
@@ -93,15 +91,31 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable secretary entity
+        /// Disable secretary's account
         /// </summary>
-        /// <response code="200">Secretary successfully disabled</response>
+        /// <response code="200">Secretary's account successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>
+        /// <response code="HTTP: 409, API: 5">Secretary's account is already disabled</response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{secretaryId}")]
-        public async Task<ActionResult> DisableSecretary(long secretaryId)
+        public async Task<ActionResult<bool>> DisableSecretary(long secretaryId)
         {
             var isDisabled = await _secretaryService.DisableSecretaryAsync(secretaryId);
+
+            return isDisabled.ToActionResult();
+        }
+
+        /// <summary>
+        /// Enable secretary's account
+        /// </summary>
+        /// <response code="200">Secretary's account successfully enabled</response>
+        /// <response code="HTTP: 404, API: 3">Secretary not found</response>
+        /// <response code="HTTP: 409, API: 5">Secretary's account is already enabled</response>
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{secretaryId}")]
+        public async Task<ActionResult> EnableSecretary(long secretaryId)
+        {
+            var isDisabled = await _secretaryService.EnableSecretaryAsync(secretaryId);
 
             return isDisabled.ToActionResult();
         }

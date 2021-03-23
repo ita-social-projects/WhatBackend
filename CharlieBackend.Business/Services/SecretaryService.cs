@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Linq;
 
 namespace CharlieBackend.Business.Services
 {
@@ -15,14 +16,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly IBlobService _blobService;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
-                                IMapper mapper, INotificationService notification)
+                                IMapper mapper, INotificationService notification, IBlobService blobService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _blobService = blobService;
         }
 
         public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
@@ -132,42 +135,74 @@ namespace CharlieBackend.Business.Services
             return secretary?.AccountId;
         }
 
-        public async Task<IList<SecretaryDto>> GetAllSecretariesAsync()
+        public async Task<IList<SecretaryDetailsDto>> GetAllSecretariesAsync()
         {
-            var secretaries = await _unitOfWork.SecretaryRepository.GetAllAsync();
+            var secretaries = await GetSecretariesWithAvatarIncluded(await _unitOfWork.SecretaryRepository.GetAllAsync());
 
-            if (secretaries == null)
-            {
-                return new List<SecretaryDto>();
-            }
-
-            return _mapper.Map<IList<SecretaryDto>>(secretaries);
+            return secretaries;
         }
 
-        public async Task<Result<IList<SecretaryDto>>> GetActiveSecretariesAsync()
+        private async Task<IList<SecretaryDetailsDto>> GetSecretariesWithAvatarIncluded(IList<Secretary> secretaries)
         {
-            var secretaries = await _unitOfWork.SecretaryRepository.GetActiveAsync();
+            var detailsDtos = await secretaries
+                .ToAsyncEnumerable()
+                .Select(m =>
+                {
+                    var detailsDto = _mapper.Map<SecretaryDetailsDto>(m);
 
-            return Result<IList<SecretaryDto>>.GetSuccess(_mapper.Map<List<SecretaryDto>>(secretaries));
+                    detailsDto.AvatarUrl = m.Account.Avatar != null ? _blobService.GetUrl(m.Account.Avatar) : null;
+
+                    return detailsDto;
+                })
+                .Select(x => x)
+                .ToListAsync();
+
+            return detailsDtos;
         }
 
-        public async Task<Result<SecretaryDto>> DisableSecretaryAsync(long secretaryId)
+        public async Task<Result<IList<SecretaryDetailsDto>>> GetActiveSecretariesAsync()
+        {
+            var secretaries = await GetSecretariesWithAvatarIncluded(await _unitOfWork.SecretaryRepository.GetActiveAsync());
+
+            return Result<IList<SecretaryDetailsDto>>.GetSuccess(secretaries);
+        }
+
+        public async Task<Result<bool>> DisableSecretaryAsync(long secretaryId)
         {
             var accountId = await GetAccountId(secretaryId);
 
             if (accountId == null)
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
             }
 
-            var secretary = await GetSecretaryByAccountIdAsync((long)accountId);
+            var changedToDisabled = await _accountService.DisableAccountAsync((long)accountId);
 
-            if (!await _accountService.DisableAccountAsync((long)accountId))
+            if (!changedToDisabled)
             {
-                return Result<SecretaryDto>.GetError(ErrorCode.NotFound,"This secretsry account is already disabled.");
+                return Result<bool>.GetError(ErrorCode.Conflict,"This secretsry account is already disabled.");
             }
 
-            return Result<SecretaryDto>.GetSuccess(secretary.Data);
+            return Result<bool>.GetSuccess(changedToDisabled);
+        }
+
+        public async Task<Result<bool>> EnableSecretaryAsync(long secretaryId)
+        {
+            var accountId = await GetAccountId(secretaryId);
+
+            if (accountId == null)
+            {
+                return Result<bool>.GetError(ErrorCode.NotFound, "Unknown secretary id.");
+            }
+
+            var changedToEnabled = await _accountService.EnableAccountAsync((long)accountId);
+
+            if (!changedToEnabled)
+            {
+                return Result<bool>.GetError(ErrorCode.Conflict, "This secretsry account is already enabled.");
+            }
+
+            return Result<bool>.GetSuccess(changedToEnabled);
         }
     }
 }

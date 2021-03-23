@@ -29,9 +29,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _entities.ToListAsync();
         }
 
-        public virtual Task<T> GetByIdAsync(long id)
+        public async virtual Task<T> GetByIdAsync(long id)
         {
-            return _entities.FirstOrDefaultAsync(entity => entity.Id == id);
+            return await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
         public void Add(T entity)

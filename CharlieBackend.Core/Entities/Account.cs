@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -23,7 +24,12 @@ namespace CharlieBackend.Core.Entities
         public string? ForgotPasswordToken { get; set; }
 
         public DateTime? ForgotTokenGenDate { get; set; }
+
+        //[ForeignKey("Avatar")]
+        public long? AvatarId { get; set; }
 #nullable disable
+
+        public virtual Attachment Avatar { get; set; }
 
         public virtual ICollection<Mentor> Mentors { get; set; }
 

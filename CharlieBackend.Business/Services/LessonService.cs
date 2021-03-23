@@ -141,13 +141,18 @@ namespace CharlieBackend.Business.Services
          
         public async Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids)
         {
-            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(ids.MentorId);
+            var mentorToAssign = await _unitOfWork.MentorRepository.GetMentorByIdAsync(ids.MentorId);
 
             if (mentorToAssign == null)
             {
-                throw new NullReferenceException();
+                return Result<Lesson>.GetError(ErrorCode.NotFound, $"Mentor with id {ids.MentorId} is not found");
             }
             var foundLesson = await _unitOfWork.LessonRepository.GetByIdAsync(ids.LessonId);
+
+            if (foundLesson == null)
+            {
+                return Result<Lesson>.GetError(ErrorCode.NotFound, $"Lesson with id {ids.LessonId} is not found");
+            }
 
             foundLesson.MentorId = ids.MentorId;
 
@@ -262,5 +267,25 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
+        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
+        {
+            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, _currentUserService.EntityId);
+
+            return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
+        }
+
+        public async Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(lessonId);
+
+            if (lesson == null)
+            {
+                return Result<LessonDto>.GetError(ErrorCode.NotFound, $"This id = {lessonId} does not exist in database");
+            }
+
+            var lessonDto = _mapper.Map<LessonDto>(lesson);
+
+            return Result<LessonDto>.GetSuccess(lessonDto);
+        }
     }
 }
