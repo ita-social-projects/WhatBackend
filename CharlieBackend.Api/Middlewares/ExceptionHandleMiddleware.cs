@@ -54,11 +54,9 @@ namespace CharlieBackend.Api.Middlewares
                 case nameof(NotFoundException):
                     context.Response.StatusCode = 404;
                     break;
-                case nameof(Exception):
+                default:
                 context.Response.StatusCode = 500;
                     break;
-                default:
-                    throw exception;
             }
 
             return context.Response.WriteAsync(JsonSerializer.Serialize (new ErrorDetails()

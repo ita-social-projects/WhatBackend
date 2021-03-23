@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long id)
+        public async Task<ActionResult<ScheduledEventDTO>> GetEvent(long id)
         {
             return await _eventsService.GetAsync(id);
         }
@@ -52,7 +52,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<ScheduledEventDTO>> UpdateEventById(long id, [FromBody] UpdateScheduledEventDto request)
+        public async Task<ActionResult<ScheduledEventDTO>> UpdateEvent(long id, [FromBody] UpdateScheduledEventDto request)
         {
             return await _eventsService.UpdateAsync(id, request);
         }
@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.Controllers
         /// /// <response code="HTTP: 404">Scheduled event does not exist</response>
         [Authorize(Roles = "Secretary, Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteConcreteSchedule(long id)
+        public async Task<ActionResult> DeleteEvent(long id)
         {
             var result = await _eventsService.DeleteAsync(id);
 
