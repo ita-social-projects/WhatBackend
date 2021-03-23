@@ -30,6 +30,7 @@ namespace CharlieBackend.Api.UnitTest
         private static long id = 1;
         private static sbyte mark = 5;
         private static long month = 30;
+        int nonExistentCourseId = int.MaxValue;
 
         public DashboardServiceTest()
         {
@@ -340,7 +341,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var studentResultRequestWithOutStudent = new StudentsRequestDto<StudentResultType>()
             {
-                CourseId = id,
+                CourseId = nonExistentCourseId,
                 StartDate = DateTime.Now,
                 FinishDate = DateTime.Now.AddDays(month),
                 IncludeAnalytics = new StudentResultType[]
