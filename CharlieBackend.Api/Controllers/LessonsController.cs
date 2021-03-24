@@ -57,7 +57,8 @@ namespace CharlieBackend.Api.Controllers
         /// Assinging mentor to lesson
         /// </summary>
         /// <response code="200">Successful assinging mentor to lesson</response>
-        /// <response code="HTTP: 422, API: 4">Error, lesson does not exist</response>
+        /// <response code="HTTP: 404, API: 3">Error, lesson does not exist</response>
+        /// <response code="HTTP: 404, API: 3">Error, mentor is not found</response>
         [SwaggerResponse(200, type: typeof(Lesson))]
         [Authorize(Roles = "Admin, Secretary")]
         [Route("assign")]
@@ -66,10 +67,6 @@ namespace CharlieBackend.Api.Controllers
         {
             var changedLesson = await _lessonService.AssignMentorToLessonAsync(ids);
 
-            if (changedLesson == null)
-            {
-                return StatusCode(422, "Lesson doesn't exist");
-            }
             return changedLesson.ToActionResult();
         }
 

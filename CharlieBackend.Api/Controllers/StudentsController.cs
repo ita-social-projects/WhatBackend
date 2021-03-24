@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Addition of new student
         /// </summary>
-        /// <response code="200">Successful passing of account into student</response>
+        /// <response code="200">New student is successfully added.</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find account</response>
         /// <response code="HTTP: 400, API: 0">Error, account already assigned</response>
         [SwaggerResponse(200, type: typeof(StudentDto))]
@@ -67,10 +67,10 @@ namespace CharlieBackend.Api.Controllers
         /// Get all students (active and inactive)
         /// </summary>
         /// <response code="200">Successful return of students list</response>
-        [SwaggerResponse(200, type: typeof(IList<StudentDto>))]
+        [SwaggerResponse(200, type: typeof(IList<StudentDetailsDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllStudents() 
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllStudents() 
         {
 
             var studentsModelsResult = await _studentService.GetAllStudentsAsync();
@@ -99,7 +99,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of students list</response>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
-        public async Task<ActionResult<IList<StudentDto>>> GetAllActiveStudents()
+        public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {
 
             var studentsModelsResult = await _studentService.GetAllActiveStudentsAsync();
