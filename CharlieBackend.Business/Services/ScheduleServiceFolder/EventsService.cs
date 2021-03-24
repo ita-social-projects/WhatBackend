@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
@@ -26,7 +27,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
         public async Task<Result<bool>> DeleteAsync(long id)
         {
-            ScheduledEvent scheduledEvent = await GetEventAsync(id);
+            ScheduledEvent scheduledEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
 
             await _unitOfWork.ScheduledEventRepository.DeleteAsync(id);
             await _unitOfWork.CommitAsync();
@@ -34,32 +35,45 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return Result<bool>.GetSuccess(true);
         }
 
-        public async Task<ScheduledEventDTO> UpdateAsync(long id, UpdateScheduledEventDto request)
+        public async Task<ScheduledEventDTO> UpdateAsync(long id, UpdateScheduledEventDto updatedSchedule)
         {
-            ScheduledEvent item = await GetEventAsync(id);
+            string errorMsg = await ValidateUpdatedScheduleAsync(updatedSchedule);
 
-            item = SchedulesUpdater.UpdateFields(item, request);
-            _unitOfWork.ScheduledEventRepository.Update(item);
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                throw new EntityValidationException(errorMsg);
+            }
+
+            ScheduledEvent schedule = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
+
+            schedule = SchedulesUpdater.UpdateFields(schedule, updatedSchedule);
+            _unitOfWork.ScheduledEventRepository.Update(schedule);
             await _unitOfWork.CommitAsync();
 
-            return _mapper.Map<ScheduledEventDTO>(item);
+            return _mapper.Map<ScheduledEventDTO>(schedule);
         }
 
         public async Task<ScheduledEventDTO> GetAsync(long id)
         {
-            var foundScheduleEvent = await GetEventAsync(id);
-            return _mapper.Map<ScheduledEventDTO>(foundScheduleEvent);
+            return _mapper.Map<ScheduledEventDTO>(await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id));
         }
 
-        private async Task<ScheduledEvent> GetEventAsync(long id)
+        private async Task<string> ValidateUpdatedScheduleAsync(UpdateScheduledEventDto updatedSchedule)
         {
-            var foundScheduleEvent = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
-
-            if (foundScheduleEvent == null)
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
             {
-                throw new NotFoundException(ExceptionsConstants.EventNotFound);
+               return ExceptionsConstants.MentorNotValid;
             }
-            return foundScheduleEvent;
+            if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
+            {
+                return ExceptionsConstants.ThemeNotValid;
+            }
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(updatedSchedule.StudentGroupId.GetValueOrDefault()) is null)
+            {
+                return ExceptionsConstants.StudentGroupNotValid;
+            }
+
+            return string.Empty;
         }
     }
 }

@@ -10,9 +10,6 @@ namespace CharlieBackend.Business.Helpers
         public const int MaxLengthURL = 200;
         public const string PasswordRule = "Password must have at least eight characters, at least one uppercase letter, one lowercase letter and one number";
         public const string PasswordConfirmNotValid = "Passwords do not match";
-        public const string MentorNotValid = "Given mentor not found";
-        public const string StudentGroupNotValid = "Given student group not found";
-        public const string ThemeNotValid = "Given theme not found";
         public const string DatesNotValid = "StartDate can not be greater than FinisDate";
 
     }
