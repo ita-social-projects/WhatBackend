@@ -48,114 +48,162 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_ValidData()
+        public async Task UpdateScheduledEventDTOAsync_ValidData_ShouldReturnTrue()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
                     validThemeId,
                     validStartDate,
-                    validEndDate)))
-                .IsValid
+                    validEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeTrue();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_ValidData_WithoutDates()
+        public async Task UpdateScheduledEventDTOAsync_ValidDataWithoutDates_ShouldReturnTrue()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
-                    validThemeId)))
-                .IsValid
+                    validThemeId);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeTrue();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_EmptyData()
+        public async Task UpdateScheduledEventDTOAsync_EmptyData_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO()))
-                .IsValid
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO();
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_InvalidData()
+        public async Task UpdateScheduledEventDTOAsync_NotValidData_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     notValidStudentGroupId,
                     notValidMentorId,
                     notValidThemeId,
                     notValidStartDate,
-                    notValidEndDate)))
-                .IsValid
+                    notValidEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_InvalidMentor()
+        public async Task UpdateScheduledEventDTOAsync_NotValidMentor_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     notValidMentorId,
                     validThemeId,
                     validStartDate,
-                    validEndDate)))
-                .IsValid
+                    validEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_InvalidTheme()
+        public async Task UpdateScheduledEventDTOAsync_NotValidTheme_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
                     notValidThemeId,
                     validStartDate,
-                    validEndDate)))
-                .IsValid
+                    validEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_InvalidGroup()
+        public async Task UpdateScheduledEventDTOAsync_NotValidGroup_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     notValidStudentGroupId,
                     validMentorId,
                     validThemeId,
                     validStartDate,
-                    validEndDate)))
-                .IsValid
+                    validEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_InvalidDates()
+        public async Task UpdateScheduledEventDTOAsync_NotValidDatesRange_ShouldReturnFalse()
         {
-            (await _validator.ValidateAsync(
-                Get_UpdateScheduledEventDTO(
+            // Arrange
+            var validator = new UpdateScheduledEventDTOValidator();
+            var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
                     validThemeId,
                     notValidStartDate,
-                    notValidEndDate)))
-                .IsValid
+                    notValidEndDate);
+
+            // Act
+            var result = await validator.ValidateAsync(schedule);
+
+            // Assert
+            result.IsValid
                 .Should()
                 .BeFalse();
         }
