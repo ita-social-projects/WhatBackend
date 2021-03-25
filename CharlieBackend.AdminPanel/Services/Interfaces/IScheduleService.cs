@@ -1,6 +1,8 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.AdminPanel.Models.Calendar;
+using CharlieBackend.Core.DTO.Schedule;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Services.Interfaces

@@ -5,22 +5,22 @@ namespace CharlieBackend.Core.DTO.Schedule
 {
     public class ScheduledEventFilterRequestDTO
     {
-        public long? CourseID;
+        public long? CourseID { get; set; }
 
-        public long? MentorID;
+        public long? MentorID { get; set; }
 
-        public long? GroupID;
+        public long? GroupID { get; set; }
 
-        public long? ThemeID;
+        public long? ThemeID { get; set; }
 
-        public long? StudentAccountID;
+        public long? StudentAccountID { get; set; }
 
-        public long? EventOccurrenceID;
-
-        [DataType(DataType.DateTime)]
-        public DateTime? StartDate;
+        public long? EventOccurrenceID { get; set; }
 
         [DataType(DataType.DateTime)]
-        public DateTime? FinishDate;
+        public DateTime? StartDate { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime? FinishDate { get; set; }
     }
 }
