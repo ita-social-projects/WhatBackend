@@ -10,6 +10,8 @@ using CharlieBackend.Core;
 using System;
 
 using CharlieBackend.Core.DTO.Attachment;
+using CharlieBackend.Data.Exceptions;
+
 namespace CharlieBackend.Data.Repositories.Impl
 {
     class ScheduledEventRepository : Repository<ScheduledEvent>, IScheduledEventRepository
@@ -43,6 +45,18 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .WhereIf(request.StartDate.HasValue, x => x.EventFinish >= request.StartDate)
                     .WhereIf(request.FinishDate.HasValue, x => x.EventStart <= request.FinishDate)
                     .ToListAsync();
+        }
+
+        public override async Task<ScheduledEvent> GetByIdAsync(long id)
+        {
+            var schedule = await _applicationContext.ScheduledEvents.FirstOrDefaultAsync(entity => entity.Id == id);
+            
+            if(schedule is null)
+            {
+                throw new NotFoundException("Scheduled event does not exist");
+            }
+
+            return schedule;
         }
     }
 }

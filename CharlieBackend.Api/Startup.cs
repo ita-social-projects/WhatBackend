@@ -154,6 +154,7 @@ namespace CharlieBackend.Api
         /// </summary>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dbContext)
         {
+
             dbContext.Database.EnsureCreated();
 
             app.UseCors(builder =>
@@ -164,7 +165,6 @@ namespace CharlieBackend.Api
                 .AllowAnyHeader();
             });
 
-            app.UseMiddleware<ExceptionHandleMiddleware>();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
@@ -189,6 +189,8 @@ namespace CharlieBackend.Api
 
             //Added Serilog to the app�s middleware pipeline
             app.UseSerilogRequestLogging();
+
+            app.UseMiddleware<ExceptionHandleMiddleware>();
 
             app.UseRouting();
 

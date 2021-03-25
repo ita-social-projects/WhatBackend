@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Data.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -44,7 +46,19 @@ namespace CharlieBackend.Api.Middlewares
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = 500;
+
+            switch(exception.GetType().Name)
+            {
+                case nameof(EntityValidationException):
+                    context.Response.StatusCode = 400;
+                    break;
+                case nameof(NotFoundException):
+                    context.Response.StatusCode = 404;
+                    break;
+                default:
+                context.Response.StatusCode = 500;
+                    break;
+            }
 
             return context.Response.WriteAsync(JsonSerializer.Serialize (new ErrorDetails()
             {

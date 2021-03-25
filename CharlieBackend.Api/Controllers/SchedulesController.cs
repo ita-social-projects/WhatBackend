@@ -56,7 +56,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get event occurrence by id
+        /// Get schedule by id
         /// </summary>
         /// <response code="200">Successful add of schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
@@ -68,21 +68,6 @@ namespace CharlieBackend.Api.Controllers
             var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
 
             return resSchedule.ToActionResult();
-        }
-
-        /// <summary>
-        /// Get concrete single schedule event by id
-        /// </summary>
-        /// <response code = "200" > Successful getting of schedule</response>
-        /// <response code="HTTP: 404, API: 3">Error, given schedule event not found</response>
-        [SwaggerResponse(200, type: typeof(ScheduledEventDTO))]
-        [Authorize(Roles = "Secretary, Admin")]
-        [HttpGet("events/{scheduledEventID}")]
-        public async Task<ActionResult<ScheduledEventDTO>> GetConcreteScheduleByID(long scheduledEventID)
-        {
-            var foundScheduleEvent = await _scheduleService.GetConcreteScheduleByIdAsync(scheduledEventID);
-
-            return foundScheduleEvent.ToActionResult();
         }
 
         /// <summary>
@@ -120,23 +105,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Updates a single event
-        /// </summary>
-        /// <response code="200">Successful update of schedule</response>
-        /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
-        /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
-        [Authorize(Roles = "Secretary, Admin")]
-        [HttpPut("events/{scheduledEventID}")]
-        public async Task<ActionResult<ScheduledEventDTO>> UpdateEventById(long scheduledEventID, [FromBody] UpdateScheduledEventDto request)
-        {
-            var foundSchedules = await _scheduleService.UpdateScheduledEventByID(scheduledEventID, request);
-
-            return foundSchedules.ToActionResult();
-        }
-
-        /// <summary>
-        /// Updates a single EventOccurrence
+        /// Updates a single schedule
         /// </summary>
         /// <remarks>
         /// Old instance of event occurrence is replaced with the new one (id is the same). 
@@ -157,7 +126,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all event occurrences
+        /// Gets all schedules
         /// </summary>
         /// <response code="200">Successfully returned a collection of event occurrences.</response>
         [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
@@ -190,23 +159,5 @@ namespace CharlieBackend.Api.Controllers
             return foundSchedules.ToActionResult();
         }
 
-        /// <summary>
-        /// Deletes concrete scheduled event by id
-        /// </summary>
-        /// <remarks>
-        /// Removes one concrete scheduled event related to specified EventOccurrence
-        /// Returns true if deleting was done, false in case scheduled event doesn't exist and error after the wrong request
-        /// </remarks>
-        /// <response code = "200" > Successful delete of schedule</response>
-        /// /// <response code="HTTP: 400, API: 0">Scheduled event does not exist</response>
-        /// <response code="HTTP: 409, API: 5">Can not delete scheduled event due to wrong request data</response>
-        [Authorize(Roles = "Secretary, Admin")]
-        [HttpDelete("events/{scheduledEventID}")]
-        public async Task<ActionResult> DeleteConcreteSchedule(long scheduledEventID)
-        {
-            var result = await _scheduleService.DeleteConcreteScheduleByIdAsync(scheduledEventID);
-
-            return result.ToActionResult();
-        }
     }
 }

@@ -42,5 +42,9 @@
     <ProjectReference Include="..\CharlieBackend.Root\CharlieBackend.Root.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SwaggerExamples\EventsController\" />
+  </ItemGroup>
+
 
 </Project>
