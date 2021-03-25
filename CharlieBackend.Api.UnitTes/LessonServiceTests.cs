@@ -631,7 +631,7 @@ namespace CharlieBackend.Api.UnitTest
             var result = await lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            result.Data.Should().BeTrue();
+            result.Should().BeTrue();
         }
 
         [Fact]

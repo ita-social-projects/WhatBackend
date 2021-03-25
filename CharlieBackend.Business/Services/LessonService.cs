@@ -290,7 +290,7 @@ namespace CharlieBackend.Business.Services
             return Result<LessonDto>.GetSuccess(lessonDto);
         }
 
-        public async Task<Result<bool>> IsLessonDoneAsync(long id)
+        public async Task<bool> IsLessonDoneAsync(long id)
         {
             var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);
 
@@ -301,7 +301,7 @@ namespace CharlieBackend.Business.Services
 
             if(lesson.Visits.Where(visit => visit.Presence == true).Any())
             {
-                return Result<bool>.GetSuccess(true);
+                return true;
             }
 
             throw new LessonNotDoneException("The lesson was not done");
