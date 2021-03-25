@@ -9,6 +9,8 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
 using System.Linq;
+using CharlieBackend.Data.Exceptions;
+using CharlieBackend.Business.Exceptions;
 
 namespace CharlieBackend.Business.Services
 {
@@ -286,6 +288,23 @@ namespace CharlieBackend.Business.Services
             var lessonDto = _mapper.Map<LessonDto>(lesson);
 
             return Result<LessonDto>.GetSuccess(lessonDto);
+        }
+
+        public async Task<Result<bool>> IsLessonDoneAsync(long id)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);
+
+            if (lesson is null)
+            {
+                throw new NotFoundException("Given lesson not found");
+            }
+
+            if(lesson.Visits.Where(visit => visit.Presence == true).Any())
+            {
+                return Result<bool>.GetSuccess(true);
+            }
+
+            throw new LessonNotDoneException("The lesson was not done");
         }
     }
 }
