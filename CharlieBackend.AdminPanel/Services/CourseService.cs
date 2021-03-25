@@ -3,6 +3,7 @@ using CharlieBackend.AdminPanel.Models.Course;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Course;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,40 +15,59 @@ namespace CharlieBackend.AdminPanel.Services
 
         private readonly IMapper _mapper;
 
-        public CourseService(IApiUtil apiUtil, IMapper mapper)
+        private readonly CoursesApiEndpoints _coursesApiEndpoints;
+
+        public CourseService(
+            IApiUtil apiUtil, 
+            IMapper mapper, 
+            IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
             _mapper = mapper;
+            _coursesApiEndpoints = options.Value.Urls.ApiEndpoints.Courses;
         }
 
         public async Task<bool> DisableCourseAsync(long id)
         {
-            return await _apiUtil.DeleteAsync<bool>($"api/courses/{id}");
+            var disableCourseEndpoint = 
+                string.Format(_coursesApiEndpoints.DisableCourseEndpoint, id);
+
+            return await _apiUtil.DeleteAsync<bool>(disableCourseEndpoint);
         }
 
         public async Task<bool> EnableCourseAsync(long id)
         {
-            return await _apiUtil.EnableAsync<bool>($"api/courses/{id}");
+            var enableCourseEndpoint =
+                string.Format(_coursesApiEndpoints.EnableCourseEndpoint, id);
+
+            return await _apiUtil.EnableAsync<bool>(enableCourseEndpoint);
         }
 
         public async Task UpdateCourse(long id, UpdateCourseDto UpdateDto)
         {
+            var updateCourseEndpoint =
+                string.Format(_coursesApiEndpoints.UpdateCourseEndpoint, id);
+
             await
-                _apiUtil.PutAsync<UpdateCourseDto>($"api/courses/{id}", UpdateDto);
+                _apiUtil.PutAsync<UpdateCourseDto>(updateCourseEndpoint, UpdateDto);
         }
 
         public async Task<IList<CourseViewModel>> GetAllCoursesAsync()
         {
-            var courses = _mapper.Map<IList<CourseViewModel>>(await _apiUtil.GetAsync<IList<CourseDto>>($"api/courses/isActive"));
+            var getAllCoursesEndpoint =
+                string.Format(_coursesApiEndpoints.GetAllCoursesEndpoint);
 
-            return courses;
+            var courseDtos = await _apiUtil.GetAsync<IList<CourseDto>>(getAllCoursesEndpoint);
+
+            return _mapper.Map<IList<CourseViewModel>>(courseDtos);
         }
 
         public async Task AddCourseAsync(CreateCourseDto courseDto)
         {
-            await
-                _apiUtil.CreateAsync<CreateCourseDto>($"api/courses", courseDto);
-        }
+            var addCourseEndpoint =
+                string.Format(_coursesApiEndpoints.AddCourseEndpoint);
 
+            await _apiUtil.CreateAsync<CreateCourseDto>(addCourseEndpoint, courseDto);
+        }
     }
 }
