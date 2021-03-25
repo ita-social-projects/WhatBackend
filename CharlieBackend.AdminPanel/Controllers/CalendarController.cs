@@ -16,12 +16,19 @@ namespace CharlieBackend.AdminPanel.Controllers
             _calendarService = calendarService;
         }
 
-        public async Task<IActionResult> Index(
-            ScheduledEventFilterRequestDTO scheduledEventFilter)
+        public async Task<IActionResult> Index()
+        {
+            var data = await _calendarService.GetCalendarDataAsync(new ScheduledEventFilterRequestDTO());
+
+            return View(data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter)
         {
             var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
 
-            return Ok(data);
+            return View("Index", data);
         }
     }
 }
