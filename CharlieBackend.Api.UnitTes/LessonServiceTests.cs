@@ -657,10 +657,10 @@ namespace CharlieBackend.Api.UnitTest
 
             _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
             //Act
-            Func<Task> isDoneMethod = async () => { await lessonService.IsLessonDoneAsync(lessonId); };
+            var result = await lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            await isDoneMethod.Should().ThrowAsync<LessonNotDoneException>();
+            result.Should().BeFalse();
         }
 
         [Fact]

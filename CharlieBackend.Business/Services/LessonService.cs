@@ -299,12 +299,7 @@ namespace CharlieBackend.Business.Services
                 throw new NotFoundException("Given lesson not found");
             }
 
-            if(lesson.Visits.Where(visit => visit.Presence == true).Any())
-            {
-                return true;
-            }
-
-            throw new LessonNotDoneException("The lesson was not done");
+            return lesson.Visits.Where(visit => visit.Presence == true).Any();
         }
     }
 }

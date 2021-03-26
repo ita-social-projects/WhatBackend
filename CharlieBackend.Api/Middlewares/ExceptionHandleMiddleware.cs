@@ -50,7 +50,6 @@ namespace CharlieBackend.Api.Middlewares
             switch(exception.GetType().Name)
             {
                 case nameof(EntityValidationException):
-                case nameof(LessonNotDoneException):
                     context.Response.StatusCode = 400;
                     break;
                 case nameof(NotFoundException):

@@ -125,8 +125,7 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Check if lesson was done
         /// </summary>
-        /// <response code="200">Lesson was done</response>
-        /// <response code="400">Lesson was not done</response>
+        /// <response code="200">Successful request</response>
         /// <response code="404">Lesson not found</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("{id}/isdone")]
