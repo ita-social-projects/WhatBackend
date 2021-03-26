@@ -213,6 +213,13 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<HomeworkStudentDto, HomeworkStudent>();
 
             #endregion
+
+            #region Visit mapping
+
+            CreateMap<Visit, VisitDto>();
+            CreateMap<VisitDto, Visit>();
+
+            #endregion
         }
     }
 }

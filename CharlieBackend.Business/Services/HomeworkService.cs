@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -188,6 +190,36 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
+        }
+
+        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        {
+
+            var studentHomework = await _unitOfWork.HomeworkStudentRepository
+                .GetByIdAsync(request.StudentHomeworkId.GetValueOrDefault());
+
+            if(studentHomework is null)
+            {
+                throw new NotFoundException("Student homework does not exist");
+            }
+
+            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(studentHomework.HomeworkId);
+
+            var visit = (await _unitOfWork.LessonRepository.GetByIdAsync(homework.LessonId))
+                .Visits
+                .FirstOrDefault(x => x.StudentId == studentHomework.StudentId);
+
+            if (studentHomework is null)
+            {
+                throw new NotFoundException("Student visit does not exist");
+            }
+
+            visit.StudentMark = (sbyte)request.StudentMark;
+
+            _unitOfWork.VisitRepository.Update(visit);
+            await _unitOfWork.CommitAsync();
+
+            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }

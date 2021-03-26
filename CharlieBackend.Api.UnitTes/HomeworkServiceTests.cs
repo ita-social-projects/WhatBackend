@@ -13,6 +13,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using CharlieBackend.Core.DTO.Visit;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -37,6 +38,17 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object);
+        }
+
+        private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
+        {
+            return new Visit()
+            {
+                Id = id,
+                StudentMark = mark,
+                Presence = presence,
+                StudentId = studentId
+            };
         }
 
         #region CreateHomeworkAsync
@@ -269,6 +281,191 @@ namespace CharlieBackend.Api.UnitTest
         {
             var mock = new Mock<IUnitOfWork>();
             return mock;
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
+        {
+            // Arrange
+            long lessonId = 1;
+            sbyte mark = 5;
+            sbyte updatedMark = 2;
+            long visitId_one = 1;
+            long visitId_two = 1;
+            long studentId_one = 1;
+            long studentId_two = 2;
+            long homeworkId = 1;
+            long homeworkStudentId_one = 1;
+            long homeworkStudentId_two = 1;
+
+            var visitTrue = CreateVisit(visitId_one, mark, true, studentId_one);
+            var visitFalse = CreateVisit(visitId_two, mark, false, studentId_two);
+
+            Lesson lesson = new Lesson()
+            {
+                Id = lessonId,
+                Visits = new List<Visit>()
+                {
+                   visitTrue,
+                   visitFalse
+                }
+            };
+
+            var homeworkStudent_one = new HomeworkStudent
+            {
+                Id = homeworkStudentId_one,
+                HomeworkId = homeworkId,
+                StudentId = studentId_one
+            };
+
+            var homeworkStudent_two = new HomeworkStudent
+            {
+                Id = homeworkStudentId_two,
+                HomeworkId = homeworkId,
+                StudentId = studentId_two
+            };
+
+            var homework = new Homework
+            {
+                LessonId = lessonId,
+                Id = homeworkId,
+                HomeworkStudents = new List<HomeworkStudent>
+                {
+                    homeworkStudent_one,
+                    homeworkStudent_two
+                }
+            };
+
+            var lessonRepositoryMock = new Mock<ILessonRepository>();
+            lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
+
+            var homeworkRepositoryMock = new Mock<IHomeworkRepository>();
+            homeworkRepositoryMock.Setup(x => x.GetByIdAsync(homeworkId)).ReturnsAsync(homework);
+
+            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
+            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId_one)).ReturnsAsync(homeworkStudent_one);
+            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId_two)).ReturnsAsync(homeworkStudent_two);
+
+            var visitRepositoryMock = new Mock<IVisitRepository>();
+            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_one)).ReturnsAsync(visitTrue);
+            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_two)).ReturnsAsync(visitFalse);
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(homeworkRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(homeworkStudentRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
+
+            var homeworkService = new HomeworkService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                _loggerMock.Object);
+
+            var request_one = new UpdateMarkRequestDto
+            { 
+                StudentHomeworkId = homeworkStudentId_one,
+                StudentMark = updatedMark
+            };
+
+            var request_two = new UpdateMarkRequestDto
+            {
+                StudentHomeworkId = homeworkStudentId_two,
+                StudentMark = updatedMark
+            };
+
+            //Act
+            var result_one = await homeworkService.UpdateMarkAsync(request_one);
+            var result_two = await homeworkService.UpdateMarkAsync(request_two);
+
+            // Assert
+
+            result_one.Data.StudentMark.GetValueOrDefault()
+                .Should()
+                .Be(updatedMark);
+
+            result_two.Data
+                .StudentMark
+                .GetValueOrDefault()
+                .Should()
+                .Be(updatedMark);
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_WrongVisitPassed_ShouldThrowException()
+        {
+            // Arrange
+            long lessonId = 1;
+            sbyte mark = 5;
+            sbyte updatedMark = 2;
+            long visitId = 1;
+            long studentId = 1;
+            long homeworkId = 1;
+            long homeworkStudentId = 1;
+            long wrongHomeworkStudentId = 2;
+
+            var visitTrue = CreateVisit(visitId, mark, true, studentId);
+
+            Lesson lesson = new Lesson()
+            {
+                Id = lessonId,
+                Visits = new List<Visit>()
+                {
+                   visitTrue,
+                }
+            };
+
+            var homeworkStudent = new HomeworkStudent
+            {
+                Id = homeworkStudentId,
+                HomeworkId = homeworkId,
+                StudentId = studentId
+            };
+
+            var homework = new Homework
+            {
+                LessonId = lessonId,
+                Id = homeworkId,
+                HomeworkStudents = new List<HomeworkStudent>
+                {
+                    homeworkStudent,
+                }
+            };
+
+            var lessonRepositoryMock = new Mock<ILessonRepository>();
+            lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
+
+            var homeworkRepositoryMock = new Mock<IHomeworkRepository>();
+            homeworkRepositoryMock.Setup(x => x.GetByIdAsync(homeworkId)).ReturnsAsync(homework);
+
+            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
+            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId)).ReturnsAsync(homeworkStudent);
+
+            var visitRepositoryMock = new Mock<IVisitRepository>();
+            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId)).ReturnsAsync(visitTrue);
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(homeworkRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(homeworkStudentRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
+
+            var homeworkService = new HomeworkService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                _loggerMock.Object);
+
+            var request = new UpdateMarkRequestDto
+            {
+                StudentHomeworkId = wrongHomeworkStudentId,
+                StudentMark = updatedMark
+            };
+
+            //Act
+            var result_one = await homeworkService.UpdateMarkAsync(request);
+
+            // Assert
+
+            result_one.Data.StudentMark.GetValueOrDefault()
+                .Should()
+                .Be(updatedMark);
         }
     }
 }
