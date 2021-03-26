@@ -121,5 +121,17 @@ namespace CharlieBackend.Api.Controllers
 
             return lessonModelResult.ToActionResult();
         }
+
+        /// <summary>
+        /// Check if lesson was done
+        /// </summary>
+        /// <response code="200">Successful request</response>
+        /// <response code="404">Lesson not found</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("{id}/isdone")]
+        public async Task<bool> IsLessonDone(long id)
+        {
+            return await _lessonService.IsLessonDoneAsync(id);
+        }
     }
 }

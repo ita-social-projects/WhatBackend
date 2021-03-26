@@ -12,6 +12,8 @@ using CharlieBackend.Business.Services;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.Models.ResultModel;
 using FluentAssertions;
+using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Data.Exceptions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -601,6 +603,82 @@ namespace CharlieBackend.Api.UnitTest
             Assert.Equal(updatedLesson.MentorId, result.MentorId);
             Assert.Equal(updatedLesson.StudentGroupId, result.StudentGroupId);
             Assert.Equal(updatedLesson.ThemeName, result.ThemeName);
+        }
+
+        [Fact]
+        public async Task IsLessonDoneAsync_ValidDataPassed_ShouldReturnTrue()
+        {
+            //Arrange
+            long lessonId = 1;
+            Lesson lesson = new Lesson 
+            {
+                Id = lessonId,
+                StudentGroup = CreateStudentGroup(),
+                Mentor = new Mentor { Id = 1},
+                Visits = new List<Visit> {
+                    new Visit{ Id = 1, Presence = true, LessonId = lessonId },
+                    new Visit{ Id = 1, Presence = false, LessonId = lessonId }
+                }
+            };
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
+            //Act
+            var result = await lessonService.IsLessonDoneAsync(lessonId);
+
+            //Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task IsLessonDoneAsync_WithoutVisits_ShouldThrowException()
+        {
+            //Arrange
+            long lessonId = 1;
+            Lesson lesson = new Lesson
+            {
+                Id = lessonId,
+                StudentGroup = CreateStudentGroup(),
+                Mentor = new Mentor { Id = 1 },
+                Visits = new List<Visit> {
+                    new Visit{ Id = 1, Presence = false, LessonId = lessonId },
+                    new Visit{ Id = 1, Presence = false, LessonId = lessonId }
+                }
+            };
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
+            //Act
+            var result = await lessonService.IsLessonDoneAsync(lessonId);
+
+            //Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task IsLessonDoneAsync_NotFoundLesson_ShouldThrowException()
+        {
+            //Arrange
+            long lessonId = 1;
+
+            var lessonService = new LessonService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                currentUserService: _currentUserServiceMock.Object);
+
+            //Act
+            Func<Task> isDoneMethod = async () => await lessonService.IsLessonDoneAsync(lessonId);
+
+            //Assert
+            await isDoneMethod.Should().ThrowAsync<NotFoundException>();
         }
     }
 }
