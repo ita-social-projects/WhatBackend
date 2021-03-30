@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
 using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Data.Exceptions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -337,22 +338,14 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             var lessonRepositoryMock = new Mock<ILessonRepository>();
-            lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
-
-            var homeworkRepositoryMock = new Mock<IHomeworkRepository>();
-            homeworkRepositoryMock.Setup(x => x.GetByIdAsync(homeworkId)).ReturnsAsync(homework);
-
-            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
-            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId_one)).ReturnsAsync(homeworkStudent_one);
-            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId_two)).ReturnsAsync(homeworkStudent_two);
+            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
+            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
 
             var visitRepositoryMock = new Mock<IVisitRepository>();
             visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_one)).ReturnsAsync(visitTrue);
             visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_two)).ReturnsAsync(visitFalse);
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(homeworkRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(homeworkStudentRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
 
             var homeworkService = new HomeworkService(
@@ -378,7 +371,9 @@ namespace CharlieBackend.Api.UnitTest
 
             // Assert
 
-            result_one.Data.StudentMark.GetValueOrDefault()
+            result_one.Data
+                .StudentMark
+                .GetValueOrDefault()
                 .Should()
                 .Be(updatedMark);
 
@@ -393,58 +388,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateMarkAsync_WrongVisitPassed_ShouldThrowException()
         {
             // Arrange
-            long lessonId = 1;
-            sbyte mark = 5;
             sbyte updatedMark = 2;
-            long visitId = 1;
-            long studentId = 1;
-            long homeworkId = 1;
-            long homeworkStudentId = 1;
             long wrongHomeworkStudentId = 2;
 
-            var visitTrue = CreateVisit(visitId, mark, true, studentId);
-
-            Lesson lesson = new Lesson()
-            {
-                Id = lessonId,
-                Visits = new List<Visit>()
-                {
-                   visitTrue,
-                }
-            };
-
-            var homeworkStudent = new HomeworkStudent
-            {
-                Id = homeworkStudentId,
-                HomeworkId = homeworkId,
-                StudentId = studentId
-            };
-
-            var homework = new Homework
-            {
-                LessonId = lessonId,
-                Id = homeworkId,
-                HomeworkStudents = new List<HomeworkStudent>
-                {
-                    homeworkStudent,
-                }
-            };
-
             var lessonRepositoryMock = new Mock<ILessonRepository>();
-            lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
-
-            var homeworkRepositoryMock = new Mock<IHomeworkRepository>();
-            homeworkRepositoryMock.Setup(x => x.GetByIdAsync(homeworkId)).ReturnsAsync(homework);
-
-            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
-            homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentId)).ReturnsAsync(homeworkStudent);
-
             var visitRepositoryMock = new Mock<IVisitRepository>();
-            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId)).ReturnsAsync(visitTrue);
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(homeworkRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(homeworkStudentRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
 
             var homeworkService = new HomeworkService(
@@ -459,13 +409,10 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             //Act
-            var result_one = await homeworkService.UpdateMarkAsync(request);
+            Func<Task> wrongUpdate = async () => await homeworkService.UpdateMarkAsync(request);
 
             // Assert
-
-            result_one.Data.StudentMark.GetValueOrDefault()
-                .Should()
-                .Be(updatedMark);
+            await wrongUpdate.Should().ThrowAsync<NotFoundException>();
         }
     }
 }

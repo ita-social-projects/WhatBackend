@@ -7,6 +7,7 @@ using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core;
 using System;
+using CharlieBackend.Data.Exceptions;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -108,6 +109,24 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Lessons
                 .Include(x => x.Visits)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
+        }
+
+        public async Task<Visit> GetVisitByStudentHomeworkIdAsync(long studentHomeworkId)
+        {
+            Visit visit = null;
+            try
+            {
+                visit = await _applicationContext.Visits.
+                    FirstAsync(visit => visit.Lesson.Homeworks
+                    .Any(hw => hw.HomeworkStudents
+                    .Any(hws => hws.Id == studentHomeworkId)));
+            }
+            catch
+            {
+                throw new NotFoundException($"Student howework with id {studentHomeworkId} not found");
+            }
+
+            return visit;
         }
     }
 }

@@ -194,24 +194,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
         {
+            var visit = await _unitOfWork
+                                .LessonRepository
+                                .GetVisitByStudentHomeworkIdAsync(request
+                                    .StudentHomeworkId.GetValueOrDefault());
 
-            var studentHomework = await _unitOfWork.HomeworkStudentRepository
-                .GetByIdAsync(request.StudentHomeworkId.GetValueOrDefault());
-
-            if(studentHomework is null)
+            if (visit is null)
             {
-                throw new NotFoundException("Student homework does not exist");
-            }
-
-            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(studentHomework.HomeworkId);
-
-            var visit = (await _unitOfWork.LessonRepository.GetByIdAsync(homework.LessonId))
-                .Visits
-                .FirstOrDefault(x => x.StudentId == studentHomework.StudentId);
-
-            if (studentHomework is null)
-            {
-                throw new NotFoundException("Student visit does not exist");
+                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
             }
 
             visit.StudentMark = (sbyte)request.StudentMark;
