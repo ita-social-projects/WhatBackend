@@ -288,62 +288,21 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
         {
             // Arrange
-            long lessonId = 1;
             sbyte mark = 5;
             sbyte updatedMark = 2;
             long visitId_one = 1;
             long visitId_two = 1;
-            long studentId_one = 1;
-            long studentId_two = 2;
-            long homeworkId = 1;
             long homeworkStudentId_one = 1;
             long homeworkStudentId_two = 1;
 
-            var visitTrue = CreateVisit(visitId_one, mark, true, studentId_one);
-            var visitFalse = CreateVisit(visitId_two, mark, false, studentId_two);
+            var visitTrue = CreateVisit(visitId_one, mark, true);
+            var visitFalse = CreateVisit(visitId_two, mark, false);
 
-            Lesson lesson = new Lesson()
-            {
-                Id = lessonId,
-                Visits = new List<Visit>()
-                {
-                   visitTrue,
-                   visitFalse
-                }
-            };
-
-            var homeworkStudent_one = new HomeworkStudent
-            {
-                Id = homeworkStudentId_one,
-                HomeworkId = homeworkId,
-                StudentId = studentId_one
-            };
-
-            var homeworkStudent_two = new HomeworkStudent
-            {
-                Id = homeworkStudentId_two,
-                HomeworkId = homeworkId,
-                StudentId = studentId_two
-            };
-
-            var homework = new Homework
-            {
-                LessonId = lessonId,
-                Id = homeworkId,
-                HomeworkStudents = new List<HomeworkStudent>
-                {
-                    homeworkStudent_one,
-                    homeworkStudent_two
-                }
-            };
+            var visitRepositoryMock = new Mock<IVisitRepository>();
 
             var lessonRepositoryMock = new Mock<ILessonRepository>();
             lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
             lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
-
-            var visitRepositoryMock = new Mock<IVisitRepository>();
-            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_one)).ReturnsAsync(visitTrue);
-            visitRepositoryMock.Setup(x => x.GetByIdAsync(visitId_two)).ReturnsAsync(visitFalse);
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
@@ -392,10 +351,8 @@ namespace CharlieBackend.Api.UnitTest
             long wrongHomeworkStudentId = 2;
 
             var lessonRepositoryMock = new Mock<ILessonRepository>();
-            var visitRepositoryMock = new Mock<IVisitRepository>();
 
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
 
             var homeworkService = new HomeworkService(
                 unitOfWork: _unitOfWorkMock.Object,
