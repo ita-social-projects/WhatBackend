@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -188,6 +190,26 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
+        }
+
+        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        {
+            var visit = await _unitOfWork
+                                .LessonRepository
+                                .GetVisitByStudentHomeworkIdAsync(request
+                                    .StudentHomeworkId.GetValueOrDefault());
+
+            if (visit is null)
+            {
+                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
+            }
+
+            visit.StudentMark = (sbyte)request.StudentMark;
+
+            _unitOfWork.VisitRepository.Update(visit);
+            await _unitOfWork.CommitAsync();
+
+            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }

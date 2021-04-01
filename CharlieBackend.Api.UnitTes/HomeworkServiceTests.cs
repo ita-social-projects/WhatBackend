@@ -13,6 +13,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Data.Exceptions;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -37,6 +39,17 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object);
+        }
+
+        private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
+        {
+            return new Visit()
+            {
+                Id = id,
+                StudentMark = mark,
+                Presence = presence,
+                StudentId = studentId
+            };
         }
 
         #region CreateHomeworkAsync
@@ -269,6 +282,94 @@ namespace CharlieBackend.Api.UnitTest
         {
             var mock = new Mock<IUnitOfWork>();
             return mock;
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
+        {
+            // Arrange
+            sbyte mark = 5;
+            sbyte updatedMark = 2;
+            long visitId_one = 1;
+            long visitId_two = 1;
+            long homeworkStudentId_one = 1;
+            long homeworkStudentId_two = 1;
+
+            var visitTrue = CreateVisit(visitId_one, mark, true);
+            var visitFalse = CreateVisit(visitId_two, mark, false);
+
+            var visitRepositoryMock = new Mock<IVisitRepository>();
+
+            var lessonRepositoryMock = new Mock<ILessonRepository>();
+            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
+            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
+
+            var homeworkService = new HomeworkService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                _loggerMock.Object);
+
+            var request_one = new UpdateMarkRequestDto
+            { 
+                StudentHomeworkId = homeworkStudentId_one,
+                StudentMark = updatedMark
+            };
+
+            var request_two = new UpdateMarkRequestDto
+            {
+                StudentHomeworkId = homeworkStudentId_two,
+                StudentMark = updatedMark
+            };
+
+            //Act
+            var result_one = await homeworkService.UpdateMarkAsync(request_one);
+            var result_two = await homeworkService.UpdateMarkAsync(request_two);
+
+            // Assert
+
+            result_one.Data
+                .StudentMark
+                .GetValueOrDefault()
+                .Should()
+                .Be(updatedMark);
+
+            result_two.Data
+                .StudentMark
+                .GetValueOrDefault()
+                .Should()
+                .Be(updatedMark);
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_WrongVisitPassed_ShouldThrowException()
+        {
+            // Arrange
+            sbyte updatedMark = 2;
+            long wrongHomeworkStudentId = 2;
+
+            var lessonRepositoryMock = new Mock<ILessonRepository>();
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+
+            var homeworkService = new HomeworkService(
+                unitOfWork: _unitOfWorkMock.Object,
+                mapper: _mapper,
+                _loggerMock.Object);
+
+            var request = new UpdateMarkRequestDto
+            {
+                StudentHomeworkId = wrongHomeworkStudentId,
+                StudentMark = updatedMark
+            };
+
+            //Act
+            Func<Task> wrongUpdate = async () => await homeworkService.UpdateMarkAsync(request);
+
+            // Assert
+            await wrongUpdate.Should().ThrowAsync<NotFoundException>();
         }
     }
 }
