@@ -17,15 +17,14 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public Task<bool> IsCourseNameTakenAsync(string courseName)
+        public async Task<bool> IsCourseNameTakenAsync(string courseName)
         {
-            return _applicationContext.Courses
-                    .AnyAsync(course => course.Name == courseName);
+            return await _applicationContext.Courses .AnyAsync(course => course.Name == courseName);
         }
 
-        public Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds)
+        public async Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds)
         {
-            return _applicationContext.Courses
+            return await _applicationContext.Courses
                     .Where(course => courseIds
                     .Contains(course.Id))
                     .ToListAsync();

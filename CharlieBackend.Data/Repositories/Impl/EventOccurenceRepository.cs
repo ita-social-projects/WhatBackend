@@ -16,24 +16,24 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public new Task<List<EventOccurrence>> GetAllAsync()
+        public new async Task<List<EventOccurrence>> GetAllAsync()
         {
-            return _applicationContext.EventOccurrences
+            return await _applicationContext.EventOccurrences
                 .Include(schedule => schedule.StudentGroup)
                 .ToListAsync();
         }
 
-        public Task<List<EventOccurrence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
+        public async Task<List<EventOccurrence>> GetSchedulesByStudentGroupIdAsync(long studentGroupId)
         {
-           return _applicationContext.EventOccurrences
+           return await _applicationContext.EventOccurrences
                 .Where(schedule => schedule.StudentGroupId == studentGroupId)
                 .Include(schedule => schedule.StudentGroup)
                 .ToListAsync();
         }
 
-        public new Task<EventOccurrence> GetByIdAsync(long id)
+        public new async Task<EventOccurrence> GetByIdAsync(long id)
         {
-            return _applicationContext.EventOccurrences
+            return await _applicationContext.EventOccurrences
                 .Include(x => x.ScheduledEvents)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }

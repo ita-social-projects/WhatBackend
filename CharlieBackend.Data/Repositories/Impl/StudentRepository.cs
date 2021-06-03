@@ -15,38 +15,38 @@ namespace CharlieBackend.Data.Repositories.Impl
             : base(applicationContext) 
         {
         }
-        public new Task<List<Student>> GetAllAsync()
+        public new async Task<List<Student>> GetAllAsync()
         {
-            return _applicationContext.Students
+            return await _applicationContext.Students
                     .Include(student => student.Account).ThenInclude(x => x.Avatar)
                     .ToListAsync();
         }
 
-        public Task<List<Student>> GetAllActiveAsync()
+        public async Task<List<Student>> GetAllActiveAsync()
         {
-            return _applicationContext.Students
+            return await _applicationContext.Students
                     .Include(student => student.Account).ThenInclude(x => x.Avatar)
                     .Where(student => student.Account.IsActive == true)
                     .ToListAsync();
         }
 
-        public new Task<Student> GetByIdAsync(long id)
+        public new async Task<Student> GetByIdAsync(long id)
         {
-            return _applicationContext.Students
+            return await _applicationContext.Students
                     .Include(student => student.Account)
                     .Include(student => student.StudentsOfStudentGroups)
                     .FirstOrDefaultAsync(student => student.Id == id);
         }
 
-        public Task<Student> GetStudentByAccountIdAsync(long accountId)
+        public async Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
-            return _applicationContext.Students
+            return await _applicationContext.Students
                     .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 
-        public Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds)
+        public async Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds)
         {
-            return _applicationContext.Students
+            return await _applicationContext.Students
                     .Where(student => studentIds.Contains(student.Id))
                     .ToListAsync();
         }

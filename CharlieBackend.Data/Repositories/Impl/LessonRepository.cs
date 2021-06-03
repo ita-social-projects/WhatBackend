@@ -18,9 +18,9 @@ namespace CharlieBackend.Data.Repositories.Impl
         { 
         }
 
-        public new Task<List<Lesson>> GetAllAsync()
+        public new async Task<List<Lesson>> GetAllAsync()
         {
-            return _applicationContext.Lessons
+            return await _applicationContext.Lessons
                     .Include(lesson => lesson.Visits)
                     .Include(lesson => lesson.Theme)
                     .ToListAsync();
