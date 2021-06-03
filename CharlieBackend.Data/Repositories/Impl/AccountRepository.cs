@@ -24,7 +24,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                                 && account.Password == authenticationModel.Password);
         }
 
-		public async Task<Account> GetAccountCredentialsById(long id)
+        public async Task<Account> GetAccountCredentialsById(long id)
         {
             return await _applicationContext.Accounts
                 .FirstOrDefaultAsync(account => account.Id == id);
