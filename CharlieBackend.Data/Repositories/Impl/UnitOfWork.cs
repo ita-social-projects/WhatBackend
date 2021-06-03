@@ -167,9 +167,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public Task CommitAsync()
+        public async Task CommitAsync()
         {
-            return _applicationContext.SaveChangesAsync();
+            await _applicationContext.SaveChangesAsync();
         }
 
         public void Rollback()
