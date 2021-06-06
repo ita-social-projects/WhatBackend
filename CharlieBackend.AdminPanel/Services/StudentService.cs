@@ -17,15 +17,27 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
 
-        public StudentService(IApiUtil apiUtil)
+        private readonly StudentsApiEndpoints _studentsApiEndpoints;
+        
+
+        public StudentService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
+
+            _studentsApiEndpoints = options.Value.Urls.ApiEndpoints.Students;
+
+            //_group
         }
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()
         {
-            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>($"api/students");
-            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>($"api/students/active");
+            var getAllStudentsEndpoints = string
+                .Format(_studentsApiEndpoints.GetAllStudentsEndpoint);
+            var activeStudentsEndpoints = string
+                .Format(_studentsApiEndpoints.ActiveStudentEndpoint);
+
+            var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>(getAllStudentsEndpoints);
+            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>(getAllStudentsEndpoints);
 
             var allStudents = await allStudentsTask;
             var activeStudents = await activeStudentsTask;
@@ -40,8 +52,10 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<StudentEditViewModel> GetStudentByIdAsync(long id)
         {
+            
+
             var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>($"api/students/{id}");
-            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"api/student_groups");
+            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"api/student_groups");// TODO: Add groups
 
             var student = await studentTask;
             var studentGroup = await studentGroupsTask;
@@ -67,12 +81,18 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<bool> DisableStudentAsync(long id)
         {
-            return await _apiUtil.DeleteAsync<bool>($"api/students/{id}");
+            var disableStudentsEndpoints = string
+                .Format(_studentsApiEndpoints.DisableStudentEndpoint, id);
+
+            return await _apiUtil.DeleteAsync<bool>(disableStudentsEndpoints);
         }
 
         public async Task<bool> EnableStudentAsync(long id)
         {
-            return await _apiUtil.EnableAsync<bool>($"api/students/{id}");
+            var enableStudentsEndpoints = string
+                .Format(_studentsApiEndpoints.EnableStudentEndpoint, id);
+
+            return await _apiUtil.EnableAsync<bool>(enableStudentsEndpoints);
         }
     }
 

@@ -28,6 +28,7 @@ namespace CharlieBackend.AdminPanel
     public class ApiEndpoints
     {
         public CoursesApiEndpoints Courses { get; set; }
+        public StudentsApiEndpoints Students { get; set; }
     }
 
     public class CoursesApiEndpoints
@@ -37,6 +38,18 @@ namespace CharlieBackend.AdminPanel
         public string UpdateCourseEndpoint { get; set; }
         public string DisableCourseEndpoint { get; set; }
         public string EnableCourseEndpoint { get; set; }
+    }
+
+    public class StudentsApiEndpoints
+    {
+        public string ActiveStudentEndpoint { get; set; }
+        public string GetAllStudentsEndpoint { get; set; }
+        public string AddStudentEndpoint { get; set; }
+        public string GetStudentEndpoint { get; set; }
+        public string UpdateStudentEndpoint { get; set; }
+        public string DisableStudentEndpoint { get; set; }
+        public string EnableStudentEndpoint { get; set; }
+        
     }
 
     public class CookiesSettings

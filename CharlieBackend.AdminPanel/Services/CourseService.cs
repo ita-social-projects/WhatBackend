@@ -17,6 +17,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         private readonly CoursesApiEndpoints _coursesApiEndpoints;
 
+
         public CourseService(
             IApiUtil apiUtil, 
             IMapper mapper, 
