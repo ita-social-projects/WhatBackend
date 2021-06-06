@@ -6,92 +6,92 @@ using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Services;
+using FluentAssertions;
 
 
 namespace CharlieBackend.Api.UnitTest
 {
     public class CurrentUserTests : TestBase
     {
+        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private readonly DefaultHttpContext _httpContext;
+        private readonly Mock<GenericIdentity> _mockIdentity;
+        private  CurrentUserService _currentuserService;
+
+        public CurrentUserTests()
+        {
+            _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            _httpContext = new DefaultHttpContext();
+            _mockIdentity = new Mock<GenericIdentity>("Test");
+            _currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
+        }
+
         [Fact]
         public void ThrowErrorIfNotLoggined()
         {
-            var _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _httpContextAccessorMock.Setup(req => req.HttpContext)
                 .Returns(new DefaultHttpContext());
-            var currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
-            Assert.Throws<UnauthorizedAccessException>(() => currentuserService.AccountId);
+
+            Func<long> getId = () => _currentuserService.AccountId;
+            Action act = () => getId();
+
+            //Assert
+            act.Should().Throw<UnauthorizedAccessException>();
         }
 
         [Fact]
         public void getAccountId()
         {
-            var _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            var httpContext = new DefaultHttpContext();
-            var mockIdentity = new Mock<GenericIdentity>("Vasya");
-            mockIdentity.Setup(i => i.Claims)
+            _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[]{
                     new Claim("AccountId", "123") 
                 });
-            httpContext.User = new ClaimsPrincipal(mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(httpContext);
-            var currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
-            var Id = currentuserService.AccountId;
+            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
+            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            Assert.Equal(123,Id);
+            _currentuserService.AccountId.Should().Be(123);
         }
         [Fact]
         public void getEntityId()
         {
-            var _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            var httpContext = new DefaultHttpContext();
-            var mockIdentity = new Mock<GenericIdentity>("Vasya");
-            mockIdentity.Setup(i => i.Claims)
+            _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] { 
                     new Claim("Id", "123") 
                 });
-            httpContext.User = new ClaimsPrincipal(mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(httpContext);
+            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
+            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            var currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
-            var EntityId = currentuserService.EntityId;
-
-            Assert.Equal(123, EntityId);
+            //Assert
+            _currentuserService.EntityId.Should().Be(123);
         }
         [Fact]
         public void getEmail()
         {
-            var _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            var httpContext = new DefaultHttpContext();
 
-            var mockIdentity = new Mock<GenericIdentity>("Vasya");
-            mockIdentity.Setup(i => i.Claims)
+            _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] {
                     new Claim("Email", "Hello@mail.com") 
                 });
-            httpContext.User = new ClaimsPrincipal(mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(httpContext);
+            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
+            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            var currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
-            var Email = currentuserService.Email;
 
-            Assert.Equal("Hello@mail.com", Email);
+            //Assert
+            _currentuserService.Email.Should().BeEquivalentTo("Hello@mail.com");
         }
         [Fact]
         public void getUserRole()
         {
-            var _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            var httpContext = new DefaultHttpContext();
-            var mockIdentity = new Mock<GenericIdentity>("Vasya");
-            mockIdentity.Setup(i => i.Claims)
+            _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] {
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, "1") 
                 });
-            httpContext.User = new ClaimsPrincipal(mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(httpContext);
-            var currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
-            var Role = currentuserService.Role;
+           _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
+            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            Assert.Equal(UserRole.Student, Role);
+
+            //Assert
+            _currentuserService.Role.Should().BeEquivalentTo(UserRole.Student);
         }
     }
 }
