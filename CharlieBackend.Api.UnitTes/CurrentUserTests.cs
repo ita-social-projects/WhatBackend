@@ -24,6 +24,8 @@ namespace CharlieBackend.Api.UnitTest
             _httpContext = new DefaultHttpContext();
             _mockIdentity = new Mock<GenericIdentity>("Test");
             _currentuserService = new CurrentUserService(_httpContextAccessorMock.Object);
+            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
+            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
         }
 
         [Fact]
@@ -32,8 +34,8 @@ namespace CharlieBackend.Api.UnitTest
             _httpContextAccessorMock.Setup(req => req.HttpContext)
                 .Returns(new DefaultHttpContext());
 
-            Func<long> getId = () => _currentuserService.AccountId;
-            Action act = () => getId();
+            // Act
+            Func<long> act = () => _currentuserService.AccountId;
 
             //Assert
             act.Should().Throw<UnauthorizedAccessException>();
@@ -42,56 +44,57 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public void getAccountId()
         {
+            // Arrange
+            long expectedAccountId = 123;
+
             _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[]{
-                    new Claim("AccountId", "123") 
+                    new Claim("AccountId", expectedAccountId.ToString()) 
                 });
-            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            _currentuserService.AccountId.Should().Be(123);
+            // Act & Assert
+            _currentuserService.AccountId.Should().Be(expectedAccountId);
         }
         [Fact]
         public void getEntityId()
         {
+            // Arrange
+            long expectedEntityId = 123;
+
             _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] { 
-                    new Claim("Id", "123") 
+                    new Claim("Id", expectedEntityId.ToString()) 
                 });
-            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-            //Assert
-            _currentuserService.EntityId.Should().Be(123);
+
+            // Act & Assert
+            _currentuserService.EntityId.Should().Be(expectedEntityId);
         }
         [Fact]
         public void getEmail()
         {
+            // Arrange
+            string expectedEmail = "Hello@mail.com";
 
             _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] {
-                    new Claim("Email", "Hello@mail.com") 
+                    new Claim("Email", expectedEmail) 
                 });
-            _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-
-            //Assert
-            _currentuserService.Email.Should().BeEquivalentTo("Hello@mail.com");
+            // Act & Assert
+            _currentuserService.Email.Should().BeEquivalentTo(expectedEmail);
         }
         [Fact]
         public void getUserRole()
         {
+            UserRole expectedRole = UserRole.Student;
             _mockIdentity.Setup(i => i.Claims)
                 .Returns(new Claim[] {
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, "1") 
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, expectedRole.ToString()) 
                 });
-           _httpContext.User = new ClaimsPrincipal(_mockIdentity.Object);
-            _httpContextAccessorMock.Setup(req => req.HttpContext).Returns(_httpContext);
 
-
-            //Assert
-            _currentuserService.Role.Should().BeEquivalentTo(UserRole.Student);
+            // Act & Assert
+            _currentuserService.Role.Should().BeEquivalentTo(expectedRole);
         }
     }
 }
