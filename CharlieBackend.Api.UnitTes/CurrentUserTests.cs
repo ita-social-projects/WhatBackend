@@ -8,7 +8,6 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Services;
 using FluentAssertions;
 
-
 namespace CharlieBackend.Api.UnitTest
 {
     public class CurrentUserTests : TestBase
