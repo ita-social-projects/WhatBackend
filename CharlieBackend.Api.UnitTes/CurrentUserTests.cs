@@ -29,7 +29,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-
         public void AccountId_UserNotLoggedIn_ThrowsUnauthorizedAccessException()
         {
             _httpContextAccessorMock.Setup(req => req.HttpContext)
@@ -43,7 +42,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-
         public void GetAccountId_ValidDataPassed_ShouldReturnExpectedAccountId()
         {
             // Arrange
@@ -59,7 +57,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-
         public void GetEntityId_ValidDataPassed_ShouldReturnExpectedEntityId()
         {
             // Arrange
@@ -76,7 +73,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-
         public void GetEmail_ValidDataPassed_ShouldReturnExpectedEmail()
         {
             // Arrange
@@ -92,7 +88,6 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-
         public void GetUserRole_ValidDataPassed_ShouldReturnExpectedUserRole()
         {
             UserRole expectedRole = UserRole.Student;
