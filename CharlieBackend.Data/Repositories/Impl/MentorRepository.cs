@@ -15,32 +15,32 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public new Task<List<Mentor>> GetAllAsync()
+        public new async Task<List<Mentor>> GetAllAsync()
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                 .Include(mentor => mentor.Account).ThenInclude(x=>x.Avatar)
                 .Include(mentor => mentor.MentorsOfCourses)
                 .ToListAsync();
         }
 
-        public Task<List<Mentor>> GetAllActiveAsync()
+        public async Task<List<Mentor>> GetAllActiveAsync()
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                     .Include(mentor => mentor.Account).ThenInclude(x => x.Avatar)
                     .Where(mentor => mentor.Account.IsActive == true)
                     .ToListAsync();
         }
 
-        public Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds)
+        public async Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds)
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                     .Where(mentor => mentorIds.Contains(mentor.Id))
                     .ToListAsync();
         }
 
-        public new Task<Mentor> GetByIdAsync(long id)
+        public new async Task<Mentor> GetByIdAsync(long id)
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                 .Include(mentor => mentor.Account)
                 .Include(mentor => mentor.MentorsOfCourses)
                 .Include(mentor => mentor.MentorsOfStudentGroups)
@@ -61,15 +61,15 @@ namespace CharlieBackend.Data.Repositories.Impl
                     TryUpdateManyToMany(currentItems, newItems);
         }
 
-        public Task<Mentor> GetMentorByAccountIdAsync(long mentorId)
+        public async Task<Mentor> GetMentorByAccountIdAsync(long mentorId)
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                     .FirstOrDefaultAsync(mentor
                             => mentor.AccountId == mentorId);
         }
-        public Task<Mentor> GetMentorByIdAsync(long mentorId)
+        public async Task<Mentor> GetMentorByIdAsync(long mentorId)
         {
-            return _applicationContext.Mentors
+            return await _applicationContext.Mentors
                     .FirstOrDefaultAsync(mentor
                             => mentor.Id == mentorId);
         }

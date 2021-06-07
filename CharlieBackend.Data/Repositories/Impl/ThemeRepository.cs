@@ -12,21 +12,21 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public Task<Theme> GetThemeByNameAsync(string name)
+        public async Task<Theme> GetThemeByNameAsync(string name)
         {
-            return _applicationContext.Themes
+            return await _applicationContext.Themes
                     .FirstOrDefaultAsync(theme => theme.Name == name);
         }
 
-        public Task<Theme> GetThemeByIdAsync(long themeId)
+        public async Task<Theme> GetThemeByIdAsync(long themeId)
         {
-            return _applicationContext.Themes
+            return await _applicationContext.Themes
                     .FirstOrDefaultAsync(theme => theme.Id == themeId);
         }
 
-        public Task<bool> IsThemeUsed(long themeId)
+        public async Task<bool> IsThemeUsed(long themeId)
         {
-            return _applicationContext.Lessons
+            return await _applicationContext.Lessons
                     .AnyAsync(les => les.ThemeId == themeId);
         }
     }
