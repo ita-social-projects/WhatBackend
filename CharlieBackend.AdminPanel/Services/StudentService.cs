@@ -18,7 +18,9 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IApiUtil _apiUtil;
 
         private readonly StudentsApiEndpoints _studentsApiEndpoints;
-        
+
+        private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
+
 
         public StudentService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
@@ -26,7 +28,7 @@ namespace CharlieBackend.AdminPanel.Services
 
             _studentsApiEndpoints = options.Value.Urls.ApiEndpoints.Students;
 
-            //_group
+            _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()
@@ -37,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Services
                 .Format(_studentsApiEndpoints.ActiveStudentEndpoint);
 
             var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>(getAllStudentsEndpoints);
-            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>(getAllStudentsEndpoints);
+            var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>(activeStudentsEndpoints);
 
             var allStudents = await allStudentsTask;
             var activeStudents = await activeStudentsTask;
@@ -52,10 +54,14 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<StudentEditViewModel> GetStudentByIdAsync(long id)
         {
-            
+            var getStudentEndpoint = string
+                .Format(_studentsApiEndpoints.GetStudentEndpoint, id);
 
-            var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>($"api/students/{id}");
-            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>($"api/student_groups");// TODO: Add groups
+            var getAllStudentGroupsEndpoint = string
+                .Format(_studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint);
+
+            var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>(getStudentEndpoint);
+            var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>(getAllStudentGroupsEndpoint);
 
             var student = await studentTask;
             var studentGroup = await studentGroupsTask;
@@ -67,14 +73,20 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<UpdateStudentDto> UpdateStudentAsync(long id, UpdateStudentDto UpdateDto)
         {
-            var updatedStudent = await _apiUtil.PutAsync($"api/students/{id}", UpdateDto);
+            var updateStudentEndpoint = string
+                .Format(_studentsApiEndpoints.UpdateStudentEndpoint, id);
+
+            var updatedStudent = await _apiUtil.PutAsync(updateStudentEndpoint, UpdateDto);
             
             return updatedStudent;
         }
 
         public async Task<StudentDto> AddStudentAsync(long id)
         {
-            var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>($"api/students/{id}", null);
+            var addStudentEndpoint = string
+                .Format(_studentsApiEndpoints.AddStudentEndpoint, id);
+
+            var addedStudentTask = await _apiUtil.CreateAsync<StudentDto>(addStudentEndpoint, null);
 
             return addedStudentTask;
         }

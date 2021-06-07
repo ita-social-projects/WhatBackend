@@ -8,6 +8,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,22 +24,29 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
 
-        private const string _getActiveCoursesEndpoint = "api/courses/isActive";
-        private const string _getActiveMetorsEndpoint = "api/mentors/active";
-        private const string _getStudentGroupsEndpoint = "api/student_groups";
-        private const string _getActiveStudentsEndpoint = "api/students/active";
-        private const string _getThemesEndpoint = "api/themes";
+        private readonly string _getActiveCoursesEndpoint;// = "api/courses/isActive";
+        private readonly string _getActiveMetorsEndpoint;// = "api/mentors/active";
+        private readonly string _getStudentGroupsEndpoint;// = "api/student_groups";
+        private readonly string _getActiveStudentsEndpoint;// = "api/students/active";
+        private readonly string _getThemesEndpoint;// = "api/themes";
 
         private const int defaultDateFilterOffset = 15;
 
         public CalendarService(
             IScheduleService scheduleService,
             IApiUtil apiUtil,
-            IMapper mapper)
+            IMapper mapper, 
+            IOptions<ApplicationSettings> options)
         {
             _scheduleService = scheduleService;
             _apiUtil = apiUtil;
             _mapper = mapper;
+
+            _getActiveCoursesEndpoint = options.Value.Urls.ApiEndpoints.Courses.GetAllCoursesEndpoint;
+            _getActiveMetorsEndpoint = options.Value.Urls.ApiEndpoints.Mentors.ActiveMentorEndpoint;
+            _getStudentGroupsEndpoint = options.Value.Urls.ApiEndpoints.StudentGroups.GetAllStudentGroupsEndpoint;
+            _getActiveStudentsEndpoint = options.Value.Urls.ApiEndpoints.Students.ActiveStudentEndpoint;
+            _getThemesEndpoint = options.Value.Urls.ApiEndpoints.Themes.GetAllThemesEndpoint;
         }
 
         /// <summary>
