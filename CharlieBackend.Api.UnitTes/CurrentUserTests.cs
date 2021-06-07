@@ -29,7 +29,8 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public void ThrowErrorIfNotLoggined()
+
+        public void AccountId_UserNotLoggedIn_ThrowsUnauthorizedAccessException()
         {
             _httpContextAccessorMock.Setup(req => req.HttpContext)
                 .Returns(new DefaultHttpContext());
@@ -42,7 +43,8 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public void getAccountId()
+
+        public void GetAccountId_ValidDataPassed_ShouldReturnExpectedAccountId()
         {
             // Arrange
             long expectedAccountId = 123;
@@ -55,8 +57,10 @@ namespace CharlieBackend.Api.UnitTest
             // Act & Assert
             _currentuserService.AccountId.Should().Be(expectedAccountId);
         }
+
         [Fact]
-        public void getEntityId()
+
+        public void GetEntityId_ValidDataPassed_ShouldReturnExpectedEntityId()
         {
             // Arrange
             long expectedEntityId = 123;
@@ -70,8 +74,10 @@ namespace CharlieBackend.Api.UnitTest
             // Act & Assert
             _currentuserService.EntityId.Should().Be(expectedEntityId);
         }
+
         [Fact]
-        public void getEmail()
+
+        public void GetEmail_ValidDataPassed_ShouldReturnExpectedEmail()
         {
             // Arrange
             string expectedEmail = "Hello@mail.com";
@@ -84,8 +90,10 @@ namespace CharlieBackend.Api.UnitTest
             // Act & Assert
             _currentuserService.Email.Should().BeEquivalentTo(expectedEmail);
         }
+
         [Fact]
-        public void getUserRole()
+
+        public void GetUserRole_ValidDataPassed_ShouldReturnExpectedUserRole()
         {
             UserRole expectedRole = UserRole.Student;
             _mockIdentity.Setup(i => i.Claims)
