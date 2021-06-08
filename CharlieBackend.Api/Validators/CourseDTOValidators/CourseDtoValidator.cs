@@ -16,7 +16,7 @@ namespace CharlieBackend.Api.Validators.CourseDTOValidators
                 .NotEmpty()
                 .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.IsActive)
-                .NotEmpty();
+                .NotNull();
         }
     }
 }

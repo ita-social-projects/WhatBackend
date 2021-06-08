@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.EmailData;
 using FluentValidation;
 

@@ -13,8 +13,7 @@ namespace CharlieBackend.Api.Validators.AttachmentDTOValidators
                 .NotEmpty()
                 .GreaterThan(0);
             RuleFor(x => x.CreatedOn)
-                .NotEmpty()
-                .Must(BeAValidDate);
+                .NotEmpty();
             RuleFor(x => x.CreatedByAccountId)
                 .NotEmpty()
                 .GreaterThan(0);
@@ -24,11 +23,6 @@ namespace CharlieBackend.Api.Validators.AttachmentDTOValidators
             RuleFor(x => x.FileName)
                 .NotEmpty()
                 .MaximumLength(ValidationConstants.MaxLengthName);
-        }
-
-        private bool BeAValidDate(DateTime date)
-        {
-            return !date.Equals(default(DateTime));
         }
     }
 }

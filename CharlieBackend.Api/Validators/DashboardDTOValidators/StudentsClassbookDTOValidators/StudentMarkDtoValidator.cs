@@ -16,14 +16,13 @@ namespace CharlieBackend.Api.Validators.DashboardDTOValidators.StudentsClassbook
                 .NotNull()
                 .GreaterThan(0);
             RuleFor(x => x.StudentId)
-              .NotNull()
-              .GreaterThan(0);
+                .NotNull()
+                .GreaterThan(0);
             RuleFor(x => x.LessonId)
                 .NotNull()
                 .GreaterThan(0);
             RuleFor(x => x.LessonDate)
-                .NotNull()
-                .Must(x => BeAValidDate(x));
+                .NotEmpty();
             RuleFor(x => x.StudentMark)
                 .NotNull()
                 .GreaterThanOrEqualTo((sbyte)0)
@@ -31,10 +30,6 @@ namespace CharlieBackend.Api.Validators.DashboardDTOValidators.StudentsClassbook
             RuleFor(x => x.Comment)
                 .NotEmpty()
                 .MaximumLength(ValidationConstants.MaxLengthName);
-        }
-        private bool BeAValidDate(DateTime? date)
-        {
-            return !date.Equals(default(DateTime?));
         }
     }
 }
