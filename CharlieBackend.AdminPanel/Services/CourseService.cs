@@ -17,7 +17,6 @@ namespace CharlieBackend.AdminPanel.Services
 
         private readonly CoursesApiEndpoints _coursesApiEndpoints;
 
-
         public CourseService(
             IApiUtil apiUtil, 
             IMapper mapper, 
@@ -55,8 +54,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<CourseViewModel>> GetAllCoursesAsync()
         {
-            var getAllCoursesEndpoint =
-                string.Format(_coursesApiEndpoints.GetAllCoursesEndpoint);
+            var getAllCoursesEndpoint = _coursesApiEndpoints.GetAllCoursesEndpoint;
 
             var courseDtos = await _apiUtil.GetAsync<IList<CourseDto>>(getAllCoursesEndpoint);
 
@@ -65,8 +63,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task AddCourseAsync(CreateCourseDto courseDto)
         {
-            var addCourseEndpoint =
-                string.Format(_coursesApiEndpoints.AddCourseEndpoint);
+            var addCourseEndpoint = _coursesApiEndpoints.AddCourseEndpoint;
 
             await _apiUtil.CreateAsync<CreateCourseDto>(addCourseEndpoint, courseDto);
         }

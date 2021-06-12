@@ -62,12 +62,9 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
         {
-            var getAllMentorsEndpoint = string
-                .Format(_mentorsApiEndpoints.GetAllMentorsEndpoint);
+            var getAllMentorsEndpoint = _mentorsApiEndpoints.GetAllMentorsEndpoint;
 
-            var activeMentorEndpoint = string
-                .Format(_mentorsApiEndpoints.ActiveMentorEndpoint);
-
+            var activeMentorEndpoint = _mentorsApiEndpoints.ActiveMentorEndpoint;
 
             var allMentors = await 
                 _apiUtil.GetAsync<IList<MentorViewModel>>(getAllMentorsEndpoint);
@@ -85,11 +82,9 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id)
         {
-            var getAllCoursesEndpoint = string
-                .Format(_coursesApiEndpoints.GetAllCoursesEndpoint);
+            var getAllCoursesEndpoint = _coursesApiEndpoints.GetAllCoursesEndpoint;
 
-            var getAllStudentGroupsEndpoint = string
-                .Format(_studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint);
+            var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 
             var getMentorEndpoint = string
                 .Format(_mentorsApiEndpoints.GetMentorEndpoint, id);

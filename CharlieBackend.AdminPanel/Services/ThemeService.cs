@@ -43,8 +43,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<ThemeViewModel>> GetAllThemesAsync()
         {
-            var getAllThemesEndpoint = string
-                .Format(_themesApiEndpoints.GetAllThemesEndpoint);
+            var getAllThemesEndpoint = _themesApiEndpoints.GetAllThemesEndpoint;
 
             return await
                 _apiUtil.GetAsync<IList<ThemeViewModel>>(getAllThemesEndpoint);
@@ -52,8 +51,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task AddThemeAsync(CreateThemeDto themeDto)
         {
-            var addThemeEndpoint = string
-                .Format(_themesApiEndpoints.AddThemeEndpoint);
+            var addThemeEndpoint = _themesApiEndpoints.AddThemeEndpoint;
 
             await
                 _apiUtil.CreateAsync<CreateThemeDto>(addThemeEndpoint, themeDto);

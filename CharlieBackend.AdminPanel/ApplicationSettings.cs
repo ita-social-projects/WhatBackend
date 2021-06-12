@@ -55,7 +55,6 @@ namespace CharlieBackend.AdminPanel
         public string UpdateStudentEndpoint { get; set; }
         public string DisableStudentEndpoint { get; set; }
         public string EnableStudentEndpoint { get; set; }
-        
     }
 
     public class MentorsApiEndpoints
@@ -67,7 +66,6 @@ namespace CharlieBackend.AdminPanel
         public string UpdateMentorEndpoint { get; set; }
         public string DisableMentorEndpoint { get; set; }
         public string EnableMentorEndpoint { get; set; }
-
     }
 
     public class ThemesApiEndpoints
@@ -78,14 +76,12 @@ namespace CharlieBackend.AdminPanel
         public string GetThemeEndpoint { get; set; }
         public string UpdateThemeEndpoint { get; set; }
         public string DeleteThemeEndpoint { get; set; }
-
     }
 
     public class ScheduleApiEndpoints
     {
         public string EventOccurrencesEndpoint { get; set; }
         public string EventsEndpoint { get; set; }
-
     }
 
     public class StudentGroupsApiEndpoints
@@ -94,7 +90,6 @@ namespace CharlieBackend.AdminPanel
         public string AddStudentGroupEndpoint { get; set; }
         public string UpdateStudentGroupEndpoint { get; set; }
         public string GetStudentGroupEndpoint { get; set; }
-
     }
 
     #endregion 

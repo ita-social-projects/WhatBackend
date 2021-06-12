@@ -24,11 +24,11 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
 
-        private readonly string _getActiveCoursesEndpoint;// = "api/courses/isActive";
-        private readonly string _getActiveMetorsEndpoint;// = "api/mentors/active";
-        private readonly string _getStudentGroupsEndpoint;// = "api/student_groups";
-        private readonly string _getActiveStudentsEndpoint;// = "api/students/active";
-        private readonly string _getThemesEndpoint;// = "api/themes";
+        private readonly string _getActiveCoursesEndpoint;
+        private readonly string _getActiveMetorsEndpoint;
+        private readonly string _getStudentGroupsEndpoint;
+        private readonly string _getActiveStudentsEndpoint;
+        private readonly string _getThemesEndpoint;
 
         private const int defaultDateFilterOffset = 15;
 

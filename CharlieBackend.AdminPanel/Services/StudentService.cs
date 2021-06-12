@@ -21,7 +21,6 @@ namespace CharlieBackend.AdminPanel.Services
 
         private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
 
-
         public StudentService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
@@ -33,10 +32,8 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<IList<StudentViewModel>> GetAllStudentsAsync()
         {
-            var getAllStudentsEndpoints = string
-                .Format(_studentsApiEndpoints.GetAllStudentsEndpoint);
-            var activeStudentsEndpoints = string
-                .Format(_studentsApiEndpoints.ActiveStudentEndpoint);
+            var getAllStudentsEndpoints = _studentsApiEndpoints.GetAllStudentsEndpoint;
+            var activeStudentsEndpoints = _studentsApiEndpoints.ActiveStudentEndpoint;
 
             var allStudentsTask =  _apiUtil.GetAsync<IList<StudentViewModel>>(getAllStudentsEndpoints);
             var activeStudentsTask = _apiUtil.GetAsync<IList<StudentViewModel>>(activeStudentsEndpoints);
@@ -57,8 +54,7 @@ namespace CharlieBackend.AdminPanel.Services
             var getStudentEndpoint = string
                 .Format(_studentsApiEndpoints.GetStudentEndpoint, id);
 
-            var getAllStudentGroupsEndpoint = string
-                .Format(_studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint);
+            var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 
             var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>(getStudentEndpoint);
             var studentGroupsTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>(getAllStudentGroupsEndpoint);

@@ -39,14 +39,12 @@ namespace CharlieBackend.AdminPanel.Services
             _mentorService = mentorService;
             _studentService = studentService;
             _courseService = courseService;
-
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
         public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync()
         {
-            var getAllStudentGroupsEndpoint = string
-                .Format(_studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint);
+            var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 
             var studentGroupsResponse = await _apiUtil.GetAsync<IList<StudentGroupDto>>(getAllStudentGroupsEndpoint);
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(studentGroupsResponse);
@@ -141,8 +139,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task<CreateStudentGroupDto> AddStudentGroupAsync(long id, CreateStudentGroupDto addDto)
         {
-            var addStudentGroupEndpoint = string
-               .Format(_studentGroupsApiEndpoints.AddStudentGroupEndpoint);
+            var addStudentGroupEndpoint = _studentGroupsApiEndpoints.AddStudentGroupEndpoint;
 
             var createStudentGroup = await _apiUtil.CreateAsync(addStudentGroupEndpoint, addDto);
 
