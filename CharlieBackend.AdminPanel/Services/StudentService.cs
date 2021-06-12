@@ -53,7 +53,6 @@ namespace CharlieBackend.AdminPanel.Services
         {
             var getStudentEndpoint = string
                 .Format(_studentsApiEndpoints.GetStudentEndpoint, id);
-
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 
             var studentTask =  _apiUtil.GetAsync<StudentEditViewModel>(getStudentEndpoint);
