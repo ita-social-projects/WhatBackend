@@ -156,5 +156,19 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             successResult.Data.Should().BeTrue();
         }
+        [Fact]
+        public async Task DeleteEvent_NotValidData_ShouldReturnException()
+        {
+            //Arrange
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
+                .Throws(new Exception());
+
+            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
+
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
+            // Act & Assert
+            Invoking(() => eventService.DeleteAsync(existingId)).Should().Throw<Exception>();
+        }
     }
 }
