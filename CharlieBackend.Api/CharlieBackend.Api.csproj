@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <Folder Include="SwaggerExamples\EventsController\" />
+    <Folder Include="Validators\Schedule\CreateScheduleDTO\" />
   </ItemGroup>
 
 
