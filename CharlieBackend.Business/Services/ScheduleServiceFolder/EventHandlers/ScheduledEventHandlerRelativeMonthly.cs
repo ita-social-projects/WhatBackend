@@ -47,30 +47,44 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
         protected override DateTime GetStartDate(int index)
         {
-            DateTime startDate = new DateTime(_source.EventStart.Year, _source.EventStart.Month, 7 * (int)_pattern.Index,
+            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
+            int day = (int)_pattern.Index != 5 ? 7 * (int)_pattern.Index : 7 * 4;
+
+            DateTime startDate = new DateTime(_source.EventStart.Year, _source.EventStart.Month, day,
                 _source.EventStart.Hour, _source.EventStart.Minute, _source.EventStart.Second);
 
-            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
             int startDay = (int)startDate.DayOfWeek;
 
-            return startDate.AddDays(startDay <= offset
+            if ((int)_pattern.Index != 5)
+            {
+                startDate = startDate.AddDays(startDay <= offset
                        ? -1 * (startDay + DAYS_IN_WEEK - offset)
                        : -1 * (startDay - offset));
+            }
+            else
+                startDate = startDate.AddDays(startDay <= offset ? offset - startDay : DAYS_IN_WEEK - startDay + offset);
+
+            return startDate;
         }
 
         protected void UpdateTime(ref DateTime startDate, ref DateTime finishDate, int index)
         {
             startDate = startDate.AddMonths(_pattern.Interval);
 
-            startDate = new DateTime(startDate.Year, startDate.Month, 7 * (int)_pattern.Index,
+            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
+            int day = (int)_pattern.Index != 5 ? 7 * (int)_pattern.Index : 7 * 4;
+
+            startDate = new DateTime(startDate.Year, startDate.Month, day,
                 startDate.Hour, startDate.Minute, startDate.Second);
 
-            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
             int startDay = (int)startDate.DayOfWeek;
 
-            startDate = startDate.AddDays(startDay <= offset
+            if ((int)_pattern.Index != 5)
+                startDate = startDate.AddDays(startDay <= offset
                        ? -1 * (startDay + DAYS_IN_WEEK - offset)
                        : -1 * (startDay - offset));
+            else
+                startDate = startDate.AddDays(DAYS_IN_WEEK);
 
             finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
                     _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
