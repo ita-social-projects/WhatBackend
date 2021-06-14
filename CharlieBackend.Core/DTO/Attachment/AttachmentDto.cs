@@ -16,11 +16,9 @@ namespace CharlieBackend.Core.DTO.Attachment
         public long CreatedByAccountId { get; set; }
 
         [Required]
-        [StringLength(100)]
         public string ContainerName { get; set; }
 
         [Required]
-        [StringLength(100)]
         public string FileName { get; set; }
     }
 }
