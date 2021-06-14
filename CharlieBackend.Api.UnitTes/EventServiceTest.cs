@@ -42,14 +42,6 @@ namespace CharlieBackend.Api.UnitTest
             nonexistingId = 999;
         }
 
-        private void InitializeForCreateEventAsync(long eventExpectedId = 10)
-        {
-            _eventRepositoryMock.Setup(x => x.Add(It.IsAny<ScheduledEvent>()))
-                .Callback<ScheduledEvent>(x => x.Id = eventExpectedId);
-
-            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
-        }
-
         [Fact]
         public async Task GetEvent_ExistingId_ShouldReturnScheduledEvent() 
         {
@@ -105,14 +97,14 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_groupRepositoryMock.Object);
 
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
             update = new UpdateScheduledEventDto
             {
                 StudentGroupId = 1,
                 ThemeId = 1,
                 MentorId = 1
             };
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
-
             var expectedUpdate = new ScheduledEventDTO
             {
                 StudentGroupId = 1,
@@ -153,11 +145,8 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
                 .ReturnsAsync(validEvent);
-            _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
-                .ReturnsAsync(new Mentor { AccountId = 111 });
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
 
