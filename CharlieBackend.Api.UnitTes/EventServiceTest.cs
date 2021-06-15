@@ -25,6 +25,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly int existingId;
         private readonly int nonexistingId;
         public UpdateScheduledEventDto update;
+
         public EventServiceTest()
         {
             _mapper = GetMapper(new ModelMappingProfile());
@@ -156,6 +157,7 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             successResult.Data.Should().BeTrue();
         }
+
         [Fact]
         public async Task DeleteEvent_NotValidData_ShouldReturnException()
         {
