@@ -21,7 +21,7 @@ namespace CharlieBackend.Api.UnitTest
                 },
                 Type = PatternType.Daily,
                 Interval = 1,
-                Index = MonthIndex.First,
+                Index = WeekIndex.First,
                 DaysOfWeek = new List<DayOfWeek>()
                 {
                     DayOfWeek.Monday, DayOfWeek.Tuesday

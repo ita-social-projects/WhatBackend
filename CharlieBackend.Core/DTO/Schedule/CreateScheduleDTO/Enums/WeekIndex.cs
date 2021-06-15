@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public enum MonthIndex
+    public enum WeekIndex
     {
         Undefined,
         First,

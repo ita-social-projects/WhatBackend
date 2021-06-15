@@ -47,31 +47,22 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
         protected override DateTime GetStartDate(int index)
         {
-            DateTime startDate = new DateTime(_source.EventStart.Year, _source.EventStart.Month, 7 * (int)_pattern.Index,
-                _source.EventStart.Hour, _source.EventStart.Minute, _source.EventStart.Second);
-
-            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
-            int startDay = (int)startDate.DayOfWeek;
-
-            return startDate.AddDays(startDay <= offset
-                       ? -1 * (startDay + DAYS_IN_WEEK - offset)
-                       : -1 * (startDay - offset));
+            var dayOfWeek = _pattern.DaysOfWeek[index];
+            var nthDayOfWeekInTheMonth = GetNthDayOfWeekInTheMonth(_source.EventStart.Year, _source.EventStart.Month, dayOfWeek, _pattern.Index.Value);
+            var startDate = nthDayOfWeekInTheMonth.Date
+                .AddHours(_source.EventStart.Hour)
+                .AddSeconds(_source.EventStart.Second);
+            return startDate;
         }
 
         protected void UpdateTime(ref DateTime startDate, ref DateTime finishDate, int index)
         {
-            startDate = startDate.AddMonths(_pattern.Interval);
-
-            startDate = new DateTime(startDate.Year, startDate.Month, 7 * (int)_pattern.Index,
-                startDate.Hour, startDate.Minute, startDate.Second);
-
-            int offset = _pattern.DaysOfWeek[index] == DayOfWeek.Sunday ? 7 : (int)_pattern.DaysOfWeek[index];
-            int startDay = (int)startDate.DayOfWeek;
-
-            startDate = startDate.AddDays(startDay <= offset
-                       ? -1 * (startDay + DAYS_IN_WEEK - offset)
-                       : -1 * (startDay - offset));
-
+            startDate = startDate.Date.AddMonths(_pattern.Interval);
+            var dayOfWeek = _pattern.DaysOfWeek[index];
+            var nthDayOfWeekInTheMonth = GetNthDayOfWeekInTheMonth(startDate.Year, startDate.Month, dayOfWeek, _pattern.Index.Value);
+            startDate = nthDayOfWeekInTheMonth.Date
+                .AddHours(_source.EventStart.Hour)
+                .AddSeconds(_source.EventStart.Second);
             finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
                     _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
         }
@@ -79,6 +70,47 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         protected override int GetIterationCount()
         {
             return _pattern.DaysOfWeek.Count;
+        }
+
+        private DateTime GetFirstDayOfWeekInTheMonth(int year, int month, DayOfWeek dayOfWeek)
+        {
+            var firstDayOfTheMonth = new DateTime(year, month, 1);
+            var offset = 0;
+
+            // if the first week of the month does not have this day of week
+            // then move forward to the nex week and back on difference between days 
+            if (firstDayOfTheMonth.DayOfWeek > dayOfWeek)
+            {
+                offset = DAYS_IN_WEEK - (firstDayOfTheMonth.DayOfWeek - dayOfWeek);
+            }
+
+            // if the first week of the month has this day of week
+            // then move forward on difference between days
+            if (firstDayOfTheMonth.DayOfWeek < dayOfWeek)
+            {
+                offset = dayOfWeek - firstDayOfTheMonth.DayOfWeek;
+            }
+
+            var firstDayOfWeekInTheMonth = firstDayOfTheMonth.AddDays(offset);
+            return firstDayOfWeekInTheMonth;
+        }
+
+        private DateTime GetNthDayOfWeekInTheMonth(int year, int month, DayOfWeek dayOfWeek, WeekIndex n)
+        {
+            var firstDayOfWeekInTheMonth = GetFirstDayOfWeekInTheMonth(year, month, dayOfWeek);
+            if (n == WeekIndex.Undefined || n == WeekIndex.First)
+            {
+                return firstDayOfWeekInTheMonth;
+            }
+
+            var nthDayOfWeekInTheMonth = firstDayOfWeekInTheMonth.AddDays(DAYS_IN_WEEK * ((int) n - 1));
+            if (nthDayOfWeekInTheMonth.Month != firstDayOfWeekInTheMonth.Month)
+            {
+                nthDayOfWeekInTheMonth = nthDayOfWeekInTheMonth.AddDays(-DAYS_IN_WEEK);
+            }
+
+            return nthDayOfWeekInTheMonth;
+
         }
     }
 }

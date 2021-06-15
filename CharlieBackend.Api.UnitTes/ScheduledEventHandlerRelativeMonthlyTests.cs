@@ -40,7 +40,7 @@ namespace CharlieBackend.Api.UnitTest
                 Interval = 1,
                 DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday, DayOfWeek.Saturday },
                 Dates = new List<int> { 1, 2, 3, 31 },
-                Index = MonthIndex.First
+                Index = WeekIndex.First
             };
             scheduledEventHandlerRelativeMonthly = new ScheduledEventHandlerRelativeMonthly(_pattern);
 
