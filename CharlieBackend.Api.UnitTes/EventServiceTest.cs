@@ -21,10 +21,10 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _groupRepositoryMock;
-        private readonly ScheduledEvent validEvent;
-        private readonly int existingId;
-        private readonly int nonexistingId;
-        public UpdateScheduledEventDto update;
+        private readonly ScheduledEvent _validEvent;
+        private readonly int _existingId;
+        private readonly int _nonexistingId;
+        public UpdateScheduledEventDto _update;
 
         public EventServiceTest()
         {
@@ -33,48 +33,48 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _themeRepositoryMock = new Mock<IThemeRepository>();
             _groupRepositoryMock = new Mock<IStudentGroupRepository>();
-            validEvent = new ScheduledEvent
+            _validEvent = new ScheduledEvent
             {
                 StudentGroupId = 1,
                 ThemeId = 1,
                 MentorId = 1
             };
-            existingId = 551;
-            nonexistingId = 999;
+            _existingId = 551;
+            _nonexistingId = 999;
         }
 
         [Fact]
         public async Task GetEvent_ExistingId_ShouldReturnScheduledEvent() 
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(validEvent);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
+                .ReturnsAsync(_validEvent);
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
 
             //Act
-            var successResult = await eventService.GetAsync(existingId);
+            var successResult = await eventService.GetAsync(_existingId);
 
             //Assert
             successResult.Should().NotBeNull();
-            successResult.Should().BeEquivalentTo(_mapper.Map<ScheduledEventDTO>(validEvent));
+            successResult.Should().BeEquivalentTo(_mapper.Map<ScheduledEventDTO>(_validEvent));
         }
 
         [Fact]
         public async Task GetEvent_NonExistingId_ShouldReturnNull()
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(validEvent);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
+                .ReturnsAsync(_validEvent);
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
 
             //Act
-            var successResult = await eventService.GetAsync(nonexistingId);
+            var successResult = await eventService.GetAsync(_nonexistingId);
 
             //Assert
             successResult.Should().BeNull();
@@ -84,8 +84,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateEvent_ValidData_ShouldReturnScheduledEvent()
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(validEvent);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
+                .ReturnsAsync(_validEvent);
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(new Mentor { AccountId = 111 });
             _themeRepositoryMock.Setup(x => x.GetByIdAsync(222))
@@ -100,7 +100,7 @@ namespace CharlieBackend.Api.UnitTest
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
             
-            update = new UpdateScheduledEventDto
+            _update = new UpdateScheduledEventDto
             {
                 StudentGroupId = 1,
                 ThemeId = 222,
@@ -114,7 +114,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             //Act
-            var successResult = await eventService.UpdateAsync(existingId, update);
+            var successResult = await eventService.UpdateAsync(_existingId, _update);
 
             //Assert
             successResult.Should().NotBeNull();
@@ -125,8 +125,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateEvent_NotValidData_ShouldThrowError()
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(validEvent);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
+                .ReturnsAsync(_validEvent);
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(new Mentor { AccountId = 111 });
 
@@ -137,22 +137,22 @@ namespace CharlieBackend.Api.UnitTest
             var expectedUpdate = new UpdateScheduledEventDto{};
 
             //Act & Assert
-            Invoking(() => eventService.UpdateAsync(existingId, expectedUpdate)).Should().Throw<EntityValidationException>();
+            Invoking(() => eventService.UpdateAsync(_existingId, expectedUpdate)).Should().Throw<EntityValidationException>();
         }
 
         [Fact]
         public async Task DeleteEvent_ValidData_ShouldReturnTrue()
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
-                .ReturnsAsync(validEvent);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
+                .ReturnsAsync(_validEvent);
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
 
             //Act
-            var successResult = await eventService.DeleteAsync(existingId);
+            var successResult = await eventService.DeleteAsync(_existingId);
 
             //Assert
             successResult.Data.Should().BeTrue();
@@ -162,7 +162,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DeleteEvent_NotValidData_ShouldReturnException()
         {
             //Arrange
-            _eventRepositoryMock.Setup(x => x.GetByIdAsync(existingId))
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
                 .Throws(new Exception());
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
@@ -170,7 +170,7 @@ namespace CharlieBackend.Api.UnitTest
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
 
             // Act & Assert
-            Invoking(() => eventService.DeleteAsync(existingId)).Should().Throw<Exception>();
+            Invoking(() => eventService.DeleteAsync(_existingId)).Should().Throw<Exception>();
         }
     }
 }
