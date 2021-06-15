@@ -84,14 +84,18 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateEvent_ValidData_ShouldReturnScheduledEvent()
         {
             //Arrange
+            long updatedStudentGroupId = 1;
+            long updatedThemeId = 222;
+            long updatedMentorId = 1;
+
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
                 .ReturnsAsync(_validEvent);
-            _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
-                .ReturnsAsync(new Mentor { AccountId = 111 });
-            _themeRepositoryMock.Setup(x => x.GetByIdAsync(222))
-                .ReturnsAsync(new Theme { Id = 1 });
-            _groupRepositoryMock.Setup(x => x.GetByIdAsync(1))
-                .ReturnsAsync(new StudentGroup { Id = 1 });
+            _mentorRepositoryMock.Setup(x => x.GetByIdAsync(updatedMentorId))
+                .ReturnsAsync(new Mentor { });
+            _themeRepositoryMock.Setup(x => x.GetByIdAsync(updatedThemeId))
+                .ReturnsAsync(new Theme {  });
+            _groupRepositoryMock.Setup(x => x.GetByIdAsync(updatedStudentGroupId))
+                .ReturnsAsync(new StudentGroup {  });
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
@@ -99,18 +103,19 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_groupRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
             
             _update = new UpdateScheduledEventDto
             {
-                StudentGroupId = 1,
-                ThemeId = 222,
-                MentorId = 1
+                StudentGroupId = updatedStudentGroupId,
+                ThemeId = updatedThemeId,
+                MentorId = updatedMentorId
             };
             var expectedUpdate = new ScheduledEventDTO
             {
-                StudentGroupId = 1,
-                ThemeId = 222,
-                MentorId = 1
+                StudentGroupId = updatedStudentGroupId,
+                ThemeId = updatedThemeId,
+                MentorId = updatedMentorId
             };
 
             //Act
@@ -128,7 +133,7 @@ namespace CharlieBackend.Api.UnitTest
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(_existingId))
                 .ReturnsAsync(_validEvent);
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
-                .ReturnsAsync(new Mentor { AccountId = 111 });
+                .ReturnsAsync(new Mentor { });
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
