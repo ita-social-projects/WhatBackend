@@ -88,7 +88,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(validEvent);
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(new Mentor { AccountId = 111 });
-            _themeRepositoryMock.Setup(x => x.GetByIdAsync(1))
+            _themeRepositoryMock.Setup(x => x.GetByIdAsync(222))
                 .ReturnsAsync(new Theme { Id = 1 });
             _groupRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(new StudentGroup { Id = 1 });
@@ -99,17 +99,17 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_groupRepositoryMock.Object);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
-
+            
             update = new UpdateScheduledEventDto
             {
                 StudentGroupId = 1,
-                ThemeId = 1,
+                ThemeId = 222,
                 MentorId = 1
             };
             var expectedUpdate = new ScheduledEventDTO
             {
                 StudentGroupId = 1,
-                ThemeId = 1,
+                ThemeId = 222,
                 MentorId = 1
             };
 
