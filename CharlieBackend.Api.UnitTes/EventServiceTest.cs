@@ -33,12 +33,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _themeRepositoryMock = new Mock<IThemeRepository>();
             _groupRepositoryMock = new Mock<IStudentGroupRepository>();
-            _validEvent = new ScheduledEvent
-            {
-                StudentGroupId = 1,
-                ThemeId = 1,
-                MentorId = 1
-            };
+            _validEvent = new ScheduledEvent{  };
             _existingId = 551;
             _nonexistingId = 999;
         }
