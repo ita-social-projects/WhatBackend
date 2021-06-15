@@ -126,9 +126,9 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return daysCollection;
         }
 
-        private static MonthIndex GetMonthIndex(string indexString)
+        private static WeekIndex GetMonthIndex(string indexString)
         {
-            return (MonthIndex)(indexString.Length - indexString.LastIndexOf('1') - 1);
+            return (WeekIndex)(indexString.Length - indexString.LastIndexOf('1') - 1);
         }
 
         private static IList<int> GetDatesList(string datesString)

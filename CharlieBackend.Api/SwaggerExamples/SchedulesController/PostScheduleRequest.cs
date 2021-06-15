@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                         DayOfWeek.Friday
                     },
 
-                    Index = MonthIndex.Second,
+                    Index = WeekIndex.Second,
                 },
 
                 Range = new OccurenceRange

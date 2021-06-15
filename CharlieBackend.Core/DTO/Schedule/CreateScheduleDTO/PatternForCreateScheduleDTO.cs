@@ -16,7 +16,7 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public IList<DayOfWeek> DaysOfWeek { get; set; }
 
-        public MonthIndex? Index { get; set; }
+        public WeekIndex? Index { get; set; }
 
         [Range(1, 31)]
         public IList<int> Dates { get; set; }
