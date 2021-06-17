@@ -25,7 +25,6 @@ namespace CharlieBackend.AdminPanel.Services
 
         public StudentGroupService(IApiUtil apiUtil,
                                    IMapper mapper,
-
                                    IMentorService mentorService,
                                    IStudentService studentService,
                                    ICourseService courseService,
