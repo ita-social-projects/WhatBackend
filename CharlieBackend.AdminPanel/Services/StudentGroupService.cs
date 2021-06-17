@@ -33,7 +33,6 @@ namespace CharlieBackend.AdminPanel.Services
         {
             _apiUtil = apiUtil;
             _mapper = mapper;
-
             _mentorService = mentorService;
             _studentService = studentService;
             _courseService = courseService;

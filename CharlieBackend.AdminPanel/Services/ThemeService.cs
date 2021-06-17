@@ -18,7 +18,6 @@ namespace CharlieBackend.AdminPanel.Services
         public ThemeService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
-
             _themesApiEndpoints = options.Value.Urls.ApiEndpoints.Themes;
         }
 

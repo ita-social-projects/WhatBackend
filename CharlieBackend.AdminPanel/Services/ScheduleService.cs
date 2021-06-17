@@ -19,7 +19,6 @@ namespace CharlieBackend.AdminPanel.Services
         public ScheduleService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
-
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
         }
 

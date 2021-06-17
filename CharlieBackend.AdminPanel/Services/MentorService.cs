@@ -26,9 +26,7 @@ namespace CharlieBackend.AdminPanel.Services
             _apiUtil = apiUtil;
 
             _mentorsApiEndpoints = options.Value.Urls.ApiEndpoints.Mentors;
-
             _coursesApiEndpoints = options.Value.Urls.ApiEndpoints.Courses;
-
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
@@ -64,7 +62,6 @@ namespace CharlieBackend.AdminPanel.Services
 
             var allMentors = await 
                 _apiUtil.GetAsync<IList<MentorViewModel>>(getAllMentorsEndpoint);
-
             var activeMentors = await 
                 _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
 

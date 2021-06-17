@@ -22,9 +22,7 @@ namespace CharlieBackend.AdminPanel.Services
         public StudentService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
-
             _studentsApiEndpoints = options.Value.Urls.ApiEndpoints.Students;
-
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 

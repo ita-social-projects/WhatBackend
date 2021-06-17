@@ -40,7 +40,6 @@ namespace CharlieBackend.AdminPanel.Services
             _scheduleService = scheduleService;
             _apiUtil = apiUtil;
             _mapper = mapper;
-
             _getActiveCoursesEndpoint = options.Value.Urls.ApiEndpoints.Courses.GetAllCoursesEndpoint;
             _getActiveMetorsEndpoint = options.Value.Urls.ApiEndpoints.Mentors.ActiveMentorEndpoint;
             _getStudentGroupsEndpoint = options.Value.Urls.ApiEndpoints.StudentGroups.GetAllStudentGroupsEndpoint;
