@@ -14,7 +14,6 @@ namespace CharlieBackend.AdminPanel.Services
     class ScheduleService : IScheduleService
     {
         private readonly IApiUtil _apiUtil;
-
         private readonly ScheduleApiEndpoints _scheduleApiEndpoints;
 
         public ScheduleService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)

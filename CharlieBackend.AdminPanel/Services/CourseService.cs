@@ -12,9 +12,7 @@ namespace CharlieBackend.AdminPanel.Services
     public class CourseService : ICourseService
     {
         private readonly IApiUtil _apiUtil;
-
         private readonly IMapper _mapper;
-
         private readonly CoursesApiEndpoints _coursesApiEndpoints;
 
         public CourseService(

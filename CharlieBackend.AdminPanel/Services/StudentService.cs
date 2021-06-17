@@ -16,9 +16,7 @@ namespace CharlieBackend.AdminPanel.Services
     public class StudentService: IStudentService
     {
         private readonly IApiUtil _apiUtil;
-
         private readonly StudentsApiEndpoints _studentsApiEndpoints;
-
         private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
 
         public StudentService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)

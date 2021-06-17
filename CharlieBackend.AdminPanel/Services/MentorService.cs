@@ -17,11 +17,8 @@ namespace CharlieBackend.AdminPanel.Services
     public class MentorService : IMentorService
     {
         private readonly IApiUtil _apiUtil;
-
         private readonly MentorsApiEndpoints _mentorsApiEndpoints;
-
         private readonly CoursesApiEndpoints _coursesApiEndpoints;
-
         private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
 
         public MentorService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)

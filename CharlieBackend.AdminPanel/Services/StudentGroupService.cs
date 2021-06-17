@@ -18,11 +18,9 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
-
         private readonly IMentorService _mentorService;
         private readonly IStudentService _studentService;
         private readonly ICourseService _courseService;
-
         private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
 
         public StudentGroupService(IApiUtil apiUtil,

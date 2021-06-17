@@ -23,7 +23,6 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IScheduleService _scheduleService;
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
-
         private readonly string _getActiveCoursesEndpoint;
         private readonly string _getActiveMetorsEndpoint;
         private readonly string _getStudentGroupsEndpoint;

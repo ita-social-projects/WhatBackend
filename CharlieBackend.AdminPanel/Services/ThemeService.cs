@@ -13,7 +13,6 @@ namespace CharlieBackend.AdminPanel.Services
     public class ThemeService : IThemeService
     {
         private readonly IApiUtil _apiUtil;
-
         private readonly ThemesApiEndpoints _themesApiEndpoints;
 
         public ThemeService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
