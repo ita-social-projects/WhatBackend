@@ -51,6 +51,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             var nthDayOfWeekInTheMonth = GetNthDayOfWeekInTheMonth(_source.EventStart.Year, _source.EventStart.Month, dayOfWeek, _pattern.Index.Value);
             var startDate = nthDayOfWeekInTheMonth.Date
                 .AddHours(_source.EventStart.Hour)
+                .AddMinutes(_source.EventStart.Minute)
                 .AddSeconds(_source.EventStart.Second);
             return startDate;
         }
@@ -62,6 +63,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             var nthDayOfWeekInTheMonth = GetNthDayOfWeekInTheMonth(startDate.Year, startDate.Month, dayOfWeek, _pattern.Index.Value);
             startDate = nthDayOfWeekInTheMonth.Date
                 .AddHours(_source.EventStart.Hour)
+                .AddMinutes(_source.EventStart.Minute)
                 .AddSeconds(_source.EventStart.Second);
             finishDate = new DateTime(startDate.Year, startDate.Month, startDate.Day,
                     _source.EventFinish.Hour, _source.EventFinish.Minute, _source.EventFinish.Second);
@@ -110,7 +112,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             }
 
             return nthDayOfWeekInTheMonth;
-
         }
     }
 }
