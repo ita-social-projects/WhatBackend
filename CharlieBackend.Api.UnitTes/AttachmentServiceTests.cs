@@ -565,5 +565,119 @@ namespace CharlieBackend.Api.UnitTest
             //Act & Assert
             _attachmentService.AttachmentExtentionValidation(file).Should().BeFalse();
         }
+
+        [Fact]
+        public async Task AttachmentsExtentionValidation_DangerousExtention_ReturnFalse() 
+        {
+            var fileMock = new Mock<IFormFile>();
+            var content = "Hello World from a Fake File";
+            var fileName = "test.exe";
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+            var file = fileMock.Object;
+            var formFiles = new FormFileCollection();
+            formFiles.Add(file);
+
+            var res = _attachmentService.AttachmentsExtentionValidation(formFiles);
+
+            res.Should().Be(false);
+        }
+
+        [Fact]
+        public async Task AttachmentSizeValidation_TooBigFile_ReturnFalse() 
+        {
+            var fileMock = new Mock<IFormFile>();
+            var content = "Hello World from a Fake File";
+            var fileName = "test.png";
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+            var file = fileMock.Object;
+
+            var res = _attachmentService.AttachmentSizeValidation(file);
+
+            res.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task AttachmentsExtentionValidation_TooBigFile_ReturnFalse()
+        {
+            var fileMock = new Mock<IFormFile>();
+            var content = "Hello World from a Fake File";
+            var fileName = "test.png";
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+            var file = fileMock.Object;
+            var formFiles = new FormFileCollection();
+            formFiles.Add(file);
+
+            var res = _attachmentService.AttachmentsSizeValidation(formFiles);
+
+            res.Should().Be(false);
+        }
+
+        [Fact]
+        public async Task ValidateAvatar_ValidData_ReturnTrue()
+        {
+            var fileMock = new Mock<IFormFile>();
+            var content = "Hello World from a Fake File";
+            var fileName = "test.png";
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+            var file = fileMock.Object;
+
+            var res = _attachmentService.ValidateAvatar(file);
+
+            res.Should().Be(true);
+        }
+
+        [Fact]
+        public async Task ValidateAvatar_InValidData_ReturnFalse()
+        {
+            var fileMock = new Mock<IFormFile>();
+            var content = "Hello World from a Fake File";
+            var fileName = "test.pdf";
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+            var file = fileMock.Object;
+
+            var res = _attachmentService.ValidateAvatar(file);
+
+            res.Should().Be(false);
+        }
     }
 }
