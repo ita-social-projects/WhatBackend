@@ -50,6 +50,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<EventOccurrenceDTO>> PostSchedule([FromBody] CreateScheduleDto scheduleDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var resSchedule = await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
             return resSchedule.ToActionResult();
@@ -99,6 +103,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("events/updateRange")]
         public async Task<ActionResult<IList<ScheduledEventDTO>>> UpdateEventRange([FromBody] EventUpdateRangeDTO request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
             return foundSchedules.ToActionResult();
@@ -120,6 +128,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("eventOccurrences/{eventOccurrenceID}")]
         public async Task<ActionResult<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody] CreateScheduleDto updateOccurrenceRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var foundSchedules = await _scheduleService.UpdateEventOccurrenceById(eventOccurrenceID, updateOccurrenceRequest);
 
             return foundSchedules.ToActionResult();
