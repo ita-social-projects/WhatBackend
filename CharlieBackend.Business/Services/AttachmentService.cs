@@ -125,8 +125,9 @@ namespace CharlieBackend.Business.Services
             var attachment = await _unitOfWork.AttachmentRepository.GetByIdAsync(id);
 
             return attachment == null ?
-                 Result<string>.GetError(ErrorCode.NotFound, "Attachment not found") :
-                 Result<string>.GetSuccess(_blobService.GetUrl(attachment));
+                Result<string>.GetSuccess(_blobService.GetUrl(attachment)) :
+                Result<string>.GetError(ErrorCode.NotFound, "Attachment not found");
+                 
         }
 
         private async Task<Attachment> AddAttachmentFileAsync(IFormFile file, bool isPublic = false)
