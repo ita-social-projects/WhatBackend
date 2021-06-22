@@ -165,7 +165,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachment_ValidData_ReturnSuccess()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"TestPhotos\TestPhoto.txt");
+            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.txt");
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
             writer.Write(physicalFile.OpenRead());
@@ -202,7 +202,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentAsAvatarAsync_NoAccount_ReturnError() 
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"TestPhotos\TestPhoto.png");
+            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
             writer.Write(physicalFile.OpenRead());
@@ -236,7 +236,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentAsAvatarAsync_validData_ReturnAttachment()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"TestPhotos\TestPhoto.png");
+            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
             writer.Write(physicalFile.OpenRead());
@@ -283,7 +283,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentsAsync_validData_ReturnSuccess()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"TestPhotos\TestPhoto.png");
+            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
             writer.Write(physicalFile.OpenRead());
