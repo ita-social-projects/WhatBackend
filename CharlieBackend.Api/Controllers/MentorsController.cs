@@ -41,6 +41,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             return createdMentorModel.ToActionResult();
@@ -120,6 +124,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{mentorId}")]
         public async Task<ActionResult> PutMentor(long mentorId, [FromBody] UpdateMentorDto mentorModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
             return updatedMentor.ToActionResult();
