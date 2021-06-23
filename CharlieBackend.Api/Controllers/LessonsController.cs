@@ -43,8 +43,11 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);          
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -97,6 +100,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonDto lessonDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var updatedLesson = await _lessonService.UpdateLessonAsync(id, lessonDto);
 
             if (updatedLesson != null)
