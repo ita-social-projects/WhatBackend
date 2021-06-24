@@ -44,5 +44,16 @@ namespace CharlieBackend.AdminPanel.Services
 
             return result;
         }
+
+        public async Task<EventOccurrenceDTO> GetEventOccurrenceById(long id)
+        {
+            var eventOccurence =
+               string.Format(_scheduleApiEndpoints.EventOccurrenceById, id);
+
+            var result = await _apiUtil
+                .GetAsync<EventOccurrenceDTO>(eventOccurence);
+
+            return result;
+        }
     }
 }

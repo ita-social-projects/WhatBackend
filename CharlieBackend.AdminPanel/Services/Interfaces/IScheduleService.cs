@@ -28,5 +28,11 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
         /// </summary>
         /// <returns>a collection of all event occurrences.</returns>
         Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences();
+
+        /// <summary>
+        /// Method for obtaining a specified event occurrence by id.
+        /// </summary>
+        /// <returns>EventOccurrenceDTO with specified id</returns>
+        Task<EventOccurrenceDTO> GetEventOccurrenceById(long id);
     }
 }
