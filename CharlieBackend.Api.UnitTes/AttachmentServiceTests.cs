@@ -36,12 +36,14 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Account _account;
         private readonly Attachment _attachment;
+        private readonly string _fakeConnection;
         IFormFile _correctFile;
         IFormFile _tooBigFile;
         IFormFile _dangerousFile;
 
         public AttachmentServiceTests() 
         {
+            _fakeConnection = "DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14z6o9HhwlY1TvAtM2g0VIuPQLDDmEruu421NZA==;EndpointSuffix=core.windows.net";
             _mapper = GetMapper(new ModelMappingProfile());
             _blobServiceMock = new Mock<IBlobService>();
             _currentUserServiceMock = new Mock<ICurrentUserService>();
@@ -176,7 +178,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachment_ValidData_ReturnSuccess()
         {
             _blobServiceMock.Setup(x => x.UploadAsync(_correctFile.FileName, It.IsAny<Stream>(), It.IsAny<bool>()))
-                .ReturnsAsync(new BlobClient("DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net",
+                .ReturnsAsync(new BlobClient(_fakeConnection,
                 "vv", "vv"));
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
 
@@ -237,7 +239,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_account);
             _blobServiceMock.Setup(x => x.UploadAsync(fileName, It.IsAny<Stream>(), It.IsAny<bool>()))
-                .ReturnsAsync(new BlobClient("DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net",
+                .ReturnsAsync(new BlobClient(_fakeConnection,
                 "vv", "vv"));
 
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
@@ -273,7 +275,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_account);
             _blobServiceMock.Setup(x => x.UploadAsync(_correctFile.FileName, It.IsAny<Stream>(), It.IsAny<bool>()))
-                .ReturnsAsync(new BlobClient("DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net",
+                .ReturnsAsync(new BlobClient(_fakeConnection,
                 "vv", "vv"));
 
             _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(_accountRepositoryMock.Object);
