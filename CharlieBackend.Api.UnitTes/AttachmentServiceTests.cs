@@ -113,7 +113,6 @@ namespace CharlieBackend.Api.UnitTest
             //fileMock.Setup(_ => _.ContentDisposition).Returns("1");
             //fileMock.Setup(_ => _.ContentType).Returns("image");
             IFormFile file = fileMock.Object;
-            //IFormFile file1 = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes("This is a dummy file")), 0, 0, "Data", "dummy.txt");
 
             //Act
             var res = await _attachmentService.AddAttachmentAsync(file);
@@ -165,18 +164,17 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachment_ValidData_ReturnSuccess()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.txt");
+            var content = "Hello World from a Fake File";
+            var fileName = "TestPhoto.txt";
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
-            writer.Write(physicalFile.OpenRead());
+            writer.Write(content);
             writer.Flush();
             ms.Position = 0;
-            var fileName = physicalFile.Name;
-            //Setup mock file using info from physical file
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.ContentDisposition).Returns(string.Format("inline; filename={0}", fileName));
+            fileMock.Setup(_ => _.Name).Returns(fileName);
             var file = fileMock.Object;
 
             _blobServiceMock.Setup(x => x.UploadAsync(fileName, It.IsAny<Stream>(), It.IsAny<bool>()))
@@ -202,18 +200,18 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentAsAvatarAsync_NoAccount_ReturnError() 
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
+            var content = "Hello World from a Fake File";
+            var fileName = "TestPhoto.png";
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
-            writer.Write(physicalFile.OpenRead());
+            writer.Write(content);
             writer.Flush();
             ms.Position = 0;
-            var fileName = physicalFile.Name;
-            //Setup mock file using info from physical file
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
             fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
             fileMock.Setup(_ => _.ContentDisposition).Returns(string.Format("inline; filename={0}", fileName));
+            
             var file = fileMock.Object;
             var at = _attachment;
             at.Account = null;
@@ -236,14 +234,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentAsAvatarAsync_validData_ReturnAttachment()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
+            var content = "Hello World from a Fake File";
+            var fileName = "TestPhoto.png";
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
-            writer.Write(physicalFile.OpenRead());
+            writer.Write(content);
             writer.Flush();
             ms.Position = 0;
-            var fileName = physicalFile.Name;
-            //Setup mock file using info from physical file
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
             fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
@@ -283,19 +280,19 @@ namespace CharlieBackend.Api.UnitTest
         public async Task AddAttachmentsAsync_validData_ReturnSuccess()
         {
             var fileMock = new Mock<IFormFile>();
-            var physicalFile = new FileInfo(@"..\..\..\Files\TestPhotos\TestPhoto.png");
+            var content = "Hello World from a Fake File";
+            var fileName = "TestPhoto.png";
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
-            writer.Write(physicalFile.OpenRead());
+            writer.Write(content);
             writer.Flush();
             ms.Position = 0;
-            var fileName = physicalFile.Name;
-            //Setup mock file using info from physical file
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
             fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
             fileMock.Setup(_ => _.ContentDisposition).Returns(string.Format("inline; filename={0}", fileName));
             var file = fileMock.Object;
+
             var formFiles = new FormFileCollection();
             formFiles.Add(file);
 
