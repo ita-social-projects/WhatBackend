@@ -36,6 +36,9 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Account _account;
         private readonly Attachment _attachment;
+        IFormFile _correctFile;
+        IFormFile _tooBigFile;
+        IFormFile _dangerousFile;
 
         public AttachmentServiceTests() 
         {
@@ -66,15 +69,10 @@ namespace CharlieBackend.Api.UnitTest
                 ContainerName = "fff",
                 FileName = "fff"
             };
-        }
 
-        [Fact]
-        public async Task AddAttachmentAsync_DengerousExtention_ShouldReturnError()
-        {
-            //Arrange
             var fileMock = new Mock<IFormFile>();
             var content = "Hello World from a Fake File";
-            var fileName = "test.exe";
+            var fileName = "TestPhoto.exe";
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms);
             writer.Write(content);
@@ -84,10 +82,41 @@ namespace CharlieBackend.Api.UnitTest
             fileMock.Setup(_ => _.FileName).Returns(fileName);
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
             fileMock.Setup(_ => _.Name).Returns(fileName);
-            IFormFile file = fileMock.Object;
 
+            _dangerousFile = fileMock.Object;
+
+            fileMock = new Mock<IFormFile>();
+            fileName = "TestPhoto.png";
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(ms.Length);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+
+            _correctFile = fileMock.Object;
+
+
+            fileMock = new Mock<IFormFile>();
+            fileName = "TestPhoto.png";
+            writer.Write(content);
+            writer.Flush();
+            ms.Position = 0;
+            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
+            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
+            fileMock.Setup(_ => _.Name).Returns(fileName);
+
+            _tooBigFile = fileMock.Object;
+
+        }
+
+        [Fact]
+        public async Task AddAttachmentAsync_DengerousExtention_ShouldReturnError()
+        {
             //Act
-            var res = await _attachmentService.AddAttachmentAsync(file);
+            var res = await _attachmentService.AddAttachmentAsync(_dangerousFile);
 
             //Assert
             res.Error.Code.Should().Be(ErrorCode.ValidationError);
@@ -97,25 +126,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AddAttachmentAsync_TooBigFile_ShouldReturnError()
         {
-            //Arrange
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1) ;
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            //fileMock.Setup(_ => _.ContentDisposition).Returns("1");
-            //fileMock.Setup(_ => _.ContentType).Returns("image");
-            IFormFile file = fileMock.Object;
-
             //Act
-            var res = await _attachmentService.AddAttachmentAsync(file);
+            var res = await _attachmentService.AddAttachmentAsync(_tooBigFile);
 
             //Assert
             res.Error.Code.Should().Be(ErrorCode.ValidationError);
@@ -163,26 +175,12 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AddAttachment_ValidData_ReturnSuccess()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "TestPhoto.txt";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
-
-            _blobServiceMock.Setup(x => x.UploadAsync(fileName, It.IsAny<Stream>(), It.IsAny<bool>()))
+            _blobServiceMock.Setup(x => x.UploadAsync(_correctFile.FileName, It.IsAny<Stream>(), It.IsAny<bool>()))
                 .ReturnsAsync(new BlobClient("DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net",
                 "vv", "vv"));
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
 
-            var res = await _attachmentService.AddAttachmentAsync(file);
+            var res = await _attachmentService.AddAttachmentAsync(_correctFile);
 
 
             //res.Should().Be(1);
@@ -191,28 +189,15 @@ namespace CharlieBackend.Api.UnitTest
                 new AttachmentDto {
                     ContainerName = "vv",
                     CreatedByAccountId = 1,
-                    FileName = "TestPhoto.txt",
+                    FileName = "TestPhoto.png",
                     Id = 0,
-                CreatedOn =res.Data.CreatedOn});
+                    CreatedOn = res.Data.CreatedOn
+                });
         }
 
         [Fact]
         public async Task AddAttachmentAsAvatarAsync_NoAccount_ReturnError() 
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "TestPhoto.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.ContentDisposition).Returns(string.Format("inline; filename={0}", fileName));
-            
-            var file = fileMock.Object;
             var at = _attachment;
             at.Account = null;
 
@@ -223,7 +208,7 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(_accountRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
 
-            var res = await _attachmentService.AddAttachmentAsAvatarAsync(file);
+            var res = await _attachmentService.AddAttachmentAsAvatarAsync(_correctFile);
 
             //Assert 
             res.Error.Code.Should().Be(ErrorCode.NotFound);
@@ -279,37 +264,25 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AddAttachmentsAsync_validData_ReturnSuccess()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "TestPhoto.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.ContentDisposition).Returns(string.Format("inline; filename={0}", fileName));
-            var file = fileMock.Object;
-
+            //Arrange
             var formFiles = new FormFileCollection();
-            formFiles.Add(file);
+            formFiles.Add(_correctFile);
 
             _attachmentRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_attachment);
             _accountRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_account);
-            _blobServiceMock.Setup(x => x.UploadAsync(fileName, It.IsAny<Stream>(), It.IsAny<bool>()))
+            _blobServiceMock.Setup(x => x.UploadAsync(_correctFile.FileName, It.IsAny<Stream>(), It.IsAny<bool>()))
                 .ReturnsAsync(new BlobClient("DefaultEndpointsProtocol=https;AccountName=123456;AccountKey=3Waz0PXXBe0Lie7HV51jdZsSFCqThFMsqGWdENueI/d6OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net",
                 "vv", "vv"));
 
             _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(_accountRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
             
-
+            //Act
             var res = await _attachmentService.AddAttachmentsAsync(formFiles);
 
+            //Assert
             res.Data[0].Should().BeEquivalentTo(new AttachmentDto
             {
                 ContainerName = "vv",
@@ -323,21 +296,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AddAttachmentsAsync_dangerousExtension_ReturnError()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.exe";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
             var formFiles = new FormFileCollection();
-            formFiles.Add(file);
+            formFiles.Add(_dangerousFile);
 
             _attachmentRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_attachment);
@@ -353,21 +313,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AddAttachmentsAsync_maxSize_ReturnError()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.exe";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
             var formFiles = new FormFileCollection();
-            formFiles.Add(file);
+            formFiles.Add(_tooBigFile);
 
             _attachmentRepositoryMock.Setup(x => x.GetByIdAsync(1))
                 .ReturnsAsync(_attachment);
@@ -545,42 +492,15 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AttachmentExtentionValidation_DangerousExtension_ReturnFalse() 
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.exe";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(ms.Length);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            IFormFile file = fileMock.Object;
-
             //Act & Assert
-            _attachmentService.AttachmentExtentionValidation(file).Should().BeFalse();
+            _attachmentService.AttachmentExtentionValidation(_dangerousFile).Should().BeFalse();
         }
 
         [Fact]
         public async Task AttachmentsExtentionValidation_DangerousExtention_ReturnFalse() 
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.exe";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(1);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
             var formFiles = new FormFileCollection();
-            formFiles.Add(file);
+            formFiles.Add(_dangerousFile);
 
             var res = _attachmentService.AttachmentsExtentionValidation(formFiles);
 
@@ -590,21 +510,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AttachmentSizeValidation_TooBigFile_ReturnFalse() 
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
 
-            var res = _attachmentService.AttachmentSizeValidation(file);
+            var res = _attachmentService.AttachmentSizeValidation(_tooBigFile);
 
             res.Should().BeFalse();
         }
@@ -612,21 +519,8 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task AttachmentsExtentionValidation_TooBigFile_ReturnFalse()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(AttachmentService.FileMaxSize + 1);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
             var formFiles = new FormFileCollection();
-            formFiles.Add(file);
+            formFiles.Add(_tooBigFile);
 
             var res = _attachmentService.AttachmentsSizeValidation(formFiles);
 
@@ -636,21 +530,7 @@ namespace CharlieBackend.Api.UnitTest
         [Fact]
         public async Task ValidateAvatar_ValidData_ReturnTrue()
         {
-            var fileMock = new Mock<IFormFile>();
-            var content = "Hello World from a Fake File";
-            var fileName = "test.png";
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms);
-            writer.Write(content);
-            writer.Flush();
-            ms.Position = 0;
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(ms);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(1);
-            fileMock.Setup(_ => _.Name).Returns(fileName);
-            var file = fileMock.Object;
-
-            var res = _attachmentService.ValidateAvatar(file);
+            var res = _attachmentService.ValidateAvatar(_correctFile);
 
             res.Should().Be(true);
         }
