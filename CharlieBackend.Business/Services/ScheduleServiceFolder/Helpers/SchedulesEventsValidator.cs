@@ -118,11 +118,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(" Mentor does not exist");
             }
 
-            if (_unitOfWork.AccountRepository.GetAccountCredentialsById(request.MentorID.Value).Result.IsActive == false)
-            {
-                error.Append(" Mentor is not active");
-            }
-
             if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
             {
                 error.Append(" Student does not exist");
