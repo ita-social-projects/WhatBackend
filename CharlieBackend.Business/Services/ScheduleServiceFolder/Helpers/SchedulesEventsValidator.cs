@@ -41,6 +41,11 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(" Mentor does not exist");
             }
 
+            if (_unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value).Result.IsActive == false)
+            {
+                error.Append(" Mentor is not active");
+            }
+
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
                 error.Append(" Theme does not exist");
@@ -111,6 +116,11 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             if (request.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorID.Value))
             {
                 error.Append(" Mentor does not exist");
+            }
+
+            if (_unitOfWork.AccountRepository.GetAccountCredentialsById(request.MentorID.Value).Result.IsActive == false)
+            {
+                error.Append(" Mentor is not active");
             }
 
             if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
