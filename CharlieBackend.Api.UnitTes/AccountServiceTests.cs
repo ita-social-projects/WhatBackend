@@ -2,6 +2,7 @@
 using Xunit;
 using System;
 using AutoMapper;
+using FluentAssertions;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
@@ -19,12 +20,51 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
+        private readonly Mock<IAccountRepository> _accountRepositoryMock;
 
         public AccountServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
             _notificationServiceMock = new Mock<INotificationService>();
+            _accountRepositoryMock = new Mock<IAccountRepository>();
         }
+
+        [Fact]
+        public async Task CreateAccountAsync_ValidData_ShouldReturnAccount()
+        {
+            //Arrange
+            int accountExpectedId = 2;
+
+            var successAccountModel = new CreateAccountDto()
+            {
+                Email = "test@example.com",
+                FirstName = "test",
+                LastName = "test",
+                Password = "Qqwerty3_",
+                ConfirmPassword = "Qqwerty3_"
+            };
+
+            var accountRepositoryMock = new Mock<IAccountRepository>();
+
+            accountRepositoryMock.Setup(x => x.Add(It.IsAny<Account>()))
+                .Callback<Account>(x => x.Id = accountExpectedId);
+
+            _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(accountRepositoryMock.Object);
+
+            var accountService = new AccountService(
+                _unitOfWorkMock.Object,
+                _mapper,
+                _notificationServiceMock.Object);
+
+            //Act
+            var successResult = await accountService.CreateAccountAsync(successAccountModel);
+
+            //Assert
+            successResult.Error.Should().BeNull();
+            successResult.Data.Id.Should().Be(accountExpectedId);
+            successResult.Data.Role.Should().Be(UserRole.NotAssigned);
+        }
+
 
         [Fact]
         public async Task CreateAccountAsync()
@@ -82,7 +122,6 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             Assert.Equal(ErrorCode.Conflict, isEmailTakenResult.Error.Code);
-
             Assert.NotNull(successResult.Data);
             Assert.Equal(accountExpectedId, successResult.Data.Id);
             Assert.Equal(UserRole.NotAssigned, successResult.Data.Role);
