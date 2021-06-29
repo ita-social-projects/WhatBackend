@@ -63,7 +63,6 @@ namespace CharlieBackend.Api.UnitTest
             successResult.Data.Role.Should().Be(UserRole.NotAssigned);
         }
 
-
         [Fact]
         public async Task CreateAccountAsync_EmailIstaken_ShouldThrowError()
         {
