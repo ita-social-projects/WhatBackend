@@ -41,7 +41,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(" Mentor does not exist");
             }
 
-            if (_unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value).Result.IsActive == false)
+            if ((await _unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value)).IsActive == false)
             {
                 error.Append(" Mentor is not active");
             }
