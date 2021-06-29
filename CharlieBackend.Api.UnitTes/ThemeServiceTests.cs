@@ -20,12 +20,19 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly IMapper _mapper;
-        private readonly Mock<INotificationService> _notificationServiceMock;
+        private ThemeService _themeService;
 
         public ThemeServiceTests()
         {
-            _notificationServiceMock = new Mock<INotificationService>();
             _mapper = GetMapper(new ModelMappingProfile());
+            _themeRepositoryMock = new Mock<IThemeRepository>();
+        }
+
+        private void Initialize()
+        {
+            _themeService = new ThemeService(
+                _unitOfWorkMock.Object,
+                _mapper);
         }
 
         [Fact]
@@ -37,16 +44,12 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "NewName"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var createNewResult = await themeService.CreateThemeAsync(newTheme);
+            var createNewResult = await _themeService.CreateThemeAsync(newTheme);
 
             //Assert
             createNewResult.Data.Should().NotBeNull();
@@ -57,16 +60,12 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateThemeAsync_Null_ShouldReturnInternalServerError()
         {
             //Arrange
-            var themeRepositoryMock = new Mock<IThemeRepository>();
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var createNullResult = await themeService.CreateThemeAsync(null);
+            var createNullResult = await _themeService.CreateThemeAsync(null);
 
             //Assert
             createNullResult.Error.Code.Should().BeEquivalentTo(ErrorCode.InternalServerError);
@@ -92,22 +91,18 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "Test_name"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
                 .ReturnsAsync(true);
 
-            themeRepositoryMock.Setup(x => x.GetThemeByIdAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.GetThemeByIdAsync(existingTheme.Id))
                 .ReturnsAsync(existingTheme);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var successResult = await themeService.UpdateThemeAsync(existingTheme.Id, updateThemeDto);
+            var successResult = await _themeService.UpdateThemeAsync(existingTheme.Id, updateThemeDto);
 
             //Assert
             successResult.Data.Should().NotBeNull();
@@ -129,22 +124,18 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "Test_name"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
                 .ReturnsAsync(true);
 
-            themeRepositoryMock.Setup(x => x.GetThemeByIdAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.GetThemeByIdAsync(existingTheme.Id))
                 .ReturnsAsync(existingTheme);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var updateToNullResult = await themeService.UpdateThemeAsync(existingTheme.Id, null);
+            var updateToNullResult = await _themeService.UpdateThemeAsync(existingTheme.Id, null);
 
             //Assert
             updateToNullResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
@@ -161,19 +152,15 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "new_test_name"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingId))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingId))
                 .ReturnsAsync(false);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var themeDoesntExistResult = await themeService.UpdateThemeAsync(notExistingId, updateThemeDto);
+            var themeDoesntExistResult = await _themeService.UpdateThemeAsync(notExistingId, updateThemeDto);
 
             //Assert
             themeDoesntExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
@@ -194,25 +181,21 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "Test_name"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingTheme.Id))
                 .ReturnsAsync(true);
 
-            themeRepositoryMock.Setup(x => x.IsThemeUsed(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsThemeUsed(existingTheme.Id))
                 .ReturnsAsync(false);
 
-            themeRepositoryMock.Setup(x => x.GetByIdAsync(existingTheme.Id))
+            _themeRepositoryMock.Setup(x => x.GetByIdAsync(existingTheme.Id))
                 .ReturnsAsync(existingTheme);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var successResult = await themeService.DeleteThemeAsync(existingTheme.Id);
+            var successResult = await _themeService.DeleteThemeAsync(existingTheme.Id);
 
             //Assert
             successResult.Data.Name.Should().BeEquivalentTo(expectedTheme.Name);
@@ -228,25 +211,21 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "Test_name2"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingUsedTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existingUsedTheme.Id))
                 .ReturnsAsync(true);
 
-            themeRepositoryMock.Setup(x => x.IsThemeUsed(existingUsedTheme.Id))
+            _themeRepositoryMock.Setup(x => x.IsThemeUsed(existingUsedTheme.Id))
                 .ReturnsAsync(true);
 
-            themeRepositoryMock.Setup(x => x.GetByIdAsync(existingUsedTheme.Id))
+            _themeRepositoryMock.Setup(x => x.GetByIdAsync(existingUsedTheme.Id))
                 .ReturnsAsync(existingUsedTheme);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var themeIsUsedExistResult = await themeService.DeleteThemeAsync(existingUsedTheme.Id);
+            var themeIsUsedExistResult = await _themeService.DeleteThemeAsync(existingUsedTheme.Id);
 
             //Assert
             themeIsUsedExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
@@ -258,19 +237,15 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             long notExistingId = 100;
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingId))
+            _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingId))
                 .ReturnsAsync(false);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var themeDoesntExistResult = await themeService.DeleteThemeAsync(notExistingId);
+            var themeDoesntExistResult = await _themeService.DeleteThemeAsync(notExistingId);
 
             //Assert
             themeDoesntExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
@@ -308,19 +283,15 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.GetAllAsync())
+            _themeRepositoryMock.Setup(x => x.GetAllAsync())
                 .ReturnsAsync(allExistingThemes);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var successResult = await themeService.GetAllThemesAsync();
+            var successResult = await _themeService.GetAllThemesAsync();
 
             //Assert
             successResult.Data.Should().BeEquivalentTo(expectedResult);
@@ -342,19 +313,15 @@ namespace CharlieBackend.Api.UnitTest
                 Name = "Test_name"
             };
 
-            var themeRepositoryMock = new Mock<IThemeRepository>();
-
-            themeRepositoryMock.Setup(x => x.GetThemeByNameAsync("Test_name"))
+            _themeRepositoryMock.Setup(x => x.GetThemeByNameAsync("Test_name"))
                 .ReturnsAsync(existingTheme);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var successResult = await themeService.GetThemeByNameAsync("Test_name");
+            var successResult = await _themeService.GetThemeByNameAsync("Test_name");
 
             //Assert
             successResult.Data.Should().BeEquivalentTo(expectedThemeDto);
@@ -364,16 +331,12 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetThemeByNameAsync_NotExistingName_ShouldReturnNotFound()
         {
             //Arrange
-            var themeRepositoryMock = new Mock<IThemeRepository>();
+            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(themeRepositoryMock.Object);
-
-            var themeService = new ThemeService(
-                _unitOfWorkMock.Object,
-                _mapper);
+            Initialize();
 
             //Act
-            var themeDoesntExistResult = await themeService.GetThemeByNameAsync("Theme_that_doesnt_exist");
+            var themeDoesntExistResult = await _themeService.GetThemeByNameAsync("Theme_that_doesnt_exist");
 
             //Assert
             themeDoesntExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
