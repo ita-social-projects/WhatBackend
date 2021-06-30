@@ -6,7 +6,7 @@ namespace CharlieBackend.Api.Validators.MentorDTOValidators
 {
     public class MentorDtoValidator : AbstractValidator<MentorDto>
     {
-        public MentorDtoValidator()
+        public MentorDtoValidator() //Is not necessary
         {
             RuleFor(x => x.Id)
                 .NotEmpty()

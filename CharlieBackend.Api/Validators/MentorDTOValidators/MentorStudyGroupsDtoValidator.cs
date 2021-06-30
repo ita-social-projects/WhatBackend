@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.MentorDTOValidators
 {
-    public class MentorStudyGroupsDtoValidator : AbstractValidator<MentorStudyGroupsDto>
+    public class MentorStudyGroupsDtoValidator : AbstractValidator<MentorStudyGroupsDto> 
     {
-        public MentorStudyGroupsDtoValidator()
+        public MentorStudyGroupsDtoValidator() //Is not necessary
         {
             RuleFor(x => x.Id)
                 .NotEmpty()

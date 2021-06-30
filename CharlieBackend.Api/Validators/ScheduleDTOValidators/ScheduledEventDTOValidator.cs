@@ -6,7 +6,7 @@ namespace CharlieBackend.Api.Validators.Schedule
 {
     public class ScheduledEventDTOValidator : AbstractValidator<ScheduledEventDTO>
     {
-        public ScheduledEventDTOValidator()
+        public ScheduledEventDTOValidator() //Is not necessary
         {
             RuleFor(x => x.Id)
                 .NotEmpty()
