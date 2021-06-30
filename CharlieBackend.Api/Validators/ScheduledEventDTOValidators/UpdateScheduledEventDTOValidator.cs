@@ -9,12 +9,15 @@ namespace CharlieBackend.Api.Validators.ScheduledEventDTOValidators
         public UpdateScheduledEventDTOValidator()
         {
             RuleFor(x => x.StudentGroupId)
+                .NotEmpty()
                 .GreaterThan(0);
 
             RuleFor(x => x.ThemeId)
+                .NotEmpty()
                 .GreaterThan(0);
 
             RuleFor(x => x.MentorId)
+                .NotEmpty()
                 .GreaterThan(0);
 
             RuleFor(x => x.EventEnd)
