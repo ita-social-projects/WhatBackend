@@ -1,4 +1,5 @@
-﻿using CharlieBackend.AdminPanel.Services.Interfaces;
+﻿using AutoMapper;
+using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.Extensions.Options;
@@ -15,9 +16,11 @@ namespace CharlieBackend.AdminPanel.Services
     {
         private readonly IApiUtil _apiUtil;
         private readonly ScheduleApiEndpoints _scheduleApiEndpoints;
+        private readonly IMapper _mapper;
 
-        public ScheduleService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
+        public ScheduleService(IApiUtil apiUtil, IOptions<ApplicationSettings> options, IMapper mapper)
         {
+            _mapper = mapper;
             _apiUtil = apiUtil;
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
         }
@@ -54,6 +57,30 @@ namespace CharlieBackend.AdminPanel.Services
                 .GetAsync<EventOccurrenceDTO>(eventOccurence);
 
             return result;
+        }
+
+        public async Task CreateSheduleAsync(CreateScheduleDto scheduleDTO)
+        {
+             await _apiUtil
+                .CreateAsync<CreateScheduleDto>(_scheduleApiEndpoints.AddEventOccurrence, scheduleDTO);
+        }
+
+        public async Task DeleteSheduleByIdAsync(long eventOccurrenceID, DateTime? startDate, DateTime? finishDate)
+        {
+            var eventOccurence =
+               string.Format(_scheduleApiEndpoints.DeleteSheduleAsync, eventOccurrenceID);
+
+            var result = await _apiUtil
+                .DeleteAsync<EventOccurrenceDTO>(eventOccurence);
+        }
+
+        public async Task UpdateSheduleByIdAsync(long eventOccurrenceID, CreateScheduleDto updateScheduleDto)
+        {
+            var eventOccurence =
+               string.Format(_scheduleApiEndpoints.UpdateSheduleAsync, eventOccurrenceID);
+
+            await _apiUtil
+                .PutAsync<CreateScheduleDto>(eventOccurence, updateScheduleDto);
         }
     }
 }

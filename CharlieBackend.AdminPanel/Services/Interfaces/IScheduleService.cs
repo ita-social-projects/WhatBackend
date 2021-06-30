@@ -34,5 +34,20 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
         /// </summary>
         /// <returns>EventOccurrenceDTO with specified id</returns>
         Task<EventOccurrenceDTO> GetEventOccurrenceById(long id);
+
+        /// <summary>
+        /// Method for adding new event occurrence.
+        /// </summary>
+        Task CreateSheduleAsync(CreateScheduleDto scheduleDTO);
+
+        /// <summary>
+        /// Method for updating event occurrence by id.
+        /// </summary>
+        Task UpdateSheduleByIdAsync(long eventOccurrenceID, CreateScheduleDto updateScheduleDto);
+
+        /// <summary>
+        /// Method for deleting event occurrence by id.
+        /// </summary>
+        Task DeleteSheduleByIdAsync(long eventOccurrenceID, DateTime? startDate, DateTime? finishDate);
     }
 }
