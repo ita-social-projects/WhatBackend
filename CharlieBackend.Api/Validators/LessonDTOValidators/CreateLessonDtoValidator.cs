@@ -2,7 +2,6 @@
 using CharlieBackend.Core.DTO.Lesson;
 using FluentValidation;
 
-
 namespace CharlieBackend.Api.Validators.LessonDTOValidators
 {
     public class CreateLessonDtoValidator : AbstractValidator<CreateLessonDto>
@@ -11,7 +10,7 @@ namespace CharlieBackend.Api.Validators.LessonDTOValidators
         {
             RuleFor(x => x.ThemeName)
                 .NotEmpty()
-                .MaximumLength(ValidationConstants.MaxLengthName);
+                .MaximumLength(ValidationConstants.MaxLengthHeader);
             RuleFor(x => x.MentorId)
                 .NotEmpty()
                 .GreaterThan(0);

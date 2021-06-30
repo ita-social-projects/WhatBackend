@@ -17,8 +17,6 @@ namespace CharlieBackend.Api.Validators.HomeworkStudentDTOValidators
             RuleForEach(x => x.AttachmentIds)
                 .NotEmpty()
                 .GreaterThan(0);
-            RuleFor(x => x.AttachmentIds)
-                .NotNull();
         }
     }
 }

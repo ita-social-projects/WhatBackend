@@ -2,12 +2,11 @@
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using FluentValidation;
 
-
 namespace CharlieBackend.Api.Validators.HomeworkStudentDTOValidators
 {
     public class HomeworkStudentDtoValidator : AbstractValidator<HomeworkStudentDto>
     {
-        public HomeworkStudentDtoValidator()
+        public HomeworkStudentDtoValidator() //IS not necessary
         {
             RuleFor(x => x.Id)
                 .NotEmpty()

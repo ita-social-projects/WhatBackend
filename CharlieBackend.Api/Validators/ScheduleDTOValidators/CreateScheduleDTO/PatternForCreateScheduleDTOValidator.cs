@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
@@ -13,12 +12,11 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
             RuleFor(x => x.Interval)
                 .NotEmpty()
                 .GreaterThan(0);
-            RuleFor(x => x.DaysOfWeek)
-                .NotEmpty();
             RuleForEach(x => x.DaysOfWeek)
                 .NotEmpty();
-            RuleFor(x => x.DaysOfWeek)
-                .NotEmpty();
+            RuleForEach(x => x.Dates)
+                .GreaterThanOrEqualTo(1)
+                .LessThanOrEqualTo(31);
         }
     }
 }

@@ -18,13 +18,9 @@ namespace CharlieBackend.Api.Validators.MentorDTOValidators
             RuleFor(x => x.LastName)
                .NotEmpty()
                .MaximumLength(ValidationConstants.MaxLengthName);
-            RuleFor(x => x.CourseIds)
-               .NotNull();
             RuleForEach(x => x.CourseIds)
                .NotNull()
                .GreaterThan(0);
-            RuleFor(x => x.StudentGroupIds)
-               .NotNull();
             RuleForEach(x => x.StudentGroupIds)
                .NotNull()
                .GreaterThan(0);
