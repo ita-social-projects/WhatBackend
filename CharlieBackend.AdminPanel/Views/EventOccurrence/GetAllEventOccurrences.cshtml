@@ -1,0 +1,27 @@
+﻿@model IEnumerable<CharlieBackend.AdminPanel.Models.EventOccurrence.EventOccurrenceViewModel>
+@{
+    Layout = "_Layout";
+}
+
+<table>
+    <thead>
+        <tr>
+            <th>StudentGroupId</th>
+            <th>Storage</th>
+            <th>EventStart</th>
+            <th>EventFinish</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.StudentGroupId</td>
+            <td>@item.Storage</td>
+            <td>@item.EventStart</td>
+            <td>@item.EventFinish</td>
+        </tr>
+        }
+    </tbody>
+</table>
+                    

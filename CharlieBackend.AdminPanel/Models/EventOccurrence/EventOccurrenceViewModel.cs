@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CharlieBackend.AdminPanel.Models.EventOccurrence
+{
+    public class EventOccurrenceViewModel
+    {
+        public long StudentGroupId { get; set; }
+
+        public DateTime? EventStart { get; set; }
+
+        public DateTime? EventFinish { get; set; }
+
+        public long Storage { get; set; }
+    }
+}
