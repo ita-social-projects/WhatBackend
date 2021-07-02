@@ -50,10 +50,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<EventOccurrenceDTO>> PostSchedule([FromBody] CreateScheduleDto scheduleDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var resSchedule = await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
             return resSchedule.ToActionResult();

@@ -41,10 +41,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("{accountId}")]
         public async Task<ActionResult> PostMentor(long accountId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var createdMentorModel = await _mentorService.CreateMentorAsync(accountId);
 
             return createdMentorModel.ToActionResult();
