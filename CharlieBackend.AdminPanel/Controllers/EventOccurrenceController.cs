@@ -24,7 +24,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEventOccurrences()
+        public async Task<IActionResult> AllEventOccurrences()
         {
             var allEventOccurences = await _scheduleService.GetAllEventOccurrences();
 
