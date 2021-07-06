@@ -41,6 +41,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         private EventOccurrenceViewModel MapDTOtoViewModel(EventOccurrenceDTO eventOccurrenceDTO)
         {
             return new EventOccurrenceViewModel { 
+                Id = eventOccurrenceDTO.Id,
                 Storage = eventOccurrenceDTO.Storage, 
                 StudentGroupId = eventOccurrenceDTO.StudentGroupId,
                 EventStart = eventOccurrenceDTO.EventStart,
@@ -56,28 +57,38 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(MapDTOtoViewModel(eventOccurence));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateEventOccurrence(CreateScheduleDto scheduleDTO)
+        [HttpGet]
+        public async Task<IActionResult> CreateEventOccurrence()
         {
-            await _scheduleService.CreateSheduleAsync(scheduleDTO);
+            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
 
-            return RedirectToAction("GetAllEventOccurrences", "EventOccurrence");
+            ViewBag.EventOccurrence = eventOccurrenceData;
+
+            return View("AddEventOccurrence");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddEventOccurrence(CreateScheduleDto scheduleDTO)
+        {
+            await _scheduleService.CreateScheduleAsync(scheduleDTO);
+
+            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateEventOccurrence(long id, CreateScheduleDto scheduleDTO)
         {
-            await _scheduleService.UpdateSheduleByIdAsync(id, scheduleDTO);
+            await _scheduleService.UpdateScheduleByIdAsync(id, scheduleDTO);
 
-            return RedirectToAction("GetAllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteEventOccurrence(long id, DateTime? startDate, DateTime? finishDate)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DeleteEventOccurrence(long id)
         {
-            await _scheduleService.DeleteSheduleByIdAsync(id, startDate, finishDate);
+            await _scheduleService.DeleteScheduleByIdAsync(id);
 
-            return RedirectToAction("GetAllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
         }
     }
 }
