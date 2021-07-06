@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Api.Validators.StudentGroupsDTOValidators;
+using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using FluentAssertions;
 using System;
