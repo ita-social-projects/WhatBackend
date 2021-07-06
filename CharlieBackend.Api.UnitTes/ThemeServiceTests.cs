@@ -26,10 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             _mapper = GetMapper(new ModelMappingProfile());
             _themeRepositoryMock = new Mock<IThemeRepository>();
-        }
 
-        private void Initialize()
-        {
             _themeService = new ThemeService(
                 _unitOfWorkMock.Object,
                 _mapper);
@@ -46,8 +43,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var createNewResult = await _themeService.CreateThemeAsync(newTheme);
 
@@ -61,8 +56,6 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
-
-            Initialize();
 
             //Act
             var createNullResult = await _themeService.CreateThemeAsync(null);
@@ -99,8 +92,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var successResult = await _themeService.UpdateThemeAsync(existingTheme.Id, updateThemeDto);
 
@@ -132,8 +123,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var updateToNullResult = await _themeService.UpdateThemeAsync(existingTheme.Id, null);
 
@@ -156,8 +145,6 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(false);
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
-
-            Initialize();
 
             //Act
             var themeDoesntExistResult = await _themeService.UpdateThemeAsync(notExistingId, updateThemeDto);
@@ -192,8 +179,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var successResult = await _themeService.DeleteThemeAsync(existingTheme.Id);
 
@@ -222,8 +207,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var themeIsUsedExistResult = await _themeService.DeleteThemeAsync(existingUsedTheme.Id);
 
@@ -241,8 +224,6 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(false);
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
-
-            Initialize();
 
             //Act
             var themeDoesntExistResult = await _themeService.DeleteThemeAsync(notExistingId);
@@ -288,8 +269,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var successResult = await _themeService.GetAllThemesAsync();
 
@@ -318,8 +297,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
 
-            Initialize();
-
             //Act
             var successResult = await _themeService.GetThemeByNameAsync("Test_name");
 
@@ -332,8 +309,6 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
-
-            Initialize();
 
             //Act
             var themeDoesntExistResult = await _themeService.GetThemeByNameAsync("Theme_that_doesnt_exist");
