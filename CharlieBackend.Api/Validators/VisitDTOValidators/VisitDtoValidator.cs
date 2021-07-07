@@ -12,7 +12,8 @@ namespace CharlieBackend.Api.Validators.VisitDTOValidators
                 .NotEmpty()
                 .GreaterThan(0);
             RuleFor(x => x.StudentMark)
-                .GreaterThanOrEqualTo((sbyte)0);
+                .GreaterThanOrEqualTo((sbyte)0)
+                .LessThanOrEqualTo((sbyte)100);
             RuleFor(x => x.Presence)
                 .NotNull();
             RuleFor(x => x.Comment)
