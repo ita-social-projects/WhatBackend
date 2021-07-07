@@ -15,6 +15,8 @@ namespace CharlieBackend.Api.Validators.DashboardDTOValidators
                 .Must((x, cancellation) => (x.FinishDate > x.StartDate || x.FinishDate.Equals(x.StartDate)))
                 .When(x => x.FinishDate != null)
                 .WithMessage(ValidationConstants.DatesNotValid);
+            RuleFor(x => x.IncludeAnalytics)
+                .NotNull();
         }
     }
 }
