@@ -1,9 +1,6 @@
 ﻿using CharlieBackend.Api.Validators.VisitDTOValidators;
-using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Visit;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
