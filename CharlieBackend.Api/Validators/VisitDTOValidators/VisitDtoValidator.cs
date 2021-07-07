@@ -12,12 +12,10 @@ namespace CharlieBackend.Api.Validators.VisitDTOValidators
                 .NotEmpty()
                 .GreaterThan(0);
             RuleFor(x => x.StudentMark)
-                .NotEmpty()
                 .GreaterThanOrEqualTo((sbyte)0);
             RuleFor(x => x.Presence)
                 .NotNull();
             RuleFor(x => x.Comment)
-                .NotEmpty()
                 .MaximumLength(ValidationConstants.MaxLengthCommentText);
 
         }
