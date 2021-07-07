@@ -21,6 +21,7 @@ namespace CharlieBackend.Api.Validators.LessonDTOValidators
                .NotNull();
             RuleForEach(x => x.LessonVisits)
                .NotNull();
+//               .SetValidator(VisitDtoValidator); uncomment after all validators are up and running
             RuleFor(x => x.LessonDate)
                .NotEmpty();
         }
