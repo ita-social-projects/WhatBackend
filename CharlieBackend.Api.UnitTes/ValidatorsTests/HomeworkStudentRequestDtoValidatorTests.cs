@@ -22,7 +22,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
             _validator = new HomeworkStudentRequestDtoValidator();
         }
 
-        public HomeworkStudentRequestDto Get_HomeworkStudentRequestDto(
+        public HomeworkStudentRequestDto GetDTO(
             long homeworkId = 0,
             string homeworkText = null,
             List<long> attachmentIds = null)
@@ -39,13 +39,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     validHomeworkId,
                     validHomeworkText,
                     validAttachmentIds);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -57,10 +57,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_EmptyData_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto();
+            var dto = GetDTO();
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -72,12 +72,12 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_EmptyAttachmentIds_ShouldReturnTrue()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     validHomeworkId,
                     validHomeworkText);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -89,13 +89,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     notValidHomeworkId,
                     notValidHomeworkText,
                     notValidAttachmentIds);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -107,13 +107,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_NotValidHomeworkId_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     notValidHomeworkId,
                     validHomeworkText,
                     validAttachmentIds);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -125,13 +125,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_NotValidHomeworkText_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     validHomeworkId,
                     notValidHomeworkText,
                     validAttachmentIds);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
@@ -143,13 +143,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task HomeworkStudentRequestDTOAsync_NotValidAttachmentIds_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_HomeworkStudentRequestDto(
+            var dto = GetDTO(
                     validHomeworkId,
                     validHomeworkText,
                     notValidAttachmentIds);
 
             // Act
-            var result = await _validator.ValidateAsync(student);
+            var result = await _validator.ValidateAsync(dto);
 
             // Assert
             result.IsValid
