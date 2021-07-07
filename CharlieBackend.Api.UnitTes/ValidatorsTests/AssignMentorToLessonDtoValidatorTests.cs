@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Api.Validators.LessonDTOValidators;
 using CharlieBackend.Core.DTO.Lesson;
 using FluentAssertions;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,8 +11,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         private AssignMentorToLessonDtoValidator _validator;
         private readonly long validMentorId = 70;
         private readonly long validLessonId = 42;
-        private readonly long notValidMentorId = 21;
-        private readonly long notValidLessonId = 21;
+        private readonly long notValidMentorId = 0;
+        private readonly long notValidLessonId = 0;
 
         public AssignMentorToLessonDtoValidatorTests()
         {
