@@ -71,10 +71,27 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task UpdateStudentDTOAsync_EmptyData_ShouldReturnTrue()
+        public async Task UpdateStudentDTOAsync_EmptyData_ShouldReturnFalse()
         {
             // Arrange
             var student = Get_UpdateStudentGroupDto();
+
+            // Act
+            var result = await _validator.ValidateAsync(student);
+
+            // Assert
+            result.IsValid
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateStudentDTOAsync_EmptyDataExceptCourseID_ShouldReturnTrue()
+        {
+            // Arrange
+            var student = Get_UpdateStudentGroupDto(
+                    null,
+                    validCourseId);
 
             // Act
             var result = await _validator.ValidateAsync(student);
