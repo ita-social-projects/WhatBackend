@@ -6,32 +6,32 @@ using Xunit;
 
 namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 {
-    public class CreateThemeDtoValidatorTests : TestBase
+    public class UpdateThemeDtoValidatorTests : TestBase
     {
-        private CreateThemeDtoValidator _validator;
+        private UpdateThemeDtoValidator _validator;
 
         private readonly string validName = "ValidName";
         private readonly string notValidName = "TooLooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongName";
 
-        public CreateThemeDtoValidatorTests()
+        public UpdateThemeDtoValidatorTests()
         {
-            _validator = new CreateThemeDtoValidator();
+            _validator = new UpdateThemeDtoValidator();
         }
 
-        public CreateThemeDto Get_CreateThemeDto(
+        public UpdateThemeDto Get_UpdateThemeDto(
             string name = null)
         {
-            return new CreateThemeDto
+            return new UpdateThemeDto
             {
                 Name = name
             };
         }
 
         [Fact]
-        public async Task CreateThemeDTOAsync_ValidData_ShouldReturnTrue()
+        public async Task UpdateThemeDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var theme = Get_CreateThemeDto(
+            var theme = Get_UpdateThemeDto(
                     validName);
 
             // Act
@@ -44,10 +44,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task CreateThemeDTOAsync_EmptyData_ShouldReturnFalse()
+        public async Task UpdateThemeDTOAsync_EmptyData_ShouldReturnFalse()
         {
             // Arrange
-            var theme = Get_CreateThemeDto();
+            var theme = Get_UpdateThemeDto();
 
             // Act
             var result = await _validator.ValidateAsync(theme);
@@ -59,10 +59,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task CreateThemeDTOAsync_notValidData_ShouldReturnFalse()
+        public async Task UpdateThemeDTOAsync_notValidData_ShouldReturnFalse()
         {
             // Arrange
-            var theme = Get_CreateThemeDto(
+            var theme = Get_UpdateThemeDto(
                     notValidName);
 
             // Act
