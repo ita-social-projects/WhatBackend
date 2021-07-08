@@ -309,7 +309,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
 
-
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
             Initialize(createScheduleDto);
@@ -435,7 +434,6 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
             _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
-
 
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
