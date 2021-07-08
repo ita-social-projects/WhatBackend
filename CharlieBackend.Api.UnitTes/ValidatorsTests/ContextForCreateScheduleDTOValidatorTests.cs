@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO;
 using CharlieBackend.Core.DTO.Schedule;
 using FluentAssertions;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
