@@ -1,14 +1,10 @@
 ﻿using CharlieBackend.Api.Validators.ScheduledEventDTOValidators;
 using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
-using FluentValidation.Results;
-using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+
 namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 {
     public class UpdateScheduledEventDTOValidatorTests : TestBase
