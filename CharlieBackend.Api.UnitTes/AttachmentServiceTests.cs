@@ -184,7 +184,6 @@ namespace CharlieBackend.Api.UnitTest
 
             var res = await _attachmentService.AddAttachmentAsync(_correctFile);
 
-
             //res.Should().Be(1);
             res.Error.Should().BeNull();
             res.Data.Should().BeEquivalentTo(
