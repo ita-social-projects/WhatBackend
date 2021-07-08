@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
 
 

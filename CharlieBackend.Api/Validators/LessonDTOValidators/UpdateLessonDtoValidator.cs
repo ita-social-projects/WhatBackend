@@ -10,11 +10,9 @@ namespace CharlieBackend.Api.Validators.LessonDTOValidators
         {
             RuleFor(x => x.ThemeName)
                 .NotEmpty()
-                .MaximumLength(ValidationConstants.MaxLengthName);
+                .MaximumLength(ValidationConstants.MaxLengthHeader);
             RuleFor(x => x.LessonDate)
                .NotEmpty();
-            RuleFor(x => x.LessonVisits)
-                .NotNull();
             RuleForEach(x => x.LessonVisits)
                 .NotNull();
         }

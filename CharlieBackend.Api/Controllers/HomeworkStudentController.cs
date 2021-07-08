@@ -42,10 +42,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostHomework([FromBody] HomeworkStudentRequestDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var results = await _homeworkStudentService.CreateHomeworkFromStudentAsync(request);
 
             return results.ToActionResult();

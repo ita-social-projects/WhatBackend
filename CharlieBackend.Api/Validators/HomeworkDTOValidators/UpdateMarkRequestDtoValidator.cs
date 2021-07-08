@@ -12,13 +12,10 @@ namespace CharlieBackend.Api.Validators.HomeworkDTOValidators
         public UpdateMarkRequestDtoValidator()
         {
             RuleFor(x => x.StudentHomeworkId)
-                .NotNull()
                 .GreaterThan(0);
-
             RuleFor(x => x.StudentMark)
-                .NotNull()
-                .GreaterThan(0)
-                .LessThan(100);
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(100);
         }
     }
 }

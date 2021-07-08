@@ -2,7 +2,6 @@
 using CharlieBackend.Core.DTO.Theme;
 using FluentValidation;
 
-
 namespace CharlieBackend.Api.Validators.ThemeDTOValidators
 {
     public class UpdateThemeDtoValidator : AbstractValidator<UpdateThemeDto>

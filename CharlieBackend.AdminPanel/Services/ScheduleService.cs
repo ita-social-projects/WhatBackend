@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Schedule;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,16 +14,18 @@ namespace CharlieBackend.AdminPanel.Services
     class ScheduleService : IScheduleService
     {
         private readonly IApiUtil _apiUtil;
+        private readonly ScheduleApiEndpoints _scheduleApiEndpoints;
 
-        public ScheduleService(IApiUtil apiUtil)
+        public ScheduleService(IApiUtil apiUtil, IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
+            _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
         }
 
         public async Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences()
         {
             var result = await _apiUtil
-                .GetAsync<IList<EventOccurrenceDTO>>("/api/schedules/event-occurrences");
+                .GetAsync<IList<EventOccurrenceDTO>>(_scheduleApiEndpoints.EventOccurrencesEndpoint);
 
             return result;
         }
@@ -36,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Services
             }
 
             var result = await _apiUtil.PostAsync<IList<ScheduledEventDTO>, ScheduledEventFilterRequestDTO>(
-                url: "api/schedules/events",
+                url: _scheduleApiEndpoints.EventsEndpoint,
                 data: scheduledEventFilterDto);
 
             return result;

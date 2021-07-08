@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Lesson;
 using FluentValidation;
 
-
 namespace CharlieBackend.Api.Validators.LessonDTOValidators
 {
     public class AssignMentorToLessonDtoValidator : AbstractValidator<AssignMentorToLessonDto>

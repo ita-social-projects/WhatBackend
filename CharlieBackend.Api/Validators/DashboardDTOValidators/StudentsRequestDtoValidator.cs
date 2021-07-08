@@ -10,10 +10,8 @@ namespace CharlieBackend.Api.Validators.DashboardDTOValidators
         public StudentsRequestDtoValidator()
         {
             RuleFor(x => x.CourseId)
-                .NotNull()
                 .GreaterThan(0);
             RuleFor(x => x.StudentGroupId)
-                .NotNull()
                 .GreaterThan(0);
             RuleFor(x => x.StartDate)
                 .NotEmpty();
@@ -22,7 +20,7 @@ namespace CharlieBackend.Api.Validators.DashboardDTOValidators
                 .When(x => x.FinishDate != null)
                 .WithMessage(ValidationConstants.DatesNotValid);
             RuleFor(x => x.IncludeAnalytics)
-                .NotEmpty();
+                .NotNull();
 
         }
     }

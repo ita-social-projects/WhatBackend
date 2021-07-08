@@ -43,10 +43,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);          
             if (createdLesson == null)
             {

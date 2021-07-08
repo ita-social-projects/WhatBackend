@@ -18,8 +18,8 @@ namespace CharlieBackend.Api.Validators.Schedule
                 .NotEmpty();
             RuleFor(x => x.DayNumber)
                 .NotEmpty()
-                .GreaterThan((uint)0)
-                .LessThan((uint)31);
+                .GreaterThanOrEqualTo((uint)1)
+                .LessThanOrEqualTo((uint)31);
         }
     }
 }
