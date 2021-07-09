@@ -144,6 +144,4 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                 .BeFalse();
         }
     }
-
-
 }
