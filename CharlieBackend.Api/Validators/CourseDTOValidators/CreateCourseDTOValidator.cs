@@ -10,7 +10,7 @@ namespace CharlieBackend.Api.Validators.CourseDTOValidators
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .MaximumLength(ValidationConstants.MaxLengthName);
+                .MaximumLength(ValidationConstants.MaxLengthHeader);
         }
     }
 }
