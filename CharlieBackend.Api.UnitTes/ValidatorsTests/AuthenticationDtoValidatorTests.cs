@@ -24,8 +24,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         public AuthenticationDto GetDTO(
-            string email = "",
-            string password = "")
+            string email = null,
+            string password = null)
         {
             return new AuthenticationDto
             {
