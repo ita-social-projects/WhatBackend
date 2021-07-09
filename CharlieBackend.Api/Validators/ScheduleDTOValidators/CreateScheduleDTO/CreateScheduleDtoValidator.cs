@@ -8,11 +8,14 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
         public CreateScheduleDtoValidator()
         {
             RuleFor(x => x.Pattern)
-                .NotEmpty();
+                .NotEmpty()
+                .SetValidator(new PatternForCreateScheduleDTOValidator());
             RuleFor(x => x.Range)
-                .NotEmpty();
+                .NotEmpty()
+                .SetValidator(new OccurenceRangeValidator());
             RuleFor(x => x.Context)
-                .NotEmpty();
+                .NotEmpty()
+                .SetValidator(new ContextForCreateScheduleDTOValidator());
         }
     }
 }
