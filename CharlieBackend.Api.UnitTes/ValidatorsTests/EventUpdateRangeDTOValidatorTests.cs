@@ -1,9 +1,7 @@
 ﻿using CharlieBackend.Api.Validators.Schedule;
 using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Core.Entities;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -88,7 +86,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task EventUpdateRangeDTOAsync_EmptyData_ShouldReturnTrue()
+        public async Task EventUpdateRangeDTOAsync_EmptyData_ShouldReturnFalse()
         {
             // Arrange
             var dto = GetDTO();
@@ -99,7 +97,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
             // Assert
             result.IsValid
                 .Should()
-                .BeTrue();
+                .BeFalse();
         }
 
         [Fact]
