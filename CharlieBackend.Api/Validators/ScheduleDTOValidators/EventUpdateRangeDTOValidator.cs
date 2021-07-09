@@ -8,9 +8,11 @@ namespace CharlieBackend.Api.Validators.Schedule
         public EventUpdateRangeDTOValidator()
         {
             RuleFor(x => x.Filter)
-                .NotEmpty();
+                .NotEmpty()
+                .SetValidator(new ScheduledEventFilterRequestDTOValidator());
             RuleFor(x => x.Request)
-                .NotEmpty();
+                .NotEmpty()
+                .SetValidator(new UpdateScheduledEventDtoValidator());
         }
     }
 }
