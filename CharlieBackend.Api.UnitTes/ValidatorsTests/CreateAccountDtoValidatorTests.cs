@@ -35,8 +35,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                 FirstName = firstName,
                 LastName = lastName,
                 Password = currentPassword,
-                ConfirmPassword = confirmPassword,
-                
+                ConfirmPassword = confirmPassword
             };
         }
 
