@@ -74,7 +74,7 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task CreateScheduleAsync(CreateScheduleDto scheduleDTO)
         {
-             await _apiUtil
+              await _apiUtil
                 .CreateAsync<CreateScheduleDto>(_scheduleApiEndpoints.AddEventOccurrence, scheduleDTO);
         }
 
@@ -83,7 +83,7 @@ namespace CharlieBackend.AdminPanel.Services
             var eventOccurence =
                string.Format(_scheduleApiEndpoints.DeleteScheduleEndpoint, eventOccurrenceID);
 
-            var result = await _apiUtil
+            await _apiUtil
                 .DeleteAsync<EventOccurrenceDTO>(eventOccurence);
         }
 

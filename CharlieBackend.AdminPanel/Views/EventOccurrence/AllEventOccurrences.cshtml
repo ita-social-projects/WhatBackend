@@ -46,7 +46,7 @@
                                                 <i class="fas fa-cog"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item text-dark js-edit-event-occurrence" data-toggle="modal" data-target="#editEventOccurrence" data-item-id="@item.Id">
+                                                <a class="dropdown-item text-dark" asp-action="PrepareEventOccurrenceForUpdate" asp-controller="EventOccurrence" asp-route-id="@item.Id">
                                                     <i class="fas fa-pen"></i>
                                                     <span>Edit </span>
                                                 </a>

@@ -30,7 +30,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             var result = new List<EventOccurrenceViewModel>();
 
-            foreach(var item in allEventOccurences)
+            foreach (var item in allEventOccurences)
             {
                 result.Add(MapDTOtoViewModel(item));
             }
@@ -40,9 +40,9 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         private EventOccurrenceViewModel MapDTOtoViewModel(EventOccurrenceDTO eventOccurrenceDTO)
         {
-            return new EventOccurrenceViewModel { 
+            return new EventOccurrenceViewModel {
                 Id = eventOccurrenceDTO.Id,
-                Storage = eventOccurrenceDTO.Storage, 
+                Storage = eventOccurrenceDTO.Storage,
                 StudentGroupId = eventOccurrenceDTO.StudentGroupId,
                 EventStart = eventOccurrenceDTO.EventStart,
                 EventFinish = eventOccurrenceDTO.EventFinish
@@ -67,15 +67,50 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View("AddEventOccurrence");
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> PrepareEventOccurrenceForUpdate(long id)
+        {
+            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+
+            ViewBag.EventOccurrence = eventOccurrenceData;
+            ViewBag.CurrentId = id;
+
+            return View("UpdateEventOccurrence");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddEventOccurrence(CreateScheduleDto scheduleDTO)
         {
+
+            //Daily case
+            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.Daily;
+            scheduleDTO.Pattern.Interval = 2;*/
+
+            //Weekly case
+            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.Weekly;
+            scheduleDTO.Pattern.Interval = 2;
+            scheduleDTO.Pattern.DaysOfWeek = new List<DayOfWeek>();
+            scheduleDTO.Pattern.DaysOfWeek.Add(DayOfWeek.Monday);
+            scheduleDTO.Pattern.DaysOfWeek.Add(DayOfWeek.Friday);*/
+
+            //AbsoluteMonthly case
+            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.AbsoluteMonthly;
+            scheduleDTO.Pattern.Interval = 2;
+            scheduleDTO.Pattern.Dates = new List<int>() {15};*/
+
+            //RelativeMonthly case
+            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.RelativeMonthly;
+            scheduleDTO.Pattern.Interval = 2;
+            scheduleDTO.Pattern.DaysOfWeek = new List<DayOfWeek>() { DayOfWeek.Monday, DayOfWeek.Friday };
+            scheduleDTO.Pattern.Index = MonthIndex.Second;*/
+
+
             await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
             return RedirectToAction("AllEventOccurrences", "EventOccurrence");
         }
 
-        [HttpPut]
+        [HttpPost("{id}")]
         public async Task<IActionResult> UpdateEventOccurrence(long id, CreateScheduleDto scheduleDTO)
         {
             await _scheduleService.UpdateScheduleByIdAsync(id, scheduleDTO);
