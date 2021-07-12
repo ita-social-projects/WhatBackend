@@ -92,7 +92,7 @@
 
                     <div class="form-group">
                         <label>Pattern type</label>
-                        <select class="custom-select" asp-for="Pattern.Type" size="1">
+                        <select class="custom-select" onchange="UpdateForm(this.value)" asp-for="Pattern.Type" size="1">
                             <option value="0">
                                 Daily
                             </option>
@@ -115,7 +115,7 @@
                     </div>
 
 
-                    <div class="form-group">
+                    <div class="form-group" id="days-of-week" hidden ="hidden">
                         <label>Days of week type</label>
                         <select class="custom-select" asp-for="Pattern.DaysOfWeek" size="7">
                             <option value="0">
@@ -142,8 +142,8 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Pattern type</label>
+                    <div class="form-group" id="pattern-index" hidden="hidden">
+                        <label>Pattern index</label>
                         <select class="custom-select" asp-for="Pattern.Index" size="1">
                             <option value="0">
                                 Undefined
@@ -166,9 +166,22 @@
                         </select>
                     </div>
 
+                    <div class="form-group dates" id="dates" hidden="hidden">
+                        <label>Days of month </label>
+                        <select class="custom-select" asp-for="Pattern.Dates" size="5">
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                <option value="@i">
+                                    @i
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
 
                     <div class="mt-3">
-                        <a class="btn btn-secondary" asp-action="AddEventOccurrence" asp-controller="EventOccurrence">Close</a>
+                        <a class="btn btn-secondary" asp-action="AllEventOccurrences" asp-controller="EventOccurrence">Close</a>
                         <button type="submit" class="btn btn-primary">Create</button>
                     </div>
 
@@ -178,3 +191,30 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script type="text/javascript">
+        function UpdateForm(value) {
+            if (value == 0) {
+                document.getElementById("dates").hidden = true;
+                document.getElementById("days-of-week").hidden = true;
+                document.getElementById("pattern-index").hidden = true;
+            }
+            else if (value == 1) {
+                document.getElementById("dates").hidden = true;
+                document.getElementById("days-of-week").hidden = false;
+                document.getElementById("pattern-index").hidden = true;
+            }
+            else if (value == 2) {
+                document.getElementById("dates").hidden = false;
+                document.getElementById("days-of-week").hidden = true;
+                document.getElementById("pattern-index").hidden = true;
+            }
+            else if (value == 3) {
+                document.getElementById("dates").hidden = true;
+                document.getElementById("days-of-week").hidden = false;
+                document.getElementById("pattern-index").hidden = false;
+            }
+        }
+    </script>
+}

@@ -81,30 +81,6 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEventOccurrence(CreateScheduleDto scheduleDTO)
         {
-
-            //Daily case
-            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.Daily;
-            scheduleDTO.Pattern.Interval = 2;*/
-
-            //Weekly case
-            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.Weekly;
-            scheduleDTO.Pattern.Interval = 2;
-            scheduleDTO.Pattern.DaysOfWeek = new List<DayOfWeek>();
-            scheduleDTO.Pattern.DaysOfWeek.Add(DayOfWeek.Monday);
-            scheduleDTO.Pattern.DaysOfWeek.Add(DayOfWeek.Friday);*/
-
-            //AbsoluteMonthly case
-            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.AbsoluteMonthly;
-            scheduleDTO.Pattern.Interval = 2;
-            scheduleDTO.Pattern.Dates = new List<int>() {15};*/
-
-            //RelativeMonthly case
-            /*scheduleDTO.Pattern.Type = Core.Entities.PatternType.RelativeMonthly;
-            scheduleDTO.Pattern.Interval = 2;
-            scheduleDTO.Pattern.DaysOfWeek = new List<DayOfWeek>() { DayOfWeek.Monday, DayOfWeek.Friday };
-            scheduleDTO.Pattern.Index = MonthIndex.Second;*/
-
-
             await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
             return RedirectToAction("AllEventOccurrences", "EventOccurrence");
