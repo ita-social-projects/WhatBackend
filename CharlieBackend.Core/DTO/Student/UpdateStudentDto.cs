@@ -8,14 +8,10 @@ namespace CharlieBackend.Core.DTO.Student
     {
         #nullable enable
 
-        [EmailAddress]
-        [StringLength(50)]
         public string? Email { get; set; }
 
-        [StringLength(30)]
         public string? FirstName { get; set; }
 
-        [StringLength(30)]
         public string? LastName { get; set; }
 
         public IList<long>? StudentGroupIds { get; set; }
