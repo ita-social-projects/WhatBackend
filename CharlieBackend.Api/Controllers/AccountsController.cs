@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Api.SwaggerExamples.AccountsController;
+using CharlieBackend.Api.Helpers;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -118,27 +119,8 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
-            var now = DateTime.UtcNow;
 
-            var jwt = new JwtSecurityToken(
-                    issuer: _authOptions.ISSUER,
-                    audience: _authOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: new List<Claim>
-                    {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
-                                    foundAccount.Role.ToString()),
-                            new Claim("Id", entityId.ToString()),
-                            new Claim("Email", foundAccount.Email),
-                            new Claim("AccountId", foundAccount.Id.ToString())
-                    },
-                    expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                    signingCredentials:
-                            new SigningCredentials(
-                                    _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-                    );
-
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var encodedJwt = JWTGenerator.GenerateEncodedJWT(_authOptions, foundAccount);
 
             var response = new
             {
