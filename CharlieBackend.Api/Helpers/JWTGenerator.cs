@@ -1,20 +1,11 @@
 ﻿using System;
-using CharlieBackend.Core;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
-using CharlieBackend.Core.Entities;
-using Swashbuckle.AspNetCore.Filters;
 using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
-using Microsoft.AspNetCore.Authorization;
-using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Api.SwaggerExamples.AccountsController;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Helpers
 {
@@ -39,9 +30,9 @@ namespace CharlieBackend.Api.Helpers
                         {
                             new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     account.Role.ToString()),
-                            new Claim("Id", account.Id.ToString()),
-                            new Claim("Email", account.Email),
-                            new Claim("AccountId", account.Id.ToString())
+                            new Claim(ClaimConstants.IdClaim, account.Id.ToString()),
+                            new Claim(ClaimConstants.EmailClaim, account.Email),
+                            new Claim(ClaimConstants.AccountClaim, account.Id.ToString())
                         },
                         expires: now.Add(TimeSpan.FromMinutes(authOptions.LIFETIME)),
                         signingCredentials:
