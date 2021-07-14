@@ -1,6 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Account;
 
-namespace CharlieBackend.Api.Helpers
+namespace CharlieBackend.Business.Helpers
 {
     public interface IJWTGenerator
     {

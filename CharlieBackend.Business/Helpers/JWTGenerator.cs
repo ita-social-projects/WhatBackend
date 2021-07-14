@@ -8,7 +8,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Helpers;
 using Microsoft.Extensions.Options;
 
-namespace CharlieBackend.Api.Helpers
+namespace CharlieBackend.Business.Helpers
 {
     public class JWTGenerator : IJWTGenerator
     {

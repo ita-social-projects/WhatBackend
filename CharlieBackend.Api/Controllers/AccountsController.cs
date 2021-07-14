@@ -1,21 +1,15 @@
-﻿using System;
-using CharlieBackend.Core;
-using System.Security.Claims;
+﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
 using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
-using Microsoft.IdentityModel.Tokens;
-using CharlieBackend.Business.Options;
-using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Api.SwaggerExamples.AccountsController;
-using CharlieBackend.Api.Helpers;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Controllers
 {
