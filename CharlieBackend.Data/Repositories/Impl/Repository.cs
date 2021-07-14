@@ -24,9 +24,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _entities.AsNoTracking();
         }
 
-        public Task<List<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _entities.ToListAsync();
+            return await _entities.ToListAsync();
         }
 
         public async virtual Task<T> GetByIdAsync(long id)

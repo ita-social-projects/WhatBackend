@@ -7,7 +7,6 @@ namespace CharlieBackend.Core.DTO.Theme
 {
     public class UpdateThemeDto
     {
-        [Required]
         public string Name { get; set; }
     }
 }

@@ -16,29 +16,29 @@ namespace CharlieBackend.Data.Repositories.Impl
         { 
         }
 
-        public Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel)
+        public async Task<Account> GetAccountCredentials(AuthenticationDto authenticationModel)
         {
-            return _applicationContext.Accounts
+            return await _applicationContext.Accounts
                 .FirstOrDefaultAsync(account 
                          => account.Email == authenticationModel.Email 
                                 && account.Password == authenticationModel.Password);
         }
 
-		public Task<Account> GetAccountCredentialsById(long id)
+        public async Task<Account> GetAccountCredentialsById(long id)
         {
-            return _applicationContext.Accounts
+            return await _applicationContext.Accounts
                 .FirstOrDefaultAsync(account => account.Id == id);
         }
 
-        public override Task<Account> GetByIdAsync(long id)
+        public override async Task<Account> GetByIdAsync(long id)
         {
-            return _applicationContext.Accounts.Include(x => x.Avatar)
+            return await _applicationContext.Accounts.Include(x => x.Avatar)
                 .FirstOrDefaultAsync(account => account.Id == id);
         }
 
-        public Task<List<Account>> GetAllNotAssignedAsync()
+        public async Task<List<Account>> GetAllNotAssignedAsync()
         {
-            return _applicationContext.Accounts
+            return await _applicationContext.Accounts
                 .Where(account => account.Role == UserRole.NotAssigned)
                 .ToListAsync();
         }
@@ -65,10 +65,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             return account.Salt;
         }
 
-        public Task<bool> IsEmailTakenAsync(string email)
+        public async Task<bool> IsEmailTakenAsync(string email)
         {
-            return _applicationContext.Accounts
-                    .AnyAsync(account => account.Email == email);
+            return await _applicationContext.Accounts.AnyAsync(account => account.Email == email);
         }
 
         public void UpdateAccountCredentials(Account account)

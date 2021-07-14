@@ -46,18 +46,24 @@ namespace CharlieBackend.Business.Services
                     return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, "CourseId does not exist");
                 }
 
-                var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
-
-                if (dublicatesStudent.Any())
+                if (studentGroupDto.StudentIds != null)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                    var dublicatesStudent = studentGroupDto.StudentIds.Dublicates();
+
+                    if (dublicatesStudent.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such student ids: {string.Join(" ", dublicatesStudent)} are not unique");
+                    }
                 }
 
-                var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
-
-                if (dublicatesMentor.Any())
+                if (studentGroupDto.MentorIds != null)
                 {
-                    return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                    var dublicatesMentor = studentGroupDto.MentorIds.Dublicates();
+
+                    if (dublicatesMentor.Any())
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.ValidationError, $"Such mentor ids: {string.Join(" ", dublicatesMentor)} are not unique");
+                    }
                 }
                 
                 if (studentGroupDto.StartDate > studentGroupDto.FinishDate)

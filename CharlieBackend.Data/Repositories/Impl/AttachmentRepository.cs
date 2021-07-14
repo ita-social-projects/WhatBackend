@@ -45,9 +45,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync(); 
         }
 
-        public Task<List<Attachment>> GetAttachmentsByIdsAsync(IList<long> attachmentIds)
+        public async Task<List<Attachment>> GetAttachmentsByIdsAsync(IList<long> attachmentIds)
         {
-            return _applicationContext.Attachments
+            return await _applicationContext.Attachments
                     .Where(attachment => attachmentIds.Contains(attachment.Id))
                     .ToListAsync();
         }

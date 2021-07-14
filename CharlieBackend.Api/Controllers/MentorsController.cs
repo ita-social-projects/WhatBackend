@@ -120,6 +120,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{mentorId}")]
         public async Task<ActionResult> PutMentor(long mentorId, [FromBody] UpdateMentorDto mentorModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var updatedMentor = await _mentorService.UpdateMentorAsync(mentorId, mentorModel);
 
             return updatedMentor.ToActionResult();

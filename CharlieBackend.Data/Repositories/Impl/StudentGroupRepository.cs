@@ -19,10 +19,10 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
         }
 
-        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
+        public async void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
         {
-            _applicationContext.StudentsOfStudentGroups
-                   .AddRange(items);
+            await _applicationContext.StudentsOfStudentGroups
+                   .AddRangeAsync(items);
         }
 
         public bool DeleteStudentGroup(long StudentGroupModelId)
@@ -43,9 +43,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public new Task<List<StudentGroup>> GetAllAsync()
+        public new async Task<List<StudentGroup>> GetAllAsync()
         {
-            return _applicationContext.StudentGroups
+            return await _applicationContext.StudentGroups
                     .Include(group => group.StudentsOfStudentGroups)
                     .Include(group => group.MentorsOfStudentGroups).ToListAsync();
         }
@@ -92,9 +92,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                     TryUpdateManyToMany(currentStudentsOfStudentGroup, newStudentsOfStudentGroup);
         }
 
-        public new Task<StudentGroup> GetByIdAsync(long id)
+        public new async Task<StudentGroup> GetByIdAsync(long id)
         {
-            return _applicationContext.StudentGroups
+            return await _applicationContext.StudentGroups
                     .Include(group => group.StudentsOfStudentGroups)
                     .Include(group => group.MentorsOfStudentGroups)
                     .FirstOrDefaultAsync(group => group.Id == id);
