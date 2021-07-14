@@ -4,7 +4,6 @@ using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,12 +14,10 @@ namespace CharlieBackend.AdminPanel.Controllers
     public class EventOccurrenceController : Controller
     {
         private readonly IScheduleService _scheduleService;
-        private readonly IMapper _mapper;
 
         public EventOccurrenceController(IScheduleService scheduleService, IMapper mapper)
         {
             _scheduleService = scheduleService;
-            _mapper = mapper;
         }
 
         [HttpGet]
