@@ -17,7 +17,6 @@ namespace CharlieBackend.Api.Validators.Schedule
             RuleFor(x => x.RepeatRate)
                 .NotEmpty();
             RuleFor(x => x.DayNumber)
-                .NotEmpty()
                 .GreaterThanOrEqualTo((uint)1)
                 .LessThanOrEqualTo((uint)31);
         }
