@@ -105,6 +105,7 @@ namespace CharlieBackend.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WHAT Project API", Version = "07.12.2020" });
+                c.AddFluentValidationRules();
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 
