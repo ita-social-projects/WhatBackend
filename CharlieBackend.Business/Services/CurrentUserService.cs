@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 
-
 namespace CharlieBackend.Business.Services
 {
     /// <summary>
