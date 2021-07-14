@@ -31,7 +31,7 @@ namespace CharlieBackend.Api.Controllers
         private readonly IStudentService _studentService;
         private readonly IMentorService _mentorService;
         private readonly ISecretaryService _secretaryService;
-        private readonly AuthOptions _authOptions;
+        private readonly IJWTGenerator _jWTGenerator;
         #endregion
         /// <summary>
         /// Account controller constructor
@@ -40,13 +40,13 @@ namespace CharlieBackend.Api.Controllers
                 IStudentService studentService,
                 IMentorService mentorService,
                 ISecretaryService secretaryService,
-                IOptions<AuthOptions> authOptions)
+                IJWTGenerator jWTGenerator)
         {
             _accountService = accountService;
             _studentService = studentService;
             _mentorService = mentorService;
             _secretaryService = secretaryService;
-            _authOptions = authOptions.Value;
+            _jWTGenerator = jWTGenerator;
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace CharlieBackend.Api.Controllers
             }
 
 
-            var encodedJwt = JWTGenerator.GenerateEncodedJWT(_authOptions, foundAccount);
+            var encodedJwt = _jWTGenerator.GenerateEncodedJWT(foundAccount);
 
             var response = new
             {

@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CharlieBackend.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using CharlieBackend.Api.Helpers;
 
 namespace CharlieBackend.Api
 {
@@ -147,6 +148,8 @@ namespace CharlieBackend.Api
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
 
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
+
+            services.AddTransient<IJWTGenerator, JWTGenerator>();
         }
 
         /// <summary>

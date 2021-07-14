@@ -6,25 +6,32 @@ using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace CharlieBackend.Api.Helpers
 {
-    public static class JWTGenerator
+    public class JWTGenerator : IJWTGenerator
     {
-        public static string GenerateEncodedJWT(AuthOptions authOptions, AccountDto account)
+        private AuthOptions _authOptions;
+        public JWTGenerator(IOptions<AuthOptions> authOptions)
         {
-            var jwt = GenerateJWT(authOptions, account);
+            _authOptions = authOptions.Value;
+        }
+        public string GenerateEncodedJWT(AccountDto account)
+        {
+
+            var jwt = GenerateJWT(account);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
         }
-        private static JwtSecurityToken GenerateJWT(AuthOptions authOptions, AccountDto account)
+        private JwtSecurityToken GenerateJWT(AccountDto account)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                        issuer: authOptions.ISSUER,
-                        audience: authOptions.AUDIENCE,
+                        issuer: _authOptions.ISSUER,
+                        audience: _authOptions.AUDIENCE,
                         notBefore: now,
                         claims: new List<Claim>
                         {
@@ -34,10 +41,10 @@ namespace CharlieBackend.Api.Helpers
                             new Claim(ClaimConstants.EmailClaim, account.Email),
                             new Claim(ClaimConstants.AccountClaim, account.Id.ToString())
                         },
-                        expires: now.Add(TimeSpan.FromMinutes(authOptions.LIFETIME)),
+                        expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
                         signingCredentials:
                                 new SigningCredentials(
-                                        authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
+                                        _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
                         );
 
             return jwt;
