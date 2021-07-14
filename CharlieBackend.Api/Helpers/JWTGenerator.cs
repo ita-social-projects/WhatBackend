@@ -13,10 +13,12 @@ namespace CharlieBackend.Api.Helpers
     public class JWTGenerator : IJWTGenerator
     {
         private AuthOptions _authOptions;
+
         public JWTGenerator(IOptions<AuthOptions> authOptions)
         {
             _authOptions = authOptions.Value;
         }
+
         public string GenerateEncodedJWT(AccountDto account)
         {
 
@@ -26,6 +28,7 @@ namespace CharlieBackend.Api.Helpers
 
             return encodedJwt;
         }
+
         private JwtSecurityToken GenerateJWT(AccountDto account)
         {
             var now = DateTime.UtcNow;
