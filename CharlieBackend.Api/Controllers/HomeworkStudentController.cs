@@ -83,7 +83,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutHomework(long id, [FromBody] HomeworkStudentRequestDto updateHomeworkDto)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var results = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(updateHomeworkDto, id);
 
             return results.ToActionResult();

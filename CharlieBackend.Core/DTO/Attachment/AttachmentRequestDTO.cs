@@ -13,10 +13,8 @@ namespace CharlieBackend.Core.DTO.Attachment
 
         public long? StudentAccountID;
 
-        [DataType(DataType.DateTime)]
         public DateTime? StartDate;
 
-        [DataType(DataType.DateTime)]
         public DateTime? FinishDate;
     }
 }

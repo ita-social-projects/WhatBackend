@@ -15,10 +15,8 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public long? MentorId { get; set; }
 
-        [DataType(DataType.Time)]
         public DateTime? EventStart { get; set; }
 
-        [DataType(DataType.Time)]
         public DateTime? EventEnd { get; set; }
     }
 }

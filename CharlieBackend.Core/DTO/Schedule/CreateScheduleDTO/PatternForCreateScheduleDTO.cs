@@ -8,10 +8,8 @@ namespace CharlieBackend.Core.DTO.Schedule
 {
     public class PatternForCreateScheduleDTO
     {
-        [Required]
         public PatternType Type { get; set; }
 
-        [Required]
         public int Interval { get; set; }
 
         public IList<DayOfWeek> DaysOfWeek { get; set; }
