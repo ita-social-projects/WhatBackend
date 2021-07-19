@@ -9,10 +9,8 @@ namespace CharlieBackend.Core.DTO.Homework
     {
         public DateTime? DueDate { get; set; }
 
-        [Required]
         public string TaskText { get; set; }
 
-        [Required]
         public long LessonId { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }

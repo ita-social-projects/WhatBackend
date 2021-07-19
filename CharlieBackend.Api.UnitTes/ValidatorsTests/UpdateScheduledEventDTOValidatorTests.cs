@@ -1,14 +1,10 @@
 ﻿using CharlieBackend.Api.Validators.ScheduledEventDTOValidators;
 using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
-using FluentValidation.Results;
-using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+
 namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 {
     public class UpdateScheduledEventDTOValidatorTests : TestBase
@@ -51,7 +47,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
@@ -60,7 +55,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     validEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -72,14 +67,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_ValidDataWithoutDates_ShouldReturnTrue()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
                     validThemeId);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -88,26 +82,24 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task UpdateScheduledEventDTOAsync_EmptyData_ShouldReturnFalse()
+        public async Task UpdateScheduledEventDTOAsync_EmptyData_ShouldReturnTrue()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO();
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
                 .Should()
-                .BeFalse();
+                .BeTrue();
         }
 
         [Fact]
         public async Task UpdateScheduledEventDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     notValidStudentGroupId,
                     notValidMentorId,
@@ -116,7 +108,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     notValidEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -128,7 +120,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_NotValidMentor_ShouldReturnFalse()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     notValidMentorId,
@@ -137,7 +128,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     validEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -149,7 +140,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_NotValidTheme_ShouldReturnFalse()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
@@ -158,7 +148,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     validEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -170,7 +160,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_NotValidGroup_ShouldReturnFalse()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     notValidStudentGroupId,
                     validMentorId,
@@ -179,7 +168,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     validEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
@@ -191,7 +180,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduledEventDTOAsync_NotValidDatesRange_ShouldReturnFalse()
         {
             // Arrange
-            var validator = new UpdateScheduledEventDTOValidator();
             var schedule = Get_UpdateScheduledEventDTO(
                     validStudentGroupId,
                     validMentorId,
@@ -200,7 +188,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                     notValidEndDate);
 
             // Act
-            var result = await validator.ValidateAsync(schedule);
+            var result = await _validator.ValidateAsync(schedule);
 
             // Assert
             result.IsValid
