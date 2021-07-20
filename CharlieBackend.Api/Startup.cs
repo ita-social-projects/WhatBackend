@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CharlieBackend.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 
 namespace CharlieBackend.Api
 {
@@ -105,7 +106,6 @@ namespace CharlieBackend.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WHAT Project API", Version = "07.12.2020" });
-                c.AddFluentValidationRules();
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 
@@ -143,6 +143,12 @@ namespace CharlieBackend.Api
                         new List<string>()
                     }
                 });
+            });
+
+            services.AddFluentValidationRulesToSwagger(options =>
+            {
+                options.SetNotNullableIfMinLengthGreaterThenZero = true;
+                options.UseAllOffForMultipleRules = true;
             });
 
             services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
