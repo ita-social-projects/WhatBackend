@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Core;
+using Newtonsoft.Json.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -132,9 +133,12 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="404">Lesson not found</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("{id}/isdone")]
-        public async Task<bool> IsLessonDone(long id)
+        public async Task<ActionResult<JObject>> IsLessonDone(long id)
         {
-            return await _lessonService.IsLessonDoneAsync(id);
+            dynamic result = new JObject();
+            result.isDone = (await _lessonService.IsLessonDoneAsync(id)).Data;
+
+            return result;
         }
     }
 }
