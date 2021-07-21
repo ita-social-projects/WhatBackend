@@ -64,7 +64,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             services.AddScoped<IEventsService, EventsService>();
-            services.AddScoped<IJWTGenerator, JWTGenerator>();
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
             #endregion
         }
     }

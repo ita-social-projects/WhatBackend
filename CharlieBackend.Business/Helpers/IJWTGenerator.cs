@@ -2,8 +2,8 @@
 
 namespace CharlieBackend.Business.Helpers
 {
-    public interface IJWTGenerator
+    public interface IJwtGenerator
     {
-        string GenerateEncodedJWT(AccountDto account);
+        string GenerateEncodedJwt(AccountDto account);
     }
 }

@@ -10,26 +10,26 @@ using Microsoft.Extensions.Options;
 
 namespace CharlieBackend.Business.Helpers
 {
-    public class JWTGenerator : IJWTGenerator
+    public class JwtGenerator : IJwtGenerator
     {
         private AuthOptions _authOptions;
 
-        public JWTGenerator(IOptions<AuthOptions> authOptions)
+        public JwtGenerator(IOptions<AuthOptions> authOptions)
         {
             _authOptions = authOptions.Value;
         }
 
-        public string GenerateEncodedJWT(AccountDto account)
+        public string GenerateEncodedJwt(AccountDto account)
         {
 
-            var jwt = GenerateJWT(account);
+            var jwt = GenerateJwt(account);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
         }
 
-        private JwtSecurityToken GenerateJWT(AccountDto account)
+        private JwtSecurityToken GenerateJwt(AccountDto account)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
