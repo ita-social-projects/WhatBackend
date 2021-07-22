@@ -3,6 +3,7 @@ using CharlieBackend.AdminPanel.Models.EventOccurrence;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace CharlieBackend.AdminPanel.Services
         private readonly IMentorService _mentorService;
 
         public ScheduleService(
-            IApiUtil apiUtil, 
-            IOptions<ApplicationSettings> options, 
+            IApiUtil apiUtil,
+            IOptions<ApplicationSettings> options,
             IMapper mapper,
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
@@ -74,8 +75,8 @@ namespace CharlieBackend.AdminPanel.Services
 
         public async Task CreateScheduleAsync(CreateScheduleDto scheduleDTO)
         {
-              await _apiUtil
-                .CreateAsync<CreateScheduleDto>(_scheduleApiEndpoints.AddEventOccurrence, scheduleDTO);
+            await _apiUtil
+              .CreateAsync<EventOccurrenceDTO, CreateScheduleDto>(_scheduleApiEndpoints.AddEventOccurrence, scheduleDTO);
         }
 
         public async Task DeleteScheduleByIdAsync(long eventOccurrenceID)
@@ -93,7 +94,7 @@ namespace CharlieBackend.AdminPanel.Services
                string.Format(_scheduleApiEndpoints.UpdateScheduleEndpoint, eventOccurrenceID);
 
             await _apiUtil
-                .PutAsync<CreateScheduleDto>(eventOccurence, updateScheduleDto);
+                .PutAsync<EventOccurrenceDTO, CreateScheduleDto>(eventOccurence, updateScheduleDto);
         }
 
         public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()

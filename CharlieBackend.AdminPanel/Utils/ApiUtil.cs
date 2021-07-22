@@ -63,6 +63,19 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
+        public async Task<T1> CreateAsync<T1, T2>(string url, T2 data)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync(url, data);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            T1 responseModel = JsonConvert.DeserializeObject<T1>(stringResponse);
+
+            return responseModel;
+        }
+
         public async Task<T1> PostAsync<T1, T2>(string url, T2 data)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data);
@@ -89,6 +102,18 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
+        public async Task<T1> PutAsync<T1,T2>(string url, T2 data)
+        {
+            var httpResponse = await _httpUtil.PutJsonAsync(url, data);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            T1 responseModel = JsonConvert.DeserializeObject<T1>(stringResponse);
+
+            return responseModel;
+        }
 
         public async Task<T> DeleteAsync<T>(string url)
         {
@@ -112,7 +137,7 @@ namespace CharlieBackend.AdminPanel.Utils
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
             var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
-            
+
             return responseModel;
         }
     }
