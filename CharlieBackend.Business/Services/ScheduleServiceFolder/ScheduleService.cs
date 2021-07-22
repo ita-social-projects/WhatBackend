@@ -20,13 +20,14 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
-        private readonly SchedulesEventsValidator _validator;
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory)
+        private readonly ISchedulesEventsValidator _validator;
+
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsValidator validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduledEventFactory = scheduledEventHandlerFactory;
-            _validator = new SchedulesEventsValidator(unitOfWork);
+            _validator = validator;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
