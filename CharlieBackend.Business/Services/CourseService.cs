@@ -2,6 +2,7 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
 
         public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
-        {
+        {           
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -111,30 +112,42 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
         }
 
-        public async Task<Result<bool>> DisableCourceAsync(long id)
+        public async Task<Result<CourseDto>> DisableCourceAsync(long id)
         {
             if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
             {
-                return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
+                return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Course has active student group");
             }
 
-            Result<bool> courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
-            await _unitOfWork.CommitAsync();
+            var courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
 
-            return courseDisabled;
+            if (courseDisabled == null)
+            {
+                return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course is not found");
+            }
+
+            await _unitOfWork.CommitAsync();      
+            var courseDto = _mapper.Map<Course, CourseDto>(courseDisabled.Data);            
+            return  Result<CourseDto>.GetSuccess(courseDto);
         }
 
-        public async Task<Result<bool>> EnableCourceAsync(long id)
+        public async Task<Result<CourseDto>> EnableCourceAsync(long id)
         {
             if (await _unitOfWork.CourseRepository.IsCourseActive(id))
             {
-                return Result<bool>.GetError(ErrorCode.Conflict, "Course is already active.");
+                return Result<CourseDto>.GetError(ErrorCode.Conflict, "Course is already active.");
             }
 
-            var courseEnabled = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
-            await _unitOfWork.CommitAsync();
+            var course= await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
 
-            return courseEnabled;
+            if (course == null)
+            {
+                return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course is not found");
+            }
+
+            await _unitOfWork.CommitAsync();          
+            var courseDto = _mapper.Map<Course,CourseDto>(course.Data);               
+            return Result<CourseDto>.GetSuccess(courseDto); 
         }
 
         public async Task<bool> IsCourseActive(long id)

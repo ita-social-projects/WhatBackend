@@ -42,31 +42,29 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<Result<bool>> DisableCourseByIdAsync(long id)
+        public async Task<Result<Course>> DisableCourseByIdAsync(long id)
         {
             var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
 
             if (course == null)
             {
-                return Result<bool>.GetError(ErrorCode.NotFound, "Course is not found");
+                return null;             
             }
             course.IsActive = false;
-
-            return Result<bool>.GetSuccess(true);
+            return Result<Course>.GetSuccess(course);
         }
 
-        public async Task<Result<bool>> EnableCourseByIdAsync(long id)
+        public async Task<Result<Course>> EnableCourseByIdAsync(long id)
         {
             var course = await _applicationContext.Courses.FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null)
             {
-                return Result<bool>.GetError(ErrorCode.NotFound, "Course is not found");
+                return null;               
             }
             
             course.IsActive = true;
-
-            return Result<bool>.GetSuccess(true);
+            return Result<Course>.GetSuccess(course);
         }
 
         public async Task<List<MentorCoursesDto>> GetMentorCourses(long id)
