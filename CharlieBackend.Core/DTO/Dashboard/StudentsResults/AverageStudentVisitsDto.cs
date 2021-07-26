@@ -6,11 +6,11 @@ namespace CharlieBackend.Core.DTO.Dashboard
 {
     public class AverageStudentVisitsDto
     {
-        public long CourseId { get; set; }
+        public string Course { get; set; }
 
-        public long StudentGroupId { get; set; }
+        public string StudentGroup { get; set; }
 
-        public long StudentId { get; set; }
+        public string Student { get; set; }
 
         public int StudentAverageVisitsPercentage { get; set; }
     }
