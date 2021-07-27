@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.AdminPanel", "CharlieBackend.AdminPanel\CharlieBackend.AdminPanel.csproj", "{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhatBackend.TelegramBotApi", "WhatBackend.TelegramBotApi\WhatBackend.TelegramBotApi.csproj", "{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
