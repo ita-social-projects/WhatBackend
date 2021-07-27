@@ -5,11 +5,14 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 {
-    public class SchedulesEventsValidator : ISchedulesEventsValidator
+    /// <summary>
+    /// Class that make requests to database to verify context IDs
+    /// </summary>
+    public class SchedulesEventsDbEntityVerifier : ISchedulesEventsDbEntityVerifier
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public SchedulesEventsValidator(IUnitOfWork unitOfWork)
+        public SchedulesEventsDbEntityVerifier(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

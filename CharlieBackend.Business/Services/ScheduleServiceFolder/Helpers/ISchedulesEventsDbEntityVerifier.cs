@@ -3,7 +3,10 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 {
-    public interface ISchedulesEventsValidator
+    /// <summary>
+    /// Interface that implies implementing class to make requests to database to verify context IDs
+    /// </summary>
+    public interface ISchedulesEventsDbEntityVerifier
     {
         Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto createScheduleRequest);
         Task<string> ValidateEventOccuranceId(long id);

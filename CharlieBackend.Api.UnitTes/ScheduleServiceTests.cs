@@ -22,7 +22,7 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
-        private readonly ISchedulesEventsValidator _validator;
+        private readonly ISchedulesEventsDbEntityVerifier _validator;
         private readonly Mock<IScheduledEventRepository> _scheduleRepositoryMock;
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
@@ -57,7 +57,7 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(_eventOccuranceRepositoryMock.Object);
-            _validator = new SchedulesEventsValidator(_unitOfWorkMock.Object);
+            _validator = new SchedulesEventsDbEntityVerifier(_unitOfWorkMock.Object);
             validScheduleDTO = new CreateScheduleDto
             {
                 Pattern = new PatternForCreateScheduleDTO

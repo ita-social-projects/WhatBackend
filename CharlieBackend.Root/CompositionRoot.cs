@@ -64,7 +64,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             services.AddScoped<IEventsService, EventsService>();
-            services.AddScoped<ISchedulesEventsValidator, SchedulesEventsValidator>();
+            services.AddScoped<ISchedulesEventsDbEntityVerifier, SchedulesEventsDbEntityVerifier>();
 
             #endregion
         }

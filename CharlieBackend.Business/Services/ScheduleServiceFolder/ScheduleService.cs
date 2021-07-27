@@ -18,9 +18,9 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
-        private readonly ISchedulesEventsValidator _validator;
+        private readonly ISchedulesEventsDbEntityVerifier _validator;
 
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsValidator validator)
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsDbEntityVerifier validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
