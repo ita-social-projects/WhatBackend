@@ -15,7 +15,7 @@ namespace CharlieBackend.AdminPanel
             if (String.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
             {
                 Console.WriteLine("ASPNETCORE_ENVIRONMENT env variable must be set!");
-                return ;
+                return;
             }
 
             Console.Title = "CharlieBackend.AdminPanel";

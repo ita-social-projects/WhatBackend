@@ -17,7 +17,6 @@ namespace CharlieBackend.AdminPanel.Extensions
         /// </summary>
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddScoped<IHttpUtil, HttpUtil>();
             services.AddScoped<IApiUtil, ApiUtil>();
 
             services.AddScoped<IStudentService, StudentService>();
