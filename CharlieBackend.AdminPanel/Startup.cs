@@ -29,7 +29,7 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddServices();
+            services.AddServices(Configuration);
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
@@ -56,8 +56,8 @@ namespace CharlieBackend.AdminPanel
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
                 {
-                     options.LoginPath = new PathString("/Account/Login");
-                 });
+                    options.LoginPath = new PathString("/Account/Login");
+                });
 
             services.AddControllersWithViews();
         }
@@ -82,7 +82,7 @@ namespace CharlieBackend.AdminPanel
 
             app.UseRouting();
 
-            app.UseAuthentication(); 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandleMiddleware>();

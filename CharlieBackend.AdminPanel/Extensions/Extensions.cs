@@ -2,7 +2,11 @@
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
+using System.Threading;
 
 namespace CharlieBackend.AdminPanel.Extensions
 {
@@ -11,9 +15,9 @@ namespace CharlieBackend.AdminPanel.Extensions
         /// <summary>
         /// Adding application's custom services into container for DI.
         /// </summary>
-        public static void AddServices(this IServiceCollection services)
+        public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IHttpUtil, HttpUtil>();
+            //services.AddScoped<IHttpUtil, HttpUtil>();
             services.AddScoped<IApiUtil, ApiUtil>();
 
             services.AddScoped<IStudentService, StudentService>();
@@ -23,6 +27,12 @@ namespace CharlieBackend.AdminPanel.Extensions
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ICalendarService, CalendarService>();
+
+            services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
+            {
+                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
+            })
+                .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         }
     }
 }

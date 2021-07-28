@@ -19,17 +19,13 @@ namespace CharlieBackend.AdminPanel.Utils
 
         public HttpUtil(IOptions<ApplicationSettings> config,
                         IHttpContextAccessor httpContextAccessor,
-                        IDataProtectionProvider provider)
+                        IDataProtectionProvider provider, HttpClient client)
         {
-
-            _client = new HttpClient()
-            {
-                BaseAddress = new Uri(config.Value.Urls.Api.Https)
-            };
+            _client = client;
 
             string protectedToken = httpContextAccessor.HttpContext.Request.Cookies["accessToken"];
 
-            if(!string.IsNullOrEmpty(protectedToken))
+            if (!string.IsNullOrEmpty(protectedToken))
             {
                 IDataProtector protector = provider.CreateProtector(config.Value.Cookies.SecureKey);
 
