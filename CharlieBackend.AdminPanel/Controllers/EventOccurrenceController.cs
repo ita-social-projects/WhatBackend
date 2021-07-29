@@ -37,7 +37,8 @@ namespace CharlieBackend.AdminPanel.Controllers
 
         private EventOccurrenceViewModel MapDTOtoViewModel(EventOccurrenceDTO eventOccurrenceDTO)
         {
-            return new EventOccurrenceViewModel {
+            return new EventOccurrenceViewModel
+            {
                 Id = eventOccurrenceDTO.Id,
                 Storage = eventOccurrenceDTO.Storage,
                 StudentGroupId = eventOccurrenceDTO.StudentGroupId,
