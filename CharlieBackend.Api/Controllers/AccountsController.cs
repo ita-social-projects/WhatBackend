@@ -16,6 +16,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -31,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         private readonly IStudentService _studentService;
         private readonly IMentorService _mentorService;
         private readonly ISecretaryService _secretaryService;
-        private readonly AuthOptions _authOptions;
+        private readonly IJwtGenerator _jWTGenerator;
         #endregion
         /// <summary>
         /// Account controller constructor
@@ -40,13 +41,13 @@ namespace CharlieBackend.Api.Controllers
                 IStudentService studentService,
                 IMentorService mentorService,
                 ISecretaryService secretaryService,
-                IOptions<AuthOptions> authOptions)
+                IJwtGenerator jWTGenerator)
         {
             _accountService = accountService;
             _studentService = studentService;
             _mentorService = mentorService;
             _secretaryService = secretaryService;
-            _authOptions = authOptions.Value;
+            _jWTGenerator = jWTGenerator;
         }
 
         /// <summary>
@@ -94,25 +95,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var jwt = new JwtSecurityToken(
-                        issuer: _authOptions.ISSUER,
-                        audience: _authOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: new List<Claim>
-                        {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
-                                    UserRole.Student.ToString()),
-                            new Claim("Id", foundStudent.Id.ToString()),
-                            new Claim("Email", foundAccount.Email),
-                            new Claim("AccountId", foundAccount.Id.ToString())
-                        },
-                        expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                        signingCredentials:
-                                new SigningCredentials(
-                                        _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-                        );
-
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Student);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -128,25 +111,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var jwt = new JwtSecurityToken(
-                        issuer: _authOptions.ISSUER,
-                        audience: _authOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: new List<Claim>
-                        {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
-                                    UserRole.Mentor.ToString()),
-                            new Claim("Id",foundMentor.Id.ToString()),
-                            new Claim("Email", foundAccount.Email),
-                            new Claim("AccountId", foundAccount.Id.ToString())
-                        },
-                        expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                        signingCredentials:
-                                new SigningCredentials(
-                                        _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-                        );
-
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Mentor);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -162,25 +127,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var jwt = new JwtSecurityToken(
-                        issuer: _authOptions.ISSUER,
-                        audience: _authOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: new List<Claim>
-                        {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
-                                    UserRole.Secretary.ToString()),
-                            new Claim("Id", foundSecretary.Id.ToString()),
-                            new Claim("Email", foundAccount.Email),
-                            new Claim("AccountId", foundAccount.Id.ToString())
-                        },
-                        expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                        signingCredentials:
-                                new SigningCredentials(
-                                        _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-                        );
-
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Secretary);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -188,26 +135,8 @@ namespace CharlieBackend.Api.Controllers
             }
 
             if (foundAccount.Role == UserRole.Admin)
-            {
-                var jwt = new JwtSecurityToken(
-                        issuer: _authOptions.ISSUER,
-                        audience: _authOptions.AUDIENCE,
-                        notBefore: now,
-                        claims: new List<Claim>
-                        {
-                            new Claim(ClaimsIdentity.DefaultRoleClaimType,
-                                    foundAccount.Role.ToString()),
-                            new Claim("Id", foundAccount.Id.ToString()),
-                            new Claim("Email", foundAccount.Email),
-                            new Claim("AccountId", foundAccount.Id.ToString())
-                        },
-                        expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
-                        signingCredentials:
-                                new SigningCredentials(
-                                        _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-                        );
-
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            {            
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin);
                 authorization = "Bearer " + encodedJwt;
 
                 userRoleList.Add(UserRole.Admin.ToString(), authorization);

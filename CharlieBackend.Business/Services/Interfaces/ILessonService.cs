@@ -26,7 +26,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId);
 
-        Task<bool> IsLessonDoneAsync(long id);
+        Task<Result<bool>> IsLessonDoneAsync(long id);
 
     }
 }

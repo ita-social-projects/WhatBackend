@@ -1,35 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using CharlieBackend.Core.DTO.Schedule;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 {
-    class SchedulesEventsValidator
+    /// <summary>
+    /// Class that make requests to database to verify context IDs
+    /// </summary>
+    public class SchedulesEventsDbEntityVerifier : ISchedulesEventsDbEntityVerifier
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public SchedulesEventsValidator(IUnitOfWork unitOfWork)
+        public SchedulesEventsDbEntityVerifier(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
         public async Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto request)
         {
-            if (request == null)
-            {
-                return "Request must not be null";
-            }
-
             StringBuilder error = new StringBuilder(string.Empty);
-
-            if (request.Pattern.Interval <= 0)
-            {
-                error.Append(" Interval value out of range");
-            }
 
             if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.Context.GroupID))
             {
@@ -44,34 +34,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
                 error.Append(" Theme does not exist");
-            }
-
-            switch (request.Pattern.Type)
-            {
-                case PatternType.Daily:
-                    break;
-                case PatternType.Weekly:
-                    if (request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0)
-                    {
-                        error.Append(" Target days not provided");
-                    }
-                    break;
-                case PatternType.AbsoluteMonthly:
-                    if (request.Pattern.Dates == null || request.Pattern.Dates.Count == 0)
-                    {
-                        error.Append(" Target dates not provided");
-                    }
-                    break;
-                case PatternType.RelativeMonthly:
-                    if ((request.Pattern.DaysOfWeek == null || request.Pattern.DaysOfWeek.Count == 0)
-                        || (request.Pattern.Index != null ? request.Pattern.Index <= 0 : false))
-                    {
-                        error.Append(" Target days not provided");
-                    }
-                    break;
-                default:
-                    error.Append(" Pattern type not supported");
-                    break;
             }
 
             return error.Length > 0 ? error.ToString() : null;
@@ -91,11 +53,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
         public async Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request)
         {
-            if (request == null)
-            {
-                return "Request must not be null";
-            }
-
             StringBuilder error = new StringBuilder(string.Empty);
 
             if (request.CourseID.HasValue && !await _unitOfWork.CourseRepository.IsEntityExistAsync(request.CourseID.Value))
@@ -121,11 +78,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             if (request.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeID.Value))
             {
                 error.Append(" Theme does not exist");
-            }
-
-            if (request.StartDate.HasValue && request.FinishDate.HasValue && (request.StartDate > request.FinishDate))
-            {
-                error.Append($" StartDate must be less then FinisDate");
             }
 
             return error.Length > 0 ? error.ToString() : null;
