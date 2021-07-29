@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
 {
-    public class ContextForCreateScheduleDTOValidators : AbstractValidator<ContextForCreateScheduleDTO>
+    public class ContextForCreateScheduleDTOValidator : AbstractValidator<ContextForCreateScheduleDTO>
     {
-        public ContextForCreateScheduleDTOValidators()
+        public ContextForCreateScheduleDTOValidator()
         {
             RuleFor(x => x.GroupID)
                 .NotEmpty()

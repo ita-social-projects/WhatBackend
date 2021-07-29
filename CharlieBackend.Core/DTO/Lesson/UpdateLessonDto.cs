@@ -11,10 +11,8 @@ namespace CharlieBackend.Core.DTO.Lesson
     {
         #nullable enable
 
-        [StringLength(100)]
         public string? ThemeName { get; set; }
 
-        [DataType(DataType.DateTime)]
         public DateTime LessonDate { get; set; }
 
         public IList<VisitDto>? LessonVisits { get; set; }

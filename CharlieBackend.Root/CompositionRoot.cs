@@ -10,6 +10,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Business.Services.FileServices;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 
 namespace CharlieBackend.Root
 {
@@ -65,6 +66,8 @@ namespace CharlieBackend.Root
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
+            services.AddScoped<ISchedulesEventsDbEntityVerifier, SchedulesEventsDbEntityVerifier>();
+
             #endregion
         }
     }

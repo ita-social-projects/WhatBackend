@@ -6,7 +6,6 @@ namespace CharlieBackend.Core.DTO.Student
     {
         public long Id { get; set; }
 
-        [StringLength(100)]
         public string Name { get; set; }
     }
 }
