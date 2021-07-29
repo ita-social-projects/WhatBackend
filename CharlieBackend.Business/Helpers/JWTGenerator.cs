@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Business.Helpers;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using CharlieBackend.Business.Options;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Helpers
@@ -19,15 +18,38 @@ namespace CharlieBackend.Business.Helpers
         {
             _authOptions = authOptions.Value;
         }
+        public Dictionary<string, string> ReturnJwtDictionary(AccountDto account)
+        {
+            var jwtDictionary = new Dictionary<string, string>();
 
-        public string GenerateEncodedJwt(AccountDto account, UserRole role)
+            if (account.Role.HasFlag(UserRole.Student))
+            {
+                jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student));
+            }
+            if (account.Role.HasFlag(UserRole.Mentor))
+            {
+                jwtDictionary.Add(UserRole.Mentor.ToString(), GenerateEncodedJwt(account, UserRole.Mentor));
+            }
+            if (account.Role.HasFlag(UserRole.Secretary))
+            {
+                jwtDictionary.Add(UserRole.Secretary.ToString(), GenerateEncodedJwt(account, UserRole.Secretary));
+            }
+            if (account.Role.HasFlag(UserRole.Admin))
+            {
+                jwtDictionary.Add(UserRole.Admin.ToString(), GenerateEncodedJwt(account, UserRole.Admin));
+            }
+            
+            return jwtDictionary;
+        }
+
+        private string GenerateEncodedJwt(AccountDto account, UserRole role)
         {
 
             var jwt = GenerateJwt(account, role);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            return encodedJwt;
+            return "Bearer " + encodedJwt; 
         }
 
         private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role)

@@ -82,9 +82,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
-            Dictionary<string, string> userRoleList = new Dictionary<string, string>();
-            var now = DateTime.UtcNow;
-            string authorization = null;
+            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.ReturnJwtDictionary(foundAccount);
 
             if (foundAccount.Role.HasFlag(UserRole.Student))
             {
@@ -94,12 +92,6 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Student);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Student.ToString(), authorization);
             }
 
             if (foundAccount.Role.HasFlag(UserRole.Mentor))
@@ -110,12 +102,6 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Mentor);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Mentor.ToString(), authorization);
             }
 
             if (foundAccount.Role.HasFlag(UserRole.Secretary))
@@ -126,31 +112,18 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Secretary);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Secretary.ToString(), authorization);
             }
-
-            if (foundAccount.Role == UserRole.Admin)
-            {            
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin);
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Admin.ToString(), authorization);
-            }
-            
             var response = new
             {
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
-                role = foundAccount.Role,
-                role_list = userRoleList
+                role = foundAccount.Role.ToString()
             };
-
-            Response.Headers.Add("Authorization", authorization);
+            foreach (KeyValuePair<string, string> record in userRoleToJwtToken)
+            {
+                Response.Headers.Add(record.Key.ToString() + "AuthorizationToken", record.Value);
+            }
+           
             Response.Headers.Add("Access-Control-Expose-Headers",
                     "x-token, Authorization");
 
