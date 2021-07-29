@@ -33,7 +33,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor")]
         [HttpPost]
-        public async Task<ActionResult> PostHomework([FromBody]HomeworkRequestDto request)
+        public async Task<ActionResult> PostHomework([FromBody] HomeworkRequestDto request)
         {
             var results = await _homeworkService
                         .CreateHomeworkAsync(request);
@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutHomework(long id, [FromBody]HomeworkRequestDto updateHomeworkDto)
+        public async Task<ActionResult> PutHomework(long id, [FromBody] HomeworkRequestDto updateHomeworkDto)
         {
             var results = await _homeworkService
                         .UpdateHomeworkAsync(id, updateHomeworkDto);
