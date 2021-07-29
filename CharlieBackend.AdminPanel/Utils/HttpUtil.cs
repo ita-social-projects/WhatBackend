@@ -29,7 +29,7 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string protectedToken = httpContextAccessor.HttpContext.Request.Cookies["accessToken"];
 
-            if(!string.IsNullOrEmpty(protectedToken))
+            if (!string.IsNullOrEmpty(protectedToken))
             {
                 IDataProtector protector = provider.CreateProtector(config.Value.Cookies.SecureKey);
 

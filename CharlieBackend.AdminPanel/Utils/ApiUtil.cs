@@ -102,7 +102,7 @@ namespace CharlieBackend.AdminPanel.Utils
             return responseModel;
         }
 
-        public async Task<T1> PutAsync<T1,T2>(string url, T2 data)
+        public async Task<T1> PutAsync<T1, T2>(string url, T2 data)
         {
             var httpResponse = await _httpUtil.PutJsonAsync(url, data);
 
