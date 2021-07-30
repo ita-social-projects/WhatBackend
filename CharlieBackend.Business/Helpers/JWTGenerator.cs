@@ -20,17 +20,17 @@ namespace CharlieBackend.Business.Helpers
             _authOptions = authOptions.Value;
         }
 
-        public string GenerateEncodedJwt(AccountDto account, UserRole role)
+        public string GenerateEncodedJwt(AccountDto account, UserRole role, long roleId)
         {
 
-            var jwt = GenerateJwt(account, role);
+            var jwt = GenerateJwt(account, role, roleId);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
         }
 
-        private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role)
+        private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role, long roleId)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
@@ -41,7 +41,7 @@ namespace CharlieBackend.Business.Helpers
                         {
                             new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     role.ToString()),
-                            new Claim(ClaimConstants.IdClaim, account.Id.ToString()),
+                            new Claim(ClaimConstants.IdClaim, roleId.ToString()),
                             new Claim(ClaimConstants.EmailClaim, account.Email),
                             new Claim(ClaimConstants.AccountClaim, account.Id.ToString())
                         },

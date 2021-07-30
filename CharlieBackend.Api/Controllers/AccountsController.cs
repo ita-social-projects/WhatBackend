@@ -95,7 +95,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Student);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Student, foundStudent.Id);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -111,7 +111,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Mentor);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Mentor, foundMentor.Id);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -127,7 +127,7 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
 
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Secretary);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Secretary, foundSecretary.Id);
 
                 authorization = "Bearer " + encodedJwt;
 
@@ -136,7 +136,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (foundAccount.Role == UserRole.Admin)
             {            
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin);
+                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin, foundAccount.Id);
                 authorization = "Bearer " + encodedJwt;
 
                 userRoleList.Add(UserRole.Admin.ToString(), authorization);
