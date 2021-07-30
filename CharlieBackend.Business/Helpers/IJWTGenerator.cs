@@ -5,6 +5,6 @@ namespace CharlieBackend.Business.Helpers
 {
     public interface IJwtGenerator
     {
-        public Dictionary<string, string> ReturnJwtDictionary(AccountDto account);
+        public Dictionary<string, string> GetRoleJwtDictionary(AccountDto account);
     }
 }

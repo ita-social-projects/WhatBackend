@@ -82,7 +82,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
-            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.ReturnJwtDictionary(foundAccount);
+            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount);
 
             if (foundAccount.Role.HasFlag(UserRole.Student))
             {
@@ -117,13 +117,11 @@ namespace CharlieBackend.Api.Controllers
             {
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
-                role = foundAccount.Role.ToString()
+                role = foundAccount.Role.ToString(),
+                roleList = userRoleToJwtToken
             };
-            foreach (KeyValuePair<string, string> record in userRoleToJwtToken)
-            {
-                Response.Headers.Add(record.Key.ToString() + "AuthorizationToken", record.Value);
-            }
-           
+            Response.Headers.Add("Access-Control-Expose-Headers",
+                     "x-token, Authorization");
             Response.Headers.Add("Access-Control-Expose-Headers",
                     "x-token, Authorization");
 

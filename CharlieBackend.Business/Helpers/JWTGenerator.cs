@@ -18,27 +18,18 @@ namespace CharlieBackend.Business.Helpers
         {
             _authOptions = authOptions.Value;
         }
-        public Dictionary<string, string> ReturnJwtDictionary(AccountDto account)
+        public Dictionary<string, string> GetRoleJwtDictionary(AccountDto account)
         {
             var jwtDictionary = new Dictionary<string, string>();
 
-            if (account.Role.HasFlag(UserRole.Student))
+            foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
             {
-                jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student));
+                if (account.Role.HasFlag(role))
+                {
+                    jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student));
+                }
             }
-            if (account.Role.HasFlag(UserRole.Mentor))
-            {
-                jwtDictionary.Add(UserRole.Mentor.ToString(), GenerateEncodedJwt(account, UserRole.Mentor));
-            }
-            if (account.Role.HasFlag(UserRole.Secretary))
-            {
-                jwtDictionary.Add(UserRole.Secretary.ToString(), GenerateEncodedJwt(account, UserRole.Secretary));
-            }
-            if (account.Role.HasFlag(UserRole.Admin))
-            {
-                jwtDictionary.Add(UserRole.Admin.ToString(), GenerateEncodedJwt(account, UserRole.Admin));
-            }
-            
+
             return jwtDictionary;
         }
 
