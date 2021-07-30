@@ -87,7 +87,6 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
                 else roleIds.Add(UserRole.Student, foundStudent.Id);
-                
             }
 
             if (foundAccount.Role.HasFlag(UserRole.Mentor))
