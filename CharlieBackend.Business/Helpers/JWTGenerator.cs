@@ -18,7 +18,7 @@ namespace CharlieBackend.Business.Helpers
         {
             _authOptions = authOptions.Value;
         }
-        public Dictionary<string, string> GetRoleJwtDictionary(AccountDto account)
+        public Dictionary<string, string> GetRoleJwtDictionary(AccountDto account, Dictionary<UserRole, long> roleIds)
         {
             var jwtDictionary = new Dictionary<string, string>();
 
@@ -26,24 +26,24 @@ namespace CharlieBackend.Business.Helpers
             {
                 if (account.Role.HasFlag(role))
                 {
-                    jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student));
+                    jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student, roleIds[role]));
                 }
             }
 
             return jwtDictionary;
         }
 
-        private string GenerateEncodedJwt(AccountDto account, UserRole role)
+        public string GenerateEncodedJwt(AccountDto account, UserRole role, long roleId)
         {
 
-            var jwt = GenerateJwt(account, role);
+            var jwt = GenerateJwt(account, role, roleId);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return "Bearer " + encodedJwt; 
         }
 
-        private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role)
+        private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role, long roleId)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
@@ -54,7 +54,7 @@ namespace CharlieBackend.Business.Helpers
                         {
                             new Claim(ClaimsIdentity.DefaultRoleClaimType,
                                     role.ToString()),
-                            new Claim(ClaimConstants.IdClaim, account.Id.ToString()),
+                            new Claim(ClaimConstants.IdClaim, roleId.ToString()),
                             new Claim(ClaimConstants.EmailClaim, account.Email),
                             new Claim(ClaimConstants.AccountClaim, account.Id.ToString())
                         },
