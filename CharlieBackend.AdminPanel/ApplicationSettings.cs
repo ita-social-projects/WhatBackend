@@ -82,6 +82,10 @@ namespace CharlieBackend.AdminPanel
     {
         public string EventOccurrencesEndpoint { get; set; }
         public string EventsEndpoint { get; set; }
+        public string EventOccurrenceById { get; set; }
+        public string AddEventOccurrence { get; set; }
+        public string DeleteScheduleEndpoint { get; set; }
+        public string UpdateScheduleEndpoint { get; set; }
     }
 
     public class StudentGroupsApiEndpoints

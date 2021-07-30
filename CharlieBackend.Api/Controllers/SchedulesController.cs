@@ -63,7 +63,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceByID(long id)
+        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceById(long id)
         {
             var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
 
@@ -94,11 +94,15 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurrence))]
+        [SwaggerResponse(200, type: typeof(List<ScheduledEventDTO>))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("events/updateRange")]
         public async Task<ActionResult<IList<ScheduledEventDTO>>> UpdateEventRange([FromBody] EventUpdateRangeDTO request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var foundSchedules = await _scheduleService.UpdateEventsRange(request.Filter, request.Request);
 
             return foundSchedules.ToActionResult();
@@ -115,11 +119,15 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
         /// <response code="HTTP: 400, API: 0">Error, update data is wrong</response>
-        [SwaggerResponse(200, type: typeof(EventOccurrence))]
+        [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("eventOccurrences/{eventOccurrenceID}")]
         public async Task<ActionResult<EventOccurrenceDTO>> UpdateEventOccurrenceById(long eventOccurrenceID, [FromBody] CreateScheduleDto updateOccurrenceRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var foundSchedules = await _scheduleService.UpdateEventOccurrenceById(eventOccurrenceID, updateOccurrenceRequest);
 
             return foundSchedules.ToActionResult();

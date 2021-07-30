@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Core;
+using Newtonsoft.Json.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -43,8 +44,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
-            
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);          
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -97,6 +97,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> PutLesson(long id, UpdateLessonDto lessonDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var updatedLesson = await _lessonService.UpdateLessonAsync(id, lessonDto);
 
             if (updatedLesson != null)
@@ -129,9 +133,12 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="404">Lesson not found</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("{id}/isdone")]
-        public async Task<bool> IsLessonDone(long id)
+        public async Task<ActionResult<JObject>> IsLessonDone(long id)
         {
-            return await _lessonService.IsLessonDoneAsync(id);
+            dynamic result = new JObject();
+            result.isDone = (await _lessonService.IsLessonDoneAsync(id)).Data;
+
+            return result;
         }
     }
 }
