@@ -26,6 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IScheduledEventRepository> _scheduleRepositoryMock;
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
+        private readonly Mock<IAccountRepository> _accountRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly long existentGroupId = 3;
         private readonly long existentMentorId = 1;
@@ -51,10 +52,12 @@ namespace CharlieBackend.Api.UnitTest
             _scheduleRepositoryMock = new Mock<IScheduledEventRepository>();
             _themeRepositoryMock = new Mock<IThemeRepository>();
             _mentorRepositoryMock = new Mock<IMentorRepository>();
+            _accountRepositoryMock = new Mock<IAccountRepository>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_scheduleRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.AccountRepository).Returns(_accountRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.EventOccurrenceRepository).Returns(_eventOccuranceRepositoryMock.Object);
             _validator = new SchedulesEventsDbEntityVerifier(_unitOfWorkMock.Object);
@@ -150,6 +153,8 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
+
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
             Initialize(validScheduleDTO);
@@ -180,11 +185,16 @@ namespace CharlieBackend.Api.UnitTest
 
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = nonExistentId
+                    GroupID = nonExistentId,
+                    MentorID = existentMentorId
                 }
             };
 
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
+
+            _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
+
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
 
             Initialize(createScheduleDto);
 
@@ -223,6 +233,8 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(nonExistentId)).ReturnsAsync(new Account { IsActive = true });
+
             Initialize(createScheduleDto);
 
             var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
@@ -260,6 +272,8 @@ namespace CharlieBackend.Api.UnitTest
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
+
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
 
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
@@ -484,6 +498,8 @@ namespace CharlieBackend.Api.UnitTest
             
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
 
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
+
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
             Initialize(validScheduleDTO);
@@ -507,6 +523,8 @@ namespace CharlieBackend.Api.UnitTest
             _themeRepositoryMock.Setup(x => x.IsEntityExistAsync(existentThemeId)).ReturnsAsync(true);
 
             _mentorRepositoryMock.Setup(x => x.IsEntityExistAsync(existentMentorId)).ReturnsAsync(true);
+
+            _accountRepositoryMock.Setup(x => x.GetAccountCredentialsById(existentMentorId)).ReturnsAsync(new Account { IsActive = true });
 
             _studentGroupRepositoryMock.Setup(x => x.IsEntityExistAsync(existentGroupId)).ReturnsAsync(true);
 
