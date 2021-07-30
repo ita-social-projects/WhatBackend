@@ -17,6 +17,7 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.Extensions;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -77,7 +78,7 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            if (foundAccount.Role == UserRole.NotAssigned)
+            if (foundAccount.Role.IsNotAssigned())
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
@@ -86,7 +87,7 @@ namespace CharlieBackend.Api.Controllers
             var now = DateTime.UtcNow;
             string authorization = null;
 
-            if (foundAccount.Role.HasFlag(UserRole.Student))
+            if (foundAccount.Role.Is(UserRole.Student))
             {
                 var foundStudent = (await _studentService.GetStudentByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -102,7 +103,7 @@ namespace CharlieBackend.Api.Controllers
                 userRoleList.Add(UserRole.Student.ToString(), authorization);
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Mentor))
+            if (foundAccount.Role.Is(UserRole.Mentor))
             {
                 var foundMentor = (await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -118,7 +119,7 @@ namespace CharlieBackend.Api.Controllers
                 userRoleList.Add(UserRole.Mentor.ToString(), authorization);
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Secretary))
+            if (foundAccount.Role.Is(UserRole.Secretary))
             {
                 var foundSecretary = (await _secretaryService.GetSecretaryByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -134,7 +135,7 @@ namespace CharlieBackend.Api.Controllers
                 userRoleList.Add(UserRole.Secretary.ToString(), authorization);
             }
 
-            if (foundAccount.Role == UserRole.Admin)
+            if (foundAccount.Role.IsAdmin())
             {            
                 var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin, foundAccount.Id);
                 authorization = "Bearer " + encodedJwt;

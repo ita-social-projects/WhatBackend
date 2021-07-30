@@ -20,11 +20,11 @@ namespace CharlieBackend.Core.Extensions
 
         public static bool IsNotAssigned(this UserRole currentRole) 
         {
-            bool result = true;
+            bool result = false;
 
-            if (currentRole != UserRole.NotAssigned)
+            if (currentRole == UserRole.NotAssigned)
             {
-                result = false;
+                result = true;
             }
 
             return result;
