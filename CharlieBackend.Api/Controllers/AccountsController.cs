@@ -111,6 +111,11 @@ namespace CharlieBackend.Api.Controllers
                 else roleIds.Add(UserRole.Secretary, foundSecretary.Id);
             }
 
+            if (foundAccount.Role.HasFlag(UserRole.Admin))
+            {
+                roleIds.Add(UserRole.Admin, foundAccount.Id);
+            }
+
             #endregion
 
             Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount,roleIds);
