@@ -6,6 +6,42 @@ namespace CharlieBackend.Core.Extensions
 {
     public static class UserRoleExtension
     {
+        public static bool Is(this UserRole currentRole, UserRole checkingRole) 
+        {
+            bool result = false;
+
+            if (currentRole.HasFlag(checkingRole))
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public static bool IsNotAssigned(this UserRole currentRole) 
+        {
+            bool result = true;
+
+            if (currentRole != UserRole.NotAssigned)
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        public static bool IsAdmin(this UserRole currentRole)
+        {
+            bool result = false;
+
+            if (currentRole == UserRole.Admin)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         private static bool CheckInputRole(UserRole role) 
         {
             bool result = true;
