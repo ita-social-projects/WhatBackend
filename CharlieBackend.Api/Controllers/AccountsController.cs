@@ -119,7 +119,7 @@ namespace CharlieBackend.Api.Controllers
             {
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
-                role = foundAccount.Role.ToString(),
+                role = foundAccount.Role,
                 roleList = userRoleToJwtToken
             };
             GetHeaders(userRoleToJwtToken);

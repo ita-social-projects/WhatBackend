@@ -24,9 +24,13 @@ namespace CharlieBackend.Business.Helpers
 
             foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
             {
-                if (account.Role.HasFlag(role))
+                if (account.Role.HasFlag(role) & role != UserRole.NotAssigned & role != UserRole.Admin)
                 {
-                    jwtDictionary.Add(UserRole.Student.ToString(), GenerateEncodedJwt(account, UserRole.Student, roleIds[role]));
+                    jwtDictionary.Add(role.ToString(), GenerateEncodedJwt(account, UserRole.Student, roleIds[role]));
+                }
+                else if (role == UserRole.Admin)
+                {
+                    jwtDictionary.Add(role.ToString(), GenerateEncodedJwt(account, UserRole.Student, account.Id));
                 }
             }
 
