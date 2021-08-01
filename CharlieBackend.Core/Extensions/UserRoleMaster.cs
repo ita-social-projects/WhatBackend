@@ -56,60 +56,72 @@ namespace CharlieBackend.Core.Extensions
             return result;
         }
 
-        public static Account SetAccountRole(this Account person, UserRole role)
+        public static bool SetAccountRole(this Account person, UserRole role)
         {
+            bool result = true;
+
             if (person == null)
             {
-                throw new NullReferenceException("Argument person equal null");
-            }
-
-            if (!CheckInputRole(role))
-            {
-                throw new ArgumentException("Role is unsuitable. You can set " +
-                    "only less than Admin and more than NotAssigned and " +
-                    "only one role");
-            }
-
-            if (!person.Role.HasFlag(role))
-            {
-                person.Role |= role;
+                result = false;
             }
             else
             {
-                throw new ArgumentException("Account allready has this role" +
-                        " or role is unsuitable");
+                if (!CheckInputRole(role))
+                {
+                    result = false;
+                }
+                else
+                {
+                    if (!person.Role.HasFlag(role))
+                    {
+                        person.Role |= role;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
             }
 
-            return person;
+            return result;
         }
 
-        public static async Task<Account> SetAccountRoleAsync(this Account person, UserRole role)
+        public static async Task<bool> SetAccountRoleAsync(this Account person,
+                UserRole role)
         {
             return await Task.Run(() => person.SetAccountRole(role));
         }
 
-        public static Account RemoveAccountRole(this Account person,
+        public static bool RemoveAccountRole(this Account person,
                 UserRole role)
         {
+            bool result = true;
+
             if (person == null)
             {
-                throw new NullReferenceException("Argument person equal null");
+                result = false;
             }
 
             if (CheckInputRole(role) && person.Role.HasFlag(role))
             {
-                person.Role &= ~role;
+                if ((person.Role &~ role) != UserRole.NotAssigned)
+                {
+                    person.Role &= ~role;
+                }
+                else
+                {
+                    result = false;
+                }              
             }
             else
             {
-                throw new ArgumentException("Role is unsuitable. You can " +
-                    "remove only less than Admin and more than NotAssigned");
+                result = false;
             }
 
-            return person;
+            return result;
         }
 
-        public static async Task<Account> RemoveAccountRoleAsync(
+        public static async Task<bool> RemoveAccountRoleAsync(
                 this Account person, UserRole role)
         {
             return await Task.Run(() => person.RemoveAccountRole(role));

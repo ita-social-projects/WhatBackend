@@ -168,10 +168,10 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin")]
         [Route("role/give")]
         [HttpPut]
-        public async Task<ActionResult> GiveRoleToAccount(AccountRoleDto account)
+        public async Task<ActionResult> AppendRoleToAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
-                    .GiveRoleToAccount(account);
+                    .AppendRoleToAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
         }
