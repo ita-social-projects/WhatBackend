@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using CharlieBackend.Business.Options;
 using System.IdentityModel.Tokens.Jwt;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Business.Helpers;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using CharlieBackend.Business.Options;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Helpers
@@ -19,6 +18,25 @@ namespace CharlieBackend.Business.Helpers
         {
             _authOptions = authOptions.Value;
         }
+        public Dictionary<string, string> GetRoleJwtDictionary(AccountDto account, Dictionary<UserRole, long> roleIds)
+        {
+            var jwtDictionary = new Dictionary<string, string>();
+
+            foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
+            {
+                if (role == UserRole.NotAssigned)
+                {
+                    continue;
+                }
+
+                if (account.Role.HasFlag(role) )
+                {
+                    jwtDictionary.Add(role.ToString(), GenerateEncodedJwt(account, role, roleIds[role]));
+                }
+            }
+
+            return jwtDictionary;
+        }
 
         public string GenerateEncodedJwt(AccountDto account, UserRole role, long roleId)
         {
@@ -27,7 +45,7 @@ namespace CharlieBackend.Business.Helpers
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            return encodedJwt;
+            return "Bearer " + encodedJwt; 
         }
 
         private JwtSecurityToken GenerateJwt(AccountDto account, UserRole role, long roleId)

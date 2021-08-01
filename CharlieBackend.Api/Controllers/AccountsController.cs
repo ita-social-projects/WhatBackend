@@ -1,17 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Threading.Tasks;
-
 using CharlieBackend.Api.SwaggerExamples.AccountsController;
-using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Account;
@@ -67,6 +60,9 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> SignIn([FromBody] AuthenticationDto authenticationModel)
         {
             var foundAccount = (await _accountService.GetAccountCredentialsAsync(authenticationModel)).Data;
+            var roleIds = new Dictionary<UserRole, long>();
+
+            #region ValidationChecks
 
             if (foundAccount == null)
             {
@@ -83,10 +79,6 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
-            Dictionary<string, string> userRoleList = new Dictionary<string, string>();
-            var now = DateTime.UtcNow;
-            string authorization = null;
-
             if (foundAccount.Role.Is(UserRole.Student))
             {
                 var foundStudent = (await _studentService.GetStudentByAccountIdAsync(foundAccount.Id)).Data;
@@ -95,12 +87,7 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Student, foundStudent.Id);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Student.ToString(), authorization);
+                else roleIds.Add(UserRole.Student, foundStudent.Id);
             }
 
             if (foundAccount.Role.Is(UserRole.Mentor))
@@ -111,12 +98,7 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Mentor, foundMentor.Id);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Mentor.ToString(), authorization);
+                else roleIds.Add(UserRole.Mentor, foundMentor.Id);
             }
 
             if (foundAccount.Role.Is(UserRole.Secretary))
@@ -127,33 +109,26 @@ namespace CharlieBackend.Api.Controllers
                 {
                     return BadRequest();
                 }
-
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Secretary, foundSecretary.Id);
-
-                authorization = "Bearer " + encodedJwt;
-
-                userRoleList.Add(UserRole.Secretary.ToString(), authorization);
+                else roleIds.Add(UserRole.Secretary, foundSecretary.Id);
             }
 
             if (foundAccount.Role.IsAdmin())
-            {            
-                var encodedJwt = _jWTGenerator.GenerateEncodedJwt(foundAccount, UserRole.Admin, foundAccount.Id);
-                authorization = "Bearer " + encodedJwt;
+            {
+                roleIds.Add(UserRole.Admin, foundAccount.Id);
+            }          
 
-                userRoleList.Add(UserRole.Admin.ToString(), authorization);
-            }
+            #endregion
+
+            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount,roleIds);
             
             var response = new
             {
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
                 role = foundAccount.Role,
-                role_list = userRoleList
+                roleList = userRoleToJwtToken
             };
-
-            Response.Headers.Add("Authorization", authorization);
-            Response.Headers.Add("Access-Control-Expose-Headers",
-                    "x-token, Authorization");
+            GetHeaders(userRoleToJwtToken);
 
             return Ok(response);
         }
@@ -166,9 +141,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account already has this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
-        [Route("role/give")]
+        [Route("role/grant")]
         [HttpPut]
-        public async Task<ActionResult> AppendRoleToAccount(AccountRoleDto account)
+        public async Task<ActionResult> GrantRoleToAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
                     .AppendRoleToAccount(account);
@@ -184,9 +159,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account doesn't have this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
-        [Route("role/remove")]
+        [Route("role/revoke")]
         [HttpPut]
-        public async Task<ActionResult> RemoveRoleFromAccount(AccountRoleDto account)
+        public async Task<ActionResult> RevokeRoleFromAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
                     .RemoveRoleFromAccount(account);
@@ -277,5 +252,25 @@ namespace CharlieBackend.Api.Controllers
 
             return updatedAccount.ToActionResult();
         }
+
+        private void GetHeaders(Dictionary<string, string> tokenDictionary)
+        {
+            if (tokenDictionary.ContainsKey(UserRole.Admin.ToString()))
+            {
+                Response.Headers.Add("Authorization", tokenDictionary[UserRole.Admin.ToString()]);
+            }
+            else if (tokenDictionary.ContainsKey(UserRole.Secretary.ToString()))
+            {
+                Response.Headers.Add("Authorization", tokenDictionary[UserRole.Secretary.ToString()]);
+            }
+            else if (tokenDictionary.ContainsKey(UserRole.Mentor.ToString()))
+            {
+                Response.Headers.Add("Authorization", tokenDictionary[UserRole.Mentor.ToString()]);
+            }
+            else Response.Headers.Add("Authorization", tokenDictionary[UserRole.Student.ToString()]);
+
+            Response.Headers.Add("Access-Control-Expose-Headers", "x-token, Authorization");
+        }
+
     }
 }
