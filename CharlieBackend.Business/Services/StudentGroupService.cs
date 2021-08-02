@@ -84,7 +84,7 @@ namespace CharlieBackend.Business.Services
 
                 if (studentGroupDto.StudentIds?.Count > 0)
                 {
-                    var notExistStudentIds = await _unitOfWork.MentorRepository.GetNotExistEntitiesIdsAsync(studentGroupDto.StudentIds);
+                    var notExistStudentIds = await _unitOfWork.StudentRepository.GetNotExistEntitiesIdsAsync(studentGroupDto.StudentIds);
 
                     if (notExistStudentIds.Any())
                     {
