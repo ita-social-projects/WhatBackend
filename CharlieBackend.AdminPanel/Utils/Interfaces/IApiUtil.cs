@@ -7,20 +7,20 @@ namespace CharlieBackend.AdminPanel.Utils.Interfaces
     {
         public Task<string> SignInAsync(string url, AuthenticationDto authModel);
 
-        public Task<TResponce> GetAsync<TResponce>(string url);
+        public Task<TResponse> GetAsync<TResponse>(string url);
 
-        public Task<TResponce> CreateAsync<TResponce>(string url, TResponce data);
+        public Task<TResponse> CreateAsync<TResponse>(string url, TResponse data);
 
-        public Task<TResponce> CreateAsync<TResponce, TRequest>(string url, TRequest data);
+        public Task<TResponse> CreateAsync<TResponse, TRequest>(string url, TRequest data);
 
-        public Task<TResponce> PostAsync<TResponce, TRequest>(string url, TRequest data);
+        public Task<TResponse> PostAsync<TResponse, TRequest>(string url, TRequest data);
 
-        public Task<TResponce> PutAsync<TResponce>(string url, TResponce data);
+        public Task<TResponse> PutAsync<TResponse>(string url, TResponse data);
 
-        public Task<TResponce> PutAsync<TResponce, TRequest>(string url, TRequest data);
+        public Task<TResponse> PutAsync<TResponse, TRequest>(string url, TRequest data);
 
-        public Task<TResponce> DeleteAsync<TResponce>(string url);
+        public Task<TResponse> DeleteAsync<TResponse>(string url);
 
-        public Task<TResponce> EnableAsync<TResponce>(string url);
+        public Task<TResponse> EnableAsync<TResponse>(string url);
     }
 }
