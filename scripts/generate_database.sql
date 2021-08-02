@@ -1,64 +1,46 @@
-CREATE DATABASE  IF NOT EXISTS `soft` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `soft`;
--- MySQL dump 10.13  Distrib 8.0.22, for Win64 (x86_64)
---
--- Host: localhost    Database: soft
--- ------------------------------------------------------
--- Server version	8.0.22
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `account`
---
-
-DROP TABLE IF EXISTS `account`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `account` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `role` tinyint DEFAULT NULL COMMENT 'from enum of roles:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n            1 - student\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n            2 - mentor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n            4 - admin',
-  `first_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `last_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'email has been set to not null and unique',
-  `password` varchar(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'password has been set to not null',
-  `salt` varchar(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'salt has been set to not null',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
-  `forgot_password_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'token for resetting password',
-  `forgot_token_gen_date` datetime DEFAULT NULL COMMENT 'date of generation for users forgot password token',
-  `avatar_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `FK_account_Attachment_avatar_id` FOREIGN KEY (`avatar_id`) REFERENCES `attachment` (`id`) ON DELETE RESTRICT,
-  UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE DATABASE IF NOT EXISTS `Soft`
+CHARACTER SET UTF8MB4
+COLLATE UTF8MB4_0900_AI_CI;
+USE `Soft`;
 
 --
 -- Table structure for table `attachment`
 --
 
-DROP TABLE IF EXISTS `attachment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `attachment` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `created_on` datetime NOT NULL COMMENT 'created_on has been set to not null',
-  `created_by_account_id` bigint NOT NULL,
+DROP TABLE IF EXISTS `Attachments`;
+CREATE TABLE `Attachments` (
+  `ID` BIGINT NOT NULL AUTO_INCREMENT,
+  `CreatedOn` DATETIME NOT NULL,
+  `CreatedByAccountID` BIGINT NOT NULL,
   `container_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'container_name has been set to not null and unique',
   `file_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'file_name has been set to not null',
   PRIMARY KEY (`id`),
   UNIQUE KEY `container_name_UNIQUE` (`container_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+);
+
+--
+-- Table structure for table `account`
+--
+
+DROP TABLE IF EXISTS `Accounts`;
+CREATE TABLE `Accounts` (
+	`ID` BIGINT NOT NULL AUTO_INCREMENT,
+	`Role` TINYINT DEFAULT NULL COMMENT 'Roles:\n 0 - NotAssigned,\n 1 - Student,\n 2 - Mentor,\n 4 - Admin,\n 8 - Secretary',
+	`FirstName` VARCHAR(30) DEFAULT NULL,
+	`LastName` VARCHAR(30) DEFAULT NULL,
+	`Email` VARCHAR(50) NOT NULL COMMENT 'email has been set to not null and unique',
+	`password` VARCHAR(65) NOT NULL COMMENT 'password has been set to not null',
+	`salt` VARCHAR(65) NOT NULL COMMENT 'salt has been set to not null',
+	`is_active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
+	`forgot_password_token` VARCHAR(100) DEFAULT NULL COMMENT 'token for resetting password',
+	`forgot_token_gen_date` DATETIME DEFAULT NULL COMMENT 'date of generation for users forgot password token',
+	`avatar_id` BIGINT DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `FK_account_Attachment_avatar_id` FOREIGN KEY (`avatar_id`) REFERENCES `attachment` (`id`) ON DELETE RESTRICT,
+	UNIQUE KEY `email_UNIQUE` (`email`)
+);
+
+
 
 --
 -- Table structure for table `attachment_of_homework`
