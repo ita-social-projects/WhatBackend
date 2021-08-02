@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -10,7 +9,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using System.Text;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 
 namespace CharlieBackend.Business.Services
@@ -20,13 +18,14 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
-        private readonly SchedulesEventsValidator _validator;
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory)
+        private readonly ISchedulesEventsDbEntityVerifier _validator;
+
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsDbEntityVerifier validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduledEventFactory = scheduledEventHandlerFactory;
-            _validator = new SchedulesEventsValidator(unitOfWork);
+            _validator = validator;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
@@ -199,6 +198,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
-
     }
 }

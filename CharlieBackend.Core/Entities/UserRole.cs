@@ -1,11 +1,14 @@
-﻿namespace CharlieBackend.Core.Entities
+﻿using System;
+
+namespace CharlieBackend.Core.Entities
 {
-    public enum UserRole
+    [Flags]
+    public enum UserRole : byte
     {
         NotAssigned = 0,
         Student = 1,
         Mentor = 2,
-        Secretary = 3,
-        Admin = 4
+        Admin = 4,
+        Secretary = 8
     }
 }
