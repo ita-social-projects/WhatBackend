@@ -48,8 +48,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             if (course == null)
             {
-                return null;             
+                return Result<Course>.GetError(ErrorCode.NotFound, "Course is not found");
             }
+
             course.IsActive = false;
             return Result<Course>.GetSuccess(course);
         }
@@ -60,9 +61,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             if (course == null)
             {
-                return null;               
+                return Result<Course>.GetError(ErrorCode.NotFound, "Course is not found");
             }
-            
+
             course.IsActive = true;
             return Result<Course>.GetSuccess(course);
         }

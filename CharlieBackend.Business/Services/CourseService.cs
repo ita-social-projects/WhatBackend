@@ -2,7 +2,6 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
 
         public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
-        {           
+        {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -121,9 +120,9 @@ namespace CharlieBackend.Business.Services
 
             var courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
 
-            if (courseDisabled == null)
+            if (courseDisabled.Data == null && courseDisabled.Error != null)
             {
-                return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course is not found");
+                return Result<CourseDto>.GetError(courseDisabled.Error.Code, courseDisabled.Error.Message);
             }
 
             await _unitOfWork.CommitAsync();      
@@ -138,11 +137,11 @@ namespace CharlieBackend.Business.Services
                 return Result<CourseDto>.GetError(ErrorCode.Conflict, "Course is already active.");
             }
 
-            var course= await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
-
-            if (course == null)
+            var course= await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);  
+            
+            if (course.Data == null && course.Error != null)
             {
-                return Result<CourseDto>.GetError(ErrorCode.NotFound, "Course is not found");
+                return Result<CourseDto>.GetError(course.Error.Code, course.Error.Message);
             }
 
             await _unitOfWork.CommitAsync();          
