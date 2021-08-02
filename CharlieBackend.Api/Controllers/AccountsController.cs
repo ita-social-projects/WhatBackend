@@ -165,9 +165,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account already has this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
-        [Route("role/give")]
+        [Route("role/ grant")]
         [HttpPut]
-        public async Task<ActionResult> GiveRoleToAccount(AccountRoleDto account)
+        public async Task<ActionResult> GrantRoleToAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
                     .GiveRoleToAccount(account);
@@ -183,9 +183,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account doesn't have this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
-        [Route("role/remove")]
+        [Route("role/revoke")]
         [HttpPut]
-        public async Task<ActionResult> RemoveRoleFromAccount(AccountRoleDto account)
+        public async Task<ActionResult> RevokeRoleFromAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
                     .RemoveRoleFromAccount(account);
