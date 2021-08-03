@@ -31,7 +31,7 @@ namespace CharlieBackend.Business.Helpers
 
                 if (account.Role.HasFlag(role) )
                 {
-                    jwtDictionary.Add(role.ToString(), GenerateEncodedJwt(account, UserRole.Student, roleIds[role]));
+                    jwtDictionary.Add(role.ToString(), GenerateEncodedJwt(account, role, roleIds[role]));
                 }
             }
 
