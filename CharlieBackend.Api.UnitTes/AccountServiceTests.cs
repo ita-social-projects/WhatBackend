@@ -6,6 +6,7 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
@@ -27,6 +28,163 @@ namespace CharlieBackend.Api.UnitTest
             _mapper = GetMapper(new ModelMappingProfile());
             _notificationServiceMock = new Mock<INotificationService>();
             _accountRepositoryMock = new Mock<IAccountRepository>();
+        }
+
+        [Fact]
+        public async Task SetRoleToAccount_GiveRole_RoleSet()
+        {
+            //Arrange
+            AccountRoleDto roleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            Account userExpected = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            //Act
+            await user.SetAccountRoleAsync(roleDto.Role);
+
+            //Assert
+            Assert.Equal(userExpected.Role, user.Role);
+        }
+
+        [Fact]
+        public async Task RemoveRoleFromAccount_RemoveRole_RoleRemoved() 
+        {
+            //Arrange
+            AccountRoleDto roleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            Account userSuccess = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            //Act
+            await user.RemoveAccountRoleAsync(roleDto.Role);
+
+            //Assert
+            Assert.Equal(userSuccess.Role, user.Role);
+        }
+
+        [Fact]
+        public async Task SetRoleToAccount_GiveUnsuitableRole_CatchExceptions() 
+        {
+            //Arrange
+            AccountRoleDto existRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            AccountRoleDto adminRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            AccountRoleDto nonAssignedRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            AccountRoleDto complexRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(existRoleDto.Role));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(adminRoleDto.Role));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(nonAssignedRoleDto.Role));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(complexRoleDto.Role));
+        }
+
+        [Fact]
+        public async Task RemoveRoleToAccount_GiveUnsuitableRole_CatchExceptions()
+        {
+            //Arrange
+            AccountRoleDto existRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            AccountRoleDto adminRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            AccountRoleDto nonAssignedRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(existRoleDto.Role));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(adminRoleDto.Role));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(nonAssignedRoleDto.Role));
         }
 
         [Fact]
