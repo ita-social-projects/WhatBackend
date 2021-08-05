@@ -130,52 +130,5 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 worksheet.Rows().AdjustToContents();
             }
         }
-
-        public async Task FillFileAlternate(StudentsResultsDto data)
-        {
-            if (data.AverageStudentsMarks != null)
-            {
-                var worksheet = xLWorkbook.Worksheet(1);
-
-                await CreateHeadersAsync(worksheet.Row(1),
-                    "Course Id",
-                    "Student Group Id",
-                    "Student Id",
-                    "Average mark");
-
-                for (int row = 0; row < data.AverageStudentsMarks.Count(); row++)
-                {
-                    var xlRow = worksheet.Row(row + 2);
-                    var mark = data.AverageStudentsMarks.ElementAt(row);
-
-                    xlRow.Cell(1).Value = mark.Course;
-                    xlRow.Cell(2).Value = mark.StudentGroup;
-                    xlRow.Cell(3).Value = mark.Student;
-                    xlRow.Cell(4).Value = mark.StudentAverageMark;
-                }
-            }
-
-            if (data.AverageStudentVisits != null)
-            {
-                var worksheet = xLWorkbook.Worksheet(2);
-
-                await CreateHeadersAsync(worksheet.Row(1),
-                    "Course Id",
-                    "Student Group Id",
-                    "Student Id",
-                    "Average visits percentage");
-
-                for (int row = 0; row < data.AverageStudentVisits.Count(); row++)
-                {
-                    var xlRow = worksheet.Row(row + 2);
-                    var presence = data.AverageStudentVisits.ElementAt(row);
-
-                    xlRow.Cell(1).Value = presence.Course;
-                    xlRow.Cell(2).Value = presence.StudentGroup;
-                    xlRow.Cell(3).Value = presence.Student;
-                    xlRow.Cell(4).Value = presence.StudentAverageVisitsPercentage;
-                }
-            }
-        }
     }
 }

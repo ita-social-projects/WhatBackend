@@ -104,48 +104,5 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 worksheet.Rows().AdjustToContents();
             }
         }
-
-        public async void FillFileAlternate(StudentGroupsResultsDto data)
-        {
-            if (data.AverageStudentGroupsMarks != null)
-            {
-                var worksheet = xLWorkbook.Worksheet(1);
-
-                await CreateHeadersAsync(worksheet.Row(1),
-                    "Course Id",
-                    "Student Group Id",
-                    "Average mark");
-
-                for (int row = 0; row < data.AverageStudentGroupsMarks.Count(); row++)
-                {
-                    var xlRow = worksheet.Row(row + 2);
-                    var mark = data.AverageStudentGroupsMarks.ElementAt(row);
-
-                    xlRow.Cell(1).Value = mark.Course;
-                    xlRow.Cell(2).Value = mark.StudentGroup;
-                    xlRow.Cell(3).Value = mark.AverageMark;
-                }
-            }
-
-            if (data.AverageStudentGroupsVisits != null)
-            {
-                var worksheet = xLWorkbook.Worksheet(2);
-
-                await CreateHeadersAsync(worksheet.Row(1),
-                    "Course Id",
-                    "Student Group Id",
-                    "Average visits percentage");
-
-                for (int row = 0; row < data.AverageStudentGroupsVisits.Count(); row++)
-                {
-                    var xlRow = worksheet.Row(row + 2);
-                    var presence = data.AverageStudentGroupsVisits.ElementAt(row);
-
-                    xlRow.Cell(1).Value = presence.Course;
-                    xlRow.Cell(2).Value = presence.StudentGroup;
-                    xlRow.Cell(3).Value = presence.AverageVisitPercentage;
-                }
-            }
-        }
     }
 }
