@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Student;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -128,7 +129,31 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
             DateTime? startDate, DateTime? finishDate)
         {
-            return await _applicationContext.Visits
+            IDictionary<string, IEnumerable<StudentDto>> listOfStudentLists = new Dictionary<string, IEnumerable<StudentDto>>();
+            foreach (var studentGroupId in studentGroupIds)
+            {
+                var StudentList = await _applicationContext.StudentsOfStudentGroups
+                    .AsNoTracking()
+                    .Where(s => s.StudentGroupId == studentGroupId).Select(x => x.Student)
+                    .Select(x => new StudentDto
+                    {
+                        Email = x.Account.Email,
+                        FirstName = x.Account.FirstName,
+                        LastName = x.Account.LastName,
+                        Id = (long)x.AccountId
+                    })
+                    .ToListAsync();
+
+                listOfStudentLists.Add(_applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .First(x => x.Id == studentGroupId).Name,
+                    StudentList
+                    .GroupBy(x => x.Id)
+                    .Select(x => x.First())
+                    .ToList());
+            }
+
+            var visitsList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
                     .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
@@ -138,11 +163,41 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
                         Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
                     })
                     .ToListAsync();
+
+            var groups = visitsList.GroupBy(x =>  x.LessonId );
+
+            foreach (var groupByDate in groups)
+            {
+                if(groupByDate == null)
+                {
+                    continue;
+                }
+                foreach (var student in listOfStudentLists.ElementAt(0).Value)
+                {
+                    if (groupByDate.FirstOrDefault(x => x.StudentId == student.Id) == null)
+                    {
+                        visitsList.Add(new StudentVisitDto
+                        {
+                            Course = groupByDate.First().Course,
+                            StudentGroup = groupByDate.First().StudentGroup,
+                            Student = student.FirstName + " " + student.LastName,
+                            StudentId = student.Id,
+                            LessonId = groupByDate.First().LessonId,
+                            LessonDate = groupByDate.First().LessonDate,
+                            Presence = null,
+                        }) ;
+                    }
+                }
+            }
+
+            return visitsList;
+
         }
 
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
