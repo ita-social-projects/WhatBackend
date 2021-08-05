@@ -105,7 +105,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task SetRoleToAccount_GiveUnsuitableRole_CatchExceptions() 
+        public async Task SetRoleToAccount_GiveUnsuitableRole_GetFalseResult()
         {
             //Arrange
             AccountRoleDto existRoleDto = new AccountRoleDto()
@@ -142,18 +142,29 @@ namespace CharlieBackend.Api.UnitTest
                 Role = UserRole.Student | UserRole.Mentor
             };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(existRoleDto.Role));
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(adminRoleDto.Role));
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(nonAssignedRoleDto.Role));
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.SetAccountRoleAsync(complexRoleDto.Role));
+            bool existRoleResult = false;
+            bool adminRoleResult = false;
+            bool notAssignedResult = false;
+            bool complexRoleResult = false;
+
+            // Act 
+            bool existRole = await user.SetAccountRoleAsync(existRoleDto.Role);
+            bool adminRole = await user.SetAccountRoleAsync(adminRoleDto.Role);
+            bool notAssignedRole = await user.SetAccountRoleAsync(nonAssignedRoleDto.Role);
+            bool complexRole = await user.SetAccountRoleAsync(complexRoleDto.Role);
+
+            //Assert
+            Assert.Equal(existRoleResult, existRole);
+            Assert.Equal(adminRoleResult, adminRole);
+            Assert.Equal(notAssignedResult, notAssignedRole);
+            Assert.Equal(complexRoleResult, complexRole);
         }
 
         [Fact]
-        public async Task RemoveRoleToAccount_GiveUnsuitableRole_CatchExceptions()
+        public async Task RemoveRoleToAccount_GiveUnsuitableRole_GetFalseResult()
         {
             //Arrange
-            AccountRoleDto existRoleDto = new AccountRoleDto()
+            AccountRoleDto notExistRoleDto = new AccountRoleDto()
             {
                 Email = "user@exmaple.com",
                 Role = UserRole.Student
@@ -165,10 +176,22 @@ namespace CharlieBackend.Api.UnitTest
                 Role = UserRole.Admin
             };
 
-            AccountRoleDto nonAssignedRoleDto = new AccountRoleDto()
+            AccountRoleDto notAssignedRoleDto = new AccountRoleDto()
             {
                 Email = "user@exmaple.com",
                 Role = UserRole.NotAssigned
+            };
+
+            AccountRoleDto complexRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            AccountRoleDto lastRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
             };
 
             Account user = new Account()
@@ -181,10 +204,25 @@ namespace CharlieBackend.Api.UnitTest
                 Role = UserRole.Mentor
             };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(existRoleDto.Role));
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(adminRoleDto.Role));
-            await Assert.ThrowsAsync<ArgumentException>(async () => await user.RemoveAccountRoleAsync(nonAssignedRoleDto.Role));
+            bool notExistRoleResult = false;
+            bool adminRoleResult = false;
+            bool notAssignedRoleResult = false;
+            bool lastRoleResult = false;
+            bool complexRoleResult = false;
+
+            // Act 
+            bool existRole = await user.RemoveAccountRoleAsync(notExistRoleDto.Role);
+            bool adminRole = await user.RemoveAccountRoleAsync(adminRoleDto.Role);
+            bool notAssigned = await user.RemoveAccountRoleAsync(notAssignedRoleDto.Role);
+            bool lastRole = await user.RemoveAccountRoleAsync(lastRoleDto.Role);
+            bool complexRole = await user.RemoveAccountRoleAsync(complexRoleDto.Role);
+
+            //Assert
+            Assert.Equal(notExistRoleResult, existRole);
+            Assert.Equal(adminRoleResult, adminRole);
+            Assert.Equal(notAssignedRoleResult, notAssigned);
+            Assert.Equal(lastRoleResult, lastRole);
+            Assert.Equal(complexRoleResult, complexRole);
         }
 
         [Fact]

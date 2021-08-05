@@ -36,7 +36,7 @@ namespace CharlieBackend.AdminPanel.Utils
             return token.FirstOrDefault();
         }
 
-        public async Task<T> GetAsync<T>(string url)
+        public async Task<TResponse> GetAsync<TResponse>(string url)
         {
             var httpResponse = await _httpUtil.GetAsync(url);
 
@@ -44,13 +44,13 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
 
             return responseModel;
         }
 
-        public async Task<T> CreateAsync<T>(string url, T data)
+        public async Task<TResponse> CreateAsync<TResponse>(string url, TResponse data)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data);
 
@@ -58,12 +58,12 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
             return responseModel;
         }
 
-        public async Task<T1> PostAsync<T1, T2>(string url, T2 data)
+        public async Task<TResponse> CreateAsync<TResponse, TRequest>(string url, TRequest data)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, data);
 
@@ -71,12 +71,25 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            T1 responseModel = JsonConvert.DeserializeObject<T1>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
             return responseModel;
         }
 
-        public async Task<T> PutAsync<T>(string url, T data)
+        public async Task<TResponse> PostAsync<TResponse, TRequest>(string url, TRequest data)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync(url, data);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
+
+            return responseModel;
+        }
+
+        public async Task<TResponse> PutAsync<TResponse>(string url, TResponse data)
         {
             var httpResponse = await _httpUtil.PutJsonAsync(url, data);
 
@@ -84,13 +97,26 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
+
+            return responseModel;
+        }
+
+        public async Task<TResponse> PutAsync<TResponse, TRequest>(string url, TRequest data)
+        {
+            var httpResponse = await _httpUtil.PutJsonAsync(url, data);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
             return responseModel;
         }
 
 
-        public async Task<T> DeleteAsync<T>(string url)
+        public async Task<TResponse> DeleteAsync<TResponse>(string url)
         {
             var httpResponse = await _httpUtil.DeleteAsync(url);
 
@@ -98,12 +124,12 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
             return responseModel;
         }
 
-        public async Task<T> EnableAsync<T>(string url)
+        public async Task<TResponse> EnableAsync<TResponse>(string url)
         {
             var httpResponse = await _httpUtil.PatchAsync(url);
 
@@ -111,7 +137,7 @@ namespace CharlieBackend.AdminPanel.Utils
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-            var responseModel = JsonConvert.DeserializeObject<T>(stringResponse);
+            TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
             
             return responseModel;
         }

@@ -27,7 +27,7 @@ namespace CharlieBackend.Business.Services
             _notification = notification;
         }
 
-        public async Task<Result<AccountRoleDto>> GiveRoleToAccount(
+        public async Task<Result<AccountRoleDto>> AppendRoleToAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -35,30 +35,30 @@ namespace CharlieBackend.Business.Services
 
             Result<AccountRoleDto> result = null;
 
-            try
+            if (user == null)
             {
-                await user.SetAccountRoleAsync(accountRole.Role);
-
-                await SetAccountRoleToRepositoryAsync(accountRole, user);
-
-                await _unitOfWork.CommitAsync();
-
-                result = Result<AccountRoleDto>.GetSuccess(
-                        _mapper.Map<AccountRoleDto>(user));
+                result = Result<AccountRoleDto>.GetError(ErrorCode.NotFound,
+                        "Account not found");
             }
-            catch (NullReferenceException)
+            else
             {
+                if (await user.SetAccountRoleAsync(accountRole.Role))
+                {
+                    await SetAccountRoleToRepositoryAsync(accountRole, user);
 
-                result = Result<AccountRoleDto>.GetError(
-                        ErrorCode.NotFound, "Account not found");
-            }
-            catch (ArgumentException)
-            {
-                result = Result<AccountRoleDto>.GetError(
-                        ErrorCode.Conflict, "Account allready has" +
-                        " this role or role is unsuitable");
-            }
+                    await _unitOfWork.CommitAsync();
 
+                    result = Result<AccountRoleDto>.GetSuccess(
+                            _mapper.Map<AccountRoleDto>(user));
+                }
+                else
+                {
+                    result = Result<AccountRoleDto>.GetError(
+                            ErrorCode.Conflict, "Account allready has" +
+                            " this role or role is unsuitable");
+                }
+            }
+         
             return result;
         }
 
@@ -122,21 +122,15 @@ namespace CharlieBackend.Business.Services
                         "Account not found");
             }
             else
-            {
-                try
+            {           
+                if (await user.RemoveAccountRoleAsync(accountRole.Role))
                 {
-                    await user.RemoveAccountRoleAsync(accountRole.Role);
                     await _unitOfWork.CommitAsync();
 
                     result = Result<AccountRoleDto>.GetSuccess(
                             _mapper.Map<AccountRoleDto>(user));
                 }
-                catch (NullReferenceException)
-                {
-                    result = Result<AccountRoleDto>.GetError(
-                            ErrorCode.NotFound, "Account not found");
-                }
-                catch (ArgumentException) 
+                else
                 {
                     result = Result<AccountRoleDto>.GetError(ErrorCode.Conflict,
                             "Account doesn't have this role or role is unsuitable");
