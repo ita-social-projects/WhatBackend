@@ -1,21 +1,8 @@
 ﻿using CharlieBackend.Core.Models.ResultModel;
 using ClosedXML.Excel;
-using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using CharlieBackend.Business.Services.FileServices.ExportFileServices;
-using CharlieBackend.Core;
-using Microsoft.AspNetCore.Authorization;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net;
-using Microsoft.AspNetCore.Http;
-using ClosedXML.Extensions;
-using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {

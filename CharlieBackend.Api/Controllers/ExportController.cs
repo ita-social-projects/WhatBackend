@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
-using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

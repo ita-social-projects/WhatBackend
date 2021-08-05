@@ -1,10 +1,7 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Dashboard;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using ClosedXML.Excel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices

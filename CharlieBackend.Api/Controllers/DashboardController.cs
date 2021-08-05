@@ -1,11 +1,6 @@
-﻿using System;
-using System.Linq;
-using CharlieBackend.Core;
+﻿using CharlieBackend.Core;
 using System.Threading.Tasks;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using CharlieBackend.Core.DTO.Dashboard;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
