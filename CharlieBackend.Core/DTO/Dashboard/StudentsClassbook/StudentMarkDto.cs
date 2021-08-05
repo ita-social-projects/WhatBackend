@@ -12,6 +12,8 @@ namespace CharlieBackend.Core.DTO.Dashboard
 
         public string Student { get; set; }
 
+        public long? StudentId { get; set; }
+
         public long? LessonId { get; set; }
 
         public DateTime? LessonDate { get; set; }
