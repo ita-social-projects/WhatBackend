@@ -145,7 +145,7 @@ namespace CharlieBackend.Api.Controllers
 
             var result = new StudentGruopResults();
 
-            result.FillFile(results.Data);
+            await result.FillFile(results.Data);
             result.AdjustContent();
 
             return File(await
