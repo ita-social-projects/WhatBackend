@@ -6,6 +6,7 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
@@ -27,6 +28,201 @@ namespace CharlieBackend.Api.UnitTest
             _mapper = GetMapper(new ModelMappingProfile());
             _notificationServiceMock = new Mock<INotificationService>();
             _accountRepositoryMock = new Mock<IAccountRepository>();
+        }
+
+        [Fact]
+        public async Task SetRoleToAccount_GiveRole_RoleSet()
+        {
+            //Arrange
+            AccountRoleDto roleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            Account userExpected = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            //Act
+            await user.SetAccountRoleAsync(roleDto.Role);
+
+            //Assert
+            Assert.Equal(userExpected.Role, user.Role);
+        }
+
+        [Fact]
+        public async Task RemoveRoleFromAccount_RemoveRole_RoleRemoved() 
+        {
+            //Arrange
+            AccountRoleDto roleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            Account userSuccess = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            //Act
+            await user.RemoveAccountRoleAsync(roleDto.Role);
+
+            //Assert
+            Assert.Equal(userSuccess.Role, user.Role);
+        }
+
+        [Fact]
+        public async Task SetRoleToAccount_GiveUnsuitableRole_GetFalseResult()
+        {
+            //Arrange
+            AccountRoleDto existRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            AccountRoleDto adminRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            AccountRoleDto nonAssignedRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            AccountRoleDto complexRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            bool existRoleResult = false;
+            bool adminRoleResult = false;
+            bool notAssignedResult = false;
+            bool complexRoleResult = false;
+
+            // Act 
+            bool existRole = await user.SetAccountRoleAsync(existRoleDto.Role);
+            bool adminRole = await user.SetAccountRoleAsync(adminRoleDto.Role);
+            bool notAssignedRole = await user.SetAccountRoleAsync(nonAssignedRoleDto.Role);
+            bool complexRole = await user.SetAccountRoleAsync(complexRoleDto.Role);
+
+            //Assert
+            Assert.Equal(existRoleResult, existRole);
+            Assert.Equal(adminRoleResult, adminRole);
+            Assert.Equal(notAssignedResult, notAssignedRole);
+            Assert.Equal(complexRoleResult, complexRole);
+        }
+
+        [Fact]
+        public async Task RemoveRoleToAccount_GiveUnsuitableRole_GetFalseResult()
+        {
+            //Arrange
+            AccountRoleDto notExistRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            AccountRoleDto adminRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            AccountRoleDto notAssignedRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            AccountRoleDto complexRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student | UserRole.Mentor
+            };
+
+            AccountRoleDto lastRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            Account user = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Mentor
+            };
+
+            bool notExistRoleResult = false;
+            bool adminRoleResult = false;
+            bool notAssignedRoleResult = false;
+            bool lastRoleResult = false;
+            bool complexRoleResult = false;
+
+            // Act 
+            bool existRole = await user.RemoveAccountRoleAsync(notExistRoleDto.Role);
+            bool adminRole = await user.RemoveAccountRoleAsync(adminRoleDto.Role);
+            bool notAssigned = await user.RemoveAccountRoleAsync(notAssignedRoleDto.Role);
+            bool lastRole = await user.RemoveAccountRoleAsync(lastRoleDto.Role);
+            bool complexRole = await user.RemoveAccountRoleAsync(complexRoleDto.Role);
+
+            //Assert
+            Assert.Equal(notExistRoleResult, existRole);
+            Assert.Equal(adminRoleResult, adminRole);
+            Assert.Equal(notAssignedRoleResult, notAssigned);
+            Assert.Equal(lastRoleResult, lastRole);
+            Assert.Equal(complexRoleResult, complexRole);
         }
 
         [Fact]

@@ -1,13 +1,14 @@
-﻿using System;
-using AutoMapper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Account;
+﻿using AutoMapper;
 using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Extensions;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
@@ -24,6 +25,119 @@ namespace CharlieBackend.Business.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+        }
+
+        public async Task<Result<AccountRoleDto>> AppendRoleToAccount(
+                AccountRoleDto accountRole)
+        {
+            Account user = await _unitOfWork.AccountRepository
+                    .GetAccountCredentialsByEmailAsync(accountRole.Email);
+
+            Result<AccountRoleDto> result = null;
+
+            if (user == null)
+            {
+                result = Result<AccountRoleDto>.GetError(ErrorCode.NotFound,
+                        "Account not found");
+            }
+            else
+            {
+                if (await user.SetAccountRoleAsync(accountRole.Role))
+                {
+                    await SetAccountRoleToRepositoryAsync(accountRole, user);
+
+                    await _unitOfWork.CommitAsync();
+
+                    result = Result<AccountRoleDto>.GetSuccess(
+                            _mapper.Map<AccountRoleDto>(user));
+                }
+                else
+                {
+                    result = Result<AccountRoleDto>.GetError(
+                            ErrorCode.Conflict, "Account allready has" +
+                            " this role or role is unsuitable");
+                }
+            }
+         
+            return result;
+        }
+
+        private void SetAccountRoleToRepository(AccountRoleDto accountRole,
+                Account user)
+        {
+            switch (accountRole.Role)
+            {
+                case UserRole.Student:
+                    Student newStudent = new Student()
+                    {
+                        Account = user,
+                        AccountId = user.Id,
+                    };
+
+                    _unitOfWork.StudentRepository.Add(newStudent);
+                    break;
+
+                case UserRole.Mentor:
+                    Mentor newMentor = new Mentor()
+                    {
+                        Account = user,
+                        AccountId = user.Id
+                    };
+
+                    _unitOfWork.MentorRepository.Add(newMentor);
+                    break;
+
+                case UserRole.Secretary:
+                    Secretary newSecretary = new Secretary()
+                    {
+                        Account = user,
+                        AccountId = user.Id
+                    };
+
+                    _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private async Task SetAccountRoleToRepositoryAsync(
+                AccountRoleDto accountRole, Account user) 
+        {
+            await Task.Run(() => SetAccountRoleToRepository(accountRole, user));
+        }
+
+        public async Task<Result<AccountRoleDto>> RemoveRoleFromAccount(
+                AccountRoleDto accountRole)
+        {
+            Account user = await _unitOfWork.AccountRepository
+                    .GetAccountCredentialsByEmailAsync(accountRole.Email);
+
+            Result<AccountRoleDto> result = null;
+
+            if (user == null)
+            {
+                result = Result<AccountRoleDto>.GetError(ErrorCode.NotFound,
+                        "Account not found");
+            }
+            else
+            {           
+                if (await user.RemoveAccountRoleAsync(accountRole.Role))
+                {
+                    await _unitOfWork.CommitAsync();
+
+                    result = Result<AccountRoleDto>.GetSuccess(
+                            _mapper.Map<AccountRoleDto>(user));
+                }
+                else
+                {
+                    result = Result<AccountRoleDto>.GetError(ErrorCode.Conflict,
+                            "Account doesn't have this role or role is unsuitable");
+                }
+            }
+
+            return result;
         }
 
         public async Task<Result<AccountDto>> CreateAccountAsync(CreateAccountDto accountModel)
@@ -72,7 +186,7 @@ namespace CharlieBackend.Business.Services
             {
                 string password = PasswordHelper.HashPassword(authenticationModel.Password, account.Salt);
 
-                if(password != account.Password)
+                if (password != account.Password)
                 {
                     return Result<AccountDto>.GetError(ErrorCode.Unauthorized, "Email or password is incorrect.");
                 }
@@ -84,7 +198,7 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            return Result<AccountDto>.GetError(ErrorCode.NotFound,"User Not Found");
+            return Result<AccountDto>.GetError(ErrorCode.NotFound, "User Not Found");
 
         }
 
@@ -150,7 +264,7 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
             var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);
-            
+
             if (user == null)
             {
                 return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
