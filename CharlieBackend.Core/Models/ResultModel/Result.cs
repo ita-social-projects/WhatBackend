@@ -24,8 +24,7 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// <returns>Return transferred data in success option, or error data</returns>
         ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
         public static Result<T> GetSuccess(T transferredData)
-        {
-            
+        {           
             if (object.Equals(transferredData, default(T) ) && typeof(T) != typeof(bool)) // default(bool) is false
             {
                 throw new ArgumentNullException();

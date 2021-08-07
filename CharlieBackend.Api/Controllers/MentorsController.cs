@@ -7,6 +7,7 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -137,12 +138,18 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorStudyGroupsDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/groups")]
-        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorId(long id)
+        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId(long id)
         {
-            var foundGroups = await _mentorService
-                    .GetMentorStudyGroupsByMentorIdAsync(id);
+            var foundGroups = await _mentorService.CheckRoleAndIdMentor(id,
+                    new Result<IList<MentorStudyGroupsDto>>());
 
-            return foundGroups;
+            if (foundGroups.Error == default)
+            {
+                foundGroups = Result<IList<MentorStudyGroupsDto>>.GetSuccess(await
+                        _mentorService.GetMentorStudyGroupsByMentorIdAsync(id));
+            }
+            
+            return foundGroups.ToActionResult();
         }
 
         /// <summary>
@@ -153,12 +160,18 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet("{id}/courses")]
-        public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorId(long id)
+        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
         {
-            var foundCourses = await _mentorService
-                    .GetMentorCoursesByMentorIdAsync(id);
+            var foundCourses = await _mentorService.CheckRoleAndIdMentor(id,
+                    new Result<IList<MentorCoursesDto>>());
 
-            return foundCourses;
+            if (foundCourses.Error == default)
+            {
+                foundCourses = Result<IList<MentorCoursesDto>>.GetSuccess(await
+                        _mentorService.GetMentorCoursesByMentorIdAsync(id));
+            }
+
+            return foundCourses.ToActionResult();
         }
 
         /// <summary>
@@ -201,7 +214,12 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}/lessons")]
         public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
         {
-            var lessons = await _lessonService.GetAllLessonsForMentor(id);
+            var lessons = await _mentorService.CheckRoleAndIdMentor(id, new Result<IList<LessonDto>>());
+
+            if (lessons.Error == default)
+            {
+                lessons = await _lessonService.GetAllLessonsForMentor(id);
+            }
 
             return lessons.ToActionResult();
         }
