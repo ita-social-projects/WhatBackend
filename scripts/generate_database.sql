@@ -1,392 +1,302 @@
 CREATE DATABASE IF NOT EXISTS `Soft`
 CHARACTER SET UTF8MB4
 COLLATE UTF8MB4_0900_AI_CI;
+
 USE `Soft`;
 
---
--- Table structure for table `attachment`
---
+-- Table `Attachments`
 
 DROP TABLE IF EXISTS `Attachments`;
+
 CREATE TABLE `Attachments` (
-  `ID` BIGINT NOT NULL AUTO_INCREMENT,
-  `CreatedOn` DATETIME NOT NULL,
-  `CreatedByAccountID` BIGINT NOT NULL,
-  `container_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'container_name has been set to not null and unique',
-  `file_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'file_name has been set to not null',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `container_name_UNIQUE` (`container_name`)
+    `ID`                    BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `CreatedOn`             DATETIME           NOT NULL,
+    `CreatedByAccountID`    BIGINT UNSIGNED    NOT NULL,
+    `ContainerName`         VARCHAR(36)        NOT NULL     COMMENT 'GUID length is 36 characters',
+    `FileName`              VARCHAR(100)       NOT NULL,
+
+    CONSTRAINT    `PK_Attachment`       PRIMARY KEY (`ID`),
+    CONSTRAINT    `UQ_ContainerName`    UNIQUE (`ContainerName`)
 );
 
---
--- Table structure for table `account`
---
+-- Table `Accounts`
 
 DROP TABLE IF EXISTS `Accounts`;
+
 CREATE TABLE `Accounts` (
-	`ID` BIGINT NOT NULL AUTO_INCREMENT,
-	`Role` TINYINT DEFAULT NULL COMMENT 'Roles:\n 0 - NotAssigned,\n 1 - Student,\n 2 - Mentor,\n 4 - Admin,\n 8 - Secretary',
-	`FirstName` VARCHAR(30) DEFAULT NULL,
-	`LastName` VARCHAR(30) DEFAULT NULL,
-	`Email` VARCHAR(50) NOT NULL COMMENT 'email has been set to not null and unique',
-	`password` VARCHAR(65) NOT NULL COMMENT 'password has been set to not null',
-	`salt` VARCHAR(65) NOT NULL COMMENT 'salt has been set to not null',
-	`is_active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
-	`forgot_password_token` VARCHAR(100) DEFAULT NULL COMMENT 'token for resetting password',
-	`forgot_token_gen_date` DATETIME DEFAULT NULL COMMENT 'date of generation for users forgot password token',
-	`avatar_id` BIGINT DEFAULT NULL,
-	PRIMARY KEY (`id`),
-	CONSTRAINT `FK_account_Attachment_avatar_id` FOREIGN KEY (`avatar_id`) REFERENCES `attachment` (`id`) ON DELETE RESTRICT,
-	UNIQUE KEY `email_UNIQUE` (`email`)
+    `ID`                     BIGINT UNSIGNED     NOT NULL         AUTO_INCREMENT,
+    `Role`                   TINYINT UNSIGNED    DEFAULT NULL     COMMENT 'Roles:\n 0 - NotAssigned,\n 1 - Student,\n 2 - Mentor,\n 4 - Admin,\n 8 - Secretary',
+    `FirstName`              VARCHAR(30)         NOT NULL,
+    `LastName`               VARCHAR(30)         NOT NULL,
+    `Email`                  VARCHAR(50)         NOT NULL,
+    `PasswordHash`           VARBINARY(256)      NOT NULL         COMMENT 'SHA256 produces 256-bit hash value',
+    `Salt`                   VARBINARY(128)      NOT NULL         COMMENT 'Standart salt length is 128 bits',
+    `IsActive`               BIT                 DEFAULT 1,
+    `ForgotPasswordToken`    VARCHAR(36)         DEFAULT NULL     COMMENT 'GUID length is 36 characters',
+    `ForgotTokenGenDate`     DATETIME            DEFAULT NULL,
+    `AvatarID`               BIGINT UNSIGNED     DEFAULT NULL,
+
+    CONSTRAINT    `PK_Account`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Avatar`     FOREIGN KEY (`AvatarId`)    REFERENCES `Attachments` (`ID`)    ON DELETE RESTRICT,
+    CONSTRAINT    `UQ_Email`      UNIQUE (`Email`)
 );
 
+-- Table `Mentors`
 
+DROP TABLE IF EXISTS `Mentors`;
 
---
--- Table structure for table `attachment_of_homework`
---
+CREATE TABLE `Mentors` (
+    `ID`           BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `attachment_of_homework`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `attachment_of_homework` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `homework_id` bigint NOT NULL,
-  `attachment_id` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_homework_id` (`homework_id`),
-  KEY `FK_attachment_id` (`attachment_id`),
-  CONSTRAINT `FK_attachment_of_homework` FOREIGN KEY (`attachment_id`) REFERENCES `attachment` (`id`),
-  CONSTRAINT `FK_homework_of_attachment` FOREIGN KEY (`homework_id`) REFERENCES `homework` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_Mentor`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Account`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+);
 
---
--- Table structure for table `course`
---
+-- Table `Students`
 
-DROP TABLE IF EXISTS `course`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `course` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'name has been set to not null and unique',
-  `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'is_active has been set to not null with true as a default value',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `Students`;
 
---
--- Table structure for table `event_occurence`
---
+CREATE TABLE `Students` (
+    `ID`           BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `event_occurence`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `event_occurence` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `student_group_id` bigint NOT NULL,
-  `event_start` datetime NOT NULL,
-  `event_finish` datetime NOT NULL,
-  `pattern` int NOT NULL,
-  `storage` bigint unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_student_group_of_schedule` (`student_group_id`),
-  CONSTRAINT `FK_student_group_of_schedule` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_Student`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Account`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+);
 
---
--- Table structure for table `homework`
---
+-- Table `Secretaries`
 
-DROP TABLE IF EXISTS `homework`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE IF NOT EXISTS `soft`.`homework` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `due_date` DATETIME NULL DEFAULT NULL,
-  `task_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
-  `lesson_id` BIGINT(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_lesson_of_homework` (`lesson_id` ASC),
-  CONSTRAINT `FK_lesson_of_homework`
-    FOREIGN KEY (`lesson_id`)
-    REFERENCES `soft`.`lesson` (`id`))
- ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `Secretaries`;
 
---
--- Table structure for table `lesson`
---
+CREATE TABLE `Secretaries` (
+    `ID`           BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `lesson`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `lesson` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `mentor_id` bigint DEFAULT NULL,
-  `student_group_id` bigint DEFAULT NULL,
-  `theme_id` bigint DEFAULT NULL,
-  `lesson_date` datetime NOT NULL COMMENT 'lesson_date has been set to not null',
-  PRIMARY KEY (`id`),
-  KEY `FK_mentor_of_lesson` (`mentor_id`),
-  KEY `FK_student_group_of_lesson` (`student_group_id`),
-  KEY `FK_ThemeOfLesson_idx` (`theme_id`),
-  CONSTRAINT `FK_mentor_of_lesson` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`),
-  CONSTRAINT `FK_student_group_of_lesson` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`),
-  CONSTRAINT `FK_theme_of_lesson` FOREIGN KEY (`theme_id`) REFERENCES `theme` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_Secretary`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Account`      FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+);
 
---
--- Table structure for table `mentor`
---
+-- Table `Courses`
 
-DROP TABLE IF EXISTS `mentor`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `mentor` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `account_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_account_of_mentor` (`account_id`),
-  CONSTRAINT `FK_account_of_mentor` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `Courses`;
 
---
--- Table structure for table `mentor_of_course`
---
+CREATE TABLE `Courses` (
+    `ID`          BIGINT UNSIGNED    NOT NULL      AUTO_INCREMENT,
+    `Name`        VARCHAR(100)       NOT NULL,
+    `IsActive`    BIT                DEFAULT 1,
 
-DROP TABLE IF EXISTS `mentor_of_course`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `mentor_of_course` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `course_id` bigint DEFAULT NULL,
-  `mentor_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `mentorAndCourseIndex` (`course_id`,`mentor_id`),
-  KEY `FK_mentorId` (`mentor_id`),
-  CONSTRAINT `FK_course_of_mentor` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`),
-  CONSTRAINT `FK_mentor_of_course` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_Course`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `UQ_Name`      UNIQUE (`Name`)
+);
 
---
--- Table structure for table `mentor_of_student_group`
---
+-- Table `MentorsOfCourses`
 
-DROP TABLE IF EXISTS `mentor_of_student_group`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `mentor_of_student_group` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `mentor_id` bigint DEFAULT NULL,
-  `student_group_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `mentorAndStudentGroupIndex` (`mentor_id`,`student_group_id`),
-  KEY `FK__idx` (`student_group_id`),
-  CONSTRAINT `FK_mentor_of_student_group` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`),
-  CONSTRAINT `FK_student_group_of_mentor` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `MentorsOfCourses`;
 
---
--- Table structure for table `scheduled_event`
---
+CREATE TABLE `MentorsOfCourses` (
+    `ID`          BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `MentorID`    BIGINT UNSIGNED    NOT NULL,
+    `CourseID`    BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `scheduled_event`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `scheduled_event` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `event_occurence_id` bigint NOT NULL,
-  `student_group_id` bigint DEFAULT NULL,
-  `theme_id` bigint DEFAULT NULL,
-  `mentor_id` bigint DEFAULT NULL,
-  `lesson_id` bigint DEFAULT NULL UNIQUE,
-  `event_start` datetime NOT NULL,
-  `event_finish` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_scheduled_events_event_occurence1_idx` (`event_occurence_id`),
-  KEY `fk_scheduled_events_student_group1_idx` (`student_group_id`),
-  KEY `fk_scheduled_events_theme1_idx` (`theme_id`),
-  KEY `fk_scheduled_events_mentor1_idx` (`mentor_id`),
-  KEY `fk_scheduled_events_lesson1_idx` (`lesson_id`),
-  CONSTRAINT `fk_scheduled_events_event_occurence1` FOREIGN KEY (`event_occurence_id`) REFERENCES `event_occurence` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_scheduled_events_lesson1` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`),
-  CONSTRAINT `fk_scheduled_events_mentor1` FOREIGN KEY (`mentor_id`) REFERENCES `mentor` (`id`),
-  CONSTRAINT `fk_scheduled_events_student_group1` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`),
-  CONSTRAINT `fk_scheduled_events_theme1` FOREIGN KEY (`theme_id`) REFERENCES `theme` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_MentorOfCourse`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Mentor`             FOREIGN KEY (`MentorID`)           REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_Course`             FOREIGN KEY (`CourseID`)           REFERENCES `Courses` (`ID`),
+    CONSTRAINT    `UQ_MentorAndCourse`    UNIQUE (`MentorID`, `CourseID`)
+);
 
---
--- Table structure for table `secretary`
---
+-- Table `StudentGroups`
 
-DROP TABLE IF EXISTS `secretary`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `secretary` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `account_id` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_account_of_secretary` (`account_id`),
-  CONSTRAINT `FK_account_of_secretary` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `StudentGroups`;
 
---
--- Table structure for table `student`
---
+CREATE TABLE `StudentGroups` (
+    `ID`            BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `CourseID`      BIGINT UNSIGNED    NOT NULL,
+    `Name`          VARCHAR(100)       NOT NULL,
+    `StartDate`     DATE               NOT NULL,
+    `FinishDate`    DATE               NOT NULL,
 
-DROP TABLE IF EXISTS `student`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `student` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `account_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_account_of_student` (`account_id`),
-  CONSTRAINT `FK_account_of_student` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_StudentGroup`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Course`          FOREIGN KEY (`CourseID`)    REFERENCES `Courses` (`ID`),
+    CONSTRAINT    `UQ_Name`            UNIQUE (`Name`)
+);
 
---
--- Table structure for table `student_group`
---
+-- Table `StudentsOfStudentGroups`
 
-DROP TABLE IF EXISTS `student_group`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `student_group` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `course_id` bigint DEFAULT NULL,
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'name has been set to not null and unique',
-  `start_date` date DEFAULT NULL,
-  `finish_date` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`),
-  KEY `FK_course_of_student_group` (`course_id`),
-  CONSTRAINT `FK_course_of_student_group` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `StudentsOfStudentGroups`;
 
---
--- Table structure for table `student_of_student_group`
---
+CREATE TABLE `StudentsOfStudentGroups` (
+    `ID`                BIGINT UNSIGNED    NOT NULL         AUTO_INCREMENT,
+    `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
+    `StudentID`         BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `student_of_student_group`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `student_of_student_group` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `student_group_id` bigint DEFAULT NULL,
-  `student_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK__idx` (`student_group_id`),
-  KEY `FK_student_of_student_group_idx` (`student_id`),
-  CONSTRAINT `FK_student_group_of_student` FOREIGN KEY (`student_group_id`) REFERENCES `student_group` (`id`),
-  CONSTRAINT `FK_student_of_student_group` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=496 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_StudentOfStudentGroup`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_StudentGroup`             FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `FK_Student`                  FOREIGN KEY (`StudentID`)         REFERENCES `Students` (`ID`)
+);
 
---
--- Table structure for table `theme`
---
+-- Table `MentorsOfStudentGroups`
 
-DROP TABLE IF EXISTS `theme`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `theme` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'name has been set to not null and unique',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `MentorsOfStudentGroups`;
 
---
--- Table structure for table `visit`
---
+CREATE TABLE `MentorsOfStudentGroups` (
+    `ID`                BIGINT UNSIGNED    NOT NULL         AUTO_INCREMENT,
+    `MentorID`          BIGINT UNSIGNED    NOT NULL,
+    `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
 
-DROP TABLE IF EXISTS `visit`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `visit` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `student_id` bigint DEFAULT NULL,
-  `lesson_id` bigint DEFAULT NULL,
-  `student_mark` tinyint DEFAULT NULL,
-  `presence` tinyint(1) NOT NULL COMMENT 'presence default value has been set',
-  `comment` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_lesson_of_visit` (`lesson_id`),
-  KEY `FK_student_of_visit_idx` (`student_id`),
-  CONSTRAINT `FK_lesson_of_visit` FOREIGN KEY (`lesson_id`) REFERENCES `lesson` (`id`),
-  CONSTRAINT `FK_student_of_visit` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=400 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+    CONSTRAINT    `PK_MentorOfStudentGroup`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Mentor`                  FOREIGN KEY (`MentorID`)                 REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_StudentGroup`            FOREIGN KEY (`StudentGroupID`)           REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `UQ_MentorAndStudentGroup`    UNIQUE (`MentorID`, `StudentGroupID`)
+);
 
--- -----------------------------------------------------
--- Table `soft`.`homework_from_student`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `soft`.`homework_from_student` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `student_id` bigint(20) not null,
-  `homework_text` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL,
-  `homework_id` BIGINT(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_student_homework` (`homework_id` ASC),
-  CONSTRAINT `FK_student_homework`
-    FOREIGN KEY (`homework_id`)
-    REFERENCES `soft`.`homework` (`id`),
-  CONSTRAINT `FK_homework_of_student`
-    FOREIGN KEY (`student_id`)
-    REFERENCES `soft`.`student` (`id`))
+-- Table `Themes`
 
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
--- -----------------------------------------------------
--- Table `soft`.`attachment_of_homework`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `soft`.`attachment_of_homework_student` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `attachment_id` BIGINT(20) NOT NULL,
-  `homework_student_id` BIGINT(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_homework_student_of_attachment_id` (`homework_student_id` ASC),
-  INDEX `FK_attachment_of_homework_student_id` (`attachment_id` ASC),
-  CONSTRAINT `FK_homework_student_of_attachment_id`
-    FOREIGN KEY (`homework_student_id`)
-    REFERENCES `soft`.`homework_from_student` (`id`),
-  CONSTRAINT `"FK_attachment_of_homework_student_id"`
-    FOREIGN KEY (`attachment_id`)
-    REFERENCES `soft`.`attachment` (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+DROP TABLE IF EXISTS `Themes`;
 
---
--- Dumping events for database 'soft'
---
+CREATE TABLE `Themes` (
+    `ID`      BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `Name`    VARCHAR(100)       NOT NULL,
 
---
--- Dumping routines for database 'soft'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+    CONSTRAINT    `PK_Theme`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `UQ_Name`     UNIQUE (`Name`)
+);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Table `Lessons`
 
--- Dump completed on 2021-01-26 14:27:34
+DROP TABLE IF EXISTS `Lessons`;
+
+CREATE TABLE `Lessons` (
+    `ID`                BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `MentorID`          BIGINT UNSIGNED    NOT NULL,
+    `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
+    `ThemeID`           BIGINT UNSIGNED    NOT NULL,
+    `LessonDate`        DATETIME           NOT NULL,
+
+    CONSTRAINT    `PK_Lesson`         PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Mentor`          FOREIGN KEY (`MentorID`)          REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_StudentGroup`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `FK_Theme`           FOREIGN KEY (`ThemeID`)           REFERENCES `Themes` (`ID`)
+);
+
+-- Table `Visits`
+
+DROP TABLE IF EXISTS `Visits`;
+
+CREATE TABLE `Visits` (
+    `ID`             BIGINT UNSIGNED     NOT NULL         AUTO_INCREMENT,
+    `StudentID`      BIGINT UNSIGNED     NOT NULL,
+    `LessonID`       BIGINT UNSIGNED     NOT NULL,
+    `StudentMark`    TINYINT UNSIGNED    DEFAULT NULL,
+    `Presence`       BIT                 DEFAULT 1,
+    `Comment`        VARCHAR(1024)       DEFAULT NULL,
+
+    CONSTRAINT    `PK_Visit`      PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Student`    FOREIGN KEY (`StudentID`)           REFERENCES `Students` (`ID`),
+    CONSTRAINT    `FK_Lesson`     FOREIGN KEY (`LessonID`)            REFERENCES `Lessons` (`ID`),
+    CONSTRAINT    `CH_Mark`       CHECK (`StudentMark` >= 0
+										 AND `StudentMark` <= 100)
+);
+
+-- Table `Homework`
+
+DROP TABLE IF EXISTS `Homeworks`;
+
+CREATE TABLE IF NOT EXISTS `Homeworks` (
+    `ID`          BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `DueDate`     DATETIME           NOT NULL,
+    `TaskText`    TEXT               NOT NULL,
+    `LessonID`    BIGINT UNSIGNED    NOT NULL,
+
+    CONSTRAINT    `PK_Homework`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Lesson`      FOREIGN KEY (`LessonID`)    REFERENCES `Lessons` (`ID`)    ON DELETE RESTRICT,
+
+    INDEX    `IX_Lesson`    (`LessonID` ASC)
+);
+
+-- Table `AttachmentsOfHomeworks`
+
+DROP TABLE IF EXISTS `AttachmentsOfHomeworks`;
+
+CREATE TABLE `AttachmentsOfHomeworks` (
+    `ID`              BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `HomeworkID`      BIGINT UNSIGNED    NOT NULL,
+    `AttachmentID`    BIGINT UNSIGNED    NOT NULL,
+
+    CONSTRAINT    `PK_AttachmentOfHomework`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Attachment`              FOREIGN KEY (`AttachmentID`)    REFERENCES `Attachments` (`ID`),
+    CONSTRAINT    `FK_Homework`                FOREIGN KEY (`HomeworkID`)      REFERENCES `Homeworks` (`ID`)
+);
+
+-- Table `HomeworksFromStudents`
+
+DROP TABLE IF EXISTS `HomeworksFromStudents`;
+
+CREATE TABLE IF NOT EXISTS `HomeworksFromStudents` (
+    `ID`              BIGINT UNSIGNED    NOT NULL         AUTO_INCREMENT,
+    `StudentID`       BIGINT UNSIGNED    NOT NULL,
+    `HomeworkText`    TEXT               DEFAULT NULL,
+    `HomeworkID`      BIGINT UNSIGNED    NOT NULL,
+
+    CONSTRAINT    `PK_HomeworkFromStudent`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Student`                FOREIGN KEY (`StudentID`)     REFERENCES `Students` (`ID`),
+    CONSTRAINT    `FK_Homework`               FOREIGN KEY (`HomeworkID`)    REFERENCES `Homeworks` (`ID`),
+
+    INDEX    `IX_Homework`    (`HomeworkID` ASC)
+);
+
+-- Table `AttachmentsOfHomeworksFromStudents`
+
+DROP TABLE IF EXISTS `AttachmentsOfHomeworksFromStudents`;
+
+CREATE TABLE IF NOT EXISTS `AttachmentsOfHomeworksFromStudents` (
+    `ID`                       BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `AttachmentID`             BIGINT UNSIGNED    NOT NULL,
+    `HomeworkFromStudentID`    BIGINT UNSIGNED    NOT NULL,
+
+    CONSTRAINT    `PK_AttachmentOfHomeworkFromStudent`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_Attachment`                         FOREIGN KEY (`AttachmentID`)             REFERENCES `Attachments` (`ID`),
+    CONSTRAINT    `FK_HomeworkFromStudent`                FOREIGN KEY (`HomeworkFromStudentID`)    REFERENCES `HomeworksFromStudents` (`ID`),
+
+    INDEX    `IX_HomeworkFromStudent`    (`HomeworkFromStudentID` ASC),
+    INDEX    `IX_Attachment`             (`AttachmentID` ASC)
+);
+
+-- Table `EventOccurrences`
+
+DROP TABLE IF EXISTS `EventOccurrences`;
+
+CREATE TABLE `EventOccurrences` (
+    `ID`                BIGINT UNSIGNED     NOT NULL        AUTO_INCREMENT,
+    `StudentGroupID`    BIGINT UNSIGNED     NOT NULL,
+    `EventStart`        DATETIME            NOT NULL,
+    `EventFinish`       DATETIME            NOT NULL,
+    `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n 0 - Daily,\n 1 - Weekly,\n 2 - AbsoluteMonthly,\n 3 - RelativeMonthly',
+    `Storage`           BIGINT UNSIGNED     NOT NULL,
+
+    CONSTRAINT    `PK_EventOccurrence`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_StudentGroup`      FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`)    ON DELETE CASCADE
+);
+
+-- Table `ScheduledEvents`
+
+DROP TABLE IF EXISTS `ScheduledEvents`;
+
+CREATE TABLE `ScheduledEvents` (
+    `ID`                   BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `EventOccurrenceID`    BIGINT UNSIGNED    NOT NULL,
+    `StudentGroupID`       BIGINT UNSIGNED    NOT NULL,
+    `ThemeID`              BIGINT UNSIGNED    NOT NULL,
+    `MentorID`             BIGINT UNSIGNED    NOT NULL,
+    `LessonID`             BIGINT UNSIGNED    NOT NULL,
+    `EventStart`           DATETIME           NOT NULL,
+    `EventFinish`          DATETIME           NOT NULL,
+
+    CONSTRAINT    `PK_ScheduledEvent`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_EventOccurrence`    FOREIGN KEY (`EventOccurrenceID`)    REFERENCES `EventOccurrences` (`ID`)    ON DELETE CASCADE,
+    CONSTRAINT    `FK_Lesson`             FOREIGN KEY (`LessonID`)             REFERENCES `Lessons` (`ID`),
+    CONSTRAINT    `FK_Mentor`             FOREIGN KEY (`MentorID`)             REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_StudentGroup`       FOREIGN KEY (`StudentGroupID`)       REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `FK_Theme`              FOREIGN KEY (`ThemeID`)              REFERENCES `Themes` (`ID`),
+    CONSTRAINT    `UQ_Lesson`             UNIQUE (`LessonID`)
+);

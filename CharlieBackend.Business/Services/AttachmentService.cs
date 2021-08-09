@@ -139,7 +139,8 @@ namespace CharlieBackend.Business.Services
             {
                 CreatedByAccountId = _currentUserService.AccountId,
                 ContainerName = blob.BlobContainerName,
-                FileName = file.FileName
+                FileName = file.FileName,
+                CreatedOn = System.DateTime.UtcNow
             };
 
             _unitOfWork.AttachmentRepository.Add(attachment);

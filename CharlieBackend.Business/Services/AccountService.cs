@@ -191,7 +191,7 @@ namespace CharlieBackend.Business.Services
             }
 
             user.ForgotPasswordToken = Guid.NewGuid().ToString();
-            user.ForgotTokenGenDate = DateTime.Now;
+            user.ForgotTokenGenDate = DateTime.UtcNow;
 
             await _unitOfWork.CommitAsync();
 
