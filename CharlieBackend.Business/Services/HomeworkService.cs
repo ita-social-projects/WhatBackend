@@ -24,13 +24,16 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
+        private readonly ICurrentUserService _currentUser;
 
         public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper,
-                ILogger<HomeworkService> logger)
+                ILogger<HomeworkService> logger,
+                ICurrentUserService currentUser)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _currentUser = currentUser;
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
@@ -214,23 +217,14 @@ namespace CharlieBackend.Business.Services
         }
 
         public async Task<Result<IList<HomeworkDto>>>GetMentorFilteredHW(
-                long mentorId, HomeworkFilterDto filter)
+                HomeworkFilterDto filter)
         {
-            var result = new Result<IList<HomeworkDto>>();
+            var homeworks = await _unitOfWork.HomeworkRepository
+                        .GetMentorFilteredHomwork(filter, _currentUser.EntityId);
 
-            if (await _unitOfWork.MentorRepository.GetByIdAsync(mentorId) == null)
-            {
-                result.Error.Code = ErrorCode.NotFound;
-            }
-            else
-            {
-                var homeworks = await _unitOfWork.HomeworkRepository
-                        .GetMentorFilteredHomwork(filter, mentorId);
-
-                result = Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map
+            var result = Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map
                     <IList<HomeworkDto>>(homeworks));            
-            }
-
+            
             return result;
         }
     }

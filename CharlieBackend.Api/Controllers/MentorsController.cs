@@ -1,14 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using CharlieBackend.Core.DTO.Mentor;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Models.ResultModel;
+using Swashbuckle.AspNetCore.Annotations;
+
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -59,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
         [Authorize(Roles = "Mentor")]
         [HttpPost("lessons")]
-        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
+        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody] FilterLessonsRequestDto filterModel)
         {
             var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel);
 
@@ -78,7 +80,7 @@ namespace CharlieBackend.Api.Controllers
 
             return mentors;
         }
-        
+
         /// <summary>
         /// Get mentor information by mentor id
         /// </summary>
@@ -153,7 +155,7 @@ namespace CharlieBackend.Api.Controllers
                 foundGroups = Result<IList<MentorStudyGroupsDto>>.GetSuccess(await
                         _mentorService.GetMentorStudyGroupsByMentorIdAsync(id));
             }
-            
+
             return foundGroups.ToActionResult();
         }
 
@@ -240,19 +242,12 @@ namespace CharlieBackend.Api.Controllers
         ///<response code="401">Mentor can get only his information</response>
         ///<response code="404">Not found account of mentor</response>
         [SwaggerResponse(200, type: typeof(IList<HomeworkDto>))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpGet("{mentorId}/homeworks")]
+        [Authorize(Roles = "Mentor")]
+        [HttpGet("homeworks")]
         public async Task<ActionResult<List<HomeworkDto>>> GetMentorHomeworks(
-                [FromBody]HomeworkFilterDto filter, long mentorId) 
+                [FromBody] HomeworkFilterDto filter, long mentorId)
         {
-            var homeworks = await _mentorService.CheckRoleAndIdMentor(mentorId,
-                    new Result<IList<HomeworkDto>>());
-
-            if (homeworks.Error == default)
-            {
-                homeworks = await _homeworkService.GetMentorFilteredHW(
-                        mentorId, filter);
-            }
+            var homeworks = await _homeworkService.GetMentorFilteredHW(filter);
 
             return homeworks.ToActionResult();
         }

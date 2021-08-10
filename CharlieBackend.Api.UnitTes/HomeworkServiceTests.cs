@@ -25,6 +25,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserMock;
         private readonly HomeworkService _homeworkService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
@@ -38,7 +39,9 @@ namespace CharlieBackend.Api.UnitTest
             _attachmentRepositoryMock = new Mock<IAttachmentRepository>();
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object);
+            _currentUserMock = new Mock<ICurrentUserService>();
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object,
+                    _mapper, _loggerMock.Object, _currentUserMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
@@ -310,7 +313,7 @@ namespace CharlieBackend.Api.UnitTest
             var homeworkService = new HomeworkService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                _loggerMock.Object);
+                _loggerMock.Object, _currentUserMock.Object);
 
             var request_one = new UpdateMarkRequestDto
             { 
@@ -357,7 +360,7 @@ namespace CharlieBackend.Api.UnitTest
             var homeworkService = new HomeworkService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                _loggerMock.Object);
+                _loggerMock.Object, _currentUserMock.Object);
 
             var request = new UpdateMarkRequestDto
             {
