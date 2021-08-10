@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -13,5 +14,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<IList<Homework>> GetHomeworksByLessonId(long studentGroupId);
 
         Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId);
+
+        Task<IList<Homework>> GetMentorFilteredHomwork(HomeworkFilterDto filter
+                , long? mentorId);
     }
 }

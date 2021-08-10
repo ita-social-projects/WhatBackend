@@ -20,5 +20,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
 
+        Task<Result<IList<HomeworkDto>>> GetMentorFilteredHW(long mentorId,
+                HomeworkFilterDto filter);
+
     }
 }

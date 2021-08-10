@@ -25,7 +25,8 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
 
-        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger)
+        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper,
+                ILogger<HomeworkService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -210,6 +211,27 @@ namespace CharlieBackend.Business.Services
             await _unitOfWork.CommitAsync();
 
             return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
+        }
+
+        public async Task<Result<IList<HomeworkDto>>>GetMentorFilteredHW(
+                long mentorId, HomeworkFilterDto filter)
+        {
+            var result = new Result<IList<HomeworkDto>>();
+
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(mentorId) == null)
+            {
+                result.Error.Code = ErrorCode.NotFound;
+            }
+            else
+            {
+                var homeworks = await _unitOfWork.HomeworkRepository
+                        .GetMentorFilteredHomwork(filter, mentorId);
+
+                result = Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map
+                    <IList<HomeworkDto>>(homeworks));            
+            }
+
+            return result;
         }
     }
 }

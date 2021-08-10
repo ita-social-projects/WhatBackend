@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -46,5 +48,26 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(x => (x.Id == homeworkId) && (x.Lesson.MentorId == mentorId));
         }
 
+        public async Task<IList<Homework>> GetMentorFilteredHomwork(
+                HomeworkFilterDto filter, long? mentorId)
+        {
+            return await _applicationContext.Mentors
+                    .Include(m => m.Lesson).ThenInclude(l => l.StudentGroup)
+                    .SelectMany(m => m.Lesson
+                            .Where(l => l.MentorId == mentorId))
+                    .WhereIf(filter.GroupId != default,
+                            l => l.StudentGroupId == filter.GroupId)
+                    .WhereIf((filter.CourseId != default)
+                            && (filter.GroupId == default),
+                            l => l.StudentGroup.CourseId == filter.CourseId)                
+                    .Include(l => l.Homeworks)
+                    .SelectMany(l => l.Homeworks
+                            .Where(h => h.LessonId == l.Id))
+                    .WhereIf(filter.StartDate != default,
+                            h => h.DueDate >= filter.StartDate)
+                    .WhereIf(filter.FinishDate != default,
+                            h => h.DueDate <= filter.FinishDate)
+                    .ToListAsync();  
+        }
     }
 }

@@ -8,6 +8,7 @@ using CharlieBackend.Core;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -21,14 +22,18 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly ILessonService _lessonService;
+        private readonly IHomeworkService _homeworkService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
-        public MentorsController(IMentorService mentorService, ILessonService lessonService)
+        public MentorsController(IMentorService mentorService,
+                ILessonService lessonService,
+                IHomeworkService homeworkService)
         {
             _mentorService = mentorService;
             _lessonService = lessonService;
+            _homeworkService = homeworkService;
         }
 
         /// <summary>
@@ -222,6 +227,34 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return lessons.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of filtered homeworks of mentor 
+        /// </summary>
+        /// <param name="filter">filter for request to db</param>
+        /// <param name="mentorId">ID of the mentor whose homework we
+        /// are looking for</param>
+        /// <response code="200">Successful return of homeworks list of
+        /// given mentor</response>
+        ///<response code="401">Mentor can get only his information</response>
+        ///<response code="404">Not found account of mentor</response>
+        [SwaggerResponse(200, type: typeof(IList<HomeworkDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpGet("{mentorId}/homeworks")]
+        public async Task<ActionResult<List<HomeworkDto>>> GetMentorHomeworks(
+                [FromBody]HomeworkFilterDto filter, long mentorId) 
+        {
+            var homeworks = await _mentorService.CheckRoleAndIdMentor(mentorId,
+                    new Result<IList<HomeworkDto>>());
+
+            if (homeworks.Error == default)
+            {
+                homeworks = await _homeworkService.GetMentorFilteredHW(
+                        mentorId, filter);
+            }
+
+            return homeworks.ToActionResult();
         }
     }
 }

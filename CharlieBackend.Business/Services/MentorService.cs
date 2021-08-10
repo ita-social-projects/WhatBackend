@@ -22,7 +22,8 @@ namespace CharlieBackend.Business.Services
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
                              IMapper mapper, INotificationService notification,
-                             ICurrentUserService currentUserService, IBlobService blobService)
+                             IBlobService blobService,
+                             ICurrentUserService currentUserService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
