@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Core.Models.ResultModel;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
