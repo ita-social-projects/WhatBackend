@@ -15,10 +15,10 @@ namespace CharlieBackend.AdminPanel.Controllers
         [Route("Home/ApiError/{statusCode}/{message}")]
         public IActionResult ApiError(uint statusCode, string message)
         {
-            var decodeMessage = HttpUtility.UrlDecode(message);
+            var decodedMessage = HttpUtility.UrlDecode(message);
 
             ViewBag.statusCode = statusCode;
-            ViewBag.message = decodeMessage;
+            ViewBag.message = decodedMessage;
 
             return View();
         }

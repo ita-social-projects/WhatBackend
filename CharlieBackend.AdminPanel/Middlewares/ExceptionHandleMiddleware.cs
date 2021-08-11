@@ -29,9 +29,9 @@ namespace CharlieBackend.AdminPanel.Middlewares
             {
                 _logger.LogError($"Something went wrong with API. {ex.Message}");
                     
-                var encodeMessage = HttpUtility.UrlEncode(ex.Message);
+                var encodedMessage = HttpUtility.UrlEncode(ex.Message);
 
-                context.Response.Redirect($"/Home/ApiError/{(uint)ex.HttpStatusCode}/{encodeMessage}");
+                context.Response.Redirect($"/Home/ApiError/{(uint)ex.HttpStatusCode}/{encodedMessage}");
             }
             catch (Exception ex)
             {
