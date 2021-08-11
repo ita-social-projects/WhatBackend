@@ -27,7 +27,13 @@ namespace CharlieBackend.Api.UnitTest
         private static long courseIdWithoutGroup = 2;
 
         private static long studentId = 2;
+        private static string student = "Ivan Ivanov";
         private static long id = 1;
+
+        private static string studentWithId = "Student One";
+        private static string courseWithId = "Course One";
+        private static string studentGroupWithId = "Group One";
+
         private static sbyte mark = 5;
         private static long month = 30;
         int nonExistentCourseId = int.MaxValue;
@@ -71,8 +77,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentMarkDto
                         {
-                            CourseId = expectedCourseId,
-                            StudentGroupId = expectedStudentGroupId,
+                            Course = courseWithId,
+                            StudentGroup = studentGroupWithId,
+                            Student = studentWithId,
                             StudentId = expectedStudentId,
                             LessonId = expectedLessonId,
                             LessonDate = DateTime.Now,
@@ -84,8 +91,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentVisitDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
                         LessonDate = DateTime.Now,
@@ -230,9 +238,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentMarkDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
-                        StudentId = expectedStudentId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentAverageMark = (decimal)5.1
                     }
             };
@@ -241,9 +249,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentVisitsDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
-                        StudentId = expectedStudentId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentAverageVisitsPercentage = 15
                     }
             };
@@ -396,8 +404,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentMarkDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
                         LessonDate = DateTime.Now,
@@ -409,8 +418,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new StudentVisitDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
                         LessonDate = DateTime.Now,
@@ -582,9 +592,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentMarkDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
-                        StudentId = expectedStudentId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentAverageMark = (decimal)5.1
                     }
             };
@@ -593,9 +603,9 @@ namespace CharlieBackend.Api.UnitTest
             {
                  new AverageStudentVisitsDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
-                        StudentId = expectedStudentId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
+                        Student = studentWithId,
                         StudentAverageVisitsPercentage = 15
                     }
             };
@@ -762,8 +772,8 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentGroupMarkDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
                         AverageMark = (decimal)4.5
                     }
             };
@@ -772,8 +782,8 @@ namespace CharlieBackend.Api.UnitTest
             {
                 new AverageStudentGroupVisitDto()
                     {
-                        CourseId = expectedCourseId,
-                        StudentGroupId = expectedStudentGroupId,
+                        Course = courseWithId,
+                        StudentGroup = studentGroupWithId,
                         AverageVisitPercentage = 15
                     }
             };

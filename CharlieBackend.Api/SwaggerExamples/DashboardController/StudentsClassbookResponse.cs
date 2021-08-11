@@ -17,18 +17,18 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                 {
                     new StudentMarkDto
                     {
-                        StudentId = 33,
-                        CourseId = 4,
-                        StudentGroupId = 31,
+                        Student = "John Coffee",
+                        Course = "Naturalism",
+                        StudentGroup = "PZ-19-1",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
                         StudentMark = 5,
                     },
                     new StudentMarkDto
                     {
-                        StudentId = 34,
-                        CourseId = 4,
-                        StudentGroupId = 31,
+                        Student = "John Coffee",
+                        Course = "Naturalism",
+                        StudentGroup = "PZ-19-1",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
                         StudentMark = 4,
@@ -38,18 +38,18 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                 {
                     new StudentVisitDto
                     {
-                        StudentId = 33,
-                        CourseId = 4,
-                        StudentGroupId = 31,
+                        Student = "John Brown",
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
                         Presence = true
                     },
                     new StudentVisitDto
                     {
-                        StudentId = 34,
-                        CourseId = 4,
-                        StudentGroupId = 31,
+                        Student = "John Brown",
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
                         Presence = true
