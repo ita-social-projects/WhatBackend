@@ -34,8 +34,8 @@ namespace CharlieBackend.Api.Controllers
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsClassbook")]
-        [HttpGet]
-        public async Task<FileResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
+        [HttpPost]
+        public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsClassbookAsync(request);
@@ -61,8 +61,8 @@ namespace CharlieBackend.Api.Controllers
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsResults")]
-        [HttpGet]
-        public async Task<FileResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
+        [HttpPost]
+        public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsResultAsync(request);
@@ -87,8 +87,8 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentClassbook/{studentId}")]
-        [HttpGet]
-        public async Task<FileResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
+        [HttpPost]
+        public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentClassbookAsync(studentId, request);
@@ -112,8 +112,8 @@ namespace CharlieBackend.Api.Controllers
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
-        [HttpGet("studentResults/{studentId}")]
-        public async Task<FileResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
+        [HttpPost("studentResults/{studentId}")]
+        public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentResultAsync(studentId, request);
@@ -137,8 +137,8 @@ namespace CharlieBackend.Api.Controllers
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpGet("studentGroupResults/{courseId}")]
-        public async Task<FileResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
+        [HttpPost("studentGroupResults/{courseId}")]
+        public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
             .GetStudentGroupResultAsync(courseId, request);
