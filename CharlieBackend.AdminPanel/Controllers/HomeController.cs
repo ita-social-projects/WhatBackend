@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
@@ -14,8 +15,10 @@ namespace CharlieBackend.AdminPanel.Controllers
         [Route("Home/ApiError/{statusCode}/{message}")]
         public IActionResult ApiError(uint statusCode, string message)
         {
+            var decodeMessage = HttpUtility.UrlDecode(message);
+
             ViewBag.statusCode = statusCode;
-            ViewBag.message = message;
+            ViewBag.message = decodeMessage;
 
             return View();
         }
