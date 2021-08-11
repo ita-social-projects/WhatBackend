@@ -67,7 +67,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                    "Course",
                     "Student Group",
                     "Student",
-                    "Average mark percentage");
+                    "Average mark");
 
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
                    AverageStudentsMarks.First().Course,

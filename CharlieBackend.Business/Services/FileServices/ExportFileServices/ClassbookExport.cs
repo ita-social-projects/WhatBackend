@@ -22,8 +22,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
-                xLWorkbook.AddWorksheet("Presence of " + data.StudentsPresences.First().StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Presence of " + data.StudentsPresences.First().StudentGroup);
+                var firstStudentPresence = data.StudentsPresences.First();
+                xLWorkbook.AddWorksheet("Presence of " + firstStudentPresence.StudentGroup);
+                var worksheet = xLWorkbook.Worksheet("Presence of " + firstStudentPresence.StudentGroup);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
@@ -31,21 +32,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     "Student:");
 
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
-                   data.StudentsPresences.First().Course,
-                   data.StudentsPresences.First().StudentGroup);
+                   firstStudentPresence.Course,
+                   firstStudentPresence.StudentGroup);
 
                 var dateData = data.StudentsPresences.GroupBy(x => x.LessonDate);
 
                 var studentList = dateData.First().OrderBy(x => x.Student);
-                for (int student = 0; student < studentList.Count(); student++)
+                for (int studentIndex = 0; studentIndex < studentList.Count(); studentIndex++)
                 {
-                    worksheet.Cell(_STUDENT_STARTING_ROW + student, _STUDENT_STARTING_COLUMN)
-                        .Value = studentList.ElementAt(student).Student;
+                    worksheet.Cell(_STUDENT_STARTING_ROW + studentIndex, _STUDENT_STARTING_COLUMN)
+                        .Value = studentList.ElementAt(studentIndex).Student;
                 }
 
-                int presencesGroups = dateData.Count();
+                int presencesGroupsCount = dateData.Count();
 
-                for (int groupN = 0; groupN < presencesGroups; groupN++)
+                for (int groupN = 0; groupN < presencesGroupsCount; groupN++)
                 {
                     int actualIndex = groupN + _DEFAULT_STARTING_COLUMN;
                     var actualGroup = dateData.ElementAt(groupN).OrderBy(x => x.Student);
@@ -77,10 +78,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         private async Task TryToFillMarks(StudentsClassbookResultDto data)
         {
+            var firstStudentMark = data.StudentsMarks.First();
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
-                xLWorkbook.AddWorksheet("Marks of " + data.StudentsMarks.First().StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Marks of " + data.StudentsMarks.First().StudentGroup);
+                xLWorkbook.AddWorksheet("Marks of " + firstStudentMark.StudentGroup);
+                var worksheet = xLWorkbook.Worksheet("Marks of " + firstStudentMark.StudentGroup);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
@@ -88,21 +90,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     "Student:");
 
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
-                   data.StudentsMarks.First().Course,
-                   data.StudentsMarks.First().StudentGroup);
+                   firstStudentMark.Course,
+                   firstStudentMark.StudentGroup);
 
                 var dateData = data.StudentsMarks.GroupBy(x => x.LessonDate);
 
                 var studentList = dateData.First().OrderBy(x => x.Student);
-                for (int student = 0; student < studentList.Count(); student++)
+                for (int studentIndex = 0; studentIndex < studentList.Count(); studentIndex++)
                 {
-                    worksheet.Cell(_STUDENT_STARTING_ROW + student, _STUDENT_STARTING_COLUMN)
-                        .Value = studentList.ElementAt(student).Student;
+                    worksheet.Cell(_STUDENT_STARTING_ROW + studentIndex, _STUDENT_STARTING_COLUMN)
+                        .Value = studentList.ElementAt(studentIndex).Student;
                 }
 
-                int presencesGroups = dateData.Count();
+                int markGroupsCount = dateData.Count();
 
-                for (int groupN = 0; groupN < presencesGroups; groupN++)
+                for (int groupN = 0; groupN < markGroupsCount; groupN++)
                 {
                     int actualIndex = groupN + _DEFAULT_STARTING_COLUMN;
                     var actualGroup = dateData.ElementAt(groupN).OrderBy(x => x.Student);
