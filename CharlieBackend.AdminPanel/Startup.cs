@@ -29,7 +29,7 @@ namespace CharlieBackend.AdminPanel
 
             services.AddHttpContextAccessor();
 
-            services.AddServices();
+            services.AddServices(Configuration);
 
             // AutoMapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>

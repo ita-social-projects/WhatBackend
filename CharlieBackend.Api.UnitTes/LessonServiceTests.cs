@@ -631,7 +631,7 @@ namespace CharlieBackend.Api.UnitTest
             var result = await lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            result.Should().Equals(true);
+            result.Data.Should().BeTrue();
         }
 
         [Fact]
@@ -660,7 +660,7 @@ namespace CharlieBackend.Api.UnitTest
             var result = await lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            result.Should().Equals(false);
+            result.Data.Should().BeFalse();
         }
 
         [Fact]
