@@ -5,6 +5,7 @@ using CharlieBackend.AdminPanel.Utils.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 
 namespace CharlieBackend.AdminPanel.Extensions
 {
@@ -28,7 +29,8 @@ namespace CharlieBackend.AdminPanel.Extensions
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
                 client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
-            });
+            })
+                .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         }
     }
 }
