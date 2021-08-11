@@ -1,8 +1,12 @@
+-- Table names are stored as given but compared in lowercase
+-- Do not use value 1 on Windows or macOS
+-- SET lower_case_table_names = 2;
+
 DROP DATABASE IF EXISTS `Soft`;
 
 CREATE DATABASE IF NOT EXISTS `Soft`
 CHARACTER SET UTF8MB4
-COLLATE UTF8MB4_0900_AI_CI;
+COLLATE UTF8MB4_0900_AS_CS;
 
 USE `Soft`;
 
