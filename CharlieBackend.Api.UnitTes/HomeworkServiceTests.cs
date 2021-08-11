@@ -195,7 +195,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 1,
                 LessonId = 1,
                 DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
-
+                PublishingDate = DateTime.UtcNow
             };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);

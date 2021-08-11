@@ -183,7 +183,7 @@ namespace CharlieBackend.Business.Services
                 yield return  $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
             }
 
-            if (homework.DueDate < DateTime.Now)
+            if (homework.DueDate < homework.PublishingDate)
             {
                 yield return $"Due date already finished. Due date {homework.DueDate}";
             }

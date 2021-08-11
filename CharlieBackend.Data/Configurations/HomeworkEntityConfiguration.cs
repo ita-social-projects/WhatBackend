@@ -26,6 +26,9 @@ namespace CharlieBackend.Data.Configurations
                 .HasCharSet("utf8mb4")
                 .HasCollation("utf8mb4_0900_ai_ci");
 
+            entity.Property(e => e.PublishingDate)
+                .HasColumnName("publishing_date");
+
             entity.Property(e => e.LessonId).HasColumnName("lesson_id");
 
             entity.HasOne(d => d.Lesson)

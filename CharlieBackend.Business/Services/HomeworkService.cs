@@ -53,7 +53,8 @@ namespace CharlieBackend.Business.Services
                 DueDate = createHomeworkDto.DueDate,
                 LessonId = createHomeworkDto.LessonId,
                 TaskText = createHomeworkDto.TaskText,
-                Lesson = lesson.Result
+                Lesson = lesson.Result,
+                PublishingDate = DateTime.UtcNow
             };
 
             _unitOfWork.HomeworkRepository.Add(newHomework);
