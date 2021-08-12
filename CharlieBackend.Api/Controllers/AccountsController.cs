@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.Extensions;
+using System.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -216,10 +217,18 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
         [Route("password")]
-        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [Authorize(Roles = "Secretary, Mentor, Student")]
         [HttpPut]
         public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
+            var claim = User.Claims;
+            var email = claim.FirstOrDefault(x => x.Type == "Email");
+
+            if (email.ToString() != changePassword.Email)
+            {
+                return StatusCode(403, "User can't change password.");
+            }
+
             var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
 
             return updatedAccount.ToActionResult();
