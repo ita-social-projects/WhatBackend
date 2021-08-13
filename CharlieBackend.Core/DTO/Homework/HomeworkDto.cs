@@ -14,6 +14,8 @@ namespace CharlieBackend.Core.DTO.Homework
 
         public long LessonId { get; set; }
 
+        public DateTime PublishingDate { get; set; }
+
         public virtual IList<long> AttachmentIds { get; set; }
     }
 }
