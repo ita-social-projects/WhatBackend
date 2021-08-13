@@ -27,7 +27,7 @@ namespace CharlieBackend.Business.Services
             _notification = notification;
         }
 
-        public async Task<Result<AccountRoleDto>> AppendRoleToAccount(
+        public async Task<Result<AccountRoleDto>> GrantRoleToAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -42,9 +42,9 @@ namespace CharlieBackend.Business.Services
             }
             else
             {
-                if (await user.SetAccountRoleAsync(accountRole.Role))
+                if (await user.GrantAccountRoleAsync(accountRole.Role))
                 {
-                    await SetAccountRoleToRepositoryAsync(accountRole, user);
+                    await AddGrantedRoleToRepositoryAsync(accountRole, user);
 
                     await _unitOfWork.CommitAsync();
 
@@ -62,7 +62,7 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        private void SetAccountRoleToRepository(AccountRoleDto accountRole,
+        private void AddGrantedRoleToRepository(AccountRoleDto accountRole,
                 Account user)
         {
             switch (accountRole.Role)
@@ -102,13 +102,13 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private async Task SetAccountRoleToRepositoryAsync(
+        private async Task AddGrantedRoleToRepositoryAsync(
                 AccountRoleDto accountRole, Account user) 
         {
-            await Task.Run(() => SetAccountRoleToRepository(accountRole, user));
+            await Task.Run(() => AddGrantedRoleToRepository(accountRole, user));
         }
 
-        public async Task<Result<AccountRoleDto>> RemoveRoleFromAccount(
+        public async Task<Result<AccountRoleDto>> RevokeRoleFromAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -123,7 +123,7 @@ namespace CharlieBackend.Business.Services
             }
             else
             {           
-                if (await user.RemoveAccountRoleAsync(accountRole.Role))
+                if (await user.RevokeAccountRoleAsync(accountRole.Role))
                 {
                     await _unitOfWork.CommitAsync();
 

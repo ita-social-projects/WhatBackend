@@ -146,7 +146,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> GrantRoleToAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
-                    .AppendRoleToAccount(account);
+                    .GrantRoleToAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
         }
@@ -164,7 +164,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> RevokeRoleFromAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
-                    .RemoveRoleFromAccount(account);
+                    .RevokeRoleFromAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
          }
