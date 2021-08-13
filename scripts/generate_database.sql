@@ -56,7 +56,8 @@ CREATE TABLE `Mentors` (
     `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
     CONSTRAINT    `PK_Mentor`            PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AccountMentors`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+    CONSTRAINT    `FK_AccountMentors`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`),
+    CONSTRAINT    `UQ_AccountMentors`    UNIQUE (`AccountID`)
 );
 
 -- Table `Students`
@@ -68,7 +69,8 @@ CREATE TABLE `Students` (
     `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
     CONSTRAINT    `PK_Student`            PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AccountStudents`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+    CONSTRAINT    `FK_AccountStudents`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`),
+    CONSTRAINT    `UQ_AccountStudents`    UNIQUE (`AccountID`)
 );
 
 -- Table `Secretaries`
@@ -79,8 +81,9 @@ CREATE TABLE `Secretaries` (
     `ID`           BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
     `AccountID`    BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_Secretary`               PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AccountSecretaries`      FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`)
+    CONSTRAINT    `PK_Secretary`             PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_AccountSecretaries`    FOREIGN KEY (`AccountID`)    REFERENCES `Accounts` (`ID`),
+    CONSTRAINT    `UQ_AccountSecretaries`    UNIQUE (`AccountID`)
 );
 
 -- Table `Courses`
