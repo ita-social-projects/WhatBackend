@@ -74,7 +74,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id,
                     };
 
-                    _unitOfWork.StudentRepository.Add(newStudent);
+                    if (_unitOfWork.StudentRepository
+                            .GetStudentByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.StudentRepository.Add(newStudent);
+                    }
                     break;
 
                 case UserRole.Mentor:
@@ -84,7 +88,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id
                     };
 
-                    _unitOfWork.MentorRepository.Add(newMentor);
+                    if (_unitOfWork.MentorRepository
+                            .GetMentorByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.MentorRepository.Add(newMentor);
+                    }
                     break;
 
                 case UserRole.Secretary:
@@ -94,7 +102,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id
                     };
 
-                    _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    if (_unitOfWork.SecretaryRepository
+                            .GetSecretaryByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    }
                     break;
 
                 default:
@@ -105,7 +117,7 @@ namespace CharlieBackend.Business.Services
         private async Task AddGrantedRoleToRepositoryAsync(
                 AccountRoleDto accountRole, Account user) 
         {
-            await Task.Run(() => AddGrantedRoleToRepository(accountRole, user));
+             await Task.Run(() => AddGrantedRoleToRepository(accountRole, user));
         }
 
         public async Task<Result<AccountRoleDto>> RevokeRoleFromAccount(
