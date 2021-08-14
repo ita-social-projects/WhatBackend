@@ -245,7 +245,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Mentor")]
         [HttpGet("homeworks")]
         public async Task<ActionResult<List<HomeworkDto>>> GetMentorHomeworks(
-                [FromBody] HomeworkFilterDto filter, long mentorId)
+                [FromBody] HomeworkFilterDto filter)
         {
             var homeworks = await _homeworkService.GetMentorFilteredHW(filter);
 

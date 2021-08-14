@@ -25,7 +25,9 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService)
+        public StudentGroupsController(
+                IStudentGroupService studentGroupService,
+                IHomeworkService homeworkService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
@@ -53,9 +55,11 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(StudentGroupDto))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpPost]
-        public async Task<ActionResult<StudentGroupDto>> PostStudentGroup([FromBody]CreateStudentGroupDto studentGroup)
+        public async Task<ActionResult<StudentGroupDto>> PostStudentGroup(
+                [FromBody]CreateStudentGroupDto studentGroup)
         {
-            var resStudentGroup = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
+            var resStudentGroup = await _studentGroupService
+                    .CreateStudentGroupAsync(studentGroup);
           
             return resStudentGroup.ToActionResult();
         }
