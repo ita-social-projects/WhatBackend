@@ -5,6 +5,7 @@ using CharlieBackend.Core.DTO.Dashboard;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Api.SwaggerExamples.DashboardController;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -70,6 +71,7 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
+        [SwaggerResponse(200, type: typeof(StudentClassbookResultDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentClassbook/{studentId}")]
         public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]DashboardAnalyticsRequestDto<ClassbookResultType> request)
@@ -87,6 +89,7 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" like optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
+        [SwaggerResponse(200, type: typeof(StudentResultsDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}")]
         public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]DashboardAnalyticsRequestDto<StudentResultType> request)
@@ -104,6 +107,7 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
+        [SwaggerResponse(200, type: typeof(StudentGroupsResultsDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost("studentGroupResults/{courseId}")]
         public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]DashboardAnalyticsRequestDto<StudentGroupResultType> request)

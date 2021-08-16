@@ -170,7 +170,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     })
                     .ToListAsync();
 
-            var groups = visitsList.GroupBy(x =>  x.LessonId );
+            var groups = visitsList.GroupBy(x =>  x.LessonId);
 
             foreach (var groupByDate in groups)
             {

@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.DashboardController
 {
-    class StudentsResultsResponse : IExamplesProvider<StudentsResultsDto>
+    /// <summary>
+    /// Class for example data on SwaggerUI, that is complete copy of parental class
+    /// with response data grouped in different way
+    /// </summary>
+    public class StudentResultsDto : StudentsResultsDto
     {
-        public StudentsResultsDto GetExamples()
+
+    }
+
+    class StudentResultsResponse : IExamplesProvider<StudentResultsDto>
+    {
+        public StudentResultsDto GetExamples()
         {
-            return new StudentsResultsDto
+            return new StudentResultsDto
             {
                 AverageStudentsMarks = new List<AverageStudentMarkDto>
                 {
@@ -19,13 +28,13 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                     {
                         Course = "Applied mathematics",
                         StudentGroup = "AM-12",
-                        Student = "Teresa Flores",
+                        Student = "Alice Evans",
                         StudentAverageMark = 4
                     },
                     new AverageStudentMarkDto
                     {
-                        Course = "Applied mathematics",
-                        StudentGroup = "AM-12",
+                        Course = "Naturalism",
+                        StudentGroup = "AquaVita-2",
                         Student = "Alice Evans",
                         StudentAverageMark = 5
                     }
@@ -35,8 +44,8 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                     new AverageStudentVisitsDto
                     {
                         Course = "Applied mathematics",
-                        StudentGroup = "AM-12",
-                        Student = "Teresa Flores",
+                        StudentGroup = "AquaVita-2",
+                        Student = "Alice Evans",
                         StudentAverageVisitsPercentage = 100
                     },
                     new AverageStudentVisitsDto
@@ -44,7 +53,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         Course = "Applied mathematics",
                         StudentGroup = "AM-12",
                         Student = "Alice Evans",
-                        StudentAverageVisitsPercentage = 96
+                        StudentAverageVisitsPercentage = 78
                     },
                 }
             };
