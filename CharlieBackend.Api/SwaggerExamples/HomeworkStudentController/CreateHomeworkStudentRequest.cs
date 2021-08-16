@@ -12,7 +12,8 @@ namespace CharlieBackend.Api.SwaggerExamples.HomeworkStudentController
             {
                 HomeworkId = 1,
                 HomeworkText = "Create Table",
-                AttachmentIds = new List<long>{ 1, 3 }
+                AttachmentIds = new List<long>{ 1, 3 },
+                IsSent = true
             };
         }
     }

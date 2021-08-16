@@ -25,6 +25,25 @@ namespace CharlieBackend.Data.Configurations
                 .HasCharSet("utf8mb4")
                 .HasCollation("utf8mb4_0900_ai_ci");
 
+            entity.Property(e => e.MarkId)
+                .HasColumnName("mark_id")
+                .HasColumnType("BIGINT");
+
+            entity.Property(e => e.PublishingDate)
+                .HasColumnName("publishing_date")
+                .HasColumnType("DATETIME")
+                .IsRequired();
+
+            entity.Property(e => e.IsSent)
+                .HasColumnName("is_sent")
+                .HasColumnType("TINYINT(1)")
+                .IsRequired();
+
+            entity.HasOne(h => h.Mark)
+                .WithOne(s => s.HomeworkStudent)
+                .HasForeignKey<HomeworkStudent>(h => h.MarkId)
+                .HasConstraintName("FK_mark_of_homework");
+
             entity.HasOne(h => h.Homework)
                 .WithMany(h => h.HomeworkStudents)
                 .HasForeignKey(h => h.HomeworkId)

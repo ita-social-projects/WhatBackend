@@ -41,6 +41,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.Homework)
                 .Include(x => x.Student)
                 .Include(x => x.Student.Account)
+                .Include(x => x.Mark)
                 .Where(x => x.StudentId == studentId)
                 .ToListAsync();
         }

@@ -42,6 +42,8 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Homework> Homeworks { get; set; }
 
+        public virtual DbSet<Mark> Marks { get; set; }
+
         public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         public virtual DbSet<HomeworkStudent> HomeworkStudents { get; set; }
@@ -58,6 +60,7 @@ namespace CharlieBackend.Data
                 .ApplyConfiguration(new EventOccurenceEntityConfiguration())
                 .ApplyConfiguration(new HomeworkEntityConfiguration())
                 .ApplyConfiguration(new HomeworkStudentEntityConfiguration())
+                .ApplyConfiguration(new MarkEntityConfiguration())
                 .ApplyConfiguration(new LessonEntityConfiguration())
                 .ApplyConfiguration(new MentorEntityConfiguration())
                 .ApplyConfiguration(new MentorOfCourseEntityConfiguration())

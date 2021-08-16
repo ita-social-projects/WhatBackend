@@ -50,12 +50,19 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, errorsList);
             }
 
+            if (homework.DueDate < DateTime.UtcNow)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Due date already finished. Due date {homework.DueDate}");
+            }
+
             var newHomework = new HomeworkStudent
             {
                 StudentId = student.Id,
                 HomeworkId = homework.Id,
                 Homework = homework,
-                HomeworkText = homeworkStudent.HomeworkText
+                HomeworkText = homeworkStudent.HomeworkText,
+                PublishingDate = DateTime.UtcNow,
+                IsSent = homeworkStudent.IsSent
             };
 
             _unitOfWork.HomeworkStudentRepository.Add(newHomework);
@@ -111,12 +118,14 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Sorry, but homework with id{foundStudentHomework.HomeworkId} not yours, choose correct homework");
             }
 
-            if (homework.DueDate < DateTime.Now)
+            if (homework.DueDate < DateTime.UtcNow)
             {
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Due date already finished. Due date {homework.DueDate}");
             }
 
             foundStudentHomework.HomeworkText = homeworkStudent.HomeworkText;
+            foundStudentHomework.PublishingDate = DateTime.UtcNow;
+            foundStudentHomework.IsSent = homeworkStudent.IsSent;
            
             var newAttachments = new List<AttachmentOfHomeworkStudent>();
 
@@ -181,11 +190,6 @@ namespace CharlieBackend.Business.Services
             if (!studentGroups.Contains(lesson.StudentGroupId.Value))
             {
                 yield return  $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
-            }
-
-            if (homework.DueDate < homework.PublishingDate)
-            {
-                yield return $"Due date already finished. Due date {homework.DueDate}";
             }
 
             if (homeworkStudent.AttachmentIds?.Count() > 0)

@@ -31,7 +31,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
             {
                 HomeworkId = homeworkId,
                 HomeworkText = homeworkText,
-                AttachmentIds = attachmentIds
+                AttachmentIds = attachmentIds,
+                IsSent = true
             };
         }
 
