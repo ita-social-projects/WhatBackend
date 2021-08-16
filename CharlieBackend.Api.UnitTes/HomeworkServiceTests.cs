@@ -104,7 +104,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateHomeworkAsync_ValidData_ShouldReturnHomeworkExemple()
+        public async Task CreateHomeworkAsync_ValidData_ShouldReturnHomeworkExample()
         {
             //Arrange
             homeworkRequestDto.AttachmentIds = new List<long> { 1, 2 };
@@ -115,8 +115,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 0,
                 LessonId = 1,
                 DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
-                AttachmentIds = new List<long>() { 1, 2 },
-                PublishingDate = DateTime.UtcNow
+                AttachmentIds = new List<long>() { 1, 2 }
             };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);
@@ -143,7 +142,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Data.Should().NotBeNull();
-            result.Data.Should().BeEquivalentTo(_mapper.Map<HomeworkDto>(homeworkDto));
+            result.Data.Should().BeEquivalentTo(_mapper.Map<HomeworkDto>(homeworkDto), x => x.Excluding(f => f.PublishingDate));
         }
         #endregion
 
@@ -288,24 +287,33 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
         {
             // Arrange
+            var homeworkStudent_one = new HomeworkStudent();
+            var homeworkStudent_two = new HomeworkStudent();
+
             sbyte mark = 5;
             sbyte updatedMark = 2;
-            long visitId_one = 1;
-            long visitId_two = 1;
+            //long visitId_one = 1;
+            //long visitId_two = 1;
             long homeworkStudentId_one = 1;
             long homeworkStudentId_two = 1;
+            string mentorComment = "There is an error at line 52";
+            MarkType markType = MarkType.Homework;
 
-            var visitTrue = CreateVisit(visitId_one, mark, true);
-            var visitFalse = CreateVisit(visitId_two, mark, false);
+            //var visitTrue = CreateVisit(visitId_one, mark, true);
+            //var visitFalse = CreateVisit(visitId_two, mark, false);
 
-            var visitRepositoryMock = new Mock<IVisitRepository>();
+            //var visitRepositoryMock = new Mock<IVisitRepository>();
 
-            var lessonRepositoryMock = new Mock<ILessonRepository>();
-            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
-            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
+            //var lessonRepositoryMock = new Mock<ILessonRepository>();
+            //lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
+            //lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
 
-            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
+            //_unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
+            //_unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
+
+            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
+            homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_one));
+            homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_two));
 
             var homeworkService = new HomeworkService(
                 unitOfWork: _unitOfWorkMock.Object,
@@ -315,13 +323,17 @@ namespace CharlieBackend.Api.UnitTest
             var request_one = new UpdateMarkRequestDto
             { 
                 StudentHomeworkId = homeworkStudentId_one,
-                StudentMark = updatedMark
+                StudentMark = mark,
+                MentorComment = mentorComment,
+                MarkType = markType
             };
 
             var request_two = new UpdateMarkRequestDto
             {
                 StudentHomeworkId = homeworkStudentId_two,
-                StudentMark = updatedMark
+                StudentMark = updatedMark,
+                MentorComment = mentorComment,
+                MarkType = markType
             };
 
             //Act
@@ -329,47 +341,15 @@ namespace CharlieBackend.Api.UnitTest
             var result_two = await homeworkService.UpdateMarkAsync(request_two);
 
             // Assert
-
             result_one.Data
-                .StudentMark
-                .GetValueOrDefault()
+                .Mark.Value
                 .Should()
-                .Be(updatedMark);
+                .Be(mark);
 
             result_two.Data
-                .StudentMark
-                .GetValueOrDefault()
+                .Mark.Value
                 .Should()
                 .Be(updatedMark);
-        }
-
-        [Fact]
-        public async Task UpdateMarkAsync_WrongVisitPassed_ShouldThrowException()
-        {
-            // Arrange
-            sbyte updatedMark = 2;
-            long wrongHomeworkStudentId = 2;
-
-            var lessonRepositoryMock = new Mock<ILessonRepository>();
-
-            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-
-            var homeworkService = new HomeworkService(
-                unitOfWork: _unitOfWorkMock.Object,
-                mapper: _mapper,
-                _loggerMock.Object);
-
-            var request = new UpdateMarkRequestDto
-            {
-                StudentHomeworkId = wrongHomeworkStudentId,
-                StudentMark = updatedMark
-            };
-
-            //Act
-            Func<Task> wrongUpdate = async () => await homeworkService.UpdateMarkAsync(request);
-
-            // Assert
-            await wrongUpdate.Should().ThrowAsync<NotFoundException>();
-        }
+        }       
     }
 }

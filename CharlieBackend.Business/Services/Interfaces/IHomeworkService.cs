@@ -5,6 +5,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -18,7 +19,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long studentGroupId);
 
-        Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
+        Task<Result<HomeworkStudentDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
 
     }
 }

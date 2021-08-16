@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
@@ -193,24 +194,35 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        public async Task<Result<HomeworkStudentDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
         {
-            var visit = await _unitOfWork
-                                .LessonRepository
-                                .GetVisitByStudentHomeworkIdAsync(request
-                                    .StudentHomeworkId.GetValueOrDefault());
+            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(request.StudentHomeworkId);
 
-            if (visit is null)
+            Mark mark;
+
+            if(homeworkStudent.Mark == null)
             {
-                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
+                mark = new Mark
+                {
+                    Value = request.StudentMark,
+                    Comment = request.MentorComment,
+                    EvaluationDate = DateTime.UtcNow,
+                    Type = request.MarkType
+                };
+                homeworkStudent.Mark = mark;
+            }
+            else
+            {
+                homeworkStudent.Mark.Value = request.StudentMark;
+                homeworkStudent.Mark.Comment = request.MentorComment;
+                homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
+                homeworkStudent.Mark.Type = request.MarkType;
             }
 
-            visit.StudentMark = (sbyte)request.StudentMark;
-
-            _unitOfWork.VisitRepository.Update(visit);
+            _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
             await _unitOfWork.CommitAsync();
 
-            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
+            return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
         }
     }
 }
