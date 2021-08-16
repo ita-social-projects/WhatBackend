@@ -193,36 +193,5 @@ namespace CharlieBackend.Business.Services
                 }
             }
         }
-
-        public async Task<Result<HomeworkStudentDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
-        {
-            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(request.StudentHomeworkId);
-
-            Mark mark;
-
-            if(homeworkStudent.Mark == null)
-            {
-                mark = new Mark
-                {
-                    Value = request.StudentMark,
-                    Comment = request.MentorComment,
-                    EvaluationDate = DateTime.UtcNow,
-                    Type = request.MarkType
-                };
-                homeworkStudent.Mark = mark;
-            }
-            else
-            {
-                homeworkStudent.Mark.Value = request.StudentMark;
-                homeworkStudent.Mark.Comment = request.MentorComment;
-                homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
-                homeworkStudent.Mark.Type = request.MarkType;
-            }
-
-            _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
-            await _unitOfWork.CommitAsync();
-
-            return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
-        }
     }
 }
