@@ -40,7 +40,7 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
 
-            var errors = await ValidateHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
+            var errors = await ValidateAddingHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
             
             if (errors.Any())
             {
@@ -97,7 +97,7 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
            
-            var errors = await ValidateHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
+            var errors = await ValidateUpdatingHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
 
             if (errors.Any())
             {
@@ -200,28 +200,59 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
         }
 
-        private async IAsyncEnumerable<string> ValidateHomeworkStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
+        private async IAsyncEnumerable<string> ValidateAddingHomeworkStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student , Homework homework)
         {
             
-            if (homeworkStudent == default)
-            {
-                yield return "Please provide request data";
-                yield break;
-            }
-          
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
-           
             if (await _unitOfWork.HomeworkStudentRepository.IsStudentHasHomeworkAsync(student.Id, homeworkStudent.HomeworkId))
             {
                 yield return $"You already add homework for this Hometask {homeworkStudent.HomeworkId}";
                 yield break;
             }
-            
+
+            var errors = await ValidateHomeworkStudentRequestBase(homeworkStudent, student, homework).ToListAsync();
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
+                    yield return error;
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<string> ValidateUpdatingHomeworkStudentRequest(HomeworkStudentRequestDto homeworkStudent, Student student, Homework homework)
+        {
+
+            if (! await _unitOfWork.HomeworkStudentRepository.IsStudentHasHomeworkAsync(student.Id, homeworkStudent.HomeworkId))
+            {
+                yield return $"There is no homework for this Hometask {homeworkStudent.HomeworkId}";
+                yield break;
+            }
+
+            var errors = await ValidateHomeworkStudentRequestBase(homeworkStudent, student, homework).ToListAsync();
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
+                    yield return error;
+                }
+            }
+        }
+    
+        private async IAsyncEnumerable<string> ValidateHomeworkStudentRequestBase(HomeworkStudentRequestDto homeworkStudent, Student student, Homework homework)
+        {
+            if (homeworkStudent == default)
+            {
+                yield return "Please provide request data";
+                yield break;
+            }
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+
             var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
 
             if (!studentGroups.Contains(lesson.StudentGroupId.Value))
             {
-                yield return  $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
+                yield return $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
             }
 
             if (homeworkStudent.AttachmentIds?.Count() > 0)
