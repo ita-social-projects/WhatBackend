@@ -24,18 +24,15 @@ namespace CharlieBackend.Api.Controllers
         #region
         private readonly IMentorService _mentorService;
         private readonly ILessonService _lessonService;
-        private readonly IHomeworkService _homeworkService;
         #endregion
         /// <summary>
         /// Mentors controller constructor
         /// </summary>
         public MentorsController(IMentorService mentorService,
-                ILessonService lessonService,
-                IHomeworkService homeworkService)
+                ILessonService lessonService)
         {
             _mentorService = mentorService;
-            _lessonService = lessonService;
-            _homeworkService = homeworkService;
+            _lessonService = lessonService;        
         }
 
         /// <summary>
