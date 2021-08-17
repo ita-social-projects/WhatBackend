@@ -1,7 +1,3 @@
--- Table names are stored as given but compared in lowercase
--- Do not use value 1 on Windows or macOS
--- SET lower_case_table_names = 2;
-
 DROP DATABASE IF EXISTS `Soft`;
 
 CREATE DATABASE IF NOT EXISTS `Soft`
@@ -16,7 +12,7 @@ DROP TABLE IF EXISTS `Attachments`;
 
 CREATE TABLE `Attachments` (
     `ID`                    BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
-    `CreatedOn`             DATETIME           NOT NULL,
+    `CreatedOn`             DATETIME           NOT NULL     COMMENT 'Use UTC time',
     `CreatedByAccountID`    BIGINT UNSIGNED    NOT NULL,
     `ContainerName`         VARCHAR(36)        NOT NULL     COMMENT 'GUID length is 36 characters',
     `FileName`              VARCHAR(100)       NOT NULL,
@@ -35,16 +31,17 @@ CREATE TABLE `Accounts` (
     `FirstName`              VARCHAR(30)         NOT NULL,
     `LastName`               VARCHAR(30)         NOT NULL,
     `Email`                  VARCHAR(50)         NOT NULL,
-    `PasswordHash`           VARBINARY(256)      NOT NULL         COMMENT 'SHA256 produces 256-bit hash value',
-    `Salt`                   VARBINARY(128)      NOT NULL         COMMENT 'Standart salt length is 128 bits',
+    `PasswordHash`           VARCHAR(64)         NOT NULL         COMMENT 'SHA265 output size is 256 bits or 64 characters',
+    `Salt`                   VARCHAR(32)         NOT NULL         COMMENT 'Standard salt size is 128 bits or 32 characters',
     `IsActive`               BIT                 DEFAULT 1,
     `ForgotPasswordToken`    VARCHAR(36)         DEFAULT NULL     COMMENT 'GUID length is 36 characters',
-    `ForgotTokenGenDate`     DATETIME            DEFAULT NULL,
+    `ForgotTokenGenDate`     DATETIME            DEFAULT NULL     COMMENT 'Use UTC time',
     `AvatarID`               BIGINT UNSIGNED     DEFAULT NULL,
 
     CONSTRAINT    `PK_Account`           PRIMARY KEY (`ID`),
     CONSTRAINT    `FK_AvatarAccounts`    FOREIGN KEY (`AvatarId`)    REFERENCES `Attachments` (`ID`),
-    CONSTRAINT    `UQ_EmailAccounts`     UNIQUE (`Email`)
+    CONSTRAINT    `UQ_EmailAccounts`     UNIQUE (`Email`),
+    CONSTRAINT    `UQ_AvatarAccounts`    UNIQUE (`AvatarID`)
 );
 
 -- Table `Mentors`
@@ -108,10 +105,10 @@ CREATE TABLE `MentorsOfCourses` (
     `MentorID`    BIGINT UNSIGNED    NOT NULL,
     `CourseID`    BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_MentorOfCourse`                     PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_MentorMentorsOfCourses`             FOREIGN KEY (`MentorID`)           REFERENCES `Mentors` (`ID`),
-    CONSTRAINT    `FK_CourseMentorsOfCourses`             FOREIGN KEY (`CourseID`)           REFERENCES `Courses` (`ID`),
-    CONSTRAINT    `UQ_MentorAndCourseMentorsOfCourses`    UNIQUE (`MentorID`, `CourseID`)
+    CONSTRAINT    `PK_MentorOfCourse`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_MentorOfCourses`    FOREIGN KEY (`MentorID`)           REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_CourseOfMentors`    FOREIGN KEY (`CourseID`)           REFERENCES `Courses` (`ID`),
+    CONSTRAINT    `UQ_MentorAndCourse`    UNIQUE (`MentorID`, `CourseID`)
 );
 
 -- Table `StudentGroups`
@@ -139,9 +136,10 @@ CREATE TABLE `StudentsOfStudentGroups` (
     `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
     `StudentID`         BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_StudentOfStudentGroup`                  PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_StudentGroupStudentsOfStudentGroups`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`),
-    CONSTRAINT    `FK_StudentStudentsOfStudentGroups`         FOREIGN KEY (`StudentID`)         REFERENCES `Students` (`ID`)
+    CONSTRAINT    `PK_StudentOfStudentGroup`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_StudentGroupOfStudents`    FOREIGN KEY (`StudentGroupID`)     REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `FK_StudentOfStudentGroups`    FOREIGN KEY (`StudentID`)          REFERENCES `Students` (`ID`),
+    CONSTRAINT    `UQ_StudentAndStudentGroup`    UNIQUE (`StudentID`, `StudentGroupID`)
 );
 
 -- Table `MentorsOfStudentGroups`
@@ -153,10 +151,10 @@ CREATE TABLE `MentorsOfStudentGroups` (
     `MentorID`          BIGINT UNSIGNED    NOT NULL,
     `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_MentorOfStudentGroup`                           PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_MentorMentorsOfStudentGroups`                   FOREIGN KEY (`MentorID`)                 REFERENCES `Mentors` (`ID`),
-    CONSTRAINT    `FK_StudentGroupMentorsOfStudentGroups`             FOREIGN KEY (`StudentGroupID`)           REFERENCES `StudentGroups` (`ID`),
-    CONSTRAINT    `UQ_MentorAndStudentGroupMentorsOfStudentGroups`    UNIQUE (`MentorID`, `StudentGroupID`)
+    CONSTRAINT    `PK_MentorOfStudentGroup`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_MentorOfStudentGroups`    FOREIGN KEY (`MentorID`)                 REFERENCES `Mentors` (`ID`),
+    CONSTRAINT    `FK_StudentGroupOfMentors`    FOREIGN KEY (`StudentGroupID`)           REFERENCES `StudentGroups` (`ID`),
+    CONSTRAINT    `UQ_MentorAndStudentGroup`    UNIQUE (`MentorID`, `StudentGroupID`)
 );
 
 -- Table `Themes`
@@ -180,7 +178,7 @@ CREATE TABLE `Lessons` (
     `MentorID`          BIGINT UNSIGNED    NOT NULL,
     `StudentGroupID`    BIGINT UNSIGNED    NOT NULL,
     `ThemeID`           BIGINT UNSIGNED    NOT NULL,
-    `LessonDate`        DATETIME           NOT NULL,
+    `LessonDate`        DATETIME           NOT NULL     COMMENT 'Use UTC time',
 
     CONSTRAINT    `PK_Lesson`                 PRIMARY KEY (`ID`),
     CONSTRAINT    `FK_MentorLessons`          FOREIGN KEY (`MentorID`)          REFERENCES `Mentors` (`ID`),
@@ -207,18 +205,18 @@ CREATE TABLE `Visits` (
                                                AND `StudentMark` <= 100)
 );
 
--- Table `Homework`
+-- Table `Homeworks`
 
 DROP TABLE IF EXISTS `Homeworks`;
 
 CREATE TABLE IF NOT EXISTS `Homeworks` (
     `ID`          BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
-    `DueDate`     DATETIME           NOT NULL,
-    `TaskText`    TEXT               NOT NULL,
+    `DueDate`     DATETIME           NOT NULL     COMMENT 'Use UTC time',
+    `TaskText`    VARCHAR(8000)      NOT NULL,
     `LessonID`    BIGINT UNSIGNED    NOT NULL,
 
     CONSTRAINT    `PK_Homework`           PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_LessonHomeworks`    FOREIGN KEY (`LessonID`)    REFERENCES `Lessons` (`ID`)    ON DELETE RESTRICT,
+    CONSTRAINT    `FK_LessonHomeworks`    FOREIGN KEY (`LessonID`)    REFERENCES `Lessons` (`ID`),
 
     INDEX    `IX_Lesson`    (`LessonID` ASC)
 );
@@ -232,9 +230,10 @@ CREATE TABLE `AttachmentsOfHomeworks` (
     `HomeworkID`      BIGINT UNSIGNED    NOT NULL,
     `AttachmentID`    BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_AttachmentOfHomework`                PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AttachmentAttachmentsOfHomeworks`    FOREIGN KEY (`AttachmentID`)    REFERENCES `Attachments` (`ID`),
-    CONSTRAINT    `FK_HomeworkAttachmentsOfHomeworks`      FOREIGN KEY (`HomeworkID`)      REFERENCES `Homeworks` (`ID`)
+    CONSTRAINT    `PK_AttachmentOfHomework`     PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_AttachmentOfHomeworks`    FOREIGN KEY (`AttachmentID`)             REFERENCES `Attachments` (`ID`),
+    CONSTRAINT    `FK_HomeworkOfAttachments`    FOREIGN KEY (`HomeworkID`)               REFERENCES `Homeworks` (`ID`),
+    CONSTRAINT    `UQ_AttachmentAndHomework`    UNIQUE (`HomeworkID`, `AttachmentID`)
 );
 
 -- Table `HomeworksFromStudents`
@@ -244,12 +243,13 @@ DROP TABLE IF EXISTS `HomeworksFromStudents`;
 CREATE TABLE IF NOT EXISTS `HomeworksFromStudents` (
     `ID`              BIGINT UNSIGNED    NOT NULL         AUTO_INCREMENT,
     `StudentID`       BIGINT UNSIGNED    NOT NULL,
-    `HomeworkText`    TEXT               DEFAULT NULL,
+    `HomeworkText`    VARCHAR(8000)      DEFAULT NULL,
     `HomeworkID`      BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_HomeworkFromStudent`              PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_StudentHomeworksFromStudents`     FOREIGN KEY (`StudentID`)     REFERENCES `Students` (`ID`),
-    CONSTRAINT    `FK_HomeworkHomeworksFromStudents`    FOREIGN KEY (`HomeworkID`)    REFERENCES `Homeworks` (`ID`),
+    CONSTRAINT    `PK_HomeworkFromStudent`    PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_StudentOfHomeworks`     FOREIGN KEY (`StudentID`)     REFERENCES `Students` (`ID`),
+    CONSTRAINT    `FK_HomeworkOfStudents`     FOREIGN KEY (`HomeworkID`)    REFERENCES `Homeworks` (`ID`),
+	CONSTRAINT    `UQ_HomeworkAndStudent`     UNIQUE (`HomeworkID`, `StudentID`),
 
     INDEX    `IX_Homework`    (`HomeworkID` ASC)
 );
@@ -263,9 +263,10 @@ CREATE TABLE IF NOT EXISTS `AttachmentsOfHomeworksFromStudents` (
     `AttachmentID`             BIGINT UNSIGNED    NOT NULL,
     `HomeworkFromStudentID`    BIGINT UNSIGNED    NOT NULL,
 
-    CONSTRAINT    `PK_AttachmentOfHomeworkFromStudent`                          PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AttachmentAttachmentsOfHomeworksFromStudents`             FOREIGN KEY (`AttachmentID`)             REFERENCES `Attachments` (`ID`),
-    CONSTRAINT    `FK_HomeworkFromStudentAttachmentsOfHomeworksFromStudents`    FOREIGN KEY (`HomeworkFromStudentID`)    REFERENCES `HomeworksFromStudents` (`ID`),
+    CONSTRAINT    `PK_AttachmentOfHomeworkFromStudent`      PRIMARY KEY (`ID`),
+    CONSTRAINT    `FK_AttachmentOfHomeworksFromStudents`    FOREIGN KEY (`AttachmentID`)                         REFERENCES `Attachments` (`ID`),
+    CONSTRAINT    `FK_HomeworkFromStudentOfAttachments`     FOREIGN KEY (`HomeworkFromStudentID`)                REFERENCES `HomeworksFromStudents` (`ID`),
+    CONSTRAINT    `UQ_HomeworkFromStudentAndAttachment`     UNIQUE (`AttachmentID`, `HomeworkFromStudentID`),
 
     INDEX    `IX_HomeworkFromStudent`    (`HomeworkFromStudentID` ASC),
     INDEX    `IX_Attachment`             (`AttachmentID` ASC)
@@ -278,13 +279,13 @@ DROP TABLE IF EXISTS `EventOccurrences`;
 CREATE TABLE `EventOccurrences` (
     `ID`                BIGINT UNSIGNED     NOT NULL        AUTO_INCREMENT,
     `StudentGroupID`    BIGINT UNSIGNED     NOT NULL,
-    `EventStart`        DATETIME            NOT NULL,
-    `EventFinish`       DATETIME            NOT NULL,
+    `EventStart`        DATETIME            NOT NULL        COMMENT 'Use UTC time',
+    `EventFinish`       DATETIME            NOT NULL        COMMENT 'Use UTC time',
     `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n 0 - Daily,\n 1 - Weekly,\n 2 - AbsoluteMonthly,\n 3 - RelativeMonthly',
     `Storage`           BIGINT UNSIGNED     NOT NULL,
 
     CONSTRAINT    `PK_EventOccurrence`                 PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_StudentGroupEventOccurrences`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`)    ON DELETE CASCADE
+    CONSTRAINT    `FK_StudentGroupEventOccurrences`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`)
 );
 
 -- Table `ScheduledEvents`
@@ -298,11 +299,11 @@ CREATE TABLE `ScheduledEvents` (
     `ThemeID`              BIGINT UNSIGNED    NOT NULL,
     `MentorID`             BIGINT UNSIGNED    NOT NULL,
     `LessonID`             BIGINT UNSIGNED    NOT NULL,
-    `EventStart`           DATETIME           NOT NULL,
-    `EventFinish`          DATETIME           NOT NULL,
+    `EventStart`           DATETIME           NOT NULL     COMMENT 'Use UTC time',
+    `EventFinish`          DATETIME           NOT NULL     COMMENT 'Use UTC time',
 
     CONSTRAINT    `PK_ScheduledEvent`                    PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_EventOccurrenceScheduledEvents`    FOREIGN KEY (`EventOccurrenceID`)    REFERENCES `EventOccurrences` (`ID`)    ON DELETE CASCADE,
+    CONSTRAINT    `FK_EventOccurrenceScheduledEvents`    FOREIGN KEY (`EventOccurrenceID`)    REFERENCES `EventOccurrences` (`ID`),
     CONSTRAINT    `FK_LessonScheduledEvents`             FOREIGN KEY (`LessonID`)             REFERENCES `Lessons` (`ID`),
     CONSTRAINT    `FK_MentorScheduledEvents`             FOREIGN KEY (`MentorID`)             REFERENCES `Mentors` (`ID`),
     CONSTRAINT    `FK_StudentGroupScheduledEvents`       FOREIGN KEY (`StudentGroupID`)       REFERENCES `StudentGroups` (`ID`),

@@ -9,29 +9,46 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<AttachmentOfHomeworkStudent> entity)
         {
-            entity.ToTable("attachment_of_homework_student");
+            entity.ToTable("AttachmentsOfHomeworksFromStudents");
 
-            entity.HasIndex(e => e.AttachmentId)
-                .HasName("FK_attachment_of_homework_student_id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
-            entity.HasIndex(e => e.HomeworkStudentId)
-                .HasName("FK_homework_student_of_attachment_id");
+            entity.Property(e => e.AttachmentId)
+                .IsRequired()
+                .HasColumnName("AttachmentID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.HomeworkStudentId)
+                .IsRequired()
+                .HasColumnName("HomeworkFromStudentID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
-
-            entity.Property(e => e.HomeworkStudentId).HasColumnName("homework_student_id");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Attachment)
                 .WithMany(p => p.AttachmentOfHomeworkStudents)
                 .HasForeignKey(d => d.AttachmentId)
-                .HasConstraintName("FK_attachment_of_homework_student");
+                .HasConstraintName("FK_AttachmentOfHomeworksFromStudents");
 
             entity.HasOne(d => d.HomeworkStudent)
                 .WithMany(p => p.AttachmentOfHomeworkStudents)
                 .HasForeignKey(d => d.HomeworkStudentId)
-                .HasConstraintName("FK_homework_ student_of_attachment");
+                .HasConstraintName("FK_HomeworkFromStudentOfAttachments");
+
+            entity.HasIndex(e => new { e.AttachmentId, e.HomeworkStudentId })
+                .HasName("UQ_HomeworkFromStudentAndAttachment")
+                .IsUnique();
+
+            entity.HasIndex(e => e.HomeworkStudentId)
+                .HasName("IX_HomeworkFromStudent");
+
+            entity.HasIndex(e => e.AttachmentId)
+                .HasName("IX_Attachment");
         }
     }
 }

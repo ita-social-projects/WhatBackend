@@ -9,30 +9,40 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<MentorOfStudentGroup> entity)
         {
-            entity.ToTable("mentor_of_student_group");
+            entity.ToTable("MentorsOfStudentGroups");
 
-            entity.HasIndex(e => e.StudentGroupId)
-                .HasName("FK__idx");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
-            entity.HasIndex(e => new { e.MentorId, e.StudentGroupId })
-                .HasName("mentorAndStudentGroupIndex")
-                .IsUnique();
+            entity.Property(e => e.StudentGroupId)
+                .IsRequired()
+                .HasColumnName("StudentGroupID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MentorId)
+                .IsRequired()
+                .HasColumnName("MentorID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.MentorId).HasColumnName("mentor_id");
-
-            entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Mentor)
                 .WithMany(p => p.MentorsOfStudentGroups)
                 .HasForeignKey(d => d.MentorId)
-                .HasConstraintName("FK_mentor_of_student_group");
+                .HasConstraintName("FK_MentorOfStudentGroups");
 
             entity.HasOne(d => d.StudentGroup)
                 .WithMany(p => p.MentorsOfStudentGroups)
                 .HasForeignKey(d => d.StudentGroupId)
-                .HasConstraintName("FK_student_group_of_mentor");
+                .HasConstraintName("FK_StudentGroupOfMentors");
+
+            entity.HasIndex(e => new { e.MentorId, e.StudentGroupId })
+                .HasName("UQ_MentorAndStudentGroup")
+                .IsUnique();
         }
     }
 }
