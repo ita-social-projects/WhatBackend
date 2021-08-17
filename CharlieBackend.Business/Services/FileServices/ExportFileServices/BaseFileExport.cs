@@ -125,7 +125,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// List of parameters which will be inserted 
         /// If you need to skip some cells use "" or " "
         /// </param>
-        public void FillRow(IXLWorksheet worksheet, int rowNumber = 1, int startingColumnNumber = 1, params string[] argsList)
+        public void FillRow(IXLWorksheet worksheet, int rowNumber = 1, int startingColumnNumber = 1,
+            params string[] argsList)
         {
             var currentRow = worksheet.Row(rowNumber);
 
@@ -146,7 +147,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// nulls will be ignored
         /// If you want to avoid empty comments replace all "" with null before calling this method
         /// </param>
-        public void FillRowWithComments(IXLWorksheet worksheet, int rowNumber = 1, int startingColumnNumber = 1, params string[] argsList)
+        public void FillRowWithComments(IXLWorksheet worksheet, int rowNumber = 1,
+            int startingColumnNumber = 1, params string[] argsList)
         {
             var currentRow = worksheet.Row(rowNumber);
 
