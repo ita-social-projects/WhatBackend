@@ -19,9 +19,5 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long studentGroupId);
 
         Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
-
-        Task<Result<IList<HomeworkDto>>> GetMentorFilteredHW(
-                HomeworkFilterDto filter);
-
     }
 }

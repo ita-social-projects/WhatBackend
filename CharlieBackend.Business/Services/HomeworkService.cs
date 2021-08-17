@@ -215,17 +215,5 @@ namespace CharlieBackend.Business.Services
 
             return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
-
-        public async Task<Result<IList<HomeworkDto>>>GetMentorFilteredHW(
-                HomeworkFilterDto filter)
-        {
-            var homeworks = await _unitOfWork.HomeworkRepository
-                        .GetMentorFilteredHomwork(filter, _currentUser.EntityId);
-
-            var result = Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map
-                    <IList<HomeworkDto>>(homeworks));            
-            
-            return result;
-        }
     }
 }
