@@ -1,26 +1,25 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.DTO.Dashboard;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
-    /// Controller to export aggregated data reports
+    /// Controller to manage export data from database to .xlsx files
     /// </summary>
-    [Route("api/dashboard")]
+    [Route("api/exports")]
     [ApiController]
-    public class DashboardController : ControllerBase
+    public class ExportController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;
 
         /// <summary>
-        /// Dashboard controllers constructor
+        /// Export controllers constructor
         /// </summary>
-        public DashboardController(IDashboardService dashboardService)
+        public ExportController(IDashboardService dashboardService)
         {
             _dashboardService = dashboardService;
         }
@@ -33,15 +32,23 @@ namespace CharlieBackend.Api.Controllers
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
-        [SwaggerResponse(200, type: typeof(StudentsClassbookResultDto))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpPost("studentsClassbook")]
-        public async Task<ActionResult> GetStudentsClassbook([FromBody]StudentsRequestDto<ClassbookResultType> request)
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("studentsClassbook")]
+        [HttpPost]
+        public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsClassbookAsync(request);
 
-            return results.ToActionResult();
+            var classbook = new ClassbookExport();
+
+            await classbook.FillFile(results.Data);
+            classbook.AdjustContent();
+
+            return File(await
+                classbook.GetByteArrayAsync(),
+                classbook.GetContentType(),
+                classbook.GetFileName());
         }
 
         /// <summary>
@@ -52,15 +59,23 @@ namespace CharlieBackend.Api.Controllers
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of cource groups.
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
-        [SwaggerResponse(200, type: typeof(StudentsResultsDto))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpPost("studentsResults")]
-        public async Task<ActionResult> GetStudentsResults([FromBody]StudentsRequestDto<StudentResultType> request)
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("studentsResults")]
+        [HttpPost]
+        public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsResultAsync(request);
 
-            return results.ToActionResult();
+            var result = new StudentsResultsExport();
+
+            await result.FillFile(results.Data);
+            result.AdjustContent();
+
+            return File(await
+                result.GetByteArrayAsync(),
+                result.GetContentType(),
+                result.GetFileName());
         }
 
         /// <summary>
@@ -70,14 +85,23 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
-        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
-        [HttpPost("studentClassbook/{studentId}")]
-        public async Task<ActionResult> GetStudentClassbook(long studentId, [FromBody]DashboardAnalyticsRequestDto<ClassbookResultType> request)
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("studentClassbook/{studentId}")]
+        [HttpPost]
+        public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentClassbookAsync(studentId, request);
 
-            return results.ToActionResult();
+            var result = new StudentClassbook();
+
+            await result.FillFile(results.Data);
+            result.AdjustContent();
+
+            return File(await
+                result.GetByteArrayAsync(),
+                result.GetContentType(),
+                result.GetFileName());
         }
 
         /// <summary>
@@ -89,12 +113,20 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}")]
-        public async Task<ActionResult> GetStudentResults(long studentId, [FromBody]DashboardAnalyticsRequestDto<StudentResultType> request)
+        public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentResultAsync(studentId, request);
 
-            return results.ToActionResult();
+            var result = new StudentResult();
+
+            await result.FillFile(results.Data);
+            result.AdjustContent();
+
+            return File(await
+                result.GetByteArrayAsync(),
+                result.GetContentType(),
+                result.GetFileName());
         }
 
         /// <summary>
@@ -106,12 +138,20 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost("studentGroupResults/{courseId}")]
-        public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]DashboardAnalyticsRequestDto<StudentGroupResultType> request)
+        public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
             .GetStudentGroupResultAsync(courseId, request);
 
-            return results.ToActionResult();
+            var result = new StudentGruopResults();
+
+            await result.FillFile(results.Data);
+            result.AdjustContent();
+
+            return File(await
+                result.GetByteArrayAsync(),
+                result.GetContentType(),
+                result.GetFileName());
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Student;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -80,24 +81,24 @@ namespace CharlieBackend.Data.Repositories.Impl
                          studentGroupIds.ToList().Contains((long)x.Lesson.StudentGroupId))
                 .Select(x => new StudentVisitDto
                 {
-                    CourseId = x.Lesson.StudentGroup.CourseId,
-                    StudentGroupId = (long)x.Lesson.StudentGroupId,
-                    StudentId = (long)x.StudentId,
+                    Course = x.Lesson.StudentGroup.Course.Name,
+                    StudentGroup = x.Lesson.StudentGroup.Name,
+                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                     Presence = x.Presence,
                 }).ToListAsync();
 
             var studentsAverageVisitsList = studentsVisitsList
                 .GroupBy(x => new
                 {
-                    StudentId = x.StudentId,
-                    GroupId = x.StudentGroupId,
-                    CourseId = x.CourseId
+                    Student = x.Student,
+                    Group = x.StudentGroup,
+                    Course = x.Course
                 })
                 .Select(x => new AverageStudentVisitsDto
                 {
-                    CourseId = x.Key.CourseId,
-                    StudentGroupId = x.Key.GroupId,
-                    StudentId = x.Key.StudentId,
+                    Course = x.Key.Course,
+                    StudentGroup = x.Key.Group,
+                    Student = x.Key.Student,
                     StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
                       / (double)x.Count() * 100)
@@ -113,9 +114,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Where(x => studentIds.ToList().Contains((long)x.StudentId))
                     .Select(x => new StudentVisitDto
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
-                        StudentId = (long)x.StudentId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -128,42 +129,150 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<StudentVisitDto>> GetStudentsPresenceListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
             DateTime? startDate, DateTime? finishDate)
         {
-            return await _applicationContext.Visits
+            IDictionary<string, IEnumerable<StudentDto>> listOfStudentLists = new Dictionary<string, IEnumerable<StudentDto>>();
+            foreach (var studentGroupId in studentGroupIds)
+            {
+                var StudentList = await _applicationContext.StudentsOfStudentGroups
+                    .AsNoTracking()
+                    .Where(s => s.StudentGroupId == studentGroupId).Select(x => x.Student)
+                    .Select(x => new StudentDto
+                    {
+                        Email = x.Account.Email,
+                        FirstName = x.Account.FirstName,
+                        LastName = x.Account.LastName,
+                        Id = (long)x.AccountId
+                    })
+                    .ToListAsync();
+
+                listOfStudentLists.Add(_applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .First(x => x.Id == studentGroupId).Name,
+                    StudentList
+                    .GroupBy(x => x.Id)
+                    .Select(x => x.First())
+                    .ToList());
+            }
+
+            var visitsList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
                     .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
                     .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.Lesson.LessonDate <= finishDate)
                     .Select(x => new StudentVisitDto
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
-                        StudentId = (long)x.StudentId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
                     })
                     .ToListAsync();
+
+            var groups = visitsList.GroupBy(x =>  x.LessonId );
+
+            foreach (var groupByDate in groups)
+            {
+                if(groupByDate == null)
+                {
+                    continue;
+                }
+                foreach (var student in listOfStudentLists.ElementAt(0).Value)
+                {
+                    if (groupByDate.FirstOrDefault(x => x.StudentId == student.Id) == null)
+                    {
+                        visitsList.Add(new StudentVisitDto
+                        {
+                            Course = groupByDate.First().Course,
+                            StudentGroup = groupByDate.First().StudentGroup,
+                            Student = student.FirstName + " " + student.LastName,
+                            StudentId = student.Id,
+                            LessonId = groupByDate.First().LessonId,
+                            LessonDate = groupByDate.First().LessonDate,
+                            Presence = null,
+                        }) ;
+                    }
+                }
+            }
+
+            return visitsList;
+
         }
 
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByGroupIdsAndDate(IEnumerable<long> studentGroupIds,
             DateTime? startDate, DateTime? finishDate)
         {
-            return await _applicationContext.Visits
+            IDictionary<string, IEnumerable<StudentDto>> listOfStudentLists = new Dictionary<string, IEnumerable<StudentDto>>();
+            foreach (var studentGroupId in studentGroupIds)
+            {
+                var StudentList = await _applicationContext.StudentsOfStudentGroups
+                    .AsNoTracking()
+                    .Where(s => s.StudentGroupId == studentGroupId).Select(x => x.Student)
+                    .Select(x => new StudentDto
+                    {
+                        Email = x.Account.Email,
+                        FirstName = x.Account.FirstName,
+                        LastName = x.Account.LastName,
+                        Id = (long)x.AccountId
+                    })
+                    .ToListAsync();
+
+                listOfStudentLists.Add(_applicationContext.StudentGroups
+                    .AsNoTracking()
+                    .First(x => x.Id == studentGroupId).Name,
+                    StudentList
+                    .GroupBy(x => x.Id)
+                    .Select(x => x.First())
+                    .ToList());
+            }
+
+            var visitsList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupIds.Contains((long)x.Lesson.StudentGroupId))
-                    .WhereIf(startDate != null && startDate != default(DateTime),
-                            x => x.Lesson.LessonDate >= startDate)
-                    .WhereIf(finishDate != null && finishDate != default(DateTime),
-                            x => x.Lesson.LessonDate <= finishDate)
+                    .WhereIf(startDate != null && startDate != default(DateTime), x => x.Lesson.LessonDate >= startDate)
+                    .WhereIf(finishDate != null && finishDate != default(DateTime), x => x.Lesson.LessonDate <= finishDate)
                     .Select(x => new StudentMarkDto
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
-                        StudentId = (long)x.StudentId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
-                        StudentMark = x.StudentMark,
-                    }).ToListAsync();
+                        Comment = x.Comment,
+                        StudentMark = x.StudentMark
+                    })
+                    .ToListAsync();
+
+            var groups = visitsList.GroupBy(x => x.LessonId);
+
+            foreach (var groupByDate in groups)
+            {
+                if (groupByDate == null)
+                {
+                    continue;
+                }
+                foreach (var student in listOfStudentLists.ElementAt(0).Value)
+                {
+                    if (groupByDate.FirstOrDefault(x => x.StudentId == student.Id) == null)
+                    {
+                        visitsList.Add(new StudentMarkDto
+                        {
+                            Course = groupByDate.First().Course,
+                            StudentGroup = groupByDate.First().StudentGroup,
+                            Student = student.FirstName + " " + student.LastName,
+                            StudentId = student.Id,
+                            LessonId = groupByDate.First().LessonId,
+                            LessonDate = groupByDate.First().LessonDate,
+                            Comment = null,
+                            StudentMark = null
+                        });
+                    }
+                }
+            }
+
+            return visitsList;
         }
 
         public async Task<List<StudentMarkDto>> GetStudentsMarksListByStudentIds(IEnumerable<long> studentIds)
@@ -174,9 +283,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                                 studentIds.ToList().Contains((long)x.StudentId))
                     .Select(x => new StudentMarkDto
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
-                        StudentId = (long)x.StudentId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         StudentMark = x.StudentMark,
@@ -210,22 +319,22 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Where(x => x.StudentMark != null)
                     .Select(x => new
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = x.Lesson.StudentGroupId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
                         StudentLessonMark = (decimal)x.StudentMark,
-                        StudentId = x.StudentId
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName
                     })
                     .GroupBy(x => new
                     {
-                        GroupId = x.StudentGroupId,
-                        CourseId = x.CourseId,
-                        StudentId = x.StudentId
+                        Group = x.StudentGroup,
+                        Course = x.Course,
+                        Student = x.Student
                     })
                     .Select(x => new AverageStudentMarkDto
                     {
-                        CourseId = x.Key.CourseId,
-                        StudentGroupId = (long)x.Key.GroupId,
-                        StudentId = (long)x.Key.StudentId,
+                        Course = x.Key.Course,
+                        StudentGroup = x.Key.Group,
+                        Student = x.Key.Student,
                         StudentAverageMark = x.Average(s => s.StudentLessonMark)
                     }
                     ).ToListAsync();
@@ -239,24 +348,24 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => x.StudentId == studentId)
                 .Select(x => new StudentVisitDto
                 {
-                    CourseId = x.Lesson.StudentGroup.CourseId,
-                    StudentGroupId = (long)x.Lesson.StudentGroupId,
-                    StudentId = (long)x.StudentId,
+                    Course = x.Lesson.StudentGroup.Course.Name,
+                    StudentGroup = x.Lesson.StudentGroup.Name,
+                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                     Presence = x.Presence,
                 }).ToListAsync();
 
             var StudentAverageVisitsPercentage = studentVisitsList
                 .GroupBy(x => new
                 {
-                    StudentId = x.StudentId,
-                    GroupId = x.StudentGroupId,
-                    CourseId = x.CourseId
+                    Student = x.Student,
+                    Group = x.StudentGroup,
+                    Course = x.Course
                 })
                 .Select(x => new AverageStudentVisitsDto
                 {
-                    CourseId = x.Key.CourseId,
-                    StudentGroupId = x.Key.GroupId,
-                    StudentId = x.Key.StudentId,
+                    Course = x.Key.Course,
+                    StudentGroup = x.Key.Group,
+                    Student = x.Key.Student,
                     StudentAverageVisitsPercentage = (int)((double)x
                      .Where(d => d.Presence == true).Count()
                       / x.Count() * 100)
@@ -273,9 +382,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Where(x => x.StudentId == studentId)
                     .Select(x => new StudentVisitDto
                     {
-                        CourseId = x.Lesson.StudentGroup.CourseId,
-                        StudentGroupId = (long)x.Lesson.StudentGroupId,
-                        StudentId = (long)x.StudentId,
+                        Course = x.Lesson.StudentGroup.Course.Name,
+                        StudentGroup = x.Lesson.StudentGroup.Name,
+                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -292,9 +401,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => x.StudentId == studentId && x.StudentMark != null)
                 .Select(x => new StudentMarkDto
                 {
-                    CourseId = x.Lesson.StudentGroup.CourseId,
-                    StudentGroupId = (long)x.Lesson.StudentGroupId,
-                    StudentId = (long)x.StudentId,
+                    Course = x.Lesson.StudentGroup.Course.Name,
+                    StudentGroup = x.Lesson.StudentGroup.Name,
+                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
                     LessonId = x.LessonId,
                     LessonDate = x.Lesson.LessonDate,
                     StudentMark = x.StudentMark,
@@ -311,19 +420,19 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => x.StudentMark != null)
                 .Select(x => new
                 {
-                    CourseId = x.Lesson.StudentGroup.CourseId,
-                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    Course = x.Lesson.StudentGroup.Course.Name,
+                    StudentGroup = x.Lesson.StudentGroup.Name,
                     StudentMark = (decimal)x.StudentMark
                 })
                 .GroupBy(x => new
                 {
-                    GroupId = x.StudentGroupId,
-                    CourseId = x.CourseId
+                    Group = x.StudentGroup,
+                    Course = x.Course
                 })
                 .Select(x => new AverageStudentGroupMarkDto
                 {
-                    CourseId = x.Key.CourseId,
-                    StudentGroupId = x.Key.GroupId,
+                    Course = x.Key.Course,
+                    StudentGroup = x.Key.Group,
                     AverageMark = x.Average(x => x.StudentMark)
                 }).ToListAsync();
 
@@ -337,8 +446,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
                 .Select(x => new
                 {
-                    CourseId = x.Lesson.StudentGroup.CourseId,
-                    StudentGroupId = (long)x.Lesson.StudentGroupId,
+                    Course = x.Lesson.StudentGroup.Course.Name,
+                    StudentGroup = x.Lesson.StudentGroup.Name,
                     StudentPresense = x.Presence
                 })
                 .ToListAsync();
@@ -346,13 +455,13 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentGroupAveragevisits = studentGroupVisits
                 .GroupBy(x => new
                 {
-                    GroupId = x.StudentGroupId,
-                    CourseId = x.CourseId
+                    Group = x.StudentGroup,
+                    Course = x.Course
                 })
                 .Select(x => new AverageStudentGroupVisitDto
                 {
-                    CourseId = x.Key.CourseId,
-                    StudentGroupId = x.Key.GroupId,
+                    Course = x.Key.Course,
+                    StudentGroup = x.Key.Group,
                     AverageVisitPercentage = (int)((double)x
                      .Where(d => d.StudentPresense == true).Count()
                       / (double)x.Count() * 100)

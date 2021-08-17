@@ -6,9 +6,9 @@ namespace CharlieBackend.Core.DTO.Dashboard
 {
     public class AverageStudentGroupMarkDto
     {
-        public long CourseId { get; set; }
+        public string Course { get; set; }
 
-        public long StudentGroupId { get; set; }
+        public string StudentGroup { get; set; }
 
         public decimal? AverageMark { get; set; }
     }

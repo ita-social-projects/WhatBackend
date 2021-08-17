@@ -175,16 +175,16 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new AverageStudentVisitsDto
                 {
-                    StudentId = 10,
-                    CourseId = 2,
-                    StudentGroupId =1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 10",
                     StudentAverageVisitsPercentage = 100
                 },
                 new AverageStudentVisitsDto
                 {
-                    StudentId = 11,
-                    CourseId = 2,
-                    StudentGroupId =1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 11",
                     StudentAverageVisitsPercentage = 0
                 },
 
@@ -222,26 +222,29 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 new StudentVisitDto
                 {
                     LessonDate = new DateTime(),
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 11",
                     StudentId = 11,
                     Presence =false,
-                    StudentGroupId =1
                 },
                 new StudentVisitDto
                 {
                     LessonDate = new DateTime(),
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentId = 12,
                     Presence =false,
-                    StudentGroupId =1
                 },
                 new StudentVisitDto
                 {
                     LessonDate = new DateTime(),
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentId = 12,
                     Presence =true,
-                    StudentGroupId =1
                 },
             };
 
@@ -275,8 +278,9 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new StudentMarkDto
                 {
-                    CourseId = 2,
-                    StudentGroupId = 1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 10",
                     StudentId = 10,
                     LessonId = 10,
                     LessonDate = new DateTime(),
@@ -284,8 +288,9 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new StudentMarkDto
                 {
-                    CourseId = 2,
-                    StudentGroupId = 1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentId = 12,
                     LessonId = 10,
                     LessonDate = new DateTime(),
@@ -293,8 +298,9 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new StudentMarkDto
                 {
-                    CourseId = 2,
-                    StudentGroupId = 1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentId = 12,
                     LessonId = 10,
                     LessonDate = new DateTime(),
@@ -332,16 +338,16 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new AverageStudentMarkDto
                 {
-                    CourseId =2,
-                    StudentGroupId =1,
-                    StudentId =11,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 11",
                     StudentAverageMark = 78
                 },
                 new AverageStudentMarkDto
                 {
-                    CourseId =2,
-                    StudentGroupId =1,
-                    StudentId =12,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentAverageMark = 60
                 }
             };
@@ -376,9 +382,9 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new AverageStudentVisitsDto
                 {
-                    CourseId =2,
-                    StudentId =12,
-                    StudentGroupId = 1,
+                    Course = "Course",
+                    StudentGroup = "Group",
+                    Student = "Ivan 12",
                     StudentAverageVisitsPercentage = 50
                 }
             };
@@ -413,16 +419,16 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new StudentVisitDto
                 {
-                    StudentGroupId =1,
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     Presence =false,
                     StudentId =12,
                     LessonId = 10
                 },
                 new StudentVisitDto
                 {
-                    StudentGroupId =1,
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     Presence =true,
                     StudentId =12,
                     LessonId = 10
@@ -459,16 +465,16 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new StudentMarkDto
                 {
-                    StudentGroupId = 1,
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     LessonId =10,
                     StudentId = 12,
                     StudentMark =0
                 },
                 new StudentMarkDto
                 {
-                    StudentGroupId = 1,
-                    CourseId =2,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     LessonId =10,
                     StudentId = 12,
                     StudentMark =90
@@ -506,8 +512,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new AverageStudentGroupMarkDto
                 {
-                    CourseId =2,
-                    StudentGroupId =1,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     AverageMark = (decimal)47.5
                 }
             };
@@ -542,8 +548,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new AverageStudentGroupVisitDto
                 {
-                    CourseId =2,
-                    StudentGroupId =1,
+                    Course = "Course",
+                    StudentGroup = "Group",
                     AverageVisitPercentage = 50
                 }
             };
@@ -581,25 +587,45 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                         {
                             Student = new Student
                             {
-                                Id = 10
+                                Id = 10,
+                                Account = new Account
+                                {
+                                    FirstName = "Ivan",
+                                    LastName = "10"
+                                }
                             }
                         },
                         new StudentOfStudentGroup
                         {
                             Student = new Student
                             {
-                                Id = 11
+                                Id = 11,
+                                Account = new Account
+                                {
+                                    FirstName = "Ivan",
+                                    LastName = "11"
+                                }
                             }
                         },
                         new StudentOfStudentGroup
                         {
                             Student = new Student
                             {
-                                Id =12
+                                Id =12,
+                                Account = new Account
+                                {
+                                    FirstName = "Ivan",
+                                    LastName = "12"
+                                }
                             }
                         }
                     },
                     CourseId = 2,
+                    Course = new Course 
+                    { 
+                        Name = "Course" 
+                    },
+                    Name = "Group",
                 },
                 StudentGroupId = 1,
                 Id = 10,
@@ -609,6 +635,15 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             {
                 new Visit
                 {
+                    Student = new Student
+                    {
+                        Id = 10,
+                        Account = new Account
+                        {
+                            FirstName = "Ivan",
+                            LastName = "10"
+                        }
+                    },
                     Lesson = lesson,
                     Presence = true,
                     StudentId =10,
@@ -616,6 +651,15 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new Visit
                 {
+                    Student = new Student
+                    {
+                        Id = 11,
+                        Account = new Account
+                        {
+                            FirstName = "Ivan",
+                            LastName = "11"
+                        }
+                    },
                     Lesson = lesson,
                     Presence = false,
                     StudentId =11,
@@ -623,6 +667,15 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new Visit
                 {
+                    Student = new Student
+                    {
+                        Id = 12,
+                        Account = new Account
+                        {
+                            FirstName = "Ivan",
+                            LastName = "12"
+                        }
+                    },
                     Lesson = lesson,
                     Presence = false,
                     StudentId =12,
@@ -630,6 +683,15 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 },
                 new Visit
                 {
+                    Student = new Student
+                    {
+                        Id = 12,
+                        Account = new Account
+                        {
+                            FirstName = "Ivan",
+                            LastName = "12"
+                        }
+                    },
                     Lesson = lesson,
                     Presence = true,
                     StudentId =12,

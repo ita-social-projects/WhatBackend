@@ -29,21 +29,10 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             foreach (var item in allEventOccurences)
             {
-                result.Add(MapDTOtoViewModel(item));
+                result.Add(EventOccurrenceViewModel.FromEventOccurrenceDTO(item));
             }
 
             return View(result);
-        }
-
-        private EventOccurrenceViewModel MapDTOtoViewModel(EventOccurrenceDTO eventOccurrenceDTO)
-        {
-            return new EventOccurrenceViewModel {
-                Id = eventOccurrenceDTO.Id,
-                Storage = eventOccurrenceDTO.Storage,
-                StudentGroupId = eventOccurrenceDTO.StudentGroupId,
-                EventStart = eventOccurrenceDTO.EventStart,
-                EventFinish = eventOccurrenceDTO.EventFinish
-            };
         }
 
         [HttpGet]
@@ -51,7 +40,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             var eventOccurence = await _scheduleService.GetEventOccurrenceById(id);
 
-            return View(MapDTOtoViewModel(eventOccurence));
+            return View(EventOccurrenceViewModel.FromEventOccurrenceDTO(eventOccurence));
         }
 
         [HttpGet]

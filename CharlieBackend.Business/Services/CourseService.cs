@@ -111,30 +111,42 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
         }
 
-        public async Task<Result<bool>> DisableCourceAsync(long id)
+        public async Task<Result<CourseDto>> DisableCourceAsync(long id)
         {
             if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
             {
-                return Result<bool>.GetError(ErrorCode.ValidationError, "Course has active student group");
+                return Result<CourseDto>.GetError(ErrorCode.ValidationError, "Course has active student group");
             }
 
-            Result<bool> courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
-            await _unitOfWork.CommitAsync();
+            var courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
 
-            return courseDisabled;
+            if (courseDisabled.Data == null && courseDisabled.Error != null)
+            {
+                return Result<CourseDto>.GetError(courseDisabled.Error.Code, courseDisabled.Error.Message);
+            }
+
+            await _unitOfWork.CommitAsync();      
+            var courseDto = _mapper.Map<Course, CourseDto>(courseDisabled.Data);            
+            return  Result<CourseDto>.GetSuccess(courseDto);
         }
 
-        public async Task<Result<bool>> EnableCourceAsync(long id)
+        public async Task<Result<CourseDto>> EnableCourceAsync(long id)
         {
             if (await _unitOfWork.CourseRepository.IsCourseActive(id))
             {
-                return Result<bool>.GetError(ErrorCode.Conflict, "Course is already active.");
+                return Result<CourseDto>.GetError(ErrorCode.Conflict, "Course is already active.");
             }
 
-            var courseEnabled = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);
-            await _unitOfWork.CommitAsync();
+            var course= await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);  
+            
+            if (course.Data == null && course.Error != null)
+            {
+                return Result<CourseDto>.GetError(course.Error.Code, course.Error.Message);
+            }
 
-            return courseEnabled;
+            await _unitOfWork.CommitAsync();          
+            var courseDto = _mapper.Map<Course,CourseDto>(course.Data);               
+            return Result<CourseDto>.GetSuccess(courseDto); 
         }
 
         public async Task<bool> IsCourseActive(long id)
