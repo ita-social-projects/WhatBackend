@@ -9,27 +9,52 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<EventOccurrence> entity)
         {
-            entity.ToTable("event_occurence");
+            entity.ToTable("EventOccurrences");
 
-            entity.HasIndex(e => e.StudentGroupId)
-                .HasName("FK_student_group_of_schedule");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.StudentGroupId)
+                .IsRequired()
+                .HasColumnName("StudentGroupID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.EventStart).HasColumnName("event_start");
+            entity.Property(e => e.EventStart)
+                .IsRequired()
+                .HasColumnName("EventStart")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
-            entity.Property(e => e.EventFinish).HasColumnName("event_finish");
+            entity.Property(e => e.EventFinish)
+                .IsRequired()
+                .HasColumnName("EventFinish")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
-            entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
+            entity.Property(e => e.Pattern)
+                .HasColumnName("Pattern")
+                .HasColumnType("TINYINT UNSIGNED")
+                .HasComment("Patterns:" +
+                "\n 0 - Daily," +
+                "\n 1 - Weekly," +
+                "\n 2 - AbsoluteMonthly," +
+                "\n 3 - RelativeMonthly");
 
-            entity.Property(e => e.Pattern).HasColumnName("pattern");
+            entity.Property(e => e.Storage)
+                .IsRequired()
+                .HasColumnName("Storage")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.Storage).HasColumnName("storage");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.StudentGroup)
                 .WithMany(p => p.EventOccurances)
                 .HasForeignKey(d => d.StudentGroupId)
-                .HasConstraintName("FK_student_group_of_schedule");
+                .HasConstraintName("FK_StudentGroupEventOccurrences");
         }
     }
 }

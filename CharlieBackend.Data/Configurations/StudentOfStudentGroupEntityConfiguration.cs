@@ -9,29 +9,40 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentOfStudentGroup> entity)
         {
-            entity.ToTable("student_of_student_group");
+            entity.ToTable("StudentsOfStudentGroups");
 
-            entity.HasIndex(e => e.StudentGroupId)
-                .HasName("FK__idx");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
-            entity.HasIndex(e => e.StudentId)
-                .HasName("FK_student_of_student_group_idx");
+            entity.Property(e => e.StudentGroupId)
+                .IsRequired()
+                .HasColumnName("StudentGroupID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.StudentId)
+                .IsRequired()
+                .HasColumnName("StudentID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.StudentGroupId).HasColumnName("student_group_id");
-
-            entity.Property(e => e.StudentId).HasColumnName("student_id");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.StudentGroup)
                 .WithMany(p => p.StudentsOfStudentGroups)
                 .HasForeignKey(d => d.StudentGroupId)
-                .HasConstraintName("FK_student_group_of_student");
+                .HasConstraintName("FK_StudentGroupOfStudents");
 
             entity.HasOne(d => d.Student)
                 .WithMany(p => p.StudentsOfStudentGroups)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK_student_of_student_group");
+                .HasConstraintName("FK_StudentOfStudentGroups");
+
+            entity.HasIndex(e => new { e.StudentId, e.StudentGroupId })
+                .HasName("UQ_StudentAndStudentGroup")
+                .IsUnique();
         }
     }
 }
