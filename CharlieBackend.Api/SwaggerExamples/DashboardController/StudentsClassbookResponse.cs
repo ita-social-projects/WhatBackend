@@ -2,8 +2,6 @@
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.SwaggerExamples.DashboardController
 {
@@ -18,6 +16,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                     new StudentMarkDto
                     {
                         Student = "John Coffee",
+                        StudentId = 14,
                         Course = "Naturalism",
                         StudentGroup = "PZ-19-1",
                         LessonId = 345,
@@ -26,20 +25,22 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                     },
                     new StudentMarkDto
                     {
-                        Student = "John Coffee",
+                        Student = "Erik Brown",
+                        StudentId = 15,
                         Course = "Naturalism",
                         StudentGroup = "PZ-19-1",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
-                        StudentMark = 4,
+                        StudentMark = 0,
                     },
                 },
                 StudentsPresences = new List<StudentVisitDto>
                 {
                     new StudentVisitDto
                     {
-                        Student = "John Brown",
-                        Course = "Applied mathematics",
+                        Student = "John Coffee",
+                        StudentId = 14,
+                        Course = "Naturalism",
                         StudentGroup = "AM-12",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
@@ -47,12 +48,13 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                     },
                     new StudentVisitDto
                     {
-                        Student = "John Brown",
-                        Course = "Applied mathematics",
+                        Student = "Erik Brown",
+                        StudentId = 15,
+                        Course = "Naturalism",
                         StudentGroup = "AM-12",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
-                        Presence = true
+                        Presence = false
                     }
                 }
             };

@@ -26,7 +26,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.Student);
                 foreach (var item in StudentsMarks)
                 {
-                    await FillStudentAverageMark(item
+                    await FillStudentMark(item
                         .Select(x => new StudentMarkDto
                         {
                             StudentMark = x.StudentMark,
@@ -100,7 +100,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             worksheet.Rows().AdjustToContents();
         }
 
-        public async Task FillStudentAverageMark(IEnumerable<StudentMarkDto> StudentsMarks)
+        public async Task FillStudentMark(IEnumerable<StudentMarkDto> StudentsMarks)
         {
             xLWorkbook.AddWorksheet("Average mark of " + StudentsMarks.First().Student);
             var worksheet = xLWorkbook.Worksheet("Average mark of " + StudentsMarks.First().Student);
@@ -110,7 +110,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 "Course",
                 "Student Group",
                 "Lesson date",
-                "Average mark");
+                "Student mark");
 
             FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
                    StudentsMarks.First().Student);
