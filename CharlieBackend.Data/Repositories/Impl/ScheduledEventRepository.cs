@@ -58,5 +58,19 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return schedule;
         }
+
+        public async Task<ScheduledEvent> ConnectEventToLessonById (long? eventId, long? lessonId)
+        {
+            var schedule = await _applicationContext.ScheduledEvents.FirstOrDefaultAsync(entity => entity.Id == eventId);
+
+            if (schedule != null)
+            {
+                schedule.LessonId = lessonId;
+                _applicationContext.ScheduledEvents.FirstOrDefault(entity => entity.Id == eventId).LessonId = lessonId;
+                _applicationContext.SaveChanges();
+            }
+
+            return schedule;
+        }
     }
 }

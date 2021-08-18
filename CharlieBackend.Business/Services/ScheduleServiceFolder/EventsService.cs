@@ -75,5 +75,14 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
             return string.Empty;
         }
+
+        public async Task<Result<ScheduledEventDTO>> ConnectScheduleToLessonById(long eventId, long lessonId)
+        {
+            var scheduleEntity = await _unitOfWork.ScheduledEventRepository.ConnectEventToLessonById(eventId, lessonId);
+
+            return scheduleEntity == null ?
+                Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Scheduled event with id={eventId} does not exist") :
+                Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
+        }
     }
 }

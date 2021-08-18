@@ -166,6 +166,5 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
-
     }
 }

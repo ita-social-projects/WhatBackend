@@ -10,5 +10,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface IScheduledEventRepository : IRepository<ScheduledEvent>
     {
         Task<IList<ScheduledEvent>> GetEventsFilteredAsync(ScheduledEventFilterRequestDTO request);
+
+        Task<ScheduledEvent> ConnectEventToLessonById(long? eventId, long? lessonId);
     }
 }

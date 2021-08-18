@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,22 @@ namespace CharlieBackend.Api.Controllers
             var result = await _eventsService.DeleteAsync(id);
 
             return result.ToActionResult();
+        }
+
+        /// <summary>
+        /// Connects scheduled event to lesson by ids
+        /// </summary>
+        /// <param name="id">Id of scheduled event</param>
+        /// <param name="lesson">Lesson to be connected (Its enough to specify lessonId)</param>
+        /// <response code = "200" > Successful delete of schedule</response>
+        /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
+        [Authorize(Roles = "Secretary, Admin, Mentor")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<EventOccurrenceDTO>> ConnectEventToLesson(long id, [FromBody] LessonDto lesson)
+        {
+            var foundSchedules = await _eventsService.ConnectScheduleToLessonById(id, lesson.Id);
+
+            return foundSchedules.ToActionResult();
         }
     }
 }
