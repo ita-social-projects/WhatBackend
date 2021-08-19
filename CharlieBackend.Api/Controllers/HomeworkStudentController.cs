@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CharlieBackend.Core;
-using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.Controllers
 {

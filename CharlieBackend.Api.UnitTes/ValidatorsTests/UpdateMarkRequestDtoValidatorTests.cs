@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Api.Validators.HomeworkDTOValidators;
-using CharlieBackend.Core.DTO.Homework;
+﻿using CharlieBackend.Api.Validators.HomeworkStudentDTOValidators;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using FluentAssertions;
 using System;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
@@ -173,6 +172,8 @@ namespace CharlieBackend.Business.Services
         {
             var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(request.StudentHomeworkId);
 
+            long accountId = _currentUserService.AccountId;
+
             Mark mark;
 
             if (homeworkStudent.Mark == null)
@@ -182,7 +183,8 @@ namespace CharlieBackend.Business.Services
                     Value = request.StudentMark,
                     Comment = request.MentorComment,
                     EvaluationDate = DateTime.UtcNow,
-                    Type = request.MarkType
+                    Type = request.MarkType,
+                    EvaluatedBy = accountId
                 };
                 homeworkStudent.Mark = mark;
             }
@@ -192,6 +194,7 @@ namespace CharlieBackend.Business.Services
                 homeworkStudent.Mark.Comment = request.MentorComment;
                 homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudent.Mark.Type = request.MarkType;
+                homeworkStudent.Mark.EvaluatedBy = accountId;
             }
 
             _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);

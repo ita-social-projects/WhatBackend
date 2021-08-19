@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Core.DTO.Homework;
-using CharlieBackend.Core.DTO.HomeworkStudent;
+﻿using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
 using System.Security.Claims;

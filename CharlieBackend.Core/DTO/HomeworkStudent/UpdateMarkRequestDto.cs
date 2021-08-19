@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CharlieBackend.Core.DTO.Homework
+namespace CharlieBackend.Core.DTO.HomeworkStudent
 {
-    public class UpdateMarkRequestDto
+     public class UpdateMarkRequestDto
     {
         public long StudentHomeworkId { get; set; }
         public int StudentMark { get; set; }

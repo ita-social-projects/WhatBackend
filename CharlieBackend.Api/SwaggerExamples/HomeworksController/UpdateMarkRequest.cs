@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Core.DTO.Homework;
+﻿using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
 

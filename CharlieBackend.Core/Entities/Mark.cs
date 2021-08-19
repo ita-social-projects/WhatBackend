@@ -14,6 +14,10 @@ namespace CharlieBackend.Core.Entities
 
         public MarkType Type { get; set; }
 
+        public long EvaluatedBy { get; set; }
+
+        public virtual Account Account { get; set; }
+
         public virtual HomeworkStudent HomeworkStudent { get; set; }
     }
 }

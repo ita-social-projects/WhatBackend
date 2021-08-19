@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Data.Exceptions;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -25,6 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly HomeworkService _homeworkService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
@@ -38,7 +40,8 @@ namespace CharlieBackend.Api.UnitTest
             _attachmentRepositoryMock = new Mock<IAttachmentRepository>();
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object);
+            _currentUserServiceMock = new Mock<ICurrentUserService>();
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
@@ -315,10 +318,10 @@ namespace CharlieBackend.Api.UnitTest
             homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_one));
             homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_two));
 
-            var homeworkService = new HomeworkService(
-                unitOfWork: _unitOfWorkMock.Object,
-                mapper: _mapper,
-                _loggerMock.Object);
+            //var homeworkService = new HomeworkService(
+            //    unitOfWork: _unitOfWorkMock.Object,
+            //    mapper: _mapper,
+            //    _loggerMock.Object);
 
             var request_one = new UpdateMarkRequestDto
             { 

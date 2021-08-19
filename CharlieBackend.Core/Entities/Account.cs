@@ -31,6 +31,10 @@ namespace CharlieBackend.Core.Entities
 
         public virtual Attachment Avatar { get; set; }
 
+        public virtual ICollection<Mark> Marks { get; set; }
+
+        public virtual ICollection<Homework> Homeworks { get; set; }
+
         public virtual ICollection<Mentor> Mentors { get; set; }
 
         public virtual ICollection<Student> Students { get; set; }

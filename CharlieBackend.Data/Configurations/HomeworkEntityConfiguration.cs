@@ -31,10 +31,20 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.LessonId).HasColumnName("lesson_id");
 
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by")
+                .HasColumnType("BIGINT")
+                .IsRequired();
+
             entity.HasOne(d => d.Lesson)
                 .WithMany(p => p.Homeworks)
                 .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_homework");
+                .HasConstraintName("FK_lesson_of_homework");
+
+            entity.HasOne(d => d.Account)
+                .WithMany(p => p.Homeworks)
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("FK_account_of_homework");
         }
     }
 }

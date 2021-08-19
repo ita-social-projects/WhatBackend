@@ -15,6 +15,10 @@ namespace CharlieBackend.Core.Entities
 
         public DateTime PublishingDate { get; set; }
 
+        public long CreatedBy { get; set; }
+
+        public virtual Account Account { get; set; }
+
         public virtual IList<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         public virtual IList<HomeworkStudent> HomeworkStudents { get; set; }

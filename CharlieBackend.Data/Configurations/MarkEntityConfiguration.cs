@@ -16,7 +16,7 @@ namespace CharlieBackend.Data.Configurations
             entity.Property(e => e.Id).HasColumnName("id"); 
 
             entity.Property(e => e.Value)
-                .HasColumnName("mark")
+                .HasColumnName("value")
                 .HasColumnType("TINYINT")
                 .IsRequired(); 
 
@@ -34,7 +34,18 @@ namespace CharlieBackend.Data.Configurations
             entity.Property(e => e.Type)
                 .HasColumnName("type")
                 .HasColumnType("TINYINT")
+                .IsRequired()
+                .HasComment("Types:\n 0 - Homework,\n 1 - Visit");
+
+            entity.Property(e => e.EvaluatedBy)
+                .HasColumnName("evaluated_by")
+                .HasColumnType("BIGINT")
                 .IsRequired();
+
+            entity.HasOne(e => e.Account)
+               .WithMany(a => a.Marks)
+               .HasForeignKey(d => d.EvaluatedBy)
+               .HasConstraintName("FK_account_of_mark");
         }
     }
 }

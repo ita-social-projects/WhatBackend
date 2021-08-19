@@ -25,12 +25,14 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
+        private readonly ICurrentUserService _currentUserService;
 
-        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger)
+        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
@@ -49,13 +51,16 @@ namespace CharlieBackend.Business.Services
 
             var lesson = _unitOfWork.LessonRepository.GetByIdAsync(createHomeworkDto.LessonId);
 
+            long accountId = _currentUserService.AccountId;
+
             var newHomework = new Homework
             {
                 DueDate = createHomeworkDto.DueDate,
                 LessonId = createHomeworkDto.LessonId,
                 TaskText = createHomeworkDto.TaskText,
                 Lesson = lesson.Result,
-                PublishingDate = DateTime.UtcNow
+                PublishingDate = DateTime.UtcNow,
+                CreatedBy = accountId
             };
 
             _unitOfWork.HomeworkRepository.Add(newHomework);

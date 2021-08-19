@@ -24,7 +24,8 @@ namespace CharlieBackend.Api.SwaggerExamples.HomeworkStudentController
                     Value = 5,
                     Comment = "Change code at line 23",
                     EvaluationDate = new DateTime(2021, 09, 10),
-                    Type = MarkType.Homework
+                    Type = MarkType.Homework,
+                    EvaluatedBy = 4
                 }
             };
         }

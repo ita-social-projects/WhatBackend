@@ -9,5 +9,6 @@ namespace CharlieBackend.Core.DTO.HomeworkStudent
         public string Comment { get; set; }
         public DateTime EvaluationDate { get; set; }
         public MarkType Type { get; set; }
+        public long EvaluatedBy { get; set; }
     }
 }
