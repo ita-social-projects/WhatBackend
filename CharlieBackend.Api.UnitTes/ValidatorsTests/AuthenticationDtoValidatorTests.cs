@@ -15,7 +15,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         private readonly string tooShortPassword = "VP_12";
         private readonly string tooLongPassword = "VeryValidAndEvenMoreEasyToRememberPassword12";
         private readonly string noSpecialSymbolsPassword = "validPassword12";
-        private readonly string noNumbersPassword = "validPassword12";
+        private readonly string noNumbersPassword = "validPassword_";
         private readonly string noUpperCasePassword = "validpassword12";
 
         public AuthenticationDtoValidatorTests()
