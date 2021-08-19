@@ -222,14 +222,9 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
             var claim = User.Claims;
-            var email = claim.FirstOrDefault(x => x.Type == "Email");
+            var email = claim.FirstOrDefault(x => x.Type == ClaimConstants.EmailClaim);
 
-            if (email.ToString() != changePassword.Email)
-            {
-                return StatusCode(403, "User can't change password.");
-            }
-
-            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword, email.Value.ToString());
 
             return updatedAccount.ToActionResult();
         }
