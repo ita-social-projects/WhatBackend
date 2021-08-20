@@ -77,7 +77,7 @@ namespace CharlieBackend.Business.Services
                             _unitOfWork.StudentRepository, studentGroup);
                     }
 
-                    result = await IsStudenHisOwnMentor(studentGroup);
+                    await IsStudenHisOwnMentor(studentGroup, ref result);
 
                     if (result.Error == null)
                     {
@@ -170,7 +170,7 @@ namespace CharlieBackend.Business.Services
                 IRepository<T> repository,
                 IList<long> ids) where T : BaseEntity
         {
-            Result<StudentGroupDto> result = null;
+            Result<StudentGroupDto> result = new Result<StudentGroupDto>();
 
             var notExistingIds = await repository
                     .GetNotExistEntitiesIdsAsync(ids);
@@ -233,11 +233,9 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private Task<Result<StudentGroupDto>> IsStudenHisOwnMentor(
-                StudentGroup group) 
+        private Task IsStudenHisOwnMentor(StudentGroup group,
+                ref Result<StudentGroupDto> result)
         {
-            Result<StudentGroupDto> result = null;
-
             if ((group.MentorsOfStudentGroups != null)
                         && (group.StudentsOfStudentGroups != null))
             {
@@ -258,7 +256,7 @@ namespace CharlieBackend.Business.Services
                         }
                     }
 
-                    if (result != null)
+                    if (result.Error != null)
                     {
                         break;
                     }
