@@ -217,14 +217,11 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return an updated account entity</response>
         [Route("password")]
-        [Authorize(Roles = "Secretary, Mentor, Student")]
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
         [HttpPut]
         public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
-            var claim = User.Claims;
-            var email = claim.FirstOrDefault(x => x.Type == ClaimConstants.EmailClaim);
-
-            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword, email.Value.ToString());
+            var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
 
             return updatedAccount.ToActionResult();
         }
