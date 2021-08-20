@@ -31,7 +31,7 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<StudentGroupDto>> CreateStudentGroupAsync(
                 CreateStudentGroupDto studentGroupDto)
         {
-            Result<StudentGroupDto> result = null;
+            Result<StudentGroupDto> result = new Result<StudentGroupDto>();
 
             try
             {
@@ -45,7 +45,7 @@ namespace CharlieBackend.Business.Services
                 result = await CheckCreateStudentGroupDto(studentGroupDto,
                         result);
 
-                if (result == null)
+                if (result.Error == null)
                 {
                     var studentGroup = new StudentGroup
                     {
@@ -79,7 +79,7 @@ namespace CharlieBackend.Business.Services
 
                     result = await IsStudenHisOwnMentor(studentGroup);
 
-                    if (result == null)
+                    if (result.Error == null)
                     {
                         await _unitOfWork.CommitAsync();
 
@@ -103,7 +103,7 @@ namespace CharlieBackend.Business.Services
               CreateStudentGroupDto studentGroupDto,
               Result<StudentGroupDto> result)
         {
-            if (result == null)
+            if (result.Error == null)
             {
                 if (await _unitOfWork.StudentGroupRepository
                             .IsGroupNameExistAsync(studentGroupDto.Name))
@@ -114,7 +114,7 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            if (result == null)
+            if (result.Error == null)
             {
                 if (!await _unitOfWork.CourseRepository.IsEntityExistAsync(
                         studentGroupDto.CourseId))
@@ -125,7 +125,7 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            if (result == null)
+            if (result.Error == null)
             {
                 if (studentGroupDto.StartDate > studentGroupDto.FinishDate)
                 {
@@ -135,23 +135,22 @@ namespace CharlieBackend.Business.Services
                 }
             }
 
-            if (result == null)
+            if (result.Error == null)
             {
-                result = await CheckDublicate(studentGroupDto.StudentIds);
+                await CheckDublicate(studentGroupDto.StudentIds, ref result);
             }
 
-            if (result == null)
+            if (result.Error == null)
             {
-                result = await CheckDublicate(studentGroupDto.MentorIds);
+                await CheckDublicate(studentGroupDto.MentorIds, ref result);
             }
 
             return result;
         }
 
-        private Task<Result<StudentGroupDto>> CheckDublicate(IList<long> list)
+        private Task CheckDublicate(IList<long> list,
+                ref Result<StudentGroupDto> result)
         {
-            Result<StudentGroupDto> result = null;
-
             if (list != null)
             {
                 var dublicates = list.Dublicates();

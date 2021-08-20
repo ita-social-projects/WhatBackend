@@ -141,7 +141,7 @@ namespace CharlieBackend.Api.UnitTest
                    .ReturnsAsync(true);
 
             //Act
-            var groupNameExistResult = await StudentGroupServiceMock().CreateStudentGroupAsync(existingStudentGroup);
+             var groupNameExistResult = await StudentGroupServiceMock().CreateStudentGroupAsync(existingStudentGroup);
             
             //Assert
             groupNameExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.UnprocessableEntity);
