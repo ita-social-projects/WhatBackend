@@ -145,7 +145,7 @@ namespace CharlieBackend.Api.Controllers
             Result<IList<MentorStudyGroupsDto>> foundGroups = 
                     new Result<IList<MentorStudyGroupsDto>>();
 
-            await _mentorService.CheckRoleAndIdMentor(id, foundGroups);
+            await _mentorService.CheckRoleAndIdMentor(id, ref foundGroups);
 
             if (foundGroups.Error == default)
             {
@@ -169,7 +169,7 @@ namespace CharlieBackend.Api.Controllers
             Result<IList<MentorCoursesDto>> foundCourses =
                    new Result<IList<MentorCoursesDto>>();
 
-            await _mentorService.CheckRoleAndIdMentor(id, foundCourses);
+            await _mentorService.CheckRoleAndIdMentor(id, ref foundCourses);
 
             if (foundCourses.Error == default)
             {
@@ -223,7 +223,7 @@ namespace CharlieBackend.Api.Controllers
             Result<IList<LessonDto>> lessons =
                   new Result<IList<LessonDto>>();
 
-            await _mentorService.CheckRoleAndIdMentor(id, lessons);
+            await _mentorService.CheckRoleAndIdMentor(id, ref lessons);
 
             if (lessons.Error == default)
             {

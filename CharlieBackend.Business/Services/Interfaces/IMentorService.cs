@@ -31,6 +31,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<bool>> EnableMentorAsync(long mentorId);
 
-        Task CheckRoleAndIdMentor<T>(long id, Result<T> result);
+        Task CheckRoleAndIdMentor<T>(long id, ref Result<T> result);
     }
 }
