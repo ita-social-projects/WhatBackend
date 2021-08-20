@@ -18,15 +18,19 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly IBlobService _blobService;
+        private readonly ICurrentUserService _currentUserService;
 
         public MentorService(IAccountService accountService, IUnitOfWork unitOfWork,
-                             IMapper mapper, INotificationService notification, IBlobService blobService)
+                              IMapper mapper, INotificationService notification,
+                              IBlobService blobService,
+                              ICurrentUserService currentUserService)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
             _blobService = blobService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<MentorDto>> CreateMentorAsync(long accountId)
@@ -296,6 +300,26 @@ namespace CharlieBackend.Business.Services
             }
 
             return foundCourses;
+        }
+
+        /// <summary>
+        /// Return result of checking to role of mentor and it's identity numbers
+        /// </summary>
+        /// <typeparam name="T">Type of data</typeparam>
+        /// <param name="id">Id of user entity</param>
+        /// <param name="result">Result of checking to role and
+        /// equality identity numbers of entities with type of data</param>
+        /// <returns></returns>
+        public Task<Result<T>> CheckRoleAndIdMentor<T>(long id, Result<T> result)
+        {
+            if (_currentUserService.Role.Is(UserRole.Mentor)
+                  && _currentUserService.EntityId != id)
+            {
+                result = Result<T>.GetError(ErrorCode.Unauthorized,
+                        "Mentor can get only his information");
+            }
+
+            return Task.FromResult(result);
         }
     }
 }
