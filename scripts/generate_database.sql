@@ -281,7 +281,7 @@ CREATE TABLE `EventOccurrences` (
     `StudentGroupID`    BIGINT UNSIGNED     NOT NULL,
     `EventStart`        DATETIME            NOT NULL        COMMENT 'Use UTC time',
     `EventFinish`       DATETIME            NOT NULL        COMMENT 'Use UTC time',
-    `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n 0 - Daily,\n 1 - Weekly,\n 2 - AbsoluteMonthly,\n 3 - RelativeMonthly',
+    `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n0 - Daily,\n1 - Weekly,\n2 - AbsoluteMonthly,\n3 - RelativeMonthly',
     `Storage`           BIGINT UNSIGNED     NOT NULL,
 
     CONSTRAINT    `PK_EventOccurrence`                 PRIMARY KEY (`ID`),

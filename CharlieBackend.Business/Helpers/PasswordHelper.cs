@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Helpers
         private const string _pattern = @"^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$_%^&+=])(?=.*[0-9]).*$";
         private static readonly string _allowedSymbols = "qa2zWSXe4dc6RF8Vtg0bYHNujmIKolPpLOk7iMJUn9hy3BGTvf_rCDE5xs1wZAQ";
         private static readonly string _saltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-01234567890";
-        private static readonly int _saltLen = 15;
+        private static readonly int _saltLen = 32;
 
         public static string GenerateSalt()
         {
