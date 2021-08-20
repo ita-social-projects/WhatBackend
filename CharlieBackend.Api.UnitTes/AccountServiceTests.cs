@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task RemoveRoleFromAccount_RemoveRole_RoleRemoved() 
+        public async Task RemoveRoleFromAccount_RemoveRole_RoleRemoved()
         {
             //Arrange
             AccountRoleDto roleDto = new AccountRoleDto()
@@ -102,6 +102,48 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             Assert.Equal(userSuccess.Role, user.Role);
+        }
+
+        [Fact]
+        public async Task SetRoleToAccount_TryGrantToUnsuitableAccount_GetFalseResult() 
+        {
+            //Arrange
+            AccountRoleDto accountRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account admin = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            Account notAssigned = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            bool adminRoleResult = false;
+            bool notAssignetResult = false;
+
+            //Act
+            bool adminPlusStudentRole = await admin.SetAccountRoleAsync(accountRoleDto.Role);
+            bool notAssignedPlusStudent = await notAssigned.SetAccountRoleAsync(accountRoleDto.Role);
+
+            //Assert
+            Assert.Equal(adminRoleResult, adminPlusStudentRole);
+            Assert.Equal(notAssignetResult, notAssignedPlusStudent);
         }
 
         [Fact]
