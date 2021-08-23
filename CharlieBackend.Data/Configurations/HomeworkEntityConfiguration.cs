@@ -32,13 +32,32 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("LessonID")
                 .HasColumnType("BIGINT UNSIGNED");
 
+            entity.Property(e => e.PublishingDate)
+                .IsRequired()
+                .HasColumnName("PublishingDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.Property(e => e.CreatedBy)
+                .IsRequired()
+                .HasColumnName("CreatedBy")
+                .HasColumnType("BIGINT UNSIGNED");
+
+            entity.HasOne(e => e.Account)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("FK_AccountOfHomework");
+
+            entity.HasOne(e => e.Lesson)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.LessonId)
+                .HasConstraintName("FK_LessonHomeworks");
+
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
 
-            entity.HasOne(d => d.Account)
-                .WithMany(p => p.Homeworks)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_account_of_homework");
+            entity.HasIndex(e => e.LessonId)
+                .HasName("IX_Lesson");
         }
     }
 }

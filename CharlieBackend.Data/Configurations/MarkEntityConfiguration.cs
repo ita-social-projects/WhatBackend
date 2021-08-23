@@ -11,41 +11,42 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Mark> entity)
         {
-            entity.ToTable("mark");
+            entity.ToTable("Marks");
 
-            entity.Property(e => e.Id).HasColumnName("id"); 
+            entity.Property(e => e.Id).HasColumnName("ID"); 
 
             entity.Property(e => e.Value)
-                .HasColumnName("value")
+                .HasColumnName("Value")
                 .HasColumnType("TINYINT")
                 .IsRequired(); 
 
             entity.Property(e => e.Comment)
-                .HasColumnName("comment")
-                .HasColumnType("varchar(1024)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Comment")
+                .HasColumnType("VARCHAR(1024)");
 
             entity.Property(e => e.EvaluationDate)
-                .HasColumnName("evaluation_date")
-                .HasColumnType("DATETIME")
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("EvaluationDate")
+                .HasColumnType("DATETIME");
 
             entity.Property(e => e.Type)
-                .HasColumnName("type")
-                .HasColumnType("TINYINT")
                 .IsRequired()
+                .HasColumnName("Type")
+                .HasColumnType("TINYINT UNSIGNED")
                 .HasComment("Types:\n 0 - Homework,\n 1 - Visit");
 
             entity.Property(e => e.EvaluatedBy)
-                .HasColumnName("evaluated_by")
-                .HasColumnType("BIGINT")
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("EvaluatedBy")
+                .HasColumnType("BIGINT UNSIGNED");
 
             entity.HasOne(e => e.Account)
-               .WithMany(a => a.Marks)
-               .HasForeignKey(d => d.EvaluatedBy)
-               .HasConstraintName("FK_account_of_mark");
+                .WithMany(a => a.Marks)
+                .HasForeignKey(d => d.EvaluatedBy)
+                .HasConstraintName("FK_AccountOfMark");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
         }
     }
 }
