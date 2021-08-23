@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             //Act
-            await user.SetAccountRoleAsync(roleDto.Role);
+            await user.GrantAccountRoleAsync(roleDto.Role);
 
             //Assert
             Assert.Equal(userExpected.Role, user.Role);
@@ -98,7 +98,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             //Act
-            await user.RemoveAccountRoleAsync(roleDto.Role);
+            await user.RevokeAccountRoleAsync(roleDto.Role);
 
             //Assert
             Assert.Equal(userSuccess.Role, user.Role);
@@ -148,10 +148,10 @@ namespace CharlieBackend.Api.UnitTest
             bool complexRoleResult = false;
 
             // Act 
-            bool existRole = await user.SetAccountRoleAsync(existRoleDto.Role);
-            bool adminRole = await user.SetAccountRoleAsync(adminRoleDto.Role);
-            bool notAssignedRole = await user.SetAccountRoleAsync(nonAssignedRoleDto.Role);
-            bool complexRole = await user.SetAccountRoleAsync(complexRoleDto.Role);
+            bool existRole = await user.GrantAccountRoleAsync(existRoleDto.Role);
+            bool adminRole = await user.GrantAccountRoleAsync(adminRoleDto.Role);
+            bool notAssignedRole = await user.GrantAccountRoleAsync(nonAssignedRoleDto.Role);
+            bool complexRole = await user.GrantAccountRoleAsync(complexRoleDto.Role);
 
             //Assert
             Assert.Equal(existRoleResult, existRole);
@@ -211,11 +211,11 @@ namespace CharlieBackend.Api.UnitTest
             bool complexRoleResult = false;
 
             // Act 
-            bool existRole = await user.RemoveAccountRoleAsync(notExistRoleDto.Role);
-            bool adminRole = await user.RemoveAccountRoleAsync(adminRoleDto.Role);
-            bool notAssigned = await user.RemoveAccountRoleAsync(notAssignedRoleDto.Role);
-            bool lastRole = await user.RemoveAccountRoleAsync(lastRoleDto.Role);
-            bool complexRole = await user.RemoveAccountRoleAsync(complexRoleDto.Role);
+            bool existRole = await user.RevokeAccountRoleAsync(notExistRoleDto.Role);
+            bool adminRole = await user.RevokeAccountRoleAsync(adminRoleDto.Role);
+            bool notAssigned = await user.RevokeAccountRoleAsync(notAssignedRoleDto.Role);
+            bool lastRole = await user.RevokeAccountRoleAsync(lastRoleDto.Role);
+            bool complexRole = await user.RevokeAccountRoleAsync(complexRoleDto.Role);
 
             //Assert
             Assert.Equal(notExistRoleResult, existRole);

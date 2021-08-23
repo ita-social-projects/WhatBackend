@@ -8,38 +8,32 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Homework> entity)
         {
-            entity.ToTable("homework");
+            entity.ToTable("Homeworks");
 
-            entity.HasIndex(e =>
-                new { e.LessonId })
-                .HasName("FK_lesson_for_homework");
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
             entity.Property(e => e.DueDate)
-                .HasColumnName("due_date")
-                .HasDefaultValue(null);
+                .IsRequired()
+                .HasColumnName("DueDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
             entity.Property(e => e.TaskText)
-                .HasColumnName("task_text")
-                .HasColumnType("varchar(4000)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .IsRequired()
+                .HasColumnName("TaskText")
+                .HasColumnType("VARCHAR(8000)");
 
-            entity.Property(e => e.PublishingDate)
-                .HasColumnName("publishing_date");
+            entity.Property(e => e.LessonId)
+                .IsRequired()
+                .HasColumnName("LessonID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.LessonId).HasColumnName("lesson_id");
-
-            entity.Property(e => e.CreatedBy)
-                .HasColumnName("created_by")
-                .HasColumnType("BIGINT")
-                .IsRequired();
-
-            entity.HasOne(d => d.Lesson)
-                .WithMany(p => p.Homeworks)
-                .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_of_homework");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Account)
                 .WithMany(p => p.Homeworks)

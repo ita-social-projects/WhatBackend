@@ -6,7 +6,7 @@ namespace CharlieBackend.Core.Entities
 {
     public partial class Attachment : BaseEntity
     {
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         public long CreatedByAccountId { get; set; }
 

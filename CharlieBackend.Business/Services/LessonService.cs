@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Visit;
 using System.Linq;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Core.Extensions;
 
 namespace CharlieBackend.Business.Services
 {
@@ -241,16 +242,36 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(long studentId)
+        public async Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(
+                long studentId)
         {
-            var studentLessonModels = await _unitOfWork.LessonRepository.GetStudentInfoAsync(studentId);
+            Result<IList<StudentLessonDto>> result = null;
 
-            if (studentLessonModels == null)
+            if ((_currentUserService.Role.Is(UserRole.Student))
+                    && (_currentUserService.EntityId != studentId))
             {
-                return Result<IList<StudentLessonDto>>.GetError(ErrorCode.NotFound, "Not found");
+                result = Result<IList<StudentLessonDto>>.GetError(
+                        ErrorCode.Unauthorized,
+                        "Student can get only his lessons");
+            }
+            else
+            {
+                var studentLessonModels = await _unitOfWork.LessonRepository
+                        .GetStudentInfoAsync(studentId);
+
+                if (studentLessonModels == null)
+                {
+                    result = Result<IList<StudentLessonDto>>.GetError(
+                            ErrorCode.NotFound, "Not found");
+                }
+                else
+                {
+                    result = Result<IList<StudentLessonDto>>.GetSuccess(
+                            _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
+                }
             }
 
-            return Result<IList<StudentLessonDto>>.GetSuccess( _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
+            return result;
         }
 
         private List<long> GetStudentsIDNotIncludeInGroup(IList<VisitDto> visit, IList<long?> groupStudentsId)

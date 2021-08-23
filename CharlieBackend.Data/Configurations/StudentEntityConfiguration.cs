@@ -8,19 +8,30 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Student> entity)
         {
-            entity.ToTable("student");
+            entity.ToTable("Students");
 
-            entity.HasIndex(e => e.AccountId)
-                .HasName("FK_account_of_student");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID")
+                .HasColumnType("BIGINT UNSIGNED")
+                .ValueGeneratedOnAdd();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountId)
+                .IsRequired()
+                .HasColumnName("AccountID")
+                .HasColumnType("BIGINT UNSIGNED");
 
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Account)
                 .WithMany(p => p.Students)
                 .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_account_of_student");
+                .HasConstraintName("FK_AccountStudents");
+
+            entity.HasIndex(e => e.AccountId)
+                .IsUnique()
+                .HasName("UQ_AccountStudents");
         }
     }
 }
