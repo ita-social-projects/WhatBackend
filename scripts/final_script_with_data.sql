@@ -310,7 +310,7 @@ UNLOCK TABLES;
 -- INSERT INTO `EventOccurrences`
 -- (`StudentGroupID`, `EventStart`, `EventFinish`, `Pattern`, `Storage`)
 -- VALUES
--- (1, '2021-07-05', '2021-12-24', 3)
+-- (1, '2021-07-05', '2021-12-24', 1)
 -- ;
 
 -- UNLOCK TABLES;

@@ -13,14 +13,11 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.StudentGroupId)
                 .IsRequired()
-                .HasColumnName("StudentGroupID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("StudentGroupID");
 
             entity.Property(e => e.EventStart)
                 .IsRequired()
@@ -36,7 +33,6 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Pattern)
                 .HasColumnName("Pattern")
-                .HasColumnType("TINYINT UNSIGNED")
                 .HasComment("Patterns:" +
                 "\n 0 - Daily," +
                 "\n 1 - Weekly," +
@@ -45,8 +41,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Storage)
                 .IsRequired()
-                .HasColumnName("Storage")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("Storage");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");

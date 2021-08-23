@@ -12,14 +12,11 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.AccountId)
                 .IsRequired()
-                .HasColumnName("AccountID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("AccountID");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
