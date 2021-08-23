@@ -11,6 +11,7 @@ using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.Extensions;
+using System.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {

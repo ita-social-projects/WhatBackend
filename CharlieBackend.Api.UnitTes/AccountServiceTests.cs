@@ -22,12 +22,14 @@ namespace CharlieBackend.Api.UnitTest
         private readonly IMapper _mapper;
         private readonly Mock<INotificationService> _notificationServiceMock;
         private readonly Mock<IAccountRepository> _accountRepositoryMock;
+        private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
 
         public AccountServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
             _notificationServiceMock = new Mock<INotificationService>();
             _accountRepositoryMock = new Mock<IAccountRepository>();
+            _currentUserServiceMock = new Mock<ICurrentUserService>();
         }
 
         [Fact]
@@ -248,7 +250,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                _currentUserServiceMock.Object);
 
             //Act
             var successResult = await accountService.CreateAccountAsync(successAccountModel);
@@ -282,7 +285,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                 _unitOfWorkMock.Object,
                 _mapper,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                _currentUserServiceMock.Object);
 
             //Act
             var isEmailTakenResult = await accountService.CreateAccountAsync(isEmailTakenAccountModel);
@@ -298,11 +302,11 @@ namespace CharlieBackend.Api.UnitTest
             var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
             var newPassword = "changedPass";
+            var email = "user@exmaple.com";
 
             var changePass = new ChangeCurrentPasswordDto
             {
-                Email = "user@exmaple.com",
-                CurrentPassword = "mypass",
+                CurrentPassword = oldPassword,
                 NewPassword = newPassword,
                 ConfirmNewPassword = newPassword
             };
@@ -328,52 +332,21 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountSaltByEmail(account.Email))
                     .ReturnsAsync(salt);
 
-            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(changePass.Email))
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(account.Email))
                     .ReturnsAsync(account);
+
+            _currentUserServiceMock.Setup(x => x.Email).Returns(email);
 
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object
+                    );
 
             var successResult = await accountService.ChangePasswordAsync(changePass);
 
             successResult.Data.Should().BeEquivalentTo(updatedAccountDto);
-        }
-
-        [Fact]
-        public async Task ChangePasswordAsync_notExistAccount_ShouldReturnError()
-        {
-            //Arrange
-            var salt = PasswordHelper.GenerateSalt();
-            var oldPassword = "mypass";
-
-            Account account = new Account
-            {
-                Id = 5,
-                IsActive = true,
-                Email = "user@exmaple.com",
-                Password = PasswordHelper.HashPassword(oldPassword, salt),
-                Salt = salt,
-                Role = UserRole.Mentor
-            };
-
-            var notExistDto = new ChangeCurrentPasswordDto
-            {
-                Email = "notExist@exmaple.com"
-            };
-
-            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountSaltByEmail(account.Email))
-                    .ReturnsAsync(salt);
-
-            var accountService = new AccountService(
-                    _unitOfWorkMock.Object,
-                    _mapper,
-                    _notificationServiceMock.Object);
-
-            var notExistAccount = await accountService.ChangePasswordAsync(notExistDto);
-
-            notExistAccount.Error.Code.Should().Be(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -382,12 +355,13 @@ namespace CharlieBackend.Api.UnitTest
             var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
             var newPassword = "changedPass";
+            var email = "user@exmaple.com";
 
             Account account = new Account
             {
                 Id = 5,
                 IsActive = true,
-                Email = "user@exmaple.com",
+                Email = email,
                 Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = salt,
                 Role = UserRole.Mentor
@@ -395,7 +369,6 @@ namespace CharlieBackend.Api.UnitTest
 
             var wrongPasswordDto = new ChangeCurrentPasswordDto
             {
-                Email = "user@exmaple.com",
                 CurrentPassword = "wrongPassword",
                 NewPassword = newPassword,
                 ConfirmNewPassword = newPassword
@@ -403,8 +376,7 @@ namespace CharlieBackend.Api.UnitTest
 
             var changePass = new ChangeCurrentPasswordDto
             {
-                Email = "user@exmaple.com",
-                CurrentPassword = "mypass",
+                CurrentPassword = oldPassword,
                 NewPassword = newPassword,
                 ConfirmNewPassword = newPassword
             };
@@ -412,13 +384,16 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountSaltByEmail(account.Email))
                    .ReturnsAsync(salt);
 
-            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(changePass.Email))
+            _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(account.Email))
                     .ReturnsAsync(account);
+
+            _currentUserServiceMock.Setup(x => x.Email).Returns(email);
 
             var wrongPassword = await accountService.ChangePasswordAsync(wrongPasswordDto);
 
@@ -431,6 +406,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var salt = PasswordHelper.GenerateSalt();
             var oldPassword = "mypass";
+            var emailWithoutSalt = "withoutSalt@exmaple.com";
 
             Account account = new Account
             {
@@ -444,14 +420,16 @@ namespace CharlieBackend.Api.UnitTest
 
             var withoutSaltDto = new ChangeCurrentPasswordDto
             {
-                Email = "withoutSalt@exmaple.com"
+                CurrentPassword = "withoutSaltPass",
+                NewPassword = "pass",
+                ConfirmNewPassword = "pass"
             };
 
             Account accountWithoutSalt = new Account
             {
                 Id = 5,
                 IsActive = true,
-                Email = "withoutSalt@exmaple.com",
+                Email = emailWithoutSalt,
                 Password = PasswordHelper.HashPassword(oldPassword, salt),
                 Salt = null,
                 Role = UserRole.Mentor
@@ -463,10 +441,13 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(accountWithoutSalt.Email))
                     .ReturnsAsync(accountWithoutSalt);
 
+            _currentUserServiceMock.Setup(x => x.Email).Returns(emailWithoutSalt);
+
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var accWithoutSalt = await accountService.ChangePasswordAsync(withoutSaltDto);
@@ -493,7 +474,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                         _unitOfWorkMock.Object,
                         _mapper,
-                        _notificationServiceMock.Object);
+                        _notificationServiceMock.Object,
+                        _currentUserServiceMock.Object);
 
             _unitOfWorkMock.Setup(x => x.AccountRepository.GetAccountCredentialsByEmailAsync(successForgotPasswordDto.Email))
                     .ReturnsAsync(successUserAccount);
@@ -532,7 +514,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var userDoesntExistResult = await accountService.GenerateForgotPasswordToken(userDoesntExistDto);
@@ -580,7 +563,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var successResult = await accountService.ResetPasswordAsync(userGuid.ToString(), successResetPasswordDto);
@@ -623,7 +607,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var userDoesntExistResult = await accountService.ResetPasswordAsync(userGuid, userDoesntExist);
@@ -662,7 +647,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var invalidFormToken = await accountService.ResetPasswordAsync(Guid.NewGuid().ToString(), successResetPasswordDto);
@@ -707,7 +693,8 @@ namespace CharlieBackend.Api.UnitTest
             var accountService = new AccountService(
                     _unitOfWorkMock.Object,
                     _mapper,
-                    _notificationServiceMock.Object);
+                    _notificationServiceMock.Object,
+                    _currentUserServiceMock.Object);
 
             //Act
             var expiredTokenDate = await accountService.ResetPasswordAsync(userGuid, userWithTokenDateExpiredDto);
