@@ -126,6 +126,7 @@ namespace CharlieBackend.Business.Services
             foundStudentHomework.HomeworkText = homeworkStudent.HomeworkText;
             foundStudentHomework.PublishingDate = DateTime.UtcNow;
             foundStudentHomework.IsSent = homeworkStudent.IsSent;
+            foundStudentHomework.Mark = null;
            
             var newAttachments = new List<AttachmentOfHomeworkStudent>();
 
