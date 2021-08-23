@@ -66,7 +66,6 @@ namespace CharlieBackend.Data.Repositories.Impl
             if (schedule != null)
             {
                 schedule.LessonId = lessonId;
-                _applicationContext.ScheduledEvents.FirstOrDefault(entity => entity.Id == eventId).LessonId = lessonId;
                 _applicationContext.SaveChanges();
             }
 
