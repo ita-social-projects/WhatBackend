@@ -161,33 +161,31 @@ namespace CharlieBackend.Business.Services
                         "Start date must be less than finish date");
             }
 
-            var result = await CheckDublicate(studentGroupDto.StudentIds);
-
-            if (result.Error == null)
+            if (studentGroupDto.MentorIds != null)
             {
-                result = await CheckDublicate(studentGroupDto.MentorIds);
-            }
-
-            return result;
-        }
-
-        private Task<Result<StudentGroupDto>> CheckDublicate(IList<long> list)
-        {
-            Result<StudentGroupDto> result = new Result<StudentGroupDto>();
-
-            if (list != null)
-            {
-                var dublicates = list.Dublicates();
+                var dublicates = studentGroupDto.MentorIds.Dublicates();
 
                 if (dublicates.Any())
                 {
-                    result = Result<StudentGroupDto>.GetError(
-                            ErrorCode.ValidationError, $"Such ids: " +
-                            $"{string.Join(' ', dublicates)} are not unique");
+                    return Result<StudentGroupDto>.GetError(
+                             ErrorCode.ValidationError, $"Such MentorIds: " +
+                             $"{string.Join(' ', dublicates)} are not unique");
                 }
             }
 
-            return Task.FromResult(result);
+            if (studentGroupDto.StudentIds != null)
+            {
+                var dublicates = studentGroupDto.StudentIds.Dublicates();
+
+                if (dublicates.Any())
+                {
+                    return Result<StudentGroupDto>.GetError(
+                             ErrorCode.ValidationError, $"Such StudentIds: " +
+                             $"{string.Join(' ', dublicates)} are not unique");
+                }
+            }
+
+            return new Result<StudentGroupDto>();
         }
 
         private Task<long?> IsStudentHisOwnMentor(StudentGroup group)

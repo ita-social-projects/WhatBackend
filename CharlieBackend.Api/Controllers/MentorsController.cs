@@ -140,8 +140,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}/groups")]
         public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId(long id)
         {
-            var foundGroups = await _mentorService.CheckRoleAndIdMentor(id,
-                    new Result<IList<MentorStudyGroupsDto>>());
+            Result<IList<MentorStudyGroupsDto>> foundGroups =
+                    new Result<IList<MentorStudyGroupsDto>>();
+
+            await _mentorService.CheckRoleAndIdMentor(id, ref foundGroups);
 
             if (foundGroups.Error == default)
             {
@@ -162,8 +164,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}/courses")]
         public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
         {
-            var foundCourses = await _mentorService.CheckRoleAndIdMentor(id,
-                    new Result<IList<MentorCoursesDto>>());
+            Result<IList<MentorCoursesDto>> foundCourses =
+                 new Result<IList<MentorCoursesDto>>();
+
+            await _mentorService.CheckRoleAndIdMentor(id, ref foundCourses);
 
             if (foundCourses.Error == default)
             {
@@ -214,7 +218,10 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}/lessons")]
         public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
         {
-            var lessons = await _mentorService.CheckRoleAndIdMentor(id, new Result<IList<LessonDto>>());
+            Result<IList<LessonDto>> lessons =
+                  new Result<IList<LessonDto>>();
+
+            await _mentorService.CheckRoleAndIdMentor(id, ref lessons);
 
             if (lessons.Error == default)
             {

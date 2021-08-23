@@ -310,7 +310,7 @@ namespace CharlieBackend.Business.Services
         /// <param name="result">Result of checking to role and
         /// equality identity numbers of entities with type of data</param>
         /// <returns></returns>
-        public Task<Result<T>> CheckRoleAndIdMentor<T>(long id, Result<T> result)
+        public Task CheckRoleAndIdMentor<T>(long id, ref Result<T> result)
         {
             if (_currentUserService.Role.Is(UserRole.Mentor)
                   && _currentUserService.EntityId != id)
