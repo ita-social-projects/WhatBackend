@@ -105,6 +105,48 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task SetRoleToAccount_TryGrantToUnsuitableAccount_GetFalseResult()
+        {
+            //Arrange
+            AccountRoleDto accountRoleDto = new AccountRoleDto()
+            {
+                Email = "user@exmaple.com",
+                Role = UserRole.Student
+            };
+
+            Account admin = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.Admin
+            };
+
+            Account notAssigned = new Account()
+            {
+                Id = 1,
+                IsActive = true,
+                FirstName = "Test",
+                LastName = "Testovich",
+                Email = "user@exmaple.com",
+                Role = UserRole.NotAssigned
+            };
+
+            bool adminRoleResult = false;
+            bool notAssignetResult = false;
+
+            //Act
+            bool adminPlusStudentRole = await admin.GrantAccountRoleAsync(accountRoleDto.Role);
+            bool notAssignedPlusStudent = await notAssigned.GrantAccountRoleAsync(accountRoleDto.Role);
+
+            //Assert
+            Assert.Equal(adminRoleResult, adminPlusStudentRole);
+            Assert.Equal(notAssignetResult, notAssignedPlusStudent);
+        }
+
+        [Fact]
         public async Task SetRoleToAccount_GiveUnsuitableRole_GetFalseResult()
         {
             //Arrange
