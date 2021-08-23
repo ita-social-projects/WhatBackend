@@ -12,13 +12,10 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.Role)
                 .HasColumnName("Role")
-                .HasColumnType("TINYINT UNSIGNED")
                 .HasComment(
                 "Roles:" +
                 "\n 0 - NotAssigned," +
@@ -72,8 +69,7 @@ namespace CharlieBackend.Data.Configurations
                 .HasComment("Use UTC time");
 
             entity.Property(e => e.AvatarId)
-                .HasColumnName("AvatarID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("AvatarID");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");

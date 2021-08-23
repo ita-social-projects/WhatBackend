@@ -12,9 +12,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.CreatedOn)
                 .IsRequired()
@@ -24,8 +22,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.CreatedByAccountId)
                 .IsRequired()
-                .HasColumnName("CreatedByAccountID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("CreatedByAccountID");
 
             entity.Property(e => e.ContainerName)
                 .IsRequired()
