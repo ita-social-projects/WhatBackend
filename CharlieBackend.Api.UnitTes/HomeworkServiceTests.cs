@@ -26,7 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
-        private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+        private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly HomeworkService _homeworkService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
@@ -284,75 +284,6 @@ namespace CharlieBackend.Api.UnitTest
         {
             var mock = new Mock<IUnitOfWork>();
             return mock;
-        }
-
-        [Fact]
-        public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
-        {
-            // Arrange
-            var homeworkStudent_one = new HomeworkStudent();
-            var homeworkStudent_two = new HomeworkStudent();
-
-            sbyte mark = 5;
-            sbyte updatedMark = 2;
-            //long visitId_one = 1;
-            //long visitId_two = 1;
-            long homeworkStudentId_one = 1;
-            long homeworkStudentId_two = 1;
-            string mentorComment = "There is an error at line 52";
-            MarkType markType = MarkType.Homework;
-
-            //var visitTrue = CreateVisit(visitId_one, mark, true);
-            //var visitFalse = CreateVisit(visitId_two, mark, false);
-
-            //var visitRepositoryMock = new Mock<IVisitRepository>();
-
-            //var lessonRepositoryMock = new Mock<ILessonRepository>();
-            //lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
-            //lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
-
-            //_unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            //_unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-
-            var homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
-            homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_one));
-            homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForStudent(homeworkStudentId_two));
-
-            //var homeworkService = new HomeworkService(
-            //    unitOfWork: _unitOfWorkMock.Object,
-            //    mapper: _mapper,
-            //    _loggerMock.Object);
-
-            var request_one = new UpdateMarkRequestDto
-            { 
-                StudentHomeworkId = homeworkStudentId_one,
-                StudentMark = mark,
-                MentorComment = mentorComment,
-                MarkType = markType
-            };
-
-            var request_two = new UpdateMarkRequestDto
-            {
-                StudentHomeworkId = homeworkStudentId_two,
-                StudentMark = updatedMark,
-                MentorComment = mentorComment,
-                MarkType = markType
-            };
-
-            //Act
-            //var result_one = await homeworkService.UpdateMarkAsync(request_one);
-            //var result_two = await homeworkService.UpdateMarkAsync(request_two);
-
-            // Assert
-            //result_one.Data
-            //    .Mark.Value
-            //    .Should()
-            //    .Be(mark);
-
-            //result_two.Data
-            //    .Mark.Value
-            //    .Should()
-            //    .Be(updatedMark);
-        }       
+        }   
     }
 }
