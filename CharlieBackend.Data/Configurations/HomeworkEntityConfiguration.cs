@@ -12,9 +12,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.DueDate)
                 .IsRequired()
@@ -29,8 +27,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.LessonId)
                 .IsRequired()
-                .HasColumnName("LessonID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("LessonID");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");

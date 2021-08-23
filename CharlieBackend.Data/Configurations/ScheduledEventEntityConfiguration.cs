@@ -13,34 +13,27 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.EventOccurrenceId)
                 .IsRequired()
-                .HasColumnName("EventOccurrenceID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("EventOccurrenceID");
 
             entity.Property(e => e.StudentGroupId)
                 .IsRequired()
-                .HasColumnName("StudentGroupID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("StudentGroupID");
 
             entity.Property(e => e.ThemeId)
                 .IsRequired()
-                .HasColumnName("ThemeID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("ThemeID");
 
             entity.Property(e => e.MentorId)
                 .IsRequired()
-                .HasColumnName("MentorID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("MentorID");
 
             entity.Property(e => e.LessonId)
                 .IsRequired()
-                .HasColumnName("LessonID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("LessonID");
 
             entity.Property(e => e.EventStart)
                 .IsRequired()

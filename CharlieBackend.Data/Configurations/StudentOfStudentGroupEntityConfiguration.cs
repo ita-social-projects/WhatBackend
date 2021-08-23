@@ -13,19 +13,15 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Id)
                 .IsRequired()
-                .HasColumnName("ID")
-                .HasColumnType("BIGINT UNSIGNED")
-                .ValueGeneratedOnAdd();
+                .HasColumnName("ID");
 
             entity.Property(e => e.StudentGroupId)
                 .IsRequired()
-                .HasColumnName("StudentGroupID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("StudentGroupID");
 
             entity.Property(e => e.StudentId)
                 .IsRequired()
-                .HasColumnName("StudentID")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("StudentID");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
