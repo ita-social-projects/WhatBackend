@@ -175,11 +175,9 @@ namespace CharlieBackend.Business.Services
 
             long accountId = _currentUserService.AccountId;
 
-            Mark mark;
-
             if (homeworkStudent.Mark == null)
             {
-                mark = new Mark
+                homeworkStudent.Mark = new Mark
                 {
                     Value = request.StudentMark,
                     Comment = request.MentorComment,
@@ -187,7 +185,6 @@ namespace CharlieBackend.Business.Services
                     Type = request.MarkType,
                     EvaluatedBy = accountId
                 };
-                homeworkStudent.Mark = mark;
             }
             else
             {
