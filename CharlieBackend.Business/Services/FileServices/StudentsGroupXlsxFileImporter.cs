@@ -67,9 +67,9 @@ namespace CharlieBackend.Business.Services.FileServices
                 var group = await _studentGroupService.CreateStudentGroupAsync(new CreateStudentGroupDto
                 {
                     CourseId = courseId,
-                    Name = book.Worksheet(1).Row(2).Cell((int)GroupsWorksheetHeader.GroupName).GetValue<string>(),
-                    StartDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)GroupsWorksheetHeader.StartDate).GetValue<string>()),
-                    FinishDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)GroupsWorksheetHeader.FinishDate).GetValue<string>()),
+                    Name = book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.GroupName).GetValue<string>(),
+                    StartDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.StartDate).GetValue<string>()),
+                    FinishDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.FinishDate).GetValue<string>()),
                 });
 
                 if (group.Error != null)

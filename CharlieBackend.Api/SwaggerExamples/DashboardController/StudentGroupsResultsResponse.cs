@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Dashboard;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Collections.Generic;
 
 namespace CharlieBackend.Api.SwaggerExamples.DashboardController
