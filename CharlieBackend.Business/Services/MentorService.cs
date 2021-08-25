@@ -311,7 +311,7 @@ namespace CharlieBackend.Business.Services
         /// <param name="result">Result of checking to role and
         /// equality identity numbers of entities with type of data</param>
         /// <returns></returns>
-        public Task<Result<T>> CheckRoleAndIdMentor<T>(long id)
+        public Result<T> CheckRoleAndIdMentor<T>(long id)
         {
             Result<T> result = new Result<T>();
 
@@ -322,7 +322,7 @@ namespace CharlieBackend.Business.Services
                         "Mentor can get only his information");
             }
 
-            return Task.FromResult(result);
+            return result;
         }
     }
 }
