@@ -24,10 +24,10 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly IMapper _mapper;
 
-        private readonly int id = 1;
-        private readonly string name = "Test_name";
-        private readonly List<long> ids = new List<long>() { 1, 2 };
-        private readonly int date = 1;
+        private readonly int _id = 1;
+        private readonly string _name = "Test_name";
+        private readonly List<long> _ids = new List<long>() { 1, 2 };
+        private readonly int _date = 1;
 
         private StudentGroupService StudentGroupServiceMock()
         {
@@ -41,11 +41,11 @@ namespace CharlieBackend.Api.UnitTest
         {
             var existingStudentGroup = new StudentGroup()
             {
-                Id = id,
-                Name = name,
-                CourseId = id,
+                Id = _id,
+                Name = _name,
+                CourseId = _id,
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddMonths(date),
+                FinishDate = DateTime.Now.AddMonths(_date),
                 StudentsOfStudentGroups = new List<StudentOfStudentGroup>(),
                 MentorsOfStudentGroups = new List<MentorOfStudentGroup>()
             };
@@ -80,17 +80,63 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task CreateStudentGroupAsync_StudentIsOwnMentor_ReturnErrorCodeConflict()
+        {
+            //Arrange
+            var newStudentGroup = new CreateStudentGroupDto()
+            {
+                Name = _name,
+                CourseId = _id,
+                StartDate = DateTime.Now.Date,
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
+            };
+
+            _studentRepositoryMock.Setup(x => x
+                .GetStudentsByIdsAsync(newStudentGroup.StudentIds))
+                .ReturnsAsync(new List<Student>()
+                {
+                      new Student { Id = 1 , AccountId = 1},
+                      new Student { Id = 2 , AccountId = 4}
+                });
+
+            _mentorRepositoryMock.Setup(x => x
+                .GetMentorsByIdsAsync(newStudentGroup.MentorIds))
+                .ReturnsAsync(new List<Mentor>()
+                {
+                    new Mentor { Id = 1 , AccountId = 2},
+                    new Mentor { Id = 2 , AccountId = 4}
+                });
+
+            _studentGroupRepositoryMock.Setup(x => x
+                    .IsGroupNameExistAsync(newStudentGroup.Name))
+                    .ReturnsAsync(false);
+
+            _courseRepositoryMock.Setup(x => x
+                    .IsEntityExistAsync(newStudentGroup.CourseId))
+                    .ReturnsAsync(true);
+
+            //Act
+            var result = await StudentGroupServiceMock()
+                    .CreateStudentGroupAsync(newStudentGroup);
+
+            //Accert
+            Assert.Equal(ErrorCode.Conflict, result.Error.Code);
+        }
+
+        [Fact]
         public async Task CreateStudentGroupAsync_StudentGroup_ShouldReturnStudentGroup()
         {
             //Arrange
             var newStudentGroup = new CreateStudentGroupDto()
             {
-                Name = name,
-                CourseId = id,
+                Name = _name,
+                CourseId = _id,
                 StartDate = DateTime.Now.Date,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
 
             _studentRepositoryMock.Setup(x => x.GetStudentsByIdsAsync(newStudentGroup.StudentIds))
@@ -118,7 +164,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Act
             var successResult = await StudentGroupServiceMock().CreateStudentGroupAsync(newStudentGroup);
-            
+
             //Assert
             successResult.Data.Should().NotBeNull();
             successResult.Data.Should().BeEquivalentTo(newStudentGroup);
@@ -131,18 +177,18 @@ namespace CharlieBackend.Api.UnitTest
             var existingStudentGroup = new CreateStudentGroupDto()
             {
                 Name = "Exists_test_name",
-                CourseId = id,
+                CourseId = _id,
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
             _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(existingStudentGroup.Name))
                    .ReturnsAsync(true);
 
             //Act
             var groupNameExistResult = await StudentGroupServiceMock().CreateStudentGroupAsync(existingStudentGroup);
-            
+
             //Assert
             groupNameExistResult.Error.Code.Should().BeEquivalentTo(ErrorCode.UnprocessableEntity);
         }
@@ -164,11 +210,11 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupWithoutCourseID = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
-                CourseId = -id,
+                CourseId = -_id,
                 StartDate = DateTime.Now.Date,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
 
             //Act
@@ -185,15 +231,15 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupWithoutValidStudentIDs = new CreateStudentGroupDto()
             {
                 Name = "New_test_name",
-                CourseId = id,
+                CourseId = _id,
                 StartDate = DateTime.Now.Date,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
 
             _studentGroupRepositoryMock.Setup(x => x.GetNotExistEntitiesIdsAsync(studentGroupWithoutValidStudentIDs.StudentIds))
-                                      .ReturnsAsync(new List<long> { id });
+                                      .ReturnsAsync(new List<long> { _id });
 
             //Act
             var withNotExistStrudentIdResult = await StudentGroupServiceMock().CreateStudentGroupAsync(studentGroupWithoutValidStudentIDs);
@@ -209,14 +255,14 @@ namespace CharlieBackend.Api.UnitTest
             var withoutMentorsAndStudentsStudentGroup = new CreateStudentGroupDto()
             {
                 Name = "Unique_test_name",
-                CourseId = id,
+                CourseId = _id,
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
                 StudentIds = new List<long>(),
                 MentorIds = new List<long>()
             };
-             _studentRepositoryMock.Setup(x => x.GetStudentsByIdsAsync(withoutMentorsAndStudentsStudentGroup.StudentIds))
-               .ReturnsAsync(new List<Student>());
+            _studentRepositoryMock.Setup(x => x.GetStudentsByIdsAsync(withoutMentorsAndStudentsStudentGroup.StudentIds))
+              .ReturnsAsync(new List<Student>());
 
             _mentorRepositoryMock.Setup(x => x.GetMentorsByIdsAsync(withoutMentorsAndStudentsStudentGroup.MentorIds))
                 .ReturnsAsync(new List<Mentor>());
@@ -238,17 +284,17 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var updateStudentGroupDto = new UpdateStudentGroupDto()
             {
-                Name = name,
-                CourseId = id,
+                Name = _name,
+                CourseId = _id,
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddMonths(date),
+                FinishDate = DateTime.Now.AddMonths(_date),
                 StudentIds = new List<long>(),
                 MentorIds = new List<long>()
             };
             var existingCourse = new Course()
             {
-                Id = id,
-                Name = name
+                Id = _id,
+                Name = _name
             };
 
             _courseRepositoryMock.Setup(x => x.GetByIdAsync(updateStudentGroupDto.CourseId))
@@ -268,13 +314,13 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateStudentGroup_NotExistingValidDataPassed_ShouldReturnNotFound()
         {
             //Arrange
-            long notExistingGroupId = -id;
+            long notExistingGroupId = -_id;
             var updateStudentGroupDto = new UpdateStudentGroupDto()
             {
                 Name = "new_test_name",
-                CourseId = id,
+                CourseId = _id,
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddMonths(date),
+                FinishDate = DateTime.Now.AddMonths(_date),
                 StudentIds = new List<long>(),
                 MentorIds = new List<long>()
 
@@ -286,8 +332,8 @@ namespace CharlieBackend.Api.UnitTest
             _courseRepositoryMock.Setup(x => x.GetByIdAsync(updateStudentGroupDto.CourseId))
              .ReturnsAsync(new Course()
              {
-                 Id = id,
-                 Name = name
+                 Id = _id,
+                 Name = _name
              });
 
             _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(updateStudentGroupDto.CourseId))
@@ -317,11 +363,11 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupWithoutCourseID = new UpdateStudentGroupDto()
             {
                 Name = "New_test_name",
-                CourseId = -id,
+                CourseId = -_id,
                 StartDate = DateTime.Now.Date,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
 
             //Act
@@ -338,14 +384,14 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupWithoutValidStudentIDs = new UpdateStudentGroupDto()
             {
                 Name = "New_test_name",
-                CourseId = id,
+                CourseId = _id,
                 StartDate = DateTime.Now.Date,
-                FinishDate = DateTime.Now.AddMonths(date).Date,
-                StudentIds = ids,
-                MentorIds = ids
+                FinishDate = DateTime.Now.AddMonths(_date).Date,
+                StudentIds = _ids,
+                MentorIds = _ids
             };
             _studentGroupRepositoryMock.Setup(x => x.GetNotExistEntitiesIdsAsync(studentGroupWithoutValidStudentIDs.StudentIds))
-                                     .ReturnsAsync(new List<long> { id });
+                                     .ReturnsAsync(new List<long> { _id });
 
             //Act
             var withNotExistStrudentIdResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(ExistingStudentGroup().Id, studentGroupWithoutValidStudentIDs);

@@ -5,6 +5,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -310,8 +311,10 @@ namespace CharlieBackend.Business.Services
         /// <param name="result">Result of checking to role and
         /// equality identity numbers of entities with type of data</param>
         /// <returns></returns>
-        public Task CheckRoleAndIdMentor<T>(long id, ref Result<T> result)
+        public Task<Result<T>> CheckRoleAndIdMentor<T>(long id)
         {
+            Result<T> result = new Result<T>();
+
             if (_currentUserService.Role.Is(UserRole.Mentor)
                   && _currentUserService.EntityId != id)
             {
