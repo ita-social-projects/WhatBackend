@@ -15,5 +15,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         public Task<ScheduledEventDTO> GetAsync(long id);
 
+        public Task<Result<ScheduledEventDTO>> ConnectScheduleToLessonById(long eventId, long lessonId);
     }
 }
