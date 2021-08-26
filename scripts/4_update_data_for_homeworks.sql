@@ -369,3 +369,4 @@ UPDATE `Soft`.`HomeworksFromStudents` AS H
 		H.`PublishingDate` = T.`PublishingDate`,
 		H.`IsSent` = T.`IsSent`
 	WHERE H.`ID` = T.`ID`;
+    
