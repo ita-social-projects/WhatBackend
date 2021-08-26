@@ -293,14 +293,14 @@ CREATE TABLE `EventOccurrences` (
 DROP TABLE IF EXISTS `ScheduledEvents`;
 
 CREATE TABLE `ScheduledEvents` (
-    `ID`                   BIGINT UNSIGNED    NOT NULL     AUTO_INCREMENT,
+    `ID`                   BIGINT UNSIGNED    NOT NULL         AUTO_INCREMENT,
     `EventOccurrenceID`    BIGINT UNSIGNED    NOT NULL,
     `StudentGroupID`       BIGINT UNSIGNED    NOT NULL,
     `ThemeID`              BIGINT UNSIGNED    NOT NULL,
     `MentorID`             BIGINT UNSIGNED    NOT NULL,
-    `LessonID`             BIGINT UNSIGNED    NOT NULL,
-    `EventStart`           DATETIME           NOT NULL     COMMENT 'Use UTC time',
-    `EventFinish`          DATETIME           NOT NULL     COMMENT 'Use UTC time',
+    `LessonID`             BIGINT UNSIGNED    DEFAULT NULL,
+    `EventStart`           DATETIME           NOT NULL         COMMENT 'Use UTC time',
+    `EventFinish`          DATETIME           NOT NULL         COMMENT 'Use UTC time',
 
     CONSTRAINT    `PK_ScheduledEvent`                    PRIMARY KEY (`ID`),
     CONSTRAINT    `FK_EventOccurrenceScheduledEvents`    FOREIGN KEY (`EventOccurrenceID`)    REFERENCES `EventOccurrences` (`ID`),
