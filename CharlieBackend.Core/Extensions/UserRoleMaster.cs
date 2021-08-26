@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Core.Extensions
 {
-    public static class UserRoleExtension
+    public static class UserRoleMaster
     {
         public static bool Is(this UserRole currentRole, UserRole checkingRole) 
         {
@@ -60,7 +60,8 @@ namespace CharlieBackend.Core.Extensions
         {
             bool result = true;
 
-            if (person == null)
+            if (person == null || person.Role.IsAdmin()
+                       || person.Role.IsNotAssigned())
             {
                 result = false;
             }

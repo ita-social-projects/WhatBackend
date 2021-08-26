@@ -9,9 +9,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
     public class ChangeCurrentPasswordDtoValidatorTests : TestBase
     {
         private ChangeCurrentPasswordDtoValidator _validator;
-        private readonly string validEmail = "ValidEmail@gmail.com";
         private readonly string validPassword = "validPassword_12";
-        private readonly string notValidEmail = "@ValidEmailgmail.com";
         private readonly string notValidPassword = "VP_12";
         private readonly string notValidConfirmPassword = "notEqualPassword";
 
@@ -21,14 +19,12 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         public ChangeCurrentPasswordDto GetDTO(
-            string email = null,
             string currentPassword = null,
             string newPassword = null,
             string confirmPassword = null)
         {
             return new ChangeCurrentPasswordDto
             {
-                Email = email,
                 CurrentPassword = currentPassword,
                 NewPassword = newPassword,
                 ConfirmNewPassword = confirmPassword
@@ -40,7 +36,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         {
             // Arrange
             var dto = GetDTO(
-                    validEmail,
                     validPassword,
                     validPassword,
                     validPassword);
@@ -68,31 +63,12 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
                 .Should()
                 .BeFalse();
         }
-        [Fact]
-        public async Task ChangeCurrentPasswordDTOAsync_NotValidEmail_ShouldReturnFalse()
-        {
-            // Arrange
-            var dto = GetDTO(
-                    notValidEmail,
-                    validPassword,
-                    validPassword,
-                    validPassword);
-
-            // Act
-            var result = await _validator.ValidateAsync(dto);
-
-            // Assert
-            result.IsValid
-                .Should()
-                .BeFalse();
-        }
 
         [Fact]
         public async Task ChangeCurrentPasswordDTOAsync_NotValidCurrentPassword_ShouldReturnFalse()
         {
             // Arrange
             var dto = GetDTO(
-                    validEmail,
                     notValidPassword,
                     validPassword,
                     validPassword);
@@ -111,7 +87,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         {
             // Arrange
             var dto = GetDTO(
-                    validEmail,
                     validPassword,
                     notValidPassword,
                     notValidPassword);
@@ -130,7 +105,6 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         {
             // Arrange
             var dto = GetDTO(
-                    validEmail,
                     validPassword,
                     validPassword,
                     notValidConfirmPassword);

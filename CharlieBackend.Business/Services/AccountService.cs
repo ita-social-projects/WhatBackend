@@ -17,14 +17,17 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly ICurrentUserService _currentUserService;
 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
-                              INotificationService notification)
+                              INotificationService notification,
+                              ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<AccountRoleDto>> GrantRoleToAccount(
@@ -275,7 +278,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);
+            var email = _currentUserService.Email;
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(email);
 
             if (user == null)
             {

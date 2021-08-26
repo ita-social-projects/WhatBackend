@@ -26,6 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly MentorService _mentorService;
         private readonly Mock<IMentorService> _mentorServiceMock;
         private readonly Mock<IBlobService> _blobServiceMock;
+        private readonly Mock<ICurrentUserService> _currentUserMock;
 
         public MentorServiceTests()
         {
@@ -35,13 +36,14 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _mentorServiceMock = new Mock<IMentorService>();
             _blobServiceMock= new Mock<IBlobService>();
+            _currentUserMock = new Mock<ICurrentUserService>();
 
             _mentorService = new MentorService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
                 _notificationServiceMock.Object,
-                _blobServiceMock.Object);
+                _blobServiceMock.Object, _currentUserMock.Object);
         }
 
         private void InitializeCreateMentorAsync(long mentorExpectedId = 5)
