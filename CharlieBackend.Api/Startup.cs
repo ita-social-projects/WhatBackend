@@ -26,6 +26,10 @@ using CharlieBackend.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using CharlieBackend.Core.DTO.Result;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api
 {
@@ -79,6 +83,20 @@ namespace CharlieBackend.Api
             services.AddHttpContextAccessor();
 
             services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = c =>
+                    {
+                        var errors = string.Join('\n', c.ModelState.Values.Where(v => v.Errors.Count > 0)
+                          .SelectMany(v => v.Errors)
+                          .Select(v => v.ErrorMessage));
+
+                        return new BadRequestObjectResult(new ErrorDto
+                        {
+                            Error = new ErrorData { Code = ErrorCode.ValidationError, Message = errors}
+                        });
+                    };
+                })
                 .AddJsonOptions(options =>
                 {
                         options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
