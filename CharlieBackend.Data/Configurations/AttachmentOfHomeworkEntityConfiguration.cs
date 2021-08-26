@@ -9,29 +9,36 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<AttachmentOfHomework> entity)
         {
-            entity.ToTable("attachment_of_homework");
+            entity.ToTable("AttachmentsOfHomeworks");
 
-            entity.HasIndex(e => e.AttachmentId)
-                .HasName("FK_attachment_of_homework_id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.HasIndex(e => e.HomeworkId)
-                .HasName("FK_homework_of_attachment_id");
+            entity.Property(e => e.HomeworkId)
+                .IsRequired()
+                .HasColumnName("HomeworkID");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AttachmentId)
+                .IsRequired()
+                .HasColumnName("AttachmentID");
 
-            entity.Property(e => e.AttachmentId).HasColumnName("attachment_id");
-
-            entity.Property(e => e.HomeworkId).HasColumnName("homework_id");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Attachment)
                 .WithMany(p => p.AttachmentsOfHomework)
                 .HasForeignKey(d => d.AttachmentId)
-                .HasConstraintName("FK_attachment_of_homework");
+                .HasConstraintName("FK_AttachmentOfHomeworks");
 
             entity.HasOne(d => d.Homework)
                 .WithMany(p => p.AttachmentsOfHomework)
                 .HasForeignKey(d => d.HomeworkId)
-                .HasConstraintName("FK_homework_of_attachment");
+                .HasConstraintName("FK_HomeworkOfAttachments");
+
+            entity.HasIndex(e => new { e.HomeworkId, e.AttachmentId })
+                .HasName("UQ_AttachmentAndHomework")
+                .IsUnique();
         }
     }
 }

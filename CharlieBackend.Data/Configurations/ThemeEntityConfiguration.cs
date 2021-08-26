@@ -8,21 +8,23 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Theme> entity)
         {
-            entity.ToTable("theme");
+            entity.ToTable("Themes");
 
-            entity.HasIndex(e => e.Name)
-                .HasName("name_UNIQUE")
-                .IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
             entity.Property(e => e.Name)
                 .IsRequired()
-                .HasColumnName("name")
-                .HasColumnType("varchar(100)")
-                .HasComment("name has been set to not null and unique")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Name")
+                .HasColumnType("VARCHAR(100)");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
+
+            entity.HasIndex(e => e.Name)
+                .HasName("UQ_NameThemes")
+                .IsUnique();
         }
     }
 }

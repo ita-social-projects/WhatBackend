@@ -8,30 +8,37 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Homework> entity)
         {
-            entity.ToTable("homework");
+            entity.ToTable("Homeworks");
 
-            entity.HasIndex(e =>
-                new { e.LessonId })
-                .HasName("FK_lesson_for_homework");
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
             entity.Property(e => e.DueDate)
-                .HasColumnName("due_date")
-                .HasDefaultValue(null);
+                .IsRequired()
+                .HasColumnName("DueDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
             entity.Property(e => e.TaskText)
-                .HasColumnName("task_text")
-                .HasColumnType("varchar(4000)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .IsRequired()
+                .HasColumnName("TaskText")
+                .HasColumnType("VARCHAR(8000)");
 
-            entity.Property(e => e.LessonId).HasColumnName("lesson_id");
+            entity.Property(e => e.LessonId)
+                .IsRequired()
+                .HasColumnName("LessonID");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Lesson)
                 .WithMany(p => p.Homeworks)
                 .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_homework");
+                .HasConstraintName("FK_LessonHomeworks");
+
+            entity.HasIndex(e => e.LessonId)
+                .HasName("IX_Lesson");
         }
     }
 }

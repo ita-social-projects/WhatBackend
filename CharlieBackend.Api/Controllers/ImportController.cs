@@ -19,52 +19,33 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly IGroupXlsFileImporter _groupXlsFileImporter;
-        private readonly IStudentXlsFileImporter _studentXlsFileImporter;
         private readonly IThemeXlsFileImporter _themeXlsFileImporter;
+        private readonly IStudentsGroupXlsxFileImporter _studentsGroupXlsxFileImporter;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IGroupXlsFileImporter groupXlsFileImporter,
-                                IStudentXlsFileImporter studentXlsFileImporter,
-                                IThemeXlsFileImporter themeXlsFileImporter)
+        public ImportController(IThemeXlsFileImporter themeXlsFileImporter,
+                                IStudentsGroupXlsxFileImporter studentsGroupXlsxFileImporter)
         {
-            _groupXlsFileImporter = groupXlsFileImporter;
-            _studentXlsFileImporter = studentXlsFileImporter;
             _themeXlsFileImporter = themeXlsFileImporter;
+            _studentsGroupXlsxFileImporter = studentsGroupXlsxFileImporter;
         }
 
         /// <summary>
-        /// Imports group data from .xlsx file to database
+        /// Imports group with students data from .xlsx file to database
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(IEnumerable<ImportStudentGroupDto>))]
+        [SwaggerResponse(200, type: typeof(IEnumerable<GroupWithStudentsDto>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("groups/{coursId}")]
+        [Route("group/{courseId}")]
         [HttpPost]
-        public async Task<ActionResult> ImportGroupDataFromFile(long coursId, IFormFile file)
+        public async Task<ActionResult> ImportGroupWithStudentsDataFromFile(long courseId, IFormFile file)
         {
-            var groups = await _groupXlsFileImporter.ImportGroupsAsync(coursId, file);
+            var groups = await _studentsGroupXlsxFileImporter.ImportGroupAsync(courseId, file);
 
             return groups.ToActionResult();
-        }
-
-        /// <summary>
-        /// Imports student data from .xlsx file to database
-        /// </summary>
-        /// <response code="200">Successful import of data from file</response>
-        /// <response code="HTTP: 400, API: 4">File validation error</response>
-        [SwaggerResponse(200, type: typeof(IEnumerable<StudentDto>))]
-        [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("students/{groupId}")]
-        [HttpPost]
-        public async Task<ActionResult> ImportStudentDataFromFile(long groupId, IFormFile file)
-        {
-            var students = await _studentXlsFileImporter.ImportStudentsAsync(groupId, file);
-
-            return students.ToActionResult();
         }
 
         /// <summary>

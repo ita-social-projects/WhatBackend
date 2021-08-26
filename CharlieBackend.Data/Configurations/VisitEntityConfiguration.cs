@@ -8,41 +8,49 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Visit> entity)
         {
-            entity.ToTable("visit");
+            entity.ToTable("Visits");
 
-            entity.HasIndex(e => e.LessonId)
-                .HasName("FK_lesson_of_visit");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.HasIndex(e => e.StudentId)
-                .HasName("FK_student_of_visit_idx");
+            entity.Property(e => e.StudentId)
+                .IsRequired()
+                .HasColumnName("StudentID");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.LessonId)
+                .IsRequired()
+                .HasColumnName("LessonID");
 
-            entity.Property(e => e.Comment)
-                .HasColumnName("comment")
-                .HasColumnType("varchar(1024)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
-
-            entity.Property(e => e.LessonId).HasColumnName("lesson_id");
+            entity.Property(e => e.StudentMark)
+                .HasColumnName("StudentMark");
 
             entity.Property(e => e.Presence)
-                .HasColumnName("presence")
-                .HasComment("presence default value has been set");
+                .IsRequired()
+                .HasDefaultValueSql("1")
+                .HasColumnName("Presence")
+                .HasColumnType("BIT");
 
-            entity.Property(e => e.StudentId).HasColumnName("student_id");
+            entity.Property(e => e.Comment)
+                .HasColumnName("Comment")
+                .HasColumnType("VARCHAR(1024)");
 
-            entity.Property(e => e.StudentMark).HasColumnName("student_mark");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Lesson)
                 .WithMany(p => p.Visits)
                 .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_of_visit");
+                .HasConstraintName("FK_LessonVisits");
 
             entity.HasOne(d => d.Student)
                 .WithMany(p => p.Visits)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK_student_of_visit");
+                .HasConstraintName("FK_StudentVisits");
+
+            entity.HasCheckConstraint(
+                "CH_MarkVisits",
+                "StudentMark >= 0 AND StudentMark <= 100");
         }
     }
 }

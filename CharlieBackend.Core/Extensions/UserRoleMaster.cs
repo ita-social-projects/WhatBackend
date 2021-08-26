@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Core.Extensions
 {
-    public static class UserRoleExtension
+    public static class UserRoleMaster
     {
         public static bool Is(this UserRole currentRole, UserRole checkingRole) 
         {
@@ -56,11 +56,12 @@ namespace CharlieBackend.Core.Extensions
             return result;
         }
 
-        public static bool SetAccountRole(this Account person, UserRole role)
+        public static bool GrantAccountRole(this Account person, UserRole role)
         {
             bool result = true;
 
-            if (person == null)
+            if (person == null || person.Role.IsAdmin()
+                       || person.Role.IsNotAssigned())
             {
                 result = false;
             }
@@ -86,13 +87,13 @@ namespace CharlieBackend.Core.Extensions
             return result;
         }
 
-        public static async Task<bool> SetAccountRoleAsync(this Account person,
+        public static async Task<bool> GrantAccountRoleAsync(this Account person,
                 UserRole role)
         {
-            return await Task.Run(() => person.SetAccountRole(role));
+            return await Task.Run(() => person.GrantAccountRole(role));
         }
 
-        public static bool RemoveAccountRole(this Account person,
+        public static bool RevokeAccountRole(this Account person,
                 UserRole role)
         {
             bool result = true;
@@ -121,10 +122,10 @@ namespace CharlieBackend.Core.Extensions
             return result;
         }
 
-        public static async Task<bool> RemoveAccountRoleAsync(
+        public static async Task<bool> RevokeAccountRoleAsync(
                 this Account person, UserRole role)
         {
-            return await Task.Run(() => person.RemoveAccountRole(role));
+            return await Task.Run(() => person.RevokeAccountRole(role));
         }
     }
 }

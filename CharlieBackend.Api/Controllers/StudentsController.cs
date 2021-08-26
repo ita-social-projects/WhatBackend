@@ -57,7 +57,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentDto>> GetStudentById(long id)
         {
-
             var studentModelResult = await _studentService.GetStudentByIdAsync(id);
 
             return studentModelResult.ToActionResult(); 
@@ -72,7 +71,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllStudents() 
         {
-
             var studentsModelsResult = await _studentService.GetAllStudentsAsync();
 
             return studentsModelsResult.ToActionResult();
@@ -101,7 +99,6 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("active")]
         public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {
-
             var studentsModelsResult = await _studentService.GetAllActiveStudentsAsync();
 
             return studentsModelsResult.ToActionResult();

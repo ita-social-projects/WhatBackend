@@ -8,77 +8,84 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Account> entity)
         {
-            entity.ToTable("account");
+            entity.ToTable("Accounts");
 
-            entity.HasIndex(e => e.Email)
-                .HasName("email_UNIQUE")
-                .IsUnique();
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Role)
+                .HasColumnName("Role")
+                .HasComment(
+                "Roles:" +
+                "\n 0 - NotAssigned," +
+                "\n 1 - Student," +
+                "\n 2 - Mentor," +
+                "\n 4 - Admin," +
+                "\n 8 - Secretary"
+                );
+
+            entity.Property(e => e.FirstName)
+                .IsRequired()
+                .HasColumnName("FirstName")
+                .HasColumnType("VARCHAR(30)");
+
+            entity.Property(e => e.LastName)
+                .IsRequired()
+                .HasColumnName("LastName")
+                .HasColumnType("VARCHAR(30)");
 
             entity.Property(e => e.Email)
                 .IsRequired()
-                .HasColumnName("email")
-                .HasColumnType("varchar(50)")
-                .HasComment("email has been set to not null and unique")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
-
-            entity.Property(e => e.FirstName)
-                .HasColumnName("first_name")
-                .HasColumnType("varchar(30)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
-
-            entity.Property(e => e.IsActive)
-                .IsRequired()
-                .HasColumnName("is_active")
-                .HasDefaultValueSql("'1'")
-                .HasComment("is_active has been set to not null with true as a default value");
-
-            entity.Property(e => e.LastName)
-                .HasColumnName("last_name")
-                .HasColumnType("varchar(30)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Email")
+                .HasColumnType("VARCHAR(50)");
 
             entity.Property(e => e.Password)
                 .IsRequired()
-                .HasColumnName("password")
-                .HasColumnType("varchar(65)")
-                .HasComment("password has been set to not null")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
-
-            entity.Property(e => e.Role)
-                .HasColumnName("role")
-                .HasComment("from enum of roles:\\\\\\\\\\\\\\\\n            1 - student\\\\\\\\\\\\\\\\n            2 - mentor\\\\\\\\\\\\\\\\n            4 - admin");
+                .HasColumnName("PasswordHash")
+                .HasColumnType("VARCHAR(64)")
+                .HasComment("SHA265 output size is 256 bits or 64 characters");
 
             entity.Property(e => e.Salt)
                 .IsRequired()
-                .HasColumnName("salt")
-                .HasColumnType("varchar(65)")
-                .HasComment("salt has been set to not null")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Salt")
+                .HasColumnType("VARCHAR(32)")
+                .HasComment("Standard salt size is 128 bits or 32 characters");
+
+            entity.Property(e => e.IsActive)
+                .IsRequired()
+                .HasColumnName("IsActive")
+                .HasColumnType("BIT")
+                .HasDefaultValueSql("1");
 
             entity.Property(e => e.ForgotPasswordToken)
-                .HasColumnName("forgot_password_token")
-                .HasColumnType("varchar(100)")
-                .HasComment("token for resetting password")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("ForgotPasswordToken")
+                .HasColumnType("VARCHAR(36)")
+                .HasComment("GUID length is 36 characters");
 
             entity.Property(e => e.ForgotTokenGenDate)
-                .HasColumnName("forgot_token_gen_date")
-                .HasColumnType("datetime")
-                .HasComment("date of generation for users forgot password token");
+                .HasColumnName("ForgotTokenGenDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
-            entity.Property(e => e.AvatarId).HasColumnName("avatar_id");
+            entity.Property(e => e.AvatarId)
+                .HasColumnName("AvatarID");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(x => x.Avatar)
                 .WithOne(x => x.Account)
-                .HasForeignKey<Account>(x => x.AvatarId);
+                .HasForeignKey<Account>(x => x.AvatarId)
+                .HasConstraintName("FK_AvatarAccounts");
+
+            entity.HasIndex(e => e.Email)
+                .HasName("UQ_EmailAccounts")
+                .IsUnique();
+
+            entity.HasIndex(e => e.AvatarId)
+                .HasName("UQ_AvatarAccounts")
+                .IsUnique();
         }
     }
 }

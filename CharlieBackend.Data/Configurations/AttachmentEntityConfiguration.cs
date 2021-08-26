@@ -8,39 +8,39 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Attachment> entity)
         {
-            entity.ToTable("Attachment");
+            entity.ToTable("Attachments");
 
-            entity.HasIndex(e => e.ContainerName)
-                .HasName("container_name_UNIQUE")
-                .IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
             entity.Property(e => e.CreatedOn)
                 .IsRequired()
-                .HasColumnName("created_on")
-                .HasColumnType("datetime")
-                .HasComment("created_on has been set to not null");
+                .HasColumnName("CreatedOn")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
             entity.Property(e => e.CreatedByAccountId)
                 .IsRequired()
-                .HasColumnName("created_by_account_id");
+                .HasColumnName("CreatedByAccountID");
 
             entity.Property(e => e.ContainerName)
                 .IsRequired()
-                .HasColumnName("container_name")
-                .HasColumnType("varchar(100)")
-                .HasComment("container_name has been set to not null and unique")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("ContainerName")
+                .HasColumnType("VARCHAR(36)")
+                .HasComment("GUID length is 36 characters");
 
             entity.Property(e => e.FileName)
                 .IsRequired()
-                .HasColumnName("file_name")
-                .HasColumnType("varchar(100)")
-                .HasComment("file_name has been set to not null")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("FileName")
+                .HasColumnType("VARCHAR(100)");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
+
+            entity.HasIndex(e => e.ContainerName)
+                .HasName("UQ_ContainerNameAttachments")
+                .IsUnique();
         }
     }
 }

@@ -17,17 +17,20 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly ICurrentUserService _currentUserService;
 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
-                              INotificationService notification)
+                              INotificationService notification,
+                              ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _currentUserService = currentUserService;
         }
 
-        public async Task<Result<AccountRoleDto>> AppendRoleToAccount(
+        public async Task<Result<AccountRoleDto>> GrantRoleToAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -42,9 +45,9 @@ namespace CharlieBackend.Business.Services
             }
             else
             {
-                if (await user.SetAccountRoleAsync(accountRole.Role))
+                if (await user.GrantAccountRoleAsync(accountRole.Role))
                 {
-                    await SetAccountRoleToRepositoryAsync(accountRole, user);
+                    await AddGrantedRoleToRepositoryAsync(accountRole, user);
 
                     await _unitOfWork.CommitAsync();
 
@@ -62,7 +65,7 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        private void SetAccountRoleToRepository(AccountRoleDto accountRole,
+        private void AddGrantedRoleToRepository(AccountRoleDto accountRole,
                 Account user)
         {
             switch (accountRole.Role)
@@ -74,7 +77,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id,
                     };
 
-                    _unitOfWork.StudentRepository.Add(newStudent);
+                    if (_unitOfWork.StudentRepository
+                            .GetStudentByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.StudentRepository.Add(newStudent);
+                    }
                     break;
 
                 case UserRole.Mentor:
@@ -84,7 +91,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id
                     };
 
-                    _unitOfWork.MentorRepository.Add(newMentor);
+                    if (_unitOfWork.MentorRepository
+                            .GetMentorByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.MentorRepository.Add(newMentor);
+                    }
                     break;
 
                 case UserRole.Secretary:
@@ -94,7 +105,11 @@ namespace CharlieBackend.Business.Services
                         AccountId = user.Id
                     };
 
-                    _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    if (_unitOfWork.SecretaryRepository
+                            .GetSecretaryByAccountIdAsync(user.Id) == null)
+                    {
+                        _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    }
                     break;
 
                 default:
@@ -102,13 +117,13 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        private async Task SetAccountRoleToRepositoryAsync(
+        private async Task AddGrantedRoleToRepositoryAsync(
                 AccountRoleDto accountRole, Account user) 
         {
-            await Task.Run(() => SetAccountRoleToRepository(accountRole, user));
+             await Task.Run(() => AddGrantedRoleToRepository(accountRole, user));
         }
 
-        public async Task<Result<AccountRoleDto>> RemoveRoleFromAccount(
+        public async Task<Result<AccountRoleDto>> RevokeRoleFromAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -123,7 +138,7 @@ namespace CharlieBackend.Business.Services
             }
             else
             {           
-                if (await user.RemoveAccountRoleAsync(accountRole.Role))
+                if (await user.RevokeAccountRoleAsync(accountRole.Role))
                 {
                     await _unitOfWork.CommitAsync();
 
@@ -263,7 +278,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);
+            var email = _currentUserService.Email;
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(email);
 
             if (user == null)
             {
@@ -305,7 +321,7 @@ namespace CharlieBackend.Business.Services
             }
 
             user.ForgotPasswordToken = Guid.NewGuid().ToString();
-            user.ForgotTokenGenDate = DateTime.Now;
+            user.ForgotTokenGenDate = DateTime.UtcNow;
 
             await _unitOfWork.CommitAsync();
 

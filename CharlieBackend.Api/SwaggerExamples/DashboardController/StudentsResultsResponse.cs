@@ -17,16 +17,16 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                 {
                     new AverageStudentMarkDto
                     {
-                        CourseId = 5,
-                        StudentGroupId = 7,
-                        StudentId = 12,
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Teresa Flores",
                         StudentAverageMark = 4
                     },
                     new AverageStudentMarkDto
                     {
-                        CourseId = 5,
-                        StudentGroupId = 7,
-                        StudentId = 13,
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Alice Evans",
                         StudentAverageMark = 5
                     }
                 },
@@ -34,16 +34,16 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                 {
                     new AverageStudentVisitsDto
                     {
-                        CourseId = 5,
-                        StudentGroupId = 7,
-                        StudentId = 12,
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Teresa Flores",
                         StudentAverageVisitsPercentage = 100
                     },
                     new AverageStudentVisitsDto
                     {
-                        CourseId = 5,
-                        StudentGroupId = 7,
-                        StudentId = 12,
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Alice Evans",
                         StudentAverageVisitsPercentage = 96
                     },
                 }
