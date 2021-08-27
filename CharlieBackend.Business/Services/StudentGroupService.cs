@@ -188,6 +188,13 @@ namespace CharlieBackend.Business.Services
             return new Result<StudentGroupDto>();
         }
 
+        /// <summary>
+        /// Checks that: is some Mentor.AccountId equal to 
+        /// some Student.AccountId in group.  
+        /// </summary>
+        /// <param name="group">Group where we do checking</param>
+        /// <returns>AccountId of mentor if it has equality
+        /// or long with result null if it hasn't</returns>
         private Task<long?> IsStudentHisOwnMentor(StudentGroup group)
         {
             if (group.MentorsOfStudentGroups == null
