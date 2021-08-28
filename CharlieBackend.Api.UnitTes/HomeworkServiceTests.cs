@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Data.Exceptions;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -25,6 +26,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
+        private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly HomeworkService _homeworkService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
@@ -38,7 +40,8 @@ namespace CharlieBackend.Api.UnitTest
             _attachmentRepositoryMock = new Mock<IAttachmentRepository>();
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object);
+            _currentUserServiceMock = new Mock<ICurrentUserService>();
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
@@ -104,7 +107,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateHomeworkAsync_ValidData_ShouldReturnHomeworkExemple()
+        public async Task CreateHomeworkAsync_ValidData_ShouldReturnHomeworkExample()
         {
             //Arrange
             homeworkRequestDto.AttachmentIds = new List<long> { 1, 2 };
@@ -116,7 +119,6 @@ namespace CharlieBackend.Api.UnitTest
                 LessonId = 1,
                 DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
                 AttachmentIds = new List<long>() { 1, 2 }
-
             };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);
@@ -143,7 +145,7 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Data.Should().NotBeNull();
-            result.Data.Should().BeEquivalentTo(_mapper.Map<HomeworkDto>(homeworkDto));
+            result.Data.Should().BeEquivalentTo(_mapper.Map<HomeworkDto>(homeworkDto), x => x.Excluding(f => f.PublishingDate));
         }
         #endregion
 
@@ -195,7 +197,7 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 1,
                 LessonId = 1,
                 DueDate = DateTime.Parse("2021-11-18T15:00:00.384Z"),
-
+                PublishingDate = DateTime.UtcNow
             };
 
             _lessonRepositoryMock.Setup(l => l.IsEntityExistAsync(1)).ReturnsAsync(true);
@@ -282,94 +284,6 @@ namespace CharlieBackend.Api.UnitTest
         {
             var mock = new Mock<IUnitOfWork>();
             return mock;
-        }
-
-        [Fact]
-        public async Task UpdateMarkAsync_ValidDataPassed_ShouldReturnExpectedData()
-        {
-            // Arrange
-            sbyte mark = 5;
-            sbyte updatedMark = 2;
-            long visitId_one = 1;
-            long visitId_two = 1;
-            long homeworkStudentId_one = 1;
-            long homeworkStudentId_two = 1;
-
-            var visitTrue = CreateVisit(visitId_one, mark, true);
-            var visitFalse = CreateVisit(visitId_two, mark, false);
-
-            var visitRepositoryMock = new Mock<IVisitRepository>();
-
-            var lessonRepositoryMock = new Mock<ILessonRepository>();
-            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one)).ReturnsAsync(visitTrue);
-            lessonRepositoryMock.Setup(x => x.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two)).ReturnsAsync(visitFalse);
-
-            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-            _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(visitRepositoryMock.Object);
-
-            var homeworkService = new HomeworkService(
-                unitOfWork: _unitOfWorkMock.Object,
-                mapper: _mapper,
-                _loggerMock.Object);
-
-            var request_one = new UpdateMarkRequestDto
-            { 
-                StudentHomeworkId = homeworkStudentId_one,
-                StudentMark = updatedMark
-            };
-
-            var request_two = new UpdateMarkRequestDto
-            {
-                StudentHomeworkId = homeworkStudentId_two,
-                StudentMark = updatedMark
-            };
-
-            //Act
-            var result_one = await homeworkService.UpdateMarkAsync(request_one);
-            var result_two = await homeworkService.UpdateMarkAsync(request_two);
-
-            // Assert
-
-            result_one.Data
-                .StudentMark
-                .GetValueOrDefault()
-                .Should()
-                .Be(updatedMark);
-
-            result_two.Data
-                .StudentMark
-                .GetValueOrDefault()
-                .Should()
-                .Be(updatedMark);
-        }
-
-        [Fact]
-        public async Task UpdateMarkAsync_WrongVisitPassed_ShouldThrowException()
-        {
-            // Arrange
-            sbyte updatedMark = 2;
-            long wrongHomeworkStudentId = 2;
-
-            var lessonRepositoryMock = new Mock<ILessonRepository>();
-
-            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(lessonRepositoryMock.Object);
-
-            var homeworkService = new HomeworkService(
-                unitOfWork: _unitOfWorkMock.Object,
-                mapper: _mapper,
-                _loggerMock.Object);
-
-            var request = new UpdateMarkRequestDto
-            {
-                StudentHomeworkId = wrongHomeworkStudentId,
-                StudentMark = updatedMark
-            };
-
-            //Act
-            Func<Task> wrongUpdate = async () => await homeworkService.UpdateMarkAsync(request);
-
-            // Assert
-            await wrongUpdate.Should().ThrowAsync<NotFoundException>();
-        }
+        }   
     }
 }

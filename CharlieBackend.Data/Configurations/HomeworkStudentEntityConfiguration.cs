@@ -27,18 +27,37 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("HomeworkText")
                 .HasColumnType("VARCHAR(8000)");
 
+            entity.Property(e => e.MarkId)
+                .HasColumnName("MarkId")
+                .HasColumnType("BIGINT UNSIGNED");
+
+            entity.Property(e => e.PublishingDate)
+                .IsRequired()
+                .HasColumnName("PublishingDate")
+                .HasColumnType("DATETIME");
+
+            entity.Property(e => e.IsSent)
+                .IsRequired()
+                .HasColumnName("IsSent")
+                .HasColumnType("TINYINT(1)");
+
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
+
+            entity.HasOne(h => h.Mark)
+                .WithOne(s => s.HomeworkStudent)
+                .HasForeignKey<HomeworkStudent>(h => h.MarkId)
+                .HasConstraintName("FK_MarkOfHomeworkFromStudent");
 
             entity.HasOne(h => h.Homework)
                 .WithMany(h => h.HomeworkStudents)
                 .HasForeignKey(h => h.HomeworkId)
-                .HasConstraintName("FK_StudentOfHomeworks");
+                .HasConstraintName("FK_HomeworkOfStudents");
 
             entity.HasOne(h => h.Student)
                 .WithMany(s => s.HomeworkStudents)
                 .HasForeignKey(h => h.StudentId)
-                .HasConstraintName("FK_HomeworkOfStudents");
+                .HasConstraintName("FK_StudentOfHomeworks");
 
             entity.HasIndex(e => new { e.StudentId, e.HomeworkId })
                 .HasName("UQ_HomeworkAndStudent")

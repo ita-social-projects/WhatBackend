@@ -29,13 +29,29 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("LessonID");
 
+            entity.Property(e => e.PublishingDate)
+                .IsRequired()
+                .HasColumnName("PublishingDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.Property(e => e.CreatedBy)
+                .IsRequired()
+                .HasColumnName("CreatedBy")
+                .HasColumnType("BIGINT UNSIGNED");
+
+            entity.HasOne(e => e.Account)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("FK_AccountOfHomework");
+
+            entity.HasOne(e => e.Lesson)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.LessonId)
+                .HasConstraintName("FK_LessonHomeworks");
+
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
-
-            entity.HasOne(d => d.Lesson)
-                .WithMany(p => p.Homeworks)
-                .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_LessonHomeworks");
 
             entity.HasIndex(e => e.LessonId)
                 .HasName("IX_Lesson");

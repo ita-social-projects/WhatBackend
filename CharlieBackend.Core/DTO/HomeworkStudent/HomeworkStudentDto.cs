@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,12 @@ namespace CharlieBackend.Core.DTO.HomeworkStudent
 
         public string HomeworkText { get; set; }
 
+        public DateTime PublishingDate { get; set; }
+
+        public bool IsSent { get; set; }
+
+        public HomeworkStudentMarkDto Mark { get; set; }
+       
         public virtual IList<long> AttachmentIds { get; set; }
     }
 }

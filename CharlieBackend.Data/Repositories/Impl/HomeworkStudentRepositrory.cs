@@ -24,6 +24,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
+                .Include(x => x.Mark)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -41,6 +42,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.Homework)
                 .Include(x => x.Student)
                 .Include(x => x.Student.Account)
+                .Include(x => x.Mark)
                 .Where(x => x.StudentId == studentId)
                 .ToListAsync();
         }
@@ -52,6 +54,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.Homework)
                 .Include(x => x.Student)
                 .Include(x => x.Student.Account)
+                .Include(x => x.Mark)
                 .Where(x => x.HomeworkId == homeworkId)
                 .ToListAsync();
 

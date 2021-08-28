@@ -91,5 +91,18 @@ namespace CharlieBackend.Api.Controllers
 
             return results.ToActionResult();
         }
+
+        /// <summary>
+        /// Update student mark
+        /// </summary>
+        /// <response code="200">Successful updating of the mark</response>
+        /// <response code="HTTP: 404">Student homework not found</response>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPut("updatemark")]
+        public async Task<ActionResult> UpdateMark([FromBody] UpdateMarkRequestDto request)
+        {
+            return (await _homeworkStudentService.UpdateMarkAsync(request)).ToActionResult();
+        }
     }
 }
