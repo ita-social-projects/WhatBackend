@@ -30,6 +30,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using CharlieBackend.Core.DTO.Result;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api
 {
@@ -97,9 +98,13 @@ namespace CharlieBackend.Api
                         });
                     };
                 })
-                .AddJsonOptions(options =>
+                //.AddJsonOptions(options =>
+                //{
+                //    options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                //})
+                .AddNewtonsoftJson(options =>
                 {
-                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                    options.SerializerSettings.ContractResolver = new JsonContractResolver();
                 })
                 .AddFluentValidation(options =>
                 {
@@ -162,6 +167,8 @@ namespace CharlieBackend.Api
                     }
                 });
             });
+
+                services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddFluentValidationRulesToSwagger(options =>
             {
