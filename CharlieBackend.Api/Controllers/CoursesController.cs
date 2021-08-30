@@ -10,7 +10,7 @@ using CharlieBackend.Core;
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
-    /// Controller to manage cources data
+    /// Controller to manage courses data
     /// </summary>
     [Route("api/courses")]
     [ApiController]
@@ -83,7 +83,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CourseDto>> DisableCourse(long id)
         {
-            var disableCourse = await _coursesService.DisableCourceAsync(id);
+            var disableCourse = await _coursesService.DisableCourseAsync(id);
 
             return disableCourse.ToActionResult();
         }
@@ -97,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<CourseDto>> EnableCourse(long id)
         {
-            var enableCourse = await _coursesService.EnableCourceAsync(id);
+            var enableCourse = await _coursesService.EnableCourseAsync(id);
 
             return enableCourse.ToActionResult();
         }
