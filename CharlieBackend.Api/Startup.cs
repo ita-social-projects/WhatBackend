@@ -162,7 +162,7 @@ namespace CharlieBackend.Api
                 });
             });
 
-                services.AddSwaggerGenNewtonsoftSupport();
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddFluentValidationRulesToSwagger(options =>
             {
