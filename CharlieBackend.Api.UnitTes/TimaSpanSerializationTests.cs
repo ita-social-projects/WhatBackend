@@ -1,11 +1,7 @@
 ﻿using CharlieBackend.Core.DTO.Schedule;
-//using Newtonsoft.Json;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -21,23 +17,10 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public void Serialize_SystemTextJson_TimeSpanIsSerializedWithExpectedFormat()
-        {
-            // Arrange
-            var serializeOptions = new JsonSerializerOptions() { Converters = { new TimeSpanConverter() } }; 
-            
-            // Act
-            var result = JsonSerializer.Serialize(_dto , serializeOptions);
-
-            // Assert
-            Assert.Equal(_expectedResult, result);
-        }
-
-        [Fact]
         public void Serialize_NetonsoftJson_TimeSpanIsSerializedWithExpectedFormat()
         {
             // Act
-            var result = Newtonsoft.Json.JsonConvert.SerializeObject(_dto);
+            var result = JsonConvert.SerializeObject(_dto);
 
             // Assert
             Assert.Equal(_expectedResult, result);

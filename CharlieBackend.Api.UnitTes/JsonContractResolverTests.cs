@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
+﻿using CharlieBackend.Core.Extensions;
 using Newtonsoft.Json;
 using System;
 using Xunit;

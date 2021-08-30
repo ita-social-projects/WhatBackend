@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System;
 
-namespace CharlieBackend.Business.Helpers
+namespace CharlieBackend.Core.Extensions
 {
     public class JsonContractResolver : DefaultContractResolver
     {
@@ -19,18 +19,18 @@ namespace CharlieBackend.Business.Helpers
         {
             JsonObjectContract contract = base.CreateObjectContract(objectType);
 
-            foreach (var property in contract.Properties)
+            foreach (var contractProperty in contract.Properties)
             {
-                if (!IsNullableValueProperty(property))
+                if (!IsOfNullableType(contractProperty))
                 {
-                    property.Required = Required.Always;
+                    contractProperty.Required = Required.Always;
                 }
             }
 
             return contract;
         }
 
-        private static bool IsNullableValueProperty(JsonProperty property)
+        private static bool IsOfNullableType(JsonProperty property)
         {
             if (property.PropertyType.IsValueType)
             {

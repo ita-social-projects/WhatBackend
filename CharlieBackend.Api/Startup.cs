@@ -1,9 +1,9 @@
 using AutoMapper;
 using CharlieBackend.Api.Extensions;
 using CharlieBackend.Api.Middlewares;
-using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Core.DTO.Result;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data;
