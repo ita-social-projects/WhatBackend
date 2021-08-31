@@ -161,6 +161,7 @@ namespace CharlieBackend.Business.Services
             foundStudentHomework.PublishingDate = DateTime.UtcNow;
             foundStudentHomework.IsSent = homeworkStudent.IsSent;
             foundStudentHomework.Mark = null;
+            foundStudentHomework.AttachmentOfHomeworkStudents = new List<AttachmentOfHomeworkStudent>();
 
             var newAttachments = new List<AttachmentOfHomeworkStudent>();
 
@@ -199,11 +200,14 @@ namespace CharlieBackend.Business.Services
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
+            var result = new List<HomeworkStudent>();
+
             foreach (var homeworkStudent in homeworksStudent)
             {
-                if (homeworkStudent.IsSent == false)
+                var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+                
+                if (homeworkStudent.IsSent == false && homeworkStudentHistory.Count > 0)
                 {
-                    var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
                     var correctHomeworkStudent = homeworkStudentHistory.Last();
 
                     homeworkStudent.HomeworkText = correctHomeworkStudent.HomeworkText;
@@ -222,9 +226,16 @@ namespace CharlieBackend.Business.Services
                             HomeworkStudentId = elem.HomeworkStudentHistoryId
                         });
                     }
+
+                    result.Add(homeworkStudent);
+                }
+                
+                if (homeworkStudent.IsSent == true)
+                {
+                    result.Add(homeworkStudent);
                 }
             }
-            return _mapper.Map<IList<HomeworkStudentDto>>(homeworksStudent);
+            return _mapper.Map<IList<HomeworkStudentDto>>(result);
         }
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentHistoryByHomeworkStudentId(long homeworkStudentId)
