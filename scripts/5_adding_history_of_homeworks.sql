@@ -1,4 +1,4 @@
-USE `New_Soft`;
+USE `Soft`;
 
 DROP TABLE IF EXISTS `HomeworksFromStudentsHistory`;
 
