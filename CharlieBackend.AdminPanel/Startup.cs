@@ -2,6 +2,7 @@ using AutoMapper;
 using CharlieBackend.AdminPanel.Extensions;
 using CharlieBackend.AdminPanel.Middlewares;
 using CharlieBackend.AdminPanel.Models.Mapping;
+using CharlieBackend.Core.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -59,7 +60,8 @@ namespace CharlieBackend.AdminPanel
                      options.LoginPath = new PathString("/Account/Login");
                  });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddJsonConverter();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -96,10 +96,7 @@ namespace CharlieBackend.Api
                         });
                     };
                 })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new JsonContractResolver();
-                })
+                .AddJsonConverter()
                 .AddFluentValidation(options =>
                 {
                         options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
