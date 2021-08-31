@@ -24,6 +24,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
+                .Include(x => x.Student)
+                .ThenInclude(x => x.Account)
                 .Include(x => x.Mark)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -59,6 +61,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
 
         }
+
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomeworkStudent> currentHomeworkAttachments,
                             IEnumerable<AttachmentOfHomeworkStudent> newHomeworkAttachments)
         {

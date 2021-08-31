@@ -37,6 +37,10 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public IHomeworkStudentRepository HomeworkStudentRepository { get; }
 
+        public IHomeworkStudentHistoryRepository HomeworkStudentHistoryRepository { get; }
+
+        public IMarkRepository MarkRepository { get; }
+
         Task CommitAsync();
 
         void Rollback();
