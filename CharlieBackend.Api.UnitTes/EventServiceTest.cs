@@ -11,6 +11,7 @@ using static FluentAssertions.FluentActions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -23,6 +24,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IStudentGroupRepository> _groupRepositoryMock;
         private readonly ScheduledEvent _validEvent;
         private readonly int _existingId;
+        private readonly int _lessonId;
         private readonly int _nonexistingId;
         public UpdateScheduledEventDto _update;
 
@@ -35,6 +37,7 @@ namespace CharlieBackend.Api.UnitTest
             _groupRepositoryMock = new Mock<IStudentGroupRepository>();
             _validEvent = new ScheduledEvent{  };
             _existingId = 551;
+            _lessonId = 11;
             _nonexistingId = 999;
         }
 
@@ -171,6 +174,47 @@ namespace CharlieBackend.Api.UnitTest
 
             // Act & Assert
             Invoking(() => eventService.DeleteAsync(_existingId)).Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task ConnectScheduleToLessonById_ValidData_ShouldReturnScheduledEvent() 
+        {
+            //Arrange
+            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
+
+            _eventRepositoryMock.Setup(x => x.ConnectEventToLessonById(_existingId, _lessonId))
+                .ReturnsAsync(_validEvent);
+
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
+            //Act
+            var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);
+
+            //Assert
+            successResult.Data.Should().BeEquivalentTo(_mapper.Map<ScheduledEventDTO>(_validEvent));
+        }
+
+        [Fact]
+        public async Task ConnectScheduleToLessonById_NonExistingEventId_ShouldReturnNotFoundExeption()
+        {
+            //Arrange
+            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
+
+            ScheduledEvent wrongScheduledEvent = new ScheduledEvent { Id = _nonexistingId };
+
+            var wrongEventRepositoryMock = new Mock<IScheduledEventRepository>();
+
+            wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonById(wrongScheduledEvent.Id, _lessonId))
+                .ReturnsAsync(default(ScheduledEvent));
+
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
+            //Act
+            var successResult = await eventService.ConnectScheduleToLessonById(wrongScheduledEvent.Id, _lessonId);
+
+            //Assert
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+
         }
     }
 }
