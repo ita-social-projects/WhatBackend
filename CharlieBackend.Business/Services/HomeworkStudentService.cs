@@ -205,7 +205,12 @@ namespace CharlieBackend.Business.Services
             foreach (var homeworkStudent in homeworksStudent)
             {
                 var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
-                
+
+                if (homeworkStudent.IsSent == true)
+                {
+                    result.Add(homeworkStudent);
+                }
+
                 if (homeworkStudent.IsSent == false && homeworkStudentHistory.Count > 0)
                 {
                     var correctHomeworkStudent = homeworkStudentHistory.Last();
@@ -229,11 +234,6 @@ namespace CharlieBackend.Business.Services
 
                     result.Add(homeworkStudent);
                 }
-                
-                if (homeworkStudent.IsSent == true)
-                {
-                    result.Add(homeworkStudent);
-                }
             }
             return _mapper.Map<IList<HomeworkStudentDto>>(result);
         }
@@ -242,8 +242,8 @@ namespace CharlieBackend.Business.Services
         {
             var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(homeworkStudentId);
             var homeworkStudentHistories = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudentId);
-
             var result = new List<HomeworkStudent>();
+
             foreach (var homeworkStudentHistory in homeworkStudentHistories)
             {
                 var resultHomeworkStudent = new HomeworkStudent()
