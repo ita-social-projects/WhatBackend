@@ -274,24 +274,39 @@ namespace CharlieBackend.Business.Services
         {
             var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(request.StudentHomeworkId);
 
-            if (homeworkStudent.IsSent == false)
+            if (homeworkStudent == null)
             {
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework from student with id {request.StudentHomeworkId} hasn't found");
             }
 
             long accountId = _currentUserService.AccountId;
-
-            if (homeworkStudent.Mark == null)
+            var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+            
+            if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
             {
-                homeworkStudent.Mark = new Mark();
-            }
-            homeworkStudent.Mark.Value = request.StudentMark;
-            homeworkStudent.Mark.Comment = request.MentorComment;
-            homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
-            homeworkStudent.Mark.Type = request.MarkType;
-            homeworkStudent.Mark.EvaluatedBy = accountId;
+                homeworkStudentHistory.Last().Mark.Value = request.StudentMark;
+                homeworkStudentHistory.Last().Mark.Comment = request.MentorComment;
+                homeworkStudentHistory.Last().Mark.EvaluationDate = DateTime.UtcNow;
+                homeworkStudentHistory.Last().Mark.Type = request.MarkType;
+                homeworkStudentHistory.Last().Mark.EvaluatedBy = accountId;
 
-            _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
+                _unitOfWork.HomeworkStudentHistoryRepository.Update(homeworkStudentHistory.Last());
+            }
+            else
+            {
+                if (homeworkStudent.Mark == null)
+                {
+                    homeworkStudent.Mark = new Mark();
+                }
+                homeworkStudent.Mark.Value = request.StudentMark;
+                homeworkStudent.Mark.Comment = request.MentorComment;
+                homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
+                homeworkStudent.Mark.Type = request.MarkType;
+                homeworkStudent.Mark.EvaluatedBy = accountId;
+
+                _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
+            }
+
             await _unitOfWork.CommitAsync();
 
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
