@@ -2,6 +2,7 @@
 using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillFile(StudentsResultsDto data)
         {
+            if (data == null)
+            {
+                return;
+            }
+
             if (data.AverageStudentsMarks != null && data.AverageStudentsMarks.Any())
             {
                 var StudentsAverageMarks = data.AverageStudentsMarks.GroupBy(x => x.StudentGroup);
@@ -60,8 +66,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         {
             if (AverageStudentsMarks != null && AverageStudentsMarks.Any())
             {
-                xLWorkbook.AddWorksheet("Average marks of " + AverageStudentsMarks.First().StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Average marks of " + AverageStudentsMarks.First().StudentGroup);
+                string worksheetName = "Average marks (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+                xLWorkbook.AddWorksheet(worksheetName);
+                var worksheet = xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                    "Course",
@@ -79,7 +86,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     var student = orderedList.ElementAt(studentId);
 
                     FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN,
-                        student.Student, Math.Round(((decimal)student.StudentAverageMark), 2).ToString());
+                        student.Student, Math.Round(((double)student.StudentAverageMark), 2)
+                            .ToString(new NumberFormatInfo() 
+                                { 
+                                    NumberDecimalSeparator = "." 
+                                }
+                            ));
                 }
 
                 DrawBorders(worksheet.Range(
@@ -98,8 +110,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         {
             if (AverageStudentVisits != null && AverageStudentVisits.Any())
             {
-                xLWorkbook.AddWorksheet("Average visits of " + AverageStudentVisits.First().StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Average visits of " + AverageStudentVisits.First().StudentGroup);
+                string worksheetName = "Average visits (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+                xLWorkbook.AddWorksheet(worksheetName);
+                var worksheet = xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                    "Course",
@@ -116,8 +129,13 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 {
                     var student = orderedList.ElementAt(studentId);
 
-                    FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN,
-                        student.Student, student.StudentAverageVisitsPercentage.ToString() + " %");
+                    FillRowWithNumberInLastColumnAsPercent(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN,
+                        student.Student, ((double)student.StudentAverageVisitsPercentage / 100)
+                        .ToString(new NumberFormatInfo()
+                            {
+                                NumberDecimalSeparator = "."
+                            }
+                        ));
                 }
 
                 DrawBorders(worksheet.Range(
