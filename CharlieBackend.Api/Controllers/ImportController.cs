@@ -1,6 +1,6 @@
 ﻿using CharlieBackend.Business.Services.FileServices;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using Microsoft.AspNetCore.Authorization;
@@ -19,15 +19,18 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
+        private readonly IImportTemplatesService _importTemplatesService;
         private readonly IThemeXlsFileImporter _themeXlsFileImporter;
         private readonly IStudentsGroupXlsxFileImporter _studentsGroupXlsxFileImporter;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IThemeXlsFileImporter themeXlsFileImporter,
+        public ImportController(IImportTemplatesService importTemplatesService,
+                                IThemeXlsFileImporter themeXlsFileImporter,
                                 IStudentsGroupXlsxFileImporter studentsGroupXlsxFileImporter)
         {
+            _importTemplatesService = importTemplatesService;
             _themeXlsFileImporter = themeXlsFileImporter;
             _studentsGroupXlsxFileImporter = studentsGroupXlsxFileImporter;
         }
@@ -62,6 +65,36 @@ namespace CharlieBackend.Api.Controllers
             var themes = await _themeXlsFileImporter.ImportThemesAsync(file);
 
             return themes.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns template of group
+        /// </summary>
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("group")]
+        [HttpGet]
+        public async Task<ActionResult> GetTemplateForGroupImport()
+        {
+            var fileName = _importTemplatesService.GetGroupTemplateFileName();
+
+            return File(await _importTemplatesService.GetByteArrayAsync(fileName),
+                        _importTemplatesService.GetContentType(),
+                        fileName);
+        }
+
+        /// <summary>
+        /// Returns template of group
+        /// </summary>
+        [Authorize(Roles = "Mentor, Secretary, Admin")]
+        [Route("themes")]
+        [HttpGet]
+        public async Task<ActionResult> GetTemplateForThemeImport()
+        {
+            var fileName = _importTemplatesService.GetThemeTemplateFileName();
+
+            return File(await _importTemplatesService.GetByteArrayAsync(fileName),
+                        _importTemplatesService.GetContentType(),
+                        fileName);
         }
     }
 }
