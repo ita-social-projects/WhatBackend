@@ -96,7 +96,7 @@ namespace CharlieBackend.Api
                         });
                     };
                 })
-                .AddJsonConverter()
+                .AddJsonSerializer()
                 .AddFluentValidation(options =>
                 {
                         options.ValidatorOptions.CascadeMode = CascadeMode.Stop;

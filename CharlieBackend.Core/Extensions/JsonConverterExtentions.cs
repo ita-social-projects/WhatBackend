@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CharlieBackend.Core.Extensions
 {
     public static class JsonConverterExtentions
     {
-        public static IMvcBuilder AddJsonConverter(this IMvcBuilder builder)
+        public static IMvcBuilder AddJsonSerializer(this IMvcBuilder builder)
         {
             builder.AddNewtonsoftJson(options =>
             {

@@ -61,7 +61,7 @@ namespace CharlieBackend.AdminPanel
                  });
 
             services.AddControllersWithViews()
-                .AddJsonConverter();
+                .AddJsonSerializer();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
