@@ -47,6 +47,8 @@ namespace CharlieBackend.Business.Services
             {
                 if (await user.GrantAccountRoleAsync(accountRole.Role))
                 {
+                    await _unitOfWork.CommitAsync();
+
                     await AddGrantedRoleToRepositoryAsync(accountRole, user);
 
                     await _unitOfWork.CommitAsync();
