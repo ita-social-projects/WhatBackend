@@ -71,44 +71,44 @@ namespace CharlieBackend.Business.Services
             switch (accountRole.Role)
             {
                 case UserRole.Student:
-                    Student newStudent = new Student()
-                    {
-                        Account = user,
-                        AccountId = user.Id,
-                    };
-
                     if (await _unitOfWork.StudentRepository
                             .GetStudentByAccountIdAsync(user.Id) == null)
                     {
+                        Student newStudent = new Student()
+                        {
+                            Account = user,
+                            AccountId = user.Id,
+                        };
+
                         _unitOfWork.StudentRepository.Add(newStudent);
                     }
                     break;
 
                 case UserRole.Mentor:
-                    Mentor newMentor = new Mentor()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
                     if (await _unitOfWork.MentorRepository
                             .GetMentorByAccountIdAsync(user.Id) == null)
                     {
-                         _unitOfWork.MentorRepository.Add(newMentor);
+                        Mentor newMentor = new Mentor()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
+                        _unitOfWork.MentorRepository.Add(newMentor);
                     }
                     break;
 
                 case UserRole.Secretary:
-                    Secretary newSecretary = new Secretary()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
                     if (await _unitOfWork.SecretaryRepository
                             .GetSecretaryByAccountIdAsync(user.Id) == null)
                     {
-                         _unitOfWork.SecretaryRepository.Add(newSecretary);
+                        Secretary newSecretary = new Secretary()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
+                        _unitOfWork.SecretaryRepository.Add(newSecretary);
                     }
                     break;
 
