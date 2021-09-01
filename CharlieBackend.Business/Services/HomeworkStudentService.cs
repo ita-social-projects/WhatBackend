@@ -3,14 +3,11 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
