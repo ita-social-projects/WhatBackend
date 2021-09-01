@@ -55,6 +55,66 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public void CheckRoleAndIdMentor_CheckOtherMentorId_ReturnUnauthorized()
+        {
+            //Arrange
+            long currentId = 1;
+            long otherId = 2;
+            Result<object> expacted = new Result<object>()
+            {
+                Error = new ErrorData()
+                {
+                    Code = ErrorCode.Unauthorized,
+                    Message = ""
+                }
+            };
+
+            _currentUserMock.Setup(u => u.Role).Returns(UserRole.Mentor);
+            _currentUserMock.Setup(u => u.EntityId).Returns(otherId);
+
+            //Act
+            var result = _mentorService.CheckRoleAndIdMentor<object>(currentId);
+
+            //Assert
+            Assert.NotNull(result.Error);
+            Assert.Equal(expacted.Error.Code, result.Error.Code);
+        }
+
+        [Fact]
+        public void CheckRoleAndIdMentor_CheckCurentMentorId_ReturnUnauthorized() 
+        {
+            //Arrange
+            long currentId = 1;
+            long otherId = 1;
+
+            _currentUserMock.Setup(u => u.Role).Returns(UserRole.Mentor);
+            _currentUserMock.Setup(u => u.EntityId).Returns(otherId);
+
+            //Act
+            var result = _mentorService.CheckRoleAndIdMentor<object>(currentId);
+
+            //Assert
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public void CheckRoleAndIdMentor_CheckNotMentorId_ReturnUnauthorized()
+        {
+            //Arrange
+            long currentId = 1;
+            long otherId = 1;
+
+            _currentUserMock.Setup(u => u.Role).Returns(UserRole.Student);
+            _currentUserMock.Setup(u => u.EntityId).Returns(otherId);
+
+            //Act
+            var result = _mentorService.CheckRoleAndIdMentor<object>(currentId);
+
+            //Assert
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
         public async Task CreateMentorAsync_NotExistingAccoutId_ShouldReturnNotFound()
         {
             //Arrange
