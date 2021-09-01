@@ -23,8 +23,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
                 var firstStudentPresence = data.StudentsPresences.First();
-                xLWorkbook.AddWorksheet("Presence of " + firstStudentPresence.StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Presence of " + firstStudentPresence.StudentGroup);
+                string workhseetName = "Presence (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+                xLWorkbook.AddWorksheet(workhseetName);
+                var worksheet = xLWorkbook.Worksheet(workhseetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
@@ -34,6 +35,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
                    firstStudentPresence.Course,
                    firstStudentPresence.StudentGroup);
+
+                FillRow(worksheet, 4, 1, "❌ - student is present");
 
                 var dateData = data.StudentsPresences.GroupBy(x => x.LessonDate);
 
@@ -55,11 +58,13 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                         .Cell(actualIndex)
                         .Value = ((DateTime)dateData.ElementAt(groupN).Key).ToString("dd-MM-yyyy");
 
-                    for (int item = 0; item < actualGroup.Count(); item++)
+                    var visitCount = actualGroup.Count();
+
+                    for (int visitN = 0; visitN < visitCount; visitN++)
                     {
                         var group = actualGroup;
-                        FillRow(worksheet, item + _STUDENT_STARTING_ROW, actualIndex,
-                        group.ElementAt(item).Presence == true ? "+" : group.ElementAt(item).Presence == false ? "-" : " ");
+                        FillRowTextAlignCenter(worksheet, visitN + _STUDENT_STARTING_ROW, actualIndex,
+                        group.ElementAt(visitN).Presence == true ? "❌" : " ");
                     }
                     
                     
@@ -70,6 +75,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                         .Cell(_STUDENT_STARTING_COLUMN + dateData.Count())));
 
                 DrawBorders(worksheet.Range("A1:B2"));
+                DrawBorders(worksheet.Range("A4:A4"));
 
                 worksheet.Columns().AdjustToContents();
                 worksheet.Rows().AdjustToContents();
@@ -81,8 +87,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             var firstStudentMark = data.StudentsMarks.First();
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
-                xLWorkbook.AddWorksheet("Marks of " + firstStudentMark.StudentGroup);
-                var worksheet = xLWorkbook.Worksheet("Marks of " + firstStudentMark.StudentGroup);
+                string workhseetName = "Marks (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+                xLWorkbook.AddWorksheet(workhseetName);
+                var worksheet = xLWorkbook.Worksheet(workhseetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
@@ -116,11 +123,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     for (int item = 0; item < actualGroup.Count(); item++)
                     {
                         var group = actualGroup;
-                        FillRow(worksheet, item + _STUDENT_STARTING_ROW, actualIndex,
-                        group.ElementAt(item).StudentMark.ToString());
-                        FillRowWithComments(worksheet, item + _STUDENT_STARTING_ROW, actualIndex,
-                        group.ElementAt(item).Comment == null || group.ElementAt(item).Comment == ""
-                        ? null : group.ElementAt(item).Comment.ToString());
+
+                        sbyte? tempMark = group.ElementAt(item).StudentMark != 0 ? group.ElementAt(item).StudentMark : null;
+
+                        string tempComment = group.ElementAt(item).Comment == null || group.ElementAt(item).Comment == ""
+                            ? null : group.ElementAt(item).Comment.ToString();
+
+                        FillRow(worksheet,
+                            item + _STUDENT_STARTING_ROW,
+                            actualIndex,
+                            tempMark.ToString());
+
+                        FillRowWithComments(worksheet, 
+                            item + _STUDENT_STARTING_ROW, 
+                            actualIndex,
+                            tempComment);
                     }
 
 
@@ -139,6 +156,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillFile(StudentsClassbookResultDto data)
         {
+            if (data == null)
+            {
+                return;
+            }
+
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.StudentGroup);

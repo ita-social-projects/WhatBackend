@@ -14,14 +14,14 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ExportController : ControllerBase
     {
-        private readonly IDashboardService _dashboardService;
+        private readonly IExportService _exportService;
 
         /// <summary>
         /// Export controllers constructor
         /// </summary>
-        public ExportController(IDashboardService dashboardService)
+        public ExportController(IExportService exportService)
         {
-            _dashboardService = dashboardService;
+            _exportService = exportService;
         }
 
         /// <summary>
@@ -37,13 +37,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentsClassbookAsync(request);
-
-            var classbook = new ClassbookExport();
-
-            await classbook.FillFile(results.Data);
-            classbook.AdjustContent();
+            var classbook = await _exportService.GetStudentsClassbook(request);
 
             return File(await
                 classbook.GetByteArrayAsync(),
@@ -64,18 +58,12 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentsResultAsync(request);
-
-            var result = new StudentsResultsExport();
-
-            await result.FillFile(results.Data);
-            result.AdjustContent();
+            var studentResults = await _exportService.GetStudentsResults(request);
 
             return File(await
-                result.GetByteArrayAsync(),
-                result.GetContentType(),
-                result.GetFileName());
+                studentResults.GetByteArrayAsync(),
+                studentResults.GetContentType(),
+                studentResults.GetFileName());
         }
 
         /// <summary>
@@ -90,18 +78,12 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentClassbookAsync(studentId, request);
-
-            var result = new StudentClassbook();
-
-            await result.FillFile(results.Data);
-            result.AdjustContent();
+            var studentClassbook = await _exportService.GetStudentClassbook(studentId, request);
 
             return File(await
-                result.GetByteArrayAsync(),
-                result.GetContentType(),
-                result.GetFileName());
+                studentClassbook.GetByteArrayAsync(),
+                studentClassbook.GetContentType(),
+                studentClassbook.GetFileName());
         }
 
         /// <summary>
@@ -115,18 +97,12 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentResults/{studentId}")]
         public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentResultAsync(studentId, request);
-
-            var result = new StudentResult();
-
-            await result.FillFile(results.Data);
-            result.AdjustContent();
+            var studentResults = await _exportService.GetStudentResults(studentId, request);
 
             return File(await
-                result.GetByteArrayAsync(),
-                result.GetContentType(),
-                result.GetFileName());
+                studentResults.GetByteArrayAsync(),
+                studentResults.GetContentType(),
+                studentResults.GetFileName());
         }
 
         /// <summary>
@@ -140,18 +116,12 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentGroupResults/{courseId}")]
         public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
-            var results = await _dashboardService
-            .GetStudentGroupResultAsync(courseId, request);
-
-            var result = new StudentGruopResults();
-
-            await result.FillFile(results.Data);
-            result.AdjustContent();
+            var studentGroupResults = await _exportService.GetStudentGroupResults(courseId, request);
 
             return File(await
-                result.GetByteArrayAsync(),
-                result.GetContentType(),
-                result.GetFileName());
+                studentGroupResults.GetByteArrayAsync(),
+                studentGroupResults.GetContentType(),
+                studentGroupResults.GetFileName());
         }
     }
 }
