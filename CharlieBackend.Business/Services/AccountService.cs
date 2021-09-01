@@ -80,7 +80,7 @@ namespace CharlieBackend.Business.Services
                     if (await _unitOfWork.StudentRepository
                             .GetStudentByAccountIdAsync(user.Id) == null)
                     {
-                       await Task.Run(() => _unitOfWork.StudentRepository.Add(newStudent));
+                        _unitOfWork.StudentRepository.Add(newStudent);
                     }
                     break;
 
@@ -94,7 +94,7 @@ namespace CharlieBackend.Business.Services
                     if (await _unitOfWork.MentorRepository
                             .GetMentorByAccountIdAsync(user.Id) == null)
                     {
-                        await Task.Run(() => _unitOfWork.MentorRepository.Add(newMentor));
+                         _unitOfWork.MentorRepository.Add(newMentor);
                     }
                     break;
 
@@ -108,7 +108,7 @@ namespace CharlieBackend.Business.Services
                     if (await _unitOfWork.SecretaryRepository
                             .GetSecretaryByAccountIdAsync(user.Id) == null)
                     {
-                        await Task.Run(() => _unitOfWork.SecretaryRepository.Add(newSecretary));
+                         _unitOfWork.SecretaryRepository.Add(newSecretary);
                     }
                     break;
 
