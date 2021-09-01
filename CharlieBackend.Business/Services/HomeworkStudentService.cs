@@ -236,31 +236,26 @@ namespace CharlieBackend.Business.Services
             var homeworkStudentHistories = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudentId);
             var result = new List<HomeworkStudent>();
 
-            foreach (var homeworkStudentHistory in homeworkStudentHistories)
+            result = homeworkStudentHistories?.Select(homeworkStudentHistory => new HomeworkStudent()
             {
-                var resultHomeworkStudent = new HomeworkStudent()
+                Id = homeworkStudent.Id,
+                StudentId = homeworkStudent.StudentId,
+                HomeworkId = homeworkStudent.HomeworkId,
+                HomeworkText = homeworkStudentHistory.HomeworkText,
+                MarkId = homeworkStudentHistory.MarkId,
+                PublishingDate = homeworkStudentHistory.PublishingDate,
+                IsSent = true,
+                Mark = homeworkStudentHistory.Mark,
+                Student = homeworkStudent.Student,
+                AttachmentOfHomeworkStudents = homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
+                new AttachmentOfHomeworkStudent()
                 {
-                    Id = homeworkStudent.Id,
-                    StudentId = homeworkStudent.StudentId,
-                    HomeworkId = homeworkStudent.HomeworkId,
-                    HomeworkText = homeworkStudentHistory.HomeworkText,
-                    MarkId = homeworkStudentHistory.MarkId,
-                    PublishingDate = homeworkStudentHistory.PublishingDate,
-                    IsSent = true,
-                    Mark = homeworkStudentHistory.Mark,
-                    Student = homeworkStudent.Student,
-                    AttachmentOfHomeworkStudents = homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
-                    new AttachmentOfHomeworkStudent()
-                    {
-                        Attachment = elem.Attachment,
-                        AttachmentId = elem.AttachmentId,
-                        HomeworkStudent = homeworkStudent,
-                        HomeworkStudentId = elem.HomeworkStudentHistoryId
-                    }).ToList()
-                };
-
-                result.Add(resultHomeworkStudent);
-            }
+                    Attachment = elem.Attachment,
+                    AttachmentId = elem.AttachmentId,
+                    HomeworkStudent = homeworkStudent,
+                    HomeworkStudentId = elem.HomeworkStudentHistoryId
+                }).ToList()
+            }).ToList();
 
             if (homeworkStudent.IsSent == true)
             {
