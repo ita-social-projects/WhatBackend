@@ -140,20 +140,15 @@ namespace CharlieBackend.Business.Services
                     PublishingDate = DateTime.UtcNow,
                 };
 
-                if (foundStudentHomework.AttachmentOfHomeworkStudents?.Count() > 0)
+                var AttachmentOfHomeworkStudentsHistory = foundStudentHomework.AttachmentOfHomeworkStudents.Select(attachmentOfHomework => new AttachmentOfHomeworkStudentHistory()
                 {
-                    homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory = new List<AttachmentOfHomeworkStudentHistory>();
-                    foreach (var attachmentOfHomework in foundStudentHomework.AttachmentOfHomeworkStudents)
-                    {
-                        homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory.Add(new AttachmentOfHomeworkStudentHistory()
-                        {
-                            HomeworkStudentHistory = homeworkStudentHistory,
-                            Attachment = attachmentOfHomework.Attachment,
-                            AttachmentId = attachmentOfHomework.AttachmentId,
-                            HomeworkStudentHistoryId = homeworkStudentHistory.Id
-                        });
-                    }
-                }
+                    HomeworkStudentHistory = homeworkStudentHistory,
+                    Attachment = attachmentOfHomework.Attachment,
+                    AttachmentId = attachmentOfHomework.AttachmentId,
+                    HomeworkStudentHistoryId = homeworkStudentHistory.Id,
+                });
+                homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory = AttachmentOfHomeworkStudentsHistory.ToList();
+
                 _unitOfWork.HomeworkStudentHistoryRepository.Add(homeworkStudentHistory);
             }
 
@@ -165,7 +160,7 @@ namespace CharlieBackend.Business.Services
 
             var newAttachments = new List<AttachmentOfHomeworkStudent>();
 
-            if (homeworkStudent.AttachmentIds?.Count() > 0)
+            if (homeworkStudent.AttachmentIds.Count() > 0)
             {
                 newAttachments = homeworkStudent.AttachmentIds.Select(x => new AttachmentOfHomeworkStudent
                 {
@@ -220,17 +215,14 @@ namespace CharlieBackend.Business.Services
                     homeworkStudent.Mark = correctHomeworkStudent.Mark;
                     homeworkStudent.PublishingDate = correctHomeworkStudent.PublishingDate;
                     homeworkStudent.MarkId = correctHomeworkStudent.MarkId;
-                    homeworkStudent.AttachmentOfHomeworkStudents = new List<AttachmentOfHomeworkStudent>();
-                    foreach (var elem in correctHomeworkStudent.AttachmentOfHomeworkStudentsHistory)
-                    {
-                        homeworkStudent.AttachmentOfHomeworkStudents.Add(new AttachmentOfHomeworkStudent()
+                    homeworkStudent.AttachmentOfHomeworkStudents = correctHomeworkStudent.AttachmentOfHomeworkStudentsHistory
+                        ?.Select(attachment => new AttachmentOfHomeworkStudent
                         {
-                            Attachment = elem.Attachment,
-                            AttachmentId = elem.AttachmentId,
+                            Attachment = attachment.Attachment,
+                            AttachmentId = attachment.AttachmentId,
                             HomeworkStudent = homeworkStudent,
-                            HomeworkStudentId = elem.HomeworkStudentHistoryId
-                        });
-                    }
+                            HomeworkStudentId = attachment.HomeworkStudentHistoryId
+                        }).ToList();
 
                     result.Add(homeworkStudent);
                 }
@@ -257,19 +249,15 @@ namespace CharlieBackend.Business.Services
                     IsSent = true,
                     Mark = homeworkStudentHistory.Mark,
                     Student = homeworkStudent.Student,
-                    AttachmentOfHomeworkStudents = new List<AttachmentOfHomeworkStudent>()
-                };
-
-                foreach (var elem in homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory)
-                {
-                    resultHomeworkStudent.AttachmentOfHomeworkStudents.Add(new AttachmentOfHomeworkStudent()
+                    AttachmentOfHomeworkStudents = homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
+                    new AttachmentOfHomeworkStudent()
                     {
                         Attachment = elem.Attachment,
                         AttachmentId = elem.AttachmentId,
                         HomeworkStudent = homeworkStudent,
                         HomeworkStudentId = elem.HomeworkStudentHistoryId
-                    });
-                }
+                    }).ToList()
+                };
 
                 result.Add(resultHomeworkStudent);
             }
