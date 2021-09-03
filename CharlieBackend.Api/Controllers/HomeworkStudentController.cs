@@ -74,6 +74,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets student homework history for Mentor by homework student id
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [HttpGet("history/{homeworkStudentId}")]
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentsHistoryByHomeworkStudentId(long homeworkStudentId)
+        {
+            var results = await _homeworkStudentService.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudentId);
+
+            return results;
+        }
+
+        /// <summary>
         /// Update student homework
         /// </summary>
         /// <param name="id">

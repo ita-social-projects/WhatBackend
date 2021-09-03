@@ -35,5 +35,7 @@ namespace CharlieBackend.Core.Entities
         public virtual Account Account { get; set; }
 
         public virtual HomeworkStudent HomeworkStudent { get; set; }
+
+        public virtual HomeworkStudentHistory HomeworkStudentHistory { get; set; }
     }
 }

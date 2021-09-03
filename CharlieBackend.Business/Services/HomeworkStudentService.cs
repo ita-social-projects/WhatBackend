@@ -8,8 +8,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -113,6 +111,7 @@ namespace CharlieBackend.Business.Services
             {
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not Found");
             }
+
             if (foundStudentHomework.StudentId != student.Id)
             {
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Sorry, but homework with id{foundStudentHomework.HomeworkId} not yours, choose correct homework");
@@ -123,14 +122,42 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Due date already finished. Due date {homework.DueDate}");
             }
 
+            if (foundStudentHomework.IsSent == true && foundStudentHomework.Mark == null)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.Forbidden, $"Homework with id {foundStudentHomework.Id} hasn't evaluated yet");
+            }
+
+            if (foundStudentHomework.IsSent == true)
+            {
+                var homeworkStudentHistory = new HomeworkStudentHistory()
+                {
+                    HomeworkText = foundStudentHomework.HomeworkText,
+                    HomeworkStudent = foundStudentHomework,
+                    Mark = foundStudentHomework.Mark,
+                    PublishingDate = DateTime.UtcNow,
+                };
+
+                var AttachmentOfHomeworkStudentsHistory = foundStudentHomework.AttachmentOfHomeworkStudents.Select(attachmentOfHomework => new AttachmentOfHomeworkStudentHistory()
+                {
+                    HomeworkStudentHistory = homeworkStudentHistory,
+                    Attachment = attachmentOfHomework.Attachment,
+                    AttachmentId = attachmentOfHomework.AttachmentId,
+                    HomeworkStudentHistoryId = homeworkStudentHistory.Id,
+                });
+                homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory = AttachmentOfHomeworkStudentsHistory.ToList();
+
+                _unitOfWork.HomeworkStudentHistoryRepository.Add(homeworkStudentHistory);
+            }
+
             foundStudentHomework.HomeworkText = homeworkStudent.HomeworkText;
             foundStudentHomework.PublishingDate = DateTime.UtcNow;
             foundStudentHomework.IsSent = homeworkStudent.IsSent;
             foundStudentHomework.Mark = null;
+            foundStudentHomework.AttachmentOfHomeworkStudents = new List<AttachmentOfHomeworkStudent>();
 
             var newAttachments = new List<AttachmentOfHomeworkStudent>();
 
-            if (homeworkStudent.AttachmentIds?.Count() > 0)
+            if (homeworkStudent.AttachmentIds.Count() > 0)
             {
                 newAttachments = homeworkStudent.AttachmentIds.Select(x => new AttachmentOfHomeworkStudent
                 {
@@ -164,28 +191,114 @@ namespace CharlieBackend.Business.Services
 
             var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
-            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
+            var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
+            var result = new List<HomeworkStudent>();
 
-            return _mapper.Map<IList<HomeworkStudentDto>>(homeworkStudent);
+            foreach (var homeworkStudent in homeworksStudent)
+            {
+                var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+
+                if (homeworkStudent.IsSent == true)
+                {
+                    result.Add(homeworkStudent);
+                }
+
+                if (homeworkStudent.IsSent == false && homeworkStudentHistory.Count > 0)
+                {
+                    var correctHomeworkStudent = homeworkStudentHistory.Last();
+
+                    homeworkStudent.HomeworkText = correctHomeworkStudent.HomeworkText;
+                    homeworkStudent.IsSent = true;
+                    homeworkStudent.Mark = correctHomeworkStudent.Mark;
+                    homeworkStudent.PublishingDate = correctHomeworkStudent.PublishingDate;
+                    homeworkStudent.MarkId = correctHomeworkStudent.MarkId;
+                    homeworkStudent.AttachmentOfHomeworkStudents = correctHomeworkStudent.AttachmentOfHomeworkStudentsHistory
+                        ?.Select(attachment => new AttachmentOfHomeworkStudent
+                        {
+                            Attachment = attachment.Attachment,
+                            AttachmentId = attachment.AttachmentId,
+                            HomeworkStudent = homeworkStudent,
+                            HomeworkStudentId = attachment.HomeworkStudentHistoryId
+                        }).ToList();
+
+                    result.Add(homeworkStudent);
+                }
+            }
+            return _mapper.Map<IList<HomeworkStudentDto>>(result);
+        }
+
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentHistoryByHomeworkStudentId(long homeworkStudentId)
+        {
+            var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(homeworkStudentId);
+            var homeworkStudentHistories = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudentId);
+            var result = new List<HomeworkStudent>();
+
+            result = homeworkStudentHistories?.Select(homeworkStudentHistory => new HomeworkStudent()
+            {
+                Id = homeworkStudent.Id,
+                StudentId = homeworkStudent.StudentId,
+                HomeworkId = homeworkStudent.HomeworkId,
+                HomeworkText = homeworkStudentHistory.HomeworkText,
+                MarkId = homeworkStudentHistory.MarkId,
+                PublishingDate = homeworkStudentHistory.PublishingDate,
+                IsSent = true,
+                Mark = homeworkStudentHistory.Mark,
+                Student = homeworkStudent.Student,
+                AttachmentOfHomeworkStudents = homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
+                new AttachmentOfHomeworkStudent()
+                {
+                    Attachment = elem.Attachment,
+                    AttachmentId = elem.AttachmentId,
+                    HomeworkStudent = homeworkStudent,
+                    HomeworkStudentId = elem.HomeworkStudentHistoryId
+                }).ToList()
+            }).ToList();
+
+            if (homeworkStudent.IsSent == true)
+            {
+                result.Add(homeworkStudent);
+            }
+
+            return _mapper.Map<IList<HomeworkStudentDto>>(result);
         }
 
         public async Task<Result<HomeworkStudentDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
         {
             var homeworkStudent = await _unitOfWork.HomeworkStudentRepository.GetByIdAsync(request.StudentHomeworkId);
 
-            long accountId = _currentUserService.AccountId;
-
-            if (homeworkStudent.Mark == null)
+            if (homeworkStudent == null)
             {
-                homeworkStudent.Mark = new Mark();
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework from student with id {request.StudentHomeworkId} hasn't found");
             }
-            homeworkStudent.Mark.Value = request.StudentMark;
-            homeworkStudent.Mark.Comment = request.MentorComment;
-            homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
-            homeworkStudent.Mark.Type = request.MarkType;
-            homeworkStudent.Mark.EvaluatedBy = accountId;
 
-            _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
+            long accountId = _currentUserService.AccountId;
+            var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+            
+            if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
+            {
+                homeworkStudentHistory.Last().Mark.Value = request.StudentMark;
+                homeworkStudentHistory.Last().Mark.Comment = request.MentorComment;
+                homeworkStudentHistory.Last().Mark.EvaluationDate = DateTime.UtcNow;
+                homeworkStudentHistory.Last().Mark.Type = request.MarkType;
+                homeworkStudentHistory.Last().Mark.EvaluatedBy = accountId;
+
+                _unitOfWork.HomeworkStudentHistoryRepository.Update(homeworkStudentHistory.Last());
+            }
+            else
+            {
+                if (homeworkStudent.Mark == null)
+                {
+                    homeworkStudent.Mark = new Mark();
+                }
+                homeworkStudent.Mark.Value = request.StudentMark;
+                homeworkStudent.Mark.Comment = request.MentorComment;
+                homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
+                homeworkStudent.Mark.Type = request.MarkType;
+                homeworkStudent.Mark.EvaluatedBy = accountId;
+
+                _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
+            }
+
             await _unitOfWork.CommitAsync();
 
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
