@@ -1,8 +1,5 @@
 ﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using CharlieBackend.Core.DTO.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces

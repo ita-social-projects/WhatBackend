@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class BaseFileExportXlsx
+    public class BaseFileExportXlsx : BaseFileExport
     {
         protected XLWorkbook xLWorkbook;
-        protected MemoryStream memoryStream;
 
         protected const int _DEFAULT_STARTING_ROW = 2;
         protected const int _STUDENT_STARTING_ROW = 2;
@@ -43,6 +42,15 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         }
 
         /// <summary>
+        /// Dispose to prevent unnecessary memory usage
+        /// </summary>
+        public override void Dispose()
+        {
+            base.Dispose();
+            xLWorkbook.Dispose();
+        }
+
+        /// <summary>
         /// Fills row with headers starting from first column (can be used for other rows as well)
         /// </summary>
         /// <param name="headerRow">Row which has to be filled</param>
@@ -59,7 +67,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// Creates byte arrray from file (Should be used to create and return file)
         /// </summary>
         /// <returns>Byte arrray</returns>
-        public async Task<byte[]> GetByteArrayAsync()
+        public override async Task<byte[]> GetByteArrayAsync()
         {
             return await Task.Run(()=> GetByteArray());
         }
@@ -70,20 +78,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// <returns>
         /// (String) file name
         /// </returns>
-        public virtual string GetFileName()
+        public override string GetFileName()
         {
             return "Filename_"+ DateTime.Now.ToString("yyyy-MM-dd") +".xlsx";
-        }
-
-        /// <summary>
-        /// Returns content type (Should be used to create and return file)
-        /// </summary>
-        /// <returns>
-        /// application/octet-stream
-        /// </returns>
-        public string GetContentType()
-        {
-            return "application/octet-stream";
         }
 
         /// <summary>

@@ -37,12 +37,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
         {
-            var classbook = await _exportService.GetStudentsClassbook(request);
-
-            return File(await
-                classbook.GetByteArrayAsync(),
-                classbook.GetContentType(),
-                classbook.GetFileName());
+            using (var classbook = await _exportService.GetStudentsClassbook(request))
+            {
+                return File(await
+                    classbook.GetByteArrayAsync(),
+                    classbook.GetContentType(),
+                    classbook.GetFileName());
+            }
         }
 
         /// <summary>
@@ -58,12 +59,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
         {
-            var studentResults = await _exportService.GetStudentsResults(request);
-
-            return File(await
-                studentResults.GetByteArrayAsync(),
-                studentResults.GetContentType(),
-                studentResults.GetFileName());
+            using (var studentResults = await _exportService.GetStudentsResults(request))
+            {
+                return File(await
+                    studentResults.GetByteArrayAsync(),
+                    studentResults.GetContentType(),
+                    studentResults.GetFileName());
+            }
         }
 
         /// <summary>
@@ -78,12 +80,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
-            var studentClassbook = await _exportService.GetStudentClassbook(studentId, request);
-
-            return File(await
-                studentClassbook.GetByteArrayAsync(),
-                studentClassbook.GetContentType(),
-                studentClassbook.GetFileName());
+            using (var studentClassbook = await _exportService.GetStudentClassbook(studentId, request))
+            {
+                return File(await
+                    studentClassbook.GetByteArrayAsync(),
+                    studentClassbook.GetContentType(),
+                    studentClassbook.GetFileName());
+            }
         }
 
         /// <summary>
@@ -97,12 +100,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentResults/{studentId}")]
         public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
-            var studentResults = await _exportService.GetStudentResults(studentId, request);
-
-            return File(await
-                studentResults.GetByteArrayAsync(),
-                studentResults.GetContentType(),
-                studentResults.GetFileName());
+            using (var studentResults = await _exportService.GetStudentResults(studentId, request))
+            {
+                return File(await
+                    studentResults.GetByteArrayAsync(),
+                    studentResults.GetContentType(),
+                    studentResults.GetFileName());
+            }
         }
 
         /// <summary>
@@ -116,12 +120,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost("studentGroupResults/{courseId}")]
         public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
-            var studentGroupResults = await _exportService.GetStudentGroupResults(courseId, request);
-
-            return File(await
-                studentGroupResults.GetByteArrayAsync(),
-                studentGroupResults.GetContentType(),
-                studentGroupResults.GetFileName());
+            using (var studentGroupResults = await _exportService.GetStudentGroupResults(courseId, request))
+            {
+                return File(await
+                    studentGroupResults.GetByteArrayAsync(),
+                    studentGroupResults.GetContentType(),
+                    studentGroupResults.GetFileName());
+            }
         }
     }
 }
