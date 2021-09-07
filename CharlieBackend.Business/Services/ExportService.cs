@@ -16,12 +16,12 @@ namespace CharlieBackend.Business.Services
             _dashboardService = dashboardService;
         }
 
-        public async Task<ClassbookExport> GetStudentsClassbook(StudentsRequestDto<ClassbookResultType> request)
+        public async Task<ClassbookExportXlsx> GetStudentsClassbook(StudentsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsClassbookAsync(request);
 
-            var classbook = new ClassbookExport();
+            var classbook = new ClassbookExportXlsx();
 
             await classbook.FillFile(results.Data);
             classbook.AdjustContent();
@@ -29,12 +29,12 @@ namespace CharlieBackend.Business.Services
             return classbook;
         }
 
-        public async Task<StudentsResultsExport> GetStudentsResults(StudentsRequestDto<StudentResultType> request)
+        public async Task<StudentsResultsExportXlsx> GetStudentsResults(StudentsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentsResultAsync(request);
 
-            var result = new StudentsResultsExport();
+            var result = new StudentsResultsExportXlsx();
 
             await result.FillFile(results.Data);
             result.AdjustContent();
@@ -42,12 +42,12 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<StudentClassbook> GetStudentClassbook(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request)
+        public async Task<StudentClassbookXlsx> GetStudentClassbook(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentClassbookAsync(studentId, request);
 
-            var result = new StudentClassbook();
+            var result = new StudentClassbookXlsx();
 
             await result.FillFile(results.Data);
             result.AdjustContent();
@@ -55,12 +55,12 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<StudentResult> GetStudentResults(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request)
+        public async Task<StudentResultXlsx> GetStudentResults(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request)
         {
             var results = await _dashboardService
                 .GetStudentResultAsync(studentId, request);
 
-            var result = new StudentResult();
+            var result = new StudentResultXlsx();
 
             await result.FillFile(results.Data);
             result.AdjustContent();
@@ -68,12 +68,12 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<StudentGroupResults> GetStudentGroupResults(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request)
+        public async Task<StudentGroupResultsXlsx> GetStudentGroupResults(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
             .GetStudentGroupResultAsync(courseId, request);
 
-            var result = new StudentGroupResults();
+            var result = new StudentGroupResultsXlsx();
 
             await result.FillFile(results.Data);
             result.AdjustContent();

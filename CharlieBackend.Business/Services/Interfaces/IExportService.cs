@@ -9,14 +9,14 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IExportService
     {
-        Task<ClassbookExport> GetStudentsClassbook(StudentsRequestDto<ClassbookResultType> request);
+        Task<ClassbookExportXlsx> GetStudentsClassbook(StudentsRequestDto<ClassbookResultType> request);
 
-        Task<StudentsResultsExport> GetStudentsResults(StudentsRequestDto<StudentResultType> request);
+        Task<StudentsResultsExportXlsx> GetStudentsResults(StudentsRequestDto<StudentResultType> request);
 
-        Task<StudentClassbook> GetStudentClassbook(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request);
+        Task<StudentClassbookXlsx> GetStudentClassbook(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request);
 
-        Task<StudentResult> GetStudentResults(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request);
+        Task<StudentResultXlsx> GetStudentResults(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request);
 
-        Task<StudentGroupResults> GetStudentGroupResults(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request);
+        Task<StudentGroupResultsXlsx> GetStudentGroupResults(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request);
     }
 }
