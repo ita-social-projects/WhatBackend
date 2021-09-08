@@ -137,6 +137,51 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         }
 
         /// <summary>
+        /// Fills rows with parameters in argList as numbers
+        /// </summary>
+        /// <param name="worksheet"> Worksheet which has to be filled </param>
+        /// <param name="rowNumber"> id of row which has to be filled </param>
+        /// <param name="startingColumnNumber"> id of column from where cells would be filled </param>
+        /// <param name="argsList"> 
+        /// List of parameters which will be inserted 
+        /// If you need to skip some cells use "" or " "
+        /// </param>
+        public void FillRowWithNumberInLastColumnAsPercent(IXLWorksheet worksheet, int rowNumber = 1, int startingColumnNumber = 1,
+            params string[] argsList)
+        {
+            var currentRow = worksheet.Row(rowNumber);
+
+            for (int cellId = 0; cellId < argsList.Length; cellId++)
+            {
+                currentRow.Cell(cellId + startingColumnNumber).Value = argsList[cellId];
+            }
+
+            currentRow.Cell(startingColumnNumber + argsList.Length - 1).Style.NumberFormat.Format = "0%";
+        }
+
+        /// <summary>
+        /// Fills rows with parameters in argList in the cells centers
+        /// </summary>
+        /// <param name="worksheet"> Worksheet which has to be filled </param>
+        /// <param name="rowNumber"> id of row which has to be filled </param>
+        /// <param name="startingColumnNumber"> id of column from where cells would be filled </param>
+        /// <param name="argsList"> 
+        /// List of parameters which will be inserted 
+        /// If you need to skip some cells use "" or " "
+        /// </param>
+        public void FillRowTextAlignCenter(IXLWorksheet worksheet, int rowNumber = 1, int startingColumnNumber = 1,
+            params string[] argsList)
+        {
+            var currentRow = worksheet.Row(rowNumber);
+
+            for (int cellId = 0; cellId < argsList.Length; cellId++)
+            {
+                currentRow.Cell(cellId + startingColumnNumber).Value = argsList[cellId];
+                currentRow.Cell(cellId + startingColumnNumber).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            }
+        }
+
+        /// <summary>
         /// Fills rows with parameters in argList as comments
         /// </summary>
         /// <param name="worksheet"> Worksheet which has to be filled </param>

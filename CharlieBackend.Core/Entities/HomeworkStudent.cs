@@ -33,5 +33,7 @@ namespace CharlieBackend.Core.Entities
         public Homework Homework { get; set; }
 
         public ICollection<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
+
+        public ICollection<HomeworkStudentHistory> HomeworkStudentsHistory { get; set; }
     }
 }

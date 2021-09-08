@@ -65,49 +65,49 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        private void AddGrantedRoleToRepository(AccountRoleDto accountRole,
+        private async Task AddGrantedRoleToRepositoryAsync(AccountRoleDto accountRole,
                 Account user)
         {
             switch (accountRole.Role)
             {
                 case UserRole.Student:
-                    Student newStudent = new Student()
-                    {
-                        Account = user,
-                        AccountId = user.Id,
-                    };
-
-                    if (_unitOfWork.StudentRepository
+                    if (await _unitOfWork.StudentRepository
                             .GetStudentByAccountIdAsync(user.Id) == null)
                     {
+                        Student newStudent = new Student()
+                        {
+                            Account = user,
+                            AccountId = user.Id,
+                        };
+
                         _unitOfWork.StudentRepository.Add(newStudent);
                     }
                     break;
 
                 case UserRole.Mentor:
-                    Mentor newMentor = new Mentor()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
-                    if (_unitOfWork.MentorRepository
+                    if (await _unitOfWork.MentorRepository
                             .GetMentorByAccountIdAsync(user.Id) == null)
                     {
+                        Mentor newMentor = new Mentor()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
                         _unitOfWork.MentorRepository.Add(newMentor);
                     }
                     break;
 
                 case UserRole.Secretary:
-                    Secretary newSecretary = new Secretary()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
-                    if (_unitOfWork.SecretaryRepository
+                    if (await _unitOfWork.SecretaryRepository
                             .GetSecretaryByAccountIdAsync(user.Id) == null)
                     {
+                        Secretary newSecretary = new Secretary()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
                         _unitOfWork.SecretaryRepository.Add(newSecretary);
                     }
                     break;
@@ -115,12 +115,6 @@ namespace CharlieBackend.Business.Services
                 default:
                     break;
             }
-        }
-
-        private async Task AddGrantedRoleToRepositoryAsync(
-                AccountRoleDto accountRole, Account user) 
-        {
-             await Task.Run(() => AddGrantedRoleToRepository(accountRole, user));
         }
 
         public async Task<Result<AccountRoleDto>> RevokeRoleFromAccount(

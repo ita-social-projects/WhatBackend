@@ -9,7 +9,9 @@ CREATE TABLE `Marks` (
     `EvaluatedBy`		BIGINT UNSIGNED     NOT NULL,
 	
     CONSTRAINT    `PK_Mark`             PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_AccountOfMark`    FOREIGN KEY (`EvaluatedBy`)    REFERENCES `Accounts` (`ID`)
+    CONSTRAINT    `FK_AccountOfMark`    FOREIGN KEY (`EvaluatedBy`)    REFERENCES `Accounts` (`ID`),
+    CONSTRAINT    `CH_Mark`       		CHECK (`Value` >= 0
+													  AND `Value` <= 100)
 );
 
 ALTER TABLE `HomeworksFromStudents` 

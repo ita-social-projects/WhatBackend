@@ -19,5 +19,7 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         public virtual ICollection<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
+
+        public virtual ICollection<AttachmentOfHomeworkStudentHistory> AttachmentOfHomeworkStudentsHistory { get; set; }
     }
 }

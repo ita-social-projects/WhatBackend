@@ -21,6 +21,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillFile(StudentsClassbookResultDto data)
         {
+            if (data == null)
+            {
+                return;
+            }
+
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.Student);
@@ -65,8 +70,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillStudentPresence(IEnumerable<StudentVisitDto> StudentVisit)
         {
-            xLWorkbook.AddWorksheet("Presence of " + StudentVisit.First().Student);
-            var worksheet = xLWorkbook.Worksheet("Presence of " + StudentVisit.First().Student);
+            string worksheetName = "Presence (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+            xLWorkbook.AddWorksheet(worksheetName);
+            var worksheet = xLWorkbook.Worksheet(worksheetName);
 
             await CreateHeadersAsync(worksheet.Row(1),
                 "Student",
@@ -83,9 +89,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             {
                 var student = orderedList.ElementAt(studentId);
 
-                FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN - 1,
+                FillRowTextAlignCenter(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN - 1,
                     student.Course, student.StudentGroup, student.LessonDate.ToString(), 
-                    student.Presence == true ? "+" : student.Presence == false ? "-" : " ");
+                    student.Presence == true ? "❌" : " ");
+
+                FillRow(worksheet, 4, 1, "❌ - student is present");
 
             }
 
@@ -95,6 +103,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                         .Cell(_STUDENT_STARTING_COLUMN + 2)));
 
             DrawBorders(worksheet.Range("A1:A2"));
+            DrawBorders(worksheet.Range("A4:A4"));
 
             worksheet.Columns().AdjustToContents();
             worksheet.Rows().AdjustToContents();
@@ -102,8 +111,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillStudentMark(IEnumerable<StudentMarkDto> StudentsMarks)
         {
-            xLWorkbook.AddWorksheet("Average mark of " + StudentsMarks.First().Student);
-            var worksheet = xLWorkbook.Worksheet("Average mark of " + StudentsMarks.First().Student);
+            string worksheetName = "Average mark (" + (xLWorkbook.Worksheets.Count + 1) + ")";
+            xLWorkbook.AddWorksheet(worksheetName);
+            var worksheet = xLWorkbook.Worksheet(worksheetName);
 
             await CreateHeadersAsync(worksheet.Row(1),
                 "Student",

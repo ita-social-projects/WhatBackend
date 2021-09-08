@@ -111,7 +111,7 @@ namespace CharlieBackend.Business.Services
             return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
         }
 
-        public async Task<Result<CourseDto>> DisableCourceAsync(long id)
+        public async Task<Result<CourseDto>> DisableCourseAsync(long id)
         {
             if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
             {
@@ -130,7 +130,7 @@ namespace CharlieBackend.Business.Services
             return  Result<CourseDto>.GetSuccess(courseDto);
         }
 
-        public async Task<Result<CourseDto>> EnableCourceAsync(long id)
+        public async Task<Result<CourseDto>> EnableCourseAsync(long id)
         {
             if (await _unitOfWork.CourseRepository.IsCourseActive(id))
             {

@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">
         /// 1. Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
-        /// learning period of cource groups.
+        /// learning period of course groups.
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
         [SwaggerResponse(200, type: typeof(StudentsClassbookResultDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
@@ -49,9 +49,9 @@ namespace CharlieBackend.Api.Controllers
         /// Gets results of every student
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courseId" or "studentGroupId" to filter all cource groups or exact student group.
+        /// 1. Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
-        /// learning period of cource groups.
+        /// learning period of course groups.
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
         [SwaggerResponse(200, type: typeof(StudentsResultsDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
