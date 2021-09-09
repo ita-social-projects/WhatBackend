@@ -1,4 +1,4 @@
-set connection-string=""DefaultEndpointsProtocol=https;AccountName=whatbackendstorage;AccountKey=8lsbrQH1kCvf2FGpbuojyvzDA/nHhOiGHvkgzRGriSSBRToIum8HiyudEAlTk7AVmjLQGuNObriGXMQIIxVjIQ==;EndpointSuffix=core.windows.net""
+set connection-string="" ""
 call az storage container create -n dc2ad5a5e5384173b1729128fa50ff2b --connection-string %connection-string%
 call az storage blob upload -f avatars\1.jpg -c dc2ad5a5e5384173b1729128fa50ff2b -n 1.jpg --connection-string %connection-string%
 call az storage container create -n da225766510245959b6cd433484fff23 --connection-string %connection-string%
