@@ -1,4 +1,4 @@
-set connection-string=""DefaultEndpointsProtocol=https;AccountName=whatbackendstorage;AccountKey=8lsbrQH1kCvf2FGpbuojyvzDA/nHhOiGHvkgzRGriSSBRToIum8HiyudEAlTk7AVmjLQGuNObriGXMQIIxVjIQ==;EndpointSuffix=core.windows.net""
+set connection-string="" ""
 call az storage container create -n 9e648721774646f9bd3bc1f21790deb4 --connection-string %connection-string%
 call az storage blob upload -f homework-tasks\1.txt -c 9e648721774646f9bd3bc1f21790deb4 -n 1.txt --connection-string %connection-string%
 call az storage container create -n a679ded8d2604eaaab8fdc87a4df2da7 --connection-string %connection-string%
