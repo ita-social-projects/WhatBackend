@@ -11,6 +11,7 @@ using CharlieBackend.Business.Services.FileServices;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 
 namespace CharlieBackend.Root
 {
@@ -53,7 +54,7 @@ namespace CharlieBackend.Root
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<IExportService, ExportService>();
+            services.AddScoped<IExportFactoryService, ExportFactoryService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAttachmentService, AttachmentService>();

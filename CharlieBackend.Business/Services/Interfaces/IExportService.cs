@@ -1,19 +1,20 @@
 ﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.DTO.Export;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IExportService
     {
-        Task<ClassbookExportXlsx> GetStudentsClassbook(StudentsRequestDto<ClassbookResultType> request);
+        Task<FileDto> GetStudentsClassbook(StudentsClassbookResultDto data);
 
-        Task<StudentsResultsExportXlsx> GetStudentsResults(StudentsRequestDto<StudentResultType> request);
+        Task<FileDto> GetStudentsResults(StudentsResultsDto data);
 
-        Task<StudentClassbookXlsx> GetStudentClassbook(long studentId, DashboardAnalyticsRequestDto<ClassbookResultType> request);
+        Task<FileDto> GetStudentClassbook(StudentsClassbookResultDto data);
 
-        Task<StudentResultXlsx> GetStudentResults(long studentId, DashboardAnalyticsRequestDto<StudentResultType> request);
+        Task<FileDto> GetStudentResults(StudentsResultsDto data);
 
-        Task<StudentGroupResultsXlsx> GetStudentGroupResults(long courseId, DashboardAnalyticsRequestDto<StudentGroupResultType> request);
+        Task<FileDto> GetStudentGroupResults(StudentGroupsResultsDto data);
     }
 }
