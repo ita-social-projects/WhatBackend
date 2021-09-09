@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public interface IExportFactoryService
+    public interface IExportServiceProvider
     {
         public IExportService GetExportService(ExportFileExtension fileExtension);
     }
