@@ -35,6 +35,7 @@ namespace CharlieBackend.AdminPanel
         public ThemesApiEndpoints Themes { get; set; }
         public ScheduleApiEndpoints Schedule { get; set; }
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
+        public HomeworksApiEndpoints Homeworks { get; set; }
     }
 
     public class CoursesApiEndpoints
