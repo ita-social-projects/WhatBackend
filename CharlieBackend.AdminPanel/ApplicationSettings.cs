@@ -96,6 +96,13 @@ namespace CharlieBackend.AdminPanel
         public string GetStudentGroupEndpoint { get; set; }
     }
 
+    public class HomeworksApiEndpoints
+    {
+        public string GetHomeworkById { get; set; }
+        public string AddHomeworkEndpoint { get; set; }
+        public string UpdateHomeworkEndpoint { get; set; }
+    }
+
     #endregion 
 
     public class CookiesSettings
