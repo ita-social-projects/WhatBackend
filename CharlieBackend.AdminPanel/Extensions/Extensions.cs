@@ -25,6 +25,7 @@ namespace CharlieBackend.AdminPanel.Extensions
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IHomeworkService, HomeworkService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
