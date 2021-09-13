@@ -33,6 +33,13 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(homework);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> CreateHomework()
+        {
+            return View("AddNewHomework");
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostHomework(HomeworkDto homework)
         {

@@ -1,7 +1,28 @@
-﻿@{
+﻿@model IList<CharlieBackend.AdminPanel.Models.StudentGroups.StudentGroupViewModel>
+
+@{
     Layout = "_Layout";
 }
 
-<div >
-    Hello
+<div>
+    <form asp-action="GetHomeworkById" asp-controller="Homeworks">
+        <input type="text" placeholder="Id" />
+        <button>Find</button>
+    </form>
+
+
+</div>
+
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+            <a asp-action="CreateHomework" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
+                <i class="fas fa-plus"></i>
+            </a>
+        </div>
+
+       
+    </div>
 </div>
