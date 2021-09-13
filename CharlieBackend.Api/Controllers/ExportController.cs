@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.FileServices;
+using CharlieBackend.Core.DTO.Export;
+using AutoMapper;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -14,14 +17,17 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ExportController : ControllerBase
     {
-        private readonly IExportService _exportService;
+        private readonly IDashboardService _dashboardService;
+        private readonly IExportServiceProvider _exportFactoryService;
 
         /// <summary>
         /// Export controllers constructor
         /// </summary>
-        public ExportController(IExportService exportService)
+        public ExportController(IExportServiceProvider exportFactoryService,
+                                IDashboardService dashboardService)
         {
-            _exportService = exportService;
+            _exportFactoryService = exportFactoryService;
+            _dashboardService = dashboardService;
         }
 
         /// <summary>
@@ -35,14 +41,19 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsClassbook")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestDto<ClassbookResultType> request)
+        public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestWithFileExtensionDto<ClassbookResultType> request)
         {
-            var classbook = await _exportService.GetStudentsClassbook(request);
+            var exportService = _exportFactoryService.GetExportService(request.Extension);
 
-            return File(await
-                classbook.GetByteArrayAsync(),
-                classbook.GetContentType(),
-                classbook.GetFileName());
+            var results = await _dashboardService
+                .GetStudentsClassbookAsync(request.GetStudentsRequestDto());
+
+            var classbook = await exportService.GetStudentsClassbook(results.Data);
+
+            return File(
+                classbook.ByteArray,
+                classbook.ContentType,
+                classbook.Filename);
         }
 
         /// <summary>
@@ -56,14 +67,19 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsResults")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestDto<StudentResultType> request)
+        public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestWithFileExtensionDto<StudentResultType> request)
         {
-            var studentResults = await _exportService.GetStudentsResults(request);
+            var exportService = _exportFactoryService.GetExportService(request.Extension);
 
-            return File(await
-                studentResults.GetByteArrayAsync(),
-                studentResults.GetContentType(),
-                studentResults.GetFileName());
+            var results = await _dashboardService
+                .GetStudentsResultAsync(request.GetStudentsRequestDto());
+
+            var studentResults = await exportService.GetStudentsResults(results.Data);
+
+            return File(
+                studentResults.ByteArray,
+                studentResults.ContentType,
+                studentResults.Filename);
         }
 
         /// <summary>
@@ -76,14 +92,19 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentClassbook/{studentId}")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
+        public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<ClassbookResultType> request)
         {
-            var studentClassbook = await _exportService.GetStudentClassbook(studentId, request);
+            var exportService = _exportFactoryService.GetExportService(request.Extension);
 
-            return File(await
-                studentClassbook.GetByteArrayAsync(),
-                studentClassbook.GetContentType(),
-                studentClassbook.GetFileName());
+            var results = await _dashboardService
+                .GetStudentClassbookAsync(studentId, request.GetDashboardAnalyticsRequestDto());
+
+            var studentClassbook = await exportService.GetStudentClassbook(results.Data);
+
+            return File(
+                studentClassbook.ByteArray,
+                studentClassbook.ContentType,
+                studentClassbook.Filename);
         }
 
         /// <summary>
@@ -95,14 +116,19 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}")]
-        public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
+        public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<StudentResultType> request)
         {
-            var studentResults = await _exportService.GetStudentResults(studentId, request);
+            var exportService = _exportFactoryService.GetExportService(request.Extension);
 
-            return File(await
-                studentResults.GetByteArrayAsync(),
-                studentResults.GetContentType(),
-                studentResults.GetFileName());
+            var results = await _dashboardService
+                .GetStudentResultAsync(studentId, request.GetDashboardAnalyticsRequestDto());
+
+            var studentResults = await exportService.GetStudentResults(results.Data);
+
+            return File(
+                studentResults.ByteArray,
+                studentResults.ContentType,
+                studentResults.Filename);
         }
 
         /// <summary>
@@ -114,14 +140,19 @@ namespace CharlieBackend.Api.Controllers
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost("studentGroupResults/{courseId}")]
-        public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
+        public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<StudentGroupResultType> request)
         {
-            var studentGroupResults = await _exportService.GetStudentGroupResults(courseId, request);
+            var exportService = _exportFactoryService.GetExportService(request.Extension);
 
-            return File(await
-                studentGroupResults.GetByteArrayAsync(),
-                studentGroupResults.GetContentType(),
-                studentGroupResults.GetFileName());
+            var results = await _dashboardService
+            .GetStudentGroupResultAsync(courseId, request.GetDashboardAnalyticsRequestDto());
+
+            var studentGroupResults = await exportService.GetStudentGroupResults(results.Data);
+
+            return File(
+                studentGroupResults.ByteArray,
+                studentGroupResults.ContentType,
+                studentGroupResults.Filename);
         }
     }
 }
