@@ -1,4 +1,4 @@
-﻿namespace WhatBackend.TelergamBot.Models
+﻿namespace CharlieBackend.Business.Models
 {
     public class AppSettings
     {

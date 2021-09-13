@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using WhatBackend.TelergamBot.Models.Commands;
+using CharlieBackend.Business.Models.Commands;
 
-namespace WhatBackend.TelergamBot.Models
+namespace CharlieBackend.Business.Models
 {
     public class Bot
     {

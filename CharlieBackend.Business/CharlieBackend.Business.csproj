@@ -15,6 +15,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="16.0.2" />
   </ItemGroup>
 
   <ItemGroup>

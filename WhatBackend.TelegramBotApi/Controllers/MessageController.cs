@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using WhatBackend.TelergamBot.Models;
+using CharlieBackend.Business.Models;
 
 namespace WhatBackend.TelergamBot.Controllers
 {

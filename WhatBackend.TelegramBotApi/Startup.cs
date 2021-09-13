@@ -12,8 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using WhatBackend.TelergamBot.Models;
-using WhatBackend.TelergamBot.Models.Commands;
+using CharlieBackend.Business.Models;
+using CharlieBackend.Business.Models.Commands;
 
 namespace WhatBackend.TelegramBotApi
 {

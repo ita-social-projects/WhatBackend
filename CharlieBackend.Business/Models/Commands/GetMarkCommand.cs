@@ -6,7 +6,7 @@ using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Models.ResultModel;
 
-namespace WhatBackend.TelergamBot.Models.Commands
+namespace CharlieBackend.Business.Models.Commands
 {
 
     /// <summary>

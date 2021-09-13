@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace WhatBackend.TelergamBot.Models.Commands
+namespace CharlieBackend.Business.Models.Commands
 {
     public class GetScheduleCommand : Command
     {
