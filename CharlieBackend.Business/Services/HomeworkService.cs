@@ -36,9 +36,12 @@ namespace CharlieBackend.Business.Services
         }
 
         //TODO DELETE BEFORE MERGE
-        public async Task<IEnumerable<Homework>> GetHomeworks()
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworks()
         {
-            return await _unitOfWork.HomeworkRepository.GetAllAsync();
+            //return await _unitOfWork.HomeworkRepository.GetAllAsync();
+            var homeworks = await _unitOfWork.HomeworkRepository.GetAllAsync();
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)

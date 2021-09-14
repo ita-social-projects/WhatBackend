@@ -9,7 +9,6 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -39,9 +38,11 @@ namespace CharlieBackend.Api.Controllers
         /// </returns>
         [Authorize(Roles = "Admin, Mentor")]
         [HttpGet]
-        public async Task<IEnumerable<Homework>> GetHomeworks()
+        public async Task<ActionResult<IList<HomeworkDto>>> GetHomeworks()
         {
-            return await _homeworkService.GetHomeworks();
+            var homeworks = await _homeworkService.GetHomeworks();
+            return homeworks.ToActionResult();
+            //return await _homeworkService.GetHomeworks();
         }
 
         /// <summary>
