@@ -20,9 +20,11 @@ namespace CharlieBackend.AdminPanel.Controllers
             _homeworkService = homeworkService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var homeworks = await _homeworkService.GetHomeworks();
+            return View(homeworks);
         }
 
         [HttpGet]
@@ -37,7 +39,7 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateHomework()
         {
-            return View("AddNewHomework");
+            return View("Create");
         }
 
         [HttpPost]

@@ -3,6 +3,7 @@ using CharlieBackend.AdminPanel.Models.Homework;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.Entities;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,12 @@ namespace CharlieBackend.AdminPanel.Services
             _homeworkApiEndpoints = options.Value.Urls.ApiEndpoints.Homeworks;
         }
 
+        public async Task<IEnumerable<Homework>> GetHomeworks()
+        {
+            var homeworksUrl = _homeworkApiEndpoints.GetHomeworks;
+            var a = await _apiUtil.GetAsync<IEnumerable<Homework>>(homeworksUrl);
+            return a;
+        }
         public async Task AddHomeworkEndpoint(HomeworkDto homeworkDto)
         {
             var addHomeworkEndpoint = _homeworkApiEndpoints.AddHomeworkEndpoint;

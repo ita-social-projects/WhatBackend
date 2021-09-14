@@ -99,6 +99,7 @@ namespace CharlieBackend.AdminPanel
 
     public class HomeworksApiEndpoints
     {
+        public string GetHomeworks { get; set; }
         public string GetHomeworkById { get; set; }
         public string AddHomeworkEndpoint { get; set; }
         public string UpdateHomeworkEndpoint { get; set; }

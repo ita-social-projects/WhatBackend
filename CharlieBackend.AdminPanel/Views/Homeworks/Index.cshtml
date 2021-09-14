@@ -1,28 +1,65 @@
-﻿@model IList<CharlieBackend.AdminPanel.Models.StudentGroups.StudentGroupViewModel>
+﻿@model IEnumerable<CharlieBackend.Core.Entities.Homework>
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "View";
 }
 
-<div>
-    <form asp-action="GetHomeworkById" asp-controller="Homeworks">
-        <input type="text" placeholder="Id" />
-        <button>Find</button>
-    </form>
+<h1>View</h1>
 
-
-</div>
-
-<div id="content-wrapper" class="d-flex flex-column">
-
-    <div id="content">
-
-        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            <a asp-action="CreateHomework" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
-                <i class="fas fa-plus"></i>
-            </a>
-        </div>
-
-       
-    </div>
-</div>
+<p>
+    <a asp-action="CreateHomework">Create Homework</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DueDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LessonId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublishingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LessonId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PublishingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
