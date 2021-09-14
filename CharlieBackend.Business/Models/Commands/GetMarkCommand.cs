@@ -38,10 +38,10 @@ namespace CharlieBackend.Business.Models.Commands
             {
                 Data = new StudentMarkDto
                 {
-                    StudentGroupId = 1,
+                    //StudentGroupId = 1,
                     StudentId = 1,
                     LessonId = 1,
-                    CourseId = 1,
+                    //CourseId = 1,
                     StudentMark = 10
                 },
                 Error = null
