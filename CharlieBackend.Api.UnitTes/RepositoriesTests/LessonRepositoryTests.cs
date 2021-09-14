@@ -81,7 +81,8 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 {
                     homeworkStudent_one,
                     homeworkStudent_two
-                }
+                },
+                PublishingDate = DateTime.UtcNow
             };
 
             homeworkStudent_one.Homework = homework;

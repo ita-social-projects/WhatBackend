@@ -8,10 +8,6 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
     {
         public ChangeCurrentPasswordDtoValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .EmailAddress()
-                .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.CurrentPassword)
                 .NotEmpty()
                 .MinimumLength(ValidationConstants.MinLength)

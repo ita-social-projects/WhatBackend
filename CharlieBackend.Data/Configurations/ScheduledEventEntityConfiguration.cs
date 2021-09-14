@@ -9,47 +9,74 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ScheduledEvent> entity)
         {
-            entity.ToTable("scheduled_event");
+            entity.ToTable("ScheduledEvents");
 
-            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.Property(x => x.EventOccurrenceId).HasColumnName("event_occurence_id").HasColumnType("bigint(20)");
+            entity.Property(e => e.EventOccurrenceId)
+                .IsRequired()
+                .HasColumnName("EventOccurrenceID");
+
+            entity.Property(e => e.StudentGroupId)
+                .IsRequired()
+                .HasColumnName("StudentGroupID");
+
+            entity.Property(e => e.ThemeId)
+                .IsRequired()
+                .HasColumnName("ThemeID");
+
+            entity.Property(e => e.MentorId)
+                .IsRequired()
+                .HasColumnName("MentorID");
+
+            entity.Property(e => e.LessonId)
+                .HasColumnName("LessonID");
+
+            entity.Property(e => e.EventStart)
+                .IsRequired()
+                .HasColumnName("EventStart")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.Property(e => e.EventFinish)
+                .IsRequired()
+                .HasColumnName("EventFinish")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(x => x.EventOccurrence)
                 .WithMany(x => x.ScheduledEvents)
                 .HasForeignKey(x => x.EventOccurrenceId)
-                .HasConstraintName("fk_scheduled_events_event_occurence1");
+                .HasConstraintName("FK_EventOccurrenceScheduledEvents");
 
-            entity.Property(x => x.StudentGroupId).HasColumnName("student_group_id").HasColumnType("bigint(20)");
-
-            entity.HasOne(x => x.StudentGroup)
-                .WithMany(x => x.ScheduledEvents)
-                .HasForeignKey(x => x.StudentGroupId)
-                .HasConstraintName("fk_scheduled_events_student_group1");
-
-            entity.Property(x => x.ThemeId).HasColumnName("theme_id").HasColumnType("bigint(20)");
-
-            entity.HasOne(x => x.Theme)
-                .WithMany(x => x.ScheduledEvents)
-                .HasForeignKey(x => x.ThemeId)
-                .HasConstraintName("fk_scheduled_events_theme1");
-
-            entity.Property(x => x.MentorId).HasColumnName("mentor_id").HasColumnType("bigint(20)");
+            entity.HasOne(x => x.Lesson)
+                .WithOne(x => x.ScheduledEvent)
+                .HasForeignKey<ScheduledEvent>(x => x.LessonId)
+                .HasConstraintName("FK_LessonScheduledEvents");
 
             entity.HasOne(x => x.Mentor)
                 .WithMany(x => x.ScheduledEvents)
                 .HasForeignKey(x => x.MentorId)
-                .HasConstraintName("fk_scheduled_events_mentor1");
+                .HasConstraintName("FK_MentorScheduledEvents");
 
-            entity.Property(x => x.LessonId).HasColumnName("lesson_id").HasColumnType("bigint(20)");
+            entity.HasOne(x => x.StudentGroup)
+                .WithMany(x => x.ScheduledEvents)
+                .HasForeignKey(x => x.StudentGroupId)
+                .HasConstraintName("FK_StudentGroupScheduledEvents");
 
-            entity.HasOne(x => x.Lesson)
-                .WithOne(x => x.ScheduledEvent)
-                .HasConstraintName("fk_scheduled_events_lesson1");
+            entity.HasOne(x => x.Theme)
+                .WithMany(x => x.ScheduledEvents)
+                .HasForeignKey(x => x.ThemeId)
+                .HasConstraintName("FK_ThemeScheduledEvents");
 
-            entity.Property(x => x.EventStart).HasColumnName("event_start").HasColumnType("datetime");
-
-            entity.Property(x => x.EventFinish).HasColumnName("event_finish").HasColumnType("datetime");
+            entity.HasIndex(e => e.LessonId)
+                .HasName("UQ_LessonScheduledEvents")
+                .IsUnique();
         }
     }
 }

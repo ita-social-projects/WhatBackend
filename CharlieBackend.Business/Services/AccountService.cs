@@ -17,98 +17,20 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
+        private readonly ICurrentUserService _currentUserService;
 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
-                              INotificationService notification)
+                              INotificationService notification,
+                              ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
+            _currentUserService = currentUserService;
         }
 
-        public async Task<Result<AccountRoleDto>> GiveRoleToAccount(
-                AccountRoleDto accountRole)
-        {
-            Account user = await _unitOfWork.AccountRepository
-                    .GetAccountCredentialsByEmailAsync(accountRole.Email);
-
-            Result<AccountRoleDto> result = null;
-
-            try
-            {
-                await user.SetAccountRoleAsync(accountRole.Role);
-
-                await SetAccountRoleToRepositoryAsync(accountRole, user);
-
-                await _unitOfWork.CommitAsync();
-
-                result = Result<AccountRoleDto>.GetSuccess(
-                        _mapper.Map<AccountRoleDto>(user));
-            }
-            catch (NullReferenceException)
-            {
-
-                result = Result<AccountRoleDto>.GetError(
-                        ErrorCode.NotFound, "Account not found");
-            }
-            catch (ArgumentException)
-            {
-                result = Result<AccountRoleDto>.GetError(
-                        ErrorCode.Conflict, "Account allready has" +
-                        " this role or role is unsuitable");
-            }
-
-            return result;
-        }
-
-        private void SetAccountRoleToRepository(AccountRoleDto accountRole,
-                Account user)
-        {
-            switch (accountRole.Role)
-            {
-                case UserRole.Student:
-                    Student newStudent = new Student()
-                    {
-                        Account = user,
-                        AccountId = user.Id,
-                    };
-
-                    _unitOfWork.StudentRepository.Add(newStudent);
-                    break;
-
-                case UserRole.Mentor:
-                    Mentor newMentor = new Mentor()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
-                    _unitOfWork.MentorRepository.Add(newMentor);
-                    break;
-
-                case UserRole.Secretary:
-                    Secretary newSecretary = new Secretary()
-                    {
-                        Account = user,
-                        AccountId = user.Id
-                    };
-
-                    _unitOfWork.SecretaryRepository.Add(newSecretary);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        private async Task SetAccountRoleToRepositoryAsync(
-                AccountRoleDto accountRole, Account user) 
-        {
-            await Task.Run(() => SetAccountRoleToRepository(accountRole, user));
-        }
-
-        public async Task<Result<AccountRoleDto>> RemoveRoleFromAccount(
+        public async Task<Result<AccountRoleDto>> GrantRoleToAccount(
                 AccountRoleDto accountRole)
         {
             Account user = await _unitOfWork.AccountRepository
@@ -123,20 +45,101 @@ namespace CharlieBackend.Business.Services
             }
             else
             {
-                try
+                if (await user.GrantAccountRoleAsync(accountRole.Role))
                 {
-                    await user.RemoveAccountRoleAsync(accountRole.Role);
+                    await AddGrantedRoleToRepositoryAsync(accountRole, user);
+
                     await _unitOfWork.CommitAsync();
 
                     result = Result<AccountRoleDto>.GetSuccess(
                             _mapper.Map<AccountRoleDto>(user));
                 }
-                catch (NullReferenceException)
+                else
                 {
                     result = Result<AccountRoleDto>.GetError(
-                            ErrorCode.NotFound, "Account not found");
+                            ErrorCode.Conflict, "Account allready has" +
+                            " this role or role is unsuitable");
                 }
-                catch (ArgumentException) 
+            }
+         
+            return result;
+        }
+
+        private async Task AddGrantedRoleToRepositoryAsync(AccountRoleDto accountRole,
+                Account user)
+        {
+            switch (accountRole.Role)
+            {
+                case UserRole.Student:
+                    if (await _unitOfWork.StudentRepository
+                            .GetStudentByAccountIdAsync(user.Id) == null)
+                    {
+                        Student newStudent = new Student()
+                        {
+                            Account = user,
+                            AccountId = user.Id,
+                        };
+
+                        _unitOfWork.StudentRepository.Add(newStudent);
+                    }
+                    break;
+
+                case UserRole.Mentor:
+                    if (await _unitOfWork.MentorRepository
+                            .GetMentorByAccountIdAsync(user.Id) == null)
+                    {
+                        Mentor newMentor = new Mentor()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
+                        _unitOfWork.MentorRepository.Add(newMentor);
+                    }
+                    break;
+
+                case UserRole.Secretary:
+                    if (await _unitOfWork.SecretaryRepository
+                            .GetSecretaryByAccountIdAsync(user.Id) == null)
+                    {
+                        Secretary newSecretary = new Secretary()
+                        {
+                            Account = user,
+                            AccountId = user.Id
+                        };
+
+                        _unitOfWork.SecretaryRepository.Add(newSecretary);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public async Task<Result<AccountRoleDto>> RevokeRoleFromAccount(
+                AccountRoleDto accountRole)
+        {
+            Account user = await _unitOfWork.AccountRepository
+                    .GetAccountCredentialsByEmailAsync(accountRole.Email);
+
+            Result<AccountRoleDto> result = null;
+
+            if (user == null)
+            {
+                result = Result<AccountRoleDto>.GetError(ErrorCode.NotFound,
+                        "Account not found");
+            }
+            else
+            {           
+                if (await user.RevokeAccountRoleAsync(accountRole.Role))
+                {
+                    await _unitOfWork.CommitAsync();
+
+                    result = Result<AccountRoleDto>.GetSuccess(
+                            _mapper.Map<AccountRoleDto>(user));
+                }
+                else
                 {
                     result = Result<AccountRoleDto>.GetError(ErrorCode.Conflict,
                             "Account doesn't have this role or role is unsuitable");
@@ -269,7 +272,8 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(changePassword.Email);
+            var email = _currentUserService.Email;
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(email);
 
             if (user == null)
             {
@@ -311,7 +315,7 @@ namespace CharlieBackend.Business.Services
             }
 
             user.ForgotPasswordToken = Guid.NewGuid().ToString();
-            user.ForgotTokenGenDate = DateTime.Now;
+            user.ForgotTokenGenDate = DateTime.UtcNow;
 
             await _unitOfWork.CommitAsync();
 

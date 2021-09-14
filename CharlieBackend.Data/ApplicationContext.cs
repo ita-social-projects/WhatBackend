@@ -42,11 +42,17 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<Homework> Homeworks { get; set; }
 
+        public virtual DbSet<Mark> Marks { get; set; }
+
         public virtual DbSet<AttachmentOfHomework> AttachmentsOfHomework { get; set; }
 
         public virtual DbSet<HomeworkStudent> HomeworkStudents { get; set; }
 
-        public virtual DbSet<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; }
+        public virtual DbSet<AttachmentOfHomeworkStudent> AttachmentOfHomeworkStudents { get; set; } 
+
+        public virtual DbSet<HomeworkStudentHistory> HomeworkStudentsHistory { get; set; } 
+
+        public virtual DbSet<AttachmentOfHomeworkStudentHistory> AttachmentOfHomeworkStudentsHistory { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,10 +60,13 @@ namespace CharlieBackend.Data
                 .ApplyConfiguration(new AttachmentEntityConfiguration())
                 .ApplyConfiguration(new AttachmentOfHomeworkEntityConfiguration())
                 .ApplyConfiguration(new AttachmentOfHomeworkStudentEntityConfiguration())
+                .ApplyConfiguration(new AttachmentOfHomeworkStudentHistoryEntityConfiguration())
                 .ApplyConfiguration(new CourseEntityConfiguration())
                 .ApplyConfiguration(new EventOccurenceEntityConfiguration())
                 .ApplyConfiguration(new HomeworkEntityConfiguration())
                 .ApplyConfiguration(new HomeworkStudentEntityConfiguration())
+                .ApplyConfiguration(new HomeworkStudentHistoryEntityConfiguration())
+                .ApplyConfiguration(new MarkEntityConfiguration())
                 .ApplyConfiguration(new LessonEntityConfiguration())
                 .ApplyConfiguration(new MentorEntityConfiguration())
                 .ApplyConfiguration(new MentorOfCourseEntityConfiguration())

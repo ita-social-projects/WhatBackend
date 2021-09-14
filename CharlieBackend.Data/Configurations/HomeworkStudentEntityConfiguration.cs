@@ -9,31 +9,62 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<HomeworkStudent> entity)
         {
-            entity.ToTable("homework_from_student");
+            entity.ToTable("HomeworksFromStudents");
 
-            entity.HasIndex(e => new { e.HomeworkId }).HasName("homework_id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.Property(e => e.Id).HasColumnName("Id");
+            entity.Property(e => e.StudentId)
+                .IsRequired()
+                .HasColumnName("StudentID");
 
-            entity.Property(e => e.StudentId).HasColumnName("student_id");
-
-            entity.Property(e => e.HomeworkId).HasColumnName("homework_id");
+            entity.Property(e => e.HomeworkId)
+                .IsRequired()
+                .HasColumnName("HomeworkID");
 
             entity.Property(e => e.HomeworkText)
-                .HasColumnName("homework_text")
-                .HasColumnType("varchar(4000)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("HomeworkText")
+                .HasColumnType("VARCHAR(8000)");
+
+            entity.Property(e => e.MarkId)
+                .HasColumnName("MarkId")
+                .HasColumnType("BIGINT UNSIGNED");
+
+            entity.Property(e => e.PublishingDate)
+                .IsRequired()
+                .HasColumnName("PublishingDate")
+                .HasColumnType("DATETIME");
+
+            entity.Property(e => e.IsSent)
+                .IsRequired()
+                .HasColumnName("IsSent")
+                .HasColumnType("TINYINT(1)");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
+
+            entity.HasOne(h => h.Mark)
+                .WithOne(s => s.HomeworkStudent)
+                .HasForeignKey<HomeworkStudent>(h => h.MarkId)
+                .HasConstraintName("FK_MarkOfHomeworkFromStudent");
 
             entity.HasOne(h => h.Homework)
                 .WithMany(h => h.HomeworkStudents)
                 .HasForeignKey(h => h.HomeworkId)
-                .HasConstraintName("FK_student_homework");
+                .HasConstraintName("FK_HomeworkOfStudents");
 
             entity.HasOne(h => h.Student)
                 .WithMany(s => s.HomeworkStudents)
                 .HasForeignKey(h => h.StudentId)
-                .HasConstraintName("FK_homework_of_student");
+                .HasConstraintName("FK_StudentOfHomeworks");
+
+            entity.HasIndex(e => new { e.StudentId, e.HomeworkId })
+                .HasName("UQ_HomeworkAndStudent")
+                .IsUnique();
+
+            entity.HasIndex(e => e.HomeworkId)
+                .HasName("IX_Homework");
         }
     }
 }

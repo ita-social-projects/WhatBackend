@@ -8,30 +8,53 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Homework> entity)
         {
-            entity.ToTable("homework");
+            entity.ToTable("Homeworks");
 
-            entity.HasIndex(e =>
-                new { e.LessonId })
-                .HasName("FK_lesson_for_homework");
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
             entity.Property(e => e.DueDate)
-                .HasColumnName("due_date")
-                .HasDefaultValue(null);
+                .IsRequired()
+                .HasColumnName("DueDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
 
             entity.Property(e => e.TaskText)
-                .HasColumnName("task_text")
-                .HasColumnType("varchar(4000)")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .IsRequired()
+                .HasColumnName("TaskText")
+                .HasColumnType("VARCHAR(8000)");
 
-            entity.Property(e => e.LessonId).HasColumnName("lesson_id");
+            entity.Property(e => e.LessonId)
+                .IsRequired()
+                .HasColumnName("LessonID");
 
-            entity.HasOne(d => d.Lesson)
-                .WithMany(p => p.Homeworks)
-                .HasForeignKey(d => d.LessonId)
-                .HasConstraintName("FK_lesson_homework");
+            entity.Property(e => e.PublishingDate)
+                .IsRequired()
+                .HasColumnName("PublishingDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.Property(e => e.CreatedBy)
+                .IsRequired()
+                .HasColumnName("CreatedBy")
+                .HasColumnType("BIGINT UNSIGNED");
+
+            entity.HasOne(e => e.Account)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("FK_AccountOfHomework");
+
+            entity.HasOne(e => e.Lesson)
+                .WithMany(h => h.Homeworks)
+                .HasForeignKey(e => e.LessonId)
+                .HasConstraintName("FK_LessonHomeworks");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
+
+            entity.HasIndex(e => e.LessonId)
+                .HasName("IX_Lesson");
         }
     }
 }

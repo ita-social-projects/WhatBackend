@@ -1,31 +1,34 @@
-using System;
-using Serilog;
-using EasyNetQ;
-using System.IO;
 using AutoMapper;
-using System.Reflection;
-using CharlieBackend.Root;
-using CharlieBackend.Core;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
-using CharlieBackend.Core.Mapping;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 using CharlieBackend.Api.Extensions;
-using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Api.Middlewares;
-using System.Text.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.Filters;
 using CharlieBackend.Business.Options;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CharlieBackend.Core.DTO.Result;
+using CharlieBackend.Core.Extensions;
+using CharlieBackend.Core.Mapping;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data;
+using CharlieBackend.Root;
+using EasyNetQ;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace CharlieBackend.Api
 {
@@ -79,10 +82,21 @@ namespace CharlieBackend.Api
             services.AddHttpContextAccessor();
 
             services.AddControllers()
-                .AddJsonOptions(options =>
+                .ConfigureApiBehaviorOptions(options =>
                 {
-                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                    options.InvalidModelStateResponseFactory = c =>
+                    {
+                        var errors = string.Join('\n', c.ModelState.Values.Where(v => v.Errors.Count > 0)
+                          .SelectMany(v => v.Errors)
+                          .Select(v => v.ErrorMessage));
+
+                        return new BadRequestObjectResult(new ErrorDto
+                        {
+                            Error = new ErrorData { Code = ErrorCode.ValidationError, Message = errors}
+                        });
+                    };
                 })
+                .AddJsonSerializer()
                 .AddFluentValidation(options =>
                 {
                         options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
@@ -144,6 +158,8 @@ namespace CharlieBackend.Api
                     }
                 });
             });
+
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddFluentValidationRulesToSwagger(options =>
             {

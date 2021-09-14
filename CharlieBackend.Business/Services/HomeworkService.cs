@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
@@ -24,12 +25,14 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
+        private readonly ICurrentUserService _currentUserService;
 
-        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger)
+        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
@@ -48,12 +51,16 @@ namespace CharlieBackend.Business.Services
 
             var lesson = _unitOfWork.LessonRepository.GetByIdAsync(createHomeworkDto.LessonId);
 
+            long accountId = _currentUserService.AccountId;
+
             var newHomework = new Homework
             {
                 DueDate = createHomeworkDto.DueDate,
                 LessonId = createHomeworkDto.LessonId,
                 TaskText = createHomeworkDto.TaskText,
-                Lesson = lesson.Result
+                Lesson = lesson.Result,
+                PublishingDate = DateTime.UtcNow,
+                CreatedBy = accountId
             };
 
             _unitOfWork.HomeworkRepository.Add(newHomework);
@@ -190,26 +197,6 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
-        }
-
-        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
-        {
-            var visit = await _unitOfWork
-                                .LessonRepository
-                                .GetVisitByStudentHomeworkIdAsync(request
-                                    .StudentHomeworkId.GetValueOrDefault());
-
-            if (visit is null)
-            {
-                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
-            }
-
-            visit.StudentMark = (sbyte)request.StudentMark;
-
-            _unitOfWork.VisitRepository.Update(visit);
-            await _unitOfWork.CommitAsync();
-
-            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }

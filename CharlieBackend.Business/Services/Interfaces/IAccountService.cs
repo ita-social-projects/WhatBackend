@@ -35,8 +35,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<AccountDto>> ResetPasswordAsync(string guid, ResetPasswordDto resetPassword);
 
-        Task<Result<AccountRoleDto>> GiveRoleToAccount(AccountRoleDto accountRole);
+        Task<Result<AccountRoleDto>> GrantRoleToAccount(AccountRoleDto accountRole);
 
-        Task<Result<AccountRoleDto>> RemoveRoleFromAccount(AccountRoleDto accountRole);
+        Task<Result<AccountRoleDto>> RevokeRoleFromAccount(AccountRoleDto accountRole);
     }
 }

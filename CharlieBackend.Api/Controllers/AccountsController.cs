@@ -10,6 +10,8 @@ using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.Extensions;
+using System.Linq;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -73,12 +75,12 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            if (foundAccount.Role == UserRole.NotAssigned)
+            if (foundAccount.Role.IsNotAssigned())
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Student))
+            if (foundAccount.Role.Is(UserRole.Student))
             {
                 var foundStudent = (await _studentService.GetStudentByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -89,7 +91,7 @@ namespace CharlieBackend.Api.Controllers
                 else roleIds.Add(UserRole.Student, foundStudent.Id);
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Mentor))
+            if (foundAccount.Role.Is(UserRole.Mentor))
             {
                 var foundMentor = (await _mentorService.GetMentorByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -100,7 +102,7 @@ namespace CharlieBackend.Api.Controllers
                 else roleIds.Add(UserRole.Mentor, foundMentor.Id);
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Secretary))
+            if (foundAccount.Role.Is(UserRole.Secretary))
             {
                 var foundSecretary = (await _secretaryService.GetSecretaryByAccountIdAsync(foundAccount.Id)).Data;
 
@@ -111,15 +113,15 @@ namespace CharlieBackend.Api.Controllers
                 else roleIds.Add(UserRole.Secretary, foundSecretary.Id);
             }
 
-            if (foundAccount.Role.HasFlag(UserRole.Admin))
+            if (foundAccount.Role.IsAdmin())
             {
                 roleIds.Add(UserRole.Admin, foundAccount.Id);
-            }
+            }          
 
             #endregion
 
             Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount,roleIds);
-
+            
             var response = new
             {
                 first_name = foundAccount.FirstName,
@@ -140,12 +142,12 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account already has this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
-        [Route("role/ grant")]
+        [Route("role/grant")]
         [HttpPut]
         public async Task<ActionResult> GrantRoleToAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
-                    .GiveRoleToAccount(account);
+                    .GrantRoleToAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
         }
@@ -163,7 +165,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> RevokeRoleFromAccount(AccountRoleDto account)
         {
             var changeAccountRoleModel = await _accountService
-                    .RemoveRoleFromAccount(account);
+                    .RevokeRoleFromAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
          }

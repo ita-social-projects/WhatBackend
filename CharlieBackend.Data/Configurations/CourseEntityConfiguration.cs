@@ -8,27 +8,29 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Course> entity)
         {
-            entity.ToTable("course");
+            entity.ToTable("Courses");
 
-            entity.HasIndex(e => e.Name)
-                .HasName("name_UNIQUE")
-                .IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
             entity.Property(e => e.Name)
                 .IsRequired()
-                .HasColumnName("name")
-                .HasColumnType("varchar(100)")
-                .HasComment("name has been set to not null and unique")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Name")
+                .HasColumnType("VARCHAR(100)");
 
             entity.Property(e => e.IsActive)
                 .IsRequired()
-                .HasColumnName("is_active")
-                .HasDefaultValueSql("'1'")
-                .HasComment("is_active has been set to not null with true as a default value");
+                .HasColumnName("IsActive")
+                .HasColumnType("BIT")
+                .HasDefaultValueSql("1");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
+
+            entity.HasIndex(e => e.Name)
+                .HasName("UQ_NameCourses")
+                .IsUnique();
         }
     }
 }

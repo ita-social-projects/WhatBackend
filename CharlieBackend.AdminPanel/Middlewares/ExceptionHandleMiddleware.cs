@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using CharlieBackend.AdminPanel.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,10 @@ namespace CharlieBackend.AdminPanel.Middlewares
             catch (HttpStatusException ex)
             {
                 _logger.LogError($"Something went wrong with API. {ex.Message}");
+                    
+                var encodedMessage = HttpUtility.UrlEncode(ex.Message);
 
-                context.Response.Redirect($"/Home/ApiError/{(uint)ex.HttpStatusCode}/{ex.Message}");
+                context.Response.Redirect($"/Home/ApiError/{(uint)ex.HttpStatusCode}/{encodedMessage}");
             }
             catch (Exception ex)
             {

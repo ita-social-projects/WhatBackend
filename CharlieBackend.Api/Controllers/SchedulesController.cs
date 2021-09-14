@@ -51,7 +51,6 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<EventOccurrenceDTO>> PostSchedule([FromBody] CreateScheduleDto scheduleDTO)
         {
             var resSchedule = await _scheduleService.CreateScheduleAsync(scheduleDTO);
-
             return resSchedule.ToActionResult();
         }
 
@@ -166,6 +165,5 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
-
     }
 }

@@ -11,6 +11,8 @@ namespace CharlieBackend.Core.DTO.HomeworkStudent
        
         public string HomeworkText { get; set; }
 
+        public bool IsSent { get; set; }
+
         public virtual IList<long> AttachmentIds { get; set; }
     }
 }

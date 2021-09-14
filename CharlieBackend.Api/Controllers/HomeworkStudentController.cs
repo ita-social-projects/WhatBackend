@@ -74,6 +74,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets student homework history for Mentor by homework student id
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [HttpGet("history/{homeworkStudentId}")]
+        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentsHistoryByHomeworkStudentId(long homeworkStudentId)
+        {
+            var results = await _homeworkStudentService.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudentId);
+
+            return results;
+        }
+
+        /// <summary>
         /// Update student homework
         /// </summary>
         /// <param name="id">
@@ -90,6 +103,19 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(updateHomeworkDto, id);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Update student mark
+        /// </summary>
+        /// <response code="200">Successful updating of the mark</response>
+        /// <response code="HTTP: 404">Student homework not found</response>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [HttpPut("updatemark")]
+        public async Task<ActionResult> UpdateMark([FromBody] UpdateMarkRequestDto request)
+        {
+            return (await _homeworkStudentService.UpdateMarkAsync(request)).ToActionResult();
         }
     }
 }

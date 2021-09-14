@@ -8,39 +8,42 @@ namespace CharlieBackend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentGroup> entity)
         {
-            entity.ToTable("student_group");
+            entity.ToTable("StudentGroups");
 
-            entity.HasIndex(e => e.CourseId)
-                .HasName("FK_course_of_student_group");
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
 
-            entity.HasIndex(e => e.Name)
-                .HasName("name_UNIQUE")
-                .IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
-
-            entity.Property(e => e.CourseId).HasColumnName("course_id");
-
-            entity.Property(e => e.FinishDate)
-                .HasColumnName("finish_date")
-                .HasColumnType("date");
+            entity.Property(e => e.CourseId)
+                .IsRequired()
+                .HasColumnName("CourseID");
 
             entity.Property(e => e.Name)
                 .IsRequired()
-                .HasColumnName("name")
-                .HasColumnType("varchar(100)")
-                .HasComment("name has been set to not null and unique")
-                .HasCharSet("utf8mb4")
-                .HasCollation("utf8mb4_0900_ai_ci");
+                .HasColumnName("Name")
+                .HasColumnType("VARCHAR(100)");
 
             entity.Property(e => e.StartDate)
-                .HasColumnName("start_date")
-                .HasColumnType("date");
+                .IsRequired()
+                .HasColumnName("StartDate")
+                .HasColumnType("DATE");
+
+            entity.Property(e => e.FinishDate)
+                .IsRequired()
+                .HasColumnName("FinishDate")
+                .HasColumnType("DATE");
+
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Course)
                 .WithMany(p => p.StudentGroup)
                 .HasForeignKey(d => d.CourseId)
-                .HasConstraintName("FK_course_of_student_group");
+                .HasConstraintName("FK_CourseStudentGroups");
+
+            entity.HasIndex(e => e.Name)
+                .HasName("UQ_NameStudentGroups")
+                .IsUnique();
         }
     }
 }
