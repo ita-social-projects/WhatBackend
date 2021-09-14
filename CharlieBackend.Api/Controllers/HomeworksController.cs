@@ -8,6 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.DTO.HomeworkStudent;
+using System.Collections.Generic;
+using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -26,6 +28,20 @@ namespace CharlieBackend.Api.Controllers
         public HomeworksController(IHomeworkService homeworkService)
         {
             _homeworkService = homeworkService;
+        }
+
+        // TODO - DELETE BEFORE MERGE
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>
+        /// All Homewrok's entities
+        /// </returns>
+        [Authorize(Roles = "Admin, Mentor")]
+        [HttpGet]
+        public async Task<IEnumerable<Homework>> GetHomeworks()
+        {
+            return await _homeworkService.GetHomeworks();
         }
 
         /// <summary>

@@ -35,6 +35,12 @@ namespace CharlieBackend.Business.Services
             _currentUserService = currentUserService;
         }
 
+        //TODO DELETE BEFORE MERGE
+        public async Task<IEnumerable<Homework>> GetHomeworks()
+        {
+            return await _unitOfWork.HomeworkRepository.GetAllAsync();
+        }
+
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
         {
             var errors = await ValidateHomeworkRequest(createHomeworkDto)

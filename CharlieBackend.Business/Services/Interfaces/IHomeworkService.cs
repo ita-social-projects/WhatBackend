@@ -11,6 +11,8 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IHomeworkService
     {
+        //TODO - DELETE BEFORE MERGE
+        Task<IEnumerable<Homework>> GetHomeworks();
         Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto homeworkDto);
 
         Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId);
