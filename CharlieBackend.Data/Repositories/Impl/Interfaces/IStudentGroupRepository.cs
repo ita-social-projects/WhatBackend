@@ -27,6 +27,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         bool DeleteStudentGroup(long StudentGroupModelId);
 
+        bool DeactivateStudentGroup(long StudentGroupModelId);
+
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
 

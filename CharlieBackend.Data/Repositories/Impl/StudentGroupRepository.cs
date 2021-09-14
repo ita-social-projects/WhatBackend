@@ -43,6 +43,23 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
+        public bool DeactivateStudentGroup(long StudentGroupModelId)
+        {
+            var x = SearchStudentGroup(StudentGroupModelId);
+
+            if (x == null)
+            {
+                return false;
+            }
+            else
+            {
+                x.IsActive = false;
+                _applicationContext.StudentGroups.Update(x);
+                _applicationContext.SaveChanges();
+                return true;
+            }
+        }
+
         public new async Task<List<StudentGroup>> GetAllAsync()
         {
             return await _applicationContext.StudentGroups

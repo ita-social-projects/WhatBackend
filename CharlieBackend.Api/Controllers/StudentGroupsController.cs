@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Business.Services.Interfaces;
 using System;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -21,28 +22,62 @@ namespace CharlieBackend.Api.Controllers
 
         private readonly IStudentGroupService _studentGroupService;
         private readonly IHomeworkService _homeworkService;
+        private readonly ILessonService _lessonService;
 
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, ILessonService lessonService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
+            _lessonService = lessonService;
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> DeleteStudentGroup(long id)
-        //{
-        //    var x = await _studentGroupService.SearchStudentGroup(id);
-        //    if (x == null)
-        //        return Ok("Not Found");
-        //    else
-        //    {
-        //        _studentGroupService.DeleteStudentGrop(id);
-        //        return Ok("Done");
-        //    }
-        //}
+        /// <summary>
+        /// Deletes the student group
+        /// </summary>
+        ///<response code="200">Successful deletion of student group</response>
+        [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<StudentGroupDto>>> DeleteStudentGroup(long id)
+        {
+            var studentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
+
+            if (studentGroup.Data == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _studentGroupService.DeleteStudentGroup(id);
+                return GetAllStudentGroups(null, null).Result;
+            }
+        }
+
+        /// <summary>
+        /// Returns list of lessons for student group
+        /// </summary>
+        /// <response code="200">Successful return of lessons list of given student group</response>
+        [SwaggerResponse(200, type: typeof(IList<StudentLessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<StudentLessonDto>>> GetAllLessonsForStudentGroup(long id)
+        {
+            var studentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
+
+            if (studentGroup.Data == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var lessonsOfStudentGroup = _lessonService.GetAllLessonsForStudentGroup(id);
+
+                return lessonsOfStudentGroup.Result.ToActionResult();
+            }
+        }
 
         /// <summary>
         /// Adding of new student group
