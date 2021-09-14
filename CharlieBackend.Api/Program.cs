@@ -77,7 +77,7 @@ namespace CharlieBackend.Api
         /// <summary>
         /// 
         /// </summary>
-        public static IConfigurationBuilder  HostConfigurationBuilder(string[] args)
+        public static IConfigurationBuilder HostConfigurationBuilder(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())

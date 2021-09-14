@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace WhatBackend.TelegramBotApi
 {
@@ -10,11 +11,18 @@ namespace WhatBackend.TelegramBotApi
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+            if (File.Exists(envFilePath))
+            {
+                DotNetEnv.Env.Load(envFilePath);
+            }
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }
