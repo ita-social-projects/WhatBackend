@@ -1,8 +1,5 @@
-﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
-using CharlieBackend.Core.DTO.Dashboard;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CharlieBackend.Core.DTO.Export
 {
@@ -18,7 +15,7 @@ namespace CharlieBackend.Core.DTO.Export
 
         public T[] IncludeAnalytics { get; set; }
 
-        public ExportFileExtension Extension { get; set; }
+        public FileExtension Extension { get; set; }
 
         public StudentsRequestDto<T> GetStudentsRequestDto()
         {
