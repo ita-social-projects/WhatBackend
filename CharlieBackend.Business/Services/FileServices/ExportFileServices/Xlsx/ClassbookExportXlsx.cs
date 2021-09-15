@@ -10,7 +10,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
     {
         public ClassbookExportXlsx()
         {
-            xLWorkbook = new XLWorkbook();
+            _xLWorkbook = new XLWorkbook();
         }
 
         public override string GetFileName()
@@ -23,9 +23,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
                 var firstStudentPresence = data.StudentsPresences.First();
-                string workhseetName = "Presence (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-                xLWorkbook.AddWorksheet(workhseetName);
-                var worksheet = xLWorkbook.Worksheet(workhseetName);
+                string workhseetName = "Presence (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+                _xLWorkbook.AddWorksheet(workhseetName);
+                var worksheet = _xLWorkbook.Worksheet(workhseetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
@@ -87,9 +87,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             var firstStudentMark = data.StudentsMarks.First();
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
-                string workhseetName = "Marks (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-                xLWorkbook.AddWorksheet(workhseetName);
-                var worksheet = xLWorkbook.Worksheet(workhseetName);
+                string workhseetName = "Marks (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+                _xLWorkbook.AddWorksheet(workhseetName);
+                var worksheet = _xLWorkbook.Worksheet(workhseetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Course",
