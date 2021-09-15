@@ -50,7 +50,15 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("Index", nameof(HomeworksController));
         }
 
-        [HttpPut]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> PrepareHomeworkForUpdate(long id)
+        {
+            ViewBag.CurrentId = id;
+
+            return View("Edit");
+        }
+
+        [HttpPost("{id}")]
         public async Task<IActionResult> PutHomework(long id, HomeworkDto homework)
         {
             await _homeworkService.UpdateHomeworkEndpoint(id, homework);
