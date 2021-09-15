@@ -51,5 +51,10 @@ namespace CharlieBackend.AdminPanel.Services
 
             await _apiUtil.PutAsync<HomeworkDto>(updateHomeworkEndpoint, homeworkDto);
         }
+
+        public Task<HomeworkEditViewModel> PrepareStudentGroupAddAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
