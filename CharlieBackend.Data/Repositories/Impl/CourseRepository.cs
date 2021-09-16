@@ -29,6 +29,27 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Contains(course.Id))
                     .ToListAsync();
         }
+        public async Task<int> GetMentorCourseAsync(long mentorId, long? courseId)
+        {
+            var mentorCourses = await _applicationContext.MentorsOfCourses
+                     .Where(x => x.MentorId == mentorId && x.CourseId == courseId)
+                     .ToListAsync();
+            return mentorCourses.Count;
+        }
+        public async Task<long> GetCourseOfGroupAsync(long mentorId, long? groupId)
+        {
+            return await _applicationContext.StudentGroups
+                       .Where(x => x.Id == groupId)
+                       .Select(x => x.CourseId)
+                       .FirstOrDefaultAsync();
+        }
+        public async Task<IList<long?>> GetMentorCoursesById(long mentorId)
+        {
+            return await _applicationContext.MentorsOfCourses
+                .Where(x => x.MentorId == mentorId)
+                .Select(x => x.CourseId)
+                .ToListAsync();
+        }
 
         public async Task<bool> IsCourseHasGroupAsync(long id)
         {

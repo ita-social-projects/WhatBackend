@@ -6,6 +6,8 @@ using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -37,6 +39,34 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.Lesson)
                 .Include(x => x.AttachmentsOfHomework)
                 .Where(x => x.LessonId == lessonId).ToListAsync();
+        }
+
+        public async Task<IList<Homework>> GetHomeworksForMentorByCourseId(long courseId)
+        {
+            return await _applicationContext.Homeworks
+                   .Include(m => m.Lesson)
+                   .Include(m => m.AttachmentsOfHomework)
+                   .Where(l => l.Lesson.StudentGroup.CourseId == courseId)
+
+                   .ToListAsync();
+        }
+        public async Task<IList<Homework>> GetHomeworks(GetHomeworksRequestDto request)
+        {
+            return await _applicationContext.Homeworks
+                    .Include(m => m.Lesson)
+                    .Include(m => m.AttachmentsOfHomework)
+                    .WhereIf(request.GroupId != 0,
+                            l => l.Lesson.StudentGroupId == request.GroupId)
+                    .WhereIf(request.ThemeId != 0,
+                            t => t.Lesson.ThemeId == request.ThemeId)
+                    .WhereIf(request.CourseId != 0,
+                            l => l.Lesson.StudentGroup.CourseId == request.CourseId)
+                    .WhereIf(request.StartDate != default,
+                            d => d.PublishingDate >= request.StartDate)
+                    .WhereIf(request.FinishDate != default,
+                            d => d.PublishingDate <= request.FinishDate)
+
+                    .ToListAsync();
         }
 
         public async Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId)

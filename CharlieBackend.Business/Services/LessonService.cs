@@ -322,5 +322,14 @@ namespace CharlieBackend.Business.Services
 
             return Result<bool>.GetSuccess(lesson.Visits.Where(visit => visit.Presence == true).Any());
         }
+        public async Task<IList<long?>> GetStudentGroupsOfThemes(long themeId)
+        {
+            var groupfOfThemes = await _unitOfWork.LessonRepository.GetStudentGroupsOfThemesAsync(themeId);
+            if (groupfOfThemes.Count == 0)
+            {
+                return null;
+            }
+            return groupfOfThemes;
+        }
     }
 }

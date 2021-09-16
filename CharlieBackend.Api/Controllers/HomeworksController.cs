@@ -1,5 +1,6 @@
 ﻿using System;
 using CharlieBackend.Core;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.DTO.Homework;
@@ -52,6 +53,20 @@ namespace CharlieBackend.Api.Controllers
         {
             var results = await _homeworkService
                         .GetHomeworkByIdAsync(id);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets homeworks
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(IList<HomeworkDto>))]
+        [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [HttpPost("getHomeworks")]
+        public async Task<ActionResult> GetHomeworks([FromBody] GetHomeworksRequestDto request)
+        {
+            var results = await _homeworkService
+                        .GetHomeworksAsync(request);
 
             return results.ToActionResult();
         }

@@ -13,11 +13,13 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CourseService(IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseDto)
@@ -57,7 +59,27 @@ namespace CharlieBackend.Business.Services
 
             return courses;
         }
-
+        public async Task<bool> CheckDoesMentorCanSeeCourseAsync(long mentorId, long? courseId)
+        {
+            if (await _unitOfWork.CourseRepository.GetMentorCourseAsync(mentorId, courseId) == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<bool> CheckDoesMentorCanSeeGroupAsync(long mentorId, long? groupId)
+        {
+            var courseOfGroup = await _unitOfWork.CourseRepository.GetCourseOfGroupAsync(mentorId, groupId);
+            if (await _unitOfWork.CourseRepository.GetMentorCourseAsync(mentorId, courseOfGroup) == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<IList<long?>> GetMentorCoursesAsync(long mentorId)
+        {
+            return await _unitOfWork.CourseRepository.GetMentorCoursesById(mentorId);
+        }
         public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
         {
             try
