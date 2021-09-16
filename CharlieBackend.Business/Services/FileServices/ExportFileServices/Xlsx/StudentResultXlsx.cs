@@ -12,7 +12,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
     {
         public StudentResultXlsx()
         {
-            xLWorkbook = new XLWorkbook();
+            _xLWorkbook = new XLWorkbook();
         }
 
         public override string GetFileName()
@@ -66,9 +66,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         {
             if (AverageStudentsMarks != null && AverageStudentsMarks.Any())
             {
-                string worksheetName = "Average marks (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-                xLWorkbook.AddWorksheet(worksheetName);
-                var worksheet = xLWorkbook.Worksheet(worksheetName);
+                string worksheetName = "Average marks (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+                _xLWorkbook.AddWorksheet(worksheetName);
+                var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Student",
@@ -109,9 +109,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         {
             if (AverageStudentVisits != null && AverageStudentVisits.Any())
             {
-                string worksheetName = "Average visits (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-                xLWorkbook.AddWorksheet(worksheetName);
-                var worksheet = xLWorkbook.Worksheet(worksheetName);
+                string worksheetName = "Average visits (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+                _xLWorkbook.AddWorksheet(worksheetName);
+                var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
                     "Student",
