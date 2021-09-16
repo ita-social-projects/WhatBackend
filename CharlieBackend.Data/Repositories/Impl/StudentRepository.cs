@@ -41,6 +41,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
             return await _applicationContext.Students
+                    .Include(x => x.StudentsOfStudentGroups)
                     .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 

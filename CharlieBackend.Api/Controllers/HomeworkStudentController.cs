@@ -52,12 +52,25 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
-        [HttpGet]
+        [HttpGet("id")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForStudentByStudentId()
         {
             var results = await _homeworkStudentService.GetHomeworkStudentForStudent();
 
             return results;
+        }
+
+        /// <summary>
+        /// Get a student's homework in a group
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Student")]
+        [HttpGet]
+        public async Task<ActionResult> GetHomeworkForStudent([FromQuery] HomeworkForStudentDto homeworkForStudent)
+        {
+            var results = await _homeworkStudentService.GetHomeworkForStudent(homeworkForStudent);
+
+            return results.ToActionResult();
         }
 
         /// <summary>

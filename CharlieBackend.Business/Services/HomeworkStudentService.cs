@@ -178,11 +178,31 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent()
         {
             long accountId = _currentUserService.AccountId;
-
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(student.Id);
-
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
+        }
+
+        public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkForStudent(HomeworkForStudentDto homeworkForStudent)
+        {
+            long accountId = _currentUserService.AccountId;
+
+            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+
+           var group = await  _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+
+            if (!group.Contains(homeworkForStudent.GroupId))
+            {
+                return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(student.Id, homeworkForStudent.StartDate,
+                homeworkForStudent.FinishtDate, homeworkForStudent.GroupId);
+
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworks);
+
+            return Result<IList<HomeworkStudentDto>>.GetSuccess(result);
+
         }
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId)

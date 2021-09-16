@@ -23,6 +23,15 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         /// <returns></returns>
         Task<IList<HomeworkStudent>> GetHomeworkStudentForStudent(long studentId);
 
+        ///<summary>
+        ///returns student homework in group
+        ///</summary>
+        ///<param name = "studentId">Student Id</param>
+        ///<param name="groupId">Group id the group on which the student wants to get homework</param>
+        ///<param name="startDate">Date from which the student wants to get homework</param>
+        ///<param name="finishDate">Date by which you need to get homework</param>
+        Task<IList<HomeworkStudent>> GetHomeworkForStudent(long studentId, DateTime? startDate, DateTime? finishDate, long groupId);
+
         /// <summary>
         /// return all students homework 
         /// </summary>
