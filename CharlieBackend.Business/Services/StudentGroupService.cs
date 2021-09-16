@@ -231,33 +231,29 @@ namespace CharlieBackend.Business.Services
             {
                 return await GetStudentGroupsByDateAsync(startDate, finishDate);
             }
-            var allStudentGroups = await _unitOfWork.StudentGroupRepository.GetAllAsync();
-            var studentGroups = HideUnactiveStudentGroups(allStudentGroups);
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
+            var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
-            if (studentGroups.Count == 0)
-            {
-                return Result<IList<StudentGroupDto>>.GetError(ErrorCode.NotFound, "Student group is unactive or does not exist.");
-            }
-            else
-            {
-                var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroups);
-
-                return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
-            }
+            return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
         }
 
-        public bool DeleteStudentGroup(long StudentGroupId)
+        public async Task<bool> DeleteStudentGroupAsync(long StudentGroupId)
         {
             var lessonsOfStudentGroup = _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(StudentGroupId);
+            bool result;
 
             if (lessonsOfStudentGroup.Result.Count == 0)
             {
-                return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
+                result = _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId).Result;
             }
             else
             {
-                return _unitOfWork.StudentGroupRepository.DeactivateStudentGroup(StudentGroupId);
+                result =  _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
             }
+
+            await _unitOfWork.CommitAsync();
+
+            return result;
         }
 
         // if we set StudentIds or MentorsIds to null, they won't update
@@ -382,23 +378,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentGroupDto>> GetStudentGroupByIdAsync(long id)
         {
-            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetActiveStudentGroupByIdAsync(id);
 
             if (foundStudentGroup == null)
             {
                 return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group not found");
             }
 
-            var studentGroup = HideUnactiveStudentGroups(new List<StudentGroup> { foundStudentGroup });
-
-            if (studentGroup.Count == 0)
-            {
-                return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group is unactive or does not exist.");
-            }
-            else
-            {
-                return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(studentGroup[0]));
-            }
+            return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
         public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
@@ -408,19 +395,9 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError, "Start date is later then finish date.");
             }
 
-            var allStudentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
-            var studentGroups = HideUnactiveStudentGroups(allStudentGroups);
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
 
-            if (studentGroups.Count == 0)
-            {
-                return Result<IList<StudentGroupDto>>.GetError(ErrorCode.NotFound, "Student group is unactive or does not exist.");
-            }
-            else
-            {
-                var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroups);
-
-                return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
-            }
+            return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
         }
 
         public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
@@ -437,21 +414,6 @@ namespace CharlieBackend.Business.Services
                                  isMoreThenOneId ? "s" : null,
                                  isMoreThenOneId ? null : "es",
                                  string.Join(", ", ids));
-        }
-
-        private IList<StudentGroup> HideUnactiveStudentGroups(IList<StudentGroup> allStudentGroups)
-        {
-            List<StudentGroup> studentGroups = new List<StudentGroup>();
-
-            foreach (var x in allStudentGroups)
-            {
-                if (x.IsActive)
-                {
-                    studentGroups.Add(x);
-                }
-            }
-
-            return studentGroups;         
         }
     }
 }

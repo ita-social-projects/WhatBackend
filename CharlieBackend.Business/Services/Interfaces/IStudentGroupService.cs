@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<bool>> IsGroupNameExistAsync(string groupName);
 
-        bool DeleteStudentGroup(long StudentGroupId);
+        Task<bool> DeleteStudentGroupAsync(long StudentGroupId);
 
         Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel);
 

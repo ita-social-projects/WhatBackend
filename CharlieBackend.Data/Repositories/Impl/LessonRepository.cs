@@ -38,7 +38,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Lessons
                 .Where(lesson => lesson.StudentGroupId == studentGroupId)
-                .Select(lesson => lesson)
                 .ToListAsync();
         }
 

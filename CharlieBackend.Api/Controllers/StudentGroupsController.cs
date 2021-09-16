@@ -38,7 +38,6 @@ namespace CharlieBackend.Api.Controllers
         /// Deletes the student group
         /// </summary>
         ///<response code="200">Successful deletion of student group</response>
-        [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<StudentGroupDto>>> DeleteStudentGroup(long id)
@@ -51,8 +50,8 @@ namespace CharlieBackend.Api.Controllers
             }
             else
             {
-                _studentGroupService.DeleteStudentGroup(id);
-                return GetAllStudentGroups(null, null).Result;
+                await _studentGroupService.DeleteStudentGroupAsync(id);
+                return Ok("Student group is deleted.");
             }
         }
 

@@ -11,6 +11,10 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         new Task<List<StudentGroup>> GetAllAsync();
 
+        Task<IList<StudentGroup>> GetAllActiveAsync(DateTime? startDate, DateTime? finishDate);
+
+        Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id);
+
         Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id);
 
         Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id);
@@ -21,13 +25,13 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<bool> IsGroupNameExistAsync(string name);
 
-        StudentGroup SearchStudentGroup(long studentGroupId);
+        new Task<StudentGroup> GetByIdAsync(long id);
 
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
 
-        bool DeleteStudentGroup(long StudentGroupModelId);
+        Task<bool> DeleteStudentGroupAsync(long StudentGroupModelId);
 
-        bool DeactivateStudentGroup(long StudentGroupModelId);
+        Task<bool> DeactivateStudentGroupAsync(long StudentGroupModelId);
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
