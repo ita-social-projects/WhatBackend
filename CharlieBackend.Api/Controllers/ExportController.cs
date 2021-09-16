@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.DTO.Export;
@@ -17,15 +18,15 @@ namespace CharlieBackend.Api.Controllers
     public class ExportController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;
-        private readonly IExportServiceContext _exportService;//TODO Maybe strategy
+        private readonly IExportServiceProvider _exportProvider;
 
         /// <summary>
         /// Export controllers constructor
         /// </summary>
-        public ExportController(IExportServiceContext exportService,
+        public ExportController(IExportServiceProvider exportService,
                                 IDashboardService dashboardService)
         {
-            _exportService = exportService;
+            _exportProvider = exportService;
             _dashboardService = dashboardService;
         }
 
@@ -37,15 +38,24 @@ namespace CharlieBackend.Api.Controllers
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of course groups.
         /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
+        /// <param name="extension"> extension of file that you want to get
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("studentsClassbook")]
+        [Route("studentsClassbook/{extension}")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentsClassbook([FromBody] StudentsRequestWithFileExtensionDto<ClassbookResultType> request)
+        public async Task<IActionResult> GetStudentsClassbook(FileExtension extension, 
+                [FromBody] StudentsRequestDto<ClassbookResultType>request)
         {
-            var results = await _dashboardService
-                .GetStudentsClassbookAsync(request.GetStudentsRequestDto());
+            var exportService = _exportProvider.GetExportService(extension);
 
-            var classbook = await _exportService.GetStudentsClassbook(results.Data);
+            if (exportService == null)
+            {
+                return Result<FileDto>.GetError(ErrorCode.ValidationError,
+                        "Extension wasn't chosen").ToActionResult();
+            }
+
+            var results = await _dashboardService.GetStudentsClassbookAsync(request);
+
+            var classbook = await exportService.GetStudentsClassbook(results.Data);
 
             if (classbook.Error == null)
             {
@@ -65,15 +75,24 @@ namespace CharlieBackend.Api.Controllers
         /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of course groups.
         /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
+        /// <param name="extension"> extension of file that you want to get
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("studentsResults")]
+        [Route("studentsResults/{extension}")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentsResults([FromBody] StudentsRequestWithFileExtensionDto<StudentResultType> request)
+        public async Task<IActionResult> GetStudentsResults(FileExtension extension, 
+                [FromBody] StudentsRequestDto<StudentResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentsResultAsync(request.GetStudentsRequestDto());
+            var exportService = _exportProvider.GetExportService(extension);
 
-            var studentResults = await _exportService.GetStudentsResults(results.Data);
+            if (exportService == null)
+            {
+                return Result<FileDto>.GetError(ErrorCode.ValidationError,
+                        "Extension wasn't chosen").ToActionResult();
+            }
+
+            var results = await _dashboardService.GetStudentsResultAsync(request);
+
+            var studentResults = await exportService.GetStudentsResults(results.Data);
 
             if (studentResults.Error == null)
             {
@@ -92,15 +111,24 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
+        /// <param name="extension"> extension of file that you want to get
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("studentClassbook/{studentId}")]
+        [Route("studentClassbook/{studentId}/{extension}")]
         [HttpPost]
-        public async Task<IActionResult> GetStudentClassbook(long studentId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<ClassbookResultType> request)
+        public async Task<IActionResult> GetStudentClassbook(long studentId, FileExtension extension,
+                [FromBody] DashboardAnalyticsRequestDto<ClassbookResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentClassbookAsync(studentId, request.GetDashboardAnalyticsRequestDto());
+            var exportService = _exportProvider.GetExportService(extension);
 
-            var studentClassbook = await _exportService.GetStudentClassbook(results.Data);
+            if (exportService == null)
+            {
+                return Result<FileDto>.GetError(ErrorCode.ValidationError,
+                        "Extension wasn't chosen").ToActionResult();
+            }
+
+            var results = await _dashboardService.GetStudentClassbookAsync(studentId, request);
+
+            var studentClassbook = await exportService.GetStudentClassbook(results.Data);
 
             if (studentClassbook.Error == null)
             {
@@ -119,14 +147,24 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="request">In body you can mention: "startDate", "finishtDate" like optional param to filter 
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
+        /// <param name="extension"> extension of file that you want to get 
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
-        [HttpPost("studentResults/{studentId}")]
-        public async Task<IActionResult> GetStudentResults(long studentId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<StudentResultType> request)
+        [HttpPost("studentResults/{studentId}/{extension}")]
+        public async Task<IActionResult> GetStudentResults(long studentId, FileExtension extension,
+                [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
-            var results = await _dashboardService
-                .GetStudentResultAsync(studentId, request.GetDashboardAnalyticsRequestDto());
+            var exportService = _exportProvider.GetExportService(extension);
 
-            var studentResults = await _exportService.GetStudentResults(results.Data);
+            if (exportService == null)
+            {
+                return Result<FileDto>.GetError(ErrorCode.ValidationError,
+                        "Extension wasn't chosen").ToActionResult();
+            }
+
+            var results = await _dashboardService
+                .GetStudentResultAsync(studentId, request);
+
+            var studentResults = await exportService.GetStudentResults(results.Data);
 
             if (studentResults.Error == null)
             {
@@ -142,17 +180,27 @@ namespace CharlieBackend.Api.Controllers
         /// Gets report data of student group results
         /// </summary>
         /// <param name="courseId">Course id</param>
-        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter       
         /// learning period of students group.
         /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
+        /// <param name="extension"> extension of file that you want to get 
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpPost("studentGroupResults/{courseId}")]
-        public async Task<IActionResult> GetStudentGroupResults(long courseId, [FromBody] DashboardAnalyticsRequestWithFileExtensionDto<StudentGroupResultType> request)
+        [HttpPost("studentGroupResults/{courseId}/{extension}")]
+        public async Task<IActionResult> GetStudentGroupResults(long courseId, FileExtension extension,
+                [FromBody] DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
-            var results = await _dashboardService
-            .GetStudentGroupResultAsync(courseId, request.GetDashboardAnalyticsRequestDto());
+            var exportService = _exportProvider.GetExportService(extension);
 
-            var studentGroupResults = await _exportService.GetStudentGroupResults(results.Data);
+            if (exportService == null)
+            {
+                return Result<FileDto>.GetError(ErrorCode.ValidationError,
+                        "Extension wasn't chosen").ToActionResult();
+            }
+
+            var results = await _dashboardService
+            .GetStudentGroupResultAsync(courseId, request);
+
+            var studentGroupResults = await exportService.GetStudentGroupResults(results.Data);
 
 
             if (studentGroupResults.Error == null)
@@ -166,19 +214,23 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets a csv file with a list of students by group number
+        /// Gets a file with a list of students by group number
         /// </summary>
+        /// <param name="groupId"> group id of students that list you want to get
+        /// <param name="extension"> extension of file that you want to get
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("studentsOfGroup/{groupId}/{extension}")]
         public async Task<IActionResult> GetStudentsOfGroupList(long groupId, FileExtension extension)
         {
-            if (!_exportService.SetServise(extension))
+            var exportService = _exportProvider.GetExportService(extension);
+
+            if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();     
+                        "Extension wasn't chosen").ToActionResult();
             }
 
-            var resultStudentList = await _exportService.GetListofStudentsByGroupId(groupId);
+            var resultStudentList = await exportService.GetListofStudentsByGroupId(groupId);
 
             if (resultStudentList.Error == null)
             {

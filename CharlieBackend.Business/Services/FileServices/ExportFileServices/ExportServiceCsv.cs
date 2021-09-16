@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    class ExportServiceCsv : IExportService
+    public class ExportServiceCsv : IExportService
     {
         IUnitOfWork _unitOfWork;
 
