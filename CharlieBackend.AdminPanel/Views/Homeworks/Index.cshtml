@@ -96,7 +96,7 @@
 
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
-                        <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-hover" @*id="dataTable"*@ width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col-4">Deadline</th>
@@ -109,7 +109,7 @@
 
                                 @foreach (var item in Model)
                                 {
-                                    <tr class="row" id="activeMentorsRow">
+                                    <tr class="row" @*id="activeMentorsRow"*@>
                                         <td class="col-4 text-truncate">@item.DueDate</td>
                                         <td class="col-3 text-truncate">@item.TaskText</td>
                                         <td class="col-3 text-truncate">@item.PublishingDate</td>
@@ -165,6 +165,7 @@
 
 
 @section Scripts{
+
     <script type="text/javascript">
         var routeForDeleteHomework = "/Homework/DeleteHomework/";
 
