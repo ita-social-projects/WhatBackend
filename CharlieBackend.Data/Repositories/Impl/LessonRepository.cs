@@ -34,6 +34,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
+        public async Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId)
+        {
+            return await _applicationContext.Lessons
+                .Where(lesson => lesson.StudentGroupId == studentGroupId)
+                .ToListAsync();
+        }
+
         public async Task<Lesson> GetLessonByHomeworkId(long homeworkId)
         {
             var homework = await _applicationContext.Homeworks.FirstOrDefaultAsync(x => x.Id == homeworkId);

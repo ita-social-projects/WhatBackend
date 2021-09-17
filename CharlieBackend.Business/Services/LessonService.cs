@@ -127,6 +127,23 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
 
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsForStudentGroup(long studentGroupId)
+        {
+            if (studentGroupId == default)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Student Group Id please");
+            }
+
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(studentGroupId) == null)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Student Group with id {studentGroupId} is not Found");
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(studentGroupId);
+
+            return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
+        }
+
         public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel)
         {
             long accountId = _currentUserService.AccountId;
