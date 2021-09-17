@@ -273,5 +273,31 @@ namespace CharlieBackend.Api.Controllers
             Response.Headers.Add("Access-Control-Expose-Headers", "x-token, Authorization");
         }
 
+        /// <summary>
+        /// Get link for Telegram account synchronization
+        /// </summary>
+        /// <returns>URL</returns>
+        //[SwaggerResponse(200, type: typeof(SignInResponse))]
+        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
+        [Route("telegram")]
+        [HttpGet]
+        public async Task<ActionResult<string>> GetTelegramBotLink()
+        {
+            var link = await _accountService.GetTelegramBotLink();
+            return link.ToActionResult();
+        }
+
+        /// <summary>
+        /// Deletes expired Telegram tokens from database
+        /// </summary>
+        /// <returns>true</returns>
+        [Authorize(Roles = "Admin")]
+        [Route("telegram/clear")]
+        [HttpGet]
+        public async Task<bool> ClearOldTelegramTokens()
+        {
+            return await _accountService.ClearOldTelegramTokens();
+        }
+
     }
 }

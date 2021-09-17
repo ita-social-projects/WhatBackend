@@ -20,7 +20,7 @@ namespace CharlieBackend.Business.Models.Commands
         {
             _dashboardService = dashboardService;
         }
-        public override async Task Execute(Message message, TelegramBotClient client)
+        public override async Task<string> Execute(Message message, TelegramBotClient client)
         { 
             var chatId = message.Chat.Id;
             var messageId = message.MessageId;
@@ -49,7 +49,7 @@ namespace CharlieBackend.Business.Models.Commands
 
             var recentMark = results.Data.StudentMark;
             var replyMessage = string.Format("Your recent mark is {0}", recentMark.ToString());
-            await client.SendTextMessageAsync(chatId, replyMessage, replyToMessageId: messageId);
+            return (await client.SendTextMessageAsync(chatId, replyMessage, replyToMessageId: messageId)).Text;
 
         }
     }

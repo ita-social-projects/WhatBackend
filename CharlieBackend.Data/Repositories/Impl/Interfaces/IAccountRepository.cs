@@ -31,5 +31,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public void UpdateAccountCredentials(Account account);
 
         public Task<Account> GetAccountCredentialsByEmailAsync(string email);
+
+        public Task<Account> GetAccountByTelegramToken(string token);
+
+        public Task<List<Account>> GetAllAccountsWithTelegramTokens();
     }
 }

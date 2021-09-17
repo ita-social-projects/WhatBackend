@@ -8,11 +8,11 @@ namespace CharlieBackend.Business.Models.Commands
     {
         public abstract string Name { get; }
 
-        public abstract Task Execute(Message message, TelegramBotClient client);
+        public abstract Task<string> Execute(Message message, TelegramBotClient client);
 
         public bool Contains(string command) 
         {
-            return command.Contains(this.Name) && command.Contains(AppSettings.Name);
+            return command.Contains(this.Name);
         }
     }
 }

@@ -8,12 +8,12 @@ namespace CharlieBackend.Business.Models.Commands
     {
         public override string Name => "Hello";
 
-        public override async Task Execute(Message message, TelegramBotClient client)
+        public override async Task<string> Execute(Message message, TelegramBotClient client)
         {
             var chatId = message.Chat.Id;
             var messageId = message.MessageId;
 
-            await client.SendTextMessageAsync(chatId, "Hello!", replyToMessageId: messageId);
+            return (await client.SendTextMessageAsync(chatId, "Hello!", replyToMessageId: messageId)).Text;
         }
     }
 }

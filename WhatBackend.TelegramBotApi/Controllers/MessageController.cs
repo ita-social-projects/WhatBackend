@@ -34,7 +34,7 @@ namespace WhatBackend.TelergamBot.Controllers
             {
                 if (command.Contains(message.Text))
                 {
-                    await command.Execute(message, client);
+                    var result = await command.Execute(message, client);
                     break;
                 }
             }

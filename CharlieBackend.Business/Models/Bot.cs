@@ -20,12 +20,16 @@ namespace CharlieBackend.Business.Models
             {
                 return _client;
             }
+
+            var startCommand = services.GetRequiredService<StartCommand>();
             var helloCommand = services.GetRequiredService<HelloCommand>();
             var getMarkCommand = services.GetRequiredService<GetMarkCommand>();
-
+            
             _commandsList = new List<Command>();
+            _commandsList.Add(startCommand);
             _commandsList.Add(helloCommand);
             _commandsList.Add(getMarkCommand);
+
 
             _client = new TelegramBotClient(AppSettings.Key);
             var hook = AppSettings.Url + "/api/bot/message/update";

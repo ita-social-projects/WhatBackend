@@ -1,10 +1,6 @@
 using AutoMapper;
-using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Data;
-using CharlieBackend.Data.Repositories.Impl;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using CharlieBackend.Business.Models;
 using CharlieBackend.Business.Models.Commands;
+using CharlieBackend.Root;
+using WhatBackend.TelegramBotApi.Extensions;
 
 namespace WhatBackend.TelegramBotApi
 {
@@ -39,14 +37,15 @@ namespace WhatBackend.TelegramBotApi
                   b => b.MigrationsAssembly("CharlieBackend.TelegramBotApi"));
             });
 
+            CompositionRoot.InjectDependencies(services, Configuration);
 
+            services.AddScoped<StartCommand>();
             services.AddScoped<HelloCommand>();
             services.AddScoped<GetMarkCommand>();
 
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IDashboardRepository, DashboardRepository>();
-            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
+
+            services.AddAzureStorageBlobs(Configuration.GetConnectionString("AzureBlobsAccessKey"));
 
             services.AddHttpContextAccessor();
             var mappingConfig = new MapperConfiguration(mc =>

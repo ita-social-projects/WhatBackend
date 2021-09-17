@@ -132,5 +132,18 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Accounts
                         .FirstOrDefaultAsync(account => account.Email == email);
         }
+
+        public async Task<Account> GetAccountByTelegramToken(string token)
+        {
+            return await _applicationContext.Accounts
+                .FirstOrDefaultAsync(account => account.TelegramToken == token);
+        }
+
+        public async Task<List<Account>> GetAllAccountsWithTelegramTokens()
+        {
+            return await _applicationContext.Accounts
+                .Where(account => account.TelegramToken != null)
+                .ToListAsync();
+        }
     }
 }
