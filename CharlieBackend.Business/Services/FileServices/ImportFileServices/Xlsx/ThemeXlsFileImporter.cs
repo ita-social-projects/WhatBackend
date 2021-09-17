@@ -3,43 +3,26 @@ using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using ClosedXML.Excel;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class ThemeXlsFileImporter : IThemeXlsFileImporter
+    public class ThemeXlsFileImporter
     {
-        private readonly IBaseFileService _baseFileService;
         private readonly IThemeService _themeService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ThemeXlsFileImporter(IBaseFileService baseFileService,
-                                 IThemeService themeService,
+        public ThemeXlsFileImporter(IThemeService themeService,
                                  IUnitOfWork unitOfWork)
         {
-            _baseFileService = baseFileService;
             _themeService = themeService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(IFormFile file)
+        public async Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(string filePath)
         {
-            if (file == null)
-            {
-                return Result<IEnumerable<ThemeDto>>.GetError(ErrorCode.ValidationError, "File was not provided");
-            }
-
-            if (!_baseFileService.IsFileExtensionValid(file))
-            {
-                return Result<IEnumerable<ThemeDto>>.GetError(ErrorCode.ValidationError, "File extension not supported");
-            }
-
-            var filePath = await _baseFileService.UploadFileAsync(file);
-
             var themes = new List<ThemeDto>();
 
             using (IXLWorkbook book = new XLWorkbook(filePath))
@@ -60,11 +43,10 @@ namespace CharlieBackend.Business.Services.FileServices
                 }
             }
 
-            File.Delete(filePath);
-
             await _unitOfWork.CommitAsync();
 
             return Result<IEnumerable<ThemeDto>>.GetSuccess(themes);
         }
+
     }
 }

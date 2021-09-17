@@ -6,36 +6,53 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class BaseFileService : IBaseFileService
+    public class FileService : IFileService
     {
-        private readonly string _basePath = @"Upload\Files";
+        private const string BASE_PATH = @"Upload\Files";
+
+        public string CurrentFilePath { get; private set; }
+
+        public FileService()
+        {
+            CurrentFilePath = string.Empty;
+        }
 
         public async Task<string> UploadFileAsync(IFormFile file)
         {
             string generatedFileName = DateTime.Now.Ticks + Path.GetExtension(file.FileName);
 
-            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), _basePath);
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH);
 
             if (!Directory.Exists(fullPath))
             {
                 Directory.CreateDirectory(fullPath);
             }
 
-            string fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), _basePath, generatedFileName);
+            string fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH, generatedFileName);
 
             using (var stream = new FileStream(fullFilePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
+            CurrentFilePath = fullFilePath;
+
             return fullFilePath;
         }
-        //TODO
-        public bool IsFileExtensionValid(IFormFile file)
+
+        public bool IsFileExtensionValid(IFormFile file, out FileExtension extension)
         {
             return Enum.TryParse(value: Path.GetExtension(file.FileName)[1..],
                                  ignoreCase: true,
-                                 result: out FileExtension _);
+                                 result: out extension);
+        }
+
+        public void Dispose()
+        {
+            if (File.Exists(CurrentFilePath))
+            {
+                File.Delete(CurrentFilePath);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Helpers;
+﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Student;
@@ -7,58 +6,36 @@ using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using ClosedXML.Excel;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices
 {
-    public class StudentsGroupXlsxFileImporter : IStudentsGroupXlsxFileImporter
+    public class StudentsGroupXlsxFileImporter
     {
-        private readonly IBaseFileService _baseFileService;
-        private readonly IMapper _mapper;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IStudentService _studentService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccountService _accountService;
 
         public StudentsGroupXlsxFileImporter(
-            IBaseFileService baseFileService,
-            IMapper mapper,
             IStudentGroupService studentGroupService,
             IStudentService studentService,
             IAccountService accountService,
             IUnitOfWork unitOfWork)
         {
-            _baseFileService = baseFileService;
-            _mapper = mapper;
             _studentGroupService = studentGroupService;
             _studentService = studentService;
             _accountService = accountService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<GroupWithStudentsDto>> ImportGroupAsync(long courseId, IFormFile file)
+        public async Task<Result<GroupWithStudentsDto>> ImportGroupAsync(
+                CreateStudentGroupDto studentGroup, string filePath)
         {
-            #region pre_validation
-            if (file == null)
-            {
-                return Result<GroupWithStudentsDto>.GetError(ErrorCode.ValidationError, "File was not provided");
-            }
-
-            if (!_baseFileService.IsFileExtensionValid(file))
-            {
-                return Result<GroupWithStudentsDto>.GetError(ErrorCode.ValidationError, "File extension not supported");
-            }
-            #endregion
-
-            var filePath = await _baseFileService.UploadFileAsync(file);
-
             var students = new List<StudentDto>();
-
             var detailedGroup = new GroupWithStudentsDto();
 
             using (IXLWorkbook book = new XLWorkbook(filePath))
@@ -66,7 +43,7 @@ namespace CharlieBackend.Business.Services.FileServices
                 #region group_creation
                 var group = await _studentGroupService.CreateStudentGroupAsync(new CreateStudentGroupDto
                 {
-                    CourseId = courseId,
+                    CourseId = studentGroup.CourseId,
                     Name = book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.GroupName).GetValue<string>(),
                     StartDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.StartDate).GetValue<string>()),
                     FinishDate = Convert.ToDateTime(book.Worksheet(1).Row(2).Cell((int)StudentsGroupWorksheetHeader.FinishDate).GetValue<string>()),
@@ -119,8 +96,6 @@ namespace CharlieBackend.Business.Services.FileServices
 
                 detailedGroup.Students = students;
             }
-
-            File.Delete(filePath);
 
             await _unitOfWork.CommitAsync();
 
