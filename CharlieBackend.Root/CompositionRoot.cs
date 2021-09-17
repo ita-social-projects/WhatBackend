@@ -1,8 +1,8 @@
 ﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services;
-using CharlieBackend.Business.Services.FileServices;
 using CharlieBackend.Business.Services.FileServices.ExportFileServices;
+using CharlieBackend.Business.Services.FileServices.ImportFileServices;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
@@ -57,14 +57,15 @@ namespace CharlieBackend.Root
             services.AddScoped<ExportServiceXlsx>();
             services.AddScoped<ExportServiceCsv>();
             services.AddScoped<IExportServiceProvider, ExportServiceProvider>();
+            services.AddScoped<ServiceOperatorXlsx>();
+            services.AddScoped<ServiceOperatorCsv>();
+            services.AddScoped<IOperatorImportProvider, ImportOperatorProvider>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAttachmentService, AttachmentService>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             services.AddScoped<IBlobService, BlobService>();
-            services.AddScoped<IBaseFileService, BaseFileService>();
-            services.AddScoped<IStudentsGroupXlsxFileImporter, StudentsGroupXlsxFileImporter>();
-            services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
+            services.AddScoped<IServiseImport, ServiceImport>();
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             services.AddScoped<IEventsService, EventsService>();
