@@ -6,7 +6,35 @@
     Layout = "_Layout";
 }
 
-<div class="text-center">
+<div class="text-center" id="helloDiv">
     <h1 class="display-4">Welcome</h1>
-    <p>You are in the admin panel</p>
+    <p>You are in the WHAT MVC Client</p>
 </div>
+@{
+    Dictionary<string, string> tokens = TempData["authTokens"] as Dictionary<string, string>;
+
+    if (tokens != null)
+    {
+        foreach (var token in tokens)
+        {
+            <script>
+                console.log(`@token.Key`);
+                localStorage.setItem(`@token.Key` +`Token`, `@token.Value`);
+            </script>
+        }
+    }
+}
+
+<script>
+    let h1 = document.createElement('h1');
+    h1.innerHTML = `You are logged in as a ${getCookie("currentRole")}`
+    let helloDiv = document.getElementById('helloDiv');
+    helloDiv.appendChild(h1);
+
+    function getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+</script>

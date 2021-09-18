@@ -1,11 +1,13 @@
-﻿using CharlieBackend.Core.DTO.Account;
+﻿using CharlieBackend.AdminPanel.Models.Account;
+using CharlieBackend.Core.DTO.Account;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Utils.Interfaces
 {
     public interface IApiUtil
     {
-        public Task<string> SignInAsync(string url, AuthenticationDto authModel);
+        public Task<SignInResultDto> SignInAsync(string url, AuthenticationDto authModel);
 
         public Task<TResponse> GetAsync<TResponse>(string url);
 

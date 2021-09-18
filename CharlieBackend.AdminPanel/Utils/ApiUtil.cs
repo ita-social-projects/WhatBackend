@@ -1,5 +1,7 @@
-﻿using CharlieBackend.AdminPanel.Utils.Interfaces;
+﻿using CharlieBackend.AdminPanel.Models.Account;
+using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +19,13 @@ namespace CharlieBackend.AdminPanel.Utils
             _httpUtil = httpUtil;
         }
 
-        public async Task<string> SignInAsync(string url, AuthenticationDto authModel)
+        public async Task<SignInResultDto> SignInAsync(string url, AuthenticationDto authModel)
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, authModel);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            var responseModel = JsonConvert.DeserializeObject<AuthenticationResponseDto>(stringResponse);
 
             if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -28,12 +34,13 @@ namespace CharlieBackend.AdminPanel.Utils
 
             httpResponse.Headers.TryGetValues("Authorization", out IEnumerable<string> token);
 
-            if (token == null)
+            var result = new SignInResultDto
             {
-                return null;
-            }
+                RoleList = responseModel.RoleList,
+                Token = token.FirstOrDefault()
+            };
 
-            return token.FirstOrDefault();
+            return result;
         }
 
         public async Task<TResponse> GetAsync<TResponse>(string url)

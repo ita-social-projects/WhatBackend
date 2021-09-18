@@ -4,7 +4,7 @@ using System.Web;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
     public class HomeController : Controller
     {
         public IActionResult Index()

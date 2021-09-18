@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CharlieBackend.AdminPanel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Account;
@@ -44,14 +43,39 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
-            var httpResponseToken = (await _apiUtil.SignInAsync($"api/accounts/auth", authDto)).Replace("Bearer ", "");
+            var responseModel = (await _apiUtil.SignInAsync($"api/accounts/auth", authDto));
 
-            if (httpResponseToken == null || !await AuthenticateAdmin(httpResponseToken))
+            var token = responseModel.Token.Replace("Bearer ", "");
+            
+            if (token == null || !await Authenticate(token))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            Response.Cookies.Append("accessToken", _protector.Protect(httpResponseToken));
+            Dictionary<string, string> roleList = new Dictionary<string, string>();
+
+            foreach (var item in responseModel.RoleList)
+            {
+                string value = _protector.Protect((item.Value.Replace("Bearer ", "")));
+                roleList.Add(item.Key, value);
+            }
+
+            Response.Cookies.Append("accessToken", _protector.Protect(token));
+
+            TempData["authTokens"] = roleList;
+
+            return RedirectToAction("Index", "Home");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ChangeRole()
+        {
+            Request.Cookies.TryGetValue("accessToken", out string token);
+            token = _protector.Unprotect(token);
+            
+            await Authenticate(token);
+
+            Response.Cookies.Append("accessToken", _protector.Protect(token));
 
             return RedirectToAction("Index", "Home");
         }
@@ -59,12 +83,13 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Login", "Account");
         }
 
-        private async Task<bool> AuthenticateAdmin(string token)
+        private async Task<bool> Authenticate(string token)
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -72,10 +97,7 @@ namespace CharlieBackend.AdminPanel.Controllers
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
-            if(role != "Admin")
-            {
-                return false;
-            }
+            Response.Cookies.Append("currentRole", role);
 
             var claims = new List<Claim>
             {

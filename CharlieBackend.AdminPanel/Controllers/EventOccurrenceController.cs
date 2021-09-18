@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Secretary")]
     [Route("[controller]/[action]")]
     public class EventOccurrenceController : Controller
     {

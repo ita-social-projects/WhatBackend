@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Secretary")]
     public class CalendarController : Controller
     {
         private readonly ICalendarService _calendarService;
