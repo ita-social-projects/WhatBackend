@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Business.Services.FileServices
+namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Xlsx
 {
     public class ThemeXlsFileImporter
     {

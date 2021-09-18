@@ -227,9 +227,15 @@ namespace CharlieBackend.Business.Services
             var student = await _unitOfWork.StudentRepository
                     .GetStudentByEmailAsync(email);
 
-            var studentDto = _mapper.Map<StudentDto>(student);
+            if (student != null)
+            {
+                var studentDto = _mapper.Map<StudentDto>(student);
 
-            return Result<StudentDto>.GetSuccess(studentDto);
+                return Result<StudentDto>.GetSuccess(studentDto);
+            }
+
+            return Result<StudentDto>.GetError(ErrorCode.NotFound,
+                    "Student wasn't found by email");
         }
 
         public async Task<Result<bool>> DisableStudentAsync(long id)
