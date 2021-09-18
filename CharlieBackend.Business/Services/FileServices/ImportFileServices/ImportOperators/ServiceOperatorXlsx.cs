@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.FileServices.ImportFileServices.Xlsx;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.Models.ResultModel;
@@ -6,7 +7,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
+namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportOperators
 {
     public class ServiceOperatorXlsx : IOperatorImport
     {
@@ -33,8 +34,7 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
                 CreateStudentGroupDto studentGroup, string filePath)
         {
             var groupCreator = new StudentsGroupXlsxFileImporter(
-                    _studentGroupService, _studentService,
-                    _accountService, _unitOfWork);
+                    _studentGroupService, _studentService, _accountService);
 
             return groupCreator.ImportGroupAsync(studentGroup, filePath);
         }

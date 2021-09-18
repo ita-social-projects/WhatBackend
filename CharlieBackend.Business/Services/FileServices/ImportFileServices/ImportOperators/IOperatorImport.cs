@@ -4,7 +4,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
+namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportOperators
 {
     public interface IOperatorImport
     {
