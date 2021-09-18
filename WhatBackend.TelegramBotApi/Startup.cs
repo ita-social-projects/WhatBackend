@@ -19,33 +19,28 @@ namespace WhatBackend.TelegramBotApi
     {
         public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            Configuration = builder.Build();
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime.
+        // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
-                  b => b.MigrationsAssembly("CharlieBackend.TelegramBotApi"));
-            });
-
             CompositionRoot.InjectDependencies(services, Configuration);
 
             services.AddScoped<StartCommand>();
             services.AddScoped<HelloCommand>();
             services.AddScoped<GetMarkCommand>();
 
-            services.AddEasyNetQ(Configuration.GetConnectionString("RabbitMQ"));
+            services.AddCors();
 
-            services.AddAzureStorageBlobs(Configuration.GetConnectionString("AzureBlobsAccessKey"));
+            services.AddEasyNetQ(Configuration
+                .GetConnectionString("RabbitMQ"));
+
+            services.AddAzureStorageBlobs(Configuration
+                .GetConnectionString("AzureBlobsAccessKey"));
 
             services.AddHttpContextAccessor();
             var mappingConfig = new MapperConfiguration(mc =>
@@ -58,12 +53,21 @@ namespace WhatBackend.TelegramBotApi
             services.AddControllers().AddNewtonsoftJson();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        // This method gets called by the runtime.
+        // Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IServiceProvider serviceProvider,
+            ApplicationContext dbContext)
         {
-            var url = Configuration.GetSection("BotSettings").GetSection("Url").Value;
-            var key = Configuration.GetSection("BotSettings").GetSection("Key").Value;
-            var name = Configuration.GetSection("BotSettings").GetSection("Name").Value;
+            dbContext.Database.EnsureCreated();
+
+            var url = Configuration.GetSection("BotSettings")
+                .GetSection("Url").Value;
+            var key = Configuration.GetSection("BotSettings")
+                .GetSection("Key").Value;
+            var name = Configuration.GetSection("BotSettings")
+                .GetSection("Name").Value;
             AppSettings.GetData(url, key, name);
 
             Bot.Get(serviceProvider).Wait();

@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using CharlieBackend.Business.Models;
+using System.Collections.Generic;
 
 namespace WhatBackend.TelergamBot.Controllers
 {
@@ -11,10 +12,12 @@ namespace WhatBackend.TelergamBot.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly Dictionary<MessageHeader, Message> _messages;
 
         public MessageController(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
+            _messages = new Dictionary<MessageHeader, Message>();
         }
         [HttpGet]
         public string Get()
@@ -26,17 +29,36 @@ namespace WhatBackend.TelergamBot.Controllers
         [HttpPost]
         public async Task<OkResult> Update([FromBody] Update update)
         {
+            var client = await Bot.Get(_serviceProvider);
             var commands = Bot.Commands;
             var message = update.Message ?? update.EditedMessage;
-            var client = await Bot.Get(_serviceProvider);
 
-            foreach (var command in commands)
-            {
-                if (command.Contains(message.Text))
+            var isNewMessage = _messages.TryAdd(
+                new MessageHeader()
                 {
-                    var result = await command.Execute(message, client);
-                    break;
+                    ChatId = message.Chat.Id,
+                    MessageId = message.MessageId
+                },
+                message);
+
+            if(isNewMessage)
+            {
+                
+
+                foreach (var command in commands)
+                {
+                    if (command.Contains(message.Text))
+                    {
+                        var result = await command.Execute(message, client);
+                        break;
+                    }
                 }
+
+                _messages.Remove(new MessageHeader()
+                {
+                    ChatId = message.Chat.Id,
+                    MessageId = message.MessageId
+                });
             }
 
             return Ok();

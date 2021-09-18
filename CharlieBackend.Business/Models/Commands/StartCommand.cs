@@ -1,4 +1,8 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -28,11 +32,12 @@ namespace CharlieBackend.Business.Models.Commands
                 var result = await _accountService
                     .SynchronizeTelegramAccount(token, chatId.ToString());
 
-                if(result.Error != null)
+                if (result.Error != null)
                 {
                     response += result.Error.Message;
                     response += "\n";
                 }
+
             }
 
             response += "Hello! I'm a Telegram bot of WHAT. " +

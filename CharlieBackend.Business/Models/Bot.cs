@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using CharlieBackend.Business.Models.Commands;
+using CharlieBackend.Data;
 
 namespace CharlieBackend.Business.Models
 {
@@ -16,11 +17,6 @@ namespace CharlieBackend.Business.Models
         public static IReadOnlyCollection<Command> Commands { get => _commandsList.AsReadOnly(); }
         public static async Task<TelegramBotClient> Get(IServiceProvider services)
         {
-            if (_client!=null)
-            {
-                return _client;
-            }
-
             var startCommand = services.GetRequiredService<StartCommand>();
             var helloCommand = services.GetRequiredService<HelloCommand>();
             var getMarkCommand = services.GetRequiredService<GetMarkCommand>();
