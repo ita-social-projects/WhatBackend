@@ -91,13 +91,6 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Base
                 }
                 else
                 {
-                    if (studentSearch.Error != null)
-                    {
-                        return Result<IList<StudentDto>>.GetError(
-                                studentSearch.Error.Code,
-                                studentSearch.Error.Message);
-                    }
-
                     var student = await _studentService.CreateStudentAsync(
                            account.Id);
 
