@@ -23,15 +23,17 @@ namespace CharlieBackend.Api.Controllers
         private readonly IStudentGroupService _studentGroupService;
         private readonly IHomeworkService _homeworkService;
         private readonly ILessonService _lessonService;
+        private readonly IScheduleService _scheduleService;
 
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, ILessonService lessonService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, ILessonService lessonService, IScheduleService scheduleService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
             _lessonService = lessonService;
+            _scheduleService = scheduleService;
         }
 
         /// <summary>
@@ -50,7 +52,18 @@ namespace CharlieBackend.Api.Controllers
             }
             else
             {
-                await _studentGroupService.DeleteStudentGroupAsync(id);
+                bool result = await _studentGroupService.DeleteStudentGroupAsync(id);
+
+                if (result)
+                {
+                    var scheduledEvents = _scheduleService.GetEventOccurrencesByGroupIdAsync(id).Result;
+
+                    foreach (var x in scheduledEvents.Data)
+                    {
+                        await _scheduleService.DeleteScheduleByIdAsync(x.Id.Value, null, null);
+                    }
+                }
+
                 return Ok("Student group is deleted.");
             }
         }

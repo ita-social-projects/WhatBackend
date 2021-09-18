@@ -248,7 +248,7 @@ namespace CharlieBackend.Business.Services
             }
             else
             {
-                result =  _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
+                result = _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
             }
 
             await _unitOfWork.CommitAsync();
