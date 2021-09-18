@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             _courseService = courseService;
         }
 
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         public async Task<IActionResult> AllCourses()
         {
@@ -23,6 +25,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(courses);
         }
 
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpPost]
         public async Task<IActionResult> AddCourse(CreateCourseDto courseDto)
         {
@@ -31,6 +34,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllCourses", "Courses");
         }
 
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateCourse(long id, UpdateCourseDto updateCourseDto)
         {
@@ -39,6 +43,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllCourses", "Courses");
         }
 
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet("{id}")]
         public async Task<IActionResult> EnableCourse(long id)
         {
@@ -47,6 +52,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("AllCourses", "Courses");
         }
 
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet("{id}")]
         public async Task<IActionResult> DisableCourse(long id)
         {

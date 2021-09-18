@@ -56,7 +56,7 @@ namespace CharlieBackend.AdminPanel
             services.AddAuthorization();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>
-                {
+                 {
                      options.LoginPath = new PathString("/Account/Login");
                  });
 
