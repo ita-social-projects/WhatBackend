@@ -183,26 +183,59 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkForStudent(HomeworkForStudentDto homeworkForStudent)
+        public async Task<Result<IList<HomeworkStudentDto>>> GetStudentHomeworkInGroup(HomeworkStudentFilter homeworkStudentFilter)
         {
             long accountId = _currentUserService.AccountId;
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-           var group = await  _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+            var group = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
 
-            if (!group.Contains(homeworkForStudent.GroupId))
+            if (!group.Contains(homeworkStudentFilter.GroupId))
             {
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
             }
 
-            var homeworks = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(student.Id, homeworkForStudent.StartDate,
-                homeworkForStudent.FinishtDate, homeworkForStudent.GroupId);
+            var homeworksStudents = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(student.Id, homeworkStudentFilter.StartDate,
+                homeworkStudentFilter.FinishtDate, homeworkStudentFilter.GroupId);
 
-            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworks);
+            foreach (HomeworkStudent homeworkStudent in homeworksStudents)
+            {
+                if (homeworkStudent.IsSent == false)
+                {
+                    var getHictoryHomework = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistory(student.Id, homeworkStudentFilter.GroupId, homeworkStudent.Id);
+                    if (getHictoryHomework == null)
+                    {
+                        continue;
+                    }
+                    homeworkStudent.HomeworkText = getHictoryHomework.HomeworkText;
+                    homeworkStudent.Mark = getHictoryHomework.Mark;
+                    homeworkStudent.PublishingDate = getHictoryHomework.PublishingDate;
+                    homeworkStudent.IsSent = true;
+                    homeworkStudent.MarkId = getHictoryHomework.MarkId;
+                    homeworkStudent.AttachmentOfHomeworkStudents = getHictoryHomework.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
+              new AttachmentOfHomeworkStudent()
+              {
+                  Attachment = elem.Attachment,
+                  AttachmentId = elem.AttachmentId,
+                  HomeworkStudent = homeworkStudent,
+                  HomeworkStudentId = elem.HomeworkStudentHistoryId
+              }).ToList();
+                }
+            }
 
+            var resultList = new List<HomeworkStudent>();
+
+            foreach (var homeworkStudent in homeworksStudents)
+            {
+                if (homeworkStudent.IsSent == true)
+                {
+                    resultList.Add(homeworkStudent);
+                }
+            }
+
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(resultList);
             return Result<IList<HomeworkStudentDto>>.GetSuccess(result);
-
         }
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId)
@@ -293,7 +326,7 @@ namespace CharlieBackend.Business.Services
 
             long accountId = _currentUserService.AccountId;
             var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
-            
+
             if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
             {
                 homeworkStudentHistory.Last().Mark.Value = request.StudentMark;

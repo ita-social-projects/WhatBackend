@@ -66,9 +66,9 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
         [HttpGet]
-        public async Task<ActionResult> GetHomeworkForStudent([FromQuery] HomeworkForStudentDto homeworkForStudent)
+        public async Task<ActionResult> GetStudentHomeworkInGroup([FromQuery] HomeworkStudentFilter homeworkForStudent)
         {
-            var results = await _homeworkStudentService.GetHomeworkForStudent(homeworkForStudent);
+            var results = await _homeworkStudentService.GetStudentHomeworkInGroup(homeworkForStudent);
 
             return results.ToActionResult();
         }

@@ -45,13 +45,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(x => x.Student)
                 .Include(x => x.Student.Account)
                 .Include(x => x.Mark)
-                .WhereIf(startDate != null && startDate !=default(DateTime),
+                .WhereIf(startDate != null && startDate != default(DateTime),
                  x => x.PublishingDate >= startDate)
                 .WhereIf(finishDate != null && finishDate != default(DateTime),
                 x => x.PublishingDate <= finishDate)
                 .Where(x => x.StudentId == studentId && x.Homework.Lesson.StudentGroupId == groupId)
                 .ToListAsync();
         }
+
         public async Task<IList<HomeworkStudent>> GetHomeworkStudentForStudent(long studentId)
         {
             return await _applicationContext.HomeworkStudents
