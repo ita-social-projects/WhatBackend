@@ -135,5 +135,21 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return visit;
         }
+        public async Task<IList<long?>> GetStudentGroupsOfThemesAsync(long themeId)
+        {
+            return await _applicationContext.Lessons
+                        .Where(x => x.ThemeId == themeId)
+                        .Select(x => x.StudentGroupId)
+                        .ToListAsync();
+        }
+        public async Task<IList<long>> GetLessonIds(IList<long> groups, long themeId)
+        {
+            return await _applicationContext.Lessons
+                        .Where(x => x.ThemeId == themeId)
+                        .Where(x => groups
+                        .Contains((long)x.StudentGroupId))
+                        .Select(x => x.Id)
+                        .ToListAsync();
+        }
     }
 }

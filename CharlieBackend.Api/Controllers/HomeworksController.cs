@@ -1,5 +1,6 @@
 ﻿using System;
 using CharlieBackend.Core;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.DTO.Homework;
@@ -52,6 +53,24 @@ namespace CharlieBackend.Api.Controllers
         {
             var results = await _homeworkService
                         .GetHomeworkByIdAsync(id);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets conditions of homework
+        /// </summary>
+        /// <param name="request">
+        /// 1. Mention "groupId" or "courseId" or "themeId" to get homework of a specific group, course, theme.
+        /// 2. You can mention optional parameters — "startDate", "finishtDate" to get homework depending on publishing date of homework
+        /// </param>
+        [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
+        [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [HttpPost("getHomework")]
+        public async Task<ActionResult> GetHomework([FromBody] GetHomeworkRequestDto request)
+        {
+            var results = await _homeworkService
+                        .GetHomeworkAsync(request);
 
             return results.ToActionResult();
         }

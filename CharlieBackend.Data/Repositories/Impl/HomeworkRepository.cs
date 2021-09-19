@@ -6,6 +6,8 @@ using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -39,6 +41,49 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => x.LessonId == lessonId).ToListAsync();
         }
 
+        public async Task<IList<Homework>> GetHomeworksForMentorByCourseId(long courseId)
+        {
+            return await _applicationContext.Homeworks
+                   .Include(m => m.Lesson)
+                   .Include(m => m.AttachmentsOfHomework)
+                   .Where(l => l.Lesson.StudentGroup.CourseId == courseId)
+
+                   .ToListAsync();
+        }
+        public async Task<IList<Homework>> GetHomework(GetHomeworkRequestDto request)
+        {
+            return await _applicationContext.Homeworks
+                    .Include(m => m.Lesson)
+                    .Include(m => m.AttachmentsOfHomework)
+                    .WhereIf(request.GroupId.HasValue,
+                            l => l.Lesson.StudentGroupId == request.GroupId)
+                    .WhereIf(request.CourseId.HasValue,
+                            l => l.Lesson.StudentGroup.CourseId == request.CourseId)
+                    .WhereIf(request.ThemeId.HasValue,
+                            t => t.Lesson.ThemeId == request.ThemeId)
+                    .WhereIf(request.StartDate.HasValue,
+                            d => d.PublishingDate >= request.StartDate)
+                    .WhereIf(request.FinishDate.HasValue,
+                            d => d.PublishingDate <= request.FinishDate)
+                    .ToListAsync(); 
+        } 
+        public async Task<IList<Homework>> GetHomeworkForThemeFilter(GetHomeworkRequestDto request, IList<long> lessonIds)
+        {
+            return await _applicationContext.Homeworks
+                    .Include(x => x.Lesson)
+                    .Include(x => x.AttachmentsOfHomework)
+                    .Where(x => lessonIds
+                        .Contains(x.LessonId))
+                    .WhereIf(request.GroupId.HasValue,
+                            l => l.Lesson.StudentGroupId == request.GroupId)
+                    .WhereIf(request.CourseId.HasValue,
+                            l => l.Lesson.StudentGroup.CourseId == request.CourseId)
+                    .WhereIf(request.StartDate.HasValue,
+                            d => d.PublishingDate >= request.StartDate)
+                    .WhereIf(request.FinishDate.HasValue,
+                            d => d.PublishingDate <= request.FinishDate)
+                    .ToListAsync();
+        }
         public async Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId)
         {
             return await _applicationContext.Homeworks

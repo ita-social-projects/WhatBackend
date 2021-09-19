@@ -17,7 +17,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<Result<Course>> DisableCourseByIdAsync(long id);
 
         Task<Result<Course>> EnableCourseByIdAsync(long id);
-
+        Task<int> GetMentorCourseAsync(long mentorId, long? courseId);
+        Task<long> GetCourseOfGroupAsync(long mentorId, long? groupId);
         Task<bool> IsCourseHasGroupAsync(long id);
 
         Task<IList<Course>> GetCoursesAsync(bool? isActive);
