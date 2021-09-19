@@ -28,7 +28,8 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, ILessonService lessonService, IScheduleService scheduleService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, 
+            ILessonService lessonService, IScheduleService scheduleService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
@@ -168,6 +169,28 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Merges student groups
+        /// </summary>
+        /// <response code="200">Successful merging</response>
+        [SwaggerResponse(200, type: typeof(StudentGroupDto))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpPost("merge")]
+        public async Task<ActionResult<StudentGroupDto>> MergeStudentGroups([FromBody] MergeStudentGroupsDto groupsToMerge)
+        {
+            var result = await _studentGroupService.MergeStudentGroupsAsync(groupsToMerge);
+
+            if (result.Data != null)
+            {
+                foreach (var groupId in groupsToMerge.IdsOfStudentGroupsToMerge)
+                {
+                    await DeleteStudentGroup(groupId);
+                }
+            }
+
+            return result.ToActionResult();
         }
     }
 }

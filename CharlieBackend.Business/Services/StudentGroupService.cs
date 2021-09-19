@@ -415,5 +415,50 @@ namespace CharlieBackend.Business.Services
                                  isMoreThenOneId ? null : "es",
                                  string.Join(", ", ids));
         }
+
+        public async Task<Result<StudentGroupDto>> MergeStudentGroupsAsync(MergeStudentGroupsDto groupsToMerge)
+        {
+            var resultingStudentGroup = await GetStudentGroupByIdAsync(groupsToMerge.ResultingStudentGroupId);
+            List<StudentGroupDto> studentGroups;
+
+            if (resultingStudentGroup.Data == null)
+            {
+                return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Resulting student group not found");
+            }
+            else
+            {
+                studentGroups = new List<StudentGroupDto>();
+
+                foreach (var groupId in groupsToMerge.IdsOfStudentGroupsToMerge)
+                {
+                    var group = await GetStudentGroupByIdAsync(groupId);
+
+                    if (group.Data == null)
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group not found");
+                    }
+                    else
+                    {
+                        studentGroups.Add(group.Data);
+                    }
+                }
+            }
+            
+            foreach(var groupToMerge in studentGroups)
+            {
+                resultingStudentGroup.Data.StudentIds = resultingStudentGroup.Data.StudentIds.Union(groupToMerge.StudentIds).ToList();
+            }
+
+            var groupToUpdate = new UpdateStudentGroupDto {
+                Name = resultingStudentGroup.Data.Name,
+                CourseId = resultingStudentGroup.Data.CourseId.Value,
+                MentorIds = resultingStudentGroup.Data.MentorIds,
+                StartDate = resultingStudentGroup.Data.StartDate,
+                FinishDate = resultingStudentGroup.Data.FinishDate,
+                StudentIds = resultingStudentGroup.Data.StudentIds
+            };
+
+            return await UpdateStudentGroupAsync(groupsToMerge.ResultingStudentGroupId, groupToUpdate);
+        }
     }
 }
