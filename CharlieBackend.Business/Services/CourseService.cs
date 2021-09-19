@@ -13,13 +13,11 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICurrentUserService _currentUserService;
 
-        public CourseService(IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
+        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _currentUserService = currentUserService;
         }
 
         public async Task<Result<CourseDto>> CreateCourseAsync(CreateCourseDto courseDto)
