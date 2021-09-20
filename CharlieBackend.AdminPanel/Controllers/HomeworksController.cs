@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.AdminPanel.Models.Course;
+using CharlieBackend.AdminPanel.Models.Homework;
 using CharlieBackend.AdminPanel.Models.Lesson;
 using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
@@ -119,10 +120,9 @@ namespace CharlieBackend.AdminPanel.Controllers
         [HttpGet()]
         public async Task<IActionResult> PrepareHomeworkForUpdate(long id)
         {
-            var homework = await _homeworkService.GetHomeworkById(id);
-            ViewBag.Homework = homework;
+            HomeworkViewModel homework = await _homeworkService.GetHomeworkById(id);
 
-            return View("Edit");
+            return View("Edit", homework);
         }
 
         [HttpPost("{id}")]
