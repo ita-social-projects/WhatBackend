@@ -36,7 +36,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 400, API: 4">File validation error</response>
         [SwaggerResponse(200, type: typeof(IEnumerable<GroupWithStudentsDto>))]
         [Authorize(Roles = "Mentor, Secretary, Admin")]
-        [Route("groupCSV/{courseId}/{groupName?}/{startDate?}/{finishDate?}")]
+        [Route("group/{courseId}/{groupName?}/{startDate?}/{finishDate?}")]
         [HttpPost]
         public async Task<ActionResult> ImportGroupWithStudentsDataFromFile(
                 IFormFile file, long courseId, string groupName = null,
