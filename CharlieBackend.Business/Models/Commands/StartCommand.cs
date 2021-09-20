@@ -45,7 +45,8 @@ namespace CharlieBackend.Business.Models.Commands
                 "/start - get this message again\n" +
                 "/studentgroups - get list of your student groups\n" +
                 "/courses - get list of courses, which list you as a mentor\n" +
-                "/personalinfo - get personal info";
+                "/personalinfo - get personal info\n" +
+                "/classmates - get list of my classmates\n";
 
             return (await client.SendTextMessageAsync(chatId, 
                 response, replyToMessageId: messageId)).Text;

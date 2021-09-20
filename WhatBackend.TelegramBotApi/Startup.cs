@@ -36,6 +36,7 @@ namespace WhatBackend.TelegramBotApi
             services.AddScoped<StudentGroupsCommand>();
             services.AddScoped<CoursesCommand>();
             services.AddScoped<PersonalInfoCommand>();
+            services.AddScoped<ClassmatesCommand>();
 
             services.AddCors();
 

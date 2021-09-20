@@ -31,19 +31,31 @@ namespace WhatBackend.TelergamBot.Controllers
         {
             var client = await Bot.Get(_serviceProvider);
             var commands = Bot.Commands;
-            var message = update.Message ?? update.EditedMessage;
+            Message message = update.Message ?? update.EditedMessage;
+
+            if(message == null)
+            {
+                message = new Message
+                {
+                    Chat = new Chat()
+                    {
+                        Id = update.CallbackQuery.From.Id
+                    },
+                    MessageId = update.Id,
+                    Text = update.CallbackQuery.Data
+                };
+            }
 
             var isNewMessage = _messages.TryAdd(
-                new MessageHeader()
-                {
-                    ChatId = message.Chat.Id,
-                    MessageId = message.MessageId
-                },
-                message);
+                    new MessageHeader()
+                    {
+                        ChatId = message.Chat.Id,
+                        MessageId = message.MessageId
+                    },
+                    message);
 
-            if(isNewMessage)
+            if (isNewMessage)
             {
-                
 
                 foreach (var command in commands)
                 {
