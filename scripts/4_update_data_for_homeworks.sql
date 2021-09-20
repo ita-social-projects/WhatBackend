@@ -369,4 +369,11 @@ UPDATE `Soft`.`HomeworksFromStudents` AS H
 		H.`PublishingDate` = T.`PublishingDate`,
 		H.`IsSent` = T.`IsSent`
 	WHERE H.`ID` = T.`ID`;
-    
+
+ALTER TABLE `HomeworksFromStudents` 
+    MODIFY    `PublishingDate`    DATETIME           NOT NUll,
+    MODIFY    `IsSent`	      	   BOOLEAN 	         NOT NULL;
+  
+ALTER TABLE `Homeworks`
+    MODIFY    `PublishingDate`    DATETIME           NOT NULL,
+    MODIFY    `CreatedBy`         BIGINT UNSIGNED    NOT NULL;

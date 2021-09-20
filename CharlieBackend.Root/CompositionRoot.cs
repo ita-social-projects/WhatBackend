@@ -1,16 +1,17 @@
-﻿using CharlieBackend.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services;
-using Microsoft.Extensions.Configuration;
-using CharlieBackend.Data.Repositories.Impl;
-using Microsoft.Extensions.DependencyInjection;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Business.Services.FileServices;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
+using CharlieBackend.Data;
+using CharlieBackend.Data.Repositories.Impl;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CharlieBackend.Root
 {
@@ -53,7 +54,9 @@ namespace CharlieBackend.Root
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<IExportService, ExportService>();
+            services.AddScoped<ExportServiceXlsx>();
+            services.AddScoped<ExportServiceCsv>();
+            services.AddScoped<IExportServiceProvider, ExportServiceProvider>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAttachmentService, AttachmentService>();

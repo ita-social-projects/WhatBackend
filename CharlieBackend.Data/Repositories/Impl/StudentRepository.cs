@@ -58,5 +58,18 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .FirstOrDefaultAsync(student => 
                     student.Account.Email == email && student.Account.Role.HasFlag(UserRole.Student));
         }
+
+        public async Task<IList<Student>> GetStudentsByIdGroups(long groupId)
+        {
+            return await _applicationContext.Students
+                  .Join(_applicationContext.StudentsOfStudentGroups,
+                        s => s.Id,
+                        sOfS => sOfS.StudentId,
+                        (s, sOfG) => new { Student = s, StudentOfGroup = sOfG })
+                  .Where(related => related.StudentOfGroup.StudentGroupId == groupId)
+                  .Select(related => related.Student)
+                  .Include(s => s.Account)
+                  .ToListAsync();
+        }
     }
 }

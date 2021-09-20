@@ -16,12 +16,12 @@ CREATE TABLE `Marks` (
 
 ALTER TABLE `HomeworksFromStudents` 
     ADD    `MarkID` 	       BIGINT UNSIGNED    DEFAULT NULL,
-    ADD    `PublishingDate`    DATETIME           NOT NUll,
-    ADD    `IsSent`	      	   BOOLEAN 	          NOT NULL,
+    ADD    `PublishingDate`    DATETIME,
+    ADD    `IsSent`	      	   BOOLEAN,
     
     ADD CONSTRAINT    `FK_MarkOfHomeworkFromStudent`    FOREIGN KEY (`MarkID`)    REFERENCES `Marks` (`ID`);
   
 ALTER TABLE `Homeworks`
-    ADD    `PublishingDate`    DATETIME           NOT NULL,
-    ADD    `CreatedBy`         BIGINT UNSIGNED    NOT NULL;
+    ADD    `PublishingDate`    DATETIME,
+    ADD    `CreatedBy`         BIGINT UNSIGNED;
     

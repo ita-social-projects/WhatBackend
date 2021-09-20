@@ -14,6 +14,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
 
+        Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId);
+
         Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);
 
         Task<Lesson> GetLessonByHomeworkId(long homeworkId);
