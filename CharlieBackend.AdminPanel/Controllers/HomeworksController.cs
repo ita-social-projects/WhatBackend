@@ -1,9 +1,10 @@
-﻿using CharlieBackend.AdminPanel.Services.Interfaces;
+﻿using CharlieBackend.AdminPanel.Models.Course;
+using CharlieBackend.AdminPanel.Models.Lesson;
+using CharlieBackend.AdminPanel.Models.Mentor;
+using CharlieBackend.AdminPanel.Models.StudentGroups;
+using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +15,22 @@ namespace CharlieBackend.AdminPanel.Controllers
     public class HomeworksController : Controller
     {
         private readonly IHomeworkService _homeworkService;
+        private readonly IThemeService _themeService;
+        private readonly ICourseService _courseService;
+        private readonly IStudentGroupService _studentGroupService;
+        private readonly ILessonService _lessonService;
+        private readonly IMentorService _mentorService;
 
-        public HomeworksController(IHomeworkService homeworkService)
+        public HomeworksController(IHomeworkService homeworkService, IThemeService themeService,
+            ICourseService courseService, IStudentGroupService studentGroupService, ILessonService lessonService, 
+            IMentorService mentorService)
         {
             _homeworkService = homeworkService;
+            _themeService = themeService;
+            _courseService = courseService;
+            _studentGroupService = studentGroupService;
+            _lessonService = lessonService;
+            _mentorService = mentorService;
         }
 
         [HttpGet]
@@ -28,19 +41,71 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(homeworks);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetHomework(long id)
-        {
-            var homework = await _homeworkService.GetHomeworkById(id);
+        //View Homework
 
-            return View(homework);
+        //[HttpGet]
+        //public async Task<IActionResult> GetHomework(long id)
+        //{
+        //    var homework = await _homeworkService.GetHomeworkById(id);
+
+        //    return View(homework);
+        //}
+
+
+        [HttpGet]
+        public async Task<IActionResult> SelectCourses()
+        {
+            IEnumerable<CourseViewModel> courses = await _courseService.GetAllCoursesAsync();
+
+            return View("Step1Courses", courses);
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> CreateHomework()
+        [HttpGet()]
+        public async Task<IActionResult> SelectGroups(long courseId)
         {
-            return View("Create");
+            IEnumerable<StudentGroupViewModel> stGroups = await _studentGroupService.GetAllStudentGroupsAsync();
+            IEnumerable<StudentGroupViewModel> groups = stGroups.Where(x => x.Course.Id == courseId).ToList();
+            return View("Step2Groups", groups);
+        }
+
+        [HttpGet("{stGroupId}/{themeN?}/{mentorId?}")]
+        public async Task<IActionResult> SelectLessonId(long stGroupId, string themeN, long? mentorId)
+        {
+            List<MentorEditViewModel> mentors = new List<MentorEditViewModel>();
+            
+            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetAllLessons();
+            if (themeN == null && mentorId == null)
+            {
+                IEnumerable<string> lessonThemes = allLessons.Where(x => x.StudentGroupId == stGroupId)
+                    .Select(x => x.ThemeName).Distinct().ToList();
+                return View("Step3ThemeNames", lessonThemes);
+            }
+            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId)
+                .Where(z => z.ThemeName == themeN).Select(x => x.MentorId).Distinct().ToList();
+            if (mentorId == null)
+            {
+                foreach (var id in mentorsId)
+                {
+                    MentorEditViewModel mentor = await _mentorService.GetMentorByIdAsync(id);
+                    mentors.Add(mentor);
+                }
+                return View("Step4Mentors", mentors);
+            }
+            IEnumerable<LessonViewModel> lessons = allLessons.Where(x => x.StudentGroupId == stGroupId)
+                .Where(z => z.ThemeName == themeN).Where(d => d.MentorId == mentorId).ToList();
+            return View("Step5LessonsDate", lessons);
+        }
+
+        [HttpGet("{lessonId}")]
+        public async Task<IActionResult> CreateHomework(long lessonId)
+        {
+
+            HomeworkDto homework = new HomeworkDto
+            {
+                LessonId = lessonId
+            };
+
+            return View("Create", homework);
         }
 
         [HttpPost]
@@ -48,13 +113,14 @@ namespace CharlieBackend.AdminPanel.Controllers
         {
             await _homeworkService.AddHomeworkEndpoint(homework);
 
-            return RedirectToAction("Index", nameof(HomeworksController));
+            return RedirectToAction("Index", "Homeworks"); 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet()]
         public async Task<IActionResult> PrepareHomeworkForUpdate(long id)
         {
-            ViewBag.CurrentId = id;
+            var homework = await _homeworkService.GetHomeworkById(id);
+            ViewBag.Homework = homework;
 
             return View("Edit");
         }

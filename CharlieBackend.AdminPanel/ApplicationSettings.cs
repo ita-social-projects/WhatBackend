@@ -36,6 +36,7 @@ namespace CharlieBackend.AdminPanel
         public ScheduleApiEndpoints Schedule { get; set; }
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
         public HomeworksApiEndpoints Homeworks { get; set; }
+        public LessonsApiEndpoints Lessons {get; set;}
     }
 
     public class CoursesApiEndpoints
@@ -103,6 +104,11 @@ namespace CharlieBackend.AdminPanel
         public string GetHomeworkById { get; set; }
         public string AddHomeworkEndpoint { get; set; }
         public string UpdateHomeworkEndpoint { get; set; }
+    }
+
+    public class LessonsApiEndpoints
+    {
+        public string GetAllLessons { get; set; }
     }
 
     #endregion 

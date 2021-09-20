@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
 using CharlieBackend.AdminPanel.Models.Calendar;
 using CharlieBackend.AdminPanel.Models.Course;
+using CharlieBackend.AdminPanel.Models.Homework;
+using CharlieBackend.AdminPanel.Models.Lesson;
 using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Models.Students;
+using CharlieBackend.AdminPanel.Models.Theme;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
@@ -27,6 +32,9 @@ namespace CharlieBackend.AdminPanel.Models.Mapping
                .ForMember(detination => detination.ActiveCourse, config => config.MapFrom(x => new CourseViewModel { Id = x.CourseId }))
                .ForMember(destination => destination.ActiveStudents, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
                .ForMember(destination => destination.ActiveMentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
+
+            CreateMap<HomeworkViewModel, HomeworkDto>();
+            CreateMap<HomeworkDto, HomeworkViewModel>();
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 

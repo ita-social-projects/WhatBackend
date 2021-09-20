@@ -13,10 +13,5 @@ namespace CharlieBackend.AdminPanel.Services.Interfaces
         Task<HomeworkViewModel> GetHomeworkById(long id);
         Task AddHomeworkEndpoint(HomeworkDto homeworkDto);
         Task UpdateHomeworkEndpoint(long id, HomeworkDto homeworkDto);
-
-        /// <summary>
-        /// Method for getting required lists to add new homework.
-        /// </summary>
-        Task<HomeworkEditViewModel> PrepareStudentGroupAddAsync();
     }
 }

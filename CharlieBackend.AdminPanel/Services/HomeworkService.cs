@@ -34,14 +34,13 @@ namespace CharlieBackend.AdminPanel.Services
         {
             var addHomeworkEndpoint = _homeworkApiEndpoints.AddHomeworkEndpoint;
 
-            await _apiUtil.CreateAsync<HomeworkDto>(addHomeworkEndpoint, homeworkDto);
+            await _apiUtil.CreateAsync(addHomeworkEndpoint, homeworkDto);
         }
 
         public async Task<HomeworkViewModel> GetHomeworkById(long id)
         {
-            var getHomeworkById = _homeworkApiEndpoints.GetHomeworkById;
+            var getHomeworkById = string.Format(_homeworkApiEndpoints.GetHomeworkById, id); 
             var homeworkDto = await _apiUtil.GetAsync<HomeworkDto>(getHomeworkById);
-            //TODO add mapper
             return _mapper.Map<HomeworkViewModel>(homeworkDto); 
         }
 
@@ -49,12 +48,7 @@ namespace CharlieBackend.AdminPanel.Services
         {
             var updateHomeworkEndpoint = string.Format(_homeworkApiEndpoints.UpdateHomeworkEndpoint, id);
 
-            await _apiUtil.PutAsync<HomeworkDto>(updateHomeworkEndpoint, homeworkDto);
-        }
-
-        public Task<HomeworkEditViewModel> PrepareStudentGroupAddAsync()
-        {
-            throw new NotImplementedException();
+            await _apiUtil.PutAsync(updateHomeworkEndpoint, homeworkDto);
         }
     }
 }
