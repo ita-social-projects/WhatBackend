@@ -245,19 +245,19 @@
 
         let dropdownMenu = document.getElementById("dropdownMenu");
 
-        if (localStorage.AdminToken !== undefined && getCookie("currentRole") != "Admin") {
+        if (localStorage.adminToken !== undefined && getCookie("currentRole") != "Admin") {
             dropdownMenu.prepend(createMoveDiv("Admin"));
         }
 
-        if (localStorage.MentorToken !== undefined && getCookie("currentRole") != "Mentor") {
+        if (localStorage.mentorToken !== undefined && getCookie("currentRole") != "Mentor") {
             dropdownMenu.prepend(createMoveDiv("Mentor"));
         }
 
-        if (localStorage.StudentToken !== undefined && getCookie("currentRole") != "Student") {
+        if (localStorage.studentToken !== undefined && getCookie("currentRole") != "Student") {
             dropdownMenu.prepend(createMoveDiv("Student"));
         }
 
-        if (localStorage.SecretaryToken !== undefined && getCookie("currentRole") != "Secretary") {
+        if (localStorage.secretaryToken !== undefined && getCookie("currentRole") != "Secretary") {
             dropdownMenu.prepend(createMoveDiv("Secretary"));
         }
 
@@ -267,7 +267,7 @@
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
                                                         Sign in as ${role} </a>`;
 
-            let token = localStorage.getItem(role + 'Token');
+            let token = localStorage.getItem(role.toLowerCase() + 'Token');
 
             div.addEventListener("click", () => {
                 document.cookie = encodeURIComponent('accessToken') + '=' + encodeURIComponent(token);
