@@ -44,5 +44,6 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<Account>> SynchronizeTelegramAccount(string telegramToken, string telegramId);
 
         Task<bool> ClearOldTelegramTokens();
+        Task<Account> GetAccountByTelegramId(long telegramId);
     }
 }

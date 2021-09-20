@@ -446,5 +446,11 @@ namespace CharlieBackend.Business.Services
 
             return true;
         }
+
+        public async Task<Account> GetAccountByTelegramId(long telegramId)
+        {
+            return await _unitOfWork.AccountRepository
+                .GetAccountByTelegramId(telegramId);
+        }
     }
 }

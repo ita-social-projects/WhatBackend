@@ -14,18 +14,33 @@ namespace CharlieBackend.Business.Models
         private static TelegramBotClient _client;
         private static List<Command> _commandsList;
         public string Name { get; }
-        public static IReadOnlyCollection<Command> Commands { get => _commandsList.AsReadOnly(); }
-        public static async Task<TelegramBotClient> Get(IServiceProvider services)
+        public static IReadOnlyCollection<Command> Commands 
         {
-            var startCommand = services.GetRequiredService<StartCommand>();
-            var helloCommand = services.GetRequiredService<HelloCommand>();
-            var getMarkCommand = services.GetRequiredService<GetMarkCommand>();
-            
+            get => _commandsList.AsReadOnly();
+        }
+        public static async Task<TelegramBotClient> Get(
+            IServiceProvider services)
+        {
+            var startCommand = services
+                .GetRequiredService<StartCommand>();
+            var helloCommand = services
+                .GetRequiredService<HelloCommand>();
+            var getMarkCommand = services
+                .GetRequiredService<GetMarkCommand>();
+            var studentGroupsCommand = services
+                .GetRequiredService<StudentGroupsCommand>();
+            var coursesCommand = services
+                .GetRequiredService<CoursesCommand>();
+            var personalInfoCommand = services
+                .GetRequiredService<PersonalInfoCommand>();
+
             _commandsList = new List<Command>();
             _commandsList.Add(startCommand);
             _commandsList.Add(helloCommand);
             _commandsList.Add(getMarkCommand);
-
+            _commandsList.Add(studentGroupsCommand);
+            _commandsList.Add(coursesCommand);
+            _commandsList.Add(personalInfoCommand);
 
             _client = new TelegramBotClient(AppSettings.Key);
             var hook = AppSettings.Url + "/api/bot/message/update";
