@@ -159,7 +159,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<IList<long?>> GetStudentGroupsByStudentId(long id)
+        public async Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups
                 .Where(s => s.StudentId == id)
