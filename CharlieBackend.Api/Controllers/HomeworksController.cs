@@ -42,7 +42,6 @@ namespace CharlieBackend.Api.Controllers
         {
             var homeworks = await _homeworkService.GetHomeworks();
             return homeworks.ToActionResult();
-            //return await _homeworkService.GetHomeworks();
         }
 
         /// <summary>

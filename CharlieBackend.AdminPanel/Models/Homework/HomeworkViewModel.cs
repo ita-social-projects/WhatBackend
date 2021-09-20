@@ -23,6 +23,7 @@ namespace CharlieBackend.AdminPanel.Models.Homework
         public DateTime PublishingDate { get; set; }
 
         public long CreatedBy { get; set; }
+        public string ThemeName { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
     }

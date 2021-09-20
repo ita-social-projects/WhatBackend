@@ -6,6 +6,7 @@ using CharlieBackend.Data.Helpers;
 using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Homework;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -22,6 +23,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                         .Include(x => x.Lesson)
                         .Include(x => x.AttachmentsOfHomework)
                         .FirstOrDefaultAsync(x => x.Id == homeworkId);
+        }
+
+        public async Task<IEnumerable<Homework>> GetHomeworksWithThemeName()
+        {
+            return await _applicationContext.Homeworks.Include(x => x.Lesson).ThenInclude(t => t.Theme).ToListAsync();
         }
 
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
