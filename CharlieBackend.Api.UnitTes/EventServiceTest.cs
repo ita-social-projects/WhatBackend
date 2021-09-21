@@ -182,7 +182,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
-            _eventRepositoryMock.Setup(x => x.ConnectEventToLessonById(_existingId, _lessonId))
+            _eventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(_existingId, _lessonId))
                 .ReturnsAsync(_validEvent);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
@@ -204,7 +204,7 @@ namespace CharlieBackend.Api.UnitTest
 
             var wrongEventRepositoryMock = new Mock<IScheduledEventRepository>();
 
-            wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonById(wrongScheduledEvent.Id, _lessonId))
+            wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
                 .ReturnsAsync(default(ScheduledEvent));
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
@@ -214,6 +214,24 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+
+        }
+        [Fact]
+        public async Task ConnectScheduleToLessonById_LessonIsAlreadyConnectionToAnotherSheduledEvent_ShouldReturnConflictExeption()
+        {
+            //Arrange
+            _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
+
+            _eventRepositoryMock.Setup(x => x.IsLessonConnectedToSheduledEventAsync(_lessonId))
+                .ReturnsAsync(true);
+
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+
+            //Act
+            var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);
+
+            //Assert
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.Conflict);
 
         }
     }
