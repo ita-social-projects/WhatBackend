@@ -23,18 +23,16 @@ namespace CharlieBackend.Api.Controllers
         private readonly IStudentGroupService _studentGroupService;
         private readonly IHomeworkService _homeworkService;
         private readonly ILessonService _lessonService;
-        private readonly IScheduleService _scheduleService;
 
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
         public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, 
-            ILessonService lessonService, IScheduleService scheduleService)
+            ILessonService lessonService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
             _lessonService = lessonService;
-            _scheduleService = scheduleService;
         }
 
         /// <summary>
@@ -45,27 +43,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<StudentGroupDto>>> DeleteStudentGroup(long id)
         {
-            var studentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
-
-            if (studentGroup.Data == null)
+            if (await _studentGroupService.DeleteStudentGroupAsync(id))
             {
-                return NotFound();
+                return Ok("Student group is deleted.");
             }
             else
             {
-                bool result = await _studentGroupService.DeleteStudentGroupAsync(id);
-
-                if (result)
-                {
-                    var scheduledEvents = _scheduleService.GetEventOccurrencesByGroupIdAsync(id).Result;
-
-                    foreach (var x in scheduledEvents.Data)
-                    {
-                        await _scheduleService.DeleteScheduleByIdAsync(x.Id.Value, null, null);
-                    }
-                }
-
-                return Ok("Student group is deleted.");
+                return NotFound();
             }
         }
 
@@ -181,14 +165,6 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<StudentGroupDto>> MergeStudentGroups([FromBody] MergeStudentGroupsDto groupsToMerge)
         {
             var result = await _studentGroupService.MergeStudentGroupsAsync(groupsToMerge);
-
-            if (result.Data != null)
-            {
-                foreach (var groupId in groupsToMerge.IdsOfStudentGroupsToMerge)
-                {
-                    await DeleteStudentGroup(groupId);
-                }
-            }
 
             return result.ToActionResult();
         }

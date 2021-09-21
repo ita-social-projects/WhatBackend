@@ -18,13 +18,15 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<StudentGroupService> _logger;
+        private readonly IScheduleService _scheduleService;
 
         public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper,
-                ILogger<StudentGroupService> logger)
+                ILogger<StudentGroupService> logger, IScheduleService scheduleService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _scheduleService = scheduleService;
         }
 
         public async Task<Result<StudentGroupDto>> CreateStudentGroupAsync
@@ -251,6 +253,16 @@ namespace CharlieBackend.Business.Services
                 result = _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
             }
 
+            if (result)
+            {
+                var scheduledEvents = _scheduleService.GetEventOccurrencesByGroupIdAsync(StudentGroupId).Result;
+
+                foreach (var x in scheduledEvents.Data)
+                {
+                    await _scheduleService.DeleteScheduleByIdAsync(x.Id.Value, null, null);
+                }
+            }
+
             await _unitOfWork.CommitAsync();
 
             return result;
@@ -447,6 +459,7 @@ namespace CharlieBackend.Business.Services
             foreach(var groupToMerge in studentGroups)
             {
                 resultingStudentGroup.Data.StudentIds = resultingStudentGroup.Data.StudentIds.Union(groupToMerge.StudentIds).ToList();
+                await DeleteStudentGroupAsync(groupToMerge.Id);
             }
 
             var groupToUpdate = new UpdateStudentGroupDto {
