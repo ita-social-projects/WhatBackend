@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);          
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -71,16 +71,16 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets list of all lessons
+        /// Get all lessons by date
         /// </summary>
-        /// <response code="200">Successful return of lessons list</response>
+        /// <response code="200">Successful return of lessons list by date</response>
         [SwaggerResponse(200, type: typeof(List<LessonDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpGet]
-        public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
+        [HttpGet("DateTime")]
+        public async Task<ActionResult<List<LessonDto>>> GetLessonsByDate([FromQuery] DateTime? startDate, DateTime? finishDate)
         {
-            var lessons = await _lessonService.GetAllLessonsAsync();
-            
+            var lessons = await _lessonService.GetLessonsByDate(startDate, finishDate);
+
             return lessons.ToActionResult();
         }
 

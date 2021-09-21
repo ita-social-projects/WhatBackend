@@ -26,6 +26,24 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
+        public Task<Lesson> GetLastLesson()
+        {
+            return _applicationContext.Lessons.OrderByDescending(l => l.LessonDate).FirstOrDefaultAsync();
+        }
+
+        public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate, long daysWeek, DateTime lastLessonDate)
+        {
+            return _applicationContext.Lessons
+                  .WhereIf(startDate != null && startDate != default(DateTime),
+                   x => x.LessonDate >= startDate)
+                  .WhereIf(finishDate != null && finishDate != default(DateTime),
+                   x => x.LessonDate <= finishDate)
+                  .WhereIf(startDate == null && finishDate == null,
+                   x => x.LessonDate <= lastLessonDate && x.LessonDate >= lastLessonDate.Date.AddDays(daysWeek))
+                  .Select(lesson => lesson)
+                  .ToListAsync();
+        }
+
         public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
         {
             return await _applicationContext.Lessons
