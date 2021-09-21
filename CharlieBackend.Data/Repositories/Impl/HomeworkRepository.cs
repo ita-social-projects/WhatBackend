@@ -25,9 +25,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         .FirstOrDefaultAsync(x => x.Id == homeworkId);
         }
 
-        public async Task<IEnumerable<Homework>> GetHomeworksWithThemeName()
+        public IQueryable<Homework> GetHomeworksWithThemeNameAndAtachemntsQuery()
         {
-            return await _applicationContext.Homeworks.Include(x => x.Lesson).ThenInclude(t => t.Theme).ToListAsync();
+            return _applicationContext.Homeworks.Include(x => x.Lesson).ThenInclude(x => x.Theme).Include(x => x.AttachmentsOfHomework);
         }
 
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,

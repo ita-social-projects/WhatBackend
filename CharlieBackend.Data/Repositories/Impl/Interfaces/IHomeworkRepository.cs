@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CharlieBackend.Core.Entities;
+using System.Linq;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
@@ -10,7 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
                      IEnumerable<AttachmentOfHomework> newHomeworkAttachments);
 
-        Task<IEnumerable<Homework>> GetHomeworksWithThemeName();
+        IQueryable<Homework> GetHomeworksWithThemeNameAndAtachemntsQuery();
 
         Task<IList<Homework>> GetHomeworksByLessonId(long studentGroupId);
 
