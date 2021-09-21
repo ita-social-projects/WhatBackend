@@ -374,6 +374,7 @@ namespace CharlieBackend.Business.Services
             }
             else if (user.TelegramId == null || user.TelegramId == string.Empty)
             {
+                //todo: move link to appsettings
                 string link = "https://t.me/whatnotification_bot?start=";
                 string guid = Guid.NewGuid().ToString("N");
 
