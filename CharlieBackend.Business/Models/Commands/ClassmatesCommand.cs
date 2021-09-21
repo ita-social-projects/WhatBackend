@@ -42,6 +42,9 @@ namespace CharlieBackend.Business.Models.Commands
                 {
                     response += await AddGroupToResponse(group);
                 }
+
+                return (await client.SendTextMessageAsync(chatId,
+                response)).Text;
             }
             else
             {
@@ -71,7 +74,7 @@ namespace CharlieBackend.Business.Models.Commands
                                 {
                                 InlineKeyboardButton.WithCallbackData(
                                     group.Name,
-                                    Name + " " + group.Id.ToString())
+                                    "/" + Name + " " + group.Id.ToString())
                                 });
                         }
                         var inlineKeyboard = new InlineKeyboardMarkup(keyboard);
