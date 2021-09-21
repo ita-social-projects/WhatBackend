@@ -8,7 +8,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
     public class BaseFileExportXlsx : BaseFileExport
     {
-        protected XLWorkbook xLWorkbook;
+        protected XLWorkbook _xLWorkbook;
 
         protected const int _DEFAULT_STARTING_ROW = 2;
         protected const int _STUDENT_STARTING_ROW = 2;
@@ -17,8 +17,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public BaseFileExportXlsx()
         {
-            xLWorkbook = new XLWorkbook();
-            memoryStream = new MemoryStream();
+            _xLWorkbook = new XLWorkbook();
+            _memoryStream = new MemoryStream();
         }
 
         private IXLRow CreateHeaders(IXLRow headerRow, params string[] argsList)
@@ -33,12 +33,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         private byte[] GetByteArray()
         {
-            if(xLWorkbook.Worksheets.Count == 0)
+            if(_xLWorkbook.Worksheets.Count == 0)
             {
-                xLWorkbook.AddWorksheet("Blank");
+                _xLWorkbook.AddWorksheet("Blank");
             }
-            xLWorkbook.SaveAs(memoryStream);
-            return memoryStream.ToArray();
+            _xLWorkbook.SaveAs(_memoryStream);
+            return _memoryStream.ToArray();
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         public override void Dispose()
         {
             base.Dispose();
-            xLWorkbook.Dispose();
+            _xLWorkbook.Dispose();
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// </summary>
         public void AdjustContent()
         {
-            foreach (var worksheet in xLWorkbook.Worksheets)
+            foreach (var worksheet in _xLWorkbook.Worksheets)
             {
                 worksheet.Columns().AdjustToContents();
                 worksheet.Rows().AdjustToContents();

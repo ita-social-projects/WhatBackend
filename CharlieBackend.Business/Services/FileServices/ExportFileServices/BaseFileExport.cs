@@ -8,9 +8,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
     /// Class for general file methods and fields
     /// Remember to implement and use IDisposable.Dispose() for inherited classes
     /// </summary>
-    public class BaseFileExport : IDisposable
+    public abstract class BaseFileExport : IDisposable
     {
-        protected MemoryStream memoryStream;
+        protected MemoryStream _memoryStream;
 
         /// <summary>
         /// Method for filename
@@ -35,7 +35,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// </summary>
         public virtual void Dispose()
         {
-            memoryStream.Dispose();
+            _memoryStream.Dispose();
         }
 
         /// <summary>
@@ -44,12 +44,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// <returns>(byte[]) byte array</returns>
         public virtual async Task<byte[]> GetByteArrayAsync()
         {
-            if(memoryStream == null)
+            if(_memoryStream == null)
             {
                 return await Task.Run(() => { return new byte[0]; });
             }
 
-            return await Task.Run(() => { return memoryStream.ToArray(); });
+            return await Task.Run(() => { return _memoryStream.ToArray(); });
         }
     }
 }

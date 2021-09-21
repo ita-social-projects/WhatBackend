@@ -127,6 +127,23 @@ namespace CharlieBackend.Business.Services
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
 
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsForStudentGroup(long studentGroupId)
+        {
+            if (studentGroupId == default)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Student Group Id please");
+            }
+
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(studentGroupId) == null)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Student Group with id {studentGroupId} is not Found");
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(studentGroupId);
+
+            return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
+        }
+
         public async Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel)
         {
             long accountId = _currentUserService.AccountId;
@@ -290,11 +307,26 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
+        public async Task<Result<IList<LessonDto>>> GetLessonsForStudentAsync(
+                FilterLessonsRequestDto filterModel)
         {
-            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, _currentUserService.EntityId);
+            var groupsOfStudent = await _unitOfWork.StudentGroupRepository
+                    .GetStudentGroupsIdsByStudentId(
+                            (long)filterModel.StudentGroupId);
 
-            return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
+            if (groupsOfStudent.Contains(filterModel.StudentGroupId))
+            {
+                var lessonsForStudent = await _unitOfWork.LessonRepository
+                        .GetLessonsForStudentAsync(filterModel.StudentGroupId,
+                                filterModel.StartDate, filterModel.FinishDate,
+                                _currentUserService.EntityId);
+
+                return Result<IList<LessonDto>>.GetSuccess(
+                        _mapper.Map<IList<LessonDto>>(lessonsForStudent));
+            }
+
+            return Result<IList<LessonDto>>.GetError(ErrorCode.Unauthorized,
+                   "student can get lessons only that group what he belongs");
         }
 
         public async Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId)

@@ -116,18 +116,18 @@ namespace CharlieBackend.Api.Controllers
             if (foundAccount.Role.IsAdmin())
             {
                 roleIds.Add(UserRole.Admin, foundAccount.Id);
-            }          
+            }
 
             #endregion
 
-            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount,roleIds);
-            
-            var response = new
+            Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount, roleIds);
+
+            var response = new AuthenticationResponseDto
             {
-                first_name = foundAccount.FirstName,
-                last_name = foundAccount.LastName,
-                role = foundAccount.Role,
-                roleList = userRoleToJwtToken
+                FisrtName = foundAccount.FirstName,
+                LastName = foundAccount.LastName,
+                Role = foundAccount.Role,
+                RoleList = userRoleToJwtToken
             };
             GetHeaders(userRoleToJwtToken);
 
@@ -168,7 +168,7 @@ namespace CharlieBackend.Api.Controllers
                     .RevokeRoleFromAccount(account);
 
             return changeAccountRoleModel.ToActionResult();
-         }
+        }
 
         /// <summary>
         /// Registration of account

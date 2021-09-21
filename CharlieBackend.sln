@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Core", "Char
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest", "CharlieBackend.Api.UnitTes\CharlieBackend.Api.UnitTest.csproj", "{FCAE2322-45AE-4604-9D3A-D417805FB7F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.AdminPanel", "CharlieBackend.AdminPanel\CharlieBackend.AdminPanel.csproj", "{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Panel", "CharlieBackend.Panel\CharlieBackend.Panel.csproj", "{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhatBackend.TelegramBotApi", "WhatBackend.TelegramBotApi\WhatBackend.TelegramBotApi.csproj", "{76B3C57E-0DE0-4A3D-BE52-D0C2FF00F117}"
 EndProject
