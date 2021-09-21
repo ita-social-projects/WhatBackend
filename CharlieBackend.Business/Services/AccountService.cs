@@ -372,7 +372,7 @@ namespace CharlieBackend.Business.Services
                 result = Result<string>.GetError(ErrorCode.NotFound,
                     "Account not found");
             }
-            else if (user.TelegramId == null)
+            else if (user.TelegramId == null || user.TelegramId == string.Empty)
             {
                 string link = "https://t.me/whatnotification_bot?start=";
                 string guid = Guid.NewGuid().ToString("N");
