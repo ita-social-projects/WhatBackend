@@ -232,7 +232,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -284,7 +284,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(default(Student));
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -333,7 +333,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -386,7 +386,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -441,7 +441,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -494,7 +494,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(default(IList<long?>));
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(default(IList<long?>));
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -547,7 +547,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -600,7 +600,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -653,7 +653,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -706,7 +706,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -778,7 +778,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -847,7 +847,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(default(Student));
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -913,7 +913,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -983,7 +983,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1053,7 +1053,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(default(List<long?>));
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(default(List<long?>));
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1123,7 +1123,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1193,7 +1193,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1263,7 +1263,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1328,7 +1328,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1399,7 +1399,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student() { Id = 7 });
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
@@ -1469,7 +1469,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
 
-            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsIdsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
