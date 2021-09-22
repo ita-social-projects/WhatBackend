@@ -57,23 +57,7 @@ namespace CharlieBackend.Business.Services
 
             return courses;
         }
-        public async Task<bool> CheckDoesMentorCanSeeCourseAsync(long mentorId, long? courseId)
-        {
-            if (await _unitOfWork.CourseRepository.GetMentorCourseAsync(mentorId, courseId) == 0)
-            {
-                return false;
-            }
-            return true;
-        }
-        public async Task<bool> CheckDoesMentorCanSeeGroupAsync(long mentorId, long? groupId)
-        {
-            var courseOfGroup = await _unitOfWork.CourseRepository.GetCourseOfGroupAsync(mentorId, groupId);
-            if (await _unitOfWork.CourseRepository.GetMentorCourseAsync(mentorId, courseOfGroup) == 0)
-            {
-                return false;
-            }
-            return true;
-        }
+
         public async Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto updateCourseDto)
         {
             try

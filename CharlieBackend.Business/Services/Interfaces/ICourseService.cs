@@ -15,8 +15,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<CourseDto>> UpdateCourseAsync(long id, UpdateCourseDto courseModel);
 
         Task<bool> IsCourseNameTakenAsync(string courseName);
-        Task<bool> CheckDoesMentorCanSeeCourseAsync(long mentorId, long? courseId);
-        Task<bool> CheckDoesMentorCanSeeGroupAsync(long mentorId, long? groupId);
+
         Task<Result<CourseDto>> DisableCourseAsync(long id);
 
         Task<Result<CourseDto>> EnableCourseAsync(long id);

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Models.ResultModel
 {
@@ -25,8 +24,8 @@ namespace CharlieBackend.Core.Models.ResultModel
         ///<exception cref="ArgumentNullException">Exception thrown if transferred data is empty or null</exception>
         public static Result<T> GetSuccess(T transferredData)
         {
-            
-            if (object.Equals(transferredData, default(T) ) && typeof(T) != typeof(bool)) // default(bool) is false
+
+            if (object.Equals(transferredData, default(T)) && typeof(T) != typeof(bool)) // default(bool) is false
             {
                 throw new ArgumentNullException();
             }
@@ -47,12 +46,26 @@ namespace CharlieBackend.Core.Models.ResultModel
         /// </summary>
         public static Result<T> GetError(ErrorCode errorCode, string errorMessage)
         {
-            var newResult = new Result<T> 
+            var newResult = new Result<T>
             {
                 Error = new ErrorData
                 {
                     Code = errorCode,
                     Message = errorMessage
+                },
+            };
+
+            return newResult;
+        }
+
+        public static Result<T> GetError(ErrorCode errorCode, IEnumerable<string> errorMessages)
+        {
+            var newResult = new Result<T>
+            {
+                Error = new ErrorData
+                {
+                    Code = errorCode,
+                    Message = string.Join("; ", errorMessages)
                 },
             };
 
