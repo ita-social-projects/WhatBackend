@@ -107,18 +107,16 @@ namespace CharlieBackend.Business.Services
         {
             var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
             const long daysWeek = -7;
-            var lessonsForWeek = new List<Lesson>();
-
-
-            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
 
             if (startDate == null && finishDate == null)
             {
-                    lessonsForWeek = lessons.Where(lesson => lesson.LessonDate <= lastLesson.LessonDate 
-                    && lesson.LessonDate >= lastLesson.LessonDate.AddDays(daysWeek)).ToList();
+                startDate = lastLesson.LessonDate.AddDays(daysWeek);
+                finishDate = lastLesson.LessonDate;
             }
 
-            var listLessons = _mapper.Map<IList<LessonDto>>(lessonsForWeek);
+            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
+
+            var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
             return Result<IList<LessonDto>>.GetSuccess(listLessons);
         }
