@@ -383,6 +383,11 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
+<<<<<<< HEAD
+=======
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
+
+>>>>>>> b304257389d1034f84bdfe0cbff8e8d2e9d58389
             var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
 
             if (lesson == default)
