@@ -14,7 +14,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
 
-        Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate, long daysWeek, DateTime lastDate);
+        Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate);
 
         Task<Lesson> GetLastLesson();
         Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId);

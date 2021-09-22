@@ -76,8 +76,8 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of lessons list by date</response>
         [SwaggerResponse(200, type: typeof(List<LessonDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
-        [HttpGet("DateTime")]
-        public async Task<ActionResult<List<LessonDto>>> GetLessonsByDate([FromQuery] DateTime? startDate, DateTime? finishDate)
+        [HttpGet]
+        public async Task<ActionResult<List<LessonDto>>> GetLessonsByDate([FromQuery] DateTime? startDate = null, DateTime? finishDate = null)
         {
             var lessons = await _lessonService.GetLessonsByDate(startDate, finishDate);
 

@@ -31,16 +31,13 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _applicationContext.Lessons.OrderByDescending(l => l.LessonDate).FirstOrDefaultAsync();
         }
 
-        public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate, long daysWeek, DateTime lastLessonDate)
+        public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
             return _applicationContext.Lessons
                   .WhereIf(startDate != null && startDate != default(DateTime),
                    x => x.LessonDate >= startDate)
                   .WhereIf(finishDate != null && finishDate != default(DateTime),
                    x => x.LessonDate <= finishDate)
-                  .WhereIf(startDate == null && finishDate == null,
-                   x => x.LessonDate <= lastLessonDate && x.LessonDate >= lastLessonDate.Date.AddDays(daysWeek))
-                  .Select(lesson => lesson)
                   .ToListAsync();
         }
 
