@@ -57,6 +57,20 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets homework not done
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkDto))]
+        [Authorize(Roles = "Student")]
+        [HttpGet]
+        public async Task<ActionResult> GetHomeworkNotDone([FromQuery] long studentGroup)
+        {
+            var results = await _homeworkService
+                        .GetHomeworkNotDone(studentGroup);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
         /// Update homework
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
