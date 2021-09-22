@@ -22,6 +22,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ILogger<HomeworkStudentService>> _loggerMock;
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IHomeworkStudentRepository> _homeworkStudentRepositoryMock;
+        private readonly Mock<IHomeworkStudentHistoryRepository> _homeworkStudentHistoryRepositoryMock;
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
@@ -31,7 +32,7 @@ namespace CharlieBackend.Api.UnitTest
         private HomeworkStudentRequestDto homeworkStudentRequestDto = new HomeworkStudentRequestDto()
         {
             HomeworkId = 1,
-            HomeworkText = "HomeworkStudentRequestdto text",
+            HomeworkText = "Some text",
             IsSent = true
         };
 
@@ -40,6 +41,7 @@ namespace CharlieBackend.Api.UnitTest
             _loggerMock = new Mock<ILogger<HomeworkStudentService>>();
             _homeworkRepositoryMock = new Mock<IHomeworkRepository>();
             _homeworkStudentRepositoryMock = new Mock<IHomeworkStudentRepository>();
+            _homeworkStudentHistoryRepositoryMock = new Mock<IHomeworkStudentHistoryRepository>();
             _attachmentRepositoryMock = new Mock<IAttachmentRepository>();
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _studentRepositoryMock = new Mock<IStudentRepository>();
@@ -48,6 +50,161 @@ namespace CharlieBackend.Api.UnitTest
             _currentUserServiceMock = new Mock<ICurrentUserService>();
             _homeworkStudentService = new HomeworkStudentService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
         }
+
+        [Fact]
+        public async Task GetHomeworkStudentHistoryByHomeworkStudentId_ValidDataWithIsSentEqualsFalse_ShouldReturnListOfHomeworkStudentExample()
+        {
+            //Arrange
+
+            var homeworkStudent = new HomeworkStudent()
+            {
+                Id = 5,
+                IsSent = false
+            };
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudent.Id))
+                .ReturnsAsync(homeworkStudent);
+
+            _homeworkStudentHistoryRepositoryMock.Setup(x => x.GetHomeworkStudentHistoryByHomeworkStudentId(It.IsAny<long>()))
+                .ReturnsAsync(new List<HomeworkStudentHistory>()
+                {
+                    new HomeworkStudentHistory() { HomeworkStudentId = 5},
+                    new HomeworkStudentHistory() { HomeworkStudentId = 5}
+                });
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+
+            //Assert
+            result.Should().NotBeNull();
+            Assert.Equal(2, result.Count);
+            foreach (var hw in result)
+            {
+                Assert.Equal(homeworkStudent.Id, hw.Id);
+            }
+        }
+
+        [Fact]
+        public async Task GetHomeworkStudentHistoryByHomeworkStudentId_ValidDataWithIsSentEqualsTrue_ShouldReturnListOfHomeworkStudentExample()
+        {
+            //Arrange
+
+            var homeworkStudent = new HomeworkStudent()
+            {
+                Id = 5,
+                IsSent = true
+            };
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudent.Id))
+                .ReturnsAsync(homeworkStudent);
+
+            _homeworkStudentHistoryRepositoryMock.Setup(x => x.GetHomeworkStudentHistoryByHomeworkStudentId(It.IsAny<long>()))
+                .ReturnsAsync(new List<HomeworkStudentHistory>()
+                {
+                    new HomeworkStudentHistory() { HomeworkStudentId = 5},
+                    new HomeworkStudentHistory() { HomeworkStudentId = 5}
+                });
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
+
+            //Assert
+            result.Should().NotBeNull();
+            Assert.Equal(3, result.Count);
+            foreach (var hw in result)
+            {
+                Assert.Equal(homeworkStudent.Id, hw.Id);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_ValidData_ShouldReturnHomeworkStudentExample()
+        {
+            //Arrange
+
+            UpdateMarkRequestDto updateMarkRequestDto = new UpdateMarkRequestDto()
+            {
+                StudentHomeworkId = 5,
+                StudentMark = 80,
+                MentorComment = "Some Comment",
+                MarkType = MarkType.Homework
+            };
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(updateMarkRequestDto.StudentHomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = null
+                });
+            _homeworkStudentHistoryRepositoryMock.Setup(x => x.GetHomeworkStudentHistoryByHomeworkStudentId(updateMarkRequestDto.StudentHomeworkId))
+                .ReturnsAsync(new List<HomeworkStudentHistory>()
+                {
+                    new HomeworkStudentHistory()
+                });
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateMarkAsync(updateMarkRequestDto);
+
+            //Assert
+            result.Data.Should().NotBeNull();
+            result.Data.Mark.Should().BeEquivalentTo(new HomeworkStudentMarkDto()
+            {
+                Value = updateMarkRequestDto.StudentMark,
+                Comment = updateMarkRequestDto.MentorComment,
+                Type = updateMarkRequestDto.MarkType,
+                EvaluatedBy = 0
+            },
+            options => options.Excluding(x => x.EvaluationDate));
+        }
+
+        [Fact]
+        public async Task UpdateMarkAsync_WrongHomeworkStudentId_ShouldReturnNotFoundError()
+        {
+            //Arrange
+
+            UpdateMarkRequestDto updateMarkRequestDto = new UpdateMarkRequestDto()
+            {
+                StudentHomeworkId = 5,
+                StudentMark = 80,
+                MentorComment = "Some Comment",
+                MarkType = MarkType.Homework
+            };
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(updateMarkRequestDto.StudentHomeworkId))
+                .ReturnsAsync(default(HomeworkStudent));
+            _homeworkStudentHistoryRepositoryMock.Setup(x => x.GetHomeworkStudentHistoryByHomeworkStudentId(updateMarkRequestDto.StudentHomeworkId))
+                .ReturnsAsync(new List<HomeworkStudentHistory>()
+                {
+                    new HomeworkStudentHistory()
+                });
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateMarkAsync(updateMarkRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        #region CreateHomeworkFromStudentAsyncTests
+
         [Fact]
         public async Task CreateHomeworkFromStudentAsync_ValidData_ShouldReturnHomeworkStudentExample()
         {
@@ -79,6 +236,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
 
+
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
 
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
@@ -100,17 +258,1245 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task CreateHomeworkFromStudentAsync_NotExistingStudent_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(default(Student));
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Message.Should().BeEquivalentTo("Student with account id 0 was not found");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_NotExistingHomework_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(default(Homework));
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Message.Should().BeEquivalentTo($"Homework with id {homeworkStudentRequestDto.HomeworkId} was not found");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_StudentAlreadyHasHomework_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), It.IsAny<long>())).ReturnsAsync(true);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"You already add homework for this Hometask {homeworkStudentRequestDto.HomeworkId}");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_RequestDataIsDefault_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto = default;
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Please provide request data");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_StudentHasNostudentGroups_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(default(IList<long?>));
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Student has no student groups");
+        }
+
+        [Fact]
         public async Task CreateHomeworkFromStudentAsync_NotExistingLessonId_ShouldReturnValidationError()
         {
             //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
             _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(default(Lesson));
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
             _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
 
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
             //Act
-            //var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
 
             //Assert
-            //result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo("Please be sure that lesson exists");
         }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_LessonIsNotSuitableForStudentsGroups_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 2, 3, 4 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Student with 0 Id number not include in student group which have been lesson with 0 Id number");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_NotExistingAttachments_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(false);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Given attachment ids do not exist: 1, 2");
+        }
+
+        [Fact]
+        public async Task CreateHomeworkFromStudentAsync_LateSendingOfHomework_ShouldReturnHomeworkStudentExample()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MinValue
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.CreateHomeworkFromStudentAsync(homeworkStudentRequestDto);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Due date already finished. Due date {DateTime.MinValue}");
+        }
+
+        #endregion
+
+        #region UpdateHomeworkFromStudentAsyncTests
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_ValidData_ShouldReturnHomeworkStudentExample()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().NotBeNull();
+            result.Data.Should().BeEquivalentTo(homeworkStudentRequestDto);
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_NotExistingStudent_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(default(Student));
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Message.Should().BeEquivalentTo("Student with account id 0 was not found");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_NotExistingHomework_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(default(Homework));
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Message.Should().BeEquivalentTo($"Homework with id {homeworkStudentRequestDto.HomeworkId} was not found");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_StudentHasNotHaveHomework_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(false);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"There is no homework for this Hometask {homeworkStudentRequestDto.HomeworkId}");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_StudentHasNostudentGroups_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(default(List<long?>));
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Student has no student groups");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_NotExistingLessonId_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(default(Lesson));
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo("Please be sure that lesson exists");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_LessonIsNotSuitableForStudentsGroups_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 2, 3, 4 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Student with 0 Id number not include in student group which have been lesson with 0 Id number");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_NotExistingAttachments_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(false);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Given attachment ids do not exist: 1, 2");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_NoHomeworkStudentForUpdate_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(default(HomeworkStudent));
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Message.Should().BeEquivalentTo($"Homework with id {homework.Id} not Found");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_HomeworkStudentIsNotCreatedByStudent_ShouldReturnValidationError()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MaxValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark(),
+                    StudentId = 5,
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student() { Id = 7 });
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Sorry, but homework with id 0 is not created by this student");
+        }
+
+        [Fact]
+        public async Task UpdateHomeworkFromStudentAsync_LateSendingOfHomework_ShouldReturnHomeworkStudentExample()
+        {
+            //Arrange
+            var groupList = new List<long?>() { 0 };
+
+            var attachments = new List<Attachment>()
+            {
+                new Attachment { Id = 1 },
+                new Attachment { Id = 2 }
+            };
+
+            var homework = new Homework()
+            {
+                Id = 1
+            };
+
+            homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
+
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+
+            _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
+                .ReturnsAsync(new Homework()
+                {
+                    Id = 1,
+                    DueDate = DateTime.MinValue
+                });
+
+            _homeworkStudentRepositoryMock.Setup(x => x.IsStudentHasHomeworkAsync(It.IsAny<long>(), homeworkStudentRequestDto.HomeworkId)).ReturnsAsync(true);
+
+            _homeworkStudentRepositoryMock.Setup(x => x.GetByIdAsync(homeworkStudentRequestDto.HomeworkId))
+                .ReturnsAsync(new HomeworkStudent()
+                {
+                    HomeworkId = 1,
+                    IsSent = true,
+                    Mark = new Mark()
+                });
+
+            _attachmentRepositoryMock.Setup(x => x.IsEntityExistAsync(It.IsAny<long>())).ReturnsAsync(true);
+
+            _studentRepositoryMock.Setup(x => x.GetStudentByAccountIdAsync(It.IsAny<long>())).ReturnsAsync(new Student());
+
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentGroupsByStudentId(It.IsAny<long>())).ReturnsAsync(groupList);
+
+            _attachmentRepositoryMock.Setup(x => x.GetAttachmentsByIdsAsync(It.IsAny<IList<long>>())).ReturnsAsync(attachments);
+
+
+            _unitOfWorkMock.Setup(x => x.LessonRepository).Returns(_lessonRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.AttachmentRepository).Returns(_attachmentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var result = await _homeworkStudentService.UpdateHomeworkFromStudentAsync(homeworkStudentRequestDto, homework.Id);
+
+            //Assert
+            result.Data.Should().BeNull();
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            result.Error.Message.Should().BeEquivalentTo($"Due date already finished. Due date {DateTime.MinValue}");
+        }
+
+        #endregion
     }
 }
