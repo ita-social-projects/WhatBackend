@@ -60,7 +60,7 @@ namespace CharlieBackend.Panel.Controllers
                 roleList.Add(item.Key, value);
             }
 
-            SetResponseCookie("accessToken", token);
+            SetResponseCookie("accessToken", _protector.Protect(token));
 
             TempData["authTokens"] = roleList;
 
@@ -75,7 +75,7 @@ namespace CharlieBackend.Panel.Controllers
             
             await Authenticate(token);
 
-            SetResponseCookie("accessToken", token);
+            SetResponseCookie("accessToken", _protector.Protect(token));
 
             return RedirectToAction("Index", "Home");
         }
@@ -112,9 +112,9 @@ namespace CharlieBackend.Panel.Controllers
             return true;
         }
 
-        private async void SetResponseCookie(string key, string value)
+        private void SetResponseCookie(string key, string value)
         {
-            Response.Cookies.Append(key, _protector.Protect(value), new CookieOptions()
+            Response.Cookies.Append(key, value, new CookieOptions()
             {
                 SameSite = SameSiteMode.Lax,
                 Path = "/",
