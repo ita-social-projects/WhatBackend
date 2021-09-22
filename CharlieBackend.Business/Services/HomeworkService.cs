@@ -124,19 +124,7 @@ namespace CharlieBackend.Business.Services
 
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
         }
-        public async Task<IList<Homework>> ValidateThemeFilterToGetHomework(GetHomeworkRequestDto request)
-        {
-            var mentorsCourses = await _unitOfWork.MentorOfCourseRepository
-                .GetMentorCoursesById(_currentUserService.EntityId);
-            var groups = await _unitOfWork.StudentGroupRepository
-                .GetStudentGroupsForCourses(mentorsCourses);
-            var lessonIds = await _unitOfWork.LessonRepository
-                .GetLessonIds(groups, (long)request.ThemeId);
-            var homeworkForTheme = await _unitOfWork.HomeworkRepository
-                .GetHomeworkForThemeFilter(request, lessonIds);
-            return homeworkForTheme;
-        }
-        public async IAsyncEnumerable<string> HasMentorRightsToSeeHomework(GetHomeworkRequestDto request)
+        public async IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request)
         {
             if (request.CourseId.HasValue)
             {
@@ -144,7 +132,7 @@ namespace CharlieBackend.Business.Services
                            .CheckDoesMentorCanSeeCourseAsync(_currentUserService.EntityId, request.CourseId);
                 if (!courses)
                 {
-                    yield return "Mentor can get only homework of his courses";
+                    yield return "Mentor can get only homeworks of his courses";
                 }
             }
             if (request.GroupId.HasValue)
@@ -153,19 +141,17 @@ namespace CharlieBackend.Business.Services
                         .CheckDoesMentorCanSeeGroupAsync(_currentUserService.EntityId, request.GroupId);
                 if (!groups)
                 {
-                    yield return "Mentor can get only homework of groups of his courses";
+                    yield return "Mentor can get only homeworks of groups of his courses";
                 }
             }
         }
-
         public async Task<Result<IList<HomeworkDto>>> GetHomeworksForMentorByCourseIdAsync(long courseId)
         {
             var homeworksForMentor = await _unitOfWork.HomeworkRepository
                     .GetHomeworksForMentorByCourseId(courseId);
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworksForMentor));
         }
-
-        public async IAsyncEnumerable<string> ValidateGetHomeworkRequest(GetHomeworkRequestDto request)
+        public async IAsyncEnumerable<string> ValidateGetHomeworksRequest(GetHomeworkRequestDto request)
         {
             if (!request.GroupId.HasValue && !request.CourseId.HasValue && !request.ThemeId.HasValue)
             {
@@ -213,9 +199,9 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworkAsync(GetHomeworkRequestDto request)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksAsync(GetHomeworkRequestDto request)
         {
-            var errors = await ValidateGetHomeworkRequest(request).ToListAsync();
+            var errors = await ValidateGetHomeworksRequest(request).ToListAsync();
             if (errors.Any())
             {
                 return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, string.Join(";\n", errors));
@@ -224,22 +210,23 @@ namespace CharlieBackend.Business.Services
             {
                 if (_currentUserService.Role.Is(UserRole.Mentor))
                 {
-                    var hasRightsError = await HasMentorRightsToSeeHomework(request).ToListAsync();
+                    var hasRightsError = await HasMentorRightsToSeeHomeworks(request).ToListAsync();
                     if (hasRightsError.Any())
                     {
                         var listOfErrors = string.Join("; ", hasRightsError);
-                        _logger.LogError("Getting homeworks for mentor has failed due to: " + listOfErrors);
+                        _logger.LogError("Getting homeworks has failed due to: " + listOfErrors);
                         return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, listOfErrors);
                     }
                     if (request.ThemeId.HasValue)
                     {
-                        var homeworkForTheme = await ValidateThemeFilterToGetHomework(request);
-                        return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworkForTheme));
+                        var homeworksForTheme = await _unitOfWork.HomeworkRepository
+                            .GetHomeworksForMentorByThemeFilter(request, _currentUserService.EntityId);
+                        return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworksForTheme));
                     }
                 }
-                var homework = await _unitOfWork.HomeworkRepository
-                    .GetHomework(request);
-                return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homework));
+                var homeworks = await _unitOfWork.HomeworkRepository
+                    .GetHomeworks(request);
+                return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
             }
         }
 

@@ -166,13 +166,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Select(s => s.StudentGroupId)
                 .ToListAsync();
         }
-        public async Task<IList<long>> GetStudentGroupsForCourses(IList<long?> listOfCourses)
-        {
-            return await _applicationContext.StudentGroups
-                    .Where(groups => listOfCourses
-                    .Contains(groups.CourseId))
-                    .Select(x => x.Id)
-                    .ToListAsync();
-        }
     }
 }

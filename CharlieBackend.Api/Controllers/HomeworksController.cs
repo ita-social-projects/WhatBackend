@@ -58,19 +58,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets conditions of homework
+        /// Gets conditions of homeworks
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "groupId" or "courseId" or "themeId" to get homework of a specific group, course, theme.
-        /// 2. You can mention optional parameters — "startDate", "finishtDate" to get homework depending on publishing date of homework
+        /// 1. Mention "groupId" or "courseId" or "themeId" to get homeworks of a specific group, course, theme.
+        /// 2. You can mention optional parameters — "startDate", "finishtDate" to get homeworks depending on publishing date of homework
         /// </param>
         [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
         [Authorize(Roles = "Mentor, Admin, Secretary")]
         [HttpPost("getHomework")]
-        public async Task<ActionResult> GetHomework([FromBody] GetHomeworkRequestDto request)
+        public async Task<ActionResult> GetHomeworks([FromBody] GetHomeworkRequestDto request)
         {
             var results = await _homeworkService
-                        .GetHomeworkAsync(request);
+                        .GetHomeworksAsync(request);
 
             return results.ToActionResult();
         }

@@ -50,7 +50,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
                    .ToListAsync();
         }
-        public async Task<IList<Homework>> GetHomework(GetHomeworkRequestDto request)
+        public async Task<IList<Homework>> GetHomeworks(GetHomeworkRequestDto request)
         {
             return await _applicationContext.Homeworks
                     .Include(m => m.Lesson)
@@ -67,13 +67,15 @@ namespace CharlieBackend.Data.Repositories.Impl
                             d => d.PublishingDate <= request.FinishDate)
                     .ToListAsync(); 
         } 
-        public async Task<IList<Homework>> GetHomeworkForThemeFilter(GetHomeworkRequestDto request, IList<long> lessonIds)
+        public async Task<IList<Homework>> GetHomeworksForMentorByThemeFilter(GetHomeworkRequestDto request, long mentorId)
         {
             return await _applicationContext.Homeworks
-                    .Include(x => x.Lesson)
                     .Include(x => x.AttachmentsOfHomework)
-                    .Where(x => lessonIds
-                        .Contains(x.LessonId))
+                    .Include(x => x.Lesson)
+                         .ThenInclude(l => l.StudentGroup)
+                            .ThenInclude(c => c.Course)
+                                .ThenInclude(m => m.MentorsOfCourses)
+                    .Where(x => x.Lesson.ThemeId == request.ThemeId && x.Lesson.StudentGroup.Course.MentorsOfCourses.Any(moc => moc.MentorId == mentorId))
                     .WhereIf(request.GroupId.HasValue,
                             l => l.Lesson.StudentGroupId == request.GroupId)
                     .WhereIf(request.CourseId.HasValue,

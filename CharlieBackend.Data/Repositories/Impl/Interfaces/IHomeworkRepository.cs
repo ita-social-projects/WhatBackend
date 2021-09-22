@@ -12,9 +12,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
                      IEnumerable<AttachmentOfHomework> newHomeworkAttachments);
 
         Task<IList<Homework>> GetHomeworksByLessonId(long studentGroupId);
-        Task<IList<Homework>> GetHomework(GetHomeworkRequestDto request);
+        Task<IList<Homework>> GetHomeworks(GetHomeworkRequestDto request);
         Task<IList<Homework>> GetHomeworksForMentorByCourseId(long courseId);
         Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId);
-        Task<IList<Homework>> GetHomeworkForThemeFilter(GetHomeworkRequestDto request, IList<long> lessonIds);
+        Task<IList<Homework>> GetHomeworksForMentorByThemeFilter(GetHomeworkRequestDto request, long mentorId);
     }
 }
