@@ -60,12 +60,7 @@ namespace CharlieBackend.Panel.Controllers
                 roleList.Add(item.Key, value);
             }
 
-            Response.Cookies.Append("accessToken", _protector.Protect(token), new CookieOptions()
-            {
-                SameSite = SameSiteMode.Lax,
-                Path = "/",
-                Secure = true
-            });
+            SetResponseCookie("accessToken", token);
 
             TempData["authTokens"] = roleList;
 
@@ -80,12 +75,7 @@ namespace CharlieBackend.Panel.Controllers
             
             await Authenticate(token);
 
-            Response.Cookies.Append("accessToken", _protector.Protect(token), new CookieOptions()
-            {
-                SameSite = SameSiteMode.Lax,
-                Path = "/",
-                Secure = true
-            });
+            SetResponseCookie("accessToken", token);
 
             return RedirectToAction("Index", "Home");
         }
@@ -107,12 +97,7 @@ namespace CharlieBackend.Panel.Controllers
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
-            Response.Cookies.Append("currentRole", role, new CookieOptions()
-            {
-                SameSite = SameSiteMode.Lax,
-                Path = "/",
-                Secure = true
-            });
+            SetResponseCookie("currentRole", role);
 
             var claims = new List<Claim>
             {
@@ -125,6 +110,16 @@ namespace CharlieBackend.Panel.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(roleClaim));
 
             return true;
+        }
+
+        private async void SetResponseCookie(string key, string value)
+        {
+            Response.Cookies.Append(key, _protector.Protect(value), new CookieOptions()
+            {
+                SameSite = SameSiteMode.Lax,
+                Path = "/",
+                Secure = true
+            });
         }
     }
 }
