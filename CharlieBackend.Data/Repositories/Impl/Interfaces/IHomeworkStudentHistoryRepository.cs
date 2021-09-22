@@ -9,6 +9,5 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     public interface IHomeworkStudentHistoryRepository : IRepository<HomeworkStudentHistory>
     {
         Task<IList<HomeworkStudentHistory>> GetHomeworkStudentHistoryByHomeworkStudentId(long homeworkStudentId);
-        Task<HomeworkStudentHistory> GetHomeworkStudentHistory(long groupId, long studentId, long homeworkId);
     }
 }

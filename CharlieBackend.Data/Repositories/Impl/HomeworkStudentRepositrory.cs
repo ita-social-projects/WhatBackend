@@ -49,7 +49,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                  x => x.PublishingDate >= startDate)
                 .WhereIf(finishDate != null && finishDate != default(DateTime),
                 x => x.PublishingDate <= finishDate)
-                .Where(x => x.StudentId == studentId && x.Homework.Lesson.StudentGroupId == groupId)
+                .Where(x => x.StudentId == studentId && x.Homework.Lesson.StudentGroupId == groupId && x.IsSent == true)
                 .ToListAsync();
         }
 

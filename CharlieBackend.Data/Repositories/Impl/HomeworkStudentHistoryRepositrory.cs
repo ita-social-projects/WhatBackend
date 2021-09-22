@@ -26,18 +26,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .OrderBy(x => x.PublishingDate)
                 .ToListAsync();
         }
-        public async Task<HomeworkStudentHistory> GetHomeworkStudentHistory(long groupId, long studentId, long homeworkStudentId)
-        {
-            return await _applicationContext.HomeworkStudentsHistory
-                .Include(x => x.Mark)
-                .Include(x => x.HomeworkStudent)
-                .Include(x => x.AttachmentOfHomeworkStudentsHistory)
-                .Where(x => x.HomeworkStudentId == homeworkStudentId)
-                .Where(x => x.HomeworkStudent.StudentId == studentId && x.HomeworkStudent.Homework.Lesson.StudentGroupId == groupId)
-                .OrderBy(x => x.PublishingDate)
-                .LastOrDefaultAsync();
-        }
-
-
     }
 }

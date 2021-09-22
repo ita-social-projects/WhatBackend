@@ -199,42 +199,7 @@ namespace CharlieBackend.Business.Services
             var homeworksStudents = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(student.Id, homeworkStudentFilter.StartDate,
                 homeworkStudentFilter.FinishtDate, homeworkStudentFilter.GroupId);
 
-            foreach (HomeworkStudent homeworkStudent in homeworksStudents)
-            {
-                if (homeworkStudent.IsSent == false)
-                {
-                    var getHictoryHomework = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistory(student.Id, homeworkStudentFilter.GroupId, homeworkStudent.Id);
-                    if (getHictoryHomework == null)
-                    {
-                        continue;
-                    }
-                    homeworkStudent.HomeworkText = getHictoryHomework.HomeworkText;
-                    homeworkStudent.Mark = getHictoryHomework.Mark;
-                    homeworkStudent.PublishingDate = getHictoryHomework.PublishingDate;
-                    homeworkStudent.IsSent = true;
-                    homeworkStudent.MarkId = getHictoryHomework.MarkId;
-                    homeworkStudent.AttachmentOfHomeworkStudents = getHictoryHomework.AttachmentOfHomeworkStudentsHistory?.Select(elem =>
-              new AttachmentOfHomeworkStudent()
-              {
-                  Attachment = elem.Attachment,
-                  AttachmentId = elem.AttachmentId,
-                  HomeworkStudent = homeworkStudent,
-                  HomeworkStudentId = elem.HomeworkStudentHistoryId
-              }).ToList();
-                }
-            }
-
-            var resultList = new List<HomeworkStudent>();
-
-            foreach (var homeworkStudent in homeworksStudents)
-            {
-                if (homeworkStudent.IsSent == true)
-                {
-                    resultList.Add(homeworkStudent);
-                }
-            }
-
-            var result = _mapper.Map<IList<HomeworkStudentDto>>(resultList);
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworksStudents);
             return Result<IList<HomeworkStudentDto>>.GetSuccess(result);
         }
 

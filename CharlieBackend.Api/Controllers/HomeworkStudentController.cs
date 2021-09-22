@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get a student's homework in a group
+        /// Gets the student's completed homework in the group
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
