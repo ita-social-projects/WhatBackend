@@ -1,0 +1,171 @@
+﻿
+@model IEnumerable<CharlieBackend.Panel.Models.Theme.ThemeViewModel>
+
+@{
+    Layout = "_Layout";
+}
+<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+    <div class="dropleft">
+        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="dropdown-menu" style="min-width: 170px;">
+            <form method="post" class="input-group" asp-action="AddTheme" asp-controller="Themes">
+                <input type="text" class="form-control" name="Name" placeholder="Theme`s name" />
+                <button type="submit" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+
+        <div class="container-fluid">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Themes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
+                        <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="thead-dark">
+                                <tr class="thead-dark row">
+                                    <th class="col-10">Name</th>
+                                    <th class="col">Controll</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="row">
+                                        <td class="col-10 text-truncate">@item.Name</td>
+                                        <td class="col">
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                    <a class="dropdown-item text-dark js-edit-theme" data-toggle="modal" data-target="#editThemeModal" data-item-name="@item.Name" data-item-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Edit </span>
+                                                    </a>
+
+                                                    <a class="dropdown-item text-dark js-delete-theme" data-toggle="modal" data-target="#deleteThemeModalWindow" data-item-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Delete</span>
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Delete theme modal window-->
+    <div class="modal fade" id="deleteThemeModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete theme?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmDeleteTheme" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editThemeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editThemeTitle">Edit theme</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <label for="themeNameInput">Name:</label>
+                    <input id="themeNameInput" class="modalTextInput form-control" value="" />
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" id="confirmEditTheme" href="">Save changes</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        var routeForDeleteTheme = "/Themes/DeleteTheme/";
+
+        var deleteThemId = null;
+
+        $(document).on("click", ".js-delete-theme", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            deleteThemId = _self.data('item-id');
+
+            $("#confirmDeleteTheme").attr("href", routeForDeleteTheme + deleteThemId);
+
+        });
+
+    </script>
+
+    <script type="text/javascript">
+
+        var routeForEditTheme = "/Themes/UpdateTheme/";
+
+        var editThemeId = null;
+
+        var editThemeName = null;
+
+        $(document).on("click", ".js-edit-theme", function (e) {
+
+            e.preventDefault();
+
+            var _self = $(this);
+
+            editThemeId = _self.data('item-id');
+            editThemeName = _self.data('item-name');
+
+            $("#themeNameInput").val(editThemeName);
+        });
+        $("#themeNameInput").on('change keyup paste', function () {
+            $("#confirmEditTheme").attr("href", routeForEditTheme + editThemeId + '?&name=' + $("#themeNameInput").val());
+        });
+
+    </script>
+}
