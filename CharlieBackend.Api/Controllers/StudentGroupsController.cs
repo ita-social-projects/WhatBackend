@@ -70,9 +70,9 @@ namespace CharlieBackend.Api.Controllers
             }
             else
             {
-                var lessonsOfStudentGroup = _lessonService.GetAllLessonsForStudentGroup(id);
+                var lessonsOfStudentGroup = await _lessonService.GetAllLessonsForStudentGroup(id);
 
-                return lessonsOfStudentGroup.Result.ToActionResult();
+                return lessonsOfStudentGroup.ToActionResult();
             }
         }
 

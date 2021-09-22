@@ -246,16 +246,16 @@ namespace CharlieBackend.Business.Services
 
             if (lessonsOfStudentGroup.Result.Count == 0)
             {
-                result = _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId).Result;
+                result = await _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId);
             }
             else
             {
-                result = _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
+                result = await _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId);
             }
 
             if (result)
             {
-                var scheduledEvents = _scheduleService.GetEventOccurrencesByGroupIdAsync(StudentGroupId).Result;
+                var scheduledEvents = await _scheduleService.GetEventOccurrencesByGroupIdAsync(StudentGroupId);
 
                 foreach (var x in scheduledEvents.Data)
                 {
