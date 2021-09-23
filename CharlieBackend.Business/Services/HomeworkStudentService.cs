@@ -32,10 +32,26 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent)
         {
+            if (homeworkStudent == default)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Please provide request data");
+            }
+
             long accountId = _currentUserService.AccountId;
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+
+            if (student == default)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Student with account id {accountId} was not found");
+            }
+
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
+
+            if (homework == default)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkStudent.HomeworkId} was not found");
+            }
 
             var errors = await ValidateAddingHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
 
@@ -90,9 +106,21 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<HomeworkStudentDto>> UpdateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent, long homeworkId)
         {
+
             long accountId = _currentUserService.AccountId;
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+
+            if (student == default)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Student with account id {accountId} was not found");
+            }
+
             var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkStudent.HomeworkId);
+
+            if (homework == default)
+            {
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkStudent.HomeworkId} was not found");
+            }
 
             var errors = await ValidateUpdatingHomeworkStudentRequest(homeworkStudent, student, homework).ToListAsync();
 
@@ -114,7 +142,7 @@ namespace CharlieBackend.Business.Services
 
             if (foundStudentHomework.StudentId != student.Id)
             {
-                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Sorry, but homework with id{foundStudentHomework.HomeworkId} not yours, choose correct homework");
+                return Result<HomeworkStudentDto>.GetError(ErrorCode.ValidationError, $"Sorry, but homework with id {foundStudentHomework.Id} is not created by this student");
             }
 
             if (homework.DueDate < DateTime.UtcNow)
@@ -137,14 +165,14 @@ namespace CharlieBackend.Business.Services
                     PublishingDate = DateTime.UtcNow,
                 };
 
-                var AttachmentOfHomeworkStudentsHistory = foundStudentHomework.AttachmentOfHomeworkStudents.Select(attachmentOfHomework => new AttachmentOfHomeworkStudentHistory()
+                var AttachmentOfHomeworkStudentsHistory = foundStudentHomework.AttachmentOfHomeworkStudents?.Select(attachmentOfHomework => new AttachmentOfHomeworkStudentHistory()
                 {
                     HomeworkStudentHistory = homeworkStudentHistory,
                     Attachment = attachmentOfHomework.Attachment,
                     AttachmentId = attachmentOfHomework.AttachmentId,
                     HomeworkStudentHistoryId = homeworkStudentHistory.Id,
                 });
-                homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory = AttachmentOfHomeworkStudentsHistory.ToList();
+                homeworkStudentHistory.AttachmentOfHomeworkStudentsHistory = AttachmentOfHomeworkStudentsHistory?.ToList();
 
                 _unitOfWork.HomeworkStudentHistoryRepository.Add(homeworkStudentHistory);
             }
@@ -168,6 +196,8 @@ namespace CharlieBackend.Business.Services
                 }).ToList();
 
                 _unitOfWork.HomeworkStudentRepository.UpdateManyToMany(foundStudentHomework.AttachmentOfHomeworkStudents, newAttachments);
+
+                foundStudentHomework.AttachmentOfHomeworkStudents = newAttachments;
             }
 
             await _unitOfWork.CommitAsync();
@@ -344,9 +374,12 @@ namespace CharlieBackend.Business.Services
 
         private async IAsyncEnumerable<string> ValidateHomeworkStudentRequestBase(HomeworkStudentRequestDto homeworkStudent, Student student, Homework homework)
         {
-            if (homeworkStudent == default)
+
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+
+            if (studentGroups == default)
             {
-                yield return "Please provide request data";
+                yield return "Student has no student groups";
                 yield break;
             }
 
@@ -354,9 +387,15 @@ namespace CharlieBackend.Business.Services
 
             var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
 
+            if (lesson == default)
+            {
+                yield return "Please be sure that lesson exists";
+                yield break;
+            }
+
             if (!studentGroups.Contains(lesson.StudentGroupId.Value))
             {
-                yield return $"Student with {student} Id number not include in student group which have been lesson with {lesson.Id} Id number";
+                yield return $"Student with {student.Id} Id number not include in student group which have been lesson with {lesson.Id} Id number";
             }
 
             if (homeworkStudent.AttachmentIds?.Count() > 0)
