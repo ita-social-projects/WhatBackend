@@ -136,5 +136,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return visit;
         }
+        public async Task<bool> DoesLessonWithThemeExist(long themeId)
+            => await _applicationContext.Lessons.AnyAsync(l => l.ThemeId == themeId);
     }
 }

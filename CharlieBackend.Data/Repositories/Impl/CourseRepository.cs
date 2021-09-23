@@ -30,6 +30,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
+        public async Task<bool> DoesMentorHasAccessToCourse(long mentorId, long courseId)
+            => await _applicationContext.MentorsOfCourses
+            .AnyAsync(x=>x.MentorId == mentorId && x.CourseId == courseId);
+
         public async Task<bool> IsCourseHasGroupAsync(long id)
         {
             return await _applicationContext.StudentGroups.AnyAsync(s => s.CourseId == id);

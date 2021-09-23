@@ -138,6 +138,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                     }).ToListAsync();
         }
 
+        public async Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .AnyAsync(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == mentorId) && x.Id == groupId);
+        }
+
         public async Task<IList<long?>> GetGroupStudentsIds(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)

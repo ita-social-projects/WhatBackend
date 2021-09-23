@@ -21,5 +21,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<Lesson> GetLessonByHomeworkId(long homeworkId);
 
         Task<Visit> GetVisitByStudentHomeworkIdAsync(long studentHomeworkId);
+        Task<bool> DoesLessonWithThemeExist(long themeId);
     }
 }
