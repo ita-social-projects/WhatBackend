@@ -119,7 +119,7 @@ namespace CharlieBackend.Business.Services
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
         }
 
-        public async Task<Result<HomeworkDto>> GetHomeworkNotDone(long studentGroup)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroup)
         {
             var accountId = _currentUserService.AccountId;
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
@@ -127,15 +127,15 @@ namespace CharlieBackend.Business.Services
 
             if (!group.Contains(studentGroup))
             {
-                return Result<HomeworkDto>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
             }
 
             var homeworIdList =  await _unitOfWork.HomeworkStudentRepository.GetIdsHomework(studentGroup,student.Id);
 
-            var homework = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroup, homeworIdList);
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroup, homeworIdList);
 
 
-            return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
