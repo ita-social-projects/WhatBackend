@@ -375,15 +375,13 @@ namespace CharlieBackend.Business.Services
         private async IAsyncEnumerable<string> ValidateHomeworkStudentRequestBase(HomeworkStudentRequestDto homeworkStudent, Student student, Homework homework)
         {
 
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
 
             if (studentGroups == default)
             {
                 yield return "Student has no student groups";
                 yield break;
             }
-
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
 
             var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
 
