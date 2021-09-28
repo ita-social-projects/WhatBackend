@@ -103,9 +103,19 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<LessonDto>>> GetAllLessonsAsync()
+        public async Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
-            var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
+            var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
+            const long daysWeek = -7;
+
+            if (startDate == null && finishDate == null)
+            {
+                startDate = lastLesson.LessonDate.AddDays(daysWeek);
+                finishDate = lastLesson.LessonDate;
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
+
             var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
             return Result<IList<LessonDto>>.GetSuccess(listLessons);
