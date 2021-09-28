@@ -11,7 +11,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
     {
         public StudentClassbookXlsx()
         {
-            xLWorkbook = new XLWorkbook();
+            _xLWorkbook = new XLWorkbook();
         }
 
         public override string GetFileName()
@@ -70,9 +70,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillStudentPresence(IEnumerable<StudentVisitDto> StudentVisit)
         {
-            string worksheetName = "Presence (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-            xLWorkbook.AddWorksheet(worksheetName);
-            var worksheet = xLWorkbook.Worksheet(worksheetName);
+            string worksheetName = "Presence (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+            _xLWorkbook.AddWorksheet(worksheetName);
+            var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
             await CreateHeadersAsync(worksheet.Row(1),
                 "Student",
@@ -111,9 +111,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task FillStudentMark(IEnumerable<StudentMarkDto> StudentsMarks)
         {
-            string worksheetName = "Average mark (" + (xLWorkbook.Worksheets.Count + 1) + ")";
-            xLWorkbook.AddWorksheet(worksheetName);
-            var worksheet = xLWorkbook.Worksheet(worksheetName);
+            string worksheetName = "Average mark (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
+            _xLWorkbook.AddWorksheet(worksheetName);
+            var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
             await CreateHeadersAsync(worksheet.Row(1),
                 "Student",

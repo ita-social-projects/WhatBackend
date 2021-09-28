@@ -103,9 +103,19 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public async Task<Result<IList<LessonDto>>> GetAllLessonsAsync()
+        public async Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
-            var lessons = await _unitOfWork.LessonRepository.GetAllAsync();
+            var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
+            const long daysWeek = -7;
+
+            if (startDate == null && finishDate == null)
+            {
+                startDate = lastLesson.LessonDate.AddDays(daysWeek);
+                finishDate = lastLesson.LessonDate;
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
+
             var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
             return Result<IList<LessonDto>>.GetSuccess(listLessons);
@@ -123,6 +133,23 @@ namespace CharlieBackend.Business.Services
             }
 
             var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentorId);
+
+            return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
+        }
+
+        public async Task<Result<IList<LessonDto>>> GetAllLessonsForStudentGroup(long studentGroupId)
+        {
+            if (studentGroupId == default)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "Write Student Group Id please");
+            }
+
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(studentGroupId) == null)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Student Group with id {studentGroupId} is not Found");
+            }
+
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(studentGroupId);
 
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
@@ -290,11 +317,26 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel)
+        public async Task<Result<IList<LessonDto>>> GetLessonsForStudentAsync(
+                FilterLessonsRequestDto filterModel)
         {
-            var lessonsForStudent = await _unitOfWork.LessonRepository.GetLessonsForStudentAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, _currentUserService.EntityId);
+            var groupsOfStudent = await _unitOfWork.StudentGroupRepository
+                    .GetStudentGroupsIdsByStudentId(
+                            (long)filterModel.StudentGroupId);
 
-            return _mapper.Map<IList<LessonDto>>(lessonsForStudent);
+            if (groupsOfStudent.Contains(filterModel.StudentGroupId))
+            {
+                var lessonsForStudent = await _unitOfWork.LessonRepository
+                        .GetLessonsForStudentAsync(filterModel.StudentGroupId,
+                                filterModel.StartDate, filterModel.FinishDate,
+                                _currentUserService.EntityId);
+
+                return Result<IList<LessonDto>>.GetSuccess(
+                        _mapper.Map<IList<LessonDto>>(lessonsForStudent));
+            }
+
+            return Result<IList<LessonDto>>.GetError(ErrorCode.Unauthorized,
+                   "student can get lessons only that group what he belongs");
         }
 
         public async Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId)

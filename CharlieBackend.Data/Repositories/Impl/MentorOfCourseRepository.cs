@@ -36,5 +36,12 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return mentorOfCourse;
         }
+        public async Task<long> GetCoursesAsync(long courseId)
+        {
+            return await _applicationContext.MentorsOfCourses
+                .Where(x => x.CourseId == courseId)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+        }
     }
 }

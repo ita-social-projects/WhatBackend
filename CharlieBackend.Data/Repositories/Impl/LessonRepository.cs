@@ -26,11 +26,34 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
+        public Task<Lesson> GetLastLesson()
+        {
+            return _applicationContext.Lessons.OrderByDescending(l => l.LessonDate).FirstOrDefaultAsync();
+        }
+
+        public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
+        {
+            return _applicationContext.Lessons
+                  .WhereIf(startDate != null && startDate != default(DateTime),
+                   x => x.LessonDate >= startDate)
+                  .WhereIf(finishDate != null && finishDate != default(DateTime),
+                   x => x.LessonDate <= finishDate)
+                  .ToListAsync();
+        }
+
         public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
         {
             return await _applicationContext.Lessons
                 .Where(lesson => lesson.MentorId == mentorId)
                 .Select(lesson => lesson)
+                .Include(lesson => lesson.Theme)
+                .ToListAsync();
+        }
+
+        public async Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId)
+        {
+            return await _applicationContext.Lessons
+                .Where(lesson => lesson.StudentGroupId == studentGroupId)
                 .ToListAsync();
         }
 
@@ -128,5 +151,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return visit;
         }
+        public async Task<bool> DoesLessonWithThemeExist(long themeId)
+            => await _applicationContext.Lessons.AnyAsync(l => l.ThemeId == themeId);
     }
 }

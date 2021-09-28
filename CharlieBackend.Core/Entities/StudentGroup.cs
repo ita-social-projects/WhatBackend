@@ -13,6 +13,8 @@ namespace CharlieBackend.Core.Entities
 
         public DateTime? FinishDate { get; set; }
 
+        public bool IsActive { get; set; }
+
         public virtual Course Course { get; set; }
 
         public virtual IList<Lesson> Lesson { get; set; }

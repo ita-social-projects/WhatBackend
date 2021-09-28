@@ -11,6 +11,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         Task<IList<ScheduledEvent>> GetEventsFilteredAsync(ScheduledEventFilterRequestDTO request);
 
-        Task<ScheduledEvent> ConnectEventToLessonById(long? eventId, long? lessonId);
+        Task<bool> IsLessonConnectedToSheduledEventAsync(long lessonId);
+
+        Task<ScheduledEvent> ConnectEventToLessonByIdAsync(long? eventId, long? lessonId);
     }
 }

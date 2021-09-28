@@ -14,6 +14,7 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto homeworkDto);
 
         Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId);
+        Task<Result<IList<HomeworkDto>>> GetHomeworksAsync(GetHomeworkRequestDto request);
 
         Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto);
 

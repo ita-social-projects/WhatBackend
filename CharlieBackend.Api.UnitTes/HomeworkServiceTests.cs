@@ -28,6 +28,8 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly HomeworkService _homeworkService;
+        private readonly CourseService _courseService;
+        private readonly LessonService _lessonService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
             LessonId = 1
@@ -41,7 +43,7 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _currentUserServiceMock = new Mock<ICurrentUserService>();
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _courseService, _lessonService, _mapper,  _loggerMock.Object, _currentUserServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)

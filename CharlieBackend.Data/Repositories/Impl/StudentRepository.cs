@@ -1,18 +1,16 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Data.Helpers;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class StudentRepository : Repository<Student>, IStudentRepository
     {
-        public StudentRepository(ApplicationContext applicationContext) 
-            : base(applicationContext) 
+        public StudentRepository(ApplicationContext applicationContext)
+            : base(applicationContext)
         {
         }
         public new async Task<List<Student>> GetAllAsync()
@@ -56,8 +54,21 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Students
                     .Include(student => student.Account)
-                    .FirstOrDefaultAsync(student => 
-                    student.Account.Email == email && student.Account.Role.HasFlag(UserRole.Student));
+                    .FirstOrDefaultAsync(student =>
+                    student.Account.Email == email);
+        }
+
+        public async Task<IList<Student>> GetStudentsByIdGroups(long groupId)
+        {
+            return await _applicationContext.Students
+                  .Join(_applicationContext.StudentsOfStudentGroups,
+                        s => s.Id,
+                        sOfS => sOfS.StudentId,
+                        (s, sOfG) => new { Student = s, StudentOfGroup = sOfG })
+                  .Where(related => related.StudentOfGroup.StudentGroupId == groupId)
+                  .Select(related => related.Student)
+                  .Include(s => s.Account)
+                  .ToListAsync();
         }
     }
 }
