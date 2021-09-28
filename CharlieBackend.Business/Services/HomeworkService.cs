@@ -134,7 +134,6 @@ namespace CharlieBackend.Business.Services
 
             var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroup, homeworIdList);
 
-
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 

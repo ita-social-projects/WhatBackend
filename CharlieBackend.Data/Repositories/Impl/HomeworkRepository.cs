@@ -33,6 +33,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(x => x.Lesson.StudentGroup.Id == studentGroup && !studentHomeworkIds.Contains(x.Id))
                 .ToListAsync();
         }
+
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
                              IEnumerable<AttachmentOfHomework> newHomeworkAttachments)
         {
