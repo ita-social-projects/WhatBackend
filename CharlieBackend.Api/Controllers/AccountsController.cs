@@ -167,6 +167,8 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
+            long entityId = foundAccount.Id;
+
             if (foundAccount.Role.IsNotAssigned())
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
@@ -181,6 +183,8 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
                 else roleIds.Add(UserRole.Student, foundStudent.Id);
+
+                entityId = foundStudent.Id;
             }
 
             if (foundAccount.Role.Is(UserRole.Mentor))
@@ -192,6 +196,8 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
                 else roleIds.Add(UserRole.Mentor, foundMentor.Id);
+
+                entityId = foundMentor.Id;
             }
 
             if (foundAccount.Role.Is(UserRole.Secretary))
@@ -203,11 +209,15 @@ namespace CharlieBackend.Api.Controllers
                     return BadRequest();
                 }
                 else roleIds.Add(UserRole.Secretary, foundSecretary.Id);
+
+                entityId = foundSecretary.Id;
             }
 
             if (foundAccount.Role.IsAdmin())
             {
                 roleIds.Add(UserRole.Admin, foundAccount.Id);
+
+                entityId = foundAccount.Id;
             }
 
             #endregion
@@ -219,7 +229,7 @@ namespace CharlieBackend.Api.Controllers
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
                 role = foundAccount.Role,
-                roleList = userRoleToJwtToken
+                id = entityId
             };
             GetHeaders(userRoleToJwtToken);
 
@@ -234,6 +244,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account already has this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
+        [MapToApiVersion("2.0")]
         [Route("role/grant")]
         [HttpPut]
         public async Task<ActionResult> GrantRoleToAccount(AccountRoleDto account)
@@ -252,6 +263,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 409, API: 5">Account doesn't have this role
         /// or role is unsuitable</response>
         [Authorize(Roles = "Admin")]
+        [MapToApiVersion("2.0")]
         [Route("role/revoke")]
         [HttpPut]
         public async Task<ActionResult> RevokeRoleFromAccount(AccountRoleDto account)
@@ -364,6 +376,5 @@ namespace CharlieBackend.Api.Controllers
 
             Response.Headers.Add("Access-Control-Expose-Headers", "x-token, Authorization");
         }
-
     }
 }

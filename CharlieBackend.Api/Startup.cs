@@ -88,13 +88,18 @@ namespace CharlieBackend.Api
                 {
                     options.InvalidModelStateResponseFactory = c =>
                     {
-                        var errors = string.Join('\n', c.ModelState.Values.Where(v => v.Errors.Count > 0)
-                          .SelectMany(v => v.Errors)
-                          .Select(v => v.ErrorMessage));
+                        var errors = string.Join('\n', c.ModelState.Values
+                            .Where(v => v.Errors.Count > 0)
+                            .SelectMany(v => v.Errors)
+                            .Select(v => v.ErrorMessage));
 
                         return new BadRequestObjectResult(new ErrorDto
                         {
-                            Error = new ErrorData { Code = ErrorCode.ValidationError, Message = errors }
+                            Error = new ErrorData 
+                            { 
+                                Code = ErrorCode.ValidationError,
+                                Message = errors 
+                            }
                         });
                     };
                 })
@@ -191,9 +196,11 @@ namespace CharlieBackend.Api
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dbContext, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ApplicationContext dbContext,
+            IApiVersionDescriptionProvider provider)
         {
-
             dbContext.Database.EnsureCreated();
 
             app.UseCors(builder =>
@@ -203,7 +210,6 @@ namespace CharlieBackend.Api
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
-
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
