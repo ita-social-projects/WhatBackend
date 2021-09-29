@@ -189,7 +189,7 @@ namespace CharlieBackend.Business.Services
 
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
 
-            var group = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByStudentId(student.Id);
+            var group = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
 
             if (!group.Contains(homeworkStudentFilter.GroupId))
             {
