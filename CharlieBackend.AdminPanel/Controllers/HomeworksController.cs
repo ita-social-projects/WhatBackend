@@ -5,6 +5,7 @@ using CharlieBackend.AdminPanel.Models.Mentor;
 using CharlieBackend.AdminPanel.Models.StudentGroups;
 using CharlieBackend.AdminPanel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.AdminPanel.Controllers
 {
+    [Authorize(Roles = "Admin, Mentor, Secretary")]
     [Route("[controller]/[action]")]
     public class HomeworksController : Controller
     {
