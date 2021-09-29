@@ -12,7 +12,9 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage courses data
     /// </summary>
-    [Route("api/courses")]
+    [Route("api/v{version:apiVersion}/courses")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class CoursesController : ControllerBase
     {

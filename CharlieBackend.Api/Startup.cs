@@ -1,6 +1,7 @@
 using AutoMapper;
 using CharlieBackend.Api.Extensions;
 using CharlieBackend.Api.Middlewares;
+using CharlieBackend.Api.VersioningHelpers;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Core.DTO.Result;
 using CharlieBackend.Core.Extensions;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -92,15 +94,15 @@ namespace CharlieBackend.Api
 
                         return new BadRequestObjectResult(new ErrorDto
                         {
-                            Error = new ErrorData { Code = ErrorCode.ValidationError, Message = errors}
+                            Error = new ErrorData { Code = ErrorCode.ValidationError, Message = errors }
                         });
                     };
                 })
                 .AddJsonSerializer()
                 .AddFluentValidation(options =>
                 {
-                        options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
-                        options.RegisterValidatorsFromAssemblyContaining<Startup>();
+                    options.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+                    options.RegisterValidatorsFromAssemblyContaining<Startup>();
                 });
 
             // EasyNetQ Congiguration through extension
@@ -117,9 +119,23 @@ namespace CharlieBackend.Api
 
             services.AddSingleton(mappingConfig.CreateMapper());
 
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+            });
+
+            services.AddVersionedApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
+
+            services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WHAT Project API", Version = "07.12.2020" });
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 
@@ -159,6 +175,8 @@ namespace CharlieBackend.Api
                 });
             });
 
+            services.ConfigureOptions<ConfigureSwaggerOptions>();
+
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddFluentValidationRulesToSwagger(options =>
@@ -167,15 +185,13 @@ namespace CharlieBackend.Api
                 options.UseAllOffForMultipleRules = true;
             });
 
-            services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
-
             services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationContext dbContext, IApiVersionDescriptionProvider provider)
         {
 
             dbContext.Database.EnsureCreated();
@@ -200,7 +216,13 @@ namespace CharlieBackend.Api
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WHAT Project API");
+
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    c.SwaggerEndpoint(
+                        $"/swagger/{description.GroupName}/swagger.json",
+                        $"WHAT Project API {description.GroupName}");
+                }
             });
 
             if (env.IsDevelopment())

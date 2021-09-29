@@ -1,20 +1,20 @@
-﻿using CharlieBackend.Core.DTO.HomeworkStudent;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.HomeworkStudent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to make operations with homework from student
     /// </summary>
-    [Route("api/homeworkstudent")]
+    [Route("api/v{version:apiVersion}/homeworkstudent")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
 
     public class HomeworkStudentController : ControllerBase

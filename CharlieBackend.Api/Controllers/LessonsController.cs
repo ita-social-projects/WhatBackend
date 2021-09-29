@@ -1,22 +1,22 @@
-﻿ using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using CharlieBackend.Core.DTO.Lesson;
-using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Business.Services.Interfaces;
-using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Entities;
-using Swashbuckle.AspNetCore.Filters;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to manage lessons
     /// </summary>
-    [Route("api/lessons")]
+    [Route("api/v{version:apiVersion}/lessons")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class LessonsController : ControllerBase
     {
@@ -44,7 +44,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostLesson(CreateLessonDto lessonDto)
         {
-            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);          
+            var createdLesson = await _lessonService.CreateLessonAsync(lessonDto);
             if (createdLesson == null)
             {
                 return StatusCode(422, "Cannot create lesson");
@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
         {
             var lessons = await _lessonService.GetAllLessonsAsync();
-            
+
             return lessons.ToActionResult();
         }
 

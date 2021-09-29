@@ -14,7 +14,9 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage mentors and related data
     /// </summary>
-    [Route("api/mentors")]
+    [Route("api/v{version:apiVersion}/mentors")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class MentorsController : ControllerBase
     {
