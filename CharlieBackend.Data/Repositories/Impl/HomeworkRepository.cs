@@ -27,7 +27,10 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public IQueryable<Homework> GetHomeworksWithThemeNameAndAtachemntsQuery()
         {
-            return _applicationContext.Homeworks.Include(x => x.Lesson).ThenInclude(x => x.Theme).Include(x => x.AttachmentsOfHomework);
+            return _applicationContext.Homeworks
+                   .Include(x => x.Lesson)
+                   .ThenInclude(x => x.Theme)
+                   .Include(x => x.AttachmentsOfHomework);
         }
 
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
