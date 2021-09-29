@@ -81,10 +81,10 @@ namespace CharlieBackend.AdminPanel.Controllers
                     .Select(x => x.ThemeName).Distinct().ToList();
                 return View("Step3ThemeNames", lessonThemes);
             }
-            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId)
-                .Where(z => z.ThemeName == themeN).Select(x => x.MentorId).Distinct().ToList();
             if (mentorId == null)
             {
+                IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId)
+                    .Where(z => z.ThemeName == themeN).Select(x => x.MentorId).Distinct().ToList();
                 foreach (var id in mentorsId)
                 {
                     MentorEditViewModel mentor = await _mentorService.GetMentorByIdAsync(id);
@@ -117,7 +117,7 @@ namespace CharlieBackend.AdminPanel.Controllers
             return RedirectToAction("Index", "Homeworks"); 
         }
 
-        [HttpGet()]
+        [HttpGet("{id}")]
         public async Task<IActionResult> PrepareHomeworkForUpdate(long id)
         {
             HomeworkViewModel homework = await _homeworkService.GetHomeworkById(id);
@@ -125,12 +125,12 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View("Edit", homework);
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> PutHomework(long id, HomeworkDto homework)
+        [HttpPost()]
+        public async Task<IActionResult> Edit(long id, HomeworkDto homework)
         {
             await _homeworkService.UpdateHomeworkEndpoint(id, homework);
 
-            return RedirectToAction("Index", nameof(HomeworksController));
+            return RedirectToAction("Index", "Homeworks");
         }
     }
 }
