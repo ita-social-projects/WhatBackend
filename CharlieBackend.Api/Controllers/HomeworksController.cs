@@ -29,9 +29,8 @@ namespace CharlieBackend.Api.Controllers
             _homeworkService = homeworkService;
         }
 
-        // TODO - DELETE BEFORE MERGE
         /// <summary>
-        ///
+        /// Get all homeworks with ThemeName
         /// </summary>
         /// <returns>
         /// All Homewrok's entities
