@@ -1,6 +1,8 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.DTO.Visit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -67,6 +69,20 @@ namespace CharlieBackend.Api.Controllers
                         .UpdateHomeworkAsync(id, updateHomeworkDto);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Update student mark
+        /// </summary>
+        /// <response code="200">Successful updating of the mark</response>
+        /// <response code="HTTP: 404">Student homework not found</response>
+        [SwaggerResponse(200, type: typeof(VisitDto))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [MapToApiVersion("1.0")]
+        [HttpPut("updatemark")]
+        public async Task<ActionResult> UpdateMark([FromBody] UpdateMarkRequestDto request)
+        {
+            return (await _homeworkService.UpdateMarkAsync(request)).ToActionResult();
         }
     }
 }

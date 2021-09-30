@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        #region
+        #region Private readonly fields
         private readonly IAccountService _accountService;
         private readonly IStudentService _studentService;
         private readonly IMentorService _mentorService;
@@ -57,8 +57,8 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="403">Account not approved</response>
         [SwaggerResponse(200, type: typeof(SignInResponse))]
         [SwaggerResponseHeader(200, "Authorization Bearer", "string", "token")]
-        [Route("auth")]
         [MapToApiVersion("2.0")]
+        [Route("auth")]
         [HttpPost]
         public async Task<ActionResult> SignIn20([FromBody] AuthenticationDto authenticationModel)
         {
@@ -167,12 +167,12 @@ namespace CharlieBackend.Api.Controllers
                 return StatusCode(401, "Account is not active!");
             }
 
-            long entityId = foundAccount.Id;
-
             if (foundAccount.Role.IsNotAssigned())
             {
                 return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
             }
+
+            long entityId = 0;
 
             if (foundAccount.Role.Is(UserRole.Student))
             {
@@ -231,15 +231,16 @@ namespace CharlieBackend.Api.Controllers
                 role = foundAccount.Role,
                 id = entityId
             };
+
             GetHeaders(userRoleToJwtToken);
 
             return Ok(response);
         }
 
         /// <summary>
-        /// Give role to account
+        /// Grant role to account
         /// </summary>
-        /// <response code="200">Role successfully given</response>
+        /// <response code="200">Role successfully grant</response>
         /// <response code="HTTP: 404, API: 3">Account not found</response>
         /// <response code="HTTP: 409, API: 5">Account already has this role
         /// or role is unsuitable</response>
@@ -256,9 +257,9 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Remove role from account
+        /// Revoke role from account
         /// </summary>
-        /// <response code="200">Role successfully given</response>
+        /// <response code="200">Role successfully revoke</response>
         /// <response code="HTTP: 404, API: 3">Account not found</response>
         /// <response code="HTTP: 409, API: 5">Account doesn't have this role
         /// or role is unsuitable</response>

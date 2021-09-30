@@ -115,7 +115,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
-            .GetStudentGroupResultAsync(courseId, request);
+                .GetStudentGroupResultAsync(courseId, request);
 
             return results.ToActionResult();
         }

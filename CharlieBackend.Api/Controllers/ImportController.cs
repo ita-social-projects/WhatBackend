@@ -15,7 +15,6 @@ namespace CharlieBackend.Api.Controllers
     /// Controller to manage import from external sources
     /// </summary>
     [Route("api/v{version:apiVersion}/imports")]
-    [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
     public class ImportController : ControllerBase
