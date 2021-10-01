@@ -12,7 +12,7 @@ namespace CharlieBackend.Business.Models.Commands
 
         public bool Contains(string command) 
         {
-            return command.Contains(this.Name);
+            return command.ToLower().Contains(this.Name);
         }
     }
 }

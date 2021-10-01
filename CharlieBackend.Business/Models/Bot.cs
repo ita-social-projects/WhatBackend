@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Models
         private static TelegramBotClient _client;
         private static List<Command> _commandsList;
         public string Name { get; }
-        public static IReadOnlyCollection<Command> Commands 
+        public static IReadOnlyCollection<Command> Commands
         {
             get => _commandsList.AsReadOnly();
         }
@@ -23,6 +23,8 @@ namespace CharlieBackend.Business.Models
         {
             var startCommand = services
                 .GetRequiredService<StartCommand>();
+            var menuCommand = services
+                .GetRequiredService<MenuCommand>();
             var helloCommand = services
                 .GetRequiredService<HelloCommand>();
             var getMarkCommand = services
@@ -38,6 +40,7 @@ namespace CharlieBackend.Business.Models
 
             _commandsList = new List<Command>();
             _commandsList.Add(startCommand);
+            _commandsList.Add(menuCommand);
             _commandsList.Add(helloCommand);
             _commandsList.Add(getMarkCommand);
             _commandsList.Add(studentGroupsCommand);

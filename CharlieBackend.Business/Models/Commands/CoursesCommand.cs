@@ -28,7 +28,6 @@ namespace CharlieBackend.Business.Models.Commands
         public override async Task<string> Execute(Message message, TelegramBotClient client)
         {
             var chatId = message.Chat.Id;
-            var messageId = message.MessageId;
             string response = string.Empty;
 
             var account = await _accountService
@@ -58,7 +57,7 @@ namespace CharlieBackend.Business.Models.Commands
             }
 
             return (await client.SendTextMessageAsync(chatId,
-                response, replyToMessageId: messageId)).Text;
+                response)).Text;
         }
     }
 }

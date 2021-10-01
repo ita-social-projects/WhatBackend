@@ -49,7 +49,7 @@ namespace CharlieBackend.Business.Models.Commands
 
             var recentMark = results.Data.StudentMark;
             var replyMessage = string.Format("Your recent mark is {0}", recentMark.ToString());
-            return (await client.SendTextMessageAsync(chatId, replyMessage, replyToMessageId: messageId)).Text;
+            return (await client.SendTextMessageAsync(chatId, replyMessage)).Text;
 
         }
     }

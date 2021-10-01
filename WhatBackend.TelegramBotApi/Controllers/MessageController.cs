@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CharlieBackend.Business.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using CharlieBackend.Business.Models;
-using System.Collections.Generic;
 
 namespace WhatBackend.TelergamBot.Controllers
 {
@@ -27,32 +27,39 @@ namespace WhatBackend.TelergamBot.Controllers
 
         [Route("update")]
         [HttpPost]
-        public async Task<OkResult> Update([FromBody] Update update)
+        public async Task<IActionResult> Update([FromBody] Update update)
         {
-            var client = await Bot.Get(_serviceProvider);
+           var client = await Bot.Get(_serviceProvider);
             var commands = Bot.Commands;
             Message message = update.Message ?? update.EditedMessage;
 
-            if(message == null)
+            if (message == null)
             {
-                message = new Message
+                if (update.CallbackQuery == null)
                 {
-                    Chat = new Chat()
+                    return BadRequest();
+                }
+                else
+                {
+                    message = new Message
                     {
-                        Id = update.CallbackQuery.From.Id
-                    },
-                    MessageId = update.Id,
-                    Text = update.CallbackQuery.Data
-                };
+                        Chat = new Chat()
+                        {
+                            Id = update.CallbackQuery.From.Id
+                        },
+                        MessageId = update.Id,
+                        Text = update.CallbackQuery.Data
+                    };
+                }
             }
 
-            var isNewMessage = _messages.TryAdd(
-                    new MessageHeader()
-                    {
-                        ChatId = message.Chat.Id,
-                        MessageId = message.MessageId
-                    },
-                    message);
+            var messageHeader = new MessageHeader()
+            {
+                ChatId = message.Chat.Id,
+                MessageId = message.MessageId
+            };
+
+            var isNewMessage = _messages.TryAdd(messageHeader, message);
 
             if (isNewMessage)
             {
@@ -66,11 +73,7 @@ namespace WhatBackend.TelergamBot.Controllers
                     }
                 }
 
-                _messages.Remove(new MessageHeader()
-                {
-                    ChatId = message.Chat.Id,
-                    MessageId = message.MessageId
-                });
+                _messages.Remove(messageHeader);
             }
 
             return Ok();

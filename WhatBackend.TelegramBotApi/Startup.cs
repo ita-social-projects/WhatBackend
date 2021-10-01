@@ -30,13 +30,7 @@ namespace WhatBackend.TelegramBotApi
         {
             CompositionRoot.InjectDependencies(services, Configuration);
 
-            services.AddScoped<StartCommand>();
-            services.AddScoped<HelloCommand>();
-            services.AddScoped<GetMarkCommand>();
-            services.AddScoped<StudentGroupsCommand>();
-            services.AddScoped<CoursesCommand>();
-            services.AddScoped<PersonalInfoCommand>();
-            services.AddScoped<ClassmatesCommand>();
+            services.AddBotCommands();
 
             services.AddCors();
 
