@@ -30,7 +30,6 @@ namespace CharlieBackend.Business.Models.Commands
         public override async Task<string> Execute(Message message, TelegramBotClient client)
         {
             var chatId = message.Chat.Id;
-            var messageId = message.MessageId;
             string response = string.Empty;
 
             var parameters = message.Text.Split(' ');
@@ -89,7 +88,7 @@ namespace CharlieBackend.Business.Models.Commands
             }
 
             return (await client.SendTextMessageAsync(chatId,
-                response, replyToMessageId: messageId)).Text;
+                response)).Text;
         }
 
         private async Task<string> AddGroupToResponse(long groupId)

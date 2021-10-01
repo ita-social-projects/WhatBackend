@@ -1,11 +1,9 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CharlieBackend.Business.Models.Commands
 {
@@ -41,15 +39,22 @@ namespace CharlieBackend.Business.Models.Commands
             }
 
             response += "Hello! I'm a Telegram bot of WHAT. " +
-                "Here's a list of my commands:\n" +
-                "/start - get this message again\n" +
-                "/studentgroups - get list of your student groups\n" +
-                "/courses - get list of courses, which list you as a mentor\n" +
-                "/personalinfo - get personal info\n" +
-                "/classmates - get list of my classmates\n";
+                "Press the button 'MENU' below the input field to open menu and begin dealing with me:\n";
 
             return (await client.SendTextMessageAsync(chatId, 
-                response, replyToMessageId: messageId)).Text;
+                response, replyToMessageId: messageId, replyMarkup: GetMainMenu())).Text;
+        }
+
+        private IReplyMarkup GetMainMenu()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{new KeyboardButton { Text = "MENU" } }
+                },
+                ResizeKeyboard = true
+            };
         }
     }
 }
