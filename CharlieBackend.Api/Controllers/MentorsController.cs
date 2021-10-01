@@ -56,7 +56,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
         [Authorize(Roles = "Mentor")]
         [HttpPost("lessons")]
-        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody]FilterLessonsRequestDto filterModel)
+        public async Task<IList<LessonDto>> GetLessonsForMentor([FromBody] FilterLessonsRequestDto filterModel)
         {
             var lessons = await _lessonService.GetLessonsForMentorAsync(filterModel);
 
@@ -75,7 +75,7 @@ namespace CharlieBackend.Api.Controllers
 
             return mentors;
         }
-        
+
         /// <summary>
         /// Get mentor information by mentor id
         /// </summary>
@@ -139,8 +139,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, can not find mentor or mentor's study groups</response>
         [SwaggerResponse(200, type: typeof(IList<MentorStudyGroupsDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [MapToApiVersion("2.0")]
         [HttpGet("{id}/groups")]
-        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId(long id)
+        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId20(long id)
         {
             var foundGroups = _mentorService
                     .CheckRoleAndIdMentor<IList<MentorStudyGroupsDto>>(id);
@@ -155,14 +156,32 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets all of the mentor's study group
+        /// </summary>
+        /// <response code="200">Successful return of mentor's study groups</response>
+        /// <response code="HTTP: 404, API: 3">Error, can not find mentor or mentor's study groups</response>
+        [SwaggerResponse(200, type: typeof(IList<MentorStudyGroupsDto>))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [MapToApiVersion("1.0")]
+        [HttpGet("{id}/groups")]
+        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsByMentorId(long id)
+        {
+            var foundGroups = await _mentorService
+                    .GetMentorStudyGroupsByMentorIdAsync(id);
+
+            return foundGroups;
+        }
+
+        /// <summary>
         /// Gets all of the mentor's courses
         /// </summary>
         /// <response code="200">Successful return of mentor's courses</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find mentor or mentor's courses</response>
         [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [MapToApiVersion("2.0")]
         [HttpGet("{id}/courses")]
-        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId(long id)
+        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId20(long id)
         {
             var foundCourses = _mentorService
                     .CheckRoleAndIdMentor<IList<MentorCoursesDto>>(id);
@@ -174,6 +193,23 @@ namespace CharlieBackend.Api.Controllers
             }
 
             return foundCourses.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets all of the mentor's courses
+        /// </summary>
+        /// <response code="200">Successful return of mentor's courses</response>
+        /// <response code="HTTP: 404, API: 3">Error, can not find mentor or mentor's courses</response>
+        [SwaggerResponse(200, type: typeof(IList<MentorCoursesDto>))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [MapToApiVersion("1.0")]
+        [HttpGet("{id}/courses")]
+        public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorId(long id)
+        {
+            var foundCourses = await _mentorService
+                    .GetMentorCoursesByMentorIdAsync(id);
+
+            return foundCourses;
         }
 
         /// <summary>
@@ -213,8 +249,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of lessons list of given mentor</response>
         [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpGet("{id}/lessons")]
-        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor20(long id)
         {
             var lessons = _mentorService
                     .CheckRoleAndIdMentor<IList<LessonDto>>(id);
@@ -223,6 +260,22 @@ namespace CharlieBackend.Api.Controllers
             {
                 lessons = await _lessonService.GetAllLessonsForMentor(id);
             }
+
+            return lessons.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns list of lessons  for mentor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Successful return of lessons list of given mentor</response>
+        [SwaggerResponse(200, type: typeof(IList<LessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [MapToApiVersion("1.0")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor(long id)
+        {
+            var lessons = await _lessonService.GetAllLessonsForMentor(id);
 
             return lessons.ToActionResult();
         }

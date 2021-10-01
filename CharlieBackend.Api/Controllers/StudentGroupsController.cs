@@ -89,7 +89,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
+        public async Task<ActionResult<IList<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
         {
             var groups = await _studentGroupService.GetAllStudentGroupsAsync(startDate, finishDate);
 

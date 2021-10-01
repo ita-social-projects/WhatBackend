@@ -132,13 +132,27 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful request</response>
         /// <response code="404">Lesson not found</response>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [MapToApiVersion("2.0")]
         [HttpGet("{id}/isdone")]
-        public async Task<ActionResult<JObject>> IsLessonDone(long id)
+        public async Task<ActionResult<JObject>> IsLessonDone20(long id)
         {
             dynamic result = new JObject();
             result.isDone = (await _lessonService.IsLessonDoneAsync(id)).Data;
 
             return result;
+        }
+
+        /// <summary>
+        /// Check if lesson was done
+        /// </summary>
+        /// <response code="200">Successful request</response>
+        /// <response code="404">Lesson not found</response>
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [MapToApiVersion("1.0")]
+        [HttpGet("{id}/isdone")]
+        public async Task<bool> IsLessonDone(long id)
+        {
+            return (await _lessonService.IsLessonDoneAsync(id)).Data;
         }
     }
 }

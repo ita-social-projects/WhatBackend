@@ -78,6 +78,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpGet("history/{homeworkStudentId}")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentsHistoryByHomeworkStudentId(long homeworkStudentId)
         {
@@ -112,6 +113,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404">Student homework not found</response>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpPut("updatemark")]
         public async Task<ActionResult> UpdateMark([FromBody] UpdateMarkRequestDto request)
         {
