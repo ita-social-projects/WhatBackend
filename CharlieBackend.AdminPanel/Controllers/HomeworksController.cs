@@ -42,17 +42,6 @@ namespace CharlieBackend.AdminPanel.Controllers
             return View(homeworks);
         }
 
-        //View Homework
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetHomework(long id)
-        //{
-        //    var homework = await _homeworkService.GetHomeworkById(id);
-
-        //    return View(homework);
-        //}
-
-
         [HttpGet]
         public async Task<IActionResult> SelectCourses()
         {
