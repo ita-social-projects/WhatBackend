@@ -16,6 +16,7 @@ using System;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Core.DTO.Homework;
+using System.Linq;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -27,6 +28,8 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IAttachmentRepository> _attachmentRepositoryMock;
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly HomeworkService _homeworkService;
         private readonly CourseService _courseService;
         private readonly LessonService _lessonService;
@@ -43,7 +46,9 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _currentUserServiceMock = new Mock<ICurrentUserService>();
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _courseService, _lessonService, _mapper,  _loggerMock.Object, _currentUserServiceMock.Object);
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            _courseRepositoryMock = new Mock<ICourseRepository>();
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _courseService, _lessonService, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)
@@ -280,6 +285,231 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
         }
+        #endregion
+
+        #region GetHomeworksAsync
+        // Для Админа Get Homeworks()
+        // Для Студента GetHomeworksForStudent()
+        // Для Ментора GetHomeworksForMentor()
+
+        [Fact]
+        public void GetHomeworksAsync_WhenRoleIsAdmin_ShouldReturnAllEntities()
+        {
+            //Arrage            
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Admin);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworks(It.IsAny<GetHomeworkRequestDto>())).Returns(Task.FromResult(homeworks));
+                       
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(new GetHomeworkRequestDto());
+
+            //Assert
+            response.Result.Data.Should().HaveCount(1);
+            response.Result.Data.First().Id.Should().Be(1);
+        }
+
+        [Fact]
+        public void GetHomeworksAsync_WhenRoleIsMentor_AndRequestHasNotParameters_ShouldReturnAllEntities()
+        {
+            //Arrage                        
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(new GetHomeworkRequestDto());
+
+            //Assert
+            response.Result.Data.Should().HaveCount(1);
+            response.Result.Data.First().Id.Should().Be(1);
+        }
+
+        [Fact]
+        public void GetHomeworksAsync_WhenRoleIsMentor_AndGroupIdHasValue_AndMentorHasAccessToGroup_ShouldReturnAllEntities()
+        {
+            //Arrage                        
+            var requst = new GetHomeworkRequestDto { GroupId = 1 };
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
+            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHasAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(true));
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+            
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(requst);
+
+            //Assert
+            response.Result.Data.Should().HaveCount(1);
+            response.Result.Data.First().Id.Should().Be(1);
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenRoleIsMentor_AndCourseIdHasValue_AndMentorHasAccessToCourse_ShouldReturnAllEntities()
+        {
+            //Arrage                        
+            var requst = new GetHomeworkRequestDto { CourseId = 1 };
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
+            _courseRepositoryMock.Setup(x => x.DoesMentorHasAccessToCourse(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(true));
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(_courseRepositoryMock.Object);
+
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(requst);
+
+            //Assert
+            response.Result.Data.Should().HaveCount(1);
+            response.Result.Data.First().Id.Should().Be(1);
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenRoleIsMentor_AndCourseIdHasValue_AndMentorHasNoAccessToCourse_ShouldReturnError()
+        {
+            //Arrage                        
+            var requst = new GetHomeworkRequestDto { CourseId = 1 };
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
+            _courseRepositoryMock.Setup(x => x.DoesMentorHasAccessToCourse(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(false));            
+            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(_courseRepositoryMock.Object);
+
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(requst);
+
+            //Assert
+            response.Result.Error.Message.Should().Be("Mentor can get only homeworks of his courses");
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenRoleIsMentor_AndGroupIdHasValue_AndMentorHasNoAccessToGroup_ShouldReturnError()
+        {
+            //Arrage                        
+            var requst = new GetHomeworkRequestDto { GroupId = 1 };
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
+            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHasAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(false));            
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(requst);
+
+            //Assert
+            response.Result.Error.Message.Should().Be("Mentor can get only homeworks of groups of his courses");
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenGroupIdHasValue_ShouldReturnFilteredEntities()
+        {
+            //Arrage            
+            var requestDto = new GetHomeworkRequestDto();
+            var homeworks = (IList<Homework>)new List<Homework> 
+            { 
+            };
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Admin);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworks(requestDto)).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = _homeworkService.GetHomeworksAsync(requestDto);
+
+            //Assert
+            response.Result.Data.Should().HaveCount(1);
+            response.Result.Data.First().Id.Should().Be(1);
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenGroupIdHasValue_ShouldReturnEntity()
+        {
+            //Arrage            
+            var requestDto = new GetHomeworkRequestDto() { GroupId = 1 };
+            var validResult = (IList<Homework>)new List<Homework>();
+
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Admin);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworks(requestDto)).Returns(Task.FromResult(validResult));
+
+            //Act
+            var result = _homeworkService.GetHomeworksAsync(requestDto);
+
+            //Assert
+            result.Should().BeEquivalentTo(validResult);
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenCourseIdHasValue_ShouldReturnEntity()
+        {
+            //Arrage
+
+
+            //Act
+
+
+            //Assert
+
+        }
+
+        [Fact] //L
+        public void GetHomeworksAsync_WhenThemeIdHasValue_ShouldReturnEntity()
+        {
+            //Arrage
+
+
+            //Act
+
+
+            //Assert
+
+        }
+
+        [Fact] //S
+        public void GetHomeworksAsync_WhenGroupIdIsNotExist_ShouldReturnEntity()
+        {
+            //Arrage
+
+
+            //Act
+
+
+            //Assert
+
+        }
+
+        [Fact] //S
+        public void GetHomeworksAsync_WhenCourseIdIsNotExist_ShouldReturnEntity()
+        {
+            //Arrage
+
+
+            //Act
+
+
+            //Assert
+
+        }
+
+        [Fact] //S
+        public void GetHomeworksAsync_WhenThemeIdIsNotExist_ShouldReturnEntity()
+        {
+            //Arrage
+
+
+            //Act
+
+
+            //Assert
+
+        }
+
         #endregion
 
         protected override Mock<IUnitOfWork> GetUnitOfWorkMock()
