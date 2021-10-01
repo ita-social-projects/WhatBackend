@@ -17,7 +17,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manupulate with account
     /// </summary>
-    [Route("api/v{version:apiVersion}/accounts")]
+    [Route("api/accounts")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
@@ -60,7 +60,7 @@ namespace CharlieBackend.Api.Controllers
         [MapToApiVersion("2.0")]
         [Route("auth")]
         [HttpPost]
-        public async Task<ActionResult> SignIn20([FromBody] AuthenticationDto authenticationModel)
+        public async Task<ActionResult> SignInV2([FromBody] AuthenticationDto authenticationModel)
         {
             var foundAccount = (await _accountService.GetAccountCredentialsAsync(authenticationModel)).Data;
             var roleIds = new Dictionary<UserRole, long>();

@@ -14,7 +14,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage mentors and related data
     /// </summary>
-    [Route("api/v{version:apiVersion}/mentors")]
+    [Route("api/mentors")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
@@ -141,7 +141,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [MapToApiVersion("2.0")]
         [HttpGet("{id}/groups")]
-        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorId20(long id)
+        public async Task<ActionResult<IList<MentorStudyGroupsDto>>> GetMentorStudyGroupsByMentorIdV2(long id)
         {
             var foundGroups = _mentorService
                     .CheckRoleAndIdMentor<IList<MentorStudyGroupsDto>>(id);
@@ -181,7 +181,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [MapToApiVersion("2.0")]
         [HttpGet("{id}/courses")]
-        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorId20(long id)
+        public async Task<ActionResult<IList<MentorCoursesDto>>> GetMentorCoursesByMentorIdV2(long id)
         {
             var foundCourses = _mentorService
                     .CheckRoleAndIdMentor<IList<MentorCoursesDto>>(id);
@@ -251,7 +251,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [MapToApiVersion("2.0")]
         [HttpGet("{id}/lessons")]
-        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentor20(long id)
+        public async Task<ActionResult<List<LessonDto>>> GetAllLessonsForMentorV2(long id)
         {
             var lessons = _mentorService
                     .CheckRoleAndIdMentor<IList<LessonDto>>(id);

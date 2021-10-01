@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller for operations related to secretary entity
     /// </summary>
-    [Route("api/v{version:apiVersion}/secretaries")]
+    [Route("api/secretaries")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

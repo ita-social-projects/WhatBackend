@@ -25,7 +25,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,10 +94,10 @@ namespace CharlieBackend.Api
 
                         return new BadRequestObjectResult(new ErrorDto
                         {
-                            Error = new ErrorData 
-                            { 
+                            Error = new ErrorData
+                            {
                                 Code = ErrorCode.ValidationError,
-                                Message = errors 
+                                Message = errors
                             }
                         });
                     };
@@ -137,10 +136,10 @@ namespace CharlieBackend.Api
                 setup.SubstituteApiVersionInUrl = true;
             });
 
-            services.Configure<SwaggerOptions>(c => c.SerializeAsV2 = true);
-
             services.AddSwaggerGen(c =>
             {
+                c.ResolveConflictingActions(a => a.First());
+
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 

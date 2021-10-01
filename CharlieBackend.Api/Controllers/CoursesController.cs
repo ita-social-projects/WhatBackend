@@ -13,7 +13,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage courses data
     /// </summary>
-    [Route("api/v{version:apiVersion}/courses")]
+    [Route("api/courses")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
@@ -85,7 +85,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Secretary")]
         [MapToApiVersion("2.0")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CourseDto>> DisableCourse20(long id)
+        public async Task<ActionResult<CourseDto>> DisableCourseV2(long id)
         {
             var disableCourse = await _coursesService.DisableCourseAsync(id);
 
@@ -100,7 +100,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Secretary")]
         [MapToApiVersion("2.0")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult<CourseDto>> EnableCourse20(long id)
+        public async Task<ActionResult<CourseDto>> EnableCourseV2(long id)
         {
             var enableCourse = await _coursesService.EnableCourseAsync(id);
 

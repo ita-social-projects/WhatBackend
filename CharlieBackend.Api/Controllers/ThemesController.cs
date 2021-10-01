@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to namage themes
     /// </summary>
-    [Route("api/v{version:apiVersion}/themes")]
+    [Route("api/themes")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

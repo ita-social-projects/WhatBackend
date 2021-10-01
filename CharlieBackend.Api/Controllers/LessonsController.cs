@@ -14,7 +14,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage lessons
     /// </summary>
-    [Route("api/v{version:apiVersion}/lessons")]
+    [Route("api/lessons")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
@@ -134,7 +134,7 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [MapToApiVersion("2.0")]
         [HttpGet("{id}/isdone")]
-        public async Task<ActionResult<JObject>> IsLessonDone20(long id)
+        public async Task<ActionResult<JObject>> IsLessonDoneV2(long id)
         {
             dynamic result = new JObject();
             result.isDone = (await _lessonService.IsLessonDoneAsync(id)).Data;

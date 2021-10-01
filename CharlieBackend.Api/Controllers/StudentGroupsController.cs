@@ -14,7 +14,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Student groups controller
     /// </summary>
-    [Route("api/v{version:apiVersion}/student_groups")]
+    [Route("api/student_groups")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]
