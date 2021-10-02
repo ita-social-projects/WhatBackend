@@ -446,7 +446,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetHomeworksAsync_WhenRoleIsSecretary_AndValidGroupId_ShouldReturnAllEntities()
+        public async Task GetHomeworksAsync_WhenRoleIsSecretary_AndGroupIdIsValid_ShouldReturnAllEntities()
         {
             //Arrange
             var homeworkDto = (IList<Homework>)new List<Homework>() { new Homework { LessonId = 2 } };
@@ -464,7 +464,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetHomeworksAsync_WhenRoleIsStudent_AndValidCourseId_ShouldReturnEntity()
+        public async Task GetHomeworksAsync_WhenRoleIsStudent_AndCourseIdIsValid_ShouldReturnEntity()
         {
             //Arange
             var homeworks = (IList<Homework>)new List<Homework>()
