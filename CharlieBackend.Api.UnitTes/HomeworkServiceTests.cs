@@ -288,7 +288,7 @@ namespace CharlieBackend.Api.UnitTest
         #endregion
 
         #region GetHomeworksAsync
-        // Для Админа Get Homeworks()
+        // Для Админа GetHomeworks()
         // Для Студента GetHomeworksForStudent()
         // Для Ментора GetHomeworksForMentor()
 
@@ -443,6 +443,47 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Should().BeEquivalentTo(validResult);
+        }
+
+        [Fact]
+        public async Task GetHomeworksAsync_WhenRoleIsSecretary_AndValidGroupId_ShouldReturnAllEntities()
+        {
+            //Arrange
+            var homeworkDto = (IList<Homework>)new List<Homework>() { new Homework { LessonId = 2 } };
+
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Secretary);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworks(It.IsAny<GetHomeworkRequestDto>())).Returns(Task.FromResult(homeworkDto));
+
+            //Act
+            var response = await _homeworkService.GetHomeworksAsync(new GetHomeworkRequestDto());
+
+            //Assert
+            response.Data.Should().HaveCount(1);
+            response.Data[0].LessonId.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task GetHomeworksAsync_WhenRoleIsStudent_AndValidCourseId_ShouldReturnEntity()
+        {
+            //Arange
+            var homeworks = (IList<Homework>)new List<Homework>()
+            {
+                new Homework { Id = 1 },
+                new Homework { Id = 2 }
+            };
+
+            _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Student);
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetHomeworksForStudent(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
+
+            //Act
+            var response = await _homeworkService.GetHomeworksAsync(new GetHomeworkRequestDto());
+
+            //Assert
+            response.Data[0].Id.Should().Be(1);
+            response.Data[1].Id.Should().Be(2);
+            response.Data.Should().HaveCount(2);
         }
 
         #endregion
