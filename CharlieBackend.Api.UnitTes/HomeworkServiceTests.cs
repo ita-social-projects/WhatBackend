@@ -413,7 +413,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             var requestDto = new GetHomeworkRequestDto();
-            var homeworks = (IList<Homework>)new List<Homework> { };
+            var homeworks = (IList<Homework>)new List<Homework> { new Homework() { Id = 1 } };
 
             _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Admin);
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
@@ -428,7 +428,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public void GetHomeworksAsync_WhenGroupIdHasValue_ShouldReturnEntity()
+        public async void GetHomeworksAsync_WhenGroupIdHasValue_ShouldReturnEntity()
         {
             //Arrange
             var requestDto = new GetHomeworkRequestDto() { GroupId = 1 };
@@ -439,10 +439,10 @@ namespace CharlieBackend.Api.UnitTest
             _homeworkRepositoryMock.Setup(x => x.GetHomeworks(requestDto)).Returns(Task.FromResult(validResult));
 
             //Act
-            var result = _homeworkService.GetHomeworksAsync(requestDto);
+            var result = await _homeworkService.GetHomeworksAsync(requestDto);
 
             //Assert
-            result.Should().BeEquivalentTo(validResult);
+            result.Data.Should().BeEquivalentTo(validResult);
         }
 
         [Fact]
