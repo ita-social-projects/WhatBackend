@@ -83,10 +83,17 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id)
         {
-            return await _applicationContext.StudentGroups
-                    .Include(group => group.StudentsOfStudentGroups)
-                    .Include(group => group.MentorsOfStudentGroups)
+            var studentGroup = await _applicationContext.StudentGroups
                     .FirstOrDefaultAsync(group => group.Id == id && group.IsActive);
+
+            studentGroup.StudentsOfStudentGroups = await _applicationContext.StudentsOfStudentGroups
+                .Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.StudentGroupId == id)
+                .ToListAsync();
+            studentGroup.MentorsOfStudentGroups = await _applicationContext.MentorsOfStudentGroups
+                .Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.StudentGroupId == id)
+                .ToListAsync();
+
+            return studentGroup;
         }
 
         public async Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id)
