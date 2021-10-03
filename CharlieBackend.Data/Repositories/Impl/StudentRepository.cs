@@ -17,6 +17,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Students
                     .Include(student => student.Account).ThenInclude(x => x.Avatar)
+                    .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                     .ToListAsync();
         }
 
@@ -24,7 +25,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Students
                     .Include(student => student.Account).ThenInclude(x => x.Avatar)
-                    .Where(student => student.Account.IsActive == true)
+                    .Where(student => student.Account.IsActive == true && student.Account.Role.HasFlag(UserRole.Student))
                     .ToListAsync();
         }
 
@@ -33,19 +34,21 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Students
                     .Include(student => student.Account)
                     .Include(student => student.StudentsOfStudentGroups)
+                    .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                     .FirstOrDefaultAsync(student => student.Id == id);
         }
 
         public async Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
             return await _applicationContext.Students
+                    .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                     .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 
         public async Task<List<Student>> GetStudentsByIdsAsync(IList<long> studentIds)
         {
             return await _applicationContext.Students
-                    .Where(student => studentIds.Contains(student.Id))
+                    .Where(student => studentIds.Contains(student.Id) && student.Account.Role.HasFlag(UserRole.Student))
                     .ToListAsync();
         }
 
@@ -53,6 +56,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Students
                     .Include(student => student.Account)
+                    .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                     .FirstOrDefaultAsync(student =>
                     student.Account.Email == email);
         }
@@ -67,6 +71,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                   .Where(related => related.StudentOfGroup.StudentGroupId == groupId)
                   .Select(related => related.Student)
                   .Include(s => s.Account)
+                  .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                   .ToListAsync();
         }
     }

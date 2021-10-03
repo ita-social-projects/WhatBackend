@@ -19,11 +19,13 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Secretaries
                 .Include(secretary => secretary.Account).ThenInclude(x => x.Avatar)
+                .Where(secretary => secretary.Account.Role.HasFlag(UserRole.Secretary))
                 .ToListAsync();
         }
         public async Task<Secretary> GetSecretaryByAccountIdAsync(long accountId)
         {
             return await _applicationContext.Secretaries
+                    .Where(secretary => secretary.Account.Role.HasFlag(UserRole.Secretary))
                     .FirstOrDefaultAsync(secretary
                             => secretary.AccountId == accountId);
         }
@@ -32,6 +34,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Secretaries
                 .Include(secretary => secretary.Account)
+                .Where(secretary => secretary.Account.Role.HasFlag(UserRole.Secretary))
                 .FirstOrDefaultAsync(secretary => secretary.Id == id);
         }
 
@@ -39,7 +42,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Secretaries
                 .Include(secretary => secretary.Account).ThenInclude(x => x.Avatar)
-                .Where(sec => sec.Account.IsActive == true)
+                .Where(sec => sec.Account.IsActive == true && sec.Account.Role.HasFlag(UserRole.Secretary))
                 .Select(sec => sec)
                 .ToListAsync();
         }
