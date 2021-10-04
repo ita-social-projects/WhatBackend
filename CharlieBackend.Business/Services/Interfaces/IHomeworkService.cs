@@ -20,7 +20,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long studentGroupId);
 
-        Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroup);
+        Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate);
 
     }
 }

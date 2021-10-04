@@ -81,10 +81,10 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Student")]
         [HttpGet]
-        public async Task<ActionResult> GetHomeworkNotDone([FromQuery] long studentGroup)
+        public async Task<ActionResult> GetHomeworkNotDone([FromQuery] long studentGroupId, DateTime? dueDate = null)
         {
             var results = await _homeworkService
-                        .GetHomeworkNotDone(studentGroup);
+                        .GetHomeworkNotDone(studentGroupId, dueDate);
 
             return results.ToActionResult();
         }

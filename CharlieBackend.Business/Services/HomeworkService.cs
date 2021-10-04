@@ -166,20 +166,25 @@ namespace CharlieBackend.Business.Services
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroup)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate)
         {
+            if (dueDate != null)
+            {
+                dueDate = dueDate.Value.AddDays(1);
+            }
+
             var accountId = _currentUserService.AccountId;
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var group = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
+            var studentGroupsIds = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
 
-            if (!group.Contains(studentGroup))
+            if (!studentGroupsIds.Contains(studentGroupId))
             {
                 return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
             }
 
-            var homeworIdList =  await _unitOfWork.HomeworkStudentRepository.GetIdsHomework(studentGroup,student.Id);
+            var homeworkIdList =  await _unitOfWork.HomeworkStudentRepository.GetIdsHomework(studentGroupId,student.Id);
 
-            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroup, homeworIdList);
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, homeworkIdList, dueDate);
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
