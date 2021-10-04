@@ -1,11 +1,11 @@
-﻿using CharlieBackend.AdminPanel.Models.Mentor;
+﻿using CharlieBackend.Panel.Models.Mentor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.AdminPanel.Models.Homework
+namespace CharlieBackend.Panel.Models.Homework
 {
     public class HomeworkViewModel
     {

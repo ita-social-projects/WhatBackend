@@ -1,11 +1,11 @@
-﻿using CharlieBackend.AdminPanel.Models.Homework;
+﻿using CharlieBackend.Panel.Models.Homework;
 using CharlieBackend.Core.DTO.Homework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.AdminPanel.Services.Interfaces
+namespace CharlieBackend.Panel.Services.Interfaces
 {
     public interface IHomeworkService
     {

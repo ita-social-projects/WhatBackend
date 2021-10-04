@@ -1,16 +1,16 @@
-﻿using CharlieBackend.AdminPanel.Models.Course;
-using CharlieBackend.AdminPanel.Models.Homework;
-using CharlieBackend.AdminPanel.Models.Lesson;
-using CharlieBackend.AdminPanel.Models.Mentor;
-using CharlieBackend.AdminPanel.Models.StudentGroups;
-using CharlieBackend.AdminPanel.Services.Interfaces;
+﻿using CharlieBackend.Panel.Models.Course;
+using CharlieBackend.Panel.Models.Homework;
+using CharlieBackend.Panel.Models.Lesson;
+using CharlieBackend.Panel.Models.Mentor;
+using CharlieBackend.Panel.Models.StudentGroups;
+using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.AdminPanel.Controllers
+namespace CharlieBackend.Panel.Controllers
 {
     [Route("[controller]/[action]")]
     public class HomeworksController : Controller

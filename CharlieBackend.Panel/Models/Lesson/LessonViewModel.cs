@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CharlieBackend.AdminPanel.Models.Lesson
+namespace CharlieBackend.Panel.Models.Lesson
 {
     public class LessonViewModel
     {

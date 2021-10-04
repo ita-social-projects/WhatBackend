@@ -13,6 +13,7 @@ using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using System.Linq;
+using CharlieBackend.Panel.Models.Homework;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {

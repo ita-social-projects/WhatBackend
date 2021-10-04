@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CharlieBackend.AdminPanel.Models.Homework;
-using CharlieBackend.AdminPanel.Services.Interfaces;
-using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Panel.Models.Homework;
+using CharlieBackend.Panel.Services.Interfaces;
+using CharlieBackend.Panel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
 using Microsoft.Extensions.Options;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.AdminPanel.Services
+namespace CharlieBackend.Panel.Services
 {
     public class HomeworkService : IHomeworkService
     {

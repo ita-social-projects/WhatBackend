@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using CharlieBackend.AdminPanel.Models.Lesson;
-using CharlieBackend.AdminPanel.Services.Interfaces;
-using CharlieBackend.AdminPanel.Utils.Interfaces;
+using CharlieBackend.Panel.Models.Lesson;
+using CharlieBackend.Panel.Services.Interfaces;
+using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.AdminPanel.Services
+namespace CharlieBackend.Panel.Services
 {
     public class LessonService : ILessonService
     {
