@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Z.EntityFramework.Plus;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -84,14 +85,18 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id)
         {
             var studentGroup = await _applicationContext.StudentGroups
+                    /*.Include(group => group.StudentsOfStudentGroups)
+                    .Include(group => group.MentorsOfStudentGroups)*/
+                    .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student)))
+                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor)))
                     .FirstOrDefaultAsync(group => group.Id == id && group.IsActive);
 
-            studentGroup.StudentsOfStudentGroups = await _applicationContext.StudentsOfStudentGroups
+            /*studentGroup.StudentsOfStudentGroups = await _applicationContext.StudentsOfStudentGroups
                 .Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.StudentGroupId == id)
                 .ToListAsync();
             studentGroup.MentorsOfStudentGroups = await _applicationContext.MentorsOfStudentGroups
                 .Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.StudentGroupId == id)
-                .ToListAsync();
+                .ToListAsync();*/
 
             return studentGroup;
         }
