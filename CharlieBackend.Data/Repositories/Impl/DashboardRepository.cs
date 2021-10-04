@@ -132,7 +132,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             IDictionary<string, IEnumerable<StudentDto>> listOfStudentLists = new Dictionary<string, IEnumerable<StudentDto>>();
             foreach (var studentGroupId in studentGroupIds)
             {
-                var StudentList = await _applicationContext.StudentsOfStudentGroups
+                var studentList = await _applicationContext.StudentsOfStudentGroups
                     .AsNoTracking()
                     .Where(s => s.StudentGroupId == studentGroupId).Select(x => x.Student)
                     .Select(x => new StudentDto
@@ -144,13 +144,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                     })
                     .ToListAsync();
 
-                listOfStudentLists.Add(_applicationContext.StudentGroups
-                    .AsNoTracking()
-                    .First(x => x.Id == studentGroupId).Name,
-                    StudentList
-                    .GroupBy(x => x.Id)
-                    .Select(x => x.First())
-                    .ToList());
+                    listOfStudentLists.Add(_applicationContext.StudentGroups
+                        .AsNoTracking()
+                        .First(x => x.Id == studentGroupId).Name,
+                        studentList
+                        .GroupBy(x => x.Id)
+                        .Select(x => x.First())
+                        .ToList());
             }
 
             var visitsList = await _applicationContext.Visits

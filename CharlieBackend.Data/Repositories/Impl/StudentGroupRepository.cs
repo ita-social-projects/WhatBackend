@@ -25,20 +25,35 @@ namespace CharlieBackend.Data.Repositories.Impl
                    .AddRangeAsync(items);
         }
 
-        public bool DeleteStudentGroup(long StudentGroupModelId)
+        public async Task<bool> DeleteStudentGroupAsync(long StudentGroupModelId)
         {
-            var x = SearchStudentGroup(StudentGroupModelId);
+            var x = await GetByIdAsync(StudentGroupModelId);
 
             if (x == null)
             {
                 return false;
             }
-
             else
             {
                 _applicationContext.StudentGroups.Remove(x);
-                _applicationContext.SaveChanges();
 
+                return true;
+            }
+        }
+
+        public async Task<bool> DeactivateStudentGroupAsync(long StudentGroupModelId)
+        {
+            var x = await GetByIdAsync(StudentGroupModelId);
+
+            if (x == null)
+            {
+                return false;
+            }
+            else
+            {
+                x.IsActive = false;
+                _applicationContext.StudentGroups.Update(x);
+                
                 return true;
             }
         }
@@ -48,6 +63,30 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.StudentGroups
                     .Include(group => group.StudentsOfStudentGroups)
                     .Include(group => group.MentorsOfStudentGroups).ToListAsync();
+        }
+
+        public async Task<IList<StudentGroup>> GetAllActiveAsync(DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.StudentGroups
+            .AsNoTracking()
+            .Include(group => group.StudentsOfStudentGroups)
+            .Include(group => group.MentorsOfStudentGroups)
+            .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
+                                                    group.FinishDate > startDate)
+            .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate ||
+                                                     group.StartDate < finishDate)
+            .Where(group => group.Course.IsActive)
+            .Where(group => group.IsActive)
+            .OrderBy(group => group.StartDate)
+            .ToListAsync();
+        }
+
+        public async Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.StudentsOfStudentGroups)
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .FirstOrDefaultAsync(group => group.Id == id && group.IsActive);
         }
 
         public async Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id)
@@ -70,19 +109,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<bool> IsGroupOnCourseAsync(long id)
         {
             return await _applicationContext.StudentGroups.AnyAsync(group => (group.CourseId == id) && (group.FinishDate >= DateTime.Now));
-        }
-
-        public StudentGroup SearchStudentGroup(long studentGroupId)
-        {
-            foreach (var x in _applicationContext.StudentGroups)
-            {
-                if (x.Id == studentGroupId)
-                {
-                    return x;
-                }
-            }
-
-            return null;
         }
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
@@ -112,6 +138,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                     }).ToListAsync();
         }
 
+        public async Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .AnyAsync(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == mentorId) && x.Id == groupId);
+        }
+
         public async Task<IList<long?>> GetGroupStudentsIds(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
@@ -133,7 +166,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<IList<long?>> GetStudentGroupsByStudentId(long id)
+        public async Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups
                 .Where(s => s.StudentId == id)

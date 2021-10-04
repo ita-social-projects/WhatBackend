@@ -1,16 +1,18 @@
-﻿using CharlieBackend.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services;
-using Microsoft.Extensions.Configuration;
-using CharlieBackend.Data.Repositories.Impl;
-using Microsoft.Extensions.DependencyInjection;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices;
+using CharlieBackend.Business.Services.FileServices.ImportFileServices;
+using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportOperators;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Business.Services.FileServices;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
+using CharlieBackend.Data;
+using CharlieBackend.Data.Repositories.Impl;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CharlieBackend.Root
 {
@@ -53,15 +55,18 @@ namespace CharlieBackend.Root
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<IExportService, ExportService>();
+            services.AddScoped<ExportServiceXlsx>();
+            services.AddScoped<ExportServiceCsv>();
+            services.AddScoped<IExportServiceProvider, ExportServiceProvider>();
+            services.AddScoped<ServiceOperatorXlsx>();
+            services.AddScoped<ServiceOperatorCsv>();
+            services.AddScoped<IOperatorImportProvider, ImportOperatorProvider>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAttachmentService, AttachmentService>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             services.AddScoped<IBlobService, BlobService>();
-            services.AddScoped<IBaseFileService, BaseFileService>();
-            services.AddScoped<IStudentsGroupXlsxFileImporter, StudentsGroupXlsxFileImporter>();
-            services.AddScoped<IThemeXlsFileImporter, ThemeXlsFileImporter>();
+            services.AddScoped<IServiseImport, ServiceImport>();
             services.AddScoped<IScheduledEventHandlerFactory, ScheduledEventHandlerFactory>();
             services.AddScoped<IHomeworkStudentService, HomeworkStudentService>();
             services.AddScoped<IEventsService, EventsService>();

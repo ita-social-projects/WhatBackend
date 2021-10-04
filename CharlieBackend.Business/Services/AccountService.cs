@@ -357,5 +357,20 @@ namespace CharlieBackend.Business.Services
 
             return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
         }
+
+        public async Task<Result<AccountDto>> GetAccountCredentialsByEmailAsync(
+                string email)
+        {
+            var account = await _unitOfWork.AccountRepository
+                    .GetAccountCredentialsByEmailAsync(email);
+
+            if (account != null)
+            {
+                return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(account));
+            }
+
+            return Result<AccountDto>.GetError(ErrorCode.NotFound,
+                    "Account with this email not found");
+        }
     }
 }

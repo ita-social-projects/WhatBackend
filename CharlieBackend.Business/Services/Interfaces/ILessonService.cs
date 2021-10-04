@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +13,9 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<IList<LessonDto>>> GetAllLessonsForMentor(long mentorId);
 
-        Task<Result<IList<LessonDto>>> GetAllLessonsAsync();
+        Task<Result<IList<LessonDto>>> GetAllLessonsForStudentGroup(long studentGroupId);
+
+        Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate);
 
         Task<Result<Lesson>> AssignMentorToLessonAsync(AssignMentorToLessonDto ids);
 
@@ -22,7 +25,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<IList<LessonDto>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel);
 
-        Task<IList<LessonDto>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel);
+        Task<Result<IList<LessonDto>>> GetLessonsForStudentAsync(FilterLessonsRequestDto filterModel);
 
         Task<Result<LessonDto>> GetLessonByIdAsync(long lessonId);
 

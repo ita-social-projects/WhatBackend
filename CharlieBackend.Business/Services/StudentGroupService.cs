@@ -229,17 +229,31 @@ namespace CharlieBackend.Business.Services
         {
             if (!(startDate is null) || !(finishDate is null))
             {
-                return await GetStudentGroupsByDateAsyns(startDate, finishDate);
+                return await GetStudentGroupsByDateAsync(startDate, finishDate);
             }
-            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
             var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
             return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
         }
 
-        public bool DeleteStudentGrop(long StudentGroupId)
+        public async Task<bool> DeleteStudentGroupAsync(long StudentGroupId)
         {
-            return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
+            var lessonsOfStudentGroup = _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(StudentGroupId);
+            bool result;
+
+            if (lessonsOfStudentGroup.Result.Count == 0)
+            {
+                result = _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId).Result;
+            }
+            else
+            {
+                result =  _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId).Result;
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return result;
         }
 
         // if we set StudentIds or MentorsIds to null, they won't update
@@ -364,7 +378,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentGroupDto>> GetStudentGroupByIdAsync(long id)
         {
-            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetActiveStudentGroupByIdAsync(id);
 
             if (foundStudentGroup == null)
             {
@@ -374,14 +388,14 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
-        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime? startDate, DateTime? finishDate)
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
         {
             if (startDate > finishDate)
             {
                 return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError, "Start date is later then finish date.");
             }
 
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
 
             return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
         }

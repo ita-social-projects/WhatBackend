@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<bool>> IsGroupNameExistAsync(string groupName);
 
-        bool DeleteStudentGrop(long StudentGroupId);
+        Task<bool> DeleteStudentGroupAsync(long StudentGroupId);
 
         Task<Result<StudentGroupDto>> UpdateStudentGroupAsync(long id, UpdateStudentGroupDto studentGroupModel);
 
@@ -23,6 +23,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
 
-        Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime? startDate, DateTime? finishDate);
+        Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
     }
 }
