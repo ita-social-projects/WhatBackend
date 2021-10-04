@@ -13,7 +13,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage schedules data
     /// </summary>
-    [Route("api/schedules")]
+    [Route("api/v{version:apiVersion}/schedules")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

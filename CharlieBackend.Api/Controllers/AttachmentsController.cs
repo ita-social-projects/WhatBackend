@@ -13,7 +13,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manipulate attachments
     /// </summary>
-    [Route("api/attachments")]
+    [Route("api/v{version:apiVersion}/attachments")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

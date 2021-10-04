@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to make operations with homework from student
     /// </summary>
-    [Route("api/homeworkstudent")]
+    [Route("api/v{version:apiVersion}/homeworkstudent")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

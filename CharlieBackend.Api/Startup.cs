@@ -138,8 +138,6 @@ namespace CharlieBackend.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.ResolveConflictingActions(a => a.First());
-
                 c.ExampleFilters();
                 c.OperationFilter<AddResponseHeadersFilter>();
 

@@ -14,7 +14,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage lessons
     /// </summary>
-    [Route("api/lessons")]
+    [Route("api/v{version:apiVersion}/lessons")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

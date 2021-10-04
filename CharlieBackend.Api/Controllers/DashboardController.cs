@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to export aggregated data reports
     /// </summary>
-    [Route("api/dashboard")]
+    [Route("api/v{version:apiVersion}/dashboard")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

@@ -17,7 +17,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manupulate with account
     /// </summary>
-    [Route("api/accounts")]
+    [Route("api/v{version:apiVersion}/accounts")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

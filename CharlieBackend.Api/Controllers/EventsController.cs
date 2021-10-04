@@ -12,7 +12,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage scheduled events data
     /// </summary>
-    [Route("api/events")]
+    [Route("api/v{version:apiVersion}/events")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [ApiController]

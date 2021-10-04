@@ -9,7 +9,7 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage export data from database to .xlsx files
     /// </summary>
-    [Route("api/exports")]
+    [Route("api/v{version:apiVersion}/exports")]
     [ApiVersion("2.0")]
     [ApiController]
     public class ExportController : ControllerBase
