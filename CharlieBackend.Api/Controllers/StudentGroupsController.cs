@@ -27,7 +27,8 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, ILessonService lessonService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, 
+            ILessonService lessonService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
@@ -42,16 +43,13 @@ namespace CharlieBackend.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<StudentGroupDto>>> DeleteStudentGroup(long id)
         {
-            var studentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
-
-            if (studentGroup.Data == null)
+            if (await _studentGroupService.DeleteStudentGroupAsync(id))
             {
-                return NotFound();
+                return Ok("Student group is deleted.");
             }
             else
             {
-                await _studentGroupService.DeleteStudentGroupAsync(id);
-                return Ok("Student group is deleted.");
+                return NotFound();
             }
         }
 
@@ -72,9 +70,9 @@ namespace CharlieBackend.Api.Controllers
             }
             else
             {
-                var lessonsOfStudentGroup = _lessonService.GetAllLessonsForStudentGroup(id);
+                var lessonsOfStudentGroup = await _lessonService.GetAllLessonsForStudentGroup(id);
 
-                return lessonsOfStudentGroup.Result.ToActionResult();
+                return lessonsOfStudentGroup.ToActionResult();
             }
         }
 
@@ -155,6 +153,20 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Merges student groups
+        /// </summary>
+        /// <response code="200">Successful merging</response>
+        [SwaggerResponse(200, type: typeof(StudentGroupDto))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpPost("merge")]
+        public async Task<ActionResult<StudentGroupDto>> MergeStudentGroups([FromBody] MergeStudentGroupsDto groupsToMerge)
+        {
+            var result = await _studentGroupService.MergeStudentGroupsAsync(groupsToMerge);
+
+            return result.ToActionResult();
         }
     }
 }
