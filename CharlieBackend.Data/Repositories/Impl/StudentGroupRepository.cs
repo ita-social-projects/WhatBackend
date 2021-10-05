@@ -69,9 +69,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<IList<StudentGroup>> GetAllActiveAsync(DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.StudentGroups
-            .AsNoTracking()
-            .Include(group => group.StudentsOfStudentGroups)
-            .Include(group => group.MentorsOfStudentGroups)
+            .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
+            .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
             .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
                                                     group.FinishDate > startDate)
             .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate ||
@@ -84,27 +83,16 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id)
         {
-            var studentGroup = await _applicationContext.StudentGroups
-                    /*.Include(group => group.StudentsOfStudentGroups)
-                    .Include(group => group.MentorsOfStudentGroups)*/
-                    .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student)))
-                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor)))
+            return await _applicationContext.StudentGroups
+                    .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
+                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
                     .FirstOrDefaultAsync(group => group.Id == id && group.IsActive);
-
-            /*studentGroup.StudentsOfStudentGroups = await _applicationContext.StudentsOfStudentGroups
-                .Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.StudentGroupId == id)
-                .ToListAsync();
-            studentGroup.MentorsOfStudentGroups = await _applicationContext.MentorsOfStudentGroups
-                .Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.StudentGroupId == id)
-                .ToListAsync();*/
-
-            return studentGroup;
         }
 
         public async Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id)
         {
             return await _applicationContext.StudentGroups
-                    .Include(group => group.StudentsOfStudentGroups)
+                    .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
                     .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == id))
                     .Select(x => new StudentStudyGroupsDto
                     {
@@ -141,7 +129,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id)
         {
             return await _applicationContext.StudentGroups
-                    .Include(group => group.MentorsOfStudentGroups)
+                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
                     .Where(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == id))
                     .Select(x => new MentorStudyGroupsDto
                     {
@@ -153,14 +141,15 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId)
         {
             return await _applicationContext.StudentGroups
-                    .Include(group => group.MentorsOfStudentGroups)
+                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
                     .AnyAsync(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == mentorId) && x.Id == groupId);
         }
 
         public async Task<IList<long?>> GetGroupStudentsIds(long id)
         {
-            return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
-                .Select(s => s.StudentId).ToListAsync();
+            return await _applicationContext.StudentsOfStudentGroups
+                    .Where(s => s.StudentGroupId == id && s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value)
+                    .Select(s => s.StudentId).ToListAsync();
         }
 
         public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
@@ -181,7 +170,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups
-                .Where(s => s.StudentId == id)
+                .Where(s => s.StudentId == id && s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value)
                 .Select(s => s.StudentGroupId)
                 .ToListAsync();
         }
