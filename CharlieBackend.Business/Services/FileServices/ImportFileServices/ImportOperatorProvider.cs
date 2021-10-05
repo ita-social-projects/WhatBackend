@@ -20,7 +20,7 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
             _importServiceTypes.Add(FileExtension.CSV, typeof(ServiceOperatorCsv));
         }
 
-        public IOperatorImport GetExportService(FileExtension extension)
+        public IOperatorImport GetImportOperatorByExtension(FileExtension extension)
         {
             if (_importServiceTypes.ContainsKey(extension))
             {
