@@ -66,7 +66,7 @@ namespace CharlieBackend.Api.Controllers
         /// </param>
         [SwaggerResponse(200, type: typeof(List<HomeworkDto>))]
         [Authorize(Roles = "Mentor, Admin, Secretary")]
-        [HttpPost("getHomework")]
+        [HttpPost("getHomeworks")]
         public async Task<ActionResult> GetHomeworks([FromBody] GetHomeworkRequestDto request)
         {
             var results = await _homeworkService

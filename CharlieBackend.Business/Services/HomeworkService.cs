@@ -159,7 +159,8 @@ namespace CharlieBackend.Business.Services
                     .GetHomeworksForStudent(request, _currentUserService.EntityId);
             }
             
-            if(_currentUserService.Role.Is(UserRole.Admin) || _currentUserService.Role.Is(UserRole.Secretary)) { 
+            if(_currentUserService.Role.Is(UserRole.Admin) || _currentUserService.Role.Is(UserRole.Secretary)) 
+            { 
                 homeworks = await _unitOfWork.HomeworkRepository.GetHomeworks(request);
             }
 
