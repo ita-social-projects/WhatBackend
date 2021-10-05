@@ -288,9 +288,6 @@ namespace CharlieBackend.Api.UnitTest
         #endregion
 
         #region GetHomeworksAsync
-        // Для Админа GetHomeworks()
-        // Для Студента GetHomeworksForStudent()
-        // Для Ментора GetHomeworksForMentor()
 
         [Fact]
         public void GetHomeworksAsync_WhenRoleIsAdmin_ShouldReturnAllEntities()
