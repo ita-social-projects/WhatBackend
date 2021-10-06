@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -45,7 +44,7 @@ namespace CharlieBackend.Business.Services
         {
             var errors = await ValidateHomeworkRequest(createHomeworkDto)
                     .ToListAsync();
-                
+
             if (errors.Any())
             {
                 var errorsList = string.Join("; ", errors);
@@ -77,9 +76,9 @@ namespace CharlieBackend.Business.Services
 
                 newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
 
-                foreach (var attachment in attachments) 
+                foreach (var attachment in attachments)
                 {
-                newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
+                    newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
                     {
                         AttachmentId = attachment.Id,
                         Attachment = attachment,
@@ -218,7 +217,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var lesson = await _unitOfWork.LessonRepository.IsEntityExistAsync(request.LessonId);
-               
+
 
             if (!lesson)
             {
@@ -245,6 +244,26 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
+        }
+
+        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        {
+            var visit = await _unitOfWork
+                                  .LessonRepository
+                                  .GetVisitByStudentHomeworkIdAsync(request
+                                      .StudentHomeworkId);
+
+            if (visit is null)
+            {
+                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
+            }
+
+            visit.StudentMark = (sbyte)request.StudentMark;
+
+            _unitOfWork.VisitRepository.Update(visit);
+            await _unitOfWork.CommitAsync();
+
+            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }
