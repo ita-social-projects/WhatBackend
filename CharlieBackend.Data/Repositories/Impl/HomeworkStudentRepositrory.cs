@@ -66,9 +66,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                             IEnumerable<AttachmentOfHomeworkStudent> newHomeworkAttachments)
         {
             _applicationContext.AttachmentOfHomeworkStudents.TryUpdateManyToMany(currentHomeworkAttachments, newHomeworkAttachments);
-
         }
-
-
     }
 }
