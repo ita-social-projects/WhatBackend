@@ -43,7 +43,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
-            var responseModel = (await _apiUtil.SignInAsync($"api/accounts/auth", authDto));
+            var responseModel = (await _apiUtil.SignInAsync($"api/v2/accounts/auth", authDto));
 
             var token = responseModel.Token.Replace("Bearer ", "");
             
