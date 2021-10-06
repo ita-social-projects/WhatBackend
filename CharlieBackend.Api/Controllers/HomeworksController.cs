@@ -1,14 +1,12 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Visit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
