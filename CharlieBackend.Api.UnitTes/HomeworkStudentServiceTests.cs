@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,6 +29,7 @@ namespace CharlieBackend.Api.UnitTest
         private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IStudentRepository> _studentRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly HomeworkStudentService _homeworkStudentService;
         private HomeworkStudentRequestDto homeworkStudentRequestDto = new HomeworkStudentRequestDto()
         {
@@ -46,6 +48,7 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _studentRepositoryMock = new Mock<IStudentRepository>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            _mentorRepositoryMock = new Mock<IMentorRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _currentUserServiceMock = new Mock<ICurrentUserService>();
             _homeworkStudentService = new HomeworkStudentService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
@@ -1498,5 +1501,39 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         #endregion
+
+        #region GetHomeworkStudentForMentorTests
+
+        [Fact]
+        public async Task GetHomeworkStudentForMentor_IsSentEqualsTrue_ShouldReturnStudentsHomeworks()
+        {
+            //Arrange 
+            long homeworkId = 5;
+            var homeworksStudent = (IList<HomeworkStudent>) new List<HomeworkStudent>
+            {
+                new HomeworkStudent{ Id = 10, HomeworkId = homeworkId, IsSent = true }
+            };
+
+            _currentUserServiceMock.Setup(x => x.EntityId).Returns(1);
+
+            _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
+            _homeworkRepositoryMock.Setup(x => x.GetMentorHomeworkAsync(It.IsAny<long>(), homeworkId)).Returns(Task.FromResult(new Homework { Id = homeworkId }));
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentRepository).Returns(_homeworkStudentRepositoryMock.Object);
+            _homeworkStudentRepositoryMock.Setup(x => x.GetHomeworkStudentForMentor(homeworkId)).Returns(Task.FromResult(homeworksStudent));
+
+            _unitOfWorkMock.Setup(x => x.HomeworkStudentHistoryRepository).Returns(_homeworkStudentHistoryRepositoryMock.Object);
+            _homeworkStudentHistoryRepositoryMock.Setup(x => x.GetHomeworkStudentHistoryByHomeworkStudentId(((List<HomeworkStudent>)homeworksStudent).First().Id)).Returns(Task.FromResult(It.IsAny<IList<HomeworkStudentHistory>>()));
+
+            //Act
+            var response = await _homeworkStudentService.GetHomeworkStudentForMentor(homeworkId);
+
+            //Assert
+            response.Data.Should().HaveCount(1);
+            response.Data[0].Id.Should().Be(10);
+            response.Data[0].HomeworkId.Should().Be(5);
+        }
+
+        #endregion 
     }
 }
