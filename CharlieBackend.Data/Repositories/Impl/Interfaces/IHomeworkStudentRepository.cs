@@ -30,8 +30,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         /// <returns></returns>
         Task<IList<HomeworkStudent>> GetHomeworkStudentForMentor(long homeworkId);
 
-        Task<List<long>> GetIdsHomework(long groupId, long studentId);
-
         void UpdateManyToMany(IEnumerable<AttachmentOfHomeworkStudent> currentHomeworkAttachments,
                             IEnumerable<AttachmentOfHomeworkStudent> newHomeworkAttachments);
     }

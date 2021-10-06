@@ -170,21 +170,17 @@ namespace CharlieBackend.Business.Services
         {
             if (dueDate != null)
             {
-                dueDate = dueDate.Value.AddDays(1);
+                dueDate = dueDate.Value.Date.AddDays(1);
             }
 
-            var accountId = _currentUserService.AccountId;
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var studentGroupsIds = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
+            var studentId = _currentUserService.EntityId;
 
-            if (!studentGroupsIds.Contains(studentGroupId))
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId,studentGroupId))
             {
                 return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
             }
 
-            var homeworkIdList =  await _unitOfWork.HomeworkStudentRepository.GetIdsHomework(studentGroupId,student.Id);
-
-            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, homeworkIdList, dueDate);
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, studentId, dueDate);
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
