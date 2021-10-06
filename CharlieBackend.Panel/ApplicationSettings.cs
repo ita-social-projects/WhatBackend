@@ -108,7 +108,7 @@ namespace CharlieBackend.Panel
 
     public class LessonsApiEndpoints
     {
-        public string GetAllLessons { get; set; }
+        public string GetLessonsByDate { get; set; }
     }
 
     #endregion 

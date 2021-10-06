@@ -63,7 +63,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             List<MentorEditViewModel> mentors = new List<MentorEditViewModel>();
             
-            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetAllLessons();
+            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDate();
             if (themeN == null && mentorId == null)
             {
                 IEnumerable<string> lessonThemes = allLessons.Where(x => x.StudentGroupId == stGroupId)
@@ -106,7 +106,7 @@ namespace CharlieBackend.Panel.Controllers
             return RedirectToAction("Index", "Homeworks"); 
         }
 
-        [HttpGet()]
+        [HttpGet("{id}")]
         public async Task<IActionResult> PrepareHomeworkForUpdate(long id)
         {
             HomeworkViewModel homework = await _homeworkService.GetHomeworkById(id);
@@ -114,12 +114,12 @@ namespace CharlieBackend.Panel.Controllers
             return View("Edit", homework);
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> PutHomework(long id, HomeworkDto homework)
+        [HttpPost()]
+        public async Task<IActionResult> Edit(long id, HomeworkDto homework)
         {
             await _homeworkService.UpdateHomeworkEndpoint(id, homework);
 
-            return RedirectToAction("Index", nameof(HomeworksController));
+            return RedirectToAction("Index", "Homeworks");
         }
     }
 }

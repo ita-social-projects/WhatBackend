@@ -14,6 +14,7 @@ using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using System.Linq;
 using CharlieBackend.Panel.Models.Homework;
+using CharlieBackend.Panel.Models.Lesson;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -33,6 +34,9 @@ namespace CharlieBackend.Panel.Models.Mapping
 
             CreateMap<HomeworkViewModel, HomeworkDto>();
             CreateMap<HomeworkDto, HomeworkViewModel>();
+
+            CreateMap<LessonViewModel, LessonDto>();
+            CreateMap<LessonDto, LessonViewModel>();
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 

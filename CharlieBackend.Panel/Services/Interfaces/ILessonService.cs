@@ -6,6 +6,6 @@ namespace CharlieBackend.Panel.Services.Interfaces
 {
     public interface ILessonService
     {
-        Task<IList<LessonViewModel>> GetAllLessons();
+        Task<IList<LessonViewModel>> GetLessonsByDate();
     }
 }
