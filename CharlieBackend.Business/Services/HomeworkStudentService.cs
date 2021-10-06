@@ -218,10 +218,9 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId)
         {
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(_currentUserService.EntityId, homeworkId);
+
             if (homework == null)
-            {
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not found or mentor doesn't have access to it");
-            }
 
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
             var result = new List<HomeworkStudent>();
