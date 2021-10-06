@@ -14,7 +14,9 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Student groups controller
     /// </summary>
-    [Route("api/student_groups")]
+    [Route("api/v{version:apiVersion}/student_groups")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class StudentGroupsController : ControllerBase
     {
@@ -87,7 +89,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
         [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
+        public async Task<ActionResult<IList<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
         {
             var groups = await _studentGroupService.GetAllStudentGroupsAsync(startDate, finishDate);
 

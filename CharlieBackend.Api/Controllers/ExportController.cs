@@ -1,16 +1,16 @@
-﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Business.Services.Interfaces;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to manage export data from database to .xlsx files
     /// </summary>
-    [Route("api/exports")]
+    [Route("api/v{version:apiVersion}/exports")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class ExportController : ControllerBase
     {

@@ -1,19 +1,20 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Theme;
-using CharlieBackend.Core.DTO.Homework;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Business.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to namage themes
     /// </summary>
-    [Route("api/themes")]
+    [Route("api/v{version:apiVersion}/themes")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class ThemesController : ControllerBase
     {
@@ -49,7 +50,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(ThemeDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost]
-        public async Task<ActionResult<IList<ThemeDto>>> PostThemes([FromBody]CreateThemeDto addThemeModel)
+        public async Task<ActionResult<IList<ThemeDto>>> PostThemes([FromBody] CreateThemeDto addThemeModel)
         {
             var themeResult = await _themeService.CreateThemeAsync(addThemeModel);
 
@@ -64,7 +65,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(ThemeDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPut("{themeId}")]
-        public async Task<ActionResult<IList<ThemeDto>>> UpdateTheme(long themeId, [FromBody]UpdateThemeDto UpdateThemeModel)
+        public async Task<ActionResult<IList<ThemeDto>>> UpdateTheme(long themeId, [FromBody] UpdateThemeDto UpdateThemeModel)
         {
             var themeResult = await _themeService.UpdateThemeAsync(themeId, UpdateThemeModel);
 

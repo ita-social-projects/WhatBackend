@@ -1,6 +1,5 @@
 ﻿using CharlieBackend.Business.Services.FileServices;
 using CharlieBackend.Core;
-using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,8 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to manage import from external sources
     /// </summary>
-    [Route("api/imports")]
+    [Route("api/v{version:apiVersion}/imports")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class ImportController : ControllerBase
     {
