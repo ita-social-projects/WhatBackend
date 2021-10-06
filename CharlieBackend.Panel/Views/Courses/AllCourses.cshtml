@@ -1,0 +1,236 @@
+﻿@model IEnumerable<CharlieBackend.Panel.Models.Course.CourseViewModel>
+@{
+    Layout = "_Layout";
+}
+
+<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+    <div class="dropleft">
+        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="dropdown-menu" style="min-width: 170px;">
+            <form method="post" class="input-group" asp-action="AddCourse" asp-controller="Courses">
+                <input type="text" class="form-control" name="Name" placeholder="Course`s name" />
+                <button type="submit" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <h6 class="m-2 font-weight-bold text-primary">Courses</h6>
+                        <a class=" btn btn-light js-Course-list-button" id="activeCourses">
+                            <i class="far fa-eye"></i>
+                            <span> Active Courses </span>
+                        </a>
+                        <a class="btn btn-light js-Course-list-button d-none" id="inactiveCourses">
+                            <i class="far fa-eye-slash"></i>
+                            <span> Inactive Courses</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
+                        <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr class="thead-dark row">
+                                    <th class="col-4">Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    if (item.IsActive)
+                                    {
+                                        <tr class="row" id="activeCoursesRow">
+                                            <td class="col-4 text-truncate">@item.Name</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@item.Name" data-item-id="@item.Id.Value">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                        </a>
+                                                        <a class="dropdown-item text-dark js-disable-Course" data-toggle="modal" data-target="#disableCourseModalWindow" data-item-id="@item.Id.Value">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Disable </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="row d-none" id="inactiveCoursesRow">
+                                            <td class="col-4 text-truncate">@item.Name</td>
+                                            <td class="col">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@item.Name" data-item-id="@item.Id.Value">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit </span>
+                                                            </a>
+                                                            <a class="dropdown-item text-dark js-enable-Course" data-toggle="modal" data-target="#enableCourseModalWindow" data-item-id="@item.Id.Value">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Enable </span>
+                                                            </a>
+                                                        </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disable Course modal window-->
+    <div class="modal fade" id="disableCourseModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Disable Course?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmDisableCourse" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Enable Course modal window-->
+    <div class="modal fade" id="enableCourseModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Enable Course?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" id="confirmEnableCourse" href="">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editCourseModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCourseTitle">Edit Course</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="courseNameInput">Name:</label>
+                    <input id="courseNameInput" class="modalTextInput form-control" value="" />
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" id="confirmEditCourse" href="">Save changes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var isOnlyActiveCourses = false;
+        var switchButtons = document.querySelectorAll(".js-Course-list-button");
+        var activeCoursesRow = document.querySelectorAll("#activeCoursesRow");
+        var inactiveCoursesRow = document.querySelectorAll("#inactiveCoursesRow");
+        switchButtons.forEach(function (item) {
+            item.addEventListener('click', function (event) {
+                event.stopPropagation();
+                if (isOnlyActiveCourses) {
+                    document.querySelector("#activeCourses").classList.remove('d-none')
+                    document.querySelector("#inactiveCourses").classList.add('d-none');
+                    activeCoursesRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+                    inactiveCoursesRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                } else {
+                    document.querySelector("#inactiveCourses").classList.remove('d-none')
+                    document.querySelector("#activeCourses").classList.add('d-none');
+                    inactiveCoursesRow.forEach(function (item) {
+                        item.classList.remove('d-none');
+                    });
+                    activeCoursesRow.forEach(function (item) {
+                        item.classList.add('d-none');
+                    });
+                }
+                isOnlyActiveCourses = !isOnlyActiveCourses;
+            }, true)
+        });
+    </script>
+
+    <script type="text/javascript">
+        var routeForDisableCourse = "/Courses/DisableCourse/";
+        var disableCourseId = null;
+        $(document).on("click", ".js-disable-Course", function (e) {
+            e.preventDefault();
+            var _self = $(this);
+            disableCourseId = _self.data('item-id');
+            $("#confirmDisableCourse").attr("href", routeForDisableCourse + disableCourseId);
+        });
+    </script>
+
+    <script type="text/javascript">
+        var routeForEnableCourse = "/Courses/EnableCourse/";
+        var enableCourseId = null;
+        $(document).on("click", ".js-enable-Course", function (e) {
+            e.preventDefault();
+            var _self = $(this);
+            enableCourseId = _self.data('item-id');
+            $("#confirmEnableCourse").attr("href", routeForEnableCourse + enableCourseId);
+        });
+    </script>
+
+    <script type="text/javascript">
+        var routeForEditCourse = "/Courses/UpdateCourse/";
+        var editCourseId = null;
+        var editCourseName = null;
+        $(document).on("click", ".js-edit-course", function (e) {
+            e.preventDefault();
+            var _self = $(this);
+            editCourseId = _self.data('item-id');
+            editCourseName = _self.data('item-name');
+            $("#courseNameInput").val(editCourseName);
+        });
+        $("#courseNameInput").on('change keyup paste', function () {
+            $("#confirmEditCourse").attr("href", routeForEditCourse + editCourseId + '?&name=' + $("#courseNameInput").val());
+        });
+    </script>
+}

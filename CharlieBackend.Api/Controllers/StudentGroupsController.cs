@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Business.Services.Interfaces;
 using System;
+using CharlieBackend.Core.DTO.Lesson;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -23,28 +24,59 @@ namespace CharlieBackend.Api.Controllers
 
         private readonly IStudentGroupService _studentGroupService;
         private readonly IHomeworkService _homeworkService;
+        private readonly ILessonService _lessonService;
 
         /// <summary>
         /// Student Groups controllers constructor
         /// </summary>
-        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService)
+        public StudentGroupsController(IStudentGroupService studentGroupService, IHomeworkService homeworkService, 
+            ILessonService lessonService)
         {
             _studentGroupService = studentGroupService;
             _homeworkService = homeworkService;
+            _lessonService = lessonService;
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> DeleteStudentGroup(long id)
-        //{
-        //    var x = await _studentGroupService.SearchStudentGroup(id);
-        //    if (x == null)
-        //        return Ok("Not Found");
-        //    else
-        //    {
-        //        _studentGroupService.DeleteStudentGrop(id);
-        //        return Ok("Done");
-        //    }
-        //}
+        /// <summary>
+        /// Deletes the student group
+        /// </summary>
+        ///<response code="200">Successful deletion of student group</response>
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<StudentGroupDto>>> DeleteStudentGroup(long id)
+        {
+            if (await _studentGroupService.DeleteStudentGroupAsync(id))
+            {
+                return Ok("Student group is deleted.");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        /// <summary>
+        /// Returns list of lessons for student group
+        /// </summary>
+        /// <response code="200">Successful return of lessons list of given student group</response>
+        [SwaggerResponse(200, type: typeof(IList<StudentLessonDto>))]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("{id}/lessons")]
+        public async Task<ActionResult<List<StudentLessonDto>>> GetAllLessonsForStudentGroup(long id)
+        {
+            var studentGroup = await _studentGroupService.GetStudentGroupByIdAsync(id);
+
+            if (studentGroup.Data == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var lessonsOfStudentGroup = await _lessonService.GetAllLessonsForStudentGroup(id);
+
+                return lessonsOfStudentGroup.ToActionResult();
+            }
+        }
 
         /// <summary>
         /// Adding of new student group
@@ -123,6 +155,20 @@ namespace CharlieBackend.Api.Controllers
             var results = await _homeworkService.GetHomeworksByLessonId(id);
 
             return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Merges student groups
+        /// </summary>
+        /// <response code="200">Successful merging</response>
+        [SwaggerResponse(200, type: typeof(StudentGroupDto))]
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [HttpPost("merge")]
+        public async Task<ActionResult<StudentGroupDto>> MergeStudentGroups([FromBody] MergeStudentGroupsDto groupsToMerge)
+        {
+            var result = await _studentGroupService.MergeStudentGroupsAsync(groupsToMerge);
+
+            return result.ToActionResult();
         }
     }
 }

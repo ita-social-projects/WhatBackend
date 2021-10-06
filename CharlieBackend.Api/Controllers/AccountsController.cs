@@ -124,12 +124,12 @@ namespace CharlieBackend.Api.Controllers
 
             Dictionary<string, string> userRoleToJwtToken = _jWTGenerator.GetRoleJwtDictionary(foundAccount, roleIds);
 
-            var response = new
+            var response = new AuthenticationResponseDto
             {
-                first_name = foundAccount.FirstName,
-                last_name = foundAccount.LastName,
-                role = foundAccount.Role,
-                roleList = userRoleToJwtToken
+                FisrtName = foundAccount.FirstName,
+                LastName = foundAccount.LastName,
+                Role = foundAccount.Role,
+                RoleList = userRoleToJwtToken
             };
             GetHeaders(userRoleToJwtToken);
 

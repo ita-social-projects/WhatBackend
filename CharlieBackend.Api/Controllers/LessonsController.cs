@@ -71,15 +71,15 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets list of all lessons
+        /// Get all lessons by date
         /// </summary>
-        /// <response code="200">Successful return of lessons list</response>
+        /// <response code="200">Successful return of lessons list by date</response>
         [SwaggerResponse(200, type: typeof(List<LessonDto>))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet]
-        public async Task<ActionResult<List<LessonDto>>> GetAllLessons()
+        public async Task<ActionResult<List<LessonDto>>> GetLessonsByDate([FromQuery] DateTime? startDate = null, DateTime? finishDate = null)
         {
-            var lessons = await _lessonService.GetAllLessonsAsync();
+            var lessons = await _lessonService.GetLessonsByDate(startDate, finishDate);
 
             return lessons.ToActionResult();
         }

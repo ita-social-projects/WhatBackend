@@ -18,13 +18,15 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<StudentGroupService> _logger;
+        private readonly IScheduleService _scheduleService;
 
         public StudentGroupService(IUnitOfWork unitOfWork, IMapper mapper,
-                ILogger<StudentGroupService> logger)
+                ILogger<StudentGroupService> logger, IScheduleService scheduleService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _scheduleService = scheduleService;
         }
 
         public async Task<Result<StudentGroupDto>> CreateStudentGroupAsync
@@ -229,17 +231,41 @@ namespace CharlieBackend.Business.Services
         {
             if (!(startDate is null) || !(finishDate is null))
             {
-                return await GetStudentGroupsByDateAsyns(startDate, finishDate);
+                return await GetStudentGroupsByDateAsync(startDate, finishDate);
             }
-            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllAsync();
+            var studentGroup = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
             var studentGroupDto = _mapper.Map<List<StudentGroupDto>>(studentGroup);
 
             return Result<IList<StudentGroupDto>>.GetSuccess(studentGroupDto);
         }
 
-        public bool DeleteStudentGrop(long StudentGroupId)
+        public async Task<bool> DeleteStudentGroupAsync(long StudentGroupId)
         {
-            return _unitOfWork.StudentGroupRepository.DeleteStudentGroup(StudentGroupId);
+            var lessonsOfStudentGroup = _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(StudentGroupId);
+            bool result;
+
+            if (lessonsOfStudentGroup.Result.Count == 0)
+            {
+                result = await _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId);
+            }
+            else
+            {
+                result = await _unitOfWork.StudentGroupRepository.DeactivateStudentGroupAsync(StudentGroupId);
+            }
+
+            if (result)
+            {
+                var scheduledEvents = await _scheduleService.GetEventOccurrencesByGroupIdAsync(StudentGroupId);
+
+                foreach (var x in scheduledEvents.Data)
+                {
+                    await _scheduleService.DeleteScheduleByIdAsync(x.Id.Value, null, null);
+                }
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return result;
         }
 
         // if we set StudentIds or MentorsIds to null, they won't update
@@ -364,7 +390,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<StudentGroupDto>> GetStudentGroupByIdAsync(long id)
         {
-            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetByIdAsync(id);
+            var foundStudentGroup = await _unitOfWork.StudentGroupRepository.GetActiveStudentGroupByIdAsync(id);
 
             if (foundStudentGroup == null)
             {
@@ -374,14 +400,14 @@ namespace CharlieBackend.Business.Services
             return Result<StudentGroupDto>.GetSuccess(_mapper.Map<StudentGroupDto>(foundStudentGroup));
         }
 
-        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsyns(DateTime? startDate, DateTime? finishDate)
+        public async Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
         {
             if (startDate > finishDate)
             {
                 return Result<IList<StudentGroupDto>>.GetError(ErrorCode.ValidationError, "Start date is later then finish date.");
             }
 
-            var studentGroups = await _unitOfWork.StudentGroupRepository.GetStudentGroupsByDateAsync(startDate, finishDate);
+            var studentGroups = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
 
             return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
         }
@@ -400,6 +426,52 @@ namespace CharlieBackend.Business.Services
                                  isMoreThenOneId ? "s" : null,
                                  isMoreThenOneId ? null : "es",
                                  string.Join(", ", ids));
+        }
+
+        public async Task<Result<StudentGroupDto>> MergeStudentGroupsAsync(MergeStudentGroupsDto groupsToMerge)
+        {
+            var resultingStudentGroup = await GetStudentGroupByIdAsync(groupsToMerge.ResultingStudentGroupId);
+            List<StudentGroupDto> studentGroups;
+
+            if (resultingStudentGroup.Data == null)
+            {
+                return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Resulting student group not found");
+            }
+            else
+            {
+                studentGroups = new List<StudentGroupDto>();
+
+                foreach (var groupId in groupsToMerge.IdsOfStudentGroupsToMerge)
+                {
+                    var group = await GetStudentGroupByIdAsync(groupId);
+
+                    if (group.Data == null)
+                    {
+                        return Result<StudentGroupDto>.GetError(ErrorCode.NotFound, "Student group not found");
+                    }
+                    else
+                    {
+                        studentGroups.Add(group.Data);
+                    }
+                }
+            }
+            
+            foreach(var groupToMerge in studentGroups)
+            {
+                resultingStudentGroup.Data.StudentIds = resultingStudentGroup.Data.StudentIds.Union(groupToMerge.StudentIds).ToList();
+                await DeleteStudentGroupAsync(groupToMerge.Id);
+            }
+
+            var groupToUpdate = new UpdateStudentGroupDto {
+                Name = resultingStudentGroup.Data.Name,
+                CourseId = resultingStudentGroup.Data.CourseId.Value,
+                MentorIds = resultingStudentGroup.Data.MentorIds,
+                StartDate = resultingStudentGroup.Data.StartDate,
+                FinishDate = resultingStudentGroup.Data.FinishDate,
+                StudentIds = resultingStudentGroup.Data.StudentIds
+            };
+
+            return await UpdateStudentGroupAsync(groupsToMerge.ResultingStudentGroupId, groupToUpdate);
         }
     }
 }

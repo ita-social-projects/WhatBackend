@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Business.Services.FileServices;
+﻿using CharlieBackend.Business.Services.FileServices.ImportFileServices;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,21 +20,18 @@ namespace CharlieBackend.Api.Controllers
     [ApiController]
     public class ImportController : ControllerBase
     {
-        private readonly IThemeXlsFileImporter _themeXlsFileImporter;
-        private readonly IStudentsGroupXlsxFileImporter _studentsGroupXlsxFileImporter;
+        IServiseImport _servise;
 
         /// <summary>
         /// Import controller constructor
         /// </summary>
-        public ImportController(IThemeXlsFileImporter themeXlsFileImporter,
-                                IStudentsGroupXlsxFileImporter studentsGroupXlsxFileImporter)
+        public ImportController(IServiseImport servise)
         {
-            _themeXlsFileImporter = themeXlsFileImporter;
-            _studentsGroupXlsxFileImporter = studentsGroupXlsxFileImporter;
+            _servise = servise;
         }
 
         /// <summary>
-        /// Imports group with students data from .xlsx file to database
+        /// Imports group with students data from .xlsx or csv file to database
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
@@ -41,15 +39,24 @@ namespace CharlieBackend.Api.Controllers
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("group/{courseId}")]
         [HttpPost]
-        public async Task<ActionResult> ImportGroupWithStudentsDataFromFile(long courseId, IFormFile file)
+        public async Task<ActionResult> ImportGroupWithStudentsDataFromFile(
+                IFormFile file, long courseId, string groupName = null,
+                DateTime startDate = default, DateTime finishDate = default)
         {
-            var groups = await _studentsGroupXlsxFileImporter.ImportGroupAsync(courseId, file);
+            var result = await _servise.ImportGroupAsync(file,
+                    new CreateStudentGroupDto()
+                    {
+                        CourseId = courseId,
+                        Name = groupName,
+                        StartDate = startDate,
+                        FinishDate = finishDate,
+                    });
 
-            return groups.ToActionResult();
+            return result.ToActionResult();
         }
 
         /// <summary>
-        /// Imports student data from .xlsx file to database
+        /// Imports student data from .xlsx or csv file to database
         /// </summary>
         /// <response code="200">Successful import of data from file</response>
         /// <response code="HTTP: 400, API: 4">File validation error</response>
@@ -59,9 +66,9 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> ImportThemeDataFromFile(IFormFile file)
         {
-            var themes = await _themeXlsFileImporter.ImportThemesAsync(file);
+            var result = await _servise.ImportThemesAsync(file);
 
-            return themes.ToActionResult();
+            return result.ToActionResult();
         }
     }
 }
