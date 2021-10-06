@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Homework;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.DTO.Visit;
+﻿using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Core.Models.ResultModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {
@@ -19,6 +17,8 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto);
 
         Task<Result<IList<HomeworkDto>>> GetHomeworksByLessonId(long studentGroupId);
+
+        Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
 
         Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate);
 

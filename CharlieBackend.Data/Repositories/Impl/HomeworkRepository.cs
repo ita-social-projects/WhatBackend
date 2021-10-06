@@ -96,6 +96,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                             d => d.PublishingDate >= request.StartDate)
                     .WhereIf(request.FinishDate.HasValue,
                             d => d.PublishingDate <= request.FinishDate);
-
     }
 }

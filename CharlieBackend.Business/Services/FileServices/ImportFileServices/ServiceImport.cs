@@ -76,7 +76,7 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
                             "File extension not supported");
             }
 
-            var importOperator = _provider.GetExportService(extension);
+            var importOperator = _provider.GetImportOperatorByExtension(extension);
 
             if (importOperator == null)
             {

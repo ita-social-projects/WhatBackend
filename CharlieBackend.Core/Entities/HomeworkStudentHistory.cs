@@ -17,10 +17,10 @@ namespace CharlieBackend.Core.Entities
         /// </summary>
         public DateTime PublishingDate { get; set; }
 
-        public Mark Mark { get; set; }
+        public virtual Mark Mark { get; set; }
 
-        public HomeworkStudent HomeworkStudent { get; set; }
+        public virtual HomeworkStudent HomeworkStudent { get; set; }
 
-        public ICollection<AttachmentOfHomeworkStudentHistory> AttachmentOfHomeworkStudentsHistory { get; set; }
+        public virtual ICollection<AttachmentOfHomeworkStudentHistory> AttachmentOfHomeworkStudentsHistory { get; set; }
     }
 }

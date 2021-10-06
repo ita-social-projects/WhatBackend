@@ -12,7 +12,9 @@ namespace CharlieBackend.Api.Controllers
     /// <summary>
     /// Controller to export aggregated data reports
     /// </summary>
-    [Route("api/dashboard")]
+    [Route("api/v{version:apiVersion}/dashboard")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class DashboardController : ControllerBase
     {
@@ -113,7 +115,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> GetStudentGroupResults(long courseId, [FromBody]DashboardAnalyticsRequestDto<StudentGroupResultType> request)
         {
             var results = await _dashboardService
-            .GetStudentGroupResultAsync(courseId, request);
+                .GetStudentGroupResultAsync(courseId, request);
 
             return results.ToActionResult();
         }
