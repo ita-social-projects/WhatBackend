@@ -29,12 +29,18 @@ namespace CharlieBackend.Panel
 
     public class ApiEndpoints
     {
+        public AccountsApiEndpoints Accounts { get; set; }
         public CoursesApiEndpoints Courses { get; set; }
         public StudentsApiEndpoints Students { get; set; }
         public MentorsApiEndpoints Mentors { get; set; }
         public ThemesApiEndpoints Themes { get; set; }
         public ScheduleApiEndpoints Schedule { get; set; }
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
+    }
+
+    public class AccountsApiEndpoints 
+    {
+        public string SignIn { get; set; }
     }
 
     public class CoursesApiEndpoints
