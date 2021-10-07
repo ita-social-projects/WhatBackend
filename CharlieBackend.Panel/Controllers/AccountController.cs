@@ -18,18 +18,17 @@ namespace CharlieBackend.Panel.Controllers
     public class AccountController : Controller
     {
         private readonly IOptions<ApplicationSettings> _config;
-
         private readonly IApiUtil _apiUtil;
-
         private readonly IDataProtector _protector;
+        private readonly AccountsApiEndpoints _accountsApiEndpoints;
 
         public AccountController(IOptions<ApplicationSettings> config, 
                                  IApiUtil apiUtil, 
                                  IDataProtectionProvider provider)
         {
             _apiUtil = apiUtil;
-
             _config = config;
+            _accountsApiEndpoints = _config.Value.Urls.ApiEndpoints.Accounts;
 
             _protector = provider.CreateProtector(_config.Value.Cookies.SecureKey);
         }
@@ -43,7 +42,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(AuthenticationDto authDto)
         {
-            var responseModel = (await _apiUtil.SignInAsync($"api/v2/accounts/auth", authDto));
+            var responseModel = await _apiUtil.SignInAsync(_accountsApiEndpoints.SignIn, authDto);
 
             var token = responseModel.Token.Replace("Bearer ", "");
             
@@ -56,7 +55,7 @@ namespace CharlieBackend.Panel.Controllers
 
             foreach (var item in responseModel.RoleList)
             {
-                string value = _protector.Protect((item.Value.Replace("Bearer ", "")));
+                string value = _protector.Protect(item.Value.Replace("Bearer ", ""));
                 roleList.Add(item.Key, value);
             }
 
