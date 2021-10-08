@@ -175,7 +175,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable mentor's account
+        /// Disable account by mentor id
         /// </summary>
         /// <response code="204">Mentor's account successfully disabled</response>
         /// <response code="HTTP: 400, API: 3">Mentor not found</response>

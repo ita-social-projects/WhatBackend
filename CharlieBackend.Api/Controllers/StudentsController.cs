@@ -137,7 +137,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable student's account
+        /// Disable account by student id
         /// </summary>
         /// <response code="204">Successful deletion of student's account</response>
         /// <response code="400">Error, student not found</response>
