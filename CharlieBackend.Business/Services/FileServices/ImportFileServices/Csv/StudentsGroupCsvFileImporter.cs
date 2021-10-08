@@ -32,10 +32,9 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Csv
 
             while (stream.Peek() != -1)
             {
-                sbyte count = 0;
-                var line = stream.ReadLine().Trim('\n');
+                int count = 0;
 
-                studentsInfo = line.Split(';');
+                studentsInfo = stream.ReadLine().Trim('\n').Split(';');
 
                 var account = new CreateAccountDto()
                 {
