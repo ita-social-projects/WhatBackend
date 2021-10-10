@@ -28,16 +28,14 @@ namespace CharlieBackend.Business.Services.FileServices
                 Directory.CreateDirectory(fullPath);
             }
 
-            string fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH, generatedFileName);
+            string CurrentFilePath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH, generatedFileName);
 
-            using (var stream = new FileStream(fullFilePath, FileMode.Create))
+            using (var stream = new FileStream(CurrentFilePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            CurrentFilePath = fullFilePath;
-
-            return fullFilePath;
+            return CurrentFilePath;
         }
 
         public bool IsFileExtensionValid(IFormFile file, out FileExtension extension)
