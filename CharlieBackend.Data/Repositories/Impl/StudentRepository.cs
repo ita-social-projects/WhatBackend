@@ -41,7 +41,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<Student> GetStudentByAccountIdAsync(long accountId)
         {
             return await _applicationContext.Students
-                    .Where(student => student.Account.Role.HasFlag(UserRole.Student))
                     .FirstOrDefaultAsync(student => student.AccountId == accountId);
         }
 

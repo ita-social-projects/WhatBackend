@@ -67,7 +67,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Mentors
                     .FirstOrDefaultAsync(mentor
-                            => mentor.AccountId == mentorId && mentor.Account.Role.HasFlag(UserRole.Mentor));
+                            => mentor.AccountId == mentorId);
         }
         public async Task<Mentor> GetMentorByIdAsync(long mentorId)
         {

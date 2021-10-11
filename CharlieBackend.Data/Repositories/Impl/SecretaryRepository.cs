@@ -25,7 +25,6 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<Secretary> GetSecretaryByAccountIdAsync(long accountId)
         {
             return await _applicationContext.Secretaries
-                    .Where(secretary => secretary.Account.Role.HasFlag(UserRole.Secretary))
                     .FirstOrDefaultAsync(secretary
                             => secretary.AccountId == accountId);
         }
