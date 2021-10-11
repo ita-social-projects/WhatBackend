@@ -38,37 +38,37 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
                 FillRow(worksheet, 4, 1, "❌ - student is present");
 
-                var dateData = data.StudentsPresences.GroupBy(x => x.LessonDate);
+                var dateData = data.StudentsPresences.GroupBy(x => x.LessonId);
 
-                var studentList = dateData.First().OrderBy(x => x.Student);
+                var studentList = data.StudentsPresences.Select(x => x.Student).Distinct().OrderByDescending(s => s).ToList();
+
                 for (int studentIndex = 0; studentIndex < studentList.Count(); studentIndex++)
                 {
                     worksheet.Cell(_STUDENT_STARTING_ROW + studentIndex, _STUDENT_STARTING_COLUMN)
-                        .Value = studentList.ElementAt(studentIndex).Student;
+                        .Value = studentList.ElementAt(studentIndex);
                 }
 
-                int presencesGroupsCount = dateData.Count();
+                var dateColumn = _DEFAULT_STARTING_COLUMN;
 
-                for (int groupN = 0; groupN < presencesGroupsCount; groupN++)
+                foreach (var date in dateData)
                 {
-                    int actualIndex = groupN + _DEFAULT_STARTING_COLUMN;
-                    var actualGroup = dateData.ElementAt(groupN).OrderBy(x => x.Student);
+                    date.OrderByDescending(s => s.Student);
 
                     worksheet.Row(1)
-                        .Cell(actualIndex)
-                        .Value = ((DateTime)dateData.ElementAt(groupN).Key).ToString("dd-MM-yyyy");
+                       .Cell(dateColumn)
+                       .Value = ((DateTime)data.StudentsPresences.First(x => x.LessonId == dateData.ElementAt(dateColumn - _DEFAULT_STARTING_COLUMN).Key).LessonDate).ToString("dd-MM-yyyy");
 
-                    var visitCount = actualGroup.Count();
-
-                    for (int visitN = 0; visitN < visitCount; visitN++)
+                    foreach (var visit in date)
                     {
-                        var group = actualGroup;
-                        FillRowTextAlignCenter(worksheet, visitN + _STUDENT_STARTING_ROW, actualIndex,
-                        group.ElementAt(visitN).Presence == true ? "❌" : " ");
+                        FillRow(worksheet,
+                            _STUDENT_STARTING_ROW + studentList.IndexOf(visit.Student),
+                            dateColumn,
+                            visit.Presence == null ? " " : visit.Presence == true ? "❌" : " ");
                     }
-                    
-                    
+
+                    dateColumn++;
                 }
+
                 DrawBorders(worksheet.Range(
                         worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN),
                         worksheet.Row(studentList.Count() + 1)
@@ -100,48 +100,37 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                    firstStudentMark.Course,
                    firstStudentMark.StudentGroup);
 
-                var dateData = data.StudentsMarks.GroupBy(x => x.LessonDate);
+                var dateData = data.StudentsMarks.GroupBy(x => x.LessonId);
 
-                var studentList = dateData.First().OrderBy(x => x.Student);
+                var studentList = data.StudentsMarks.Select(x => x.Student).Distinct().OrderByDescending(s => s).ToList();
+
                 for (int studentIndex = 0; studentIndex < studentList.Count(); studentIndex++)
                 {
                     worksheet.Cell(_STUDENT_STARTING_ROW + studentIndex, _STUDENT_STARTING_COLUMN)
-                        .Value = studentList.ElementAt(studentIndex).Student;
+                        .Value = studentList.ElementAt(studentIndex);
                 }
 
-                int markGroupsCount = dateData.Count();
+                var dateColumn = _DEFAULT_STARTING_COLUMN;
 
-                for (int groupN = 0; groupN < markGroupsCount; groupN++)
+                foreach (var date in dateData)
                 {
-                    int actualIndex = groupN + _DEFAULT_STARTING_COLUMN;
-                    var actualGroup = dateData.ElementAt(groupN).OrderBy(x => x.Student);
+                    date.OrderByDescending(s => s.Student);
 
                     worksheet.Row(1)
-                        .Cell(actualIndex)
-                        .Value = ((DateTime)dateData.ElementAt(groupN).Key).ToString("dd-MM-yyyy");
+                       .Cell(dateColumn)
+                       .Value = ((DateTime)data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(dateColumn - _DEFAULT_STARTING_COLUMN).Key).LessonDate).ToString("dd-MM-yyyy");
 
-                    for (int item = 0; item < actualGroup.Count(); item++)
+                    foreach (var mark in date)
                     {
-                        var group = actualGroup;
-
-                        sbyte? tempMark = group.ElementAt(item).StudentMark != 0 ? group.ElementAt(item).StudentMark : null;
-
-                        string tempComment = group.ElementAt(item).Comment == null || group.ElementAt(item).Comment == ""
-                            ? null : group.ElementAt(item).Comment.ToString();
-
                         FillRow(worksheet,
-                            item + _STUDENT_STARTING_ROW,
-                            actualIndex,
-                            tempMark.ToString());
-
-                        FillRowWithComments(worksheet, 
-                            item + _STUDENT_STARTING_ROW, 
-                            actualIndex,
-                            tempComment);
+                            _STUDENT_STARTING_ROW + studentList.IndexOf(mark.Student),
+                            dateColumn,
+                            mark.StudentMark == null ? " " : mark.StudentMark.ToString());
                     }
 
-
+                    dateColumn++;
                 }
+
                 DrawBorders(worksheet.Range(
                         worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN),
                         worksheet.Row(studentList.Count() + 1)
