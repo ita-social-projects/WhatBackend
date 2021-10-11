@@ -6,13 +6,16 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Annotations;
 using CharlieBackend.Core;
+using CharlieBackend.Core.Models.ResultModel;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to manage courses data
     /// </summary>
-    [Route("api/courses")]
+    [Route("api/v{version:apiVersion}/courses")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class CoursesController : ControllerBase
     {
@@ -80,8 +83,9 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Course successfully disabled</response>
         /// <response code="HTTP: 400, API: 0">Course has active student group</response>
         [Authorize(Roles = "Admin, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CourseDto>> DisableCourse(long id)
+        public async Task<ActionResult<CourseDto>> DisableCourseV2(long id)
         {
             var disableCourse = await _coursesService.DisableCourseAsync(id);
 
@@ -94,12 +98,65 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Course successfully enabled</response>
         /// <response code="HTTP: 409, API: 5">Course is already active</response>
         [Authorize(Roles = "Admin, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpPatch("{id}")]
-        public async Task<ActionResult<CourseDto>> EnableCourse(long id)
+        public async Task<ActionResult<CourseDto>> EnableCourseV2(long id)
         {
             var enableCourse = await _coursesService.EnableCourseAsync(id);
 
             return enableCourse.ToActionResult();
+        }
+
+        /// <summary>
+        /// Disable course
+        /// </summary>
+        /// <response code="200">Course successfully disabled</response>
+        /// <response code="HTTP: 400, API: 0">Course has active student group</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [MapToApiVersion("1.0")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DisableCourse(long id)
+        {
+            var disableCourse = await _coursesService.DisableCourseAsync(id);
+
+            Result<bool> result = new Result<bool>();
+
+            if (disableCourse.Error == null)
+            {
+                result.Data = true;
+            }
+            else
+            {
+                result.Error = disableCourse.Error;
+            }
+
+            return result.ToActionResult();
+        }
+
+        /// <summary>
+        /// Enable course
+        /// </summary>
+        /// <response code="200">Course successfully enabled</response>
+        /// <response code="HTTP: 409, API: 5">Course is already active</response>
+        [Authorize(Roles = "Admin, Secretary")]
+        [MapToApiVersion("1.0")]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<bool>> EnableCourse(long id)
+        {
+            var enableCourse = await _coursesService.EnableCourseAsync(id);
+
+            Result<bool> result = new Result<bool>();
+
+            if (enableCourse.Error == null)
+            {
+                result.Data = true;
+            }
+            else
+            {
+                result.Error = enableCourse.Error;
+            }
+
+            return result.ToActionResult();
         }
     }
 }

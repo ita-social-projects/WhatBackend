@@ -13,14 +13,17 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Impor
         private readonly IStudentGroupService _studentGroupService;
         private readonly IAccountService _accountService;
         private readonly IStudentService _studentService;
+        private readonly IThemeService _themeService;
 
         public ServiceOperatorCsv(IStudentGroupService studentGroupService,
             IAccountService accountService,
-            IStudentService studentService)
+            IStudentService studentService,
+            IThemeService themeService)
         {
             _studentGroupService = studentGroupService;
             _accountService = accountService;
             _studentService = studentService;
+            _themeService = themeService;
         }
 
         public async Task<Result<GroupWithStudentsDto>> ImportGroupAsync(
@@ -33,11 +36,11 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Impor
         }
 
         public Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(
-                string path)
+                string filePath)
         {
-            return Task.FromResult(Result<IEnumerable<ThemeDto>>.GetError(
-                    ErrorCode.NotFound,
-                    "Application can't do import themes from csv yet"));
+            var themeCreator = new ThemeCsvFileImporter(_themeService);
+
+            return themeCreator.ImportThemesAsync(filePath);
         }
     }
 }

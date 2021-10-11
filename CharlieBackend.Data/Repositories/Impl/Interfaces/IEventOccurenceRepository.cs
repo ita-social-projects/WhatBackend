@@ -10,6 +10,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         public new Task<List<EventOccurrence>> GetAllAsync();
 
+        Task<List<EventOccurrence>> GetByStudentGroupIdAsync(long studentGroupId);
+
         Task<List<EventOccurrence>> GetSchedulesByStudentGroupIdAsync(long id);
     }
 }

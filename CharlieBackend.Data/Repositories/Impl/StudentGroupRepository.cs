@@ -92,6 +92,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<StudentStudyGroupsDto>> GetStudentStudyGroups(long id)
         {
             return await _applicationContext.StudentGroups
+                    .Where(group => group.IsActive)
                     .Include(group => group.StudentsOfStudentGroups)
                     .Where(x => x.StudentsOfStudentGroups.Any(x => x.StudentId == id))
                     .Select(x => new StudentStudyGroupsDto
@@ -129,6 +130,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<MentorStudyGroupsDto>> GetMentorStudyGroups(long id)
         {
             return await _applicationContext.StudentGroups
+                    .Where(group => group.IsActive)
                     .Include(group => group.MentorsOfStudentGroups)
                     .Where(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == id))
                     .Select(x => new MentorStudyGroupsDto
@@ -136,6 +138,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Id = x.Id,
                         Name = x.Name
                     }).ToListAsync();
+        }
+
+        public async Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId)
+        {
+            return await _applicationContext.StudentGroups
+                    .Include(group => group.MentorsOfStudentGroups)
+                    .AnyAsync(x => x.MentorsOfStudentGroups.Any(x => x.MentorId == mentorId) && x.Id == groupId);
         }
 
         public async Task<IList<long?>> GetGroupStudentsIds(long id)

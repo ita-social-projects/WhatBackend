@@ -5,6 +5,6 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
 {
     public interface IOperatorImportProvider
     {
-        public IOperatorImport GetExportService(FileExtension fileExtension);
+        public IOperatorImport GetImportOperatorByExtension(FileExtension fileExtension);
     }
 }

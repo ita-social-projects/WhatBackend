@@ -9,5 +9,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<MentorOfCourse>> GetAllMentorCoursesAsync(long mentorId);
 
         Task<MentorOfCourse> GetMentorOfCourseIdAsync(MentorOfCourse mentorOfCourse);
+        Task<long> GetCoursesAsync(long courseId);
     }
 }
