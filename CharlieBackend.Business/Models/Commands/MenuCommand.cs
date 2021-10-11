@@ -36,7 +36,8 @@ namespace CharlieBackend.Business.Models.Commands
             var buttonsList = new List<List<InlineKeyboardButton>>
             {
                 new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Personal Info", CallbackData = "/personalinfo" } },
-                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Student Groups", CallbackData = "/studentgroups" } }
+                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Student Groups", CallbackData = "/studentgroups" } },
+                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Secretaries", CallbackData = "/secretaries" } }
             };
 
             if (account.Role.Is(UserRole.Student))

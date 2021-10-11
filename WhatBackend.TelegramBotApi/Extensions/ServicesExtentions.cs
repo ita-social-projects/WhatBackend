@@ -23,6 +23,7 @@ namespace WhatBackend.TelegramBotApi.Extensions
             services.AddScoped<CoursesCommand>();
             services.AddScoped<PersonalInfoCommand>();
             services.AddScoped<ClassmatesCommand>();
+            services.AddScoped<SecretariesCommand>();
         }
     }
 }
