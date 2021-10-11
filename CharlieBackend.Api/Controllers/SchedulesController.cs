@@ -55,9 +55,24 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get detailed schedule by id
+        /// </summary>
+        /// <response code="200">Successful return of detailed schedule</response>        
+        /// <response code="HTTP: 404, API: 3">No such event occurence</response>
+        [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DetailedEventOccurrenceDTO>> GetDetailedEventOccuranceById(long id)
+        {
+            var resSchedule = await _scheduleService.GetDetailedEventOccurrenceById(id);
+
+            return resSchedule.ToActionResult();
+        }
+
+        /// <summary>
         /// Get schedule by id
         /// </summary>
-        /// <response code="200">Successful add of schedule</response>        
+        /// <response code="200">Successful return of schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
