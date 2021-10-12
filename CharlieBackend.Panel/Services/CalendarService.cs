@@ -29,7 +29,7 @@ namespace CharlieBackend.Panel.Services
         private readonly string _getActiveStudentsEndpoint;
         private readonly string _getThemesEndpoint;
 
-        private const int defaultDateFilterOffset = 15;
+        private const int defaultDateFilterOffset = 7;
 
         public CalendarService(
             IScheduleService scheduleService,
@@ -96,7 +96,7 @@ namespace CharlieBackend.Panel.Services
         {
             if (!scheduledEventFilter.StartDate.HasValue)
             {
-                scheduledEventFilter.StartDate = DateTime.Now.AddDays(-defaultDateFilterOffset);
+                scheduledEventFilter.StartDate = DateTime.Now;
             }
 
             if (!scheduledEventFilter.FinishDate.HasValue)

@@ -16,11 +16,12 @@ namespace CharlieBackend.Panel.HtmlHelpers
             DateTime start, finish;
 
             var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
-
+ 
             if (calendar.ScheduledEventFilter.FinishDate.HasValue)
             {
                 finish = calendar.ScheduledEventFilter.FinishDate.Value;
             }
+
             else
             {
                 DateTime latestFinish = eventOccurencesFiltered.Max(x => x.EventFinish);

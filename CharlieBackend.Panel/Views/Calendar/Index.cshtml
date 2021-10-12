@@ -67,11 +67,11 @@
                                     @if (Model.ScheduledEventFilter.GroupID.HasValue)
                                     {
                                         <option value="null">-Group-</option>
-                                        <option value="@Model.ScheduledEventFilter.GroupID.Value" selected>Group @Model.StudentGroups.First(x => x.Id == Model.ScheduledEventFilter.GroupID.Value).FinishDate.ToString()</option>
+                                        <option value="@Model.ScheduledEventFilter.GroupID.Value" selected>Group @Model.StudentGroups.First(x => x.Id == Model.ScheduledEventFilter.GroupID.Value).Name.ToString()</option>
 
                                         @foreach (var group in Model.StudentGroups.Where(x => x.Id != Model.ScheduledEventFilter.GroupID.Value))
                                         {
-                                            <option value="@group.Id">Group @group.FinishDate.ToString()</option>
+                                            <option value="@group.Id">Group @group.Name.ToString()</option>
                                         }
                                     }
                                     else
@@ -80,7 +80,7 @@
 
                                         @foreach (var group in Model.StudentGroups)
                                         {
-                                            <option value="@group.Id">Group @group.FinishDate.ToString()</option>
+                                            <option value="@group.Id">Group @group.Name.ToString()</option>
                                         }
                                     }
                                 </select>
@@ -155,29 +155,29 @@
                                 <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
                                     @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
                                     {
-                                        <option value="null">-Account-</option>
+                                        <option value="null">-Student-</option>
                                         <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
                                             @{
                                                 var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
                                             }
-                                            Account @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
+                                            Student @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
                                         </option>
 
                                         @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
                                         {
-                                            <option value="@student.Id">Account @(student.FirstName+" "+ student.LastName)</option>
+                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                         }
                                     }
                                     else
                                     {
-                                        <option value="null" selected>-Account-</option>
+                                        <option value="null" selected>-Student-</option>
                                         @foreach (var student in Model.Students)
                                         {
-                                            <option value="@student.Id">Account @(student.FirstName+" "+ student.LastName)</option>
+                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                         }
                                     }
                                 </select>
-                                <select class="custom-select" name="EventOccurrenceID" id="occurenceSelect" aria-label="Example select with button addon">
+                                @*<select class="custom-select" name="EventOccurrenceID" id="occurenceSelect" aria-label="Example select with button addon">
                                     @if (Model.ScheduledEventFilter.EventOccurrenceID.HasValue)
                                     {
                                         <option value="null">-Occurrence-</option>
@@ -201,7 +201,7 @@
                                             <option value="@occurence.Id">@(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
                                         }
                                     }
-                                </select>
+                                </select>*@
                             </div>
                             <div class="form-group row">
                                 <div class="col-6">
