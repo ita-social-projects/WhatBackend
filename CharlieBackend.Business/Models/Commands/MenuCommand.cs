@@ -54,7 +54,8 @@ namespace CharlieBackend.Business.Models.Commands
             {
                 buttonsList.AddRange(new List<List<InlineKeyboardButton>>
                 {
-                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Courses", CallbackData = "/courses" } }
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Courses", CallbackData = "/courses" } },
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "New Homeworks", CallbackData = "/newhomework" } }
                 });
             }
 

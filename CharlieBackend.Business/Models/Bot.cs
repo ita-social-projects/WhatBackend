@@ -41,6 +41,8 @@ namespace CharlieBackend.Business.Models
                 .GetRequiredService<SecretariesCommand>();
             var mentorsCommand = services
                 .GetRequiredService<MentorsCommand>();
+            var newHomeworkCommand = services
+                .GetRequiredService<NewHomeworkCommand>();
 
             _commandsList = new List<Command>();
             _commandsList.Add(startCommand);
@@ -53,6 +55,7 @@ namespace CharlieBackend.Business.Models
             _commandsList.Add(classmatesCommand);
             _commandsList.Add(secretariesCommand);
             _commandsList.Add(mentorsCommand);
+            _commandsList.Add(newHomeworkCommand);
 
             _client = new TelegramBotClient(AppSettings.Key);
             var hook = AppSettings.Url + "/api/bot/message/update";
