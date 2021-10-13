@@ -1,38 +1,39 @@
-﻿using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportOperators;
+﻿using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportReaders;
 using CharlieBackend.Core.DTO.Export;
 using System;
 using System.Collections.Generic;
 
 namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
 {
-    public class ImportOperatorProvider : IOperatorImportProvider
+    public class FileReaderProvider : IFileReaderProvider
     {
         IServiceProvider _serviceProvider;
         private readonly IDictionary<FileExtension, Type> _importServiceTypes;
 
-        public ImportOperatorProvider(IServiceProvider serviceProvider)
+        public FileReaderProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 
             _importServiceTypes = new Dictionary<FileExtension, Type>();
 
-            _importServiceTypes.Add(FileExtension.XLSX, typeof(ServiceOperatorXlsx));
-            _importServiceTypes.Add(FileExtension.CSV, typeof(ServiceOperatorCsv));
+            _importServiceTypes.Add(FileExtension.XLSX, typeof(XlsxFileReader));
+            _importServiceTypes.Add(FileExtension.CSV, typeof(CsvFileReader));
         }
 
-        public IOperatorImport GetImportOperatorByExtension(FileExtension extension)
+        public IFileReader GetFileReader(FileExtension extension)
         {
             if (_importServiceTypes.ContainsKey(extension))
             {
-                return _serviceProvider.GetService(_importServiceTypes[extension]) as IOperatorImport;
+                return _serviceProvider.GetService(_importServiceTypes[extension]) as IFileReader;
             }
 
             return null;
         }
 
-        public bool IsExtansionSupported(FileExtension extension) 
+        public bool IsExtansionSupported(FileExtension extension)
         {
             return _importServiceTypes.ContainsKey(extension);
         }
     }
 }
+

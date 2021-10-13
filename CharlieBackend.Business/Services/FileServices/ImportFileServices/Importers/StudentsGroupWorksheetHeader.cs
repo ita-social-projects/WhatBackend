@@ -1,4 +1,4 @@
-﻿namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Xlsx
+﻿namespace CharlieBackend.Business.Services.FileServices.Importers
 {
     enum StudentsGroupWorksheetHeader
     {

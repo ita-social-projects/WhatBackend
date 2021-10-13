@@ -11,6 +11,6 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
     {
         Task<Result<GroupWithStudentsDto>> ImportGroupAsync(IFormFile file, CreateStudentGroupDto group);
 
-        Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(IFormFile file);
+        Task<Result<IList<ThemeDto>>> ImportThemesAsync(IFormFile file);
     }
 }
