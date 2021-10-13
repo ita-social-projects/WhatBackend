@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Visit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -72,6 +73,20 @@ namespace CharlieBackend.Api.Controllers
         {
             var results = await _homeworkService
                         .GetHomeworksAsync(request);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
+        /// Gets homework not done
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkDto))]
+        [Authorize(Roles = "Student")]
+        [HttpGet]
+        public async Task<ActionResult> GetHomeworkNotDone([FromQuery] long studentGroupId, DateTime? dueDate = null)
+        {
+            var results = await _homeworkService
+                        .GetHomeworkNotDone(studentGroupId, dueDate);
 
             return results.ToActionResult();
         }

@@ -41,5 +41,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id);
 
         Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId);
+
+        Task<bool> DoesStudentBelongsGroup(long studentId, long studentGroupId);
     }
 }

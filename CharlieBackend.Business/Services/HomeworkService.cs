@@ -166,13 +166,32 @@ namespace CharlieBackend.Business.Services
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate)
+        {
+            if (dueDate != null)
+            {
+                dueDate = dueDate.Value.Date.AddDays(1);
+            }
+
+            var studentId = _currentUserService.EntityId;
+
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId,studentGroupId))
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, studentId, dueDate);
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
+        }
+
         public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
         {
             var errors = await ValidateHomeworkRequest(updateHomeworkDto).ToListAsync();
 
             if (errors.Any())
             {
-                var errorsList = string.Join("; ", errors);
+                var errorsList = string.Join(";", errors);
 
                 _logger.LogError("Homework update request has failed due to: " + errorsList);
 
