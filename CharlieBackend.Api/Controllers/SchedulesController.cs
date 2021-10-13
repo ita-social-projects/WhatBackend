@@ -39,7 +39,7 @@ namespace CharlieBackend.Api.Controllers
         /// Add new schedule
         /// </summary>
         /// <remarks>
-        /// Creates new EventOccurance instance and related ScheduledEvents
+        /// Creates new EventOccurence instance and related ScheduledEvents
         /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
         /// </remarks>
         /// <response code="200">Successful add of schedule</response>
@@ -62,7 +62,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceById(long id)
+        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccurenceById(long id)
         {
             var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
 
@@ -77,7 +77,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(DetailedEventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("detailed/{id}")]
-        public async Task<ActionResult<DetailedEventOccurrenceDTO>> GetDetailedEventOccuranceById(long id)
+        public async Task<ActionResult<DetailedEventOccurrenceDTO>> GetDetailedEventOccurenceById(long id)
         {
             var resSchedule = await _scheduleService.GetDetailedEventOccurrenceById(id);
 
