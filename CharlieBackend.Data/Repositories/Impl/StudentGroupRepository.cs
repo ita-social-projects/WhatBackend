@@ -161,5 +161,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Select(s => s.StudentGroupId)
                 .ToListAsync();
         }
+
+        public async Task<bool> DoesStudentBelongsGroup(long studentId, long studentGroupId)
+        {
+            return await _applicationContext.StudentsOfStudentGroups.AnyAsync(s => s.StudentGroupId == studentGroupId && s.StudentId == studentId);
+        }
     }
 }
