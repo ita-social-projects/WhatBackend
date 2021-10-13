@@ -15,6 +15,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 
 namespace CharlieBackend.Business.Models.Commands
 {
@@ -31,6 +32,7 @@ namespace CharlieBackend.Business.Models.Commands
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _loggerHomeworkService;
         private readonly ILogger<HomeworkStudentService> _loggerHomeworkStudentService;
+        private readonly IHangfireJobService _jobService;
 
         private IHomeworkService _homeworkService;
         private IHomeworkStudentService _homeworkStudentService;
@@ -46,7 +48,8 @@ namespace CharlieBackend.Business.Models.Commands
             ILessonService lessonService,
             IMapper mapper,
             ILogger<HomeworkService> loggerHomeworkService,
-            ILogger<HomeworkStudentService> loggerHomeworkStudentService)
+            ILogger<HomeworkStudentService> loggerHomeworkStudentService,
+            IHangfireJobService jobService)
         {
             _accountService = accountService;
             _mentorService = mentorService;
@@ -58,6 +61,7 @@ namespace CharlieBackend.Business.Models.Commands
             _mapper = mapper;
             _loggerHomeworkService = loggerHomeworkService;
             _loggerHomeworkStudentService = loggerHomeworkStudentService;
+            _jobService = jobService;
         }
 
         public override async Task<string> Execute(Message message, TelegramBotClient client)
@@ -95,12 +99,14 @@ namespace CharlieBackend.Business.Models.Commands
                         _lessonService,
                         _mapper,
                         _loggerHomeworkService,
-                        currentUserService);
+                        currentUserService,
+                        _jobService);
                     _homeworkStudentService = new HomeworkStudentService(
                         _unitOfWork,
                         _mapper,
                         _loggerHomeworkStudentService,
-                        currentUserService);
+                        currentUserService,
+                        _jobService);
 
                     var group = await _studentGroupService
                     .GetStudentGroupByIdAsync(groupId);

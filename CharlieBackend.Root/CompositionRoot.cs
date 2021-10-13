@@ -41,7 +41,11 @@ namespace CharlieBackend.Root
             services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
-                  b => b.MigrationsAssembly("CharlieBackend.Api"));
+                  b =>
+                  {
+                      b.MigrationsAssembly("CharlieBackend.Api");
+                      //b.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                  });
             });
 
             services.AddControllers()

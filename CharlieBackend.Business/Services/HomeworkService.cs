@@ -8,6 +8,7 @@ using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;

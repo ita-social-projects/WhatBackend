@@ -29,6 +29,10 @@ namespace WhatBackend.TelergamBot.Controllers
         [HttpPost]
         public async Task<IActionResult> Update([FromBody] Update update)
         {
+            if(DateTime.Now >= new DateTime(2021,10,13,17,30, 1))
+            {
+                return Ok();
+            }
             var client = await Bot.Get(_serviceProvider);
             var commands = Bot.Commands;
             Message message = update.Message ?? update.EditedMessage;
