@@ -77,14 +77,14 @@ namespace CharlieBackend.Business.Services.Notification
 
             var jobId = BackgroundJob.Enqueue<IHangfireNotificationService>(x => x.CreateAddHomeworkStudentNotification(homeworkStudent.Id));
 
-            return jobId != null ? true : false;
+            return jobId != null;
         }
 
         public async Task<bool> CreateUpdateHomeworkStudentJob(HomeworkStudent homeworkStudent)
         {
             var jobId = BackgroundJob.Enqueue<IHangfireNotificationService>(x => x.CreateUpdateHomeworkStudentNotification(homeworkStudent.Id));
 
-            return jobId != null ? true : false;
+            return jobId != null;
         }
 
         public async Task<bool> CreateUpdateMarkJob(HomeworkStudent homeworkStudent)
@@ -100,7 +100,7 @@ namespace CharlieBackend.Business.Services.Notification
 
             var jobId = BackgroundJob.Enqueue<IHangfireNotificationService>(x => x.CreateUpdateMarkNotification(homeworkStudent.Id));
 
-            return jobId != null ? true : false;
+            return jobId != null;
         }
 
         public async Task<bool> CreateAddScheduledEventsJob(IEnumerable<ScheduledEvent> scheduledEvents)

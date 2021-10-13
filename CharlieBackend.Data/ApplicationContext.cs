@@ -1,4 +1,4 @@
-﻿ using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
