@@ -14,43 +14,44 @@ namespace CharlieBackend.Business.Models.Commands
     /// </summary>
     public class GetMarkCommand : Command
     {
+        private readonly IAccountService _accountService;
+        private readonly IStudentService _studentService;
         private readonly IDashboardService _dashboardService;
-        public override string Name => "Mark";
-        public GetMarkCommand(IDashboardService dashboardService)
+        public override string Name => "mark";
+        public GetMarkCommand(IAccountService accountService,
+            IStudentService studentService,
+            IDashboardService dashboardService)
         {
+            _accountService = accountService;
+            _studentService = studentService;
             _dashboardService = dashboardService;
         }
         public override async Task<string> Execute(Message message, TelegramBotClient client)
         { 
             var chatId = message.Chat.Id;
-            var messageId = message.MessageId;
+            string response = string.Empty;
 
-            //var userId = 1;
-            //var request = new DashboardAnalyticsRequestDto<StudentResultType>
-            //{
-            //    StartDate = default(DateTime),
-            //    FinishDate = default(DateTime),
-            //    IncludeAnalytics = new StudentResultType[0]
-            //};
-            //var results = await _dashboardService.GetStudentResultAsync(userId, request);
-
-            var results = new Result<StudentMarkDto>  //temporary stub to make this work
-            {
-                Data = new StudentMarkDto
+            var account = await _accountService
+                .GetAccountByTelegramId(chatId);
+            var student = await _studentService
+                .GetStudentByAccountIdAsync(account.Id);
+            var results = await _dashboardService
+                .GetStudentClassbookAsync(student.Data.Id,
+                new DashboardAnalyticsRequestDto<ClassbookResultType>()
                 {
-                    //StudentGroupId = 1,
-                    StudentId = 1,
-                    LessonId = 1,
-                    //CourseId = 1,
-                    StudentMark = 10
-                },
-                Error = null
-            };
+                    FinishDate = DateTime.UtcNow,
+                    StartDate = DateTime.UtcNow - new TimeSpan(7, 0, 0, 0),
+                    IncludeAnalytics = new ClassbookResultType[] 
+                    { 
+                        ClassbookResultType.StudentMarks, 
+                        ClassbookResultType.StudentPresence 
+                    }
+                });
 
-            var recentMark = results.Data.StudentMark;
-            var replyMessage = string.Format("Your recent mark is {0}", recentMark.ToString());
-            return (await client.SendTextMessageAsync(chatId, replyMessage)).Text;
+            //implement new logic here (after rework of DashboardService)
 
+            return (await client.SendTextMessageAsync(chatId,
+                response)).Text;
         }
     }
 }

@@ -41,5 +41,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
         
         Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id);
+
+        Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId);
     }
 }

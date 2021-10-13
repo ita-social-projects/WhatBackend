@@ -148,6 +148,14 @@ namespace CharlieBackend.Business.Services
                 _mapper.Map<IList<EventOccurrenceDTO>>(eventOccurences));
         }
 
+        public async Task<Result<IList<EventOccurrenceDTO>>> GetEventOccurrencesByGroupIdAsync(long studentGroupId)
+        {
+            var eventOccurences = await _unitOfWork.EventOccurrenceRepository.GetByStudentGroupIdAsync(studentGroupId);
+
+            return Result<IList<EventOccurrenceDTO>>.GetSuccess(
+                _mapper.Map<IList<EventOccurrenceDTO>>(eventOccurences));
+        }
+
         public async Task<Result<IList<ScheduledEventDTO>>> GetEventsFiltered(ScheduledEventFilterRequestDTO request)
         {
             string error = await _validator.ValidateGetEventsFilteredRequest(request);

@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to manage scheduled events data
     /// </summary>
-    [Route("api/events")]
+    [Route("api/v{version:apiVersion}/events")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -84,6 +83,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code = "200" > Successful delete of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
         [Authorize(Roles = "Secretary, Admin, Mentor")]
+        [MapToApiVersion("2.0")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<EventOccurrenceDTO>> ConnectEventToLesson(long id, [FromBody] LessonDto lesson)
         {

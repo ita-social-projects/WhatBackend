@@ -36,7 +36,8 @@ namespace CharlieBackend.Business.Models.Commands
             var buttonsList = new List<List<InlineKeyboardButton>>
             {
                 new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Personal Info", CallbackData = "/personalinfo" } },
-                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Student Groups", CallbackData = "/studentgroups" } }
+                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Student Groups", CallbackData = "/studentgroups" } },
+                new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Secretaries", CallbackData = "/secretaries" } }
             };
 
             if (account.Role.Is(UserRole.Student))
@@ -44,7 +45,8 @@ namespace CharlieBackend.Business.Models.Commands
                 buttonsList.AddRange(new List<List<InlineKeyboardButton>>
                 {
                     new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Classmates", CallbackData = "/classmates" } },
-                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Upcoming Homeworks", CallbackData = "/upcominghomeworks" } }
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Upcoming Homeworks", CallbackData = "/upcominghomeworks" } },
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Mentors", CallbackData = "/mentors" } }
                 });
             }
 
@@ -52,7 +54,8 @@ namespace CharlieBackend.Business.Models.Commands
             {
                 buttonsList.AddRange(new List<List<InlineKeyboardButton>>
                 {
-                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Courses", CallbackData = "/courses" } }
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "Courses", CallbackData = "/courses" } },
+                    new List<InlineKeyboardButton>{ new InlineKeyboardButton { Text = "New Homeworks", CallbackData = "/newhomework" } }
                 });
             }
 

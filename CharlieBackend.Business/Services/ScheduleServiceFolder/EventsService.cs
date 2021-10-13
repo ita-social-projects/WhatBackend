@@ -85,7 +85,12 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
         public async Task<Result<ScheduledEventDTO>> ConnectScheduleToLessonById(long eventId, long lessonId)
         {
-            var scheduleEntity = await _unitOfWork.ScheduledEventRepository.ConnectEventToLessonById(eventId, lessonId);
+            if (await _unitOfWork.ScheduledEventRepository.IsLessonConnectedToSheduledEventAsync(lessonId))
+            {
+                return Result<ScheduledEventDTO>.GetError(ErrorCode.Conflict, $"Lesson with id={lessonId} is already associated with another ScheduledEvent");
+            }
+
+            var scheduleEntity = await _unitOfWork.ScheduledEventRepository.ConnectEventToLessonByIdAsync(eventId, lessonId);
 
             return scheduleEntity == null ?
                 Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Scheduled event with id={eventId} does not exist") :

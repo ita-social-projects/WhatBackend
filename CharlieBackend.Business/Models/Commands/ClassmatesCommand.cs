@@ -26,7 +26,6 @@ namespace CharlieBackend.Business.Models.Commands
             _studentGroupService = studentGroupService;
         }
 
-        //TODO: fix problem with multiple groups
         public override async Task<string> Execute(Message message, TelegramBotClient client)
         {
             var chatId = message.Chat.Id;

@@ -2,7 +2,11 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -20,14 +24,19 @@ namespace CharlieBackend.Business.Services
     public class HomeworkService : IHomeworkService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICourseService _courseService;
+        private readonly ILessonService _lessonService;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
         private readonly ICurrentUserService _currentUserService;
         private readonly IHangfireJobService _jobService;
 
-        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService, IHangfireJobService jobService)
+        public HomeworkService(IUnitOfWork unitOfWork, ICourseService courseService, ILessonService lessonService, IMapper mapper,
+            ILogger<HomeworkService> logger, ICurrentUserService currentUserService, IHangfireJobService jobService)
         {
             _unitOfWork = unitOfWork;
+            _courseService = courseService;
+            _lessonService = lessonService;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
@@ -38,7 +47,7 @@ namespace CharlieBackend.Business.Services
         {
             var errors = await ValidateHomeworkRequest(createHomeworkDto)
                     .ToListAsync();
-                
+
             if (errors.Any())
             {
                 var errorsList = string.Join("; ", errors);
@@ -70,9 +79,9 @@ namespace CharlieBackend.Business.Services
 
                 newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
 
-                foreach (var attachment in attachments) 
+                foreach (var attachment in attachments)
                 {
-                newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
+                    newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
                     {
                         AttachmentId = attachment.Id,
                         Attachment = attachment,
@@ -118,6 +127,48 @@ namespace CharlieBackend.Business.Services
             }
 
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(homework));
+        }
+
+        public async IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request)
+        {
+            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHasAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
+            {
+                yield return "Mentor can get only homeworks of groups of his courses";
+            }
+
+            if (request.CourseId.HasValue && !await _unitOfWork.CourseRepository.DoesMentorHasAccessToCourse(_currentUserService.EntityId, request.CourseId.Value))
+            {
+                yield return "Mentor can get only homeworks of his courses";
+            }
+        }
+
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworksAsync(GetHomeworkRequestDto request)
+        {
+            IList<Homework> homeworks = null;
+            if (_currentUserService.Role.Is(UserRole.Mentor))
+            {
+                var hasRightsError = await HasMentorRightsToSeeHomeworks(request).ToListAsync();
+                if (hasRightsError.Any())
+                {
+                    _logger.LogInformation("Getting homeworks has failed due to mentor's rights.");
+                    return Result<IList<HomeworkDto>>.GetError(ErrorCode.ValidationError, hasRightsError);
+                }
+
+                homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksForMentor(request, _currentUserService.EntityId);
+            }
+
+            if (_currentUserService.Role.Is(UserRole.Student))
+            {
+                homeworks = await _unitOfWork.HomeworkRepository
+                    .GetHomeworksForStudent(request, _currentUserService.EntityId);
+            }
+            
+            if(_currentUserService.Role.Is(UserRole.Admin) || _currentUserService.Role.Is(UserRole.Secretary)) 
+            { 
+                homeworks = await _unitOfWork.HomeworkRepository.GetHomeworks(request);
+            }
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
         public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
@@ -173,7 +224,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var lesson = await _unitOfWork.LessonRepository.IsEntityExistAsync(request.LessonId);
-               
+
 
             if (!lesson)
             {
@@ -200,6 +251,26 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
+        }
+
+        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        {
+            var visit = await _unitOfWork
+                                  .LessonRepository
+                                  .GetVisitByStudentHomeworkIdAsync(request
+                                      .StudentHomeworkId);
+
+            if (visit is null)
+            {
+                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
+            }
+
+            visit.StudentMark = (sbyte)request.StudentMark;
+
+            _unitOfWork.VisitRepository.Update(visit);
+            await _unitOfWork.CommitAsync();
+
+            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }

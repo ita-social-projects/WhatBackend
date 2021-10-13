@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using ClosedXML.Excel;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +8,13 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Xlsx
 {
-    public class ThemeXlsFileImporter
+    public class ThemeXlsxFileImporter
     {
         private readonly IThemeService _themeService;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public ThemeXlsFileImporter(IThemeService themeService,
-                                 IUnitOfWork unitOfWork)
+        public ThemeXlsxFileImporter(IThemeService themeService)
         {
             _themeService = themeService;
-            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(string filePath)
@@ -42,8 +38,6 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Xlsx
                     themes.Add(theme.Data);
                 }
             }
-
-            await _unitOfWork.CommitAsync();
 
             return Result<IEnumerable<ThemeDto>>.GetSuccess(themes);
         }
