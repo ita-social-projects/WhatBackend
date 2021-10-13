@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
-using CharlieBackend.Core.DTO.HomeworkStudent;
-using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -26,13 +23,15 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHangfireJobService _jobService;
 
-        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService)
+        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService, IHangfireJobService jobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+            _jobService = jobService;
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
@@ -82,6 +81,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateAddHomeworkJob(newHomework);
 
             _logger.LogInformation($"Homework with id {newHomework.Id} has been added");
 
@@ -157,6 +158,8 @@ namespace CharlieBackend.Business.Services
             _unitOfWork.HomeworkRepository.UpdateManyToMany(foundHomework.AttachmentsOfHomework, newAttachments);
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateHomeworkJob(foundHomework);
 
             return Result<HomeworkDto>.GetSuccess(_mapper.Map<HomeworkDto>(foundHomework));
         }

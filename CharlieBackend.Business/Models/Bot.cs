@@ -1,11 +1,9 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Models.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using CharlieBackend.Business.Models.Commands;
-using CharlieBackend.Data;
 
 namespace CharlieBackend.Business.Models
 {

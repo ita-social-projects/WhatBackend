@@ -14,7 +14,7 @@ using CharlieBackend.Data.Exceptions;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
-    class ScheduledEventRepository : Repository<ScheduledEvent>, IScheduledEventRepository
+    public class ScheduledEventRepository : Repository<ScheduledEvent>, IScheduledEventRepository
     {
         public ScheduledEventRepository(ApplicationContext applicationContext)
             : base(applicationContext)
@@ -49,9 +49,15 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public override async Task<ScheduledEvent> GetByIdAsync(long id)
         {
-            var schedule = await _applicationContext.ScheduledEvents.FirstOrDefaultAsync(entity => entity.Id == id);
-            
-            if(schedule is null)
+            var schedule = await _applicationContext.ScheduledEvents
+                .Include(x => x.StudentGroup.StudentsOfStudentGroups)
+                .ThenInclude(x => x.Student.Account)
+                .Include(x => x.StudentGroup.MentorsOfStudentGroups)
+                .ThenInclude(x => x.Mentor.Account)
+                .Include(x => x.Theme)
+                .FirstOrDefaultAsync(entity => entity.Id == id);
+
+            if (schedule is null)
             {
                 throw new NotFoundException("Scheduled event does not exist");
             }
@@ -59,7 +65,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return schedule;
         }
 
-        public async Task<ScheduledEvent> ConnectEventToLessonById (long? eventId, long? lessonId)
+        public async Task<ScheduledEvent> ConnectEventToLessonById(long? eventId, long? lessonId)
         {
             var schedule = await _applicationContext.ScheduledEvents.FirstOrDefaultAsync(entity => entity.Id == eventId);
 

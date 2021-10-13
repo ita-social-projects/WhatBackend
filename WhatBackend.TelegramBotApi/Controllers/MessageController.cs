@@ -29,7 +29,7 @@ namespace WhatBackend.TelergamBot.Controllers
         [HttpPost]
         public async Task<IActionResult> Update([FromBody] Update update)
         {
-           var client = await Bot.Get(_serviceProvider);
+            var client = await Bot.Get(_serviceProvider);
             var commands = Bot.Commands;
             Message message = update.Message ?? update.EditedMessage;
 
