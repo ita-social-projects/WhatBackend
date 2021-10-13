@@ -1,17 +1,23 @@
-﻿using System;
-using System.Text;
+﻿using CharlieBackend.Panel.Models.Mentor;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace CharlieBackend.Core.DTO.Homework
+namespace CharlieBackend.Panel.Models.Homework
 {
-    public class HomeworkDto
+    public class HomeworkEditViewModel
     {
+        [Required]
         public long Id { get; set; }
 
         public DateTime? DueDate { get; set; }
 
+        [StringLength(5000)]
         public string TaskText { get; set; }
 
+        [Required]
         public long LessonId { get; set; }
 
         public DateTime PublishingDate { get; set; }
@@ -19,6 +25,7 @@ namespace CharlieBackend.Core.DTO.Homework
         public long CreatedBy { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
-        public string ThemeName { get; set; }
+
+        public IList<MentorViewModel> AllMentors { get; set; }
     }
 }

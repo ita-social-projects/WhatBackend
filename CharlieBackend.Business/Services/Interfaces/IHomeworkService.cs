@@ -10,6 +10,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 {
     public interface IHomeworkService
     {
+        Task<Result<IList<HomeworkDto>>> GetHomeworks();
         Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto homeworkDto);
 
         Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId);

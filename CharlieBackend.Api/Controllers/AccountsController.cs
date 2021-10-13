@@ -238,7 +238,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Grant role to account
+        /// Grant one more role to account
         /// </summary>
         /// <response code="200">Role successfully grant</response>
         /// <response code="HTTP: 404, API: 3">Account not found</response>

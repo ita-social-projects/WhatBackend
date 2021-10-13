@@ -9,6 +9,7 @@ using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,23 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+        }
+
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworks()
+        {
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksWithThemeNameAndAtachemntsQuery().Select(x => new HomeworkDto
+            {
+                ThemeName = x.Lesson.Theme.Name,
+                CreatedBy = x.CreatedBy,
+                DueDate = x.DueDate,
+                Id = x.Id,
+                LessonId = x.LessonId,
+                PublishingDate = x.PublishingDate,
+                TaskText = x.TaskText,
+                AttachmentIds = x.AttachmentsOfHomework.Select(a => a.AttachmentId).ToList()
+            }).ToListAsync();
+
+            return Result<IList<HomeworkDto>>.GetSuccess(homeworks);
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)

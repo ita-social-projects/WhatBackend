@@ -25,10 +25,12 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IHomeworkService, HomeworkService>();
+            services.AddScoped<ILessonService, LessonService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
-                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
+                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Http").Value);
             })
                 .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         }
