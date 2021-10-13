@@ -126,7 +126,7 @@ namespace CharlieBackend.Business.Services
 
         public async IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request)
         {
-            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHasAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
+            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHaveAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
             {
                 yield return "Mentor can get only homeworks of groups of his courses";
             }

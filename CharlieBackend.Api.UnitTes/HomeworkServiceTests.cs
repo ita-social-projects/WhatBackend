@@ -333,7 +333,7 @@ namespace CharlieBackend.Api.UnitTest
             var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
 
             _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
-            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHasAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(true));
+            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHaveAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(true));
             _unitOfWorkMock.Setup(x => x.HomeworkRepository).Returns(_homeworkRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
             _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
@@ -394,7 +394,7 @@ namespace CharlieBackend.Api.UnitTest
             var homeworks = (IList<Homework>)new List<Homework> { new Homework { Id = 1 } };
 
             _currentUserServiceMock.Setup(x => x.Role).Returns(UserRole.Mentor);
-            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHasAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(false));            
+            _studentGroupRepositoryMock.Setup(x => x.DoesMentorHaveAccessToGroup(It.IsAny<long>(), It.IsAny<long>())).Returns(Task.FromResult(false));            
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
             _homeworkRepositoryMock.Setup(x => x.GetHomeworksForMentor(It.IsAny<GetHomeworkRequestDto>(), It.IsAny<long>())).Returns(Task.FromResult(homeworks));
 
