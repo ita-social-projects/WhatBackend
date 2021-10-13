@@ -28,7 +28,7 @@ namespace CharlieBackend.Business.Services.FileServices
                 Directory.CreateDirectory(fullPath);
             }
 
-            string CurrentFilePath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH, generatedFileName);
+            CurrentFilePath = Path.Combine(Directory.GetCurrentDirectory(), BASE_PATH, generatedFileName);
 
             using (var stream = new FileStream(CurrentFilePath, FileMode.Create))
             {
