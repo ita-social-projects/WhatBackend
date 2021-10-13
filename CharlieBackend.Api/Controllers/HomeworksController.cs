@@ -10,6 +10,8 @@ using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace CharlieBackend.Api.Controllers
 {
