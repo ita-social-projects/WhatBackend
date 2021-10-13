@@ -215,12 +215,13 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId)
+        public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId)
         {
-            long accountId = _currentUserService.AccountId;
+            var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(_currentUserService.EntityId, homeworkId);
 
-            var mentor = await _unitOfWork.MentorRepository.GetMentorByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(mentor.Id, homeworkId);
+            if (homework == null)
+                return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not found or mentor doesn't have access to it");
+
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
             var result = new List<HomeworkStudent>();
 
@@ -254,7 +255,7 @@ namespace CharlieBackend.Business.Services
                     result.Add(homeworkStudent);
                 }
             }
-            return _mapper.Map<IList<HomeworkStudentDto>>(result);
+            return Result<IList<HomeworkStudentDto>>.GetSuccess(_mapper.Map<IList<HomeworkStudentDto>>(result));
         }
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentHistoryByHomeworkStudentId(long homeworkStudentId)
