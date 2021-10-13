@@ -15,25 +15,19 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Models.Commands.Attributes;
 
 namespace CharlieBackend.Business.Models.Commands
 {
+    [MentorRoleCommand]
     public class NewHomeworkCommand : Command
     {
         private readonly IAccountService _accountService;
         private readonly IMentorService _mentorService;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IStudentService _studentService;
-
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ICourseService _courseService;
-        private readonly ILessonService _lessonService;
-        private readonly IMapper _mapper;
-        private readonly ILogger<HomeworkService> _loggerHomeworkService;
-        private readonly ILogger<HomeworkStudentService> _loggerHomeworkStudentService;
-
-        private IHomeworkService _homeworkService;
-        private IHomeworkStudentService _homeworkStudentService;
+        private readonly IHomeworkService _homeworkService;
+        private readonly IHomeworkStudentService _homeworkStudentService;
 
         public override string Name => "/newhomework";
 
@@ -41,23 +35,15 @@ namespace CharlieBackend.Business.Models.Commands
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
             IStudentService studentService,
-            IUnitOfWork unitOfWork,
-            ICourseService courseService,
-            ILessonService lessonService,
-            IMapper mapper,
-            ILogger<HomeworkService> loggerHomeworkService,
-            ILogger<HomeworkStudentService> loggerHomeworkStudentService)
+            IHomeworkService homeworkService,
+            IHomeworkStudentService homeworkStudentService)
         {
             _accountService = accountService;
             _mentorService = mentorService;
             _studentGroupService = studentGroupService;
             _studentService = studentService;
-            _unitOfWork = unitOfWork;
-            _courseService = courseService;
-            _lessonService = lessonService;
-            _mapper = mapper;
-            _loggerHomeworkService = loggerHomeworkService;
-            _loggerHomeworkStudentService = loggerHomeworkStudentService;
+            _homeworkService = homeworkService;
+            _homeworkStudentService = homeworkStudentService;
         }
 
         public override async Task<string> Execute(Message message, TelegramBotClient client)
@@ -77,31 +63,6 @@ namespace CharlieBackend.Business.Models.Commands
                 long groupId;
                 if (long.TryParse(parameters[1], out groupId))
                 {
-                    var httpContext = new DefaultHttpContext();
-                    var identity = (ClaimsIdentity)httpContext.User.Identity;
-                    identity.AddClaim(new Claim(
-                        ClaimsIdentity.DefaultRoleClaimType, "Mentor"));
-                    identity.AddClaim(new Claim(
-                        ClaimConstants.IdClaim, mentor.Data.Id.ToString()));
-                    identity.AddClaim(new Claim(
-                        ClaimConstants.AccountClaim, account.Id.ToString()));
-                    var httpContextAccessor = new HttpContextAccessor()
-                    {
-                        HttpContext = httpContext
-                    };
-                    var currentUserService = new CurrentUserService(httpContextAccessor);
-                    _homeworkService = new HomeworkService(_unitOfWork,
-                        _courseService,
-                        _lessonService,
-                        _mapper,
-                        _loggerHomeworkService,
-                        currentUserService);
-                    _homeworkStudentService = new HomeworkStudentService(
-                        _unitOfWork,
-                        _mapper,
-                        _loggerHomeworkStudentService,
-                        currentUserService);
-
                     var group = await _studentGroupService
                     .GetStudentGroupByIdAsync(groupId);
                     var homeworkTasks = await _homeworkService

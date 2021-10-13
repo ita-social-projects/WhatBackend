@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Models.Commands.Attributes;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CharlieBackend.Business.Models.Commands
 {
+    [StudentRoleCommand]
     public class ClassmatesCommand : Command
     {
         private readonly IAccountService _accountService;
