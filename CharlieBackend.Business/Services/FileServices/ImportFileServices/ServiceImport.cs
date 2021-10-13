@@ -1,4 +1,7 @@
-﻿using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportOperators;
+﻿using CharlieBackend.Business.Services.FileServices.Importers;
+using CharlieBackend.Business.Services.FileServices.ImportFileServices.Importers;
+using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportReaders;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Export;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
@@ -11,11 +14,23 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
 {
     public class ServiceImport : IServiseImport
     {
-        IOperatorImportProvider _provider;
+        private readonly IFileReaderProvider _provider;
+        private readonly IStudentService _studentService;
+        private readonly IStudentGroupService _studentGroupService;
+        private readonly IAccountService _accountService;
+        private readonly IThemeService _themeService;
 
-        public ServiceImport(IOperatorImportProvider provider)
+        public ServiceImport(IFileReaderProvider provider,
+            IStudentService studentService,
+            IStudentGroupService studentGroupService,
+            IAccountService accountService,
+            IThemeService themeService)
         {
             _provider = provider;
+            _studentService = studentService;
+            _studentGroupService = studentGroupService;
+            _accountService = accountService;
+            _themeService = themeService;
         }
 
         public async Task<Result<GroupWithStudentsDto>> ImportGroupAsync(
@@ -23,47 +38,55 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
         {
             using FileService fileService = new FileService();
 
-            var importOperator = GetImportOperator(file, fileService);
+            var fileReader = GetImportReader(file, fileService);
 
-            if (importOperator.Error != null)
+            if (fileReader.Error != null)
             {
                 return Result<GroupWithStudentsDto>.GetError(
-                        importOperator.Error.Code,
-                        importOperator.Error.Message);
+                        fileReader.Error.Code,
+                        fileReader.Error.Message);
             }
 
             string filePath = await fileService.UploadFileAsync(file);
+            var accounts = await fileReader.Data.ReadAccountsAsync(filePath);
 
-            var result = await importOperator.Data.ImportGroupAsync(group, filePath);
+            var groupImporter = new StudentGroupImporter(_studentService,
+                _studentGroupService, _accountService);
 
-            return result;
+            await groupImporter.ImportGroupAsync(group, accounts.Data);
+
+            return Result<GroupWithStudentsDto>.GetSuccess(new GroupWithStudentsDto());
         }
 
-        public async Task<Result<IEnumerable<ThemeDto>>> ImportThemesAsync(IFormFile file)
+        public async Task<Result<IList<ThemeDto>>> ImportThemesAsync(IFormFile file)
         {
             using FileService fileService = new FileService();
-     
-            var importOperator = GetImportOperator(file, fileService);
+
+            var importOperator = GetImportReader(file, fileService);
 
             if (importOperator.Error != null)
             {
-                return Result<IEnumerable<ThemeDto>>.GetError(
+                return Result<IList<ThemeDto>>.GetError(
                         importOperator.Error.Code,
                         importOperator.Error.Message);
             }
 
             var filePath = await fileService.UploadFileAsync(file);
-            var themes = await importOperator.Data.ImportThemesAsync(filePath);
+            var themes = await importOperator.Data.ReadThemesAsync(filePath);
 
-            return themes;
+            var themeImporter = new ThemeImporter(_themeService);
+
+            var themeResult = await themeImporter.ImportThemesAsync(themes.Data);
+
+            return themeResult;
         }
 
-        public Result<IOperatorImport> GetImportOperator(IFormFile file, 
+        public Result<IFileReader> GetImportReader(IFormFile file,
             FileService fileService)
         {
             if (file == null)
             {
-                return Result<IOperatorImport>.GetError(ErrorCode.ValidationError,
+                return Result<IFileReader>.GetError(ErrorCode.ValidationError,
                             "File was not provided");
             }
 
@@ -71,21 +94,21 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
 
             if (!fileService.IsFileExtensionValid(file, out extension))
             {
-                return Result<IOperatorImport>.GetError(
+                return Result<IFileReader>.GetError(
                             ErrorCode.ValidationError,
                             "File extension not supported");
             }
 
-            var importOperator = _provider.GetExportService(extension);
+            var importReader = _provider.GetFileReader(extension);
 
-            if (importOperator == null)
+            if (importReader == null)
             {
-                return Result<IOperatorImport>.GetError(ErrorCode.ValidationError,
+                return Result<IFileReader>.GetError(ErrorCode.ValidationError,
                         "Extension wasn't chosen");
             }
             else
             {
-                return Result<IOperatorImport>.GetSuccess(importOperator);
+                return Result<IFileReader>.GetSuccess(importReader);
             }
         }
     }

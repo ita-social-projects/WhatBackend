@@ -29,6 +29,7 @@ namespace CharlieBackend.Panel
 
     public class ApiEndpoints
     {
+        public AccountsApiEndpoints Accounts { get; set; }
         public CoursesApiEndpoints Courses { get; set; }
         public StudentsApiEndpoints Students { get; set; }
         public MentorsApiEndpoints Mentors { get; set; }
@@ -37,6 +38,11 @@ namespace CharlieBackend.Panel
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
         public HomeworksApiEndpoints Homeworks { get; set; }
         public LessonsApiEndpoints Lessons {get; set;}
+    }
+
+    public class AccountsApiEndpoints 
+    {
+        public string SignIn { get; set; }
     }
 
     public class CoursesApiEndpoints

@@ -34,6 +34,19 @@ namespace CharlieBackend.Data.Repositories.Impl
                    .Include(x => x.AttachmentsOfHomework);
         }
 
+        public async Task<IList<Homework>> GetNotDoneHomeworksByStudentGroup(long studentGroupId, long studentId, DateTime? dueDate)
+        {
+            return await _applicationContext.Homeworks
+                .Include(x => x.HomeworkStudents)
+                .Include(x => x.Lesson)
+                .ThenInclude(x => x.StudentGroup)
+                .Where(x => x.Lesson.StudentGroup.Id == studentGroupId)
+                .Where(h => !h.HomeworkStudents.Any(hs => hs.StudentId == studentId && hs.IsSent))
+                .WhereIf(dueDate != null && dueDate != default(DateTime),
+                 x => x.DueDate <= dueDate)
+                .ToListAsync();
+        }
+
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
                              IEnumerable<AttachmentOfHomework> newHomeworkAttachments)
         {
@@ -91,6 +104,5 @@ namespace CharlieBackend.Data.Repositories.Impl
                             d => d.PublishingDate >= request.StartDate)
                     .WhereIf(request.FinishDate.HasValue,
                             d => d.PublishingDate <= request.FinishDate);
-
     }
 }

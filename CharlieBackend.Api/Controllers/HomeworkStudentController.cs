@@ -1,20 +1,21 @@
-﻿using CharlieBackend.Core.DTO.HomeworkStudent;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CharlieBackend.Core;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to make operations with homework from student
     /// </summary>
-    [Route("api/homeworkstudent")]
+    [Route("api/v{version:apiVersion}/homeworkstudent")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
 
     public class HomeworkStudentController : ControllerBase
@@ -66,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor")]
         [HttpGet("{homeworkId}")]
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkForMentorByHomeworkId(long homeworkId)
+        public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkForMentorByHomeworkId(long homeworkId)
         {
             var results = await _homeworkStudentService.GetHomeworkStudentForMentor(homeworkId);
 
@@ -78,6 +79,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor, Admin, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpGet("history/{homeworkStudentId}")]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentsHistoryByHomeworkStudentId(long homeworkStudentId)
         {
@@ -112,6 +114,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404">Student homework not found</response>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [MapToApiVersion("2.0")]
         [HttpPut("updatemark")]
         public async Task<ActionResult> UpdateMark([FromBody] UpdateMarkRequestDto request)
         {

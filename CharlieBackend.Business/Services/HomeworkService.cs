@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
@@ -63,7 +62,7 @@ namespace CharlieBackend.Business.Services
         {
             var errors = await ValidateHomeworkRequest(createHomeworkDto)
                     .ToListAsync();
-                
+
             if (errors.Any())
             {
                 var errorsList = string.Join("; ", errors);
@@ -95,9 +94,9 @@ namespace CharlieBackend.Business.Services
 
                 newHomework.AttachmentsOfHomework = new List<AttachmentOfHomework>();
 
-                foreach (var attachment in attachments) 
+                foreach (var attachment in attachments)
                 {
-                newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
+                    newHomework.AttachmentsOfHomework.Add(new AttachmentOfHomework
                     {
                         AttachmentId = attachment.Id,
                         Attachment = attachment,
@@ -145,7 +144,7 @@ namespace CharlieBackend.Business.Services
 
         public async IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request)
         {
-            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHasAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
+            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHaveAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
             {
                 yield return "Mentor can get only homeworks of groups of his courses";
             }
@@ -177,9 +176,29 @@ namespace CharlieBackend.Business.Services
                     .GetHomeworksForStudent(request, _currentUserService.EntityId);
             }
             
-            if(_currentUserService.Role.Is(UserRole.Admin) || _currentUserService.Role.Is(UserRole.Secretary)) { 
+            if(_currentUserService.Role.Is(UserRole.Admin) || _currentUserService.Role.Is(UserRole.Secretary)) 
+            { 
                 homeworks = await _unitOfWork.HomeworkRepository.GetHomeworks(request);
             }
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
+        }
+
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate)
+        {
+            if (dueDate != null)
+            {
+                dueDate = dueDate.Value.Date.AddDays(1);
+            }
+
+            var studentId = _currentUserService.EntityId;
+
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId,studentGroupId))
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, studentId, dueDate);
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
@@ -190,7 +209,7 @@ namespace CharlieBackend.Business.Services
 
             if (errors.Any())
             {
-                var errorsList = string.Join("; ", errors);
+                var errorsList = string.Join(";", errors);
 
                 _logger.LogError("Homework update request has failed due to: " + errorsList);
 
@@ -235,7 +254,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var lesson = await _unitOfWork.LessonRepository.IsEntityExistAsync(request.LessonId);
-               
+
 
             if (!lesson)
             {
@@ -262,6 +281,26 @@ namespace CharlieBackend.Business.Services
                     yield return "Given attachment ids do not exist: " + String.Join(", ", nonExistingAttachment);
                 }
             }
+        }
+
+        public async Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request)
+        {
+            var visit = await _unitOfWork
+                                  .LessonRepository
+                                  .GetVisitByStudentHomeworkIdAsync(request
+                                      .StudentHomeworkId);
+
+            if (visit is null)
+            {
+                throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
+            }
+
+            visit.StudentMark = (sbyte)request.StudentMark;
+
+            _unitOfWork.VisitRepository.Update(visit);
+            await _unitOfWork.CommitAsync();
+
+            return Result<VisitDto>.GetSuccess(_mapper.Map<VisitDto>(visit));
         }
     }
 }

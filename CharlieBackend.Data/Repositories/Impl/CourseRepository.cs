@@ -52,7 +52,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             if (course == null)
             {
-                return Result<Course>.GetError(ErrorCode.NotFound, "Course is not found");
+                return Result<Course>.GetError(ErrorCode.NotFound, "Active course is not found");
             }
 
             course.IsActive = false;
