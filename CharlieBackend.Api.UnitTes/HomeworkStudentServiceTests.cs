@@ -21,6 +21,7 @@ namespace CharlieBackend.Api.UnitTest
     {
         private readonly IMapper _mapper;
         private readonly Mock<ILogger<HomeworkStudentService>> _loggerMock;
+        private readonly Mock<ILogger<HomeworkService>> _loggerHomeworkMock;
         private readonly Mock<IHomeworkRepository> _homeworkRepositoryMock;
         private readonly Mock<IHomeworkStudentRepository> _homeworkStudentRepositoryMock;
         private readonly Mock<IHomeworkStudentHistoryRepository> _homeworkStudentHistoryRepositoryMock;
@@ -30,7 +31,10 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IStudentRepository> _studentRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
+        private readonly Mock<ICourseService> _courseServiceMock;
+        private readonly Mock<ILessonService> _lessonServiceMock;
         private readonly HomeworkStudentService _homeworkStudentService;
+        private readonly HomeworkService _homeworkService;
         private HomeworkStudentRequestDto homeworkStudentRequestDto = new HomeworkStudentRequestDto()
         {
             HomeworkId = 1,
@@ -51,7 +55,22 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _mapper = GetMapper(new ModelMappingProfile());
             _currentUserServiceMock = new Mock<ICurrentUserService>();
-            _homeworkStudentService = new HomeworkStudentService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
+            _loggerHomeworkMock = new Mock<ILogger<HomeworkService>>();
+            _courseServiceMock = new Mock<ICourseService>();
+            _lessonServiceMock = new Mock<ILessonService>();
+            _homeworkService = new HomeworkService(
+                _unitOfWorkMock.Object,
+                _courseServiceMock.Object,
+                _lessonServiceMock.Object,
+                _mapper,
+                _loggerHomeworkMock.Object,
+                _currentUserServiceMock.Object);
+            _homeworkStudentService = new HomeworkStudentService(
+                _unitOfWorkMock.Object,
+                _mapper,
+                _loggerMock.Object,
+                _currentUserServiceMock.Object,
+                _homeworkService);
         }
 
         [Fact]
