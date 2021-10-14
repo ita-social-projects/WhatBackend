@@ -32,20 +32,23 @@
 </style>
 @section Scripts{
     <script type="text/javascript">
-        var seGroupdID = null;
+        var seGroupId = null;
         var seMentorId = null;
         var seLessonId = null;
+        var seName = null;
         var seThemeId = null;
         $(document).on("click", ".btn-event", function (e) {
             e.preventDefault();
             var _self = $(this);
-            seGroupdID = _self.attr("segroupdid");
-            seMentorId = _self.attr("sementorid");
-            seLessonId = _self.attr("selessonid");
-            seThemeId = _self.attr("sethemeid");
-            $("#seGroupdID").val(seGroupdID);
+            seGroupId = _self.attr("seGroupId");
+            seMentorId = _self.attr("seMentorId");
+            seLessonId = _self.attr("seLessonId");
+            seName = _self.attr("seName");
+            seThemeId = _self.attr("seThemeId");
+            $("#seGroupId").val(seGroupId);
             $("#seMentorId").val(seMentorId);
             $("#seLessonId").val(seLessonId);
+            $("#seName").val(seName);
             $("#seThemeId").val(seThemeId);
         });
     </script>
@@ -63,7 +66,7 @@
                                 <div class="input-group-prepend">
                                     <button class="btn btn-outline-secondary" type="submit">Update</button>
                                 </div>
-                                <select class="custom-select" name="GroupID" id="groupSelect" aria-label="Example select with button addon">
+                                <select class="custom-select" name="GroupId" id="groupSelect" aria-label="Example select with button addon">
                                     @if (Model.ScheduledEventFilter.GroupID.HasValue)
                                     {
                                         <option value="null">-Group-</option>
@@ -230,14 +233,17 @@
                 </div>
                 <div class="modal-body">
 
-                    <label for="seGroupdID">GroupdID:</label>
-                    <input id="seGroupdID" class="modalTextInput form-control" value="" />
+                    <label for="seGroupId">GroupId:</label>
+                    <input id="seGroupId" class="modalTextInput form-control" value="" />
 
                     <label for="seMentorId">MentorId:</label>
                     <input id="seMentorId" class="modalTextInput form-control" value="" />
 
                     <label for="seLessonId">LessonId:</label>
                     <input id="seLessonId" class="modalTextInput form-control" value="" />
+
+                    <label for="seName">Name:</label>
+                    <input id="seName" class="modalTextInput form-control" value="" />
 
                     <label for="seThemeId">ThemeId:</label>
                     <input id="seThemeId" class="modalTextInput form-control" value="" />

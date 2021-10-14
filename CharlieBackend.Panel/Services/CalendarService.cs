@@ -68,9 +68,9 @@ namespace CharlieBackend.Panel.Services
             var getScheduledEventsTask = GetScheduledEventViewModelsAsync(scheduledEventFilter);
 
             await Task.WhenAll(
-                new Task[] { getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
+                getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
                     getThemesTask, getEventOccurrencesTask, getScheduledEventsTask
-                });
+                );
 
             return new CalendarViewModel
             {

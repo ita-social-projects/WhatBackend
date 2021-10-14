@@ -88,6 +88,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return rowContainers;
         }
 
+        //TODO: сделать по умолчанию вывод за неделю, либо по опр датам complited
         private static IList<TagBuilder> GetDaysContainersList(
             ref int daysCount,
             IList<CalendarScheduledEventViewModel> events,
@@ -101,11 +102,11 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 dayContainers.Add(GetDayContainerHtml(startDate.AddDays(day), events));
             }
 
-            if (finishDate.DayOfWeek != DayOfWeek.Saturday)
+          /*  if (finishDate.DayOfWeek != DayOfWeek.Saturday)
             {
                 int daysToAppendCount = DaysInOneWeek - (int)finishDate.DayOfWeek;
 
-                int daysRangeLength = daysCount + daysToAppendCount;
+                int daysRangeLength = daysCount + daysToAppendCount; // why daysCount + daysToAppendCount;
 
                 for (int day = daysCount + 1; day < daysRangeLength; day++)
                 {
@@ -113,7 +114,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 }
 
                 daysCount += daysToAppendCount;
-            }
+            }*/
 
             if (startDate.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
             {
@@ -226,11 +227,12 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("type", "button");
             button.Attributes.Add("data-toggle", "modal");
             button.Attributes.Add("data-target", "#seeSchedulEvent");
-            button.Attributes.Add("seGroupdID", model.StudentGroupId.ToString());
+            button.Attributes.Add("seGroupId", model.StudentGroupId.ToString());
             button.Attributes.Add("seMentorId", model.MentorId.ToString());
             button.Attributes.Add("seLessonId", model.LessonId.ToString());
+            button.Attributes.Add("seName", model.Name);
             button.Attributes.Add("seThemeId", model.ThemeId.ToString());
-            button.InnerHtml.Append(model.Id.ToString());
+            button.InnerHtml.Append(model.Name);
 
             return button;
         }
