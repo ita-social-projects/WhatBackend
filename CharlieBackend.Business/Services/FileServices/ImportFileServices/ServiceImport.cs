@@ -53,9 +53,9 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices
             var groupImporter = new StudentGroupImporter(_studentService,
                 _studentGroupService, _accountService);
 
-            await groupImporter.ImportGroupAsync(group, accounts.Data);
+            var result = await groupImporter.ImportGroupAsync(group, accounts.Data);
 
-            return Result<GroupWithStudentsDto>.GetSuccess(new GroupWithStudentsDto());
+            return result;
         }
 
         public async Task<Result<IList<ThemeDto>>> ImportThemesAsync(IFormFile file)
