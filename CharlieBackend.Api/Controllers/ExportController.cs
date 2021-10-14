@@ -199,9 +199,10 @@ namespace CharlieBackend.Api.Controllers
             }
 
             var results = await _dashboardService
-            .GetStudentGroupResultAsync(courseId, request);
+                .GetStudentGroupResultAsync(courseId, request);
 
-            var studentGroupResults = await exportService.GetStudentGroupResults(results.Data);
+            var studentGroupResults = await exportService
+                .GetStudentGroupResults(results.Data);
 
 
             if (studentGroupResults.Error == null)

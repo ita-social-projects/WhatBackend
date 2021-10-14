@@ -17,7 +17,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public override string GetFileName()
         {
-            return "StudentResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
+            return "StudentGroupResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
         public async Task FillFile(StudentGroupsResultsDto data)
