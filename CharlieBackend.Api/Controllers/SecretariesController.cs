@@ -92,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable secretary's account
+        /// Disable account by secretary id
         /// </summary>
         /// <response code="200">Secretary's account successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>

@@ -19,5 +19,6 @@ namespace CharlieBackend.Core.DTO.Homework
         public long CreatedBy { get; set; }
 
         public virtual IList<long> AttachmentIds { get; set; }
+        public string ThemeName { get; set; }
     }
 }

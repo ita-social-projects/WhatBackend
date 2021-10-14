@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -66,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor")]
         [HttpGet("{homeworkId}")]
-        public async Task<IList<HomeworkStudentDto>> GetHomeworkForMentorByHomeworkId(long homeworkId)
+        public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkForMentorByHomeworkId(long homeworkId)
         {
             var results = await _homeworkStudentService.GetHomeworkStudentForMentor(homeworkId);
 

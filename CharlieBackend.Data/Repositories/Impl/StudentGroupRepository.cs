@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Z.EntityFramework.Plus;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -68,9 +69,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<IList<StudentGroup>> GetAllActiveAsync(DateTime? startDate, DateTime? finishDate)
         {
             return await _applicationContext.StudentGroups
-            .AsNoTracking()
-            .Include(group => group.StudentsOfStudentGroups)
-            .Include(group => group.MentorsOfStudentGroups)
+            .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
+            .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
             .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
                                                     group.FinishDate > startDate)
             .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate ||
@@ -84,8 +84,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<StudentGroup> GetActiveStudentGroupByIdAsync(long id)
         {
             return await _applicationContext.StudentGroups
-                    .Include(group => group.StudentsOfStudentGroups)
-                    .Include(group => group.MentorsOfStudentGroups)
+                    .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
+                    .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
                     .FirstOrDefaultAsync(group => group.Id == id && group.IsActive);
         }
 
@@ -140,7 +140,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     }).ToListAsync();
         }
 
-        public async Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId)
+        public async Task<bool> DoesMentorHaveAccessToGroup(long mentorId, long groupId)
         {
             return await _applicationContext.StudentGroups
                     .Include(group => group.MentorsOfStudentGroups)
@@ -149,23 +149,9 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public async Task<IList<long?>> GetGroupStudentsIds(long id)
         {
-            return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
-                .Select(s => s.StudentId).ToListAsync();
-        }
-
-        public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
-        {
-            return await _applicationContext.StudentGroups
-                .AsNoTracking()
-                .Include(group => group.StudentsOfStudentGroups)
-                .Include(group => group.MentorsOfStudentGroups)
-                .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
-                                                        group.FinishDate > startDate)
-                .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate || 
-                                                         group.StartDate < finishDate)
-                .Where(group => group.Course.IsActive)
-                .OrderBy(group => group.StartDate)
-                .ToListAsync();
+            return await _applicationContext.StudentsOfStudentGroups
+                    .Where(s => s.StudentGroupId == id)
+                    .Select(s => s.StudentId).ToListAsync();
         }
 
         public async Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id)
@@ -174,6 +160,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Where(s => s.StudentId == id)
                 .Select(s => s.StudentGroupId)
                 .ToListAsync();
+        }
+
+        public async Task<bool> DoesStudentBelongsGroup(long studentId, long studentGroupId)
+        {
+            return await _applicationContext.StudentsOfStudentGroups.AnyAsync(s => s.StudentGroupId == studentGroupId && s.StudentId == studentId);
         }
     }
 }

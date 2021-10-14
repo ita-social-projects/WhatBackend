@@ -20,6 +20,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.Mentors
                 .Include(mentor => mentor.Account).ThenInclude(x=>x.Avatar)
                 .Include(mentor => mentor.MentorsOfCourses)
+                .Where(mentor => mentor.Account.Role.HasFlag(UserRole.Mentor)
+)
                 .ToListAsync();
         }
 
@@ -27,14 +29,14 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Mentors
                     .Include(mentor => mentor.Account).ThenInclude(x => x.Avatar)
-                    .Where(mentor => mentor.Account.IsActive == true)
+                    .Where(mentor => mentor.Account.IsActive == true && mentor.Account.Role.HasFlag(UserRole.Mentor))
                     .ToListAsync();
         }
 
         public async Task<List<Mentor>> GetMentorsByIdsAsync(IList<long> mentorIds)
         {
             return await _applicationContext.Mentors
-                    .Where(mentor => mentorIds.Contains(mentor.Id))
+                    .Where(mentor => mentorIds.Contains(mentor.Id) && mentor.Account.Role.HasFlag(UserRole.Mentor))
                     .ToListAsync();
         }
 
@@ -44,7 +46,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .Include(mentor => mentor.Account)
                 .Include(mentor => mentor.MentorsOfCourses)
                 .Include(mentor => mentor.MentorsOfStudentGroups)
-                .FirstOrDefaultAsync(mentor => mentor.Id == id);
+                .FirstOrDefaultAsync(mentor => mentor.Id == id && mentor.Account.Role.HasFlag(UserRole.Mentor));
         }
 
         public void UpdateMentorCourses(IEnumerable<MentorOfCourse> currentItems,
@@ -71,7 +73,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Mentors
                     .FirstOrDefaultAsync(mentor
-                            => mentor.Id == mentorId);
+                            => mentor.Id == mentorId && mentor.Account.Role.HasFlag(UserRole.Mentor));
         }
     }
 }

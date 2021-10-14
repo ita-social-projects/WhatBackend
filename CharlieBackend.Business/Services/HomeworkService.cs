@@ -9,6 +9,7 @@ using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,23 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+        }
+
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworks()
+        {
+            var homeworks = await _unitOfWork.HomeworkRepository.GetHomeworksWithThemeNameAndAtachemntsQuery().Select(x => new HomeworkDto
+            {
+                ThemeName = x.Lesson.Theme.Name,
+                CreatedBy = x.CreatedBy,
+                DueDate = x.DueDate,
+                Id = x.Id,
+                LessonId = x.LessonId,
+                PublishingDate = x.PublishingDate,
+                TaskText = x.TaskText,
+                AttachmentIds = x.AttachmentsOfHomework.Select(a => a.AttachmentId).ToList()
+            }).ToListAsync();
+
+            return Result<IList<HomeworkDto>>.GetSuccess(homeworks);
         }
 
         public async Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto createHomeworkDto)
@@ -126,7 +144,7 @@ namespace CharlieBackend.Business.Services
 
         public async IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request)
         {
-            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHasAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
+            if (request.GroupId.HasValue && !await _unitOfWork.StudentGroupRepository.DoesMentorHaveAccessToGroup(_currentUserService.EntityId, request.GroupId.Value))
             {
                 yield return "Mentor can get only homeworks of groups of his courses";
             }
@@ -166,13 +184,32 @@ namespace CharlieBackend.Business.Services
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
 
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate)
+        {
+            if (dueDate != null)
+            {
+                dueDate = dueDate.Value.Date.AddDays(1);
+            }
+
+            var studentId = _currentUserService.EntityId;
+
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId,studentGroupId))
+            {
+                return Result<IList<HomeworkDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+            }
+
+            var homeworks = await _unitOfWork.HomeworkRepository.GetNotDoneHomeworksByStudentGroup(studentGroupId, studentId, dueDate);
+
+            return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
+        }
+
         public async Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto)
         {
             var errors = await ValidateHomeworkRequest(updateHomeworkDto).ToListAsync();
 
             if (errors.Any())
             {
-                var errorsList = string.Join("; ", errors);
+                var errorsList = string.Join(";", errors);
 
                 _logger.LogError("Homework update request has failed due to: " + errorsList);
 
