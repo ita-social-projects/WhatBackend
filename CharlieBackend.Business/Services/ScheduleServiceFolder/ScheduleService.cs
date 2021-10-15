@@ -206,5 +206,27 @@ namespace CharlieBackend.Business.Services
 
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
+
+        async public Task<Result<DetailedEventOccurrenceDTO>> GetDetailedEventOccurrenceById(long eventOccurrenceId)
+        {
+            var eventOccurrence = (await GetEventOccurrenceByIdAsync(eventOccurrenceId)).Data;
+
+            var detailedEventOccurrence = new DetailedEventOccurrenceDTO
+            {
+                Id = eventOccurrence.Id,
+                Pattern = EventOccuranceStorageParser.GetFullDataFromStorage(eventOccurrence.Storage),
+                Range = new OccurenceRange
+                {
+                    FinishDate = eventOccurrence.EventFinish,
+                    StartDate = eventOccurrence.EventStart
+                },
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = eventOccurrence.StudentGroupId
+                }
+            };
+
+            return Result<DetailedEventOccurrenceDTO>.GetSuccess(detailedEventOccurrence);
+        }
     }
 }
