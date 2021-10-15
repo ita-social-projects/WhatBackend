@@ -6,6 +6,10 @@
     .out-of-range {
         background: #edeff1;
     }
+    .auto-scroll {
+        white-space: normal;
+        width: 200px;
+    }
     .events button {
         margin-top: 2px;
         width: 100%;
@@ -32,24 +36,18 @@
 </style>
 @section Scripts{
     <script type="text/javascript">
-        var seGroupId = null;
-        var seMentorId = null;
-        var seLessonId = null;
-        var seName = null;
-        var seThemeId = null;
+        var seGroup = null;
+        var seMentor = null;
+        var seTheme = null;
         $(document).on("click", ".btn-event", function (e) {
             e.preventDefault();
             var _self = $(this);
-            seGroupId = _self.attr("seGroupId");
-            seMentorId = _self.attr("seMentorId");
-            seLessonId = _self.attr("seLessonId");
-            seName = _self.attr("seName");
-            seThemeId = _self.attr("seThemeId");
-            $("#seGroupId").val(seGroupId);
-            $("#seMentorId").val(seMentorId);
-            $("#seLessonId").val(seLessonId);
-            $("#seName").val(seName);
-            $("#seThemeId").val(seThemeId);
+            seGroup = _self.attr("seGroup");
+            seMentor = _self.attr("seMentor");
+            seTheme = _self.attr("seTheme");
+            $("#seGroup").val(seGroup);
+            $("#seMentor").val(seMentor);
+            $("#seTheme").val(seTheme);
         });
     </script>
 }
@@ -180,31 +178,6 @@
                                         }
                                     }
                                 </select>
-                                @*<select class="custom-select" name="EventOccurrenceID" id="occurenceSelect" aria-label="Example select with button addon">
-                                    @if (Model.ScheduledEventFilter.EventOccurrenceID.HasValue)
-                                    {
-                                        <option value="null">-Occurrence-</option>
-                                        <option value="@Model.ScheduledEventFilter.EventOccurrenceID.Value" selected>
-                                            @{
-                                                var occurenceFiltered = Model.EventOccurences.First(x => x.Id == Model.ScheduledEventFilter.EventOccurrenceID.Value);
-                                            }
-                                            @(occurenceFiltered.EventStart.Date+" - "+ occurenceFiltered.EventFinish.Date)
-                                        </option>
-
-                                        @foreach (var occurence in Model.EventOccurences.Where(x => x.Id != Model.ScheduledEventFilter.EventOccurrenceID.Value))
-                                        {
-                                            <option value="@occurence.Id">@(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <option value="null" selected>-Occurrence-</option>
-                                        @foreach (var occurence in Model.EventOccurences)
-                                        {
-                                            <option value="@occurence.Id">@(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
-                                        }
-                                    }
-                                </select>*@
                             </div>
                             <div class="form-group row">
                                 <div class="col-6">
@@ -232,22 +205,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <label for="seTheme">Theme:</label>
+                    <input id="seTheme" class="modalTextInput form-control" value="" />
 
-                    <label for="seGroupId">GroupId:</label>
-                    <input id="seGroupId" class="modalTextInput form-control" value="" />
+                    <label for="seGroup">Group:</label>
+                    <input id="seGroup" class="modalTextInput form-control" value="" />
 
-                    <label for="seMentorId">MentorId:</label>
-                    <input id="seMentorId" class="modalTextInput form-control" value="" />
-
-                    <label for="seLessonId">LessonId:</label>
-                    <input id="seLessonId" class="modalTextInput form-control" value="" />
-
-                    <label for="seName">Name:</label>
-                    <input id="seName" class="modalTextInput form-control" value="" />
-
-                    <label for="seThemeId">ThemeId:</label>
-                    <input id="seThemeId" class="modalTextInput form-control" value="" />
-
+                    <label for="seMentor">Mentor:</label>
+                    <input id="seMentor" class="modalTextInput form-control" value="" />
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>

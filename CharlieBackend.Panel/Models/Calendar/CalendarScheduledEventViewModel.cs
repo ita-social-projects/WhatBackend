@@ -15,7 +15,6 @@ namespace CharlieBackend.Panel.Models.Calendar
         public long? MentorId { get; set; }
 
         public long? LessonId { get; set; }
-        public string Name { get; set; } = "Test";
 
         public DateTime EventStart { get; set; }
 

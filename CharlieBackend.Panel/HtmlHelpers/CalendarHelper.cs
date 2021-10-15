@@ -19,7 +19,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishData(eventOccurencesFiltered);
 
             string result = string.Empty;
-            foreach (var item in GetRowContainers(calendar.ScheduledEvents, startDate, finishDate))
+            foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
             {
                 using var writer = new System.IO.StringWriter();
                 item.WriteTo(writer, HtmlEncoder.Default);
@@ -29,10 +29,41 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return new HtmlString(result);
         }
 
-        private static IList<TagBuilder> GetRowContainers(IList<CalendarScheduledEventViewModel> events, DateTime startDate, DateTime finishDate)
+        private static IList<CalendarScheduledEventModel> GetScheduledEventModels(CalendarViewModel calendar, DateTime startDate, DateTime finishDate)
+        {
+            IList<CalendarScheduledEventModel> models = new List<CalendarScheduledEventModel>();
+
+            var scheduledEvents = calendar.ScheduledEvents.Where(i => i.EventStart >= startDate && i.EventFinish <= finishDate);
+
+            foreach (var item in scheduledEvents)
+            {
+                var theme = calendar.Themes.First(t => t.Id == item.ThemeId).Name;
+                var mentorFirstName = calendar.Mentors.First(m => m.Id == item. MentorId).FirstName;
+                var mentorLastName = calendar.Mentors.First(m => m.Id == item. MentorId).LastName;
+                var studentGroup = calendar.StudentGroups.First(s => s.Id == item.StudentGroupId).Name;
+                var eventStart = item.EventStart;
+                var eventFinish = item.EventFinish;
+
+                var model = new CalendarScheduledEventModel
+                {
+                    Theme = theme,
+                    MentorFirstName = mentorFirstName,
+                    MentorLastName = mentorLastName,
+                    StudentGroup = studentGroup,
+                    EventStart = eventStart,
+                    EventFinish = eventFinish
+                };
+                models.Add(model);
+            }
+
+            return models;
+        }
+
+             
+        private static IList<TagBuilder> GetRowContainers(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate)
         {
             IList<IList<TagBuilder>> daysContainers = new List<IList<TagBuilder>>();
-            var list = GetDaysContainer(events, startDate, finishDate);
+            var list = GetDaysContainer(models, startDate, finishDate);
 
             while(list.Count != 0)
             {
@@ -61,7 +92,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return rowsBlock;
         }
 
-        private static IList<TagBuilder> GetDaysContainer(IList<CalendarScheduledEventViewModel> events, DateTime startDate, DateTime finishDate)
+        private static IList<TagBuilder> GetDaysContainer(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate)
         {
             IList<TagBuilder> dayContainers = new List<TagBuilder>();
 
@@ -73,7 +104,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             for (DateTime date = startDate; date.Date < finishDate.Date; date = date.AddDays(1))
             {
-                dayContainers.Add(GetDayBlockWithEvents(events.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date));
+                dayContainers.Add(GetDayBlockWithEvents(models.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date));
             }
 
             var endOfWeek = finishDate.EndOfWeek(DayOfWeek.Saturday);
@@ -85,7 +116,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return dayContainers;
         }
 
-        private static TagBuilder GetDayBlockWithEvents(IEnumerable<CalendarScheduledEventViewModel> events, DateTime day)
+        private static TagBuilder GetDayBlockWithEvents(IEnumerable<CalendarScheduledEventModel> models, DateTime day)
         {
             TagBuilder div = GetDayBlockWithDate(day);
 
@@ -107,7 +138,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 btnClass = "btn btn-outline-dark btn-event";
             }
 
-            foreach (var e in events)
+            foreach (var e in models)
             {
                 TagBuilder button = GetButtonContainerHtml(e, btnClass);
 
@@ -149,20 +180,22 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return div;
         }
 
-        private static TagBuilder GetButtonContainerHtml(CalendarScheduledEventViewModel model, string cssClass)
+        private static TagBuilder GetButtonContainerHtml(CalendarScheduledEventModel model, string cssClass)
         {
             TagBuilder button = new TagBuilder("button");
 
             button.AddCssClass(cssClass);
+            button.AddCssClass("auto-scroll");
             button.Attributes.Add("type", "button");
             button.Attributes.Add("data-toggle", "modal");
             button.Attributes.Add("data-target", "#seeSchedulEvent");
-            button.Attributes.Add("seGroupId", model.StudentGroupId.ToString());
-            button.Attributes.Add("seMentorId", model.MentorId.ToString());
-            button.Attributes.Add("seLessonId", model.LessonId.ToString());
-            button.Attributes.Add("seName", model.Name);
-            button.Attributes.Add("seThemeId", model.ThemeId.ToString());
-            button.InnerHtml.Append(model.Name);
+            button.Attributes.Add("seGroup", model.StudentGroup);
+            button.Attributes.Add("seMentor", $"{model.MentorFirstName} {model.MentorLastName}");
+            button.Attributes.Add("seTheme", model.Theme);
+            button.InnerHtml.Append($"{model.Theme}; ");
+            button.InnerHtml.Append($"{model.StudentGroup}; ");
+            button.InnerHtml.Append($"{model.MentorFirstName} ");
+            button.InnerHtml.Append($"{model.MentorLastName}; ");
 
             return button;
         }
@@ -187,5 +220,20 @@ namespace CharlieBackend.Panel.HtmlHelpers
         {
             return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
         }
+    }
+
+    class CalendarScheduledEventModel
+    {
+        public string Theme { get; set; }
+
+        public string MentorFirstName { get; set; }
+        
+        public string MentorLastName { get; set; }
+
+        public string StudentGroup { get; set; }
+
+        public DateTime EventStart { get; set; }
+
+        public DateTime EventFinish { get; set; }
     }
 }
