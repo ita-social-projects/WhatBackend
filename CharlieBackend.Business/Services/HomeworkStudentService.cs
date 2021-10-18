@@ -207,10 +207,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent()
         {
-            long accountId = _currentUserService.AccountId;
-
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(student.Id);
+            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(_currentUserService.EntityId);
 
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
@@ -302,7 +299,6 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework from student with id {request.StudentHomeworkId} hasn't found");
             }
 
-            long accountId = _currentUserService.AccountId;
             var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
             
             if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
@@ -311,7 +307,7 @@ namespace CharlieBackend.Business.Services
                 homeworkStudentHistory.Last().Mark.Comment = request.MentorComment;
                 homeworkStudentHistory.Last().Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudentHistory.Last().Mark.Type = request.MarkType;
-                homeworkStudentHistory.Last().Mark.EvaluatedBy = accountId;
+                homeworkStudentHistory.Last().Mark.EvaluatedBy = _currentUserService.AccountId;
 
                 _unitOfWork.HomeworkStudentHistoryRepository.Update(homeworkStudentHistory.Last());
             }
@@ -325,7 +321,7 @@ namespace CharlieBackend.Business.Services
                 homeworkStudent.Mark.Comment = request.MentorComment;
                 homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudent.Mark.Type = request.MarkType;
-                homeworkStudent.Mark.EvaluatedBy = accountId;
+                homeworkStudent.Mark.EvaluatedBy = _currentUserService.AccountId;
 
                 _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
             }
