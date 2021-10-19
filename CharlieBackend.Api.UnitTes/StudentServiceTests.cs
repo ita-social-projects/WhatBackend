@@ -281,7 +281,6 @@ namespace CharlieBackend.Api.UnitTest
 
             //Act
             var successResultOfStudents = await _studentService.GetAllStudentsAsync();
-            
 
             //Assert
             successResultOfStudents.Data.Should().BeEquivalentTo(_mapper.Map<List<StudentDetailsDto>>(allStudents));
