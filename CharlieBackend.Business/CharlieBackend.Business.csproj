@@ -10,6 +10,7 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.7.0" />
     <PackageReference Include="ClosedXML" Version="0.95.3" />
     <PackageReference Include="EasyNetQ" Version="6.0.3" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.25" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
@@ -21,6 +22,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CharlieBackend.Core\CharlieBackend.Core.csproj" />
     <ProjectReference Include="..\CharlieBackend.Data\CharlieBackend.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

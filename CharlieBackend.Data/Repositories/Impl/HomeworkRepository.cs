@@ -22,6 +22,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Homeworks
                         .Include(x => x.Lesson)
+                        .ThenInclude(x => x.StudentGroup)
                         .Include(x => x.AttachmentsOfHomework)
                         .FirstOrDefaultAsync(x => x.Id == homeworkId);
         }

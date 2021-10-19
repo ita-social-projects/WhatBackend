@@ -12,6 +12,9 @@ using CharlieBackend.Business.Models;
 using CharlieBackend.Business.Models.Commands;
 using CharlieBackend.Root;
 using WhatBackend.TelegramBotApi.Extensions;
+using Hangfire;
+using System.Data.Common;
+using CharlieBackend.Business.Services.Notification;
 
 namespace WhatBackend.TelegramBotApi
 {
@@ -29,8 +32,6 @@ namespace WhatBackend.TelegramBotApi
         public void ConfigureServices(IServiceCollection services)
         {
             CompositionRoot.InjectDependencies(services, Configuration);
-
-            services.AddBotCommands();
 
             services.AddCors();
 
@@ -59,17 +60,10 @@ namespace WhatBackend.TelegramBotApi
             IServiceProvider serviceProvider,
             ApplicationContext dbContext)
         {
+
             dbContext.Database.EnsureCreated();
 
-            var url = Configuration.GetSection("BotSettings")
-                .GetSection("Url").Value;
-            var key = Configuration.GetSection("BotSettings")
-                .GetSection("Key").Value;
-            var name = Configuration.GetSection("BotSettings")
-                .GetSection("Name").Value;
-            AppSettings.GetData(url, key, name);
-
-            Bot.Get(serviceProvider).Wait();
+            CompositionRoot.Configure(serviceProvider, Configuration);
 
             if (env.IsDevelopment())
             {

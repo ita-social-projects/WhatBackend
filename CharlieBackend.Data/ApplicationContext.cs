@@ -54,6 +54,8 @@ namespace CharlieBackend.Data
 
         public virtual DbSet<AttachmentOfHomeworkStudentHistory> AttachmentOfHomeworkStudentsHistory { get; set; } 
 
+        public virtual DbSet<JobMapping> JobMappings { get; set; } 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new AccountEntityConfiguration())
@@ -77,7 +79,8 @@ namespace CharlieBackend.Data
                 .ApplyConfiguration(new StudentGroupEntityConfiguration())
                 .ApplyConfiguration(new StudentOfStudentGroupEntityConfiguration())
                 .ApplyConfiguration(new ThemeEntityConfiguration())
-                .ApplyConfiguration(new VisitEntityConfiguration());
+                .ApplyConfiguration(new VisitEntityConfiguration())
+                .ApplyConfiguration(new JobMappingEntityConfiguration());
         }
     }
 }

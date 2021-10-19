@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,13 +23,15 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkStudentService> _logger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHangfireJobService _jobService;
 
-        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger, ICurrentUserService currentUserService)
+        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger, ICurrentUserService currentUserService, IHangfireJobService hangfireJobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+            _jobService = hangfireJobService;
         }
 
         public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent)
@@ -98,6 +102,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateAddHomeworkStudentJob(newHomework);
 
             _logger.LogInformation($"Homework with id {newHomework.Id} for student with id {accountId} has been added ");
 
@@ -201,6 +207,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateHomeworkStudentJob(foundStudentHomework);
 
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(foundStudentHomework));
         }
@@ -331,6 +339,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateMarkJob(homeworkStudent);
 
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
         }

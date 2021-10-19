@@ -24,6 +24,8 @@ namespace CharlieBackend.Data.Repositories.Impl
             return await _applicationContext.HomeworkStudents
                 .Include(x => x.AttachmentOfHomeworkStudents)
                 .Include(x => x.Homework)
+                .ThenInclude(x => x.Lesson.StudentGroup.MentorsOfStudentGroups)
+                .ThenInclude(x => x.Mentor.Account)
                 .Include(x => x.Student)
                 .ThenInclude(x => x.Account)
                 .Include(x => x.Mark)

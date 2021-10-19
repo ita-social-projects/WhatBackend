@@ -1,30 +1,50 @@
 ﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Models;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using CharlieBackend.Business.Services.FileServices.ImportFileServices;
 using CharlieBackend.Business.Services.FileServices.ImportFileServices.ImportReaders;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Root.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CharlieBackend.Root
 {
     public class CompositionRoot
     {
+        public static void Configure(IServiceProvider serviceProvider, IConfiguration configuration)
+        {
+            var url = configuration.GetSection("BotSettings")
+                .GetSection("Url").Value;
+            var key = configuration.GetSection("BotSettings")
+                .GetSection("Key").Value;
+            var name = configuration.GetSection("BotSettings")
+                .GetSection("Name").Value;
+            AppSettings.GetData(url, key, name);
+
+            Bot.Get(serviceProvider).Wait();
+        }
         // Inject your dependencies here
         public static void InjectDependencies(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseMySql(configuration.GetConnectionString("DefaultConnection"),
-                  b => b.MigrationsAssembly("CharlieBackend.Api"));
+                  builder =>
+                  {
+                      builder.MigrationsAssembly("CharlieBackend.Api");
+                  });
             });
 
             services.AddControllers()
@@ -35,6 +55,7 @@ namespace CharlieBackend.Root
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
+
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
@@ -43,6 +64,8 @@ namespace CharlieBackend.Root
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IMentorService, MentorService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IHangfireNotificationService, HangfireNotificationService>();
+            services.AddScoped<IHangfireJobService, HangfireJobService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
@@ -52,6 +75,10 @@ namespace CharlieBackend.Root
             services.AddScoped<IMentorOfCourseRepository, MentorOfCourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
+            services.AddScoped<IScheduledEventRepository, ScheduledEventRepository>();
+            services.AddScoped<IHomeworkRepository, HomeworkRepository>();
+            services.AddScoped<IHomeworkStudentRepository, HomeworkStudentRepositrory>();
+            services.AddScoped<IJobMappingRepository, JobMappingRepository>();
             services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IDashboardService, DashboardService>();
@@ -72,6 +99,8 @@ namespace CharlieBackend.Root
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<ISchedulesEventsDbEntityVerifier, SchedulesEventsDbEntityVerifier>();
+
+            services.AddBotCommands();
 
             #endregion
         }
