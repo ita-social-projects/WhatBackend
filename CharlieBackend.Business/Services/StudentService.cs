@@ -93,13 +93,6 @@ namespace CharlieBackend.Business.Services
 
         private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> students)
         {
-            //foreach(var s in students)
-            //{
-            //    if(s.Account==null)
-            //    {
-
-            //    }
-            //}
 
             var detailsDtos = await students
                 .ToAsyncEnumerable()
