@@ -1,6 +1,6 @@
 ﻿namespace CharlieBackend.Core.DTO.Student
 {
-    public class StudentDetailsDto : StudentDto
+    public class StudentDetailsDto 
     {
         public long Id { get; set; }
 
