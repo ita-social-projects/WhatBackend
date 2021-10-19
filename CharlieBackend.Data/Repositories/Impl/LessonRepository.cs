@@ -33,7 +33,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
         public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
-            return _applicationContext.Lessons
+            return _applicationContext.Lessons.Include(lesson => lesson.Theme)
                   .WhereIf(startDate != null && startDate != default(DateTime),
                    x => x.LessonDate >= startDate)
                   .WhereIf(finishDate != null && finishDate != default(DateTime),

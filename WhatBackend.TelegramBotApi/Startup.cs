@@ -42,6 +42,7 @@ namespace WhatBackend.TelegramBotApi
                 .GetConnectionString("AzureBlobsAccessKey"));
 
             services.AddHttpContextAccessor();
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ModelMappingProfile());

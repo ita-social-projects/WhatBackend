@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CharlieBackend.Business.Models.Commands.Attributes;
 using CharlieBackend.Business.Services.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace CharlieBackend.Business.Models.Commands
 {
+    [StudentRoleCommand]
     public class MentorsCommand : Command
     {
         private readonly IAccountService _accountService;

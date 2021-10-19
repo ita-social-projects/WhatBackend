@@ -106,7 +106,7 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
             var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
-            const long daysWeek = -7;
+            const long daysWeek = -30;
 
             if (startDate == null && finishDate == null)
             {

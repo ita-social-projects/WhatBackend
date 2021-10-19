@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Models.Commands.Attributes;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Telegram.Bot.Types;
 
 namespace CharlieBackend.Business.Models.Commands
 {
+    [MentorRoleCommand]
     public class CoursesCommand : Command
     {
         private readonly IAccountService _accountService;

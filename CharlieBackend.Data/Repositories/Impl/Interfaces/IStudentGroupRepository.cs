@@ -37,11 +37,11 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public void UpdateManyToMany(IEnumerable<StudentOfStudentGroup> currentStudentsOfStudentGroup,
                                      IEnumerable<StudentOfStudentGroup> newStudentsOfStudentGroup);
-
-        Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
         
         Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id);
 
-        Task<bool> DoesMentorHasAccessToGroup(long mentorId, long groupId);
+        Task<bool> DoesMentorHaveAccessToGroup(long mentorId, long groupId);
+
+        Task<bool> DoesStudentBelongsGroup(long studentId, long studentGroupId);
     }
 }

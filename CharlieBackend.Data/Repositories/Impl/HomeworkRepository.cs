@@ -27,6 +27,27 @@ namespace CharlieBackend.Data.Repositories.Impl
                         .FirstOrDefaultAsync(x => x.Id == homeworkId);
         }
 
+        public IQueryable<Homework> GetHomeworksWithThemeNameAndAtachemntsQuery()
+        {
+            return _applicationContext.Homeworks
+                   .Include(x => x.Lesson)
+                   .ThenInclude(x => x.Theme)
+                   .Include(x => x.AttachmentsOfHomework);
+        }
+
+        public async Task<IList<Homework>> GetNotDoneHomeworksByStudentGroup(long studentGroupId, long studentId, DateTime? dueDate)
+        {
+            return await _applicationContext.Homeworks
+                .Include(x => x.HomeworkStudents)
+                .Include(x => x.Lesson)
+                .ThenInclude(x => x.StudentGroup)
+                .Where(x => x.Lesson.StudentGroup.Id == studentGroupId)
+                .Where(h => !h.HomeworkStudents.Any(hs => hs.StudentId == studentId && hs.IsSent))
+                .WhereIf(dueDate != null && dueDate != default(DateTime),
+                 x => x.DueDate <= dueDate)
+                .ToListAsync();
+        }
+
         public void UpdateManyToMany(IEnumerable<AttachmentOfHomework> currentHomeworkAttachments,
                              IEnumerable<AttachmentOfHomework> newHomeworkAttachments)
         {

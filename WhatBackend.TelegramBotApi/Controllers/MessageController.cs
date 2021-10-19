@@ -1,9 +1,17 @@
 ﻿using CharlieBackend.Business.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Microsoft.Extensions.DependencyInjection;
+using CharlieBackend.Business.Services.Interfaces;
+using System.Security.Claims;
+using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Models.Commands;
+using CharlieBackend.Business.Models.Commands.Attributes;
+using CharlieBackend.Core.Entities;
 
 namespace WhatBackend.TelergamBot.Controllers
 {
@@ -33,6 +41,13 @@ namespace WhatBackend.TelergamBot.Controllers
             var commands = Bot.Commands;
             Message message = update.Message ?? update.EditedMessage;
 
+            var accountService = _serviceProvider
+                .GetService<IAccountService>();
+            var httpContextAccessor = _serviceProvider
+                .GetService<IHttpContextAccessor>();
+            var identity = (ClaimsIdentity)httpContextAccessor
+                .HttpContext.User.Identity;
+            
             if (message == null)
             {
                 if (update.CallbackQuery == null)
@@ -59,6 +74,14 @@ namespace WhatBackend.TelergamBot.Controllers
                 MessageId = message.MessageId
             };
 
+            var account = await accountService
+                .GetAccountByTelegramId(message.Chat.Id);
+
+            identity.AddClaim(new Claim(
+                        ClaimConstants.AccountClaim, account.Id.ToString()));
+            identity.AddClaim(new Claim(
+                        ClaimConstants.EmailClaim, account.Email));
+
             var isNewMessage = _messages.TryAdd(messageHeader, message);
 
             if (isNewMessage)
@@ -68,6 +91,31 @@ namespace WhatBackend.TelergamBot.Controllers
                 {
                     if (command.Contains(message.Text))
                     {
+                        if(Attribute.GetCustomAttribute(command.GetType(),
+                            typeof(StudentRoleCommandAttribute)) != null)
+                        {
+                            identity.AddClaim(new Claim(
+                                ClaimsIdentity.DefaultRoleClaimType,
+                                UserRole.Student.ToString()));
+                            var studentService = _serviceProvider
+                                .GetService<IStudentService>();
+                            var student = studentService
+                                .GetStudentByAccountIdAsync(account.Id);
+                            identity.AddClaim(new Claim(
+                                ClaimConstants.IdClaim, student.Id.ToString()));
+                        }
+                        else if(Attribute.GetCustomAttribute(command.GetType(),
+                            typeof(MentorRoleCommandAttribute)) != null)
+                        {
+                            identity.AddClaim(new Claim(
+                                ClaimsIdentity.DefaultRoleClaimType, UserRole.Mentor.ToString()));
+                            var mentorService = _serviceProvider
+                                .GetService<IMentorService>();
+                            var mentor = mentorService
+                                .GetMentorByAccountIdAsync(account.Id);
+                            identity.AddClaim(new Claim(
+                                ClaimConstants.IdClaim, mentor.Id.ToString()));
+                        }
                         var result = await command.Execute(message, client);
                         break;
                     }
