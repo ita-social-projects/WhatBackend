@@ -17,15 +17,18 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
         private readonly ISchedulesEventsDbEntityVerifier _validator;
 
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsDbEntityVerifier validator)
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory,
+                               ISchedulesEventsDbEntityVerifier validator, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduledEventFactory = scheduledEventHandlerFactory;
             _validator = validator;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
@@ -147,6 +150,21 @@ namespace CharlieBackend.Business.Services
             if (error != null)
             {
                 return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
+            }
+
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                if (_currentUserService.AccountId != request.StudentAccountID)
+                {
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only his events");
+                }
+            }
+            else if (_currentUserService.Role == UserRole.Mentor)
+            {
+                if (_currentUserService.EntityId != request.MentorID)
+                {
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only his events");
+                }
             }
 
             var schedulesOfGroup = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(request);
