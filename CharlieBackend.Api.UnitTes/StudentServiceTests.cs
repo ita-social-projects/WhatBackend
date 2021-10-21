@@ -37,8 +37,7 @@ namespace CharlieBackend.Api.UnitTest
                 _unitOfWorkMock.Object,
                 _mapper,
                 _notificationServiceMock.Object,
-                _blobServiceMock.Object,
-                _currentUserServiceMock.Object);
+                _blobServiceMock.Object);
         }
 
         private void InitializeForCreateStudentAsync(long studentExpectedId = 10)
