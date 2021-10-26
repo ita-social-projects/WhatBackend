@@ -119,7 +119,7 @@ namespace CharlieBackend.Business.Services
             {
                 if (_currentUserService.EntityId != id)
                 {
-                    return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.Unauthorized, "Student can see only his student groups");
+                    return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.Unauthorized, "Student can see only own student groups");
                 }
             }
 

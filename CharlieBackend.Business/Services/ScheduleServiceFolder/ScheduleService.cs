@@ -156,14 +156,14 @@ namespace CharlieBackend.Business.Services
             {
                 if (_currentUserService.AccountId != request.StudentAccountID)
                 {
-                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only his events");
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only own events");
                 }
             }
             else if (_currentUserService.Role == UserRole.Mentor)
             {
                 if (_currentUserService.EntityId != request.MentorID)
                 {
-                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only his events");
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only own events");
                 }
             }
 
