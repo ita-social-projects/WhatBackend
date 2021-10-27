@@ -22,18 +22,11 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("LessonID");
 
-            entity.Property(e => e.StudentMark)
-                .HasColumnName("StudentMark");
-
             entity.Property(e => e.Presence)
                 .IsRequired()
                 .HasDefaultValueSql("1")
                 .HasColumnName("Presence")
                 .HasColumnType("BIT");
-
-            entity.Property(e => e.Comment)
-                .HasColumnName("Comment")
-                .HasColumnType("VARCHAR(1024)");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
