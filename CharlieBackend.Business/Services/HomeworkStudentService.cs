@@ -208,26 +208,21 @@ namespace CharlieBackend.Business.Services
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent()
         {
             var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(_currentUserService.EntityId);
-            long accountId = _currentUserService.AccountId;
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(student.Id);
+
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
         public async Task<Result<IList<HomeworkStudentDto>>> GetStudentHomeworkInGroup(HomeworkStudentFilter homeworkStudentFilter)
         {
-            long accountId = _currentUserService.AccountId;
 
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
+            var studentId = _currentUserService.EntityId;
 
-            var group = await _unitOfWork.StudentGroupRepository.GetStudentGroupsIdsByStudentId(student.Id);
-
-            if (!group.Contains(homeworkStudentFilter.GroupId))
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId, homeworkStudentFilter.GroupId))
             {
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
             }
 
-            var homeworksStudents = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(student.Id, homeworkStudentFilter.StartDate,
+            var homeworksStudents = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(studentId, homeworkStudentFilter.StartDate,
                 homeworkStudentFilter.FinishtDate, homeworkStudentFilter.GroupId);
 
             var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworksStudents);

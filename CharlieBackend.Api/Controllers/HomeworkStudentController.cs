@@ -53,7 +53,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
-        [HttpGet("id")]
+        [HttpGet]
         public async Task<IList<HomeworkStudentDto>> GetHomeworkForStudentByStudentId()
         {
             var results = await _homeworkStudentService.GetHomeworkStudentForStudent();
@@ -66,8 +66,8 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
-        [HttpGet]
-        public async Task<ActionResult> GetStudentHomeworkInGroup([FromQuery] HomeworkStudentFilter homeworkForStudent)
+        [HttpGet("done")]
+        public async Task<ActionResult> GetComplitedHomeworkStudentByFilter([FromQuery] HomeworkStudentFilter homeworkForStudent)
         {
             var results = await _homeworkStudentService.GetStudentHomeworkInGroup(homeworkForStudent);
 

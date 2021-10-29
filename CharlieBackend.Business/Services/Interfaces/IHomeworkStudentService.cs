@@ -13,8 +13,6 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId);
         Task<Result<IList<HomeworkStudentDto>>> GetStudentHomeworkInGroup(HomeworkStudentFilter homeworkForStudent);
 
-        Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId);
-
         Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent();
 
         Task<IList<HomeworkStudentDto>> GetHomeworkStudentHistoryByHomeworkStudentId(long homeworkStudentId);
