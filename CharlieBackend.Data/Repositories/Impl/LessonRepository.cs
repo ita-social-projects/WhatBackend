@@ -131,6 +131,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Lessons
                 .Include(x => x.Visits)
+                .Include(x => x.Theme)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
