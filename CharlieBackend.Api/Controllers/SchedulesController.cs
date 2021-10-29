@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core;
-using CharlieBackend.Core.Models.ResultModel;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller to manage schedules data
     /// </summary>
-    [Route("api/schedules")]
+    [Route("api/v{version:apiVersion}/schedules")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class SchedulesController : ControllerBase
     {
@@ -39,7 +37,7 @@ namespace CharlieBackend.Api.Controllers
         /// Add new schedule
         /// </summary>
         /// <remarks>
-        /// Creates new EventOccurance instance and related ScheduledEvents
+        /// Creates new EventOccurence instance and related ScheduledEvents
         /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
         /// </remarks>
         /// <response code="200">Successful add of schedule</response>
@@ -57,14 +55,29 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Get schedule by id
         /// </summary>
-        /// <response code="200">Successful add of schedule</response>        
+        /// <response code="200">Successful return of schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceById(long id)
+        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccurenceById(long id)
         {
             var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
+
+            return resSchedule.ToActionResult();
+        }
+
+        /// <summary>
+        /// Get detailed schedule by id
+        /// </summary>
+        /// <response code="200">Successful return of detailed schedule</response>        
+        /// <response code="HTTP: 404, API: 3">No such event occurence</response>
+        [SwaggerResponse(200, type: typeof(DetailedEventOccurrenceDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("detailed/{id}")]
+        public async Task<ActionResult<DetailedEventOccurrenceDTO>> GetDetailedEventOccurenceById(long id)
+        {
+            var resSchedule = await _scheduleService.GetDetailedEventOccurrenceById(id);
 
             return resSchedule.ToActionResult();
         }

@@ -93,13 +93,6 @@ namespace CharlieBackend.Business.Services
 
         private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> students)
         {
-            foreach(var s in students)
-            {
-                if(s.Account==null)
-                {
-
-                }
-            }
 
             var detailsDtos = await students
                 .ToAsyncEnumerable()
@@ -115,7 +108,7 @@ namespace CharlieBackend.Business.Services
                 .ToListAsync();
 
             return detailsDtos;
-        }
+         }
 
         public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
         {
@@ -197,6 +190,11 @@ namespace CharlieBackend.Business.Services
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var studentDto = _mapper.Map<StudentDto>(student);
+
+            if (studentDto == null)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Not Found");
+            }
 
             return Result<StudentDto>.GetSuccess(studentDto);
         }

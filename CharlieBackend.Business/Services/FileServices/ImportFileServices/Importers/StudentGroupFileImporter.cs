@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
@@ -7,24 +8,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Base
+namespace CharlieBackend.Business.Services.FileServices.Importers
 {
-    abstract public class StudentGroupFileImporter
+    public class StudentGroupImporter
     {
-        protected readonly IStudentService _studentService;
+        private readonly IStudentService _studentService;
         private readonly IStudentGroupService _studentGroupService;
+        private readonly IAccountService _accountService;
 
-        public StudentGroupFileImporter(IStudentService studentService,
-                IStudentGroupService studentGroupService)
+        public StudentGroupImporter(IStudentService studentService,
+                IStudentGroupService studentGroupService,
+                IAccountService accountService)
         {
             _studentService = studentService;
             _studentGroupService = studentGroupService;
+            _accountService = accountService;
         }
 
         public async Task<Result<GroupWithStudentsDto>> ImportGroupAsync(
-                CreateStudentGroupDto studentGroup, string filePath)
+                CreateStudentGroupDto studentGroup,
+                IList<CreateAccountDto> accountsList)
         {
-            var accounts = await СollectAccountsFromFilePath(filePath);
+            var accounts = await CollectAccountsFromList(accountsList);
 
             if (accounts.Error != null)
             {
@@ -40,7 +45,7 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Base
                         "file hasn't any student accounts");
             }
 
-            var students = await CreateStudents(accounts.Data);
+            var students = await CollectStudents(accounts.Data);
 
             if (students.Error != null)
             {
@@ -73,9 +78,47 @@ namespace CharlieBackend.Business.Services.FileServices.ImportFileServices.Base
             return Result<GroupWithStudentsDto>.GetSuccess(detailedGroup);
         }
 
-        protected abstract Task<Result<IList<AccountDto>>> СollectAccountsFromFilePath(string filePath);
+        protected async Task<Result<IList<AccountDto>>> CollectAccountsFromList(
+                IList<CreateAccountDto> accounts)
+        {
+            IList<AccountDto> accountsForStudents = new List<AccountDto>();
 
-        protected async Task<Result<IList<StudentDto>>> CreateStudents(
+            foreach (var account in accounts)
+            {
+                if (await _accountService.IsEmailTakenAsync(account.Email))
+                {
+                    var accountSearch = await _accountService
+                            .GetAccountCredentialsByEmailAsync(account.Email);
+
+                    accountsForStudents.Add(accountSearch.Data);
+                }
+                else
+                {
+                    var _tempPassword = PasswordHelper.GeneratePassword();
+
+                    account.Password = _tempPassword;
+                    account.ConfirmPassword = _tempPassword;
+
+                    var accountCreating = await _accountService
+                        .CreateAccountAsync(account);
+
+                    if (accountCreating.Error != null)
+                    {
+                        return Result<IList<AccountDto>>.GetError(
+                                accountCreating.Error.Code,
+                                accountCreating.Error.Message);
+                    }
+                    else
+                    {
+                        accountsForStudents.Add(accountCreating.Data);
+                    }
+                }
+            }
+
+            return Result<IList<AccountDto>>.GetSuccess(accountsForStudents);
+        }
+
+        protected async Task<Result<IList<StudentDto>>> CollectStudents(
                IList<AccountDto> accounts)
         {
             IList<StudentDto> students = new List<StudentDto>();

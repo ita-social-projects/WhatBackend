@@ -1,28 +1,19 @@
 ﻿using Moq;
 using Xunit;
-using System;
 using AutoMapper;
 using FluentAssertions;
 using System.Threading.Tasks;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Account;
-using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Microsoft.Extensions.Logging;
-using CharlieBackend.Core;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using System.Text;
-using System.Net.Http;
-using System.Linq;
 using Azure.Storage.Blobs;
 using CharlieBackend.Core.DTO.Attachment;
 using System.Collections.Generic;
-using Azure.Storage.Blobs.Models;
 
 namespace CharlieBackend.Api.UnitTest
 {

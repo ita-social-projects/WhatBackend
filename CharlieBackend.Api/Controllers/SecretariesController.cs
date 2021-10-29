@@ -1,19 +1,20 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Secretary;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Business.Services.Interfaces;
-using Swashbuckle.AspNetCore.Filters;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
     /// <summary>
     /// Controller for operations related to secretary entity
     /// </summary>
-    [Route("api/secretaries")]
+    [Route("api/v{version:apiVersion}/secretaries")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class SecretariesController : ControllerBase
     {
@@ -83,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
         [SwaggerResponse(200, type: typeof(UpdateSecretaryDto))]
         [Authorize(Roles = "Admin")]
         [HttpPut("{secretaryId}")]
-        public async Task<ActionResult> PutSecretary(long secretaryId, [FromBody]UpdateSecretaryDto secretaryDto)
+        public async Task<ActionResult> PutSecretary(long secretaryId, [FromBody] UpdateSecretaryDto secretaryDto)
         {
             var updatedSecretary = await _secretaryService.UpdateSecretaryAsync(secretaryId, secretaryDto);
 
@@ -91,7 +92,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Disable secretary's account
+        /// Disable account by secretary id
         /// </summary>
         /// <response code="200">Secretary's account successfully disabled</response>
         /// <response code="HTTP: 404, API: 3">Secretary not found</response>

@@ -196,9 +196,12 @@ namespace CharlieBackend.Core.Mapping
 
             #region Homework mapping
 
-            CreateMap<Homework, HomeworkDto>().ForMember(dest => dest.AttachmentIds,
-                                                         opt => opt.MapFrom(src => src.AttachmentsOfHomework.Select(y => y.AttachmentId)
-                                                                                                            .ToList()));
+            CreateMap<Homework, HomeworkDto>()
+                .ForMember(dest => dest.AttachmentIds,
+                opt => opt.MapFrom(src => src.AttachmentsOfHomework.Select(y => y.AttachmentId)
+                .ToList()))
+                .ForMember(theme => theme.ThemeName, opts => opts.MapFrom(x => x.Lesson.Theme.Name));
+
             CreateMap<HomeworkDto, Homework>();
 
             #endregion

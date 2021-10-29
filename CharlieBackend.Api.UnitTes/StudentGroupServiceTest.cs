@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
@@ -22,6 +23,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IStudentRepository> _studentRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
+        private readonly Mock<IScheduleService> _scheduleServiceMock;
         private readonly IMapper _mapper;
 
         private readonly int _id = 1;
@@ -34,7 +36,8 @@ namespace CharlieBackend.Api.UnitTest
             return new StudentGroupService(
                _unitOfWorkMock.Object,
                _mapper,
-               _loggerMock.Object
+               _loggerMock.Object,
+               _scheduleServiceMock.Object
                );
         }
         private StudentGroup ExistingStudentGroup()
@@ -70,6 +73,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             _loggerMock = new Mock<ILogger<StudentGroupService>>();
             _mapper = GetMapper(new ModelMappingProfile());
+            _scheduleServiceMock = new Mock<IScheduleService>();
 
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _studentRepositoryMock = new Mock<IStudentRepository>();

@@ -5,12 +5,16 @@ using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using System.Linq;
+using CharlieBackend.Panel.Models.Homework;
+using CharlieBackend.Panel.Models.Lesson;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -27,6 +31,12 @@ namespace CharlieBackend.Panel.Models.Mapping
                .ForMember(detination => detination.ActiveCourse, config => config.MapFrom(x => new CourseViewModel { Id = x.CourseId }))
                .ForMember(destination => destination.ActiveStudents, config => config.MapFrom(x => x.StudentIds.Select(y => new StudentViewModel { Id = y }).ToList()))
                .ForMember(destination => destination.ActiveMentors, config => config.MapFrom(x => x.MentorIds.Select(y => new MentorViewModel { Id = y }).ToList()));
+
+            CreateMap<HomeworkViewModel, HomeworkDto>();
+            CreateMap<HomeworkDto, HomeworkViewModel>();
+
+            CreateMap<LessonViewModel, LessonDto>();
+            CreateMap<LessonDto, LessonViewModel>();
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 

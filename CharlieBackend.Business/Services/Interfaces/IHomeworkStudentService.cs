@@ -10,6 +10,7 @@ namespace CharlieBackend.Business.Services.Interfaces
     {
         Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent);
 
+        Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId);
         Task<Result<IList<HomeworkStudentDto>>> GetStudentHomeworkInGroup(HomeworkStudentFilter homeworkForStudent);
 
         Task<IList<HomeworkStudentDto>> GetHomeworkStudentForMentor(long homeworkId);
