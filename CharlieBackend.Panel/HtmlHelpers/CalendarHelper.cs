@@ -189,13 +189,14 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("type", "button");
             button.Attributes.Add("data-toggle", "modal");
             button.Attributes.Add("data-target", "#seeSchedulEvent");
+            button.Attributes.Add("seTime", $"{ model.EventStart.TimeOfDay} - {model.EventFinish.TimeOfDay}");
             button.Attributes.Add("seGroup", model.StudentGroup);
             button.Attributes.Add("seMentor", $"{model.MentorFirstName} {model.MentorLastName}");
             button.Attributes.Add("seTheme", model.Theme);
+            button.InnerHtml.Append($"{model.EventStart.TimeOfDay} - {model.EventFinish.TimeOfDay} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");
-            button.InnerHtml.Append($"{model.MentorFirstName} ");
-            button.InnerHtml.Append($"{model.MentorLastName}; ");
+            button.InnerHtml.Append($"{model.MentorFirstName} {model.MentorLastName}");
 
             return button;
         }

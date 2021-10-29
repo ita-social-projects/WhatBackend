@@ -39,15 +39,18 @@
         var seGroup = null;
         var seMentor = null;
         var seTheme = null;
+        var seTime = null;
         $(document).on("click", ".btn-event", function (e) {
             e.preventDefault();
             var _self = $(this);
             seGroup = _self.attr("seGroup");
             seMentor = _self.attr("seMentor");
             seTheme = _self.attr("seTheme");
+            seTime = _self.attr("seTime");
             $("#seGroup").val(seGroup);
             $("#seMentor").val(seMentor);
             $("#seTheme").val(seTheme);
+            $("#seTime").val(seTime);
         });
     </script>
 }
@@ -205,6 +208,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <label for="seTime">Time:</label>
+                    <input id="seTime" class="modalTextInput form-control" value="" />
+
                     <label for="seTheme">Theme:</label>
                     <input id="seTheme" class="modalTextInput form-control" value="" />
 
