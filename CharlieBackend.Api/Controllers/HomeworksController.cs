@@ -93,7 +93,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets conditions of homeworks
+        /// Gets homeworks' tasks
         /// </summary>
         /// <param name="request">
         /// 1. Mention "groupId" or "courseId" or "themeId" to get homeworks of a specific group, course, theme.
