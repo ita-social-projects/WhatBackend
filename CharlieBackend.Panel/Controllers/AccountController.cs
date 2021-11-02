@@ -1,16 +1,16 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Account;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using Microsoft.AspNetCore.DataProtection;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {

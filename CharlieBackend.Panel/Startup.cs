@@ -1,8 +1,8 @@
 using AutoMapper;
+using CharlieBackend.Core.Extensions;
 using CharlieBackend.Panel.Extensions;
 using CharlieBackend.Panel.Middlewares;
 using CharlieBackend.Panel.Models.Mapping;
-using CharlieBackend.Core.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,8 +1,6 @@
-﻿using CharlieBackend.Panel.Models.Students;
-using CharlieBackend.Core.DTO.Student;
-using System;
+﻿using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Panel.Models.Students;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services.Interfaces

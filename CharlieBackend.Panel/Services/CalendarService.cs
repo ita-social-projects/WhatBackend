@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using CharlieBackend.Panel.Models.Calendar;
-using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Panel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Panel.Models.Calendar;
+using CharlieBackend.Panel.Services.Interfaces;
+using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;

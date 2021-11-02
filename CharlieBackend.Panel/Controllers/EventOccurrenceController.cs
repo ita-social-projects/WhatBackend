@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
