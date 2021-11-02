@@ -1,6 +1,4 @@
-﻿using CharlieBackend.Core.DTO;
-using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.DTO.Mentor;
+﻿using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Models.ResultModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;

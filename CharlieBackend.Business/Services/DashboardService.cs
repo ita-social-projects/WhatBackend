@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Dashboard;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {

@@ -1,15 +1,13 @@
-﻿using System.IO;
-using AutoMapper;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Attachment;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Attachment;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System.Linq;
+using System.IO;
+using System.Threading.Tasks;
 
 
 namespace CharlieBackend.Business.Services

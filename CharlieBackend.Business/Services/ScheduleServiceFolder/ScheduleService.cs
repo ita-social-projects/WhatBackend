@@ -1,15 +1,15 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
+﻿using AutoMapper;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 
 namespace CharlieBackend.Business.Services
 {

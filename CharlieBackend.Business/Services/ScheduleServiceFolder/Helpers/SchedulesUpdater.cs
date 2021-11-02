@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 

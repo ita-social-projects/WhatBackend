@@ -5,7 +5,6 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
@@ -13,8 +12,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
-using CharlieBackend.Core.DTO.Visit;
-using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Core.DTO.Homework;
 using System.Linq;
 
@@ -31,8 +28,6 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly HomeworkService _homeworkService;
-        private readonly CourseService _courseService;
-        private readonly LessonService _lessonService;
         private HomeworkRequestDto homeworkRequestDto = new HomeworkRequestDto()
         {
             LessonId = 1
@@ -48,7 +43,7 @@ namespace CharlieBackend.Api.UnitTest
             _currentUserServiceMock = new Mock<ICurrentUserService>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _courseRepositoryMock = new Mock<ICourseRepository>();
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _courseService, _lessonService, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)

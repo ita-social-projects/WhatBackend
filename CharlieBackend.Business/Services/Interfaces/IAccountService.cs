@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Models.ResultModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace CharlieBackend.Business.Services.Interfaces

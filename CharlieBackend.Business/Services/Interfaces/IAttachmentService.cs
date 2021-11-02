@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using CharlieBackend.Core.DTO.Attachment;
+using CharlieBackend.Core.Models.ResultModel;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using CharlieBackend.Core.DTO.Attachment;
-using CharlieBackend.Core.Models.ResultModel;
+using System.Threading.Tasks;
 
 
 namespace CharlieBackend.Business.Services.Interfaces
