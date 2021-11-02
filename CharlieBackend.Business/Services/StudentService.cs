@@ -14,15 +14,18 @@ namespace CharlieBackend.Business.Services
     public class StudentService : IStudentService
     {
         private readonly IAccountService _accountService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly IBlobService _blobService;
 
         public StudentService(IAccountService accountService, IUnitOfWork unitOfWork,
-                              IMapper mapper, INotificationService notification, IBlobService blobService)
+                              IMapper mapper, INotificationService notification, IBlobService blobService, 
+                              ICurrentUserService currentUserService)
         {
             _accountService = accountService;
+            _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
@@ -112,6 +115,14 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
         {
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                if (_currentUserService.EntityId != id)
+                {
+                    return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.Unauthorized, "Student can see only own student groups");
+                }
+            }
+
             if (!await _unitOfWork.StudentRepository.IsEntityExistAsync(id))
             {
                 return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Student doesn`t exist");
