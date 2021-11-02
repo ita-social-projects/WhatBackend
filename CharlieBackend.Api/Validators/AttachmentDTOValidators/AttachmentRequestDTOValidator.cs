@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.DTO.Attachment;
 using FluentValidation;
-using System;
 
 namespace CharlieBackend.Api.Validators.AttachmentDTOValidators
 {

@@ -6,12 +6,9 @@ using CharlieBackend.Core.DTO.Visit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.DTO.Visit;
-using CharlieBackend.Core.DTO.HomeworkStudent;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace CharlieBackend.Api.Controllers
 {
