@@ -15,8 +15,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
         {
             var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
 
-            DateTime startDate = calendar.ScheduledEventFilter.StartDate ?? GetStartData(eventOccurencesFiltered);
-            DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishData(eventOccurencesFiltered);
+            DateTime startDate = calendar.ScheduledEventFilter.StartDate ?? GetStartDate(eventOccurencesFiltered);
+            DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishDate(eventOccurencesFiltered);
 
             string result = string.Empty;
             foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
@@ -201,7 +201,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return button;
         }
 
-        private static DateTime GetFinishData(IList<CalendarEventOccurrenceViewModel> models)
+        private static DateTime GetFinishDate(IList<CalendarEventOccurrenceViewModel> models)
         {
             DateTime latestFinish = models.Max(x => x.EventFinish);
             DateTime latestStart = models.Max(x => x.EventStart);
@@ -209,7 +209,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return latestFinish > latestStart ? latestFinish : latestStart;
         }
 
-        private static DateTime GetStartData(IList<CalendarEventOccurrenceViewModel> models)
+        private static DateTime GetStartDate(IList<CalendarEventOccurrenceViewModel> models)
         {
             DateTime earliestFinish = models.Min(x => x.EventFinish);
             DateTime earliestStart = models.Min(x => x.EventStart);
@@ -221,20 +221,5 @@ namespace CharlieBackend.Panel.HtmlHelpers
         {
             return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
         }
-    }
-
-    class CalendarScheduledEventModel
-    {
-        public string Theme { get; set; }
-
-        public string MentorFirstName { get; set; }
-        
-        public string MentorLastName { get; set; }
-
-        public string StudentGroup { get; set; }
-
-        public DateTime EventStart { get; set; }
-
-        public DateTime EventFinish { get; set; }
     }
 }
