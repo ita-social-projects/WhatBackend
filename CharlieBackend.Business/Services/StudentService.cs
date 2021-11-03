@@ -14,15 +14,18 @@ namespace CharlieBackend.Business.Services
     public class StudentService : IStudentService
     {
         private readonly IAccountService _accountService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly IBlobService _blobService;
 
         public StudentService(IAccountService accountService, IUnitOfWork unitOfWork,
-                              IMapper mapper, INotificationService notification, IBlobService blobService)
+                              IMapper mapper, INotificationService notification, IBlobService blobService, 
+                              ICurrentUserService currentUserService)
         {
             _accountService = accountService;
+            _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
@@ -93,13 +96,6 @@ namespace CharlieBackend.Business.Services
 
         private async Task<IList<StudentDetailsDto>> GetStudentsWithAvatarIncluded(IList<Student> students)
         {
-            foreach(var s in students)
-            {
-                if(s.Account==null)
-                {
-
-                }
-            }
 
             var detailsDtos = await students
                 .ToAsyncEnumerable()
@@ -115,10 +111,18 @@ namespace CharlieBackend.Business.Services
                 .ToListAsync();
 
             return detailsDtos;
-        }
+         }
 
         public async Task<Result<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentIdAsync(long id)
         {
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                if (_currentUserService.EntityId != id)
+                {
+                    return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.Unauthorized, "Student can see only own student groups");
+                }
+            }
+
             if (!await _unitOfWork.StudentRepository.IsEntityExistAsync(id))
             {
                 return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, "Student doesn`t exist");
@@ -197,6 +201,11 @@ namespace CharlieBackend.Business.Services
         {
             var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
             var studentDto = _mapper.Map<StudentDto>(student);
+
+            if (studentDto == null)
+            {
+                return Result<StudentDto>.GetError(ErrorCode.NotFound, "Not Found");
+            }
 
             return Result<StudentDto>.GetSuccess(studentDto);
         }

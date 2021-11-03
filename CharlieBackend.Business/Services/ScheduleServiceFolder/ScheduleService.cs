@@ -17,15 +17,18 @@ namespace CharlieBackend.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
         private readonly ISchedulesEventsDbEntityVerifier _validator;
 
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory, ISchedulesEventsDbEntityVerifier validator)
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory,
+                               ISchedulesEventsDbEntityVerifier validator, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduledEventFactory = scheduledEventHandlerFactory;
             _validator = validator;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
@@ -149,6 +152,21 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
 
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                if (_currentUserService.AccountId != request.StudentAccountID)
+                {
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only own events");
+                }
+            }
+            else if (_currentUserService.Role == UserRole.Mentor)
+            {
+                if (_currentUserService.EntityId != request.MentorID)
+                {
+                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only own events");
+                }
+            }
+
             var schedulesOfGroup = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(request);
 
             return Result<IList<ScheduledEventDTO>>.GetSuccess(
@@ -205,6 +223,28 @@ namespace CharlieBackend.Business.Services
             await _unitOfWork.CommitAsync();
 
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
+        }
+
+        async public Task<Result<DetailedEventOccurrenceDTO>> GetDetailedEventOccurrenceById(long eventOccurrenceId)
+        {
+            var eventOccurrence = (await GetEventOccurrenceByIdAsync(eventOccurrenceId)).Data;
+
+            var detailedEventOccurrence = new DetailedEventOccurrenceDTO
+            {
+                Id = eventOccurrence.Id,
+                Pattern = EventOccuranceStorageParser.GetFullDataFromStorage(eventOccurrence.Storage),
+                Range = new OccurenceRange
+                {
+                    FinishDate = eventOccurrence.EventFinish,
+                    StartDate = eventOccurrence.EventStart
+                },
+                Context = new ContextForCreateScheduleDTO
+                {
+                    GroupID = eventOccurrence.StudentGroupId
+                }
+            };
+
+            return Result<DetailedEventOccurrenceDTO>.GetSuccess(detailedEventOccurrence);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace CharlieBackend.Api.Controllers
         /// Add new schedule
         /// </summary>
         /// <remarks>
-        /// Creates new EventOccurance instance and related ScheduledEvents
+        /// Creates new EventOccurence instance and related ScheduledEvents
         /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
         /// </remarks>
         /// <response code="200">Successful add of schedule</response>
@@ -55,14 +55,29 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Get schedule by id
         /// </summary>
-        /// <response code="200">Successful add of schedule</response>        
+        /// <response code="200">Successful return of schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccuranceById(long id)
+        public async Task<ActionResult<EventOccurrenceDTO>> GetEventOccurenceById(long id)
         {
             var resSchedule = await _scheduleService.GetEventOccurrenceByIdAsync(id);
+
+            return resSchedule.ToActionResult();
+        }
+
+        /// <summary>
+        /// Get detailed schedule by id
+        /// </summary>
+        /// <response code="200">Successful return of detailed schedule</response>        
+        /// <response code="HTTP: 404, API: 3">No such event occurence</response>
+        [SwaggerResponse(200, type: typeof(DetailedEventOccurrenceDTO))]
+        [Authorize(Roles = "Secretary, Admin")]
+        [HttpGet("detailed/{id}")]
+        public async Task<ActionResult<DetailedEventOccurrenceDTO>> GetDetailedEventOccurenceById(long id)
+        {
+            var resSchedule = await _scheduleService.GetDetailedEventOccurrenceById(id);
 
             return resSchedule.ToActionResult();
         }
