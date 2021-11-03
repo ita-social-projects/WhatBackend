@@ -1,8 +1,6 @@
-﻿using CharlieBackend.Core.Entities;
-using System;
+﻿using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
-using CharlieBackend.Core.DTO.Schedule;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces

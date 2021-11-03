@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

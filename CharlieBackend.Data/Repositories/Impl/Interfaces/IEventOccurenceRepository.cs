@@ -1,8 +1,6 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

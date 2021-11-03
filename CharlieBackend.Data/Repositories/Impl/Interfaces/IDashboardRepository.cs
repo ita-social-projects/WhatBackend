@@ -1,10 +1,6 @@
-﻿using CharlieBackend.Core.CharlieBackend.Core.DTO.Dashboard.StudentGroupResults;
-using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core.DTO.StudentGroups;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
