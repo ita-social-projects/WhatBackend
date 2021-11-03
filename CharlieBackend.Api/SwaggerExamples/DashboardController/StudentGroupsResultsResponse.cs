@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Dashboard;
+﻿using CharlieBackend.Core.CharlieBackend.Core.DTO.Dashboard.StudentGroupResults;
+using CharlieBackend.Core.DTO.Dashboard;
 using Swashbuckle.AspNetCore.Filters;
 using System.Collections.Generic;
 

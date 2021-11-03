@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-namespace CharlieBackend.Core.DTO.Mentor
+﻿namespace CharlieBackend.Core.DTO.Mentor
 {
     public class MentorDto
     {

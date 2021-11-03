@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CharlieBackend.Core.DTO.Result;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Core.DTO.Result;
-using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CharlieBackend.Core
 {
