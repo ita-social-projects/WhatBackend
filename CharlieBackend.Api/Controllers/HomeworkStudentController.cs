@@ -69,7 +69,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpGet("done")]
         public async Task<ActionResult> GetComplitedHomeworkStudentByFilter([FromQuery] HomeworkStudentFilter homeworkForStudent)
         {
-            var results = await _homeworkStudentService.GetStudentHomeworkInGroup(homeworkForStudent);
+            var results = await _homeworkStudentService.GetComplitedHomeworkStudentByFilter(homeworkForStudent);
 
             return results.ToActionResult();
         }

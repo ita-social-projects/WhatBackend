@@ -212,7 +212,7 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
-        public async Task<Result<IList<HomeworkStudentDto>>> GetStudentHomeworkInGroup(HomeworkStudentFilter homeworkStudentFilter)
+        public async Task<Result<IList<HomeworkStudentDto>>> GetComplitedHomeworkStudentByFilter(HomeworkStudentFilter homeworkStudentFilter)
         {
 
             var studentId = _currentUserService.EntityId;
