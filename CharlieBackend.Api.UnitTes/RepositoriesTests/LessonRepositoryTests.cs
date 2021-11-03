@@ -1,17 +1,11 @@
-﻿using AutoMapper;
-using CharlieBackend.Business.Services;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.Mapping;
+﻿using CharlieBackend.Core.Entities;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 

@@ -1,18 +1,15 @@
-﻿using System;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Dashboard;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using Moq;
-using Xunit;
 using FluentAssertions;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace CharlieBackend.Api.UnitTest
 {

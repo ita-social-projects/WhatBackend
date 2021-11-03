@@ -1,12 +1,12 @@
-﻿using Moq;
-using Xunit;
+﻿using CharlieBackend.Business.Services;
+using CharlieBackend.Core.Entities;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using System;
 using System.Security.Claims;
 using System.Security.Principal;
-using Microsoft.AspNetCore.Http;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Business.Services;
-using FluentAssertions;
+using Xunit;
 
 namespace CharlieBackend.Api.UnitTest
 {
