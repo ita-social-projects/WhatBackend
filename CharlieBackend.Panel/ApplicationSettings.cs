@@ -115,6 +115,10 @@ namespace CharlieBackend.Panel
     public class LessonsApiEndpoints
     {
         public string GetLessonsByDate { get; set; }
+        public string GetLessonById { get; set; }
+        public string AddLessonEndpoint { get; set; }
+        public string UpdateLessonEndpoint { get; set; }
+        public string GetLessonsForMentor { get; set; }
     }
 
     #endregion 

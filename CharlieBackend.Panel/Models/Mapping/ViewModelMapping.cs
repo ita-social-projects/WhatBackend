@@ -15,6 +15,8 @@ using CharlieBackend.Core.DTO.Theme;
 using System.Linq;
 using CharlieBackend.Panel.Models.Homework;
 using CharlieBackend.Panel.Models.Lesson;
+using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -36,7 +38,32 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<HomeworkDto, HomeworkViewModel>();
 
             CreateMap<LessonViewModel, LessonDto>();
-            CreateMap<LessonDto, LessonViewModel>();
+            CreateMap<LessonDto, LessonViewModel>()
+                .ForMember(destination => destination.Mentor, config => config.MapFrom(x => new MentorViewModel() { Id = x.MentorId }))
+                .ForMember(destination => destination.StudentGroup, config => config.MapFrom(x => new StudentGroupViewModel() { Id = (long)x.StudentGroupId}));
+            //CreateMap<LessonDto, LessonVisitModel>()
+            //    .ForMember(destination => destination.Visit, config => config.MapFrom(x => new VisitDto()
+            //    {
+            //        StudentId = x.LessonVisits.FirstOrDefault().StudentId,
+            //        //Comment = x.LessonVisits.FirstOrDefault().Comment,
+            //        Presence = x.LessonVisits.FirstOrDefault().Presence,
+            //        StudentMark = x.LessonVisits.FirstOrDefault().StudentMark
+            //    }));
+
+            CreateMap<LessonDto, LessonVisitModel>()
+               .ForMember(destination => destination.Visit, config => config.MapFrom(x => x.LessonVisits));
+            //.ForMember(destination => destination.Students, config => config.MapFrom(x => new StudentViewModel() { Id = x.LessonVisits.FirstOrDefault().StudentId}));
+
+            CreateMap<LessonCreateViewModel, CreateLessonDto>()
+                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits.Select(y => new  VisitDto()
+                {
+                    StudentId = y.StudentId,
+                    StudentMark = y.StudentMark,
+                    Presence = y.Presence,
+                    Comment = y.Comment
+                }).ToList()));
+
+            //CreateMap<LessonCreateViewModel, CreateLessonDto>();
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 
@@ -47,6 +74,8 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<MentorViewModel, MentorViewModel>();
 
             CreateMap<CourseDto, CourseViewModel>();
+
+            CreateMap<ScheduledEventViewModel, ScheduledEventDTO>().ReverseMap();
 
             #region Calendar ViewModels mappings
             CreateMap<CourseDto, CalendarCourseViewModel>();

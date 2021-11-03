@@ -1,0 +1,77 @@
+﻿
+@model CharlieBackend.Panel.Models.Lesson.LessonVisitModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+        @*<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+                <a asp-action="CreateLesson" asp-controller="Lessons" class="btn btn-lg btn-success btn-circle">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>*@
+
+        <div class="container-fluid">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lessons</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
+                        <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr class="thead-dark row">
+                                    <th class="col-2">Student</th>
+                                    <th class="col-3">Mark</th>
+                                    <th class="col-2">Presence</th>
+                                    <th class="col">Comment Null</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in @Model.Visit)
+                                {
+                                    <tr class="row">
+                                          <td class="col-2 text-truncate">@item.StudentId</td>
+                                        <td class="col-3 text-truncate">@item.StudentMark</td>
+                                        <td class="col-2 text-truncate">@item.Presence</td>
+                                        <td class="col text-truncate">@item.Comment</td>
+
+
+                                        <!--<td class="col">
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+                                        @*<a class="dropdown-item"
+                                               asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
+                                                <i class="fas fa-pen"></i>
+                                                <span>Edit</span>
+                                            </a>
+                                            <a class="dropdown-item"
+                                               asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
+                                                <i class="fas fa-cog"></i>
+                                                <span>Show Attendance</span>
+                                            </a>*@
+
+                                        <!--</div>
+                                            </div>
+                                        </td>-->
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿@*@model IList<CharlieBackend.Panel.Models.Students.StudentViewModel>*@
+
+
+
+
+<div class="form-group">
+    <label>Students</label>
+    <select class="custom-select"  size="4" multiple>
+        @if (@ViewBag.Students != null)
+        {
+            @foreach (var item in @ViewBag.Students)
+            {
+
+                <option value="@item.Id">
+                    @item.FirstName
+                </option>
+
+            }
+        }
+        else
+        {
+            <option value="@null">null</option>
+        }
+
+        @*@foreach (var item in Model)
+        {
+            <span>@item.FirstName</span>
+            <option value="@item.Id">
+                @item.FirstName
+            </option>
+
+        }*@
+    </select>
+</div>
