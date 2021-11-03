@@ -152,19 +152,13 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.ValidationError, error);
             }
 
-            if (_currentUserService.Role == UserRole.Student)
+            if (_currentUserService.Role == UserRole.Student && _currentUserService.AccountId != request.StudentAccountID)
             {
-                if (_currentUserService.AccountId != request.StudentAccountID)
-                {
-                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only own events");
-                }
+                return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only own events");
             }
-            else if (_currentUserService.Role == UserRole.Mentor)
+            else if (_currentUserService.Role == UserRole.Mentor && _currentUserService.EntityId != request.MentorID)
             {
-                if (_currentUserService.EntityId != request.MentorID)
-                {
-                    return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only own events");
-                }
+                return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Mentor can see only own events");
             }
 
             var schedulesOfGroup = await _unitOfWork.ScheduledEventRepository.GetEventsFilteredAsync(request);
