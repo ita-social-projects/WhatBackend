@@ -224,11 +224,11 @@ namespace CharlieBackend.Business.Services
             var result = new List<HomeworkStudent>();
             var errors = await _homeworkService.HasMentorRightsToSeeHomeworks(new Core.DTO.Homework.GetHomeworkRequestDto()
             {
-                CourseId = homework.Lesson.StudentGroup.CourseId,
-                GroupId = homework.Lesson.StudentGroupId
+                CourseId = homework?.Lesson.StudentGroup.CourseId,
+                GroupId = homework?.Lesson.StudentGroupId
             }).ToListAsync();
 
-            if (errors.Any())
+            if (errors.Any() || homework == null)
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not found or mentor doesn't have access to it");
 
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
