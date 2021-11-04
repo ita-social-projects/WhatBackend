@@ -102,7 +102,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return foundAccount?.IsActive;
         }
 
-        public async Task<bool> DisableAccountAsync(long id, long editedBy)
+        public async Task<bool> DisableAccountAsync(long id)
         {
             var foundAccount = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Id == id);
@@ -110,14 +110,11 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return false;   
             }
-
             foundAccount.IsActive = false;
-            foundAccount.LastEditorID = editedBy;
-
             return true;
         }
 
-        public async Task<bool> EnableAccountAsync(long id, long editedBy)
+        public async Task<bool> EnableAccountAsync(long id)
         {
             var foundAccount = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Id == id);
@@ -127,8 +124,6 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
             
             foundAccount.IsActive = true;
-            foundAccount.LastEditorID = editedBy;
-
             return true;
         }
 

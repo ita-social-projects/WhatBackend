@@ -18,8 +18,6 @@ namespace CharlieBackend.Core.Entities
 
         public string Salt { get; set; }
 
-        public long LastEditorID { get; set; }
-
 #nullable enable
         public bool? IsActive { get; set; }
 
