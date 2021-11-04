@@ -36,6 +36,8 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
+            user.LastEditorID = _currentUserService.AccountId;
+
             Result<AccountRoleDto> result = null;
 
             if (user == null)
@@ -123,6 +125,8 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
+            user.LastEditorID = _currentUserService.AccountId;
+
             Result<AccountRoleDto> result = null;
 
             if (user == null)
@@ -165,7 +169,8 @@ namespace CharlieBackend.Business.Services
                 {
                     Email = accountModel.Email,
                     FirstName = accountModel.FirstName,
-                    LastName = accountModel.LastName
+                    LastName = accountModel.LastName,
+                    LastEditorID = _currentUserService.AccountId
                 };
 
                 account.Salt = PasswordHelper.GenerateSalt();
@@ -254,7 +259,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> DisableAccountAsync(long id)
         {
-            var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id, _currentUserService.AccountId);
 
             await _unitOfWork.CommitAsync();
 
@@ -263,7 +268,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> EnableAccountAsync(long id)
         {
-            var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id, _currentUserService.AccountId);
 
             await _unitOfWork.CommitAsync();
 
