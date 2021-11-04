@@ -170,7 +170,6 @@ namespace CharlieBackend.Business.Services
                     Email = accountModel.Email,
                     FirstName = accountModel.FirstName,
                     LastName = accountModel.LastName,
-                    LastEditorID = _currentUserService.AccountId
                 };
 
                 account.Salt = PasswordHelper.GenerateSalt();
@@ -295,6 +294,7 @@ namespace CharlieBackend.Business.Services
                 {
                     user.Salt = PasswordHelper.GenerateSalt();
                     user.Password = PasswordHelper.HashPassword(changePassword.NewPassword, user.Salt);
+                    user.LastEditorID = _currentUserService.AccountId;
 
                     await _unitOfWork.CommitAsync();
 
