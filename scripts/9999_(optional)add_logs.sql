@@ -63,7 +63,8 @@ CREATE TABLE `AccountsChanges` (
     `NewFirstName`              VARCHAR(30)         DEFAULT NULL,
     `OldLastName`               VARCHAR(30)         DEFAULT NULL,
     `NewLastName`               VARCHAR(30)         DEFAULT NULL,
-    `Email`                     VARCHAR(50)         DEFAULT NULL,
+    `OldEmail`                  VARCHAR(50)         DEFAULT NULL,
+    `NewEmail`                  VARCHAR(50)         DEFAULT NULL,
     `OldPasswordHash`           VARCHAR(64)         DEFAULT NULL,
     `NewPasswordHash`           VARCHAR(64)         DEFAULT NULL,
     `OldSalt`                   VARCHAR(32)         DEFAULT NULL,
@@ -89,7 +90,7 @@ AFTER INSERT
 ON `Accounts` FOR EACH ROW
 BEGIN
 	INSERT INTO `AccountsChanges`
-    (`AccountID`, `NewRole`, `NewFirstName`, `NewLastName`, `Email`, `NewPasswordHash`, `NewSalt`, `NewIsActive`, `NewForgotPasswordToken`, `NewForgotTokenGenDate`, `NewAvatarID`, `QueriedBy`)
+    (`AccountID`, `NewRole`, `NewFirstName`, `NewLastName`, `NewEmail`, `NewPasswordHash`, `NewSalt`, `NewIsActive`, `NewForgotPasswordToken`, `NewForgotTokenGenDate`, `NewAvatarID`, `QueriedBy`)
     VALUES
     (NEW.`ID`, NEW.`Role`, NEW.`FirstName`, NEW.`LastName`, NEW.`Email`, NEW.`PasswordHash`, NEW.`Salt`, NEW.`IsActive`, NEW.`ForgotPasswordToken`, NEW.`ForgotTokenGenDate`, NEW.`AvatarID`, NEW.`LastEditorID`)
     ;
@@ -104,10 +105,10 @@ AFTER UPDATE
 ON `Accounts` FOR EACH ROW
 BEGIN
 	INSERT INTO `AccountsChanges`
-    (`AccountID`, `OldRole`, `NewRole`, `OldFirstName`, `NewFirstName`, `OldLastName`, `NewLastName`, `Email`, `OldPasswordHash`, `NewPasswordHash`, `OldSalt`, `NewSalt`, `OldIsActive`, `NewIsActive`, `OldForgotPasswordToken`, `NewForgotPasswordToken`,
+    (`AccountID`, `OldRole`, `NewRole`, `OldFirstName`, `NewFirstName`, `OldLastName`, `NewLastName`, `OldEmail`, `NewEmail`, `OldPasswordHash`, `NewPasswordHash`, `OldSalt`, `NewSalt`, `OldIsActive`, `NewIsActive`, `OldForgotPasswordToken`, `NewForgotPasswordToken`,
     `OldForgotTokenGenDate`, `NewForgotTokenGenDate`, `OldAvatarID`, `NewAvatarID`, `QueriedBy`)
     VALUES
-    (NEW.`ID`, OLD.`Role`, NEW.`Role`, OLD.`FirstName`, NEW.`FirstName`, OLD.`LastName`, NEW.`LastName`, NEW.`Email`, OLD.`PasswordHash`, NEW.`PasswordHash`, OLD.`Salt`, NEW.`Salt`, OLD.`IsActive`, NEW.`IsActive`, OLD.`ForgotPasswordToken`, NEW.`ForgotPasswordToken`, 
+    (NEW.`ID`, OLD.`Role`, NEW.`Role`, OLD.`FirstName`, NEW.`FirstName`, OLD.`LastName`, NEW.`LastName`, OLD.`Email`, NEW.`Email`, OLD.`PasswordHash`, NEW.`PasswordHash`, OLD.`Salt`, NEW.`Salt`, OLD.`IsActive`, NEW.`IsActive`, OLD.`ForgotPasswordToken`, NEW.`ForgotPasswordToken`, 
     OLD.`ForgotTokenGenDate`, NEW.`ForgotTokenGenDate`, OLD.`AvatarID`, NEW.`AvatarID`, NEW.`LastEditorID`)
     ;
 END$$
