@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
@@ -34,6 +35,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ICourseService> _courseServiceMock;
         private readonly Mock<ILessonService> _lessonServiceMock;
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
+        private readonly Mock<IHangfireJobService> _hangfireJobServiceMock;
         private readonly HomeworkStudentService _homeworkStudentService;
         private readonly HomeworkService _homeworkService;
         private HomeworkStudentRequestDto homeworkStudentRequestDto = new HomeworkStudentRequestDto()
@@ -60,19 +62,22 @@ namespace CharlieBackend.Api.UnitTest
             _courseServiceMock = new Mock<ICourseService>();
             _lessonServiceMock = new Mock<ILessonService>();
             _courseRepositoryMock = new Mock<ICourseRepository>();
+            _hangfireJobServiceMock = new Mock<IHangfireJobService>();
             _homeworkService = new HomeworkService(
                 _unitOfWorkMock.Object,
                 _courseServiceMock.Object,
                 _lessonServiceMock.Object,
                 _mapper,
                 _loggerHomeworkMock.Object,
-                _currentUserServiceMock.Object);
+                _currentUserServiceMock.Object,
+                _hangfireJobServiceMock.Object);
             _homeworkStudentService = new HomeworkStudentService(
                 _unitOfWorkMock.Object,
                 _mapper,
                 _loggerMock.Object,
                 _currentUserServiceMock.Object,
-                _homeworkService);
+                _homeworkService,
+                _hangfireJobServiceMock.Object);
         }
 
         [Fact]
