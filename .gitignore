@@ -600,3 +600,6 @@ dist
 /CharlieBackend.Api/Properties/serviceDependencies.json
 /CharlieBackend.Api/Properties/serviceDependencies.local.json
 /CharlieBackend.Api/env
+
+# Docker
+Dockerfile

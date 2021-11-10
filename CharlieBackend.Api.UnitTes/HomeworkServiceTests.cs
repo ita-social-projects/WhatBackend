@@ -17,6 +17,7 @@ using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Core.DTO.Homework;
 using System.Linq;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -30,6 +31,7 @@ namespace CharlieBackend.Api.UnitTest
         private new readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
+        private readonly Mock<IHangfireJobService> _hangfireJobServiceMock;
         private readonly HomeworkService _homeworkService;
         private readonly CourseService _courseService;
         private readonly LessonService _lessonService;
@@ -48,7 +50,14 @@ namespace CharlieBackend.Api.UnitTest
             _currentUserServiceMock = new Mock<ICurrentUserService>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _courseRepositoryMock = new Mock<ICourseRepository>();
-            _homeworkService = new HomeworkService(_unitOfWorkMock.Object, _courseService, _lessonService, _mapper, _loggerMock.Object, _currentUserServiceMock.Object);
+            _hangfireJobServiceMock = new Mock<IHangfireJobService>();
+            _homeworkService = new HomeworkService(_unitOfWorkMock.Object,
+                _courseService,
+                _lessonService,
+                _mapper,
+                _loggerMock.Object,
+                _currentUserServiceMock.Object,
+                _hangfireJobServiceMock.Object);
         }
 
         private static Visit CreateVisit(long id = 1, sbyte mark = 5, bool presence = true, long studentId = 1)

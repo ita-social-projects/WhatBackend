@@ -52,6 +52,10 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnType("VARCHAR(32)")
                 .HasComment("Standard salt size is 128 bits or 32 characters");
 
+            entity.Property(e => e.TelegramId)
+                .HasColumnName("TelegramID")
+                .HasColumnType("VARCHAR(8000)");
+
             entity.Property(e => e.IsActive)
                 .IsRequired()
                 .HasColumnName("IsActive")
@@ -65,6 +69,16 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.ForgotTokenGenDate)
                 .HasColumnName("ForgotTokenGenDate")
+                .HasColumnType("DATETIME")
+                .HasComment("Use UTC time");
+
+            entity.Property(e => e.TelegramToken)
+                .HasColumnName("TelegramToken")
+                .HasColumnType("VARCHAR(36)")
+                .HasComment("GUID length is 36 characters");
+
+            entity.Property(e => e.TelegramTokenGenDate)
+                .HasColumnName("TelegramTokenGenDate")
                 .HasColumnType("DATETIME")
                 .HasComment("Use UTC time");
 

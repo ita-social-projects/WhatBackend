@@ -10,6 +10,7 @@ using AutoMapper;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 
 namespace CharlieBackend.Business.Services
 {
@@ -20,15 +21,21 @@ namespace CharlieBackend.Business.Services
         private readonly ICurrentUserService _currentUserService;
         private readonly IScheduledEventHandlerFactory _scheduledEventFactory;
         private readonly ISchedulesEventsDbEntityVerifier _validator;
+        private readonly IHangfireJobService _jobService;
 
-        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, IScheduledEventHandlerFactory scheduledEventHandlerFactory,
-                               ISchedulesEventsDbEntityVerifier validator, ICurrentUserService currentUserService)
+        public ScheduleService(IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IScheduledEventHandlerFactory scheduledEventHandlerFactory,
+            ISchedulesEventsDbEntityVerifier validator,
+            ICurrentUserService currentUserService,
+            IHangfireJobService jobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _scheduledEventFactory = scheduledEventHandlerFactory;
             _validator = validator;
             _currentUserService = currentUserService;
+            _jobService = jobService;
         }
 
         public async Task<Result<EventOccurrenceDTO>> CreateScheduleAsync(CreateScheduleDto createScheduleRequest)
@@ -60,8 +67,10 @@ namespace CharlieBackend.Business.Services
 
         private async Task AddEventsAsync(EventOccurrence result, CreateScheduleDto createScheduleRequest)
         {
-            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context));
+            var events = _scheduledEventFactory.Get(createScheduleRequest.Pattern).GetEvents(result, createScheduleRequest.Context).ToList();
+            _unitOfWork.ScheduledEventRepository.AddRange(events);
             await _unitOfWork.CommitAsync();
+            await _jobService.CreateAddScheduledEventsJob(events);
         }
 
         public async Task<Result<EventOccurrenceDTO>> DeleteScheduleByIdAsync(long id, DateTime? startDate, DateTime? finishDate)
@@ -78,7 +87,8 @@ namespace CharlieBackend.Business.Services
             var everyValue = eventOccurrenceResult
                 .ScheduledEvents
                 .Where(x => startDate.HasValue && x.EventFinish >= startDate.Value)
-                .Where(x => finishDate.HasValue && x.EventStart <= finishDate.Value);
+                .Where(x => finishDate.HasValue && x.EventStart <= finishDate.Value)
+                .ToList();
 
             var everyValueWithLesson = everyValue.Where(x => x.LessonId != null);
 
@@ -114,6 +124,15 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            if(result.Count() != 0)
+            {
+                await _jobService.DeleteScheduledEventsJob(result);
+            }
+            else
+            {
+                await _jobService.DeleteScheduledEventsJob(eventOccurrenceResult.ScheduledEvents);
+            }
 
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }
@@ -195,6 +214,8 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
+            await _jobService.CreateUpdateScheduledEventsJob(result);
+
             return Result<IList<ScheduledEventDTO>>.GetSuccess(_mapper.Map<IList<ScheduledEventDTO>>(result));
         }
 
@@ -216,11 +237,15 @@ namespace CharlieBackend.Business.Services
             eventOccurrenceResult.EventFinish = request.Range.FinishDate.Value;
             eventOccurrenceResult.Storage = EventOccuranceStorageParser.GetPatternStorageValue(request.Pattern);
 
-            _unitOfWork.ScheduledEventRepository.RemoveRange(eventOccurrenceResult.ScheduledEvents.Where(x => x.LessonId is null));
-            _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(request.Pattern).GetEvents(eventOccurrenceResult, request.Context));
+            var removedScheduledEvents = eventOccurrenceResult.ScheduledEvents.Where(x => x.LessonId is null).ToList();
+            _unitOfWork.ScheduledEventRepository.RemoveRange(removedScheduledEvents);
+            var events = _scheduledEventFactory.Get(request.Pattern).GetEvents(eventOccurrenceResult, request.Context).ToList();
+            _unitOfWork.ScheduledEventRepository.AddRange(events);
             _unitOfWork.EventOccurrenceRepository.Update(eventOccurrenceResult);
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateEventOccurrenceJob(removedScheduledEvents, events);
 
             return Result<EventOccurrenceDTO>.GetSuccess(_mapper.Map<EventOccurrenceDTO>(eventOccurrenceResult));
         }

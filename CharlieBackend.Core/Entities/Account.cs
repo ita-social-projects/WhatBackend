@@ -25,6 +25,12 @@ namespace CharlieBackend.Core.Entities
 
         public DateTime? ForgotTokenGenDate { get; set; }
 
+        public string? TelegramId { get; set; }
+
+        public string? TelegramToken { get; set; }
+
+        public DateTime? TelegramTokenGenDate { get; set; }
+
         //[ForeignKey("Avatar")]
         public long? AvatarId { get; set; }
 #nullable disable

@@ -28,6 +28,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IHomeworkStudentRepository _homeworkStudentRepository;
         private IHomeworkStudentHistoryRepository _homeworkStudentHistoryRepository;
         private IMarkRepository _markRepository;
+        private IJobMappingRepository _jobMappingRepository;
 
         #endregion 
 
@@ -208,6 +209,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return _studentGroupRepository = _studentGroupRepository 
                         ?? new StudentGroupRepository(_applicationContext);
+            }
+        }
+
+        public IJobMappingRepository JobMappingRepository
+        {
+            get
+            {
+                return _jobMappingRepository = _jobMappingRepository
+                        ?? new JobMappingRepository(_applicationContext);
             }
         }
 

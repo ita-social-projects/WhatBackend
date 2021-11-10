@@ -6,6 +6,7 @@ using AutoMapper;
 using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
@@ -18,11 +19,13 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHangfireJobService _jobService;
 
-        public EventsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public EventsService(IUnitOfWork unitOfWork, IMapper mapper, IHangfireJobService jobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _jobService = jobService;
         }
 
         public async Task<Result<bool>> DeleteAsync(long id)
@@ -31,6 +34,8 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
             await _unitOfWork.ScheduledEventRepository.DeleteAsync(id);
             await _unitOfWork.CommitAsync();
+
+            await _jobService.DeleteScheduledEventsJob(new List<ScheduledEvent>{ scheduledEvent });
 
             return Result<bool>.GetSuccess(true);
         }
@@ -49,6 +54,8 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             schedule = SchedulesUpdater.UpdateFields(schedule, updatedSchedule);
             _unitOfWork.ScheduledEventRepository.Update(schedule);
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateScheduledEventsJob(new List<ScheduledEvent> { schedule });
 
             return _mapper.Map<ScheduledEventDTO>(schedule);
         }

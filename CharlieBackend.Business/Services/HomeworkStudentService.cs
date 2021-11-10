@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.Notification.Interfaces;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,13 +23,22 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkStudentService> _logger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHomeworkService _homeworkService;
+        private readonly IHangfireJobService _jobService;
 
-        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger, ICurrentUserService currentUserService)
+        public HomeworkStudentService(IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ILogger<HomeworkStudentService> logger,
+            ICurrentUserService currentUserService,
+            IHomeworkService homeworkService,
+            IHangfireJobService hangfireJobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+            _homeworkService = homeworkService;
+            _jobService = hangfireJobService;
         }
 
         public async Task<Result<HomeworkStudentDto>> CreateHomeworkFromStudentAsync(HomeworkStudentRequestDto homeworkStudent)
@@ -98,6 +109,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateAddHomeworkStudentJob(newHomework);
 
             _logger.LogInformation($"Homework with id {newHomework.Id} for student with id {accountId} has been added ");
 
@@ -202,6 +215,8 @@ namespace CharlieBackend.Business.Services
 
             await _unitOfWork.CommitAsync();
 
+            await _jobService.CreateUpdateHomeworkStudentJob(foundStudentHomework);
+
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(foundStudentHomework));
         }
 
@@ -214,13 +229,19 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId)
         {
-            var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(_currentUserService.EntityId, homeworkId);
+            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkId);
+            var result = new List<HomeworkStudent>();
+            var errors = await _homeworkService.HasMentorRightsToSeeHomeworks(new Core.DTO.Homework.GetHomeworkRequestDto()
+            {
+                CourseId = homework?.Lesson.StudentGroup.CourseId,
+                GroupId = homework?.Lesson.StudentGroupId
+            }).ToListAsync();
 
-            if (homework == null)
+            if (errors.Any() || homework == null)
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not found or mentor doesn't have access to it");
 
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
-            var result = new List<HomeworkStudent>();
+            
 
             foreach (var homeworkStudent in homeworksStudent)
             {
@@ -327,6 +348,8 @@ namespace CharlieBackend.Business.Services
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _jobService.CreateUpdateMarkJob(homeworkStudent);
 
             return Result<HomeworkStudentDto>.GetSuccess(_mapper.Map<HomeworkStudentDto>(homeworkStudent));
         }

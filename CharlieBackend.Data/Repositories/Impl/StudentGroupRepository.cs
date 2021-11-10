@@ -154,6 +154,30 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .Select(s => s.StudentId).ToListAsync();
         }
 
+        public async Task<IList<Student>> GetGroupStudentsByGroupId(long id)
+        {
+            return await _applicationContext.StudentsOfStudentGroups.Where(s => s.StudentGroupId == id)
+                .Include(x => x.Student)
+                .ThenInclude(x => x.Account)
+                .Select(s => s.Student)
+                .ToListAsync();
+        }
+
+        public async Task<IList<StudentGroup>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate)
+        {
+            return await _applicationContext.StudentGroups
+                .AsNoTracking()
+                .Include(group => group.StudentsOfStudentGroups)
+                .Include(group => group.MentorsOfStudentGroups)
+                .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
+                                                        group.FinishDate > startDate)
+                .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate || 
+                                                         group.StartDate < finishDate)
+                .Where(group => group.Course.IsActive)
+                .OrderBy(group => group.StartDate)
+                .ToListAsync();
+        }
+
         public async Task<IList<long?>> GetStudentGroupsIdsByStudentId(long id)
         {
             return await _applicationContext.StudentsOfStudentGroups

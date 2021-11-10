@@ -3,6 +3,7 @@ using CharlieBackend.Api.Extensions;
 using CharlieBackend.Api.Middlewares;
 using CharlieBackend.Api.VersioningHelpers;
 using CharlieBackend.Business.Options;
+using CharlieBackend.Business.Services.Notification;
 using CharlieBackend.Core.DTO.Result;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Mapping;
@@ -12,6 +13,8 @@ using CharlieBackend.Root;
 using EasyNetQ;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.MySql;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -57,6 +60,29 @@ namespace CharlieBackend.Api
         public void ConfigureServices(IServiceCollection services)
         {
             CompositionRoot.InjectDependencies(services, Configuration);
+
+            services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(
+                new MySqlStorage(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    new MySqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(10),
+                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                        PrepareSchemaIfNecessary = true,
+                        DashboardJobListLimit = 25000,
+                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TablesPrefix = "Hangfire",
+                    }
+                )
+            )
+            );
+
+            services.AddHangfireServer();
 
             var authOptions = new AuthOptions();
             Configuration.GetSection("AuthOptions").Bind(authOptions);
@@ -196,9 +222,15 @@ namespace CharlieBackend.Api
         public void Configure(IApplicationBuilder app,
             IWebHostEnvironment env,
             ApplicationContext dbContext,
-            IApiVersionDescriptionProvider provider)
+            IApiVersionDescriptionProvider provider,
+            IServiceProvider serviceProvider)
         {
+            GlobalConfiguration.Configuration
+                .UseActivator(new HangfireActivator(serviceProvider));
+
             dbContext.Database.EnsureCreated();
+
+            CompositionRoot.Configure(serviceProvider, Configuration);
 
             app.UseCors(builder =>
             {
@@ -228,12 +260,13 @@ namespace CharlieBackend.Api
                 }
             });
 
+            app.UseHttpsRedirection();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHangfireDashboard("/hangfire");
             }
-
-            app.UseHttpsRedirection();
 
             //Added Serilog to the app�s middleware pipeline
             app.UseSerilogRequestLogging();
@@ -250,6 +283,7 @@ namespace CharlieBackend.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
             });
         }
     }
