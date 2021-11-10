@@ -25,6 +25,8 @@ namespace CharlieBackend.Business.Models.Commands
         private readonly IMentorService _mentorService;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IStudentService _studentService;
+        private readonly IHomeworkService _homeworkService;
+        private readonly IHomeworkStudentService _homeworkStudentService;
 
         public override string Name => "/newhomework";
 
