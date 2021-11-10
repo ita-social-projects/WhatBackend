@@ -74,7 +74,9 @@ namespace CharlieBackend.Business.Models.Commands
                     {
                         var studentHomeworks = (await _homeworkStudentService
                             .GetHomeworkStudentForMentor(task.Id))
-                            .Where(homework => homework.Mark == null)
+                            .Data
+                            .Where(homework => homework.Mark == null
+                            && homework.IsSent)
                             .GroupBy(homework => homework.StudentId);
                         foreach (var studentHomework in studentHomeworks)
                         {

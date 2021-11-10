@@ -82,7 +82,6 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
-        //TODO: why x.Lesson.MentorId == mentorId ? Should we grant these rights to all mentors on the course?
         public async Task<Homework> GetMentorHomeworkAsync(long mentorId, long homeworkId)
         {
             return await _applicationContext.Homeworks

@@ -112,7 +112,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of student's study groups</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find student or student's study groups</response>
         [SwaggerResponse(200, type: typeof(IList<StudentStudyGroupsDto>))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin, Student")]
         [HttpGet("{id}/groups")]
         public async Task<ActionResult<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentId(long id)
         {

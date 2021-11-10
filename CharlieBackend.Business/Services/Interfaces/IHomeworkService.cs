@@ -11,9 +11,11 @@ namespace CharlieBackend.Business.Services.Interfaces
     public interface IHomeworkService
     {
         Task<Result<IList<HomeworkDto>>> GetHomeworks();
+
         Task<Result<HomeworkDto>> CreateHomeworkAsync(HomeworkRequestDto homeworkDto);
 
         Task<Result<HomeworkDto>> GetHomeworkByIdAsync(long homeworkId);
+
         Task<Result<IList<HomeworkDto>>> GetHomeworksAsync(GetHomeworkRequestDto request);
 
         Task<Result<HomeworkDto>> UpdateHomeworkAsync(long homeworkId, HomeworkRequestDto updateHomeworkDto);
@@ -24,5 +26,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate);
 
+        IAsyncEnumerable<string> HasMentorRightsToSeeHomeworks(GetHomeworkRequestDto request);
     }
 }

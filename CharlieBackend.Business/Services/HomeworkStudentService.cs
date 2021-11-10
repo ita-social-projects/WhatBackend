@@ -23,14 +23,21 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkStudentService> _logger;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IHomeworkService _homeworkService;
         private readonly IHangfireJobService _jobService;
 
-        public HomeworkStudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkStudentService> logger, ICurrentUserService currentUserService, IHangfireJobService hangfireJobService)
+        public HomeworkStudentService(IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ILogger<HomeworkStudentService> logger,
+            ICurrentUserService currentUserService,
+            IHomeworkService homeworkService,
+            IHangfireJobService hangfireJobService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;
+            _homeworkService = homeworkService;
             _jobService = hangfireJobService;
         }
 
@@ -215,23 +222,26 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<HomeworkStudentDto>> GetHomeworkStudentForStudent()
         {
-            long accountId = _currentUserService.AccountId;
-
-            var student = await _unitOfWork.StudentRepository.GetStudentByAccountIdAsync(accountId);
-            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(student.Id);
+            var homework = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForStudent(_currentUserService.EntityId);
 
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
         public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId)
         {
-            var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(_currentUserService.EntityId, homeworkId);
+            var homework = await _unitOfWork.HomeworkRepository.GetByIdAsync(homeworkId);
+            var result = new List<HomeworkStudent>();
+            var errors = await _homeworkService.HasMentorRightsToSeeHomeworks(new Core.DTO.Homework.GetHomeworkRequestDto()
+            {
+                CourseId = homework?.Lesson.StudentGroup.CourseId,
+                GroupId = homework?.Lesson.StudentGroupId
+            }).ToListAsync();
 
-            if (homework == null)
+            if (errors.Any() || homework == null)
                 return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, $"Homework with id {homeworkId} not found or mentor doesn't have access to it");
 
             var homeworksStudent = await _unitOfWork.HomeworkStudentRepository.GetHomeworkStudentForMentor(homework.Id);
-            var result = new List<HomeworkStudent>();
+            
 
             foreach (var homeworkStudent in homeworksStudent)
             {
@@ -310,7 +320,6 @@ namespace CharlieBackend.Business.Services
                 return Result<HomeworkStudentDto>.GetError(ErrorCode.NotFound, $"Homework from student with id {request.StudentHomeworkId} hasn't found");
             }
 
-            long accountId = _currentUserService.AccountId;
             var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
             
             if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
@@ -319,7 +328,7 @@ namespace CharlieBackend.Business.Services
                 homeworkStudentHistory.Last().Mark.Comment = request.MentorComment;
                 homeworkStudentHistory.Last().Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudentHistory.Last().Mark.Type = request.MarkType;
-                homeworkStudentHistory.Last().Mark.EvaluatedBy = accountId;
+                homeworkStudentHistory.Last().Mark.EvaluatedBy = _currentUserService.AccountId;
 
                 _unitOfWork.HomeworkStudentHistoryRepository.Update(homeworkStudentHistory.Last());
             }
@@ -333,7 +342,7 @@ namespace CharlieBackend.Business.Services
                 homeworkStudent.Mark.Comment = request.MentorComment;
                 homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudent.Mark.Type = request.MarkType;
-                homeworkStudent.Mark.EvaluatedBy = accountId;
+                homeworkStudent.Mark.EvaluatedBy = _currentUserService.AccountId;
 
                 _unitOfWork.HomeworkStudentRepository.Update(homeworkStudent);
             }

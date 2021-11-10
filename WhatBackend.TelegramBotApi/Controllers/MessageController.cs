@@ -99,10 +99,11 @@ namespace WhatBackend.TelergamBot.Controllers
                                 UserRole.Student.ToString()));
                             var studentService = _serviceProvider
                                 .GetService<IStudentService>();
-                            var student = studentService
+                            var student = await studentService
                                 .GetStudentByAccountIdAsync(account.Id);
                             identity.AddClaim(new Claim(
-                                ClaimConstants.IdClaim, student.Id.ToString()));
+                                ClaimConstants.IdClaim,
+                                student.Data.Id.ToString()));
                         }
                         else if(Attribute.GetCustomAttribute(command.GetType(),
                             typeof(MentorRoleCommandAttribute)) != null)
@@ -111,10 +112,11 @@ namespace WhatBackend.TelergamBot.Controllers
                                 ClaimsIdentity.DefaultRoleClaimType, UserRole.Mentor.ToString()));
                             var mentorService = _serviceProvider
                                 .GetService<IMentorService>();
-                            var mentor = mentorService
+                            var mentor = await mentorService
                                 .GetMentorByAccountIdAsync(account.Id);
                             identity.AddClaim(new Claim(
-                                ClaimConstants.IdClaim, mentor.Id.ToString()));
+                                ClaimConstants.IdClaim,
+                                mentor.Data.Id.ToString()));
                         }
                         var result = await command.Execute(message, client);
                         break;
