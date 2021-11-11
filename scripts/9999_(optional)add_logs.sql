@@ -40,7 +40,7 @@ BEGIN
 	INSERT INTO `AccountsChanges`
     (`AccountID`, `NewRole`, `NewFirstName`, `NewLastName`, `NewEmail`, `NewPasswordHash`, `NewSalt`, `NewIsActive`, `NewForgotPasswordToken`, `NewForgotTokenGenDate`, `NewAvatarID`, `QueriedBy`)
     VALUES
-    (NEW.`ID`, NEW.`Role`, NEW.`FirstName`, NEW.`LastName`, NEW.`Email`, NEW.`PasswordHash`, NEW.`Salt`, NEW.`IsActive`, NEW.`ForgotPasswordToken`, NEW.`ForgotTokenGenDate`, NEW.`AvatarID`, NEW.`LastEditorID`)
+    (NEW.`ID`, NEW.`Role`, NEW.`FirstName`, NEW.`LastName`, NEW.`Email`, NEW.`PasswordHash`, NEW.`Salt`, NEW.`IsActive`, NEW.`ForgotPasswordToken`, NEW.`ForgotTokenGenDate`, NEW.`AvatarID`, NEW.`UpdatedByAccountId`)
     ;
 END$$
 
