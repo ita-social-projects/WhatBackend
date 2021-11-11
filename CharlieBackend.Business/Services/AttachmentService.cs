@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-
 namespace CharlieBackend.Business.Services
 {
     public class AttachmentService : IAttachmentService

@@ -14,7 +14,6 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-
 namespace CharlieBackend.Api.UnitTest
 {
     public class AccountServiceTests : TestBase

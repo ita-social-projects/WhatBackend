@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Threading.Tasks;
 
-
 namespace CharlieBackend.Data.Repositories.Impl
 {
     public class UnitOfWork : IUnitOfWork

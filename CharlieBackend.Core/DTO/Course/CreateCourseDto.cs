@@ -1,6 +1,4 @@
-﻿
-
-namespace CharlieBackend.Core.DTO.Course
+﻿namespace CharlieBackend.Core.DTO.Course
 {
     public class CreateCourseDto
     {

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-
 namespace CharlieBackend.Data.Helpers
 {
     public static class ExtensionMethods
