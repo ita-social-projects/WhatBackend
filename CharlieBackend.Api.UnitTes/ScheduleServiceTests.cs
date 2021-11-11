@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using FluentAssertions;
-using CharlieBackend.Business.Services.Interfaces;
-using System.Linq;
-using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 
 namespace CharlieBackend.Api.UnitTest
 {

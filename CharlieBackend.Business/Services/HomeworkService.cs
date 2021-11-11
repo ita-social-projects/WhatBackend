@@ -2,7 +2,6 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
-using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
@@ -25,17 +24,13 @@ namespace CharlieBackend.Business.Services
     public class HomeworkService : IHomeworkService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICourseService _courseService;
-        private readonly ILessonService _lessonService;
         private readonly IMapper _mapper;
         private readonly ILogger<HomeworkService> _logger;
         private readonly ICurrentUserService _currentUserService;
 
-        public HomeworkService(IUnitOfWork unitOfWork, ICourseService courseService, ILessonService lessonService, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService)
+        public HomeworkService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<HomeworkService> logger, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
-            _courseService = courseService;
-            _lessonService = lessonService;
             _mapper = mapper;
             _logger = logger;
             _currentUserService = currentUserService;

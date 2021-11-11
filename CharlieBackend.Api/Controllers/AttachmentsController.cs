@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Core;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Attachment;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using CharlieBackend.Business.Services.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {

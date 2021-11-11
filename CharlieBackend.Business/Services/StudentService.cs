@@ -1,13 +1,13 @@
 using AutoMapper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Student;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {

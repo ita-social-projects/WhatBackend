@@ -1,11 +1,11 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CharlieBackend.Core.DTO.Dashboard;
-using Swashbuckle.AspNetCore.Annotations;
-using Microsoft.AspNetCore.Authorization;
+﻿using CharlieBackend.Api.SwaggerExamples.DashboardController;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Api.SwaggerExamples.DashboardController;
+using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Dashboard;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {

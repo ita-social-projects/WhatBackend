@@ -1,9 +1,6 @@
-﻿using System;
-using System.Text;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CharlieBackend.Core.DTO.Dashboard;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Models.ResultModel;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {

@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-
 namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 {
     public class OccurenceRangeValidatorTests : TestBase

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.DTO.Lesson
 {

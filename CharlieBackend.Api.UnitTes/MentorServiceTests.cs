@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
-using CharlieBackend.Data.Repositories.Impl;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using FluentAssertions;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using CharlieBackend.Core.DTO.Mentor;
-using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {

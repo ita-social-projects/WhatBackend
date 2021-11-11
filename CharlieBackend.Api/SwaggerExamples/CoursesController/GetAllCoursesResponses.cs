@@ -1,8 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Course;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CharlieBackend.Api.SwaggerExamples.CoursesController
 {

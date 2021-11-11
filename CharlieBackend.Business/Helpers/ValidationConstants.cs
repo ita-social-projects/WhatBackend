@@ -1,5 +1,4 @@
-﻿using System;
-namespace CharlieBackend.Business.Helpers
+﻿namespace CharlieBackend.Business.Helpers
 {
     public static class ValidationConstants
     {

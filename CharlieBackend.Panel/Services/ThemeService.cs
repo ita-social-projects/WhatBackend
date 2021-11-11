@@ -1,9 +1,7 @@
-﻿using CharlieBackend.Panel.Models.Theme;
+﻿using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Panel.Models.Theme;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Theme;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {

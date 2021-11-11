@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Core.DTO.StudentGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {

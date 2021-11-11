@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CharlieBackend.Core.DTO.Schedule
+﻿namespace CharlieBackend.Core.DTO.Schedule
 {
     public enum MonthIndex
     {

@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Panel.Models.Course;
-using CharlieBackend.Core.DTO.Course;
+﻿using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Panel.Models.Course;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

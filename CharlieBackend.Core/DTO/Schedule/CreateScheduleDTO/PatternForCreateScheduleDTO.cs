@@ -1,8 +1,6 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel.DataAnnotations;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {

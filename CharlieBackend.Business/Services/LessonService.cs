@@ -1,17 +1,16 @@
-﻿using System;
-using AutoMapper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
+﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.DTO.Visit;
-using System.Linq;
-using CharlieBackend.Data.Exceptions;
-using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Extensions;
+using CharlieBackend.Core.Models.ResultModel;
+using CharlieBackend.Data.Exceptions;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {
@@ -272,8 +271,7 @@ namespace CharlieBackend.Business.Services
         public async Task<Result<IList<StudentLessonDto>>> GetStudentLessonsAsync(
                 long studentId)
         {
-            Result<IList<StudentLessonDto>> result = null;
-
+            Result<IList<StudentLessonDto>> result;
             if ((_currentUserService.Role.Is(UserRole.Student))
                     && (_currentUserService.EntityId != studentId))
             {

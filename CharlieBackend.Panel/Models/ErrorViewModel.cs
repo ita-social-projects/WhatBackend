@@ -1,5 +1,3 @@
-using System;
-
 namespace CharlieBackend.Panel.Models
 {
     public class ErrorViewModel

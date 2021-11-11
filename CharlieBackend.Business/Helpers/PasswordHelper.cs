@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
-using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Business.Helpers
 {

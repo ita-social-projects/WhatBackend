@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CharlieBackend.Core.Entities
+﻿namespace CharlieBackend.Core.Entities
 {
     public enum MarkType : byte
     {

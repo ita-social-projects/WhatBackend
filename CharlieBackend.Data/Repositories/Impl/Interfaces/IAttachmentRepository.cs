@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
+﻿using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Attachment;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

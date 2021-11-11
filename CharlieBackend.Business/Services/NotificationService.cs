@@ -1,9 +1,9 @@
-﻿using EasyNetQ;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.IntegrationEvents.Events;
+using EasyNetQ;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {

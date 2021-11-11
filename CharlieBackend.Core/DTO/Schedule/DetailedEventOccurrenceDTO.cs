@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-
-namespace CharlieBackend.Core.DTO.Schedule
+﻿namespace CharlieBackend.Core.DTO.Schedule
 {
     public class DetailedEventOccurrenceDTO
     {

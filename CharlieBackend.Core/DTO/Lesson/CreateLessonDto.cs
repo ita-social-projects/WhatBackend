@@ -1,10 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using CharlieBackend.Core.DTO.Visit;
+using System;
 using System.Collections.Generic;
-using CharlieBackend.Core.DTO.Visit;
-using System.Text.Json.Serialization;
-using CharlieBackend.Core.Models.Visit;
-using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Core.DTO.Lesson
 {

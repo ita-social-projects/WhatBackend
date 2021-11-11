@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Core.DTO.Account;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Utils.Interfaces

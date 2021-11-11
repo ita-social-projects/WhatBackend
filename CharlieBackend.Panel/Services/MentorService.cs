@@ -1,12 +1,9 @@
-﻿using CharlieBackend.Panel.Models.Course;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Panel.Models.Course;
 using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Mentor;
-using CharlieBackend.Core.Models.ResultModel;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
