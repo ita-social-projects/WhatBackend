@@ -36,7 +36,7 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
-            user.LastEditorID = _currentUserService.AccountId;
+            user.UpdatedByAccountId = _currentUserService.AccountId;
 
             Result<AccountRoleDto> result = null;
 
@@ -125,7 +125,7 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
-            user.LastEditorID = _currentUserService.AccountId;
+            user.UpdatedByAccountId = _currentUserService.AccountId;
 
             Result<AccountRoleDto> result = null;
 
@@ -169,7 +169,7 @@ namespace CharlieBackend.Business.Services
                 {
                     Email = accountModel.Email,
                     FirstName = accountModel.FirstName,
-                    LastName = accountModel.LastName,
+                    LastName = accountModel.LastName
                 };
 
                 account.Salt = PasswordHelper.GenerateSalt();
@@ -294,7 +294,7 @@ namespace CharlieBackend.Business.Services
                 {
                     user.Salt = PasswordHelper.GenerateSalt();
                     user.Password = PasswordHelper.HashPassword(changePassword.NewPassword, user.Salt);
-                    user.LastEditorID = _currentUserService.AccountId;
+                    user.UpdatedByAccountId = _currentUserService.AccountId;
 
                     await _unitOfWork.CommitAsync();
 

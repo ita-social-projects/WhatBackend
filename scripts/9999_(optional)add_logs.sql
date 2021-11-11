@@ -57,7 +57,7 @@ BEGIN
     `OldForgotTokenGenDate`, `NewForgotTokenGenDate`, `OldAvatarID`, `NewAvatarID`, `QueriedBy`)
     VALUES
     (NEW.`ID`, OLD.`Role`, NEW.`Role`, OLD.`FirstName`, NEW.`FirstName`, OLD.`LastName`, NEW.`LastName`, OLD.`Email`, NEW.`Email`, OLD.`PasswordHash`, NEW.`PasswordHash`, OLD.`Salt`, NEW.`Salt`, OLD.`IsActive`, NEW.`IsActive`, OLD.`ForgotPasswordToken`, NEW.`ForgotPasswordToken`, 
-    OLD.`ForgotTokenGenDate`, NEW.`ForgotTokenGenDate`, OLD.`AvatarID`, NEW.`AvatarID`, NEW.`LastEditorID`)
+    OLD.`ForgotTokenGenDate`, NEW.`ForgotTokenGenDate`, OLD.`AvatarID`, NEW.`AvatarID`, NEW.`UpdatedByAccountId`)
     ;
 END$$
 
