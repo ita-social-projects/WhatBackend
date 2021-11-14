@@ -96,11 +96,16 @@ namespace CharlieBackend.Panel.Controllers
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
+            var accountId = tokenS.Claims.First(claim => claim.Type == "AccountId" /*ClaimConstants.AccountClaim*/).Value; 
+
             SetResponseCookie("currentRole", role);
+
+            SetResponseCookie("accountId", accountId);
 
             var claims = new List<Claim>
             {
-                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                 new Claim("AccountId", accountId)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

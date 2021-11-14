@@ -74,6 +74,7 @@ namespace CharlieBackend.Panel
         public string UpdateMentorEndpoint { get; set; }
         public string DisableMentorEndpoint { get; set; }
         public string EnableMentorEndpoint { get; set; }
+        public string GetLessonsForMentor { get; set; }
     }
 
     public class ThemesApiEndpoints

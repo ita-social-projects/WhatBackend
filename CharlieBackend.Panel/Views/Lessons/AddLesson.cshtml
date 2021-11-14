@@ -1,13 +1,14 @@
 ﻿@*@model CharlieBackend.Core.DTO.Lesson.CreateLessonDto*@
 @model CharlieBackend.Panel.Models.Lesson.LessonCreateViewModel
 
+
 @{
     Layout = "_Layout";
 }
 
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
 
-    <div class="container mt-3 col-5">
+    <div class="container mt-4 col-6">
 
         <h1 class="h3 mb-2 text-gray-800">Add Lesson</h1>
 
@@ -51,9 +52,7 @@
                             {
                                 @foreach (var item in @ViewBag.Lesson.Themes)
                                 {
-                                    <option value="@item.Name">
-                                        @item.Name
-                                    </option>
+                                    <option value="@item.Name">@item.Name</option>
                                 }
                             }
                             else
@@ -72,9 +71,7 @@
                                 @foreach (var item in @ViewBag.Lesson.StudentGroups)
                                 {
 
-                                    <option value="@item.Id">
-                                        @item.Name
-                                    </option>
+                                    <option value="@item.Id">@item.Name</option>
 
                                 }
                             }
@@ -86,42 +83,81 @@
                     </div>
 
 
+                    <div class="form-group">
+                        <label>Student Group</label>
+                        <select class="custom-select" asp-for="LessonVisits" size="12">
+
+                            @if (@ViewBag.Lesson.Students != null)
+                            {
+
+
+                                @foreach (var student in @ViewBag.Lesson.Students)
+                                {
+                                    <option value="@student.Id"> @student.FirstName </option>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
 
 
                     <div class="card-body">
-                        <div class="table-responsive p-3" style="overflow-x:unset">
-                            <table class="table text-center table-striped container-fluid" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr class="thead-dark row">
-                                        <th class="col">Student's Name</th>
-                                        <th class="col-3">Student Mark</th>
-                                        <th class="col-3">Presence</th>
-                                    </tr>
-                                </thead>
+            <div class="table-responsive p-3" style="overflow-x:unset">
+                 <table class="table text-center table-striped container-fluid" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="thead-dark row">
+                            <th class="col">Student's Name</th>
+                            <th class="col-3">Student Mark</th>
+                            <th class="col-1">Presence</th>
+                            <th class="col-3">Comment</th>
+                        </tr>
+                    </thead>
 
-                                <tbody>
+                    <tbody>
+
+                        @for (int i = 0; i < Model.Students.Count; i++)
+			             {
+                        <tr class="row">
+
+                            @*<td class="col-2 text-truncate"><input type="checkbox" name="LessonVisits[i].Presence" value="@Model.LessonVisits[i].Presence" /></td>*@
+
+                            @*<td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id">@Model.Students[i].FirstName @Model.Students[i].LastName</td>*@
+
+                            <td class="col text-truncate "><input type="number" asp-for="@Model.LessonVisits[i].StudentId" />@Model.Students[i].Id</td>
+
+                            <td class="col-3 text-truncate "><input type="number" asp-for="@Model.LessonVisits[i].StudentMark" /></td>
+                            <td class="col-1 text-truncate"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" /></td>
+                            <td class="col-3 text-truncate"><input type="text" asp-for="LessonVisits[i].Comment" /></td>
+
+                        </tr>
+			             }
+
+                        @*@foreach (var item in Model.Students)
+                        {
+                            <tr class="row">
+
+                                <td class="col text-truncate" value="@item.Id">@item.FirstName @item.LastName</td>
+                                <td class="col-2 text-truncate "><input type="number" asp-for="StudentMark" /></td>
+                                <td class="col-2 text-truncate"><input type="checkbox" asp-for="Presence" /></td>
+                                <td class="col-3 text-truncate"><input type="text" asp-for="Comment" /></td>
+
+                            </tr>
+
+                        }*@
 
 
 
-                                    @foreach (var item in Model.Students)
-                                    {
-                                        <tr class="row">
+                    </tbody>
 
-                                            <td class="col text-truncate" value="@item.Id">@item.FirstName @item.LastName</td>
-                                            <td class="col-3 text-truncate"><input type="number" asp-for="StudentMark" /></td>
-                                            <td class="col-3 text-truncate"><input type="checkbox" asp-for="Presence" /></td>
-
-                                        </tr>
-
-                                    }
-
-
-
-                                </tbody>
-
-                            </table>
-                        </div>
-                    </div>
+                 </table>
+            </div>
+        </div>
 
 
 

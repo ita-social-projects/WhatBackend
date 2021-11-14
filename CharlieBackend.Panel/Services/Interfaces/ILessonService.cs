@@ -13,9 +13,9 @@ namespace CharlieBackend.Panel.Services.Interfaces
         Task<LessonViewModel> GetLessonById(long id);
         Task AddLessonEndpoint(LessonCreateViewModel createLesson);
         Task UpdateLessonEndpoint(long id, LessonDto lessonDto);
-        Task<LessonCreateViewModel> PrepareLessonAddAsync();
+        Task<LessonCreateViewModel> PrepareLessonAddAsync(long id);
         Task<LessonVisitModel> LessonVisits(long id);
-        Task<IList<ScheduledEventViewModel>> Get2MounthEvents();
+        Task<IList<ScheduledEventViewModel>> Get2DaysEvents();
         //Task<IList<StudentViewModel>> StudentsPartial(long id);
         Task<IList<LessonViewModel>> GetLessonsForMentorAsync(FilterLessonsRequestDto filterModel);
     }

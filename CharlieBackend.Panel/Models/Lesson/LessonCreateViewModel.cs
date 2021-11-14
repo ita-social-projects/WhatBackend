@@ -25,15 +25,15 @@ namespace CharlieBackend.Panel.Models.Lesson
 
         public DateTime LessonDate { get; set; }
 
-        public IList<VisitDto> LessonVisits { get; set; }
+        public List<VisitDto> LessonVisits { get; set; }
 
         public IList<StudentViewModel> Students { get; set; }
-        public long StudentId { get; set; }
+        //public long StudentId { get; set; }
 
-        public sbyte? StudentMark { get; set; }
+        //public sbyte? StudentMark { get; set; }
 
-        public bool Presence { get; set; }
+        //public bool Presence { get; set; }
 
-        public string? Comment { get; set; }
+        //public string? Comment { get; set; }
     }
 }

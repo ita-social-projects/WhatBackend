@@ -12,8 +12,10 @@ namespace CharlieBackend.Panel.Models.ScheduledEvent
         //public long EventOccuranceId { get; set; }
 
         public long StudentGroupId { get; set; }
+        public string StudentGroupName { get; set; }
 
         public long? ThemeId { get; set; }
+        
 
         public long? MentorId { get; set; }
 

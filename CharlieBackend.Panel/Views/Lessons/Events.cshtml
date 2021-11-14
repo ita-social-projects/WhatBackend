@@ -10,17 +10,11 @@
 
     <div id="content">
 
-        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            <a asp-action="CreateLesson" asp-controller="Lessons" class="btn btn-lg btn-success btn-circle">
-                <i class="fas fa-plus"></i>
-            </a>
-        </div>
-
         <div class="container-fluid">
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Lessons</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Nearest events</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
@@ -60,16 +54,11 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                @*<a class="dropdown-item"
-                       asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
-                        <i class="fas fa-pen"></i>
-                        <span>Edit</span>
-                    </a>
-                    <a class="dropdown-item"
-                       asp-action="Attendance" asp-controller="Lessons" asp-route-id="@item.Id">
-                        <i class="fas fa-cog"></i>
-                        <span>Show Attendance</span>
-                    </a>*@
+                                                <a class="dropdown-item"
+                                                    asp-action="CreateLesson" asp-controller="Lessons" >
+                                                    <i class="fas fa-pen"></i>
+                                                    <span>Attach new Lesson</span>
+                                                 </a>
 
                                             </div>
                                         </div>

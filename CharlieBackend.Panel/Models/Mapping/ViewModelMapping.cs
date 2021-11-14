@@ -41,29 +41,20 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<LessonDto, LessonViewModel>()
                 .ForMember(destination => destination.Mentor, config => config.MapFrom(x => new MentorViewModel() { Id = x.MentorId }))
                 .ForMember(destination => destination.StudentGroup, config => config.MapFrom(x => new StudentGroupViewModel() { Id = (long)x.StudentGroupId}));
-            //CreateMap<LessonDto, LessonVisitModel>()
-            //    .ForMember(destination => destination.Visit, config => config.MapFrom(x => new VisitDto()
-            //    {
-            //        StudentId = x.LessonVisits.FirstOrDefault().StudentId,
-            //        //Comment = x.LessonVisits.FirstOrDefault().Comment,
-            //        Presence = x.LessonVisits.FirstOrDefault().Presence,
-            //        StudentMark = x.LessonVisits.FirstOrDefault().StudentMark
-            //    }));
 
             CreateMap<LessonDto, LessonVisitModel>()
                .ForMember(destination => destination.Visit, config => config.MapFrom(x => x.LessonVisits));
-            //.ForMember(destination => destination.Students, config => config.MapFrom(x => new StudentViewModel() { Id = x.LessonVisits.FirstOrDefault().StudentId}));
 
             CreateMap<LessonCreateViewModel, CreateLessonDto>()
-                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits.Select(y => new  VisitDto()
+                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits.
+                Select(y => new  VisitDto
                 {
                     StudentId = y.StudentId,
                     StudentMark = y.StudentMark,
                     Presence = y.Presence,
                     Comment = y.Comment
-                }).ToList()));
-
-            //CreateMap<LessonCreateViewModel, CreateLessonDto>();
+                })
+                .ToList()));
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 

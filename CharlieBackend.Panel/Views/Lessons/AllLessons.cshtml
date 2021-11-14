@@ -11,9 +11,24 @@
     <div id="content">
 
         <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            <a asp-action="CreateLesson" asp-controller="Lessons" class="btn btn-lg btn-success btn-circle">
-                <i class="fas fa-plus"></i>
-            </a>
+            <div class="dropleft">
+                <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="dropdown-menu ">
+                    <a class="dropdown-item"
+                       asp-action="SelectGroup" asp-controller="Lessons" >
+                        <i class="fas fa-plus"></i>
+                        <span>Create new Lesson</span>
+                    </a>
+                    <a class="dropdown-item"
+                       asp-action="RangeOfEvents" asp-controller="Lessons" >
+                        <i class="fas fa-plus"></i>
+                        <span>Attach Lesson to Event</span>
+                    </a>
+                </div>
+            </div>
+
         </div>
 
         <div class="container-fluid">
@@ -37,39 +52,39 @@
 
                             <tbody>
                                 @foreach (var item in @Model)
-                                 {
-                                   <tr class="row">
-                                    <td class="col-2 text-truncate">@item.Mentor.FirstName @item.Mentor.LastName</td>
-                                    <td class="col-3 text-truncate">@item.StudentGroup.Name</td>
-                                    <td class="col-2 text-truncate">@item.ThemeName</td>
-                                    <td class="col-3 text-truncate">@item.LessonDate</td>
+                                {
+                                    <tr class="row">
+                                        <td class="col-2 text-truncate">@item.Mentor.FirstName @item.Mentor.LastName</td>
+                                        <td class="col-3 text-truncate">@item.StudentGroup.Name</td>
+                                        <td class="col-2 text-truncate">@item.ThemeName</td>
+                                        <td class="col-3 text-truncate">@item.LessonDate</td>
 
-                                    
-                                     <td class="col">
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondar dropdown-toggle"
-                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                <a class="dropdown-item"
-                                                   asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
-                                                    <i class="fas fa-pen"></i>
-                                                    <span>Edit</span>
-                                                </a>
-                                                <a class="dropdown-item"
-                                                   asp-action="Attendance" asp-controller="Lessons" asp-route-id="@item.Id">
+                                        <td class="col">
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondar dropdown-toggle"
+                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
                                                     <i class="fas fa-cog"></i>
-                                                    <span>Show Attendance</span>
-                                                </a>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
+                                                    <a class="dropdown-item"
+                                                       asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
+                                                        <i class="fas fa-pen"></i>
+                                                        <span>Edit</span>
+                                                    </a>
+                                                    <a class="dropdown-item"
+                                                       asp-action="Attendance" asp-controller="Lessons" asp-route-id="@item.Id">
+                                                        <i class="fas fa-cog"></i>
+                                                        <span>Show Attendance</span>
+                                                    </a>
+
+                                                </div>
                                             </div>
-                                        </div>
-                                     </td>
-                                   </tr>
-                                 }
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
