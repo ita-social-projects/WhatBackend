@@ -35,8 +35,8 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("Comment")
                 .HasColumnType("VARCHAR(1024)");
 
-            //entity.HasKey(e => e.Id)
-            //    .HasName("PRIMARY");
+            entity.HasKey(e => e.Id)
+                .HasName("PRIMARY");
 
             entity.HasOne(d => d.Lesson)
                 .WithMany(p => p.Visits)

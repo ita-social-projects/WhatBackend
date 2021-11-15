@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using Microsoft.AspNetCore.DataProtection;
+using CharlieBackend.Panel.Helpers;
 
 namespace CharlieBackend.Panel.Controllers
 {
@@ -96,16 +97,26 @@ namespace CharlieBackend.Panel.Controllers
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
 
-            var accountId = tokenS.Claims.First(claim => claim.Type == "AccountId" /*ClaimConstants.AccountClaim*/).Value; 
+            //var accountId = tokenS.Claims.First(claim => claim.Type == "AccountId" /*ClaimConstants.AccountClaim*/).Value;
+
+            //var entityId = tokenS.Claims.First(claim => claim.Type == ClaimConstants.IdClaim).Value;
+
+            //var mail = tokenS.Claims.First(claim => claim.Type == ClaimConstants.EmailClaim).Value;
 
             SetResponseCookie("currentRole", role);
 
-            SetResponseCookie("accountId", accountId);
+            //SetResponseCookie("accountId", accountId);
+
+            //SetResponseCookie("entityId", entityId);
+
+            //SetResponseCookie("mail", mail);
 
             var claims = new List<Claim>
             {
-                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                 new Claim("AccountId", accountId)
+                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                 //new Claim("AccountId", accountId),
+                 //new Claim(ClaimConstants.IdClaim, entityId)
+                 //new Claim(ClaimConstants.EmailClaim, mail)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
