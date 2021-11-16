@@ -96,9 +96,9 @@ namespace CharlieBackend.Panel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-            var accountId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.AccountClaim).Value;
-            var entityId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EntityClaim).Value;
-            var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EmailClaim).Value;
+            var accountId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.AccountId).Value;
+            var entityId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EntityId).Value;
+            var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Email).Value;
 
             SetResponseCookie("currentRole", role);
             SetResponseCookie("accountId", accountId);
@@ -108,9 +108,9 @@ namespace CharlieBackend.Panel.Controllers
             var claims = new List<Claim>
             {
                  new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                 new Claim(ClaimsConstants.AccountClaim, accountId),
-                 new Claim(ClaimsConstants.EntityClaim, entityId),
-                 new Claim(ClaimsConstants.EmailClaim, email)
+                 new Claim(ClaimsConstants.AccountId, accountId),
+                 new Claim(ClaimsConstants.EntityId, entityId),
+                 new Claim(ClaimsConstants.Email, email)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

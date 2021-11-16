@@ -2,8 +2,8 @@
 {
     public static class ClaimsConstants
     {
-        public const string EntityClaim = "Id";
-        public const string EmailClaim = "Email";
-        public const string AccountClaim = "AccountId";
+        public const string EntityId = "Id";
+        public const string Email = "Email";
+        public const string AccountId = "AccountId";
     }
 }

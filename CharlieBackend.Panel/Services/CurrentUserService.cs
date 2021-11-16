@@ -25,7 +25,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_accountId == default)
                 {
-                    var accountId = GetClaimValue(claimType: ClaimsConstants.AccountClaim);
+                    var accountId = GetClaimValue(claimType: ClaimsConstants.AccountId);
                     if (!long.TryParse(accountId, out _accountId))
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
@@ -41,7 +41,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_entityId == default)
                 {
-                    var entityId = GetClaimValue(ClaimsConstants.EntityClaim);
+                    var entityId = GetClaimValue(ClaimsConstants.EntityId);
                     if (!long.TryParse(entityId, out _entityId))
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
@@ -57,7 +57,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_email is null)
                 {
-                    _email = GetClaimValue(ClaimsConstants.EmailClaim);
+                    _email = GetClaimValue(ClaimsConstants.Email);
                     if (_email is null)
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
