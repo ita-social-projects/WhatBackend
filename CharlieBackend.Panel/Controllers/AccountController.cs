@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -95,12 +96,21 @@ namespace CharlieBackend.Panel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+            var accountId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.AccountClaim).Value;
+            var entityId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EntityClaim).Value;
+            var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EmailClaim).Value;
 
             SetResponseCookie("currentRole", role);
+            SetResponseCookie("accountId", accountId);
+            SetResponseCookie("entityId", entityId);
+            SetResponseCookie("email", email);
 
             var claims = new List<Claim>
             {
-                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                 new Claim(ClaimsConstants.AccountClaim, accountId),
+                 new Claim(ClaimsConstants.EntityClaim, entityId),
+                 new Claim(ClaimsConstants.EmailClaim, email)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
