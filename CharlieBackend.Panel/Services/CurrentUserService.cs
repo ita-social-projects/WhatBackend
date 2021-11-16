@@ -3,10 +3,8 @@ using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services
 {
@@ -28,7 +26,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_accountId == default)
                 {
-                    var accountIdString = GetClaimValue(claimType: ClaimConstants.AccountClaim);
+                    var accountIdString = GetClaimValue(claimType: ClaimsConstants.AccountClaim);
 
                     if (!long.TryParse(accountIdString, out _accountId))
                     {
@@ -46,10 +44,8 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_entityId == default)
                 {
-                    //var enti =
-                        //User//.Claims.FirstOrDefault(c => c.Type == ClaimConstants.IdClaim).Value;
 
-                    var entityIdString = GetClaimValue(claimType: ClaimConstants.IdClaim);
+                    var entityIdString = GetClaimValue(claimType: ClaimsConstants.IdClaim);
 
                     if (!long.TryParse(entityIdString, out _entityId))
                     {
@@ -67,7 +63,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_email is null)
                 {
-                    _email = GetClaimValue(claimType: ClaimConstants.EmailClaim);
+                    _email = GetClaimValue(claimType: ClaimsConstants.EmailClaim);
 
                     if (_email is null)
                     {
@@ -98,12 +94,11 @@ namespace CharlieBackend.Panel.Services
 
         private string GetClaimValue(string claimType)
         {
-            return _httpContextAccessor
-                .HttpContext
-                .User
-                ?.Claims
-                ?.SingleOrDefault(claim => claim.Type == claimType)
-                ?.Value;
+            return _httpContextAccessor.HttpContext
+                .User?
+                .Claims?
+                .SingleOrDefault(claim => claim.Type == claimType)?
+                .Value;
         }
     }
 }

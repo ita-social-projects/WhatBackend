@@ -96,27 +96,21 @@ namespace CharlieBackend.Panel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-
-            //var accountId = tokenS.Claims.First(claim => claim.Type == "AccountId" /*ClaimConstants.AccountClaim*/).Value;
-
-            //var entityId = tokenS.Claims.First(claim => claim.Type == ClaimConstants.IdClaim).Value;
-
-            //var mail = tokenS.Claims.First(claim => claim.Type == ClaimConstants.EmailClaim).Value;
+            var accountId = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.AccountClaim).Value;
+            var entityId = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.IdClaim).Value;
+            var mail = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.EmailClaim).Value;
 
             SetResponseCookie("currentRole", role);
-
-            //SetResponseCookie("accountId", accountId);
-
-            //SetResponseCookie("entityId", entityId);
-
-            //SetResponseCookie("mail", mail);
+            SetResponseCookie("accountId", accountId);
+            SetResponseCookie("entityId", entityId);
+            SetResponseCookie("mail", mail);
 
             var claims = new List<Claim>
             {
-                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
-                 //new Claim("AccountId", accountId),
-                 //new Claim(ClaimConstants.IdClaim, entityId)
-                 //new Claim(ClaimConstants.EmailClaim, mail)
+                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
+                 new Claim(ClaimsConstants.AccountClaim, accountId),
+                 new Claim(ClaimsConstants.IdClaim, entityId),
+                 new Claim(ClaimsConstants.EmailClaim, mail)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
