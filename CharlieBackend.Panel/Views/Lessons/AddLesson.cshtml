@@ -63,7 +63,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    @*<div class="form-group">
                         <label>Student Group</label>
                         <select class="custom-select" asp-for="StudentGroupId" size="1">
                             @if (@ViewBag.Lesson.StudentGroups != null)
@@ -80,7 +80,7 @@
                                 <option value="@null">null</option>
                             }
                         </select>
-                    </div>
+                    </div>*@
 
 
                     <div class="form-group">
@@ -127,9 +127,11 @@
 
                             @*<td class="col-2 text-truncate"><input type="checkbox" name="LessonVisits[i].Presence" value="@Model.LessonVisits[i].Presence" /></td>*@
 
-                            @*<td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id">@Model.Students[i].FirstName @Model.Students[i].LastName</td>*@
+                            <td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
 
-                            <td class="col text-truncate "><input type="number" asp-for="@Model.LessonVisits[i].StudentId" />@Model.Students[i].Id</td>
+                            @*<td class="col text-truncate ">@Model.Students[i].FirstName @Model.Students[i].LastName</td>*@
+
+                            <td class="col-3 text-truncate "><input type="hidden" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id" /></td>
 
                             <td class="col-3 text-truncate "><input type="number" asp-for="@Model.LessonVisits[i].StudentMark" /></td>
                             <td class="col-1 text-truncate"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" /></td>

@@ -58,8 +58,19 @@ namespace CharlieBackend.Panel.Services
             var themes = _themeService.GetAllThemesAsync();
             var students = studentGroups.Where(x => x.Id == stGroupId).FirstOrDefault().Students;
 
-            List<VisitDto> newVisits = new List<VisitDto>(new VisitDto[students.Count]);
-            
+            //var visits = new VisitDto[students.Count];
+
+            //for (int i = 0; i < students.Length; i++)
+            //{
+            //    visits[i] = new VisitDto
+            //    {
+            //        StudentId = students[i].Id
+
+            //    };
+            //}
+
+            //List<VisitDto> newVisits = new List<VisitDto>(new VisitDto[students.Count]);
+
 
             var newLesson = new LessonCreateViewModel()
             {
@@ -67,15 +78,13 @@ namespace CharlieBackend.Panel.Services
                 Mentors = await mentors,
                 Themes = await themes,
                 Students = students,
-                LessonVisits = newVisits
+                LessonVisits = students.Select(s => new VisitDto { StudentId = s.Id }).ToList()
 
                 //LessonVisits = new List<VisitDto>()
-                //{
-                //   new VisitDto() {},
-                //   new VisitDto() {}                 
-                //}
+                
                 
             };
+
 
             return newLesson;
         }
