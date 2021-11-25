@@ -1,7 +1,10 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.HomeworkStudent;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Helpers;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,13 +30,28 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-      
         public async Task<bool> IsStudentHasHomeworkAsync(long studentId, long homeworkId)
         {
             return await _applicationContext.HomeworkStudents.AnyAsync(x => (x.StudentId == studentId) && (x.HomeworkId == homeworkId));
         }
 
-        
+        public async Task<IList<HomeworkStudent>> GetHomeworkForStudent(long studentId, DateTime? startDate, DateTime? finishDate, long groupId)
+        {
+            return await _applicationContext.HomeworkStudents
+                .Include(x => x.AttachmentOfHomeworkStudents)
+                .Include(x => x.Homework)
+                .ThenInclude(x => x.Lesson)
+                .Include(x => x.Student)
+                .Include(x => x.Student.Account)
+                .Include(x => x.Mark)
+                .WhereIf(startDate != null && startDate != default(DateTime),
+                 x => x.PublishingDate >= startDate)
+                .WhereIf(finishDate != null && finishDate != default(DateTime),
+                x => x.PublishingDate <= finishDate)
+                .Where(x => x.StudentId == studentId && x.Homework.Lesson.StudentGroupId == groupId && x.IsSent == true)
+                .ToListAsync();
+        }
+
         public async Task<IList<HomeworkStudent>> GetHomeworkStudentForStudent(long studentId)
         {
             return await _applicationContext.HomeworkStudents

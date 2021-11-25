@@ -212,6 +212,23 @@ namespace CharlieBackend.Business.Services
             return _mapper.Map<IList<HomeworkStudentDto>>(homework);
         }
 
+        public async Task<Result<IList<HomeworkStudentDto>>> GetComplitedHomeworkStudentByFilter(HomeworkStudentFilter homeworkStudentFilter)
+        {
+
+            var studentId = _currentUserService.EntityId;
+
+            if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId, homeworkStudentFilter.GroupId))
+            {
+                return Result<IList<HomeworkStudentDto>>.GetError(ErrorCode.NotFound, "Group id is incorrect");
+            }
+
+            var homeworksStudents = await _unitOfWork.HomeworkStudentRepository.GetHomeworkForStudent(studentId, homeworkStudentFilter.StartDate,
+                homeworkStudentFilter.FinishtDate, homeworkStudentFilter.GroupId);
+
+            var result = _mapper.Map<IList<HomeworkStudentDto>>(homeworksStudents);
+            return Result<IList<HomeworkStudentDto>>.GetSuccess(result);
+        }
+
         public async Task<Result<IList<HomeworkStudentDto>>> GetHomeworkStudentForMentor(long homeworkId)
         {
             var homework = await _unitOfWork.HomeworkRepository.GetMentorHomeworkAsync(_currentUserService.EntityId, homeworkId);
@@ -300,7 +317,7 @@ namespace CharlieBackend.Business.Services
             }
 
             var homeworkStudentHistory = await _unitOfWork.HomeworkStudentHistoryRepository.GetHomeworkStudentHistoryByHomeworkStudentId(homeworkStudent.Id);
-            
+
             if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
             {
                 homeworkStudentHistory.Last().Mark.Value = request.StudentMark;

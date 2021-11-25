@@ -62,6 +62,19 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the student's completed homework in the group
+        /// </summary>
+        [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
+        [Authorize(Roles = "Student")]
+        [HttpGet("done")]
+        public async Task<ActionResult> GetComplitedHomeworkStudentByFilter([FromQuery] HomeworkStudentFilter homeworkForStudent)
+        {
+            var results = await _homeworkStudentService.GetComplitedHomeworkStudentByFilter(homeworkForStudent);
+
+            return results.ToActionResult();
+        }
+
+        /// <summary>
         /// Gets student homework for Mentor by homework id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
