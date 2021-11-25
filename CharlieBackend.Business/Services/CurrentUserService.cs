@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Business.Helpers;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -93,9 +93,8 @@ namespace CharlieBackend.Business.Services
             {
                 string roleString = GetClaimValue(claimType: ClaimsIdentity.DefaultRoleClaimType);
 
-                UserRole role;
 
-                if (!Enum.TryParse<UserRole>(roleString, out role))
+                if (!Enum.TryParse<UserRole>(roleString, out UserRole role))
                 {
                     throw new UnauthorizedAccessException("Not authorized!");
                 }

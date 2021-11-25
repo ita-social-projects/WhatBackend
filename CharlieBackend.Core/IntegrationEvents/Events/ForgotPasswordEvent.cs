@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Core.IntegrationEvents.Events
 {

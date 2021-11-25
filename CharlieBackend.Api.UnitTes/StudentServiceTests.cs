@@ -6,11 +6,11 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using FluentAssertions;
 using Moq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using FluentAssertions;
-using System.Collections.Generic;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -37,7 +37,8 @@ namespace CharlieBackend.Api.UnitTest
                 _unitOfWorkMock.Object,
                 _mapper,
                 _notificationServiceMock.Object,
-                _blobServiceMock.Object);
+                _blobServiceMock.Object,
+                GetCurrentUserAsExistingStudent().Object);
         }
 
         private void InitializeForCreateStudentAsync(long studentExpectedId = 10)

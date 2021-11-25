@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using CharlieBackend.Core;
-using System;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Exceptions;
+using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {
@@ -131,6 +131,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Lessons
                 .Include(x => x.Visits)
+                .Include(x => x.Theme)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
         }
 

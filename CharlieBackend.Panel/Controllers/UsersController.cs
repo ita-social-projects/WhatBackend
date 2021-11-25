@@ -1,10 +1,7 @@
-﻿using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Account;
+﻿using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

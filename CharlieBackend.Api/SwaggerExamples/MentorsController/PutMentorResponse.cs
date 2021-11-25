@@ -1,8 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CharlieBackend.Api.SwaggerExamples.MentorsController
 {

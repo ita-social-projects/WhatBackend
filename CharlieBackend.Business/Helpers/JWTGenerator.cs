@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Security.Claims;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using CharlieBackend.Business.Options;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;

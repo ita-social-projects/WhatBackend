@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Panel.Models.StudentGroups;
-using CharlieBackend.Core.DTO.StudentGroups;
+﻿using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Panel.Models.StudentGroups;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

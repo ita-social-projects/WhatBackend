@@ -2,9 +2,7 @@
 using CharlieBackend.Core.Models.ResultModel;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using CharlieBackend.Core.Entities;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {

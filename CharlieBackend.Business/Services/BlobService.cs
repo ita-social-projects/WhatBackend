@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using Azure.Storage.Blobs;
-using CharlieBackend.Core;
-using System.Threading.Tasks;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Microsoft.Extensions.Logging;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.Entities;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services
 {

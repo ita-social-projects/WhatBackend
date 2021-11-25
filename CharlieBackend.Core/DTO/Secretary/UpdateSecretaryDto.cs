@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-namespace CharlieBackend.Core.DTO.Secretary
+﻿namespace CharlieBackend.Core.DTO.Secretary
 {
     public class UpdateSecretaryDto
     {

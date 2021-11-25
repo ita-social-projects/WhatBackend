@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
 
-
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
 {
     public class OccurenceRangeValidator : AbstractValidator<OccurenceRange>

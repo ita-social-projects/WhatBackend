@@ -1,6 +1,6 @@
-﻿using CharlieBackend.Panel.Models.Account;
+﻿using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Panel.Models.Account;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Account;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;

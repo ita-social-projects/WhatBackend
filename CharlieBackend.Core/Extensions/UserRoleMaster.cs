@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Core.Entities;
-using System;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Core.Extensions

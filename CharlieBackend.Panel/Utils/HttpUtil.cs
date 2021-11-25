@@ -1,15 +1,14 @@
-using System;
-using System.Text;
-using System.Net.Http;
-using System.Threading.Tasks;
-using CharlieBackend.Panel.Utils.Interfaces;
-using Newtonsoft.Json;
-using CharlieBackend.Panel.Exceptions;
 using CharlieBackend.Core.DTO.Result;
-using System.Net.Http.Headers;
+using CharlieBackend.Panel.Exceptions;
+using CharlieBackend.Panel.Utils.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.DataProtection;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Utils
 {

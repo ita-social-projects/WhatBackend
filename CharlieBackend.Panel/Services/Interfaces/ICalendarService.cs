@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Panel.Models.Calendar;
-using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Panel.Models.Calendar;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services.Interfaces

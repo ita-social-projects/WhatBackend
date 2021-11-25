@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-
-namespace CharlieBackend.Core.DTO.Theme
+﻿namespace CharlieBackend.Core.DTO.Theme
 {
     public class CreateThemeDto
     {

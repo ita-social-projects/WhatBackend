@@ -1,16 +1,15 @@
-﻿using Moq;
-using Xunit;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Repositories.Impl;
-using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 {

@@ -6,6 +6,10 @@
     .out-of-range {
         background: #edeff1;
     }
+    .auto-scroll {
+        white-space: normal;
+        width: 200px;
+    }
     .events button {
         margin-top: 2px;
         width: 100%;
@@ -32,21 +36,21 @@
 </style>
 @section Scripts{
     <script type="text/javascript">
-        var seGroupdID = null;
-        var seMentorId = null;
-        var seLessonId = null;
-        var seThemeId = null;
+        var seGroup = null;
+        var seMentor = null;
+        var seTheme = null;
+        var seTime = null;
         $(document).on("click", ".btn-event", function (e) {
             e.preventDefault();
             var _self = $(this);
-            seGroupdID = _self.attr("segroupdid");
-            seMentorId = _self.attr("sementorid");
-            seLessonId = _self.attr("selessonid");
-            seThemeId = _self.attr("sethemeid");
-            $("#seGroupdID").val(seGroupdID);
-            $("#seMentorId").val(seMentorId);
-            $("#seLessonId").val(seLessonId);
-            $("#seThemeId").val(seThemeId);
+            seGroup = _self.attr("seGroup");
+            seMentor = _self.attr("seMentor");
+            seTheme = _self.attr("seTheme");
+            seTime = _self.attr("seTime");
+            $("#seGroup").val(seGroup);
+            $("#seMentor").val(seMentor);
+            $("#seTheme").val(seTheme);
+            $("#seTime").val(seTime);
         });
     </script>
 }
@@ -63,15 +67,15 @@
                                 <div class="input-group-prepend">
                                     <button class="btn btn-outline-secondary" type="submit">Update</button>
                                 </div>
-                                <select class="custom-select" name="GroupID" id="groupSelect" aria-label="Example select with button addon">
+                                <select class="custom-select" name="GroupId" id="groupSelect" aria-label="Example select with button addon">
                                     @if (Model.ScheduledEventFilter.GroupID.HasValue)
                                     {
                                         <option value="null">-Group-</option>
-                                        <option value="@Model.ScheduledEventFilter.GroupID.Value" selected>Group @Model.StudentGroups.First(x => x.Id == Model.ScheduledEventFilter.GroupID.Value).FinishDate.ToString()</option>
+                                        <option value="@Model.ScheduledEventFilter.GroupID.Value" selected>Group @Model.StudentGroups.First(x => x.Id == Model.ScheduledEventFilter.GroupID.Value).Name.ToString()</option>
 
                                         @foreach (var group in Model.StudentGroups.Where(x => x.Id != Model.ScheduledEventFilter.GroupID.Value))
                                         {
-                                            <option value="@group.Id">Group @group.FinishDate.ToString()</option>
+                                            <option value="@group.Id">Group @group.Name.ToString()</option>
                                         }
                                     }
                                     else
@@ -80,7 +84,7 @@
 
                                         @foreach (var group in Model.StudentGroups)
                                         {
-                                            <option value="@group.Id">Group @group.FinishDate.ToString()</option>
+                                            <option value="@group.Id">Group @group.Name.ToString()</option>
                                         }
                                     }
                                 </select>
@@ -155,50 +159,25 @@
                                 <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
                                     @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
                                     {
-                                        <option value="null">-Account-</option>
+                                        <option value="null">-Student-</option>
                                         <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
                                             @{
                                                 var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
                                             }
-                                            Account @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
+                                            Student @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
                                         </option>
 
                                         @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
                                         {
-                                            <option value="@student.Id">Account @(student.FirstName+" "+ student.LastName)</option>
+                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                         }
                                     }
                                     else
                                     {
-                                        <option value="null" selected>-Account-</option>
+                                        <option value="null" selected>-Student-</option>
                                         @foreach (var student in Model.Students)
                                         {
-                                            <option value="@student.Id">Account @(student.FirstName+" "+ student.LastName)</option>
-                                        }
-                                    }
-                                </select>
-                                <select class="custom-select" name="EventOccurrenceID" id="occurenceSelect" aria-label="Example select with button addon">
-                                    @if (Model.ScheduledEventFilter.EventOccurrenceID.HasValue)
-                                    {
-                                        <option value="null">-Occurrence-</option>
-                                        <option value="@Model.ScheduledEventFilter.EventOccurrenceID.Value" selected>
-                                            @{
-                                                var occurenceFiltered = Model.EventOccurences.First(x => x.Id == Model.ScheduledEventFilter.EventOccurrenceID.Value);
-                                            }
-                                            @(occurenceFiltered.EventStart.Date+" - "+ occurenceFiltered.EventFinish.Date)
-                                        </option>
-
-                                        @foreach (var occurence in Model.EventOccurences.Where(x => x.Id != Model.ScheduledEventFilter.EventOccurrenceID.Value))
-                                        {
-                                            <option value="@occurence.Id">@(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <option value="null" selected>-Occurrence-</option>
-                                        @foreach (var occurence in Model.EventOccurences)
-                                        {
-                                            <option value="@occurence.Id">@(occurence.EventStart.Date+" - "+occurence.EventFinish.Date)</option>
+                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                         }
                                     }
                                 </select>
@@ -229,19 +208,17 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <label for="seTime">Time:</label>
+                    <input id="seTime" class="modalTextInput form-control" value="" />
 
-                    <label for="seGroupdID">GroupdID:</label>
-                    <input id="seGroupdID" class="modalTextInput form-control" value="" />
+                    <label for="seTheme">Theme:</label>
+                    <input id="seTheme" class="modalTextInput form-control" value="" />
 
-                    <label for="seMentorId">MentorId:</label>
-                    <input id="seMentorId" class="modalTextInput form-control" value="" />
+                    <label for="seGroup">Group:</label>
+                    <input id="seGroup" class="modalTextInput form-control" value="" />
 
-                    <label for="seLessonId">LessonId:</label>
-                    <input id="seLessonId" class="modalTextInput form-control" value="" />
-
-                    <label for="seThemeId">ThemeId:</label>
-                    <input id="seThemeId" class="modalTextInput form-control" value="" />
-
+                    <label for="seMentor">Mentor:</label>
+                    <input id="seMentor" class="modalTextInput form-control" value="" />
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>

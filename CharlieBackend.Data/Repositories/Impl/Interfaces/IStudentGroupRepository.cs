@@ -1,9 +1,9 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {

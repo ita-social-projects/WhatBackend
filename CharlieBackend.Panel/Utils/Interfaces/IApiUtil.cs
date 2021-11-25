@@ -1,6 +1,5 @@
-﻿using CharlieBackend.Panel.Models.Account;
-using CharlieBackend.Core.DTO.Account;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Panel.Models.Account;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Utils.Interfaces

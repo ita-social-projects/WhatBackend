@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Panel.Models.Course;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Course;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;

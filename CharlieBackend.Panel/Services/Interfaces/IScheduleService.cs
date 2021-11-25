@@ -1,9 +1,7 @@
-﻿using CharlieBackend.Panel.Models.Calendar;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
-using CharlieBackend.Core.DTO.Schedule;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services.Interfaces

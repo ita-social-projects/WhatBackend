@@ -1,10 +1,10 @@
-﻿using System;
-using System.Text.Json;
-using System.Threading.Tasks;
-using CharlieBackend.Business.Exceptions;
+﻿using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Data.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Middlewares
 {

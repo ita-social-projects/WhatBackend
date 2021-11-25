@@ -1,13 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core;
+using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.Entities;
-using CharlieBackend.Core;
-using Microsoft.EntityFrameworkCore;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-
-using CharlieBackend.Core.DTO.Attachment;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Data.Repositories.Impl
 {

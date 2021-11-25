@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-
+using System.Collections.Generic;
 
 namespace CharlieBackend.Data.Helpers
 {

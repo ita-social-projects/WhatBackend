@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Secretary;
 using Swashbuckle.AspNetCore.Filters;
-using CharlieBackend.Core.DTO.Secretary;
 
 namespace CharlieBackend.Api.SwaggerExamples.SecretariesController
 {

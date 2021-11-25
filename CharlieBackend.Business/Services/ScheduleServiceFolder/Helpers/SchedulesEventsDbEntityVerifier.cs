@@ -1,7 +1,7 @@
-﻿using System.Text;
-using System.Threading.Tasks;
-using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 {
