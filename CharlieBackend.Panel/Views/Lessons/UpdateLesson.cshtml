@@ -1,5 +1,4 @@
-﻿@model CharlieBackend.Panel.Models.Lesson.LessonCreateViewModel
-
+﻿@model CharlieBackend.Panel.Models.Lesson.LessonUpdateViewModel
 
 @{
     Layout = "_Layout";
@@ -7,51 +6,14 @@
 
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
 
-    <div class="container mt-4 col-6">
+    <div class="container mt-3 col-5">
 
-        <h1 class="h3 mb-2 text-gray-800">Add Lesson</h1>
+        <h1 class="h3 mb-2 text-gray-800">Edit Lesson</h1>
 
         <div class="card shadow mb-4">
 
             <div class="modal-body">
-                <form method="post" asp-action="AddLesson" asp-controller="Lessons">
-
-                    @if (!User.IsInRole("Mentor"))
-                    {
-                        <div class="form-group">
-                            <label>Mentor </label>
-                            <select class="custom-select" asp-for="MentorId" size="1">
-
-                                @if (@ViewBag.Lesson.Mentors != null)
-                                {
-                                    @foreach (var item in @ViewBag.Lesson.Mentors)
-                                    {
-
-                                        <option value="@item.Id">@item.FirstName @item.LastName</option>
-                                    }
-                                }
-                                else
-                                {
-                                    <option value="@null">null</option>
-                                }
-
-                            </select>
-                        </div>
-                    }
-                    @if (User.IsInRole("Mentor"))
-                    {
-                        <input type="hidden"
-                               value="@ViewBag.MentorId" class="form-control" asp-for="MentorId">
-                    }
-
-                    <input type="hidden"
-                           value="@ViewBag.EventId" class="form-control" asp-for="EventId">
-
-
-
-                    <input type="hidden" min="1900-01-01" max="2100-12-31"
-                           value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" asp-for="LessonDate">
-
+                <form method="post" asp-action="UpdateLesson" asp-controller="Lessons" asp-route-id="@ViewBag.Lesson.Id">
 
                     <div class="form-group">
                         <label>Theme Name</label>
@@ -72,7 +34,8 @@
                         </select>
                     </div>
 
-                    <div class="col-3 text-truncate "><input type="hidden" asp-for="@Model.StudentGroupId" value="@Model.StudentGroupId" /></div>
+                    <input type="hidden" min="1900-01-01" max="2100-12-31"
+                           value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" asp-for="LessonDate">
 
                     <div class="card-body">
                         <div class="table-responsive p-3" style="overflow-x:unset">
@@ -88,7 +51,7 @@
 
                                 <tbody>
 
-                                    @for (int i = 0; i < Model.Students.Count; i++)
+                                    @for (int i = 0; i < Model.LessonVisits.Count; i++)
                                     {
                                         <tr class="row">
 
@@ -109,8 +72,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="mt-3">
                         <a class="btn btn-secondary" asp-action="AllLessons" asp-controller="Lessons">Close</a>
                         <button type="submit" class="btn btn-primary">Save changes</button>
@@ -122,5 +83,3 @@
         </div>
     </div>
 </div>
-
-

@@ -84,7 +84,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
         [Authorize(Roles = "Secretary, Admin, Mentor")]
         [MapToApiVersion("2.0")]
-        [HttpPatch("{id}")]
+        [HttpPut("connect/{id}")]
         public async Task<ActionResult<EventOccurrenceDTO>> ConnectEventToLesson(long id, [FromBody] LessonDto lesson)
         {
             var foundSchedules = await _eventsService.ConnectScheduleToLessonById(id, lesson.Id);

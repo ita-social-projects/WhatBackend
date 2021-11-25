@@ -47,7 +47,17 @@ namespace CharlieBackend.Panel.Controllers
             var role = _currentUserService.Role;
             var entity = _currentUserService.EntityId;
             var mails = _currentUserService.Email;
-            
+
+            if (role == Core.Entities.UserRole.Mentor)
+            {
+                var lessons = await _lessonService.GetAllLessonsForMentor(entity);
+                return View(lessons);
+            }
+            if (role == Core.Entities.UserRole.Student)
+            {
+                var lessons = await _lessonService.GetStudentLessonsAsync(entity);
+                return View("AllStudentsLessons", lessons);
+            }
 
             //var user = User.Identity as ClaimsIdentity;
             //if (user != null)
@@ -56,13 +66,15 @@ namespace CharlieBackend.Panel.Controllers
             //}
             //if (User.IsInRole("Mentor"))
             //{
-            var filteredM = new FilterLessonsRequestDto()
-            {
-                StartDate = DateTime.Now.AddDays(-30)
-            };
 
-            var sel = await _lessonService.GetLessonsForMentorAsync(filteredM);
-                return View(sel);
+
+            //var filteredM = new FilterLessonsRequestDto()
+            //{
+            //    StartDate = DateTime.Now.AddDays(-30)
+            //};
+
+            var allLessons = await _lessonService.GetLessonsByDate();
+            return View(allLessons);
 
             //}
             //var lessons = await _lessonService.GetLessonsByDate();
@@ -78,14 +90,34 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateLesson(long stGroupId)
+        public async Task<IActionResult> CreateLesson(long stGroupId, long? eventId)
         {
-            var LessonData = await _lessonService.PrepareLessonAddAsync(stGroupId);
+            if (User.IsInRole("Mentor"))
+            {
+                ViewBag.MentorId = _currentUserService.EntityId;
+            }
+            var LessonData = await _lessonService.PrepareLessonAddAsync(stGroupId/*, eventId*/);
+
+            ViewBag.EventId = eventId;
 
             ViewBag.Lesson = LessonData;
 
             return View("AddLesson", LessonData);
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> CreateLessonToEvent(long Id)
+        //{
+        //    if (User.IsInRole("Mentor"))
+        //    {
+        //        ViewBag.MentorId = _currentUserService.EntityId;
+        //    }
+        //    var LessonData = await _lessonService.PrepareLessonAddToEventAsync(Id);
+
+        //    ViewBag.Lesson = LessonData;
+
+        //    return View("AddLesson", LessonData);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> AddLesson(LessonCreateViewModel data)
@@ -107,6 +139,24 @@ namespace CharlieBackend.Panel.Controllers
         {
             var events = await _lessonService.Get2DaysEvents();
             return View("Events", events);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> PrepareLessonForUpdate(long id)
+        {
+            var lesson = await _lessonService.PrepareLessonUpdateAsync(id);
+
+            ViewBag.Lesson = lesson;
+
+            return View("UpdateLesson", lesson);
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> UpdateLesson(long id, LessonUpdateViewModel data)
+        {
+            await _lessonService.UpdateLessonEndpoint(id, data);
+
+            return RedirectToAction("AllLessons", "Lessons");
         }
 
     }

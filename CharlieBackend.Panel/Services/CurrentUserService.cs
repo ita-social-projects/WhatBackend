@@ -26,7 +26,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_accountId == default)
                 {
-                    var accountIdString = GetClaimValue(claimType: ClaimsConstants.AccountClaim);
+                    var accountIdString = GetClaimValue(claimType: ClaimsConstants.AccountId);
 
                     if (!long.TryParse(accountIdString, out _accountId))
                     {
@@ -45,7 +45,7 @@ namespace CharlieBackend.Panel.Services
                 if (_entityId == default)
                 {
 
-                    var entityIdString = GetClaimValue(claimType: ClaimsConstants.IdClaim);
+                    var entityIdString = GetClaimValue(ClaimsConstants.EntityId);
 
                     if (!long.TryParse(entityIdString, out _entityId))
                     {
@@ -63,7 +63,7 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_email is null)
                 {
-                    _email = GetClaimValue(claimType: ClaimsConstants.EmailClaim);
+                    _email = GetClaimValue(ClaimsConstants.Email);
 
                     if (_email is null)
                     {

@@ -106,7 +106,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
+                @if (!User.IsInRole("NotAssigned"))
                 {
                     <a class="nav-link collapsed" asp-action="AllLessons" asp-controller="Lessons">
                         <i class="fas fa-book-open"></i>

@@ -21,14 +21,14 @@
                         <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-1">EvId</th>
-                                    <th class="col-1">SrGrId</th>
-                                    <th class="col-1">ThemeId</th>
-                                    <th class="col-1">MentorId</th>
-                                    <th class="col-2">LessonId</th>
+                                    @*<th class="col-1">EvId</th>*@
+                                    <th class="col">Student Group</th>
+                                    <th class="col-2">Theme</th>
+                                    <th class="col-2">Mentor</th>
+                                    @*<th class="col-1">LessonId</th>*@
                                     <th class="col-2">Start</th>
                                     <th class="col-2">Finish</th>
-                                    <th class="col">Controll</th>
+                                    <th class="col-1">Controll</th>
                                 </tr>
                             </thead>
 
@@ -36,16 +36,16 @@
                                 @foreach (var item in @Model)
                                 {
                                 <tr class="row">
-                                    <td class="col-1 text-truncate">@item.Id</td>
-                                    <td class="col-1 text-truncate">@item.StudentGroupId</td>
-                                    <td class="col-1 text-truncate">@item.ThemeId</td>
-                                    <td class="col-1 text-truncate">@item.MentorId</td>
-                                    <td class="col-2 text-truncate">@item.LessonId</td>
+                                    @*<td class="col-1 text-truncate">@item.Id</td>*@
+                                    <td class="col text-truncate">@item.StudentGroupName</td>
+                                    <td class="col-2 text-truncate">@item.ThemeName</td>
+                                    <td class="col-2 text-truncate">@item.MentorFirstName @item.MentorLastName</td>
+                                    @*<td class="col-1 text-truncate">@item.LessonId</td>*@
                                     <td class="col-2 text-truncate">@item.EventStart</td>
                                     <td class="col-2 text-truncate">@item.EventFinish</td>
 
 
-                                    <td class="col">
+                                    <td class="col-1">
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondar dropdown-toggle"
                                                     type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -55,7 +55,7 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
                                                 <a class="dropdown-item"
-                                                    asp-action="CreateLesson" asp-controller="Lessons" >
+                                                    asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@item.StudentGroupId" asp-route-eventId="@item.Id">
                                                     <i class="fas fa-pen"></i>
                                                     <span>Attach new Lesson</span>
                                                  </a>

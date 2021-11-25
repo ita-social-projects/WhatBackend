@@ -45,7 +45,7 @@ namespace CharlieBackend.Panel.Services
             var studentGroupsResponse = await _apiUtil.GetAsync<IList<StudentGroupDto>>(getAllStudentGroupsEndpoint);
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(studentGroupsResponse);
             
-            var students = await _studentService.GetAllStudentsAsync(); ;
+            var students = await _studentService.GetAllStudentsAsync();
             var mentors = await _mentorService.GetAllMentorsAsync();
             var courses = await _courseService.GetAllCoursesAsync();
 
