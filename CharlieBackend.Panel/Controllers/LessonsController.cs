@@ -74,7 +74,7 @@ namespace CharlieBackend.Panel.Controllers
             //};
 
             var allLessons = await _lessonService.GetLessonsByDate();
-            return View(allLessons);
+            return View(allLessons.OrderByDescending(x => x.LessonDate));
 
             //}
             //var lessons = await _lessonService.GetLessonsByDate();

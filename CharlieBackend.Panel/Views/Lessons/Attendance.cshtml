@@ -21,9 +21,9 @@
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col">Student</th>
-                                    <th class="col-3">Mark</th>
+                                    <th class="col-2">Mark</th>
                                     <th class="col-2">Presence</th>
-                                    <th class="col-2">Comment Null</th>
+                                    <th class="col-3">Comment Null</th>
                                 </tr>
                             </thead>
 
@@ -31,14 +31,23 @@
                                 
                                 @for (int i = 0; i < Model.Students.Count; i++)
                                 {
-                                   <tr class="row">
+                                <tr class="row">
 
-                                       <td class="col text-truncate">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
-                                       <td class="col-3 text-truncate">@Model.Visit[i].StudentMark</td>
-                                       <td class="col-2 text-truncate">@Model.Visit[i].Presence</td>
-                                       <td class="col-2 text-truncate">@Model.Visit[i].Comment</td>
+                                    <td class="col text-truncate">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
+                                    <td class="col-2 text-truncate">@Model.Visit[i].StudentMark</td>
+                                    @if (@Model.Visit[i].Presence)
+                                    {
+                                        <td class="col-2 text-truncate">+</td>
 
-                                   </tr>
+                                    }
+                                    @if (!@Model.Visit[i].Presence)
+                                    {
+                                        <td class="col-2 text-truncate">-</td>
+
+                                    }
+                                    <td class="col-3 text-truncate">@Model.Visit[i].Comment</td>
+
+                                </tr>
                                 }
                 
                             </tbody>
