@@ -1,8 +1,6 @@
-﻿using CharlieBackend.Panel.Models.Theme;
-using CharlieBackend.Core.DTO.Theme;
-using System;
+﻿using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Panel.Models.Theme;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services.Interfaces

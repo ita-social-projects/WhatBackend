@@ -1,9 +1,8 @@
-using System.IO;
 using Azure.Storage.Blobs;
-using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
-using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Core.Entities;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {

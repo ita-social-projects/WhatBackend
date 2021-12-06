@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CharlieBackend.Core.DTO.Secretary;
 using CharlieBackend.Core.Models.ResultModel;
 

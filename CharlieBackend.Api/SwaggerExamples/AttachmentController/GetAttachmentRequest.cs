@@ -1,8 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Attachment;
-using CharlieBackend.Core.Entities;
 using Swashbuckle.AspNetCore.Filters;
 using System;
-using System.Collections.Generic;
 
 namespace CharlieBackend.Api.SwaggerExamples.AttachmentController
 {

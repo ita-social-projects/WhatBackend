@@ -1,8 +1,7 @@
-﻿using AutoMapper;
+﻿using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Schedule;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,6 @@ namespace CharlieBackend.Panel.Services
     {
         private readonly IApiUtil _apiUtil;
         private readonly ScheduleApiEndpoints _scheduleApiEndpoints;
-        private readonly IMapper _mapper;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IThemeService _themeService;
         private readonly IMentorService _mentorService;
@@ -25,12 +23,10 @@ namespace CharlieBackend.Panel.Services
         public ScheduleService(
             IApiUtil apiUtil, 
             IOptions<ApplicationSettings> options, 
-            IMapper mapper,
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
             IThemeService themeService)
         {
-            _mapper = mapper;
             _apiUtil = apiUtil;
             _themeService = themeService;
             _mentorService = mentorService;

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CharlieBackend.Core.DTO.Account
+﻿namespace CharlieBackend.Core.DTO.Account
 {
     public class ChangeCurrentPasswordDto
     {

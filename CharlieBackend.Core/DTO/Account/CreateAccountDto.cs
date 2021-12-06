@@ -1,10 +1,6 @@
-﻿using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-
-namespace CharlieBackend.Core.DTO.Account
+﻿namespace CharlieBackend.Core.DTO.Account
 {
-	public class CreateAccountDto
+    public class CreateAccountDto
 	{
         public string Email { get; set; }
 

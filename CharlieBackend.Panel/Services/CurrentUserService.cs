@@ -14,7 +14,7 @@ namespace CharlieBackend.Panel.Services
         private long _entityId;
         private string _email;
 
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -22,16 +22,15 @@ namespace CharlieBackend.Panel.Services
 
         public long AccountId
         {
-            get
+            get 
             {
                 if (_accountId == default)
                 {
-                    var accountIdString = GetClaimValue(claimType: ClaimsConstants.AccountId);
-
-                    if (!long.TryParse(accountIdString, out _accountId))
+                    var accountId = GetClaimValue(claimType: ClaimsConstants.AccountId);
+                    if (!long.TryParse(accountId, out _accountId))
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
-                    }
+                    }                    
                 }
 
                 return _accountId;
@@ -44,10 +43,8 @@ namespace CharlieBackend.Panel.Services
             {
                 if (_entityId == default)
                 {
-
-                    var entityIdString = GetClaimValue(ClaimsConstants.EntityId);
-
-                    if (!long.TryParse(entityIdString, out _entityId))
+                    var entityId = GetClaimValue(ClaimsConstants.EntityId);
+                    if (!long.TryParse(entityId, out _entityId))
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
                     }
@@ -79,16 +76,13 @@ namespace CharlieBackend.Panel.Services
         {
             get
             {
-                var roleString = GetClaimValue(claimType: ClaimsIdentity.DefaultRoleClaimType);
+                string role = GetClaimValue(ClaimsIdentity.DefaultRoleClaimType);
 
-                UserRole role;
-
-                if (!Enum.TryParse<UserRole>(roleString, out role))
+                if (!Enum.TryParse<UserRole>(role, out UserRole userRole))
                 {
                     throw new UnauthorizedAccessException("Not authorized!");
                 }
-
-                return role;
+                return userRole;
             }
         }
 

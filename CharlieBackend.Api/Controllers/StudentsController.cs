@@ -1,12 +1,12 @@
-﻿using CharlieBackend.Core;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core;
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Business.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Api.Controllers
 {
@@ -112,7 +112,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful return of student's study groups</response>
         /// <response code="HTTP: 404, API: 3">Error, can not find student or student's study groups</response>
         [SwaggerResponse(200, type: typeof(IList<StudentStudyGroupsDto>))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin, Student")]
         [HttpGet("{id}/groups")]
         public async Task<ActionResult<IList<StudentStudyGroupsDto>>> GetStudentStudyGroupsByStudentId(long id)
         {

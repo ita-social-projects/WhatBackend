@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Microsoft.Extensions.Configuration;
-using System.IO;
 using System;
+using System.IO;
 
 namespace CharlieBackend.Api
 {

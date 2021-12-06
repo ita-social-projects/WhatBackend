@@ -5,7 +5,6 @@ namespace CharlieBackend.Panel.Exceptions
 {
     class HttpStatusException : Exception
     {
-
         public HttpStatusCode HttpStatusCode { get; set; }
 
         public HttpStatusException(HttpStatusCode statusCode, string message) : base(message)

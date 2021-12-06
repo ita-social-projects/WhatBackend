@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Web;
-using CharlieBackend.Panel.Exceptions;
+﻿using CharlieBackend.Panel.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace CharlieBackend.Panel.Middlewares
 

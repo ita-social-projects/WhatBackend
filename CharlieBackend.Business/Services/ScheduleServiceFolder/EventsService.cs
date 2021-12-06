@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
@@ -11,6 +7,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {

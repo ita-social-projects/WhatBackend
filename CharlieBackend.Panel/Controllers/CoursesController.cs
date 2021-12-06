@@ -1,5 +1,5 @@
-﻿using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Core.DTO.Course;
+﻿using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

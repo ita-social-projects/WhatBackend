@@ -1,8 +1,6 @@
-﻿using CharlieBackend.Panel.Models.Mentor;
-using CharlieBackend.Core.DTO.Mentor;
-using System;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Panel.Models.Mentor;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services.Interfaces

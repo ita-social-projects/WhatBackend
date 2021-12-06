@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using CharlieBackend.Panel.Models.Calendar;
-using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Panel.Utils.Interfaces;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Panel.Models.Calendar;
+using CharlieBackend.Panel.Services.Interfaces;
+using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace CharlieBackend.Panel.Services
         private readonly string _getActiveStudentsEndpoint;
         private readonly string _getThemesEndpoint;
 
-        private const int defaultDateFilterOffset = 15;
+        private const int defaultDateFilterOffset = 7;
 
         public CalendarService(
             IScheduleService scheduleService,
@@ -68,9 +68,9 @@ namespace CharlieBackend.Panel.Services
             var getScheduledEventsTask = GetScheduledEventViewModelsAsync(scheduledEventFilter);
 
             await Task.WhenAll(
-                new Task[] { getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
+                getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
                     getThemesTask, getEventOccurrencesTask, getScheduledEventsTask
-                });
+                );
 
             return new CalendarViewModel
             {
@@ -96,7 +96,7 @@ namespace CharlieBackend.Panel.Services
         {
             if (!scheduledEventFilter.StartDate.HasValue)
             {
-                scheduledEventFilter.StartDate = DateTime.Now.AddDays(-defaultDateFilterOffset);
+                scheduledEventFilter.StartDate = DateTime.Now;
             }
 
             if (!scheduledEventFilter.FinishDate.HasValue)

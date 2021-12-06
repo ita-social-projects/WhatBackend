@@ -1,6 +1,6 @@
-﻿using CharlieBackend.Core.DTO.Account;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
-using CharlieBackend.Business.Helpers;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {

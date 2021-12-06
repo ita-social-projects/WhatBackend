@@ -1,15 +1,17 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Utils.Interfaces;
-using CharlieBackend.Core.DTO.Account;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.DataProtection;
 using CharlieBackend.Panel.Helpers;
 
@@ -96,21 +98,21 @@ namespace CharlieBackend.Panel.Controllers
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
             var role = tokenS.Claims.First(claim => claim.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
-            var accountId = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.AccountId).Value;
-            var entityId = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.EntityId).Value;
-            var mail = tokenS.Claims.First(claim => claim.Type == ClaimsConstants.Email).Value;
+            var accountId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.AccountId).Value;
+            var entityId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EntityId).Value;
+            var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Email).Value;
 
             SetResponseCookie("currentRole", role);
             SetResponseCookie("accountId", accountId);
             SetResponseCookie("entityId", entityId);
-            SetResponseCookie("mail", mail);
+            SetResponseCookie("email", email);
 
             var claims = new List<Claim>
             {
                  new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                  new Claim(ClaimsConstants.AccountId, accountId),
                  new Claim(ClaimsConstants.EntityId, entityId),
-                 new Claim(ClaimsConstants.Email, mail)
+                 new Claim(ClaimsConstants.Email, email)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

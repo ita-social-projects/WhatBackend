@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CharlieBackend.Core.DTO.Homework;
 using Swashbuckle.AspNetCore.Filters;
-using CharlieBackend.Core.DTO.Homework;
+using System;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Api.SwaggerExamples.HomeworksController
 {

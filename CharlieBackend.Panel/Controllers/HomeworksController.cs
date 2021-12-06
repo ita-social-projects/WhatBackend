@@ -1,10 +1,10 @@
-﻿using CharlieBackend.Panel.Models.Course;
+﻿using CharlieBackend.Core.DTO.Homework;
+using CharlieBackend.Panel.Models.Course;
 using CharlieBackend.Panel.Models.Homework;
 using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Core.DTO.Homework;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,18 +16,16 @@ namespace CharlieBackend.Panel.Controllers
     public class HomeworksController : Controller
     {
         private readonly IHomeworkService _homeworkService;
-        private readonly IThemeService _themeService;
         private readonly ICourseService _courseService;
         private readonly IStudentGroupService _studentGroupService;
         private readonly ILessonService _lessonService;
         private readonly IMentorService _mentorService;
 
-        public HomeworksController(IHomeworkService homeworkService, IThemeService themeService,
+        public HomeworksController(IHomeworkService homeworkService,
             ICourseService courseService, IStudentGroupService studentGroupService, ILessonService lessonService, 
             IMentorService mentorService)
         {
             _homeworkService = homeworkService;
-            _themeService = themeService;
             _courseService = courseService;
             _studentGroupService = studentGroupService;
             _lessonService = lessonService;

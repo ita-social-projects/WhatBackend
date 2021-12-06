@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Panel.Services.Interfaces;
-using CharlieBackend.Core.DTO.Theme;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {

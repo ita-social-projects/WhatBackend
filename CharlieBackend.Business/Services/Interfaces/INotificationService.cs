@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.Entities;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.Interfaces
 {

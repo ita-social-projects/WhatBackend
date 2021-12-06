@@ -1,8 +1,8 @@
 ﻿using CharlieBackend.Business.Services.Interfaces;
-using CharlieBackend.Core.Entities;
-using CharlieBackend.Core.DTO.Schedule;
-using System;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
+using System;
 
 namespace CharlieBackend.Business.Services
 {

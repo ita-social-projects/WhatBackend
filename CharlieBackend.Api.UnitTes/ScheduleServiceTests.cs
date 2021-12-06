@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services;
+using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using CharlieBackend.Business.Services.ScheduleServiceFolder;
-using FluentAssertions;
-using CharlieBackend.Business.Services.Interfaces;
-using System.Linq;
-using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 
 namespace CharlieBackend.Api.UnitTest
 {
@@ -159,7 +159,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(validScheduleDTO);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.CreateScheduleAsync(validScheduleDTO);
@@ -198,7 +198,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(createScheduleDto);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
@@ -237,7 +237,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(createScheduleDto);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
@@ -279,7 +279,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(createScheduleDto);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.CreateScheduleAsync(createScheduleDto);
@@ -296,7 +296,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(validEventOccurrence);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.GetEventOccurrenceByIdAsync(id);
@@ -310,7 +310,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetEventOccurrenceByIdAsync_NonExistingId_ShouldReturnNotFound()
         {
             //Arrange
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.GetEventOccurrenceByIdAsync(nonExistentId);
@@ -327,7 +327,7 @@ namespace CharlieBackend.Api.UnitTest
             var validRequest = new ScheduledEventFilterRequestDTO
             {
                 MentorID = existentMentorId,
-                GroupID = existentGroupId
+                GroupID = existentGroupId,
             };
 
             var expectedFilteredList = new List<ScheduledEventDTO>()
@@ -362,7 +362,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(validScheduleDTO);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent(role: UserRole.Admin).Object);
 
             //Act
             var result = await scheduleService.GetEventsFiltered(validRequest);
@@ -396,7 +396,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(courseRepositoryMock.Object);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.GetEventsFiltered(nonValidRequest);
@@ -412,7 +412,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(nonExistentId)).ReturnsAsync(false);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.DeleteScheduleByIdAsync(nonExistentId, startDate, finishDate);
@@ -462,7 +462,7 @@ namespace CharlieBackend.Api.UnitTest
             _eventOccuranceRepositoryMock.Setup(x => x.IsEntityExistAsync(existingId)).ReturnsAsync(true);
             _eventOccuranceRepositoryMock.Setup(x => x.GetByIdAsync(existingId)).ReturnsAsync(validEventOccurrence);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory,_validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory,_validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.DeleteScheduleByIdAsync(existingId, startDate, finishDate);
@@ -504,7 +504,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(validScheduleDTO);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.UpdateEventOccurrenceById(existingId, validScheduleDTO);
@@ -530,7 +530,7 @@ namespace CharlieBackend.Api.UnitTest
 
             Initialize(validScheduleDTO);
 
-            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator);
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
 
             //Act
             var result = await scheduleService.UpdateEventOccurrenceById(nonExistentId, validScheduleDTO);

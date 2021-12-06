@@ -1,10 +1,10 @@
 ﻿using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using Xunit;
-using FluentAssertions;
 
 namespace CharlieBackend.Api.UnitTest
 {

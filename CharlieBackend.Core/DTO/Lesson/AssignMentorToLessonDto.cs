@@ -1,8 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-
-namespace CharlieBackend.Core.DTO.Lesson
+﻿namespace CharlieBackend.Core.DTO.Lesson
 {
     public class AssignMentorToLessonDto
     {
