@@ -35,18 +35,8 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet]
         public async Task<IActionResult> AllLessons()
         {
-
-
-            //var id = User.Claims.FirstOrDefault(c => c.Type == "AccountId").Value;
-
-            //var enti = User.Claims.FirstOrDefault(c => c.Type == ClaimConstants.IdClaim).Value;
-
-            //var mail = User.Claims.FirstOrDefault(c => c.Type == ClaimConstants.EmailClaim).Value;
-
-            var Id = _currentUserService.AccountId;
             var role = _currentUserService.Role;
             var entity = _currentUserService.EntityId;
-            var mails = _currentUserService.Email;
 
             if (role == Core.Entities.UserRole.Mentor)
             {
@@ -59,33 +49,14 @@ namespace CharlieBackend.Panel.Controllers
                 return View("AllStudentsLessons", lessons);
             }
 
-            //var user = User.Identity as ClaimsIdentity;
-            //if (user != null)
-            //{
-            //    var userClaim = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            //}
-            //if (User.IsInRole("Mentor"))
-            //{
-
-
-            //var filteredM = new FilterLessonsRequestDto()
-            //{
-            //    StartDate = DateTime.Now.AddDays(-30)
-            //};
-
             var allLessons = await _lessonService.GetLessonsByDate();
             return View(allLessons.OrderByDescending(x => x.LessonDate));
-
-            //}
-            //var lessons = await _lessonService.GetLessonsByDate();
-            //return View(lessons);
         }
 
         [HttpGet()]
         public async Task<IActionResult> SelectGroup()
         {
             IEnumerable<StudentGroupViewModel> stGroups = await _studentGroupService.GetAllStudentGroupsAsync();
-            //IEnumerable<StudentGroupViewModel> groups = stGroups.Where(x => x.Course.Id == courseId).ToList();
             return View("GroupSelection", stGroups);
         }
 
@@ -96,7 +67,7 @@ namespace CharlieBackend.Panel.Controllers
             {
                 ViewBag.MentorId = _currentUserService.EntityId;
             }
-            var LessonData = await _lessonService.PrepareLessonAddAsync(stGroupId/*, eventId*/);
+            var LessonData = await _lessonService.PrepareLessonAddAsync(stGroupId);
 
             ViewBag.EventId = eventId;
 
@@ -104,20 +75,6 @@ namespace CharlieBackend.Panel.Controllers
 
             return View("AddLesson", LessonData);
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> CreateLessonToEvent(long Id)
-        //{
-        //    if (User.IsInRole("Mentor"))
-        //    {
-        //        ViewBag.MentorId = _currentUserService.EntityId;
-        //    }
-        //    var LessonData = await _lessonService.PrepareLessonAddToEventAsync(Id);
-
-        //    ViewBag.Lesson = LessonData;
-
-        //    return View("AddLesson", LessonData);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> AddLesson(LessonCreateViewModel data)

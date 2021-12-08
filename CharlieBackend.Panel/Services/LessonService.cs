@@ -2,6 +2,7 @@
 using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Models.Students;
@@ -26,6 +27,7 @@ namespace CharlieBackend.Panel.Services
         private readonly IEventsService _eventsService;
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         public LessonService(IOptions<ApplicationSettings> options, 
             IApiUtil apiUtil, 
             IMapper mapper, 
@@ -34,7 +36,8 @@ namespace CharlieBackend.Panel.Services
             IThemeService themeService,
             IStudentService studentService,
             IScheduleService scheduleService,
-            IEventsService eventsService)
+            IEventsService eventsService,
+            ICurrentUserService currentUserService)
         {
             _lessonsApiEndpoints = options.Value.Urls.ApiEndpoints.Lessons;
             _apiUtil = apiUtil;
@@ -45,6 +48,7 @@ namespace CharlieBackend.Panel.Services
             _studentService = studentService;
             _scheduleService = scheduleService;
             _eventsService = eventsService;
+            _currentUserService = currentUserService;
         }
 
         public async Task AddLessonEndpoint(LessonCreateViewModel createLesson)
@@ -63,7 +67,7 @@ namespace CharlieBackend.Panel.Services
         public async Task<LessonCreateViewModel> PrepareLessonAddAsync(long stGroupId)
         {
             var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
-            var mentors = _mentorService.GetAllMentorsAsync();
+            var mentors = _mentorService.GetAllActiveMentorsAsync();
             var themes = _themeService.GetAllThemesAsync();
             var students = studentGroups.Where(x => x.Id == stGroupId).FirstOrDefault().Students;
 
@@ -93,7 +97,7 @@ namespace CharlieBackend.Panel.Services
             var allLessonsResponse = await _apiUtil.GetAsync<IList<LessonDto>>(lessonsEndpoint);
             var allLessons = _mapper.Map<IList<LessonViewModel>>(allLessonsResponse);
 
-            var mentors = await _mentorService.GetAllMentorsAsync();
+            var mentors = await _mentorService.GetAllActiveMentorsAsync();
             var stGroups = await _studentGroupService.GetAllStudentGroupsAsync();
 
             foreach (var item in allLessons)
@@ -144,17 +148,26 @@ namespace CharlieBackend.Panel.Services
 
         public async Task<IList<ScheduledEventViewModel>> Get2DaysEvents()
         {
+            const int numberOfDays = 2;
+
             var evDt = new ScheduledEventFilterRequestDTO
             {
                 StartDate = DateTime.Now,
-                FinishDate = DateTime.Now.AddDays(2)
+                FinishDate = DateTime.Now.AddDays(numberOfDays)        
             };
+
+            if (_currentUserService.Role == UserRole.Mentor)
+            {
+                evDt.MentorID = _currentUserService.EntityId;
+            }
+
             var events = await _scheduleService.GetEventsFiltered(evDt);
             var evWithoutLesson = events.Where(x => x.LessonId == null);
             var mapped = _mapper.Map<IList<ScheduledEventViewModel>>(evWithoutLesson);
+
             var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
             var themes = await _themeService.GetAllThemesAsync();
-            var mentors = await _mentorService.GetAllMentorsAsync();
+            var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
             foreach (var item in mapped)
             {
@@ -163,7 +176,6 @@ namespace CharlieBackend.Panel.Services
                 item.MentorFirstName = mentors.Where(x => x.Id == item.MentorId).FirstOrDefault().FirstName;
                 item.MentorLastName = mentors.Where(x => x.Id == item.MentorId).FirstOrDefault().LastName;
             }
-         
 
             return mapped;
         }
@@ -207,7 +219,6 @@ namespace CharlieBackend.Panel.Services
 
             return lessonToUpdate;
         }
-
 
     }
 }

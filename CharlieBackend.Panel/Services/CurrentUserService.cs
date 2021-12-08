@@ -19,7 +19,6 @@ namespace CharlieBackend.Panel.Services
         {
             _httpContextAccessor = httpContextAccessor;
         }
-
         public long AccountId
         {
             get 
@@ -32,7 +31,6 @@ namespace CharlieBackend.Panel.Services
                         throw new UnauthorizedAccessException("Not authorized!");
                     }                    
                 }
-
                 return _accountId;
             }
         }
@@ -49,7 +47,6 @@ namespace CharlieBackend.Panel.Services
                         throw new UnauthorizedAccessException("Not authorized!");
                     }
                 }
-
                 return _entityId;
             }
         }
@@ -61,13 +58,11 @@ namespace CharlieBackend.Panel.Services
                 if (_email is null)
                 {
                     _email = GetClaimValue(ClaimsConstants.Email);
-
                     if (_email is null)
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
                     }
                 }
-
                 return _email;
             }
         }

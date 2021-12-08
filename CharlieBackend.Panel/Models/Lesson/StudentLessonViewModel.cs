@@ -15,8 +15,6 @@ namespace CharlieBackend.Panel.Models.Lesson
 
         public string Comment { get; set; }
 
-        public long? StudentGroupId { get; set; }
-
         public DateTime LessonDate { get; set; }
     }
 }

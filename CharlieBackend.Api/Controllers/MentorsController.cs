@@ -100,7 +100,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return of mentors list</response>
         [SwaggerResponse(200, type: typeof(IList<MentorDto>))]
-        [Authorize(Roles = "Admin, Secretary, Mentor")]
+        [Authorize(Roles = "Admin, Secretary")]
         [HttpGet]
         public async Task<ActionResult<IList<MentorDetailsDto>>> GetAllMentors()
         {

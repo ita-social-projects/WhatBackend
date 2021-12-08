@@ -43,16 +43,12 @@ namespace CharlieBackend.Panel.Models.Mapping
                 .ForMember(destination => destination.Mentor, config => config.MapFrom(x => new MentorViewModel() { Id = x.MentorId }))
                 .ForMember(destination => destination.StudentGroup, config => config.MapFrom(x => new StudentGroupViewModel() { Id = (long)x.StudentGroupId}));
 
-            //CreateMap<StudentLessonDto, LessonViewModel>()
-            //.ForMember(destination => destination.StudentGroup, config => config.MapFrom(src => new StudentGroupViewModel() { Id = (long)src.StudentGroupId }));
-
             CreateMap<StudentLessonDto, StudentLessonViewModel>();
 
             CreateMap<LessonDto, LessonVisitModel>()
                .ForMember(destination => destination.Visit, config => config.MapFrom(x => x.LessonVisits));
 
             CreateMap<LessonDto, LessonUpdateViewModel>();
-               //.ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits));
 
             CreateMap<LessonUpdateViewModel, UpdateLessonDto>();
 
