@@ -17,7 +17,6 @@ using CharlieBackend.Panel.Models.Students;
 using System.Linq;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Panel.Models.ScheduledEvent;
-using CharlieBackend.Panel.Models.Theme;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {

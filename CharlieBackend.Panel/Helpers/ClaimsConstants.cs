@@ -1,5 +1,4 @@
-﻿
-namespace CharlieBackend.Panel.Helpers
+﻿namespace CharlieBackend.Panel.Helpers
 {
     public static class ClaimsConstants
     {

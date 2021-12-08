@@ -1,15 +1,10 @@
-﻿using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.DTO.Visit;
-using CharlieBackend.Panel.Helpers;
-using CharlieBackend.Panel.Models.Lesson;
+﻿using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers

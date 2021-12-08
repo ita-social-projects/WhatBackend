@@ -56,6 +56,7 @@ namespace CharlieBackend.Panel.Services
             var createLessonDto = _mapper.Map<CreateLessonDto>(createLesson);
             var addLessonEndpoint = _lessonsApiEndpoints.AddLessonEndpoint;
             await _apiUtil.CreateAsync(addLessonEndpoint, createLessonDto);
+
             if (createLesson.EventId != null)
             {
                 var lessonDto = _mapper.Map<LessonDto>(createLesson);
@@ -100,11 +101,11 @@ namespace CharlieBackend.Panel.Services
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
             var stGroups = await _studentGroupService.GetAllStudentGroupsAsync();
 
-            foreach (var item in allLessons)
+            foreach (var lesson in allLessons)
             {
-                item.Mentor.FirstName = mentors.Where(x => x.Id == item.Mentor.Id).FirstOrDefault()?.FirstName;
-                item.Mentor.LastName = mentors.Where(x => x.Id == item.Mentor.Id).FirstOrDefault()?.LastName;
-                item.StudentGroup.Name = stGroups.Where(x => x.Id == item.StudentGroup.Id).FirstOrDefault()?.Name;
+                lesson.Mentor.FirstName = mentors.Where(x => x.Id == lesson.Mentor.Id).FirstOrDefault()?.FirstName;
+                lesson.Mentor.LastName = mentors.Where(x => x.Id == lesson.Mentor.Id).FirstOrDefault()?.LastName;
+                lesson.StudentGroup.Name = stGroups.Where(x => x.Id == lesson.StudentGroup.Id).FirstOrDefault()?.Name;
             }
 
             return allLessons;
@@ -161,23 +162,23 @@ namespace CharlieBackend.Panel.Services
                 evDt.MentorID = _currentUserService.EntityId;
             }
 
-            var events = await _scheduleService.GetEventsFiltered(evDt);
-            var evWithoutLesson = events.Where(x => x.LessonId == null);
-            var mapped = _mapper.Map<IList<ScheduledEventViewModel>>(evWithoutLesson);
+            var eventsDto = await _scheduleService.GetEventsFiltered(evDt);
+            var eventsDtoWithoutLesson = eventsDto.Where(x => x.LessonId == null);
+            var scheduledEvents = _mapper.Map<IList<ScheduledEventViewModel>>(eventsDtoWithoutLesson);
 
             var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
             var themes = await _themeService.GetAllThemesAsync();
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
 
-            foreach (var item in mapped)
+            foreach (var sheduledE in scheduledEvents)
             {
-                item.ThemeName = themes.Where(x => x.Id == item.ThemeId).FirstOrDefault().Name;
-                item.StudentGroupName = studentGroups.Where(x => x.Id == item.StudentGroupId).FirstOrDefault().Name;
-                item.MentorFirstName = mentors.Where(x => x.Id == item.MentorId).FirstOrDefault().FirstName;
-                item.MentorLastName = mentors.Where(x => x.Id == item.MentorId).FirstOrDefault().LastName;
+                sheduledE.ThemeName = themes.Where(x => x.Id == sheduledE.ThemeId).FirstOrDefault().Name;
+                sheduledE.StudentGroupName = studentGroups.Where(x => x.Id == sheduledE.StudentGroupId).FirstOrDefault().Name;
+                sheduledE.MentorFirstName = mentors.Where(x => x.Id == sheduledE.MentorId).FirstOrDefault().FirstName;
+                sheduledE.MentorLastName = mentors.Where(x => x.Id == sheduledE.MentorId).FirstOrDefault().LastName;
             }
 
-            return mapped;
+            return scheduledEvents;
         }
 
         public async Task<IList<LessonViewModel>> GetAllLessonsForMentor(long mentorId)

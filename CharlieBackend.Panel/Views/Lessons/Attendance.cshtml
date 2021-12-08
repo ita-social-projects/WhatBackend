@@ -1,5 +1,4 @@
-﻿
-@model  CharlieBackend.Panel.Models.Lesson.LessonVisitModel
+﻿@model CharlieBackend.Panel.Models.Lesson.LessonVisitModel
 
 @{
     Layout = "_Layout";
@@ -28,28 +27,28 @@
                             </thead>
 
                             <tbody>
-                                
+
                                 @for (int i = 0; i < Model.Students.Count; i++)
                                 {
-                                <tr class="row">
+                                    <tr class="row">
 
-                                    <td class="col text-truncate">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
-                                    <td class="col-2 text-truncate">@Model.Visit[i].StudentMark</td>
-                                    @if (@Model.Visit[i].Presence)
-                                    {
-                                        <td class="col-2 text-truncate">+</td>
+                                        <td class="col text-truncate">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
+                                        <td class="col-2 text-truncate">@Model.Visit[i].StudentMark</td>
+                                        @if (@Model.Visit[i].Presence)
+                                        {
+                                            <td class="col-2 text-truncate">+</td>
 
-                                    }
-                                    @if (!@Model.Visit[i].Presence)
-                                    {
-                                        <td class="col-2 text-truncate">-</td>
+                                        }
+                                        @if (!@Model.Visit[i].Presence)
+                                        {
+                                            <td class="col-2 text-truncate">-</td>
 
-                                    }
-                                    <td class="col-3 text-truncate">@Model.Visit[i].Comment</td>
+                                        }
+                                        <td class="col-3 text-truncate">@Model.Visit[i].Comment</td>
 
-                                </tr>
+                                    </tr>
                                 }
-                
+
                             </tbody>
                         </table>
 

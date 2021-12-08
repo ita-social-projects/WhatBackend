@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Models.ScheduledEvent
 {
@@ -18,8 +15,6 @@ namespace CharlieBackend.Panel.Models.ScheduledEvent
         public long? MentorId { get; set; }
         public string MentorFirstName { get; set; }
         public string MentorLastName { get; set; }
-
-        public long? LessonId { get; set; }
 
         public DateTime EventStart { get; set; }
 

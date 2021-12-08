@@ -1,7 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.ScheduledEvent;
-using CharlieBackend.Panel.Models.Students;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

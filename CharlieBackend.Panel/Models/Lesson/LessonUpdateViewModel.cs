@@ -3,8 +3,6 @@ using CharlieBackend.Panel.Models.Students;
 using CharlieBackend.Panel.Models.Theme;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Models.Lesson
 {

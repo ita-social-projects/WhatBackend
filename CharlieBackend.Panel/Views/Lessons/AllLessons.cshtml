@@ -1,5 +1,4 @@
-﻿
-@model IEnumerable<CharlieBackend.Panel.Models.Lesson.LessonViewModel>
+﻿@model IEnumerable<CharlieBackend.Panel.Models.Lesson.LessonViewModel>
 
 @{
     Layout = "_Layout";
@@ -10,26 +9,26 @@
 
     <div id="content">
 
-            <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-                <div class="dropleft">
-                    <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+            <div class="dropleft">
+                <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="dropdown-menu ">
+                    <a class="dropdown-item"
+                       asp-action="SelectGroup" asp-controller="Lessons">
                         <i class="fas fa-plus"></i>
-                    </button>
-                    <div class="dropdown-menu ">
-                        <a class="dropdown-item"
-                           asp-action="SelectGroup" asp-controller="Lessons">
-                            <i class="fas fa-plus"></i>
-                            <span>Create new Lesson</span>
-                        </a>
-                        <a class="dropdown-item"
-                           asp-action="RangeOfEvents" asp-controller="Lessons">
-                            <i class="fas fa-plus"></i>
-                            <span>Attach Lesson to Event</span>
-                        </a>
-                    </div>
+                        <span>Create new Lesson</span>
+                    </a>
+                    <a class="dropdown-item"
+                       asp-action="RangeOfEvents" asp-controller="Lessons">
+                        <i class="fas fa-plus"></i>
+                        <span>Attach Lesson to Event</span>
+                    </a>
                 </div>
-
             </div>
+
+        </div>
 
 
         <div class="container-fluid">
@@ -72,7 +71,7 @@
                                                     @if (!User.IsInRole("Secretary") || !(DateTime.Now.AddDays(-1) > item.LessonDate))
                                                     {
                                                         <a class="dropdown-item"
-                                                            asp-action="PrepareLessonForUpdate" asp-controller="Lessons" asp-route-id="@item.Id">
+                                                           asp-action="PrepareLessonForUpdate" asp-controller="Lessons" asp-route-id="@item.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit</span>
                                                         </a>

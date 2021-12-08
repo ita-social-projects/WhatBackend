@@ -5,7 +5,7 @@
 }
 
 
-<div id="content-wrapper" class="d-flex flex-column"> 
+<div id="content-wrapper" class="d-flex flex-column">
 
     <div id="content">
 
@@ -31,24 +31,24 @@
                             <tbody>
                                 @foreach (var item in @Model)
                                 {
-                                <tr class="row">
-                                    <td class="col text-truncate">@item.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
-                                    <td class="col-3 text-truncate">@item.ThemeName</td>
-                                    @if (@item.Presence)
-                                    {
-                                        <td class="col-2 text-truncate">+</td>
+                                    <tr class="row">
+                                        <td class="col text-truncate">@item.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td class="col-3 text-truncate">@item.ThemeName</td>
+                                        @if (@item.Presence)
+                                        {
+                                            <td class="col-2 text-truncate">+</td>
 
-                                    }
-                                    @if (!@item.Presence)
-                                    {
-                                        <td class="col-2 text-truncate">-</td>
+                                        }
+                                        @if (!@item.Presence)
+                                        {
+                                            <td class="col-2 text-truncate">-</td>
 
-                                    }
+                                        }
 
-                                    <td class="col-1 text-truncate">@item.Mark</td>
-                                    <td class="col-3 text-truncate">@item.Comment</td>
+                                        <td class="col-1 text-truncate">@item.Mark</td>
+                                        <td class="col-3 text-truncate">@item.Comment</td>
 
-                                </tr>
+                                    </tr>
                                 }
                             </tbody>
                         </table>

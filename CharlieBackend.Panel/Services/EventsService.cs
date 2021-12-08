@@ -22,6 +22,5 @@ namespace CharlieBackend.Panel.Services
             var eventToLesson = string.Format(_eventsApiEndpoints.ConnectEventToLesson, id);
             await _apiUtil.PutAsync(eventToLesson, lesson);
         }
-
     }
 }
