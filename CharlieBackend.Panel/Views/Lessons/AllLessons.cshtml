@@ -68,7 +68,7 @@
                                                     <i class="fas fa-cog"></i>
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    @if (!User.IsInRole("Secretary") || !(DateTime.Now.AddDays(-1) > item.LessonDate))
+                                                    @if (!User.IsInRole("Secretary"))
                                                     {
                                                         <a class="dropdown-item"
                                                            asp-action="PrepareLessonForUpdate" asp-controller="Lessons" asp-route-id="@item.Id">

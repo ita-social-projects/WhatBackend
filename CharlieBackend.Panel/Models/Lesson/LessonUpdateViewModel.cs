@@ -8,6 +8,8 @@ namespace CharlieBackend.Panel.Models.Lesson
 {
     public class LessonUpdateViewModel
     {
+        public long Id { get; set; }
+
         public string ThemeName { get; set; }
         public IList<ThemeViewModel> Themes { get; set; }
 
