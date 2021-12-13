@@ -66,7 +66,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
                 {
                     <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
                         <i class="fas fa-address-book"></i>
@@ -273,7 +273,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                        Sign in as ${role} </a>`;
+                                                                Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 

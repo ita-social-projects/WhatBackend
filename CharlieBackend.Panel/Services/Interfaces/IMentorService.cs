@@ -9,6 +9,8 @@ namespace CharlieBackend.Panel.Services.Interfaces
     {
         Task<IList<MentorViewModel>> GetAllMentorsAsync();
 
+        Task<IList<MentorViewModel>> GetActiveMentorsAsync();
+
         Task<MentorEditViewModel> GetMentorByIdAsync(long id);
 
         Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto);

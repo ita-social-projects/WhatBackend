@@ -10,16 +10,38 @@
     <div id="content">
 
         <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
-                <i class="fas fa-plus"></i>
-            </a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
+            {
+                <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
+                    <i class="fas fa-plus"></i>
+                </a>
+            }
         </div>
 
         <div class="container-fluid">
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Student groups</h6>
+                    <div class="row">
+
+                        <h6 class="m-0 font-weight-bold text-primary">Student groups</h6>
+
+                        @*@if (ViewBag.IsAllGroups)
+                        {
+                            <a class="btn btn-light" asp-action="AllStudentGroups" asp-controller="StudentGroup" asp-route="false">
+                                <i class="far fa-eye-slash"></i>
+                                <span> All student groups</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class=" btn btn-light"
+                               asp-action="AllStudentGroups" asp-controller="StudentGroup">
+                                <i class="far fa-eye"></i>
+                                <span> Your student groups </span>
+                            </a>
+                        }*@
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
@@ -76,12 +98,17 @@
                                                     {
                                                         @foreach (var mentor in @item.Mentors)
                                                         {
-                                                            <label class="dropdown-item" href="#">@mentor.FirstName @mentor.LastName</label>
+                                                            if (mentor.IsActive)
+                                                            {
+                                                                <label class="dropdown-item" href="#">@mentor.FirstName @mentor.LastName</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <del>
+                                                                    <label class="dropdown-item" href="#">@mentor.FirstName @mentor.LastName</label>
+                                                                </del>
+                                                            }
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        <label class="dropdown-item" href="#">null</label>
                                                     }
                                                 </div>
                                             </div>

@@ -24,7 +24,7 @@ namespace CharlieBackend.Panel.Controllers
 
             return View(mentor);
         }
-
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateMentor(long id)
         {
