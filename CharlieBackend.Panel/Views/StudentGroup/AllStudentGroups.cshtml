@@ -23,29 +23,30 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <div class="row">
-
-                        <h6 class="m-0 font-weight-bold text-primary">Student groups</h6>
-
-                        @*@if (ViewBag.IsAllGroups)
+                        <h6 class="m-2 font-weight-bold text-primary">Student groups</h6>
+                        @if (User.IsInRole("Mentor"))
                         {
-                            <a class="btn btn-light" asp-action="AllStudentGroups" asp-controller="StudentGroup" asp-route="false">
-                                <i class="far fa-eye-slash"></i>
-                                <span> All student groups</span>
-                            </a>
+                            if (ViewBag.IsAllGroups)
+                            {
+                                <a class="btn btn-light" asp-action="AllStudentGroups" asp-controller="StudentGroup" asp-route-isAllGroups="false">
+                                    <i class="fas fa-users"></i>
+                                    <span> All student groups</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class=" btn btn-light"
+                                   asp-action="AllStudentGroups" asp-controller="StudentGroup">
+                                    <i class="fas fa-crown"></i>
+                                    <span> Your student groups </span>
+                                </a>
+                            }
                         }
-                        else
-                        {
-                            <a class=" btn btn-light"
-                               asp-action="AllStudentGroups" asp-controller="StudentGroup">
-                                <i class="far fa-eye"></i>
-                                <span> Your student groups </span>
-                            </a>
-                        }*@
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
-                        <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-striped container-fluid" id="groupsDataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col-2">Course name</th>

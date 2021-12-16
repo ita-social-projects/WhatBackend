@@ -40,7 +40,7 @@ namespace CharlieBackend.Panel.Services
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
-        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync(bool isAllGroups)
+        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync(bool isAllGroups = true)
         {
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 

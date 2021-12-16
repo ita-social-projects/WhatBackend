@@ -66,14 +66,21 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
                         <i class="fas fa-address-book"></i>
                         <span>Students groups</span>
                     </a>
                 }
-
+                else if (User.IsInRole("Mentor"))
+                {
+                    <a class="nav-link collapsed" asp-action="AllStudentGroups"
+                       asp-controller="StudentGroup" asp-route-isAllGroups="false">
+                        <i class="fas fa-address-book"></i>
+                        <span>Students groups</span>
+                    </a>
+                }
                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="AllThemes" asp-controller="Themes">
@@ -245,6 +252,7 @@
 
     <!-- Page level custom scripts -->
     <script src="~/js/demo/datatables-demo.js"></script>
+    <script src="~/js/demo/student-groups-datatable.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="~/js/sb-admin-2.min.js"></script>
@@ -273,7 +281,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                                Sign in as ${role} </a>`;
+                                                                    Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 
