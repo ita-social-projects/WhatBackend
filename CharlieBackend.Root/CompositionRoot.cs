@@ -57,6 +57,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ExportServiceXlsx>();
             services.AddScoped<ExportServiceCsv>();
+            services.AddScoped<ExportServiceHtml>();
             services.AddScoped<IExportServiceProvider, ExportServiceProvider>();
             services.AddScoped<XlsxFileReader>();
             services.AddScoped<CsvFileReader>();
