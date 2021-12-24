@@ -30,14 +30,14 @@
                             </thead>
 
                             <tbody>
-                                @foreach (var item in @Model)
+                                @foreach (var scheduledEvent in @Model)
                                 {
                                     <tr class="row">
-                                        <td class="col text-truncate">@item.StudentGroupName</td>
-                                        <td class="col-2 text-truncate">@item.ThemeName</td>
-                                        <td class="col-2 text-truncate">@item.MentorFirstName @item.MentorLastName</td>
-                                        <td class="col-2 text-truncate">@item.EventStart</td>
-                                        <td class="col-2 text-truncate">@item.EventFinish</td>
+                                        <td class="col text-truncate">@scheduledEvent.StudentGroupName</td>
+                                        <td class="col-2 text-truncate">@scheduledEvent.ThemeName</td>
+                                        <td class="col-2 text-truncate">@scheduledEvent.MentorFirstName @scheduledEvent.MentorLastName</td>
+                                        <td class="col-2 text-truncate">@scheduledEvent.EventStart</td>
+                                        <td class="col-2 text-truncate">@scheduledEvent.EventFinish</td>
 
 
                                         <td class="col-1">
@@ -50,7 +50,7 @@
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
                                                     <a class="dropdown-item"
-                                                       asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@item.StudentGroupId" asp-route-eventId="@item.Id">
+                                                       asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@scheduledEvent.StudentGroupId" asp-route-eventId="@scheduledEvent.Id">
                                                         <i class="fas fa-pen"></i>
                                                         <span>Attach new Lesson</span>
                                                     </a>

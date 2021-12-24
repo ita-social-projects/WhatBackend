@@ -10,6 +10,7 @@ namespace CharlieBackend.Panel.Services
     {
         private readonly EventsApiEndpoints _eventsApiEndpoints;
         private readonly IApiUtil _apiUtil;
+
         public EventsService(IOptions<ApplicationSettings> options,
             IApiUtil apiUtil)
         {

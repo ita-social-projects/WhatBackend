@@ -8,14 +8,14 @@ namespace CharlieBackend.Panel.Services.Interfaces
 {
     public interface ILessonService
     {
-        Task<IList<LessonViewModel>> GetLessonsByDate();
-        Task<LessonDto> GetLessonById(long id);
-        Task AddLessonEndpoint(LessonCreateViewModel createLesson);
-        Task UpdateLessonEndpoint(long id, LessonUpdateViewModel lessonToUpdate);
+        Task<IList<LessonViewModel>> GetLessonsByDateAsync();
+        Task<LessonDto> GetLessonByIdAsync(long id);
+        Task AddLessonEndpointAsync(LessonCreateViewModel createLesson);
+        Task UpdateLessonEndpointAsync(long id, LessonUpdateViewModel lessonToUpdate);
         Task<LessonCreateViewModel> PrepareLessonAddAsync(long stGrId);
-        Task<LessonVisitModel> LessonVisits(long id);
-        Task<IList<ScheduledEventViewModel>> Get2DaysEvents();
-        Task<IList<LessonViewModel>> GetAllLessonsForMentor(long mentorId);
+        Task<LessonVisitModel> LessonVisitsAsync(long id);
+        Task<IList<ScheduledEventViewModel>> Get2DaysEventsAsync();
+        Task<IList<LessonViewModel>> GetAllLessonsForMentorAsync(long mentorId);
         Task<IList<StudentLessonViewModel>> GetStudentLessonsAsync(long studentId);
         Task<LessonUpdateViewModel> PrepareLessonUpdateAsync(long id);
     }

@@ -51,7 +51,7 @@ namespace CharlieBackend.Panel.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task AddLessonEndpoint(LessonCreateViewModel createLesson)
+        public async Task AddLessonEndpointAsync(LessonCreateViewModel createLesson)
         {
             var createLessonDto = _mapper.Map<CreateLessonDto>(createLesson);
             var addLessonEndpoint = _lessonsApiEndpoints.AddLessonEndpoint;
@@ -60,7 +60,7 @@ namespace CharlieBackend.Panel.Services
             if (createLesson.EventId != null)
             {
                 var lessonDto = _mapper.Map<LessonDto>(createLesson);
-                lessonDto.Id = GetLessonsByDate().GetAwaiter().GetResult().Last().Id;
+                lessonDto.Id = GetLessonsByDateAsync().GetAwaiter().GetResult().Last().Id;
                 await _eventsService.ConnectScheduleToLessonById((long)createLesson.EventId, lessonDto);
             }
         }
@@ -85,14 +85,14 @@ namespace CharlieBackend.Panel.Services
             return newLesson;
         }
 
-        public async Task<LessonDto> GetLessonById(long id)
+        public async Task<LessonDto> GetLessonByIdAsync(long id)
         {
             var getLessonById = string.Format(_lessonsApiEndpoints.GetLessonById, id);
             var lessonDto = await _apiUtil.GetAsync<LessonDto>(getLessonById);
             return lessonDto;
         }
 
-        public async Task<IList<LessonViewModel>> GetLessonsByDate()
+        public async Task<IList<LessonViewModel>> GetLessonsByDateAsync()
         {
             var lessonsEndpoint = _lessonsApiEndpoints.GetLessonsByDate;
             var allLessonsResponse = await _apiUtil.GetAsync<IList<LessonDto>>(lessonsEndpoint);
@@ -112,14 +112,14 @@ namespace CharlieBackend.Panel.Services
            
         }
 
-        public async Task UpdateLessonEndpoint(long id, LessonUpdateViewModel lessonToUpdate)
+        public async Task UpdateLessonEndpointAsync(long id, LessonUpdateViewModel lessonToUpdate)
         {
             var updateLessonDto = _mapper.Map<UpdateLessonDto>(lessonToUpdate);
             var updateLessonEndpoint = string.Format(_lessonsApiEndpoints.UpdateLessonEndpoint, id);
             await _apiUtil.PutAsync(updateLessonEndpoint, updateLessonDto);
         }
 
-        public async Task<LessonVisitModel> LessonVisits(long id)
+        public async Task<LessonVisitModel> LessonVisitsAsync(long id)
         {
             var getLessonById = string.Format(_lessonsApiEndpoints.GetLessonById, id);
             var lessonDto = await _apiUtil.GetAsync<LessonDto>(getLessonById);
@@ -147,7 +147,7 @@ namespace CharlieBackend.Panel.Services
             return attendance;
         }
 
-        public async Task<IList<ScheduledEventViewModel>> Get2DaysEvents()
+        public async Task<IList<ScheduledEventViewModel>> Get2DaysEventsAsync()
         {
             const int numberOfDays = 2;
 
@@ -181,7 +181,7 @@ namespace CharlieBackend.Panel.Services
             return scheduledEvents;
         }
 
-        public async Task<IList<LessonViewModel>> GetAllLessonsForMentor(long mentorId)
+        public async Task<IList<LessonViewModel>> GetAllLessonsForMentorAsync(long mentorId)
         {
             var mentorLessons = string.Format(_lessonsApiEndpoints.GetAllLessonsForMentor, mentorId);
             var lessonsDto = await _apiUtil.GetAsync<IList<LessonDto>>(mentorLessons);
@@ -211,7 +211,7 @@ namespace CharlieBackend.Panel.Services
 
         public async Task<LessonUpdateViewModel> PrepareLessonUpdateAsync(long id)
         {
-            var lessonDto = await GetLessonById(id);
+            var lessonDto = await GetLessonByIdAsync(id);
             var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
 
             var lessonToUpdate = _mapper.Map<LessonUpdateViewModel>(lessonDto);

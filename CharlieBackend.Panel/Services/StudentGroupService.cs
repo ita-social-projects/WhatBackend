@@ -49,7 +49,7 @@ namespace CharlieBackend.Panel.Services
             var students = await _studentService.GetAllStudentsAsync();
 
             var mentors = await _mentorService.GetAllActiveMentorsAsync();
-            if (!(_currentUserService.Role == Core.Entities.UserRole.Mentor))
+            if ((_currentUserService.Role != Core.Entities.UserRole.Mentor))
             {
                 mentors = await _mentorService.GetAllMentorsAsync();
             }

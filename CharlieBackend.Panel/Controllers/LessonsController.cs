@@ -35,7 +35,7 @@ namespace CharlieBackend.Panel.Controllers
 
             if (role == Core.Entities.UserRole.Mentor)
             {
-                var lessons = await _lessonService.GetAllLessonsForMentor(entity);
+                var lessons = await _lessonService.GetAllLessonsForMentorAsync(entity);
                 return View(lessons);
             }
             if (role == Core.Entities.UserRole.Student)
@@ -44,7 +44,7 @@ namespace CharlieBackend.Panel.Controllers
                 return View("AllStudentsLessons", lessons);
             }
 
-            var allLessons = await _lessonService.GetLessonsByDate();
+            var allLessons = await _lessonService.GetLessonsByDateAsync();
             return View(allLessons.OrderByDescending(x => x.LessonDate));
         }
 
@@ -65,7 +65,6 @@ namespace CharlieBackend.Panel.Controllers
             var LessonData = await _lessonService.PrepareLessonAddAsync(stGroupId);
 
             ViewBag.EventId = eventId;
-
             ViewBag.Lesson = LessonData;
 
             return View("AddLesson", LessonData);
@@ -74,7 +73,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLesson(LessonCreateViewModel data)
         {
-            await _lessonService.AddLessonEndpoint(data);
+            await _lessonService.AddLessonEndpointAsync(data);
 
             return RedirectToAction("AllLessons", "Lessons");
         }
@@ -82,14 +81,14 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet]
         public async Task<IActionResult> Attendance(long id)
         {
-            var visits = await _lessonService.LessonVisits(id);
+            var visits = await _lessonService.LessonVisitsAsync(id);
             return View(visits);
         }
 
         [HttpGet]
         public async Task<IActionResult> RangeOfEvents()
         {
-            var events = await _lessonService.Get2DaysEvents();
+            var events = await _lessonService.Get2DaysEventsAsync();
             return View("Events", events);
         }
 
@@ -106,7 +105,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateLesson(long id, LessonUpdateViewModel data)
         {
-            await _lessonService.UpdateLessonEndpoint(id, data);
+            await _lessonService.UpdateLessonEndpointAsync(id, data);
 
             return RedirectToAction("AllLessons", "Lessons");
         }

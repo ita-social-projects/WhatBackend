@@ -29,12 +29,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var studentGroup in Model)
                             {
                                 <tr>
                                     <td>
-                                        <a class=" dropdown-item" asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@item.Id">
-                                            <span>@Html.DisplayFor(modelItem => item.Name)</span>
+                                        <a class=" dropdown-item" asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@studentGroup.Id">
+                                            <span>@Html.DisplayFor(modelItem => studentGroup.Name)</span>
                                         </a>
                                     </td>
 

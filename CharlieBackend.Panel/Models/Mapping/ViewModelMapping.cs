@@ -52,15 +52,9 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<LessonUpdateViewModel, UpdateLessonDto>();
 
             CreateMap<LessonCreateViewModel, CreateLessonDto>()
-                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits.
-                Select(y => new  VisitDto
-                {
-                    StudentId = y.StudentId,
-                    StudentMark = y.StudentMark,
-                    Presence = y.Presence,
-                    Comment = y.Comment
-                })
-                .ToList()));
+                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits))
+                .ReverseMap();
+
 
             CreateMap<LessonCreateViewModel, LessonDto>();
 
