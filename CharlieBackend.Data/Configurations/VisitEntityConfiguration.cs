@@ -27,7 +27,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.Presence)
                 .IsRequired()
-                .HasDefaultValueSql("1")
+                //.HasDefaultValueSql("1")
                 .HasColumnName("Presence")
                 .HasColumnType("BIT");
 

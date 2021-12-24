@@ -38,6 +38,7 @@ namespace CharlieBackend.Panel
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
         public HomeworksApiEndpoints Homeworks { get; set; }
         public LessonsApiEndpoints Lessons {get; set;}
+        public EventsApiEndpoints Events { get; set; }
     }
 
     public class AccountsApiEndpoints 
@@ -74,6 +75,7 @@ namespace CharlieBackend.Panel
         public string UpdateMentorEndpoint { get; set; }
         public string DisableMentorEndpoint { get; set; }
         public string EnableMentorEndpoint { get; set; }
+        public string GetLessonsForMentor { get; set; }
     }
 
     public class ThemesApiEndpoints
@@ -115,6 +117,16 @@ namespace CharlieBackend.Panel
     public class LessonsApiEndpoints
     {
         public string GetLessonsByDate { get; set; }
+        public string GetLessonById { get; set; }
+        public string AddLessonEndpoint { get; set; }
+        public string UpdateLessonEndpoint { get; set; }
+        public string GetAllLessonsForMentor { get; set; }
+        public string GetStudentLessonsAsync { get; set; }
+    }
+
+    public class EventsApiEndpoints
+    {
+        public string ConnectEventToLesson { get; set; }
     }
 
     #endregion 

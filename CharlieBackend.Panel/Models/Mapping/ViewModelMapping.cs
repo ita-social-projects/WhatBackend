@@ -15,6 +15,8 @@ using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
 using System.Linq;
+using CharlieBackend.Core.DTO.Visit;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -36,7 +38,31 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<HomeworkDto, HomeworkViewModel>();
 
             CreateMap<LessonViewModel, LessonDto>();
-            CreateMap<LessonDto, LessonViewModel>();
+            CreateMap<LessonDto, LessonViewModel>()
+                .ForMember(destination => destination.Mentor, config => config.MapFrom(x => new MentorViewModel() { Id = x.MentorId }))
+                .ForMember(destination => destination.StudentGroup, config => config.MapFrom(x => new StudentGroupViewModel() { Id = (long)x.StudentGroupId}));
+
+            CreateMap<StudentLessonDto, StudentLessonViewModel>();
+
+            CreateMap<LessonDto, LessonVisitModel>()
+               .ForMember(destination => destination.Visit, config => config.MapFrom(x => x.LessonVisits));
+
+            CreateMap<LessonDto, LessonUpdateViewModel>();
+
+            CreateMap<LessonUpdateViewModel, UpdateLessonDto>();
+
+            CreateMap<LessonCreateViewModel, CreateLessonDto>()
+                .ForMember(destination => destination.LessonVisits, config => config.MapFrom(x => x.LessonVisits.
+                Select(y => new  VisitDto
+                {
+                    StudentId = y.StudentId,
+                    StudentMark = y.StudentMark,
+                    Presence = y.Presence,
+                    Comment = y.Comment
+                })
+                .ToList()));
+
+            CreateMap<LessonCreateViewModel, LessonDto>();
 
             CreateMap<StudentGroupDto, UpdateStudentGroupDto>();
 
@@ -47,6 +73,9 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<MentorViewModel, MentorViewModel>();
 
             CreateMap<CourseDto, CourseViewModel>();
+
+            CreateMap<ScheduledEventViewModel, ScheduledEventDTO>();
+            CreateMap<ScheduledEventDTO, ScheduledEventViewModel>();
 
             #region Calendar ViewModels mappings
             CreateMap<CourseDto, CalendarCourseViewModel>();
