@@ -82,7 +82,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor") || User.IsInRole("Student"))
                 {
                     <a class="nav-link collapsed" asp-action="AllCourses" asp-controller="Courses">
                         <i class="fab fa-cuttlefish"></i>
