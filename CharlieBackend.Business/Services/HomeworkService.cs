@@ -178,7 +178,6 @@ namespace CharlieBackend.Business.Services
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
-        //ToDo: Add new parametr StudentID
         public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, long studentId, DateTime? dueDate)
         {
             if (dueDate != null)

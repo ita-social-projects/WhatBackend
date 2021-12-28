@@ -35,9 +35,8 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IList<HomeworkViewModel> homeworks;
-                
-            homeworks = await _homeworkService.GetHomeworks();
+
+            var homeworks = await _homeworkService.GetHomeworks();
             homeworks = homeworks.OrderBy(x => x.PublishingDate).ToList();
 
             return View(homeworks);
