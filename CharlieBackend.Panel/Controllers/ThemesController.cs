@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {
-    [Authorize(Roles = "Admin, Secretary")]
+    [Authorize(Roles = "Admin, Secretary, Mentor")]
     [Route("[controller]/[action]")]
     public class ThemesController : Controller
     {
