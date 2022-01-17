@@ -1,8 +1,10 @@
 ﻿using CharlieBackend.Core.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
@@ -15,35 +17,27 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             _fileGroupName = fileGroupName;
         }
 
-        public Task FillFile(IEnumerable<Student> students)
+        public void FillFile(IEnumerable<Student> students)
         {
-            StringBuilder tableHead = new StringBuilder("<tr>");
-            tableHead.Append(HtmlGenerator.HeadTh("#"));
-            tableHead.Append(HtmlGenerator.HeadTh("FirstName"));
-            tableHead.Append(HtmlGenerator.HeadTh("LastName"));
-            tableHead.Append(HtmlGenerator.HeadTh("Email"));
-            tableHead.Append("</tr>");
+            string[] headers = new string[] { "FirstName", "Lastname", "Email" };
 
-            StringBuilder tableBody = new StringBuilder();
-            int counter = 1;
-            foreach (var student in students)
+            string[][] rows = new string[students.Count()][];
+
+            for (int i = 0; i < rows.Length; i++)
             {
-                tableBody.Append("<tr>");
-                tableBody.Append(HtmlGenerator.BodyTh($"{counter}"));
-                tableBody.Append($"<td>{student.Account.FirstName}</td>");
-                tableBody.Append($"<td>{student.Account.LastName}</td>");
-                tableBody.Append($"<td>{student.Account.Email}</td>");
-                tableBody.Append("</tr>");
-                counter++;
+                rows[i] = new string[headers.Length];
+                rows[i][0] = students.ElementAt(i).Account.FirstName;
+                rows[i][1] = students.ElementAt(i).Account.LastName;
+                rows[i][2] = students.ElementAt(i).Account.Email;
             }
 
-            StringBuilder html = HtmlGenerator.GenerateHtml(_fileGroupName, tableHead.ToString(), tableBody.ToString());
+            StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
+
+            StringBuilder html = HtmlGenerator.GenerateHtml(_fileGroupName, table);
 
             byte[] byteLine = ConvertLineToArray(html.ToString());
 
             _memoryStream.Write(byteLine);
-
-            return Task.CompletedTask;
         }
 
         private byte[] ConvertLineToArray(string line)

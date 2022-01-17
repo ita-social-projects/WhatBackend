@@ -1,7 +1,8 @@
 ﻿using CharlieBackend.Core.DTO.Dashboard;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
@@ -12,67 +13,155 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         }
 
-        public async Task FillFile(StudentsClassbookResultDto data)
+        public void FillFile(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
                 return;
             }
 
-            //if (data.StudentsMarks != null && data.StudentsMarks.Any())
-            //{
-            //    var StudentsMarks = data.StudentsMarks.GroupBy(x => x.StudentGroup);
-            //    foreach (var item in StudentsMarks)
-            //    {
-            //        await TryToFillMarks(new StudentsClassbookResultDto
-            //        {
-            //            StudentsMarks = item
-            //                 .Select(x => new StudentMarkDto
-            //                 {
-            //                     LessonDate = x.LessonDate,
-            //                     LessonId = x.LessonId,
-            //                     Course = x.Course,
-            //                     StudentMark = x.StudentMark,
-            //                     Student = x.Student,
-            //                     StudentGroup = x.StudentGroup,
-            //                     StudentId = x.StudentId,
-            //                     Comment = x.Comment
-            //                 })
-            //                .ToList(),
-            //            StudentsPresences = null
-            //        });
-            //    }
-            //}
+            TryToFillPresences(data);
 
-            //if (data.StudentsPresences != null && data.StudentsPresences.Any())
-            //{
-            //    var StudentsPresences = data.StudentsPresences.GroupBy(x => x.StudentGroup);
-            //    foreach (var item in StudentsPresences)
-            //    {
-            //        await TryToFillPresences(new StudentsClassbookResultDto
-            //        {
-            //            StudentsMarks = null,
-            //            StudentsPresences = item
-            //                .Select(x => new StudentVisitDto
-            //                {
-            //                    LessonDate = x.LessonDate,
-            //                    LessonId = x.LessonId,
-            //                    Course = x.Course,
-            //                    Presence = x.Presence,
-            //                    Student = x.Student,
-            //                    StudentGroup = x.StudentGroup,
-            //                    StudentId = x.StudentId
-            //                })
-            //                .ToList()
-            //        });
-            //    }
-            //}
-
-            await Task.CompletedTask;
+            TryToFillMarks(data);
         }
+
+        private void TryToFillPresences(StudentsClassbookResultDto data)
+        {
+            if (data.StudentsPresences != null && data.StudentsPresences.Any())
+            {
+                var dateData = data.StudentsPresences.GroupBy(x => x.LessonId);
+
+                string[] headers = new string[dateData.Count() + 1];
+                headers[0] = "Students:";
+
+                for (int i = 0; i + 1 < headers.Length; i++)
+                {
+                    headers[i + 1] = ((DateTime)data.StudentsPresences.First(x => x.LessonId == dateData.ElementAt(i).Key).LessonDate).ToString("dd.MM.yyyy");
+                }
+
+                var students = data.StudentsPresences.Select(x => x.Student).Distinct().OrderByDescending(s => s);
+
+                string[][] rows = new string[students.Count()][];
+
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    rows[i] = new string[headers.Length];
+                    rows[i][0] = students.ElementAt(i);
+
+                    for (int j = 0; j + 1 < headers.Length; j++)
+                    {
+                        var visits = data.StudentsPresences
+                            .Where(x => x.Student == rows[i][0] && x.LessonDate?
+                            .ToString("dd.MM.yyyy") == headers[j + 1]);
+
+                        var studentVisit = visits.Any() ? visits.First().Presence : null;
+
+                        rows[i][j + 1] = studentVisit == null ? " " : studentVisit == true ? $"&#10003;" : " ";
+                    }
+                }
+
+                StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
+
+                StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
+
+                byte[] byteLine = ConvertLineToArray(html.ToString());
+
+                _memoryStream.Write(byteLine);
+            }
+        }
+
+        private void TryToFillMarks(StudentsClassbookResultDto data)
+        {
+            if (data.StudentsMarks != null && data.StudentsMarks.Any())
+            {
+                var dateData = data.StudentsMarks.GroupBy(x => x.LessonId);
+
+                string[] headers = new string[dateData.Count() + 2];
+                headers[0] = "Students:";
+                headers[dateData.Count() + 1] = "Avg:";
+
+                for (int i = 0; i + 1 < headers.Length - 1; i++)
+                {
+                    headers[i + 1] = ((DateTime)data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(i).Key).LessonDate).ToString("dd.MM.yyyy");
+                }
+
+                var students = data.StudentsMarks.Select(x => x.Student).Distinct().OrderByDescending(s => s);
+
+                string[][] rows = new string[students.Count()][];
+
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    rows[i] = new string[headers.Length];
+                    rows[i][0] = students.ElementAt(i);
+
+                    List<int> listOfMarks = new List<int>();
+
+                    for (int j = 0; j + 1 < headers.Length - 1; j++)
+                    {
+                        var marks = data.StudentsMarks
+                            .Where(x => x.Student == rows[i][0] && x.LessonDate?
+                            .ToString("dd.MM.yyyy") == headers[j + 1]);
+
+                        var studentMark = marks.Any() ? marks.First().StudentMark : null;
+
+                        rows[i][j + 1] = studentMark == null ? " " : studentMark == 0 ? "-" : $"{studentMark}";
+
+                        if(rows[i][j + 1] != " "  && rows[i][j + 1] != "-")
+                        {
+                            listOfMarks.Add(Convert.ToInt32(rows[i][j + 1]));
+                        }
+                    }
+
+                    rows[i][headers.Length - 1] = string.Format("{0:0.00}", listOfMarks.Any() ? listOfMarks.Average() : 0f);
+                }
+
+                StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
+
+                StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
+
+                byte[] byteLine = ConvertLineToArray(html.ToString());
+
+                _memoryStream.Write(byteLine);
+            }
+        }
+
+        private string GetFileHeader(StudentsClassbookResultDto data)
+        {
+            string group = String.Empty;
+            string startDate = String.Empty;
+            string finishDate = String.Empty;
+
+            if (data.StudentsPresences != null && data.StudentsPresences.Any())
+            {
+                group = data.StudentsPresences.First().StudentGroup;
+                startDate = data.StudentsPresences.First().LessonDate?.ToString("dd.MM.yyyy");
+                finishDate = data.StudentsPresences.Last().LessonDate?.ToString("dd.MM.yyyy");
+            }
+            else if(data.StudentsMarks != null && data.StudentsMarks.Any())
+            {
+                group = data.StudentsMarks.First().StudentGroup;
+                startDate = data.StudentsMarks.First().LessonDate?.ToString("dd.MM.yyyy");
+                finishDate = data.StudentsMarks.Last().LessonDate?.ToString("dd.MM.yyyy");
+            }
+
+            return $"Group: {group} {startDate}&nbsp;-&nbsp;{finishDate}";
+        }
+
         public override string GetFileName()
         {
-            return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd.HH:mm") + ".html";
+            return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd") + ".html";
+        }
+
+        private byte[] ConvertLineToArray(string line)
+        {
+            byte[] array = new byte[line.Length];
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                array[i] = (byte)line[i];
+            }
+
+            return array;
         }
     }
 }

@@ -3,9 +3,6 @@ using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.DTO.Export;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -35,7 +32,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
                 using var fileExporter = new StudentGroupsExportHTML(group.Name);
 
-                await fileExporter.FillFile(students);
+                fileExporter.FillFile(students);
 
                 return Result<FileDto>.GetSuccess(new FileDto()
                 {
@@ -51,11 +48,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
+        public async Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
         {
-            return Task.FromResult(Result<FileDto>.GetError(
+            return Result<FileDto>.GetError(
                     ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+                    "student classbook can't be returned in html format");
         }
 
         public Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
@@ -72,11 +69,18 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     "student classbook can't be returned in html format"));
         }
 
-        public Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
+        public async Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
         {
-            return Task.FromResult(Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+            using var classbook = new ClassbookExportHTML();
+
+            classbook.FillFile(data);
+
+            return Result<FileDto>.GetSuccess(new FileDto()
+            {
+                ByteArray = await classbook.GetByteArrayAsync(),
+                ContentType = classbook.GetContentType(),
+                Filename = classbook.GetFileName()
+            });
         }
 
         public Task<Result<FileDto>> GetStudentsResults(StudentsResultsDto data)
