@@ -135,14 +135,22 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
+                    <!-- Navbar Brand - WHAT Logo -->
+                    <div class="container-fluid">
+                        <a class="navbar-brand" asp-action="Index" asp-controller="Home">
+                            <img src="/img/horizontal_logo_on_white.png" alt="Who is absent today" width="150">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 font-weight-bold">Who is absent today</span>
+                        </a>
+                    </div>
+
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
 
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
+
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -273,7 +281,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                        Sign in as ${role} </a>`;
+                                                                Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 
