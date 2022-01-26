@@ -5,7 +5,6 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Threading.Tasks;
 
-
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
     public class ExportServiceHtml : IExportService

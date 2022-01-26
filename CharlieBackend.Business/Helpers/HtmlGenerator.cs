@@ -8,7 +8,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
         private const string _htmlPattern = "<html><head><link rel = \"stylesheet\" " +
                     "href = \"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" " +
                     "integrity = \"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" " +
-                    "crossorigin = \"anonymous\" ></head><body><div class=\"container\">" +
+                    "crossorigin = \"anonymous\" ></head><body><div class=\"col-12\">" +
                     "<h1>{0}</h1>{1}</div></body></html>";
         #endregion
 
@@ -57,13 +57,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             table.Append(tableBody);
             table.Append("</table>");
 
-
             return table;
         }
 
         public static string HeadTh(string str) => $"<th scope = \"col\"><center>{str}</center></th>";
 
-        public static string BodyTh(string str) => $"<th scope = \"row\">{str}</th>";
+        public static string BodyTh(string str) => $"<th scope = \"row\"><center>{str}</center></th>";
 
         public static string BodyTd(string str) => $"<td><center>{str}</center></td>";
 

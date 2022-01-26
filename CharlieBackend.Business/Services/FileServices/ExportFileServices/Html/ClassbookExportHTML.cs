@@ -20,12 +20,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 return;
             }
 
-            TryToFillPresences(data);
+            FillPresences(data);
 
-            TryToFillMarks(data);
+            FillMarks(data);
         }
 
-        private void TryToFillPresences(StudentsClassbookResultDto data)
+        private void FillPresences(StudentsClassbookResultDto data)
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -70,7 +70,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             }
         }
 
-        private void TryToFillMarks(StudentsClassbookResultDto data)
+        private void FillMarks(StudentsClassbookResultDto data)
         {
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
@@ -94,25 +94,25 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i] = new string[headers.Length];
                     rows[i][0] = students.ElementAt(i);
 
-                    List<int> listOfMarks = new List<int>();
+                    List<int> marks = new List<int>();
 
                     for (int j = 0; j + 1 < headers.Length - 1; j++)
                     {
-                        var marks = data.StudentsMarks
+                        var studentMarks = data.StudentsMarks
                             .Where(x => x.Student == rows[i][0] && x.LessonDate?
                             .ToString("dd.MM.yyyy") == headers[j + 1]);
 
-                        var studentMark = marks.Any() ? marks.First().StudentMark : null;
+                        var studentMark = studentMarks.Any() ? studentMarks.First().StudentMark : null;
+
+                        if (studentMark != null && studentMark != 0)
+                        {
+                            marks.Add((int)studentMark);
+                        }
 
                         rows[i][j + 1] = studentMark == null ? " " : studentMark == 0 ? "-" : $"{studentMark}";
-
-                        if(rows[i][j + 1] != " "  && rows[i][j + 1] != "-")
-                        {
-                            listOfMarks.Add(Convert.ToInt32(rows[i][j + 1]));
-                        }
                     }
 
-                    rows[i][headers.Length - 1] = string.Format("{0:0.00}", listOfMarks.Any() ? listOfMarks.Average() : 0f);
+                    rows[i][headers.Length - 1] = string.Format("{0:0.00}", marks.Any() ? marks.Average() : 0f);
                 }
 
                 StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
