@@ -178,15 +178,12 @@ namespace CharlieBackend.Business.Services
 
             return Result<IList<HomeworkDto>>.GetSuccess(_mapper.Map<IList<HomeworkDto>>(homeworks));
         }
-
-        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate)
+        public async Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, long studentId, DateTime? dueDate)
         {
             if (dueDate != null)
             {
                 dueDate = dueDate.Value.Date.AddDays(1);
             }
-
-            var studentId = _currentUserService.EntityId;
 
             if (!await _unitOfWork.StudentGroupRepository.DoesStudentBelongsGroup(studentId,studentGroupId))
             {
