@@ -19,6 +19,7 @@ namespace CharlieBackend.Panel.Services
         private readonly IMentorService _mentorService;
         private readonly IStudentService _studentService;
         private readonly ICourseService _courseService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly StudentGroupsApiEndpoints _studentGroupsApiEndpoints;
 
         public StudentGroupService(IApiUtil apiUtil,
@@ -26,13 +27,15 @@ namespace CharlieBackend.Panel.Services
                                    IMentorService mentorService,
                                    IStudentService studentService,
                                    ICourseService courseService,
-                                   IOptions<ApplicationSettings> options)
+                                   IOptions<ApplicationSettings> options,
+                                   ICurrentUserService currentUserService)
         {
             _apiUtil = apiUtil;
             _mapper = mapper;
             _mentorService = mentorService;
             _studentService = studentService;
             _courseService = courseService;
+            _currentUserService = currentUserService;
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
@@ -43,8 +46,14 @@ namespace CharlieBackend.Panel.Services
             var studentGroupsResponse = await _apiUtil.GetAsync<IList<StudentGroupDto>>(getAllStudentGroupsEndpoint);
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(studentGroupsResponse);
             
-            var students = await _studentService.GetAllStudentsAsync(); ;
-            var mentors = await _mentorService.GetAllMentorsAsync();
+            var students = await _studentService.GetAllStudentsAsync();
+
+            var mentors = await _mentorService.GetAllActiveMentorsAsync();
+            if ((_currentUserService.Role != Core.Entities.UserRole.Mentor))
+            {
+                mentors = await _mentorService.GetAllMentorsAsync();
+            }
+
             var courses = await _courseService.GetAllCoursesAsync();
 
             foreach (var item in studentGroups)

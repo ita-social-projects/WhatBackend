@@ -70,6 +70,16 @@ namespace CharlieBackend.Panel.Services
             return allMentors;
         }
 
+        public async Task<IList<MentorViewModel>> GetAllActiveMentorsAsync()
+        {
+            var activeMentorEndpoint = _mentorsApiEndpoints.ActiveMentorEndpoint;
+
+            var activeMentors = await
+                _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
+
+            return activeMentors;
+        }
+
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id)
         {
             var getAllCoursesEndpoint = _coursesApiEndpoints.GetAllCoursesEndpoint;

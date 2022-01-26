@@ -106,6 +106,14 @@
                     </a>
                 }
 
+                @if (!User.IsInRole("NotAssigned"))
+                {
+                    <a class="nav-link collapsed" asp-action="AllLessons" asp-controller="Lessons">
+                        <i class="fas fa-book-open"></i>
+                        <span>Lessons</span>
+                    </a>
+                }
+
                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="Index" asp-controller="Calendar">
