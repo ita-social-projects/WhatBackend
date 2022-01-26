@@ -63,7 +63,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             List<MentorEditViewModel> mentors = new List<MentorEditViewModel>();
             
-            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDate();
+            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDateAsync();
             if (themeN == null && mentorId == null)
             {
                 IEnumerable<string> lessonThemes = allLessons.Where(x => x.StudentGroupId == stGroupId)

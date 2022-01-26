@@ -37,7 +37,7 @@ namespace CharlieBackend.Api.Controllers
         /// <returns>
         /// All Homewrok's entities
         /// </returns>
-        [Authorize(Roles = "Admin, Mentor, Student")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<IList<HomeworkDto>>> GetHomeworks()
