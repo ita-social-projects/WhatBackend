@@ -12,6 +12,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     "<h1>{0}</h1>{1}</div></body></html>";
         #endregion
 
+        public const string NonBreakingSpace = "&nbsp;-&nbsp;";
+
         public static StringBuilder GenerateHtml(string header, StringBuilder table)
         {
             return new StringBuilder().AppendFormat(_htmlPattern, header, table);

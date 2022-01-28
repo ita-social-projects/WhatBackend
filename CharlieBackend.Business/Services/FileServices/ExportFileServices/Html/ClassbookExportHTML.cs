@@ -8,11 +8,6 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
     class ClassbookExportHTML : BaseFileExportHTML
     {
-        public ClassbookExportHTML()
-        {
-
-        }
-
         public void FillFile(StudentsClassbookResultDto data)
         {
             if (data == null)
@@ -76,6 +71,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             {
                 var dateData = data.StudentsMarks.GroupBy(x => x.LessonId);
 
+                //Need 2 extra slots for columns "students" and "average mark" (besides lesson dates)
                 string[] headers = new string[dateData.Count() + 2];
                 headers[0] = "Students:";
                 headers[dateData.Count() + 1] = "Avg:";
@@ -144,7 +140,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 finishDate = data.StudentsMarks.Last().LessonDate?.ToString("dd.MM.yyyy");
             }
 
-            return $"Group: {group} {startDate}&nbsp;-&nbsp;{finishDate}";
+            return $"Group: {group} {startDate}{HtmlGenerator.NonBreakingSpace}{finishDate}";
         }
 
         public override string GetFileName()

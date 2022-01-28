@@ -11,6 +11,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
     public class StudentGroupsExportHTML : BaseFileExportHTML
     {
         private string _fileGroupName;
+        private const int _FirstNameColumnNumber = 0;
+        private const int _LastNameColumnNumber = 1;
+        private const int _EmailColumnNumber = 2;
 
         public StudentGroupsExportHTML(string fileGroupName)
         {
@@ -26,9 +29,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             for (int i = 0; i < rows.Length; i++)
             {
                 rows[i] = new string[headers.Length];
-                rows[i][0] = students.ElementAt(i).Account.FirstName;
-                rows[i][1] = students.ElementAt(i).Account.LastName;
-                rows[i][2] = students.ElementAt(i).Account.Email;
+                rows[i][_FirstNameColumnNumber] = students.ElementAt(i).Account.FirstName;
+                rows[i][_LastNameColumnNumber] = students.ElementAt(i).Account.LastName;
+                rows[i][_EmailColumnNumber] = students.ElementAt(i).Account.Email;
             }
 
             StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);

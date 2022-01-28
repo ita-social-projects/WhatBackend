@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices.Html;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices.Html;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.DTO.Export;
 using CharlieBackend.Core.Models.ResultModel;
@@ -26,7 +27,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 if (students.Count == 0)
                 {
                     return Result<FileDto>.GetError(ErrorCode.NotFound,
-                            "Group hasn't any students");
+                            ResponseMessages.GroupHasNotStudents);
                 }
 
                 using var fileExporter = new StudentGroupsExportHTML(group.Name);
@@ -43,7 +44,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             else
             {
                 return Result<FileDto>.GetError(ErrorCode.NotFound,
-                        "Group not found");
+                        ResponseMessages.GroupNotFound);
             }
         }
 
