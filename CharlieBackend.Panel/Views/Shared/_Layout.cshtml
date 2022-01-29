@@ -74,7 +74,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
                 {
                     <a class="nav-link collapsed" asp-action="AllThemes" asp-controller="Themes">
                         <i class="fas fa-book-open"></i>
