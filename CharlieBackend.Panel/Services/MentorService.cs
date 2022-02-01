@@ -77,6 +77,11 @@ namespace CharlieBackend.Panel.Services
             var activeMentors = await
                 _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
 
+            foreach(var mentor in activeMentors)
+            {
+                mentor.IsActive = true;
+            }
+
             return activeMentors;
         }
 

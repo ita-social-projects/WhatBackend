@@ -1,26 +1,39 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Core.Entities;
+using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {
-    [Authorize(Roles = "Admin, Secretary")]
+    [Authorize(Roles = "Admin, Secretary, Mentor")]
     [Route("[controller]/[action]")]
     public class MentorsController : Controller
     {
         private readonly IMentorService _mentorService;
+        private readonly ICurrentUserService _currentUserService;
 
-
-        public MentorsController(IMentorService mentorService)
+        public MentorsController(IMentorService mentorService, ICurrentUserService currentUserService)
         {
             _mentorService = mentorService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IActionResult> AllMentors()
         {
-            var mentor = await _mentorService.GetAllMentorsAsync();
+            IEnumerable<MentorViewModel> mentor = null;
+
+            if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
+            {
+                mentor = await _mentorService.GetAllMentorsAsync();
+            }
+            else if(_currentUserService.Role == UserRole.Mentor)
+            {
+                mentor = await _mentorService.GetAllActiveMentorsAsync();
+            }
 
             return View(mentor);
         }
