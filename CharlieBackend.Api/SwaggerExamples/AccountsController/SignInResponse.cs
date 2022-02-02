@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.SwaggerExamples.AccountsController
                 role = 1,
                 role_list = new Dictionary<string, string>()
                 {
-                    {"student", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiSWQiOiI0IiwiRW1haWwiOiJ0aG9tYXMucm9iZXJ0c0BleGFtcGxlLmNvbSIsIkFjY291bnRJZCI6IjkiLCJuYmYiOjE2NDM3MTIyNDEsImV4cCI6MTY0Mzc1NTQ0MSwiaXNzIjoiTXlBdXRoU2VydmVyIiwiYXVkIjoiTXlBdXRoQ2xpZW50In0.1ITyYhlGsykxSJj8ftPLmYTV2Fik04dej6QX7HcEmyc" }
+                    {"student", "Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9" }
                 } 
             };
         }
