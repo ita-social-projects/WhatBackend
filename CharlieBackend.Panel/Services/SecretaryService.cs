@@ -19,12 +19,14 @@ namespace CharlieBackend.Panel.Services
             _secretariesApiEndpoints = options.Value.Urls.ApiEndpoints.Secretaries;            
         }
 
-        public async Task<bool> DisableSecretaryAsync(long id)
+        public async Task<IList<SecretaryViewModel>> GetAllSecretariesAsync()
         {
-            var disableSecretaryEndpoint = string
-                .Format(_secretariesApiEndpoints.DisableSecretaryEndpoint, id);
+            var getAllSecretariesEndpoint = _secretariesApiEndpoints.GetAllSecretariesEndpoint;
 
-            return await _apiUtil.DeleteAsync<bool>(disableSecretaryEndpoint);
+            var allSecretaries = await
+                _apiUtil.GetAsync<IList<SecretaryViewModel>>(getAllSecretariesEndpoint);
+
+            return allSecretaries;
         }
 
         public async Task<bool> EnableSecretaryAsync(long id)
@@ -35,22 +37,12 @@ namespace CharlieBackend.Panel.Services
             return await _apiUtil.EnableAsync<bool>(enableSecretaryEndpoint);
         }
 
-        public async Task<IList<SecretaryViewModel>> GetAllSecretariesAsync()
+        public async Task<bool> DisableSecretaryAsync(long id)
         {
-            var getAllSecretariesEndpoint = _secretariesApiEndpoints.GetAllSecretariesEndpoint;
-            var activeSecretaryEndpoint = _secretariesApiEndpoints.ActiveSecretaryEndpoint;            
+            var disableSecretaryEndpoint = string
+                .Format(_secretariesApiEndpoints.DisableSecretaryEndpoint, id);
 
-            var allSecretaries = await
-                _apiUtil.GetAsync<IList<SecretaryViewModel>>(getAllSecretariesEndpoint);
-            var activeSecretaries = await
-                _apiUtil.GetAsync<IList<SecretaryViewModel>>(activeSecretaryEndpoint);
-
-            foreach (var secretary in allSecretaries)
-            {
-                secretary.IsActive = activeSecretaries.Any(x => x.Id == secretary.Id);
-            }
-
-            return allSecretaries;
+            return await _apiUtil.DeleteAsync<bool>(disableSecretaryEndpoint);
         }
     }
 }

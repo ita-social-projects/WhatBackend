@@ -133,7 +133,6 @@ namespace CharlieBackend.Panel
     public class SecretariesApiEndpoints
     {
         public string GetAllSecretariesEndpoint { get; set; }
-        public string ActiveSecretaryEndpoint { get; set; }
         public string EnableSecretaryEndpoint { get; set; }
         public string DisableSecretaryEndpoint { get; set; }
     }

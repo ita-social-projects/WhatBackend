@@ -8,8 +8,9 @@ namespace CharlieBackend.Panel.Services.Interfaces
     {
         Task<IList<SecretaryViewModel>> GetAllSecretariesAsync();
 
+        Task<bool> EnableSecretaryAsync(long id);
+
         Task<bool> DisableSecretaryAsync(long id);
 
-        Task<bool> EnableSecretaryAsync(long id);
     }
 }

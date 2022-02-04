@@ -16,7 +16,7 @@ namespace CharlieBackend.Panel.Controllers
             _secretaryService = secretaryService;
         }
 
-        public async Task<IActionResult> AllSecretaries()
+        public async Task<IActionResult> GetAllSecretaries()
         {
             var secretaries = await _secretaryService.GetAllSecretariesAsync();
 
@@ -24,19 +24,19 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> DisableSecretary(long id)
-        {
-            var disabledSecretary = await _secretaryService.DisableSecretaryAsync(id);
-
-            return RedirectToAction("AllSecretaries", "Secretaries");
-        }
-
-        [HttpGet("{id}")]
         public async Task<IActionResult> EnableSecretary(long id)
         {
             await _secretaryService.EnableSecretaryAsync(id);
 
-            return RedirectToAction("AllSecretaries", "Secretaries");
+            return RedirectToAction("GetAllSecretaries", "Secretaries");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DisableSecretary(long id)
+        {
+            var disabledSecretary = await _secretaryService.DisableSecretaryAsync(id);
+
+            return RedirectToAction("GetAllSecretaries", "Secretaries");
         }
     }
 }
