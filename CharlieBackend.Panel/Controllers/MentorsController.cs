@@ -48,22 +48,6 @@ namespace CharlieBackend.Panel.Controllers
             return View("UpdateMentor");
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> UpdateMentor(long id, UpdateMentorDto data)
-        {
-            var updatedStudent = await _mentorService.UpdateMentorAsync(id, data);
-
-            return RedirectToAction("AllMentors", "Mentors");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddMentor(long id)
-        {
-            await _mentorService.AddMentorAsync(id);
-
-            return RedirectToAction("AllMentors", "Mentors");
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> DisableMentor(long id)
         {
@@ -76,6 +60,22 @@ namespace CharlieBackend.Panel.Controllers
         public async Task<IActionResult> EnableMentor(long id)
         {
             await _mentorService.EnableMentorAsync(id);
+
+            return RedirectToAction("AllMentors", "Mentors");
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> UpdateMentor(long id, UpdateMentorDto data)
+        {
+            var updatedStudent = await _mentorService.UpdateMentorAsync(id, data);
+
+            return RedirectToAction("AllMentors", "Mentors");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMentor(long id)
+        {
+            await _mentorService.AddMentorAsync(id);
 
             return RedirectToAction("AllMentors", "Mentors");
         }
