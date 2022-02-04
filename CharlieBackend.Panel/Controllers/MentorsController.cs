@@ -24,7 +24,7 @@ namespace CharlieBackend.Panel.Controllers
 
         public async Task<IActionResult> AllMentors()
         {
-            IEnumerable<MentorViewModel> mentor = null;
+            IEnumerable<MentorViewModel> mentor = new List<MentorViewModel>();
 
             if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
             {
