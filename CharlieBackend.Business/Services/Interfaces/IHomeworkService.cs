@@ -22,7 +22,7 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<VisitDto>> UpdateMarkAsync(UpdateMarkRequestDto request);
 
-        Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate);
+        Task<Result<IList<HomeworkDto>>> GetHomeworkNotDone(long studentGroupId, long studentId, DateTime? dueDate);
 
     }
 }

@@ -17,6 +17,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
             _exportServiceTypes.Add(FileExtension.XLSX, typeof(ExportServiceXlsx));
             _exportServiceTypes.Add(FileExtension.CSV, typeof(ExportServiceCsv));
+            _exportServiceTypes.Add(FileExtension.HTML, typeof(ExportServiceHtml));
         }
 
         public IExportService GetExportService(FileExtension fileExtension)

@@ -37,7 +37,7 @@ namespace CharlieBackend.Api.Controllers
         /// <returns>
         /// All Homewrok's entities
         /// </returns>
-        [Authorize(Roles = "Admin, Mentor")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<IList<HomeworkDto>>> GetHomeworks()
@@ -64,12 +64,12 @@ namespace CharlieBackend.Api.Controllers
         /// Gets homework not done
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
-        [Authorize(Roles = "Student")]
-        [HttpGet("notdonehomework/{studentGroupId}")]
-        public async Task<ActionResult> GetHomeworkNotDone(long studentGroupId, DateTime? dueDate = null)
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [HttpGet("notdonehomework/{studentGroupId}/{studentId}")]
+        public async Task<ActionResult> GetHomeworkNotDone(long studentGroupId, long studentId, DateTime? dueDate = null)
         {
             var results = await _homeworkService
-                        .GetHomeworkNotDone(studentGroupId, dueDate);
+                        .GetHomeworkNotDone(studentGroupId, studentId, dueDate);
 
             return results.ToActionResult();
         }

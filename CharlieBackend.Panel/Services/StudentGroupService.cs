@@ -28,8 +28,8 @@ namespace CharlieBackend.Panel.Services
                                    IMentorService mentorService,
                                    IStudentService studentService,
                                    ICourseService courseService,
-                                   ICurrentUserService currentUserService,
-                                   IOptions<ApplicationSettings> options)
+                                   IOptions<ApplicationSettings> options,
+                                   ICurrentUserService currentUserService)
         {
             _apiUtil = apiUtil;
             _mapper = mapper;
@@ -57,7 +57,7 @@ namespace CharlieBackend.Panel.Services
             }
             else if (_currentUserService.Role == UserRole.Mentor)
             {
-                mentors = await _mentorService.GetActiveMentorsAsync();
+                mentors = await _mentorService.GetAllActiveMentorsAsync();
             }
 
             foreach (var item in studentGroups)
@@ -104,7 +104,7 @@ namespace CharlieBackend.Panel.Services
         public async Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync()
         {
             var studentsTask = _studentService.GetAllStudentsAsync();
-            var mentorsTask = _mentorService.GetActiveMentorsAsync();
+            var mentorsTask = _mentorService.GetAllActiveMentorsAsync();
             var coursesTask = _courseService.GetAllCoursesAsync();
 
             var studentGroup = new StudentGroupEditViewModel
@@ -124,7 +124,7 @@ namespace CharlieBackend.Panel.Services
 
             var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>(getStudentGroupEndpoint);
             var studentsTask = _studentService.GetAllStudentsAsync();
-            var mentorsTask = _mentorService.GetActiveMentorsAsync();
+            var mentorsTask = _mentorService.GetAllActiveMentorsAsync();
 
             var coursesTask = _courseService.GetAllCoursesAsync();
 

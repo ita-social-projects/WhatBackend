@@ -2,7 +2,7 @@
 {
     public enum FileExtension
     {
-        Undefined = 0,
+        HTML = 0,
         XLSX = 1,
         CSV = 2
     }

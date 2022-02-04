@@ -1,0 +1,60 @@
+﻿@model CharlieBackend.Panel.Models.Lesson.LessonVisitModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+        <div class="container-fluid">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Attendance</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
+                        <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr class="thead-dark row">
+                                    <th class="col">Student</th>
+                                    <th class="col-2">Mark</th>
+                                    <th class="col-2">Presence</th>
+                                    <th class="col-3">Comment Null</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @for (int i = 0; i < Model.Students.Count; i++)
+                                {
+                                    <tr class="row">
+
+                                        <td class="col text-truncate">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
+                                        <td class="col-2 text-truncate">@Model.Visit[i].StudentMark</td>
+                                        @if (@Model.Visit[i].Presence)
+                                        {
+                                            <td class="col-2 text-truncate">+</td>
+
+                                        }
+                                        else
+                                        {
+                                            <td class="col-2 text-truncate">-</td>
+
+                                        }
+                                        <td class="col-3 text-truncate">@Model.Visit[i].Comment</td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
