@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Api.SwaggerExamples.AccountsController
 {
@@ -10,7 +11,7 @@ namespace CharlieBackend.Api.SwaggerExamples.AccountsController
 
         public int role { get; set; }
 
-        public long id { get; set; }
+        public Dictionary<string, string> role_list { get; set; }
 
 
         public SignInResponse GetExamples()
@@ -20,10 +21,11 @@ namespace CharlieBackend.Api.SwaggerExamples.AccountsController
                 first_name = "Evgeniy",
                 last_name = "Karnaushekno",
                 role = 1,
-                id = 15
+                role_list = new Dictionary<string, string>()
+                {
+                    {"student", "Bearer yJhbGciOiJIUzI1iIsInR5cCI6IkpXVCJ9" }
+                } 
             };
         }
-
-
     }
 }

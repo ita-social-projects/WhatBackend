@@ -7,22 +7,25 @@
 
 
 
-<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-    <div class="dropleft">
-        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="dropdown-menu ">
-            <form method="post" class="input-group" asp-action="AddMentor" asp-controller="Mentors">
-                <input type="text" class="form-control" name="id" placeholder="Account id" />
-                <button type="submit" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </form>
+@if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+{
+    <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+        <div class="dropleft">
+            <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                <i class="fas fa-plus"></i>
+            </button>
+            <div class="dropdown-menu ">
+                <form method="post" class="input-group" asp-action="AddMentor" asp-controller="Mentors">
+                    <input type="text" class="form-control" name="id" placeholder="Account id" />
+                    <button type="submit" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
 
-</div>
+    </div>
+}
 
 <div id="content-wrapper" class="d-flex flex-column">
 
@@ -36,15 +39,18 @@
 
                         <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
 
-                        <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
-                            <i class="far fa-eye"></i>
-                            <span> Active Mentors </span>
-                        </a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                        {
+                            <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
+                                <i class="far fa-eye"></i>
+                                <span> Active Mentors </span>
+                            </a>
 
-                        <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
-                            <i class="far fa-eye-slash"></i>
-                            <span> Inactive Mentors</span>
-                        </a>
+                            <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
+                                <i class="far fa-eye-slash"></i>
+                                <span> Inactive Mentors</span>
+                            </a>
+                        }
                     </div>
 
                 </div>
@@ -54,10 +60,13 @@
                         <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-4">Email</th>
-                                    <th class="col-3">First Name</th>
-                                    <th class="col-3">Last Name</th>
-                                    <th class="col">Controll</th>
+                                    <th class="col">Email</th>
+                                    <th class="col">First Name</th>
+                                    <th class="col">Last Name</th>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                                    {
+                                        <th class="col">Controll</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -68,38 +77,41 @@
                                     if (item.IsActive)
                                     {
                                         <tr class="row" id="activeMentorsRow">
-                                            <td class="col-4 text-truncate">@item.Email</td>
-                                            <td class="col-3 text-truncate">@item.FirstName</td>
-                                            <td class="col-3 text-truncate">@item.LastName</td>
-                                            <td class="col">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-outline-secondar dropdown-toggle"
-                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                            aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fas fa-cog"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <td class="col text-truncate">@item.Email</td>
+                                            <td class="col text-truncate">@item.FirstName</td>
+                                            <td class="col text-truncate">@item.LastName</td>
+                                            @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                                            {
+                                                <td class="col">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-outline-secondar dropdown-toggle"
+                                                                type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-cog"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                        <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
-                                                            <i class="fas fa-pen"></i>
-                                                            <span>Edit </span>
-                                                        </a>
+                                                            <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@item.Id">
+                                                                <i class="fas fa-pen"></i>
+                                                                <span>Edit </span>
+                                                            </a>
 
-                                                        <a class="dropdown-item text-dark js-disable-Mentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
-                                                            <i class="fas fa-trash"></i>
-                                                            <span>Disable </span>
-                                                        </a>
+                                                            <a class="dropdown-item text-dark js-disable-Mentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@item.Id">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Disable </span>
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                     else
                                     {
                                         <tr class="row d-none" id="inactiveMentorsRow">
-                                            <td class="col-4 text-truncate">@item.Email</td>
-                                            <td class="col-3 text-truncate">@item.FirstName</td>
-                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col text-truncate">@item.Email</td>
+                                            <td class="col text-truncate">@item.FirstName</td>
+                                            <td class="col text-truncate">@item.LastName</td>
                                             <td class="col">
                                                 <div class="dropdown">
                                                     <button class="btn btn-outline-secondar dropdown-toggle"
@@ -149,7 +161,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Enable Mentor modal window-->
     <div class="modal fade" id="enableMentorModalWindow" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -240,7 +252,7 @@
         });
 
     </script>
-    
+
     <script type="text/javascript">
 
         var routeForEnableMentor = "/Mentors/EnableMentor/";

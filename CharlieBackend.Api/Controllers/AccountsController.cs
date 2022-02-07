@@ -126,7 +126,7 @@ namespace CharlieBackend.Api.Controllers
 
             var response = new AuthenticationResponseDto
             {
-                FisrtName = foundAccount.FirstName,
+                FirstName = foundAccount.FirstName,
                 LastName = foundAccount.LastName,
                 Role = foundAccount.Role,
                 RoleList = userRoleToJwtToken
