@@ -58,7 +58,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
                 {
                     <a class="nav-link collapsed" asp-action="AllMentors" asp-controller="Mentors">
                         <i class="far fa-address-book"></i>

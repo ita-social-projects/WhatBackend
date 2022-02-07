@@ -55,17 +55,9 @@ namespace CharlieBackend.Panel.Services
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
         {
             var getAllMentorsEndpoint = _mentorsApiEndpoints.GetAllMentorsEndpoint;
-            var activeMentorEndpoint = _mentorsApiEndpoints.ActiveMentorEndpoint;
 
             var allMentors = await
                 _apiUtil.GetAsync<IList<MentorViewModel>>(getAllMentorsEndpoint);
-            var activeMentors = await
-                _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
-
-            foreach (var mentor in allMentors)
-            {
-                mentor.IsActive = activeMentors.Any(x => x.Id == mentor.Id);
-            }
 
             return allMentors;
         }
