@@ -27,7 +27,6 @@ namespace CharlieBackend.Panel.Controllers
             return View(studentGroups);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareStudentGroupForUpdate(long id)
         {
@@ -37,7 +36,6 @@ namespace CharlieBackend.Panel.Controllers
 
             return View("UpdateStudentGroup");
         }
-
 
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudentGroup(long id, StudentGroupDto data)
