@@ -70,7 +70,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.StudentGroups
             .IncludeFilter(group => group.StudentsOfStudentGroups.Where(s => s.Student.Account.Role.HasFlag(UserRole.Student) && s.Student.Account.IsActive.Value))
-            .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor) && m.Mentor.Account.IsActive.Value))
+            .IncludeFilter(group => group.MentorsOfStudentGroups.Where(m => m.Mentor.Account.Role.HasFlag(UserRole.Mentor)))
             .WhereIf(!(startDate is null), group => group.StartDate >= startDate ||
                                                     group.FinishDate > startDate)
             .WhereIf(!(finishDate is null), group => group.FinishDate < finishDate ||

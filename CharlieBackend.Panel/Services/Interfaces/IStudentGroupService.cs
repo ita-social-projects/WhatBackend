@@ -7,7 +7,7 @@ namespace CharlieBackend.Panel.Services.Interfaces
 {
     public interface IStudentGroupService
     {
-        Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync();
+        Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync(bool isAllGroups = true);
 
         Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id);
 

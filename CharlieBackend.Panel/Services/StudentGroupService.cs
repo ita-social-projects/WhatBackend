@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Core.DTO.StudentGroups;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
@@ -39,22 +40,25 @@ namespace CharlieBackend.Panel.Services
             _studentGroupsApiEndpoints = options.Value.Urls.ApiEndpoints.StudentGroups;
         }
 
-        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync()
+        public async Task<IList<StudentGroupViewModel>> GetAllStudentGroupsAsync(bool isAllGroups = true)
         {
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
 
             var studentGroupsResponse = await _apiUtil.GetAsync<IList<StudentGroupDto>>(getAllStudentGroupsEndpoint);
             var studentGroups = _mapper.Map<IList<StudentGroupViewModel>>(studentGroupsResponse);
-            
-            var students = await _studentService.GetAllStudentsAsync();
 
-            var mentors = await _mentorService.GetAllActiveMentorsAsync();
-            if ((_currentUserService.Role != Core.Entities.UserRole.Mentor))
+            var students = await _studentService.GetAllStudentsAsync();
+            var courses = await _courseService.GetAllCoursesAsync();
+            IList<MentorViewModel> mentors = null;
+
+            if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
             {
                 mentors = await _mentorService.GetAllMentorsAsync();
             }
-
-            var courses = await _courseService.GetAllCoursesAsync();
+            else if (_currentUserService.Role == UserRole.Mentor)
+            {
+                mentors = await _mentorService.GetAllActiveMentorsAsync();
+            }
 
             foreach (var item in studentGroups)
             {
@@ -89,31 +93,18 @@ namespace CharlieBackend.Panel.Services
                 item.Course.Name = courses.Where(x => x.Id == item.Course.Id).FirstOrDefault()?.Name;
             }
 
+            if (_currentUserService.Role == UserRole.Mentor && !isAllGroups)
+            {
+                return studentGroups.Where(g => g.Mentors.Any(m => m.Id == _currentUserService.EntityId)).ToList();
+            }
+
             return studentGroups;
-        }
-
-        public async Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id)
-        {
-            var getStudentGroupEndpoint = string
-                .Format(_studentGroupsApiEndpoints.GetStudentGroupEndpoint, id);
-
-            var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>(getStudentGroupEndpoint);
-            var studentsTask = _studentService.GetAllStudentsAsync();
-            var mentorsTask = _mentorService.GetAllMentorsAsync();
-            var coursesTask = _courseService.GetAllCoursesAsync();
-
-            var studentGroup = _mapper.Map<StudentGroupEditViewModel>(await studentGroupsTask);
-            studentGroup.AllCourses = await coursesTask;
-            studentGroup.AllStudents = await studentsTask;
-            studentGroup.AllMentors = await mentorsTask;
-
-            return studentGroup;
         }
 
         public async Task<StudentGroupEditViewModel> PrepareStudentGroupAddAsync()
         {
             var studentsTask = _studentService.GetAllStudentsAsync();
-            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var mentorsTask = _mentorService.GetAllActiveMentorsAsync();
             var coursesTask = _courseService.GetAllCoursesAsync();
 
             var studentGroup = new StudentGroupEditViewModel
@@ -126,6 +117,25 @@ namespace CharlieBackend.Panel.Services
             return studentGroup;
         }
 
+        public async Task<StudentGroupEditViewModel> PrepareStudentGroupUpdateAsync(long id)
+        {
+            var getStudentGroupEndpoint = string
+                .Format(_studentGroupsApiEndpoints.GetStudentGroupEndpoint, id);
+
+            var studentGroupsTask = _apiUtil.GetAsync<StudentGroupDto>(getStudentGroupEndpoint);
+            var studentsTask = _studentService.GetAllStudentsAsync();
+            var mentorsTask = _mentorService.GetAllActiveMentorsAsync();
+
+            var coursesTask = _courseService.GetAllCoursesAsync();
+
+            var studentGroup = _mapper.Map<StudentGroupEditViewModel>(await studentGroupsTask);
+            studentGroup.AllCourses = await coursesTask;
+            studentGroup.AllStudents = await studentsTask;
+            studentGroup.AllMentors = await mentorsTask;
+
+            return studentGroup;
+        }
+
         public async Task<StudentGroupDto> UpdateStudentGroupAsync(long id, StudentGroupDto updateDto)
         {
             var updateStudentGroupEndpoint = string
@@ -133,7 +143,6 @@ namespace CharlieBackend.Panel.Services
 
             var updateStudentGroupTask = _apiUtil.PutAsync(updateStudentGroupEndpoint
                 , _mapper.Map<UpdateStudentGroupDto>(updateDto));
-
 
             await updateStudentGroupTask;
 

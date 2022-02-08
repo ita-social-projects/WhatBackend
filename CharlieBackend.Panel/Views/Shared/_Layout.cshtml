@@ -81,6 +81,14 @@
                         <span>Students groups</span>
                     </a>
                 }
+                else if (User.IsInRole("Mentor"))
+                {
+                    <a class="nav-link collapsed" asp-action="AllStudentGroups"
+                       asp-controller="StudentGroup" asp-route-isAllGroups="false">
+                        <i class="fas fa-address-book"></i>
+                        <span>Students groups</span>
+                    </a>
+                }
 
                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
                 {
