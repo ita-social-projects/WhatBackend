@@ -66,6 +66,14 @@
                     </a>
                 }
 
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="nav-link collapsed" asp-action="GetAllSecretaries" asp-controller="Secretaries">
+                        <i class="fas fa-inbox"></i>
+                        <span>Secretaries</span>
+                    </a>
+                }
+
                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="AllStudentGroups" asp-controller="StudentGroup">
