@@ -7,9 +7,42 @@
 }
 
 <div class="text-center" id="helloDiv">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4 container-fluid">Welcome</h1>
     <p>You are in the WHAT MVC Client</p>
+
+    <div class="container-fluid justify-content-between" id="wrapper">
+        <div class="text-left" style="flex:1 1 30%">
+            <h2>About project:</h2>
+            <p>
+                Platform for organization of the study process with abilities to store and view educational information.
+            </p>
+            <p>
+                Registered users can add and view information in accordance with their rights,
+                and users that are not registered can only sign up in the service.
+            </p>
+            <p>
+                Users access service through the website interface.
+            </p>
+        </div>
+
+        <div style="flex: 1 1 40%">
+            <img src="~/img/Home_page_picture.png" style="width: 100%" />
+        </div>
+
+        <div class="text-left" style="flex: 1 1 30%">
+            <h2>Project features:</h2>
+            <ul>
+                <li>Homework and grades</li>
+                <li>Timetable of classes</li>
+                <li>Lists of students, mentors and secretaries</li>
+                <li>Notification</li>
+                <li>Export and import</li>
+                <li>Access to information 24/7</li>
+            </ul>
+        </div>
+    </div>
 </div>
+
 @{
     Dictionary<string, string> tokens = TempData["authTokens"] as Dictionary<string, string>;
 
@@ -23,17 +56,3 @@
         }
     }
 }
-
-<script>
-    let h1 = document.createElement('h1');
-    h1.innerHTML = `You are logged in as a ${getCookie("currentRole")}`
-    let helloDiv = document.getElementById('helloDiv');
-    helloDiv.appendChild(h1);
-
-    function getCookie(name) {
-        let matches = document.cookie.match(new RegExp(
-            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-        ));
-        return matches ? decodeURIComponent(matches[1]) : undefined;
-    }
-</script>
