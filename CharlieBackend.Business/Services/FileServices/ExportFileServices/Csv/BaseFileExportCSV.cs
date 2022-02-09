@@ -2,7 +2,7 @@
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Csv
 {
-    public class BaseFileExportCSV : BaseFileExport
+    public class BaseFileExportCSV : FileExport
     {
         public BaseFileExportCSV()
         {

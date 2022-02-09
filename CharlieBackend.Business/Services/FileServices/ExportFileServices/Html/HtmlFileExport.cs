@@ -2,9 +2,9 @@
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class BaseFileExportHTML : FileExport
+    public class HtmlFileExport : FileExport
     {
-        public BaseFileExportHTML()
+        public HtmlFileExport()
         {
             _memoryStream = new MemoryStream();
         }
