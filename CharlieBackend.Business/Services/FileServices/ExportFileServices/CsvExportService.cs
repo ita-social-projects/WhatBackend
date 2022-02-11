@@ -32,7 +32,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             "Group hasn't any students");
                 }
 
-                using var fileExporter = new StudentGroupCSVExporter(group.Name);
+                using var fileExporter = new CsvStudentsGroupExport(group.Name);
 
                 await fileExporter.FillFileAsync(students);
 
