@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
             _fileGroupName = fileGroupName;
         }
 
-        public void FillFile(IEnumerable<Student> students)
+        private void FillFile(IEnumerable<Student> students)
         {
             StringBuilder line = new StringBuilder();
 

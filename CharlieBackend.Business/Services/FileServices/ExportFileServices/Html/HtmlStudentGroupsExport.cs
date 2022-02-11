@@ -20,7 +20,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             _fileGroupName = fileGroupName;
         }
 
-        public void FillFile(IEnumerable<Student> students)
+        private void FillFile(IEnumerable<Student> students)
         {
             string[] headers = new string[] { "FirstName", "Lastname", "Email" };
 

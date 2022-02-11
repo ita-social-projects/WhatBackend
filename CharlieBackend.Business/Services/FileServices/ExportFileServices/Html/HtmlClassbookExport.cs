@@ -9,7 +9,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
     class HtmlClassbookExport : HtmlFileExport<StudentsClassbookResultDto>
     {
-        public void FillFile(StudentsClassbookResultDto data)
+        private void FillFile(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
