@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class StudentGroupsExportHTML : BaseFileExportHTML
+    public class HtmlStudentGroupsExport : HtmlFileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
         private const int _FirstNameColumnNumber = 0;
         private const int _LastNameColumnNumber = 1;
         private const int _EmailColumnNumber = 2;
 
-        public StudentGroupsExportHTML(string fileGroupName)
+        public HtmlStudentGroupsExport(string fileGroupName)
         {
             _fileGroupName = fileGroupName;
         }
@@ -43,16 +43,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             _memoryStream.Write(byteLine);
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(IEnumerable<Student> data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte)line[i];
-            }
-
-            return array;
+            await Task.Run(() => FillFile(data));
         }
 
         public override string GetFileName()

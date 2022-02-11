@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class BaseFileExportXlsx : FileExport
+    public abstract class XlsxFileExport<T> : FileExport<T>
     {
         protected XLWorkbook _xLWorkbook;
 
@@ -15,10 +15,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         protected const int _DEFAULT_STARTING_COLUMN = 4;
         protected const int _STUDENT_STARTING_COLUMN = 3;
 
-        public BaseFileExportXlsx()
+        public XlsxFileExport()
         {
             _xLWorkbook = new XLWorkbook();
-            _memoryStream = new MemoryStream();
         }
 
         private IXLRow CreateHeaders(IXLRow headerRow, params string[] argsList)

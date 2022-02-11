@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
+namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Csv
 {
-    public abstract class HtmlFileExport<T> : FileExport<T>
+    public abstract class CsvFileExport<T> : FileExport<T>
     {
         protected virtual byte[] ConvertLineToArray(string line)
         {

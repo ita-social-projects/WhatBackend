@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class StudentResultXlsx : BaseFileExportXlsx
+    public class XlsxStudentsResultsExport : XlsxFileExport<StudentsResultsDto>
     {
-        public StudentResultXlsx()
+        public XlsxStudentsResultsExport()
         {
             _xLWorkbook = new XLWorkbook();
         }
 
         public override string GetFileName()
         {
-            return "SingleStudentResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
+            return "StudentsResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public async Task FillFile(StudentsResultsDto data)
+        public override async Task FillFileAsync(StudentsResultsDto data)
         {
             if (data == null)
             {
@@ -29,10 +29,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
             if (data.AverageStudentsMarks != null && data.AverageStudentsMarks.Any())
             {
-                var StudentsAverageMarks = data.AverageStudentsMarks.GroupBy(x => x.Student);
+                var StudentsAverageMarks = data.AverageStudentsMarks.GroupBy(x => x.StudentGroup);
                 foreach (var item in StudentsAverageMarks)
                 {
-                    await FillAverageMarks(item
+                    await FillAverageMarksAsync(item
                         .Select(x => new AverageStudentMarkDto
                         {
                             StudentAverageMark = x.StudentAverageMark,
@@ -46,10 +46,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
             if (data.AverageStudentVisits != null && data.AverageStudentVisits.Any())
             {
-                var StudentsPresences = data.AverageStudentVisits.GroupBy(x => x.Student);
+                var StudentsPresences = data.AverageStudentVisits.GroupBy(x => x.StudentGroup);
                 foreach (var item in StudentsPresences)
                 {
-                    await FillAverageVisits(item
+                    await FillAverageVisitsAsync(item
                         .Select(x => new AverageStudentVisitsDto
                         {
                             StudentAverageVisitsPercentage = x.StudentAverageVisitsPercentage,
@@ -62,7 +62,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        private async Task FillAverageMarks(IEnumerable<AverageStudentMarkDto> AverageStudentsMarks)
+        private async Task FillAverageMarksAsync(IEnumerable<AverageStudentMarkDto> AverageStudentsMarks)
         {
             if (AverageStudentsMarks != null && AverageStudentsMarks.Any())
             {
@@ -71,41 +71,42 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
-                    "Student",
-                    "Course",
+                   "Course",
                     "Student Group",
+                    "Student",
                     "Average mark");
 
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
-                   AverageStudentsMarks.First().Student);
+                   AverageStudentsMarks.First().Course,
+                   AverageStudentsMarks.First().StudentGroup);
 
-                var orderedList = AverageStudentsMarks.OrderBy(x => x.Course).ThenBy(x => x.StudentGroup);
+                var orderedList = AverageStudentsMarks.OrderBy(x => x.Student);
                 for (int studentId = 0; studentId < orderedList.Count(); studentId++)
                 {
                     var student = orderedList.ElementAt(studentId);
 
-                    FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN - 1,
-                        student.Course, student.StudentGroup, Math.Round(((decimal)student.StudentAverageMark), 2)
-                        .ToString(new NumberFormatInfo()
-                            {
-                                NumberDecimalSeparator = "."
-                            }
-                        ));
+                    FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN,
+                        student.Student, Math.Round(((double)student.StudentAverageMark), 2)
+                            .ToString(new NumberFormatInfo() 
+                                { 
+                                    NumberDecimalSeparator = "." 
+                                }
+                            ));
                 }
 
                 DrawBorders(worksheet.Range(
-                        worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN - 1),
+                        worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN),
                         worksheet.Row(orderedList.Count() + 1)
                         .Cell(_STUDENT_STARTING_COLUMN + 1)));
 
-                DrawBorders(worksheet.Range("A1:A2"));
+                DrawBorders(worksheet.Range("A1:B2"));
 
                 worksheet.Columns().AdjustToContents();
                 worksheet.Rows().AdjustToContents();
             }
         }
 
-        private async Task FillAverageVisits(IEnumerable<AverageStudentVisitsDto> AverageStudentVisits)
+        private async Task FillAverageVisitsAsync(IEnumerable<AverageStudentVisitsDto> AverageStudentVisits)
         {
             if (AverageStudentVisits != null && AverageStudentVisits.Any())
             {
@@ -114,34 +115,35 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var worksheet = _xLWorkbook.Worksheet(worksheetName);
 
                 await CreateHeadersAsync(worksheet.Row(1),
-                    "Student",
-                    "Course",
+                   "Course",
                     "Student Group",
+                    "Student",
                     "Average visits percentage");
 
                 FillRow(worksheet, _DEFAULT_STARTING_ROW, 1,
-                   AverageStudentVisits.First().Student);
+                   AverageStudentVisits.First().Course,
+                   AverageStudentVisits.First().StudentGroup);
 
                 var orderedList = AverageStudentVisits.OrderBy(x => x.Student);
                 for (int studentId = 0; studentId < orderedList.Count(); studentId++)
                 {
                     var student = orderedList.ElementAt(studentId);
 
-                    FillRowWithNumberInLastColumnAsPercent(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN - 1,
-                        student.Course, student.StudentGroup, ((double)student.StudentAverageVisitsPercentage / 100)
-                            .ToString(new NumberFormatInfo()
-                                {
-                                    NumberDecimalSeparator = "."
-                                }
-                            ));
+                    FillRowWithNumberInLastColumnAsPercent(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN,
+                        student.Student, ((double)student.StudentAverageVisitsPercentage / 100)
+                        .ToString(new NumberFormatInfo()
+                            {
+                                NumberDecimalSeparator = "."
+                            }
+                        ));
                 }
 
                 DrawBorders(worksheet.Range(
-                         worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN - 1),
-                         worksheet.Row(orderedList.Count() + 1)
-                         .Cell(_STUDENT_STARTING_COLUMN + 1)));
+                        worksheet.Row(1).Cell(_STUDENT_STARTING_COLUMN),
+                        worksheet.Row(orderedList.Count() + 1)
+                        .Cell(_STUDENT_STARTING_COLUMN + 1)));
 
-                DrawBorders(worksheet.Range("A1:A2"));
+                DrawBorders(worksheet.Range("A1:B2"));
 
                 worksheet.Columns().AdjustToContents();
                 worksheet.Rows().AdjustToContents();

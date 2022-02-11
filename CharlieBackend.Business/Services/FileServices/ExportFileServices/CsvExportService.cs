@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Business.Services.FileServices.ExportFileServices.Html;
+﻿using CharlieBackend.Business.Services.FileServices.ExportCSVFilesService;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.DTO.Export;
 using CharlieBackend.Core.Models.ResultModel;
@@ -8,16 +7,19 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class ExportServiceHtml : IExportService
+    public class CsvExportService : IExportService
     {
         IUnitOfWork _unitOfWork;
-        public ExportServiceHtml(IUnitOfWork unitOfWork)
+
+        public CsvExportService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+
         public async Task<Result<FileDto>> GetListofStudentsByGroupId(long groupId)
         {
-            var group = await _unitOfWork.StudentGroupRepository.GetByIdAsync(groupId);
+            var group = await _unitOfWork.StudentGroupRepository.GetByIdAsync(
+                 groupId);
 
             if (group != null)
             {
@@ -27,12 +29,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 if (students.Count == 0)
                 {
                     return Result<FileDto>.GetError(ErrorCode.NotFound,
-                            ResponseMessages.GroupHasNotStudents);
+                            "Group hasn't any students");
                 }
 
-                using var fileExporter = new StudentGroupsExportHTML(group.Name);
+                using var fileExporter = new StudentGroupCSVExporter(group.Name);
 
-                fileExporter.FillFile(students);
+                await fileExporter.FillFileAsync(students);
 
                 return Result<FileDto>.GetSuccess(new FileDto()
                 {
@@ -44,50 +46,43 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             else
             {
                 return Result<FileDto>.GetError(ErrorCode.NotFound,
-                        ResponseMessages.GroupNotFound);
+                        "Group not found");
             }
         }
 
-        public async Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
+        public Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
         {
-            return Result<FileDto>.GetError(
+            return Task.FromResult(Result<FileDto>.GetError(
                     ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format");
+                    "student classbook can't be returned in csv format"));
         }
 
         public Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
         {
             return Task.FromResult(Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+                   ErrorCode.ValidationError,
+                   "student group results can't be returned in csv format"));
         }
 
         public Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
         {
             return Task.FromResult(Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+                   ErrorCode.ValidationError,
+                   "student results can't be returned in csv format"));
         }
 
-        public async Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
+        public Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
         {
-            using var classbook = new ClassbookExportHTML();
-
-            classbook.FillFile(data);
-
-            return Result<FileDto>.GetSuccess(new FileDto()
-            {
-                ByteArray = await classbook.GetByteArrayAsync(),
-                ContentType = classbook.GetContentType(),
-                Filename = classbook.GetFileName()
-            });
+            return Task.FromResult(Result<FileDto>.GetError(
+                   ErrorCode.ValidationError,
+                   "students classbook can't be returned in csv format"));
         }
 
         public Task<Result<FileDto>> GetStudentsResults(StudentsResultsDto data)
         {
             return Task.FromResult(Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+                   ErrorCode.ValidationError,
+                   "student results can't be returned in csv format"));
         }
     }
 }

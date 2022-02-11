@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
 {
-    public class StudentGroupCSVExporter : BaseFileExportCSV
+    public class StudentGroupCSVExporter : CsvFileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
 
@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
             _fileGroupName = fileGroupName;
         }
 
-        public Task FillFile(IList<Student> students)
+        public void FillFile(IEnumerable<Student> students)
         {
             StringBuilder line = new StringBuilder();
 
@@ -29,20 +29,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
             byte[] byteLine = ConvertLineToArray(line.ToString());
 
             _memoryStream.Write(byteLine);
-
-            return Task.CompletedTask;
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(IEnumerable<Student> data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte)line[i];
-            }
-
-            return array;
+            await Task.Run(() => FillFile(data));
         }
 
         public override string GetFileName()

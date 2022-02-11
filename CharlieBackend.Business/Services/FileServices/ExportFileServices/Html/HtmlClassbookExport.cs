@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    class ClassbookExportHTML : BaseFileExportHTML
+    class HtmlClassbookExport : HtmlFileExport<StudentsClassbookResultDto>
     {
         public void FillFile(StudentsClassbookResultDto data)
         {
@@ -148,16 +149,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd") + ".html";
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte)line[i];
-            }
-
-            return array;
+            await Task.Run(()=>FillFile(data));
         }
     }
 }
