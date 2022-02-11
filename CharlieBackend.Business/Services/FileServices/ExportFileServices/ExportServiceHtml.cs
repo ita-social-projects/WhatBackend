@@ -55,11 +55,18 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     "student classbook can't be returned in html format");
         }
 
-        public Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
+        public async Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
         {
-            return Task.FromResult(Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format"));
+            using var studentGroupResults = new StudentGroupResultsExportHTML("StudentGroupResults");
+
+            studentGroupResults.FillFileAsync(data);
+
+            return Result<FileDto>.GetSuccess(new FileDto()
+            {
+                ByteArray = await studentGroupResults.GetByteArrayAsync(),
+                ContentType = studentGroupResults.GetContentType(),
+                Filename = studentGroupResults.GetFileName()
+            });
         }
 
         public Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
