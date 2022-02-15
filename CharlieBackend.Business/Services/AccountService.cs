@@ -36,6 +36,8 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
+            user.UpdatedByAccountId = _currentUserService.AccountId;
+
             Result<AccountRoleDto> result = null;
 
             if (user == null)
@@ -123,6 +125,7 @@ namespace CharlieBackend.Business.Services
             Account user = await _unitOfWork.AccountRepository
                     .GetAccountCredentialsByEmailAsync(accountRole.Email);
 
+            user.UpdatedByAccountId = _currentUserService.AccountId;
             Result<AccountRoleDto> result = null;
 
             if (user == null)
@@ -254,7 +257,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> DisableAccountAsync(long id)
         {
-            var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.DisableAccountAsync(id, _currentUserService.AccountId);
 
             await _unitOfWork.CommitAsync();
 
@@ -263,7 +266,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> EnableAccountAsync(long id)
         {
-            var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id);
+            var isSucceeded = await _unitOfWork.AccountRepository.EnableAccountAsync(id, _currentUserService.AccountId);
 
             await _unitOfWork.CommitAsync();
 
@@ -290,7 +293,7 @@ namespace CharlieBackend.Business.Services
                 {
                     user.Salt = PasswordHelper.GenerateSalt();
                     user.Password = PasswordHelper.HashPassword(changePassword.NewPassword, user.Salt);
-
+                    user.UpdatedByAccountId = _currentUserService.AccountId;
                     await _unitOfWork.CommitAsync();
 
                     return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));

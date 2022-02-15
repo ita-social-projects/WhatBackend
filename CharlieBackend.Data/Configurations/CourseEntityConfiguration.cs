@@ -10,6 +10,11 @@ namespace CharlieBackend.Data.Configurations
         {
             entity.ToTable("Courses");
 
+            entity.Property(e => e.UpdatedByAccountId)
+               .IsRequired()
+               .HasColumnName("UpdatedByAccountId")
+               .HasDefaultValueSql("1");
+
             entity.Property(e => e.Id)
                 .IsRequired()
                 .HasColumnName("ID");

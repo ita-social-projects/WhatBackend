@@ -1,0 +1,9 @@
+USE Soft;
+
+LOCK TABLES Studentgroups WRITE;
+
+ALTER TABLE Studentgroups
+
+ADD UpdatedByAccountId BIGINT UNSIGNED    NOT NULL    DEFAULT 1;
+
+UNLOCK TABLES;

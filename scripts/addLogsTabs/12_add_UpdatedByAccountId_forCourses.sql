@@ -1,0 +1,9 @@
+USE Soft;
+
+LOCK TABLES Courses WRITE;
+
+ALTER TABLE Courses
+
+ADD UpdatedByAccountId BIGINT UNSIGNED    NOT NULL    DEFAULT 1;
+
+UNLOCK TABLES;

@@ -23,9 +23,9 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public Task<bool?> IsAccountActiveAsync(string email);
 
-        Task<bool> DisableAccountAsync(long id);
+        Task<bool> DisableAccountAsync(long id, long editedBy);
 
-        Task<bool> EnableAccountAsync(long id);
+        Task<bool> EnableAccountAsync(long id, long editedBy);
 
         public void UpdateAccountCredentials(Account account);
 

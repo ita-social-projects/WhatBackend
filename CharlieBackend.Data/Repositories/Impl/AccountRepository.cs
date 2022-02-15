@@ -101,7 +101,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return foundAccount?.IsActive;
         }
 
-        public async Task<bool> DisableAccountAsync(long id)
+        public async Task<bool> DisableAccountAsync(long id, long updatedBy)
         {
             var foundAccount = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Id == id);
@@ -110,10 +110,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                 return false;   
             }
             foundAccount.IsActive = false;
+            foundAccount.UpdatedByAccountId = updatedBy;
             return true;
         }
 
-        public async Task<bool> EnableAccountAsync(long id)
+        public async Task<bool> EnableAccountAsync(long id, long updatedBy)
         {
             var foundAccount = await _applicationContext.Accounts
                     .FirstOrDefaultAsync(account => account.Id == id);
@@ -123,6 +124,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
             
             foundAccount.IsActive = true;
+            foundAccount.UpdatedByAccountId=updatedBy;
             return true;
         }
 
