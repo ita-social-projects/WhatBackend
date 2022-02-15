@@ -40,6 +40,7 @@ namespace CharlieBackend.Panel
         public LessonsApiEndpoints Lessons {get; set;}
         public EventsApiEndpoints Events { get; set; }
         public SecretariesApiEndpoints Secretaries { get; set; }
+        public DashboardApiEndpoints Dashboard{ get; set; }
     }
 
     public class AccountsApiEndpoints 
@@ -135,6 +136,11 @@ namespace CharlieBackend.Panel
         public string GetAllSecretariesEndpoint { get; set; }
         public string EnableSecretaryEndpoint { get; set; }
         public string DisableSecretaryEndpoint { get; set; }
+    }
+
+    public class DashboardApiEndpoints
+    {
+        public string GetStudentsClassbookEndpoint { get; set; }
     }
 
     #endregion 

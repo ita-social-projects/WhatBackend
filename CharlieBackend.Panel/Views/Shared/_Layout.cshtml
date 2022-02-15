@@ -130,6 +130,14 @@
                     </a>
                 }
 
+                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                {
+                    <a class="nav-link collapsed" asp-action="GetRegister" asp-controller="GroupsRegisters">
+                        <i class="fas fa-book"></i>
+                        <span>Groups Registers</span>
+                    </a>
+                }
+
                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="Index" asp-controller="Calendar">
