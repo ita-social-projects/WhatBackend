@@ -35,11 +35,14 @@ namespace CharlieBackend.Api.Controllers
         /// Gets classbook data of every students lesson
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
-        /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
+        /// In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of course groups.
-        /// 3. "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return </param>
-        /// <param name="extension"> extension of file that you want to get
+        /// "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return:
+        ///                                                            0 - presence
+        ///                                                            1 - marks
+        ///                                                            0, 1 - both presence and marks</param>
+        /// <param name="extension"> Extension of file that you want to get </param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsClassbook/{extension}")]
         [HttpPost]
@@ -111,8 +114,11 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="studentId">Student id</param>
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of students group.
-        /// "includeAnalytics": ["StudentPresence", "StudentMarks"] options which report type to receive</param>
-        /// <param name="extension"> extension of file that you want to get
+        /// "includeAnalytics": ["StudentPresence", "StudentMarks"] params to choose what to return:
+        ///                                                            0 - presence
+        ///                                                            1 - marks
+        ///                                                            0, 1 - both presence and marks</param>
+        /// <param name="extension"> Extension of file that you want to get </param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentClassbook/{studentId}/{extension}")]
         [HttpPost]

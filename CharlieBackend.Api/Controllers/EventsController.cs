@@ -79,15 +79,15 @@ namespace CharlieBackend.Api.Controllers
         /// Connects scheduled event to lesson by ids
         /// </summary>
         /// <param name="id">Id of scheduled event</param>
-        /// <param name="lesson">Lesson to be connected (Its enough to specify lessonId)</param>
-        /// <response code = "200" > Successful delete of schedule</response>
-        /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
+        /// <param name="lessonId">Lesson to be connected (Its enough to specify lessonId)</param>
+        /// <response code = "200" > Successful event lesson connection </response>
+        /// <response code="HTTP: 404, API: 3">Error, given scheduled event not found</response>
         [Authorize(Roles = "Secretary, Admin, Mentor")]
         [MapToApiVersion("2.0")]
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<EventOccurrenceDTO>> ConnectEventToLesson(long id, [FromBody] LessonDto lesson)
+        [HttpPatch("connect/{id:long}")]
+        public async Task<ActionResult<EventOccurrenceDTO>> ConnectEventToLesson([FromRoute]long id, [FromQuery] long lessonId)
         {
-            var foundSchedules = await _eventsService.ConnectScheduleToLessonById(id, lesson.Id);
+            var foundSchedules = await _eventsService.ConnectScheduleToLessonById(id, lessonId);
 
             return foundSchedules.ToActionResult();
         }

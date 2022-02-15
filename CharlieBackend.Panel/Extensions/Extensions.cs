@@ -22,12 +22,14 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<IStudentGroupService, StudentGroupService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IMentorService, MentorService>();
+            services.AddScoped<ISecretaryService, SecretaryService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ICalendarService, CalendarService>();
             services.AddScoped<IHomeworkService, HomeworkService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IEventsService, EventsService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {

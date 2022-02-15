@@ -104,7 +104,8 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Mentor, MentorDetailsDto>()
                 .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
                 .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
-                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName))
+                .ForMember(source => source.IsActive, conf => conf.MapFrom(x => x.Account.IsActive));
 
             #endregion
 
@@ -170,7 +171,8 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Secretary, SecretaryDetailsDto>()
                 .ForMember(source => source.Email, conf => conf.MapFrom(x => x.Account.Email))
                 .ForMember(source => source.FirstName, conf => conf.MapFrom(x => x.Account.FirstName))
-                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName));
+                .ForMember(source => source.LastName, conf => conf.MapFrom(x => x.Account.LastName))
+                .ForMember(source => source.IsActive, conf => conf.MapFrom(x => x.Account.IsActive));
 
             #endregion
 

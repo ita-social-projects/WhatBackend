@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {
-    [Authorize(Roles = "Admin, Secretary")]
+    [Authorize(Roles = "Admin, Secretary, Mentor")]
     [Route("[controller]/[action]")]
     public class StudentGroupController : Controller
     {
@@ -18,9 +18,11 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AllStudentGroups()
+        public async Task<IActionResult> AllStudentGroups(bool isAllGroups = true)
         {
-            var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync();
+            ViewBag.IsAllGroups = isAllGroups;
+
+            var studentGroups = await _studentGroupService.GetAllStudentGroupsAsync(isAllGroups);
 
             return View(studentGroups);
         }

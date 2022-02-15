@@ -55,19 +55,21 @@ namespace CharlieBackend.Panel.Services
         public async Task<IList<MentorViewModel>> GetAllMentorsAsync()
         {
             var getAllMentorsEndpoint = _mentorsApiEndpoints.GetAllMentorsEndpoint;
-            var activeMentorEndpoint = _mentorsApiEndpoints.ActiveMentorEndpoint;
 
-            var allMentors = await 
+            var allMentors = await
                 _apiUtil.GetAsync<IList<MentorViewModel>>(getAllMentorsEndpoint);
-            var activeMentors = await 
-                _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
-
-            foreach (var mentor in allMentors)
-            {
-                mentor.IsActive = activeMentors.Any(x => x.Id == mentor.Id);
-            }
 
             return allMentors;
+        }
+
+        public async Task<IList<MentorViewModel>> GetAllActiveMentorsAsync()
+        {
+            var activeMentorEndpoint = _mentorsApiEndpoints.ActiveMentorEndpoint;
+
+            var activeMentors = await
+                _apiUtil.GetAsync<IList<MentorViewModel>>(activeMentorEndpoint);
+
+            return activeMentors;
         }
 
         public async Task<MentorEditViewModel> GetMentorByIdAsync(long id)
@@ -92,7 +94,7 @@ namespace CharlieBackend.Panel.Services
             var updateMentorEndpoint = string
                .Format(_mentorsApiEndpoints.UpdateMentorEndpoint, id);
 
-            return await 
+            return await
                 _apiUtil.PutAsync(updateMentorEndpoint, UpdateDto);
         }
     }

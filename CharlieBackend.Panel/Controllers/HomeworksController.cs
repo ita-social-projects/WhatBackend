@@ -35,8 +35,10 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+
             var homeworks = await _homeworkService.GetHomeworks();
             homeworks = homeworks.OrderBy(x => x.PublishingDate).ToList();
+
             return View(homeworks);
         }
 
@@ -61,7 +63,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             List<MentorEditViewModel> mentors = new List<MentorEditViewModel>();
             
-            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDate();
+            IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDateAsync();
             if (themeN == null && mentorId == null)
             {
                 IEnumerable<string> lessonThemes = allLessons.Where(x => x.StudentGroupId == stGroupId)
