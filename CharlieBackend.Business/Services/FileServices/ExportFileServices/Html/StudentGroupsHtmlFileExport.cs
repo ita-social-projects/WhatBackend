@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class HtmlStudentGroupsExport : HtmlFileExport<IEnumerable<Student>>
+    public class StudentGroupsHtmlFileExport : HtmlFileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
         private const int _FirstNameColumnNumber = 0;
         private const int _LastNameColumnNumber = 1;
         private const int _EmailColumnNumber = 2;
 
-        public HtmlStudentGroupsExport(string fileGroupName)
+        public StudentGroupsHtmlFileExport(string fileGroupName)
         {
             _fileGroupName = fileGroupName;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    class HtmlClassbookExport : HtmlFileExport<StudentsClassbookResultDto>
+    class ClassbookHtmlFileExport : HtmlFileExport<StudentsClassbookResultDto>
     {
         private void FillFile(StudentsClassbookResultDto data)
         {

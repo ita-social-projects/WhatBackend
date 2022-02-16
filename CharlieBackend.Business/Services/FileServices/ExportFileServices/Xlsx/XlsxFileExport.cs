@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public abstract class XlsxFileExport<T> : FileExport<T>
+    public abstract class XlsxFileExport<T> : FileExport<T> where T : class
     {
         protected XLWorkbook _xLWorkbook;
 
@@ -32,7 +32,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         private byte[] GetByteArray()
         {
-            if(_xLWorkbook.Worksheets.Count == 0)
+            if (_xLWorkbook.Worksheets.Count == 0)
             {
                 _xLWorkbook.AddWorksheet("Blank");
             }
@@ -68,7 +68,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// <returns>Byte arrray</returns>
         public override async Task<byte[]> GetByteArrayAsync()
         {
-            return await Task.Run(()=> GetByteArray());
+            return await Task.Run(() => GetByteArray());
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
         /// </returns>
         public override string GetFileName()
         {
-            return "Filename_"+ DateTime.Now.ToString("yyyy-MM-dd") +".xlsx";
+            return "Filename_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 worksheet.Columns().AdjustToContents();
                 worksheet.Rows().AdjustToContents();
             }
-            
+
         }
 
         /// <summary>

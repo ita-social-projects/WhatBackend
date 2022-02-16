@@ -8,7 +8,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
     /// Class for general file methods and fields
     /// Remember to implement and use IDisposable.Dispose() for inherited classes
     /// </summary>
-    public abstract class FileExport<T> : IDisposable
+    public abstract class FileExport<T> : IDisposable where T : class
     {
         protected MemoryStream _memoryStream;
 

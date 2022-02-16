@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class XlsxStudentResult : XlsxFileExport<StudentsResultsDto>
+    public class StudentResultXlsxFileExport : XlsxFileExport<StudentsResultsDto>
     {
-        public XlsxStudentResult()
+        public StudentResultXlsxFileExport()
         {
             _xLWorkbook = new XLWorkbook();
         }

@@ -2,7 +2,7 @@
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public abstract class HtmlFileExport<T> : FileExport<T>
+    public abstract class HtmlFileExport<T> : FileExport<T> where T : class
     {
         protected virtual byte[] ConvertLineToArray(string line)
         {

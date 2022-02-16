@@ -14,11 +14,11 @@
       <FileName>Services\FileServices\ExportFileServices\Csv\CsvStudentsGroupExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.HtmlClassbookExport" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.ClassbookHtmlFileExport" Collapsed="true">
     <Position X="19.25" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAMAAAAAAAAAAAAAggAAAAAQAAAgAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Html\HtmlClassbookExport.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Html\ClassbookHtmlFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.HtmlFileExport&lt;T&gt;" Collapsed="true">
@@ -28,18 +28,18 @@
       <FileName>Services\FileServices\ExportFileServices\Html\HtmlFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.HtmlStudentGroupsExport" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.StudentGroupsHtmlFileExport" Collapsed="true">
     <Position X="21.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>CAAEAAAAAAAAAAAAAgAAAAAAQAAACAAAAAEAEAAAAAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Html\HtmlStudentGroupsExport.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Html\StudentGroupsHtmlFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxClassbookExport" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.ClassbookXlsxFileExport" Collapsed="true">
     <Position X="8" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAiAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxClassbookExport.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Xlsx\ClassbookXlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxFileExport&lt;T&gt;" Collapsed="true">
@@ -49,36 +49,36 @@
       <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxStudentClassbook" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.StudentClassbookXlsxFileExport" Collapsed="true">
     <Position X="12.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAg=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxStudentClassbook.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Xlsx\StudentClassbookXlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxStudentGroupResults" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.StudentGroupResultsXlsxFileExport" Collapsed="true">
     <Position X="14.75" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxStudentGroupResults.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Xlsx\StudentGroupResultsXlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxStudentResult" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.StudentResultXlsxFileExport" Collapsed="true">
     <Position X="17" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxStudentResult.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Xlsx\StudentResultXlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxStudentsResultsExport" Collapsed="true">
+  <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.StudentsResultsXlsxFileExport" Collapsed="true">
     <Position X="10.25" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Xlsx\XlsxStudentsResultsExport.cs</FileName>
+      <FileName>Services\FileServices\ExportFileServices\Xlsx\StudentsResultsXlsxFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.CsvExportService" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="0.5" Width="1.75" />
+    <Position X="23.75" Y="1" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAgAAAAAAAAAAhAAAAIAAAABAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\CsvExportService.cs</FileName>
@@ -86,7 +86,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.ExportServiceProvider" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="0.5" Width="1.75" />
+    <Position X="25.5" Y="1" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AQAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\ExportServiceProvider.cs</FileName>
@@ -94,7 +94,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.FileExport&lt;T&gt;" Collapsed="true">
-    <Position X="13.5" Y="0.5" Width="1.75" />
+    <Position X="12.5" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAACAAACAAAAABAgAAAAAAQAAAAAAAAAAAAEAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\FileExport.cs</FileName>
@@ -102,7 +102,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.HtmlExportService" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="1.5" Width="1.75" />
+    <Position X="23.75" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAgAAAAAAAAAAhAAAAIAAAABAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\HtmlExportService.cs</FileName>
@@ -110,7 +110,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.XlsxExportService" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="1.5" Width="1.75" />
+    <Position X="25.5" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAgAAAAAAAAAABAAAAIAAAABAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\XlsxExportService.cs</FileName>
@@ -118,14 +118,14 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Interface Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.IExportService" Collapsed="true">
-    <Position X="24" Y="2.75" Width="1.75" />
+    <Position X="23.75" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAgAAAAAAAAAABAAAAIAAAABAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\IExportService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.IExportServiceProvider" Collapsed="true">
-    <Position X="25.75" Y="2.75" Width="1.75" />
+    <Position X="25.5" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Services\FileServices\ExportFileServices\IExportServiceProvider.cs</FileName>

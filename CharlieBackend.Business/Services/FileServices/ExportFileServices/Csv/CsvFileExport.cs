@@ -2,7 +2,7 @@
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Csv
 {
-    public abstract class CsvFileExport<T> : FileExport<T>
+    public abstract class CsvFileExport<T> : FileExport<T> where T : class
     {
         protected virtual byte[] ConvertLineToArray(string line)
         {

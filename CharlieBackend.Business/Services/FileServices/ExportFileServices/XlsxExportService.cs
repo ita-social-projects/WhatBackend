@@ -13,7 +13,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
         {
-            using var classbook = new XlsxClassbookExport();
+            using var classbook = new ClassbookXlsxFileExport();
 
             await classbook.FillFileAsync(data);
             classbook.AdjustContent();
@@ -28,7 +28,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentsResults(StudentsResultsDto data)
         {
-            using var result = new XlsxStudentsResultsExport();
+            using var result = new StudentsResultsXlsxFileExport();
 
             await result.FillFileAsync(data);
             result.AdjustContent();
@@ -43,7 +43,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
         {
-            using var result = new XlsxStudentClassbook();
+            using var result = new StudentClassbookXlsxFileExport();
 
             await result.FillFileAsync(data);
             result.AdjustContent();
@@ -58,7 +58,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
         {
-            using var result = new XlsxStudentResult();
+            using var result = new StudentResultXlsxFileExport();
 
             await result.FillFileAsync(data);
             result.AdjustContent();
@@ -73,7 +73,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
         {
-            using var result = new XlsxStudentGroupResults();
+            using var result = new StudentGroupResultsXlsxFileExport();
 
             await result.FillFileAsync(data);
             result.AdjustContent();
