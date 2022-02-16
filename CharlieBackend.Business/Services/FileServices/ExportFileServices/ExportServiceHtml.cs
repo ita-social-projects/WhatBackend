@@ -57,7 +57,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
         {
-            using var studentGroupResults = new StudentGroupResultsExportHTML("StudentGroupResults");
+            using var studentGroupResults = new StudentGroupResultsExportHTML("Student Group Results");
 
             studentGroupResults.FillFileAsync(data);
 

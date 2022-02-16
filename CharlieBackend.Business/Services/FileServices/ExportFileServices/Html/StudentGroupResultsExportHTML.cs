@@ -24,19 +24,14 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 			{
 				return;
 			}
-			if (data.AverageStudentGroupsMarks != null && data.AverageStudentGroupsMarks.Any())
-			{
-				FillAverageMarks(data.AverageStudentGroupsMarks);
-			}
-			if (data.AverageStudentGroupsVisits != null && data.AverageStudentGroupsVisits.Any())
-			{
-				FillAverageVisits(data.AverageStudentGroupsVisits);
-			}
+			FillAverageMarks(data.AverageStudentGroupsMarks);
+
+			FillAverageVisits(data.AverageStudentGroupsVisits);
 		}
 
 		public void FillAverageMarks(IEnumerable<AverageStudentGroupMarkDto> AverageStudentGroupsMarks)
 		{
-			if (AverageStudentGroupsMarks != null && AverageStudentGroupsMarks.Any())
+			if (AverageStudentGroupsMarks.Any())
 			{
 				var orderedList = AverageStudentGroupsMarks.OrderBy(x => x.StudentGroup);
 				string[] headers = new string[] { "Course", "Student Group", "Average mark" };
@@ -48,7 +43,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 					rows[i] = new string[headers.Length];
 					rows[i][_CourseColumnNumber] = AverageStudentGroupsMarks.First().Course;
 					rows[i][_StudentGroupColumnNumber] = group.StudentGroup;
-					rows[i][_AverageMarkColumnNumber] = Math.Round((decimal)group.AverageMark,2).ToString();
+					rows[i][_AverageMarkColumnNumber] = Math.Round((decimal)group.AverageMark, 2).ToString();
 				}
 
 				StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
@@ -57,9 +52,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 				_memoryStream.Write(byteLine);
 			}
 		}
+
 		public void FillAverageVisits(IEnumerable<AverageStudentGroupVisitDto> AverageStudentGroupsVisits)
 		{
-			if (AverageStudentGroupsVisits != null && AverageStudentGroupsVisits.Any())
+			if (AverageStudentGroupsVisits.Any())
 			{
 				var orderedList = AverageStudentGroupsVisits.OrderBy(x => x.StudentGroup);
 				string[] headers = new string[] { "Course", "Student Group", "Average visits" };
@@ -93,6 +89,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
 			return array;
 		}
+
 		public override string GetFileName()
 		{
 			return "StudentGroupResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".html";
