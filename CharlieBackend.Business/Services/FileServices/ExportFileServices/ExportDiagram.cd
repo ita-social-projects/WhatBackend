@@ -7,13 +7,6 @@
       <FileName>Services\FileServices\ExportFileServices\Csv\CsvFileExport.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CharlieBackend.Business.Services.FileServices.ExportCSVFilesService.CsvStudentsGroupExport" Collapsed="true">
-    <Position X="5.75" Y="3.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>CAAEAAAAAAAAAAAAAgAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Services\FileServices\ExportFileServices\Csv\CsvStudentsGroupExport.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CharlieBackend.Business.Services.FileServices.ExportFileServices.Html.ClassbookHtmlFileExport" Collapsed="true">
     <Position X="19.25" Y="3.25" Width="1.75" />
     <TypeIdentifier>

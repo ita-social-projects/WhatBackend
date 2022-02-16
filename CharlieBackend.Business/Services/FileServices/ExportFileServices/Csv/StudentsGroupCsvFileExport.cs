@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
 {
-    public class CsvStudentsGroupExport : CsvFileExport<IEnumerable<Student>>
+    public class StudentsGroupCsvFileExport : CsvFileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
 
-        public CsvStudentsGroupExport(string fileGroupName)
+        public StudentsGroupCsvFileExport(string fileGroupName)
         {
             _fileGroupName = fileGroupName;
         }
