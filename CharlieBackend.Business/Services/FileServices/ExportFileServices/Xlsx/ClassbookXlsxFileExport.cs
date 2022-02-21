@@ -8,11 +8,6 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
     public class ClassbookXlsxFileExport : XlsxFileExport<StudentsClassbookResultDto>
     {
-        public ClassbookXlsxFileExport()
-        {
-            _xLWorkbook = new XLWorkbook();
-        }
-
         public override string GetFileName()
         {
             return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd.HH:mm") + ".xlsx";
