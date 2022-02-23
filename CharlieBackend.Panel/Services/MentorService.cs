@@ -56,7 +56,7 @@ namespace CharlieBackend.Panel.Services
         {
             var getAllMentorsEndpoint = _mentorsApiEndpoints.GetAllMentorsEndpoint;
 
-            var allMentors = await 
+            var allMentors = await
                 _apiUtil.GetAsync<IList<MentorViewModel>>(getAllMentorsEndpoint);
 
             return allMentors;
@@ -94,7 +94,7 @@ namespace CharlieBackend.Panel.Services
             var updateMentorEndpoint = string
                .Format(_mentorsApiEndpoints.UpdateMentorEndpoint, id);
 
-            return await 
+            return await
                 _apiUtil.PutAsync(updateMentorEndpoint, UpdateDto);
         }
     }
