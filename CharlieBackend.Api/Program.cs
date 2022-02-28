@@ -15,7 +15,6 @@ namespace CharlieBackend.Api
         /// <summary>
         /// 
         /// </summary>
-        /// 
         public static void Main(string[] args)
         {
             //Configuration for Serilog
