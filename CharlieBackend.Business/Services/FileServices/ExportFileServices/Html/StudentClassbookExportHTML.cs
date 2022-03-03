@@ -1,20 +1,22 @@
-﻿using CharlieBackend.Core.DTO.Dashboard;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Dashboard;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    class StudentClassbookExportHTML : BaseFileExportHTML
+    internal class StudentClassbookExportHTML : BaseFileExportHTML
     {
         #region private constants
+
         private const int _CourseColumnNumber = 0;
         private const int _StudentGroupColumnNumber = 1;
         private const int _DateColumnNumber = 2;
         private const int _FourthColumn = 3;
         private const int _FifthColumn = 4;
+
         #endregion
 
         public void FillFile(StudentsClassbookResultDto data)
@@ -24,7 +26,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 return;
             }
 
-            StringBuilder table = new StringBuilder();
+            var table = new StringBuilder();
 
             bool visitsExistAndValid = data.StudentsPresences != null && data.StudentsPresences.Any();
 
@@ -36,7 +38,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 IEnumerable<StudentVisitDto> studentVisits = data.StudentsPresences;
 
-                string[] headers = new string[] { "Course", "Student Group", "Lesson date", "Presence", "Marks" };
+                string[] headers = {"Course", "Student Group", "Lesson date", "Presence", "Marks"};
 
                 string[][] rows = new string[data.StudentsMarks.Count()][];
 
@@ -47,8 +49,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i][_CourseColumnNumber] = studentMarks.ElementAt(i).Course;
                     rows[i][_StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
                     rows[i][_DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " : studentVisits.ElementAt(i).Presence == true ? $"&#10003;" : " ";
-                    rows[i][_FifthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " : studentMarks.ElementAt(i).StudentMark == 0 ? $"-" : $"{studentMarks.ElementAt(i).StudentMark}";
+                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
+                        studentVisits.ElementAt(i).Presence == true ? $"{HtmlConstants.CheckMark}" : " ";
+                    rows[i][_FifthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
+                        studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
@@ -57,7 +61,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             {
                 IEnumerable<StudentVisitDto> studentVisits = data.StudentsPresences;
 
-                string[] headers = new string[] { "Course", "Student Group", "Lesson date", "Presence" };
+                string[] headers = {"Course", "Student Group", "Lesson date", "Presence"};
 
                 string[][] rows = new string[data.StudentsPresences.Count()][];
 
@@ -68,16 +72,17 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i][_CourseColumnNumber] = studentVisits.ElementAt(i).Course;
                     rows[i][_StudentGroupColumnNumber] = studentVisits.ElementAt(i).StudentGroup;
                     rows[i][_DateColumnNumber] = studentVisits.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " : studentVisits.ElementAt(i).Presence == true ? $"&#10003;" : " ";
+                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
+                        studentVisits.ElementAt(i).Presence == true ? $"{HtmlConstants.CheckMark}" : " ";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
             }
             else if (marksExistAndValid)
             {
-                var studentMarks = data.StudentsMarks;
+                IEnumerable<StudentMarkDto> studentMarks = data.StudentsMarks;
 
-                string[] headers = new string[] { "Course", "Student Group", "Lesson date", "Marks" };
+                string[] headers = {"Course", "Student Group", "Lesson date", "Marks"};
 
                 string[][] rows = new string[data.StudentsMarks.Count()][];
 
@@ -88,7 +93,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i][_CourseColumnNumber] = studentMarks.ElementAt(i).Course;
                     rows[i][_StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
                     rows[i][_DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " : studentMarks.ElementAt(i).StudentMark == 0 ? $"-" : $"{studentMarks.ElementAt(i).StudentMark}";
+                    rows[i][_FourthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
+                        studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
@@ -103,9 +109,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         private string GetFileHeader(StudentsClassbookResultDto data)
         {
-            string student = String.Empty;
-            string startDate = String.Empty;
-            string finishDate = String.Empty;
+            string student = string.Empty;
+            string startDate = string.Empty;
+            string finishDate = string.Empty;
 
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -120,7 +126,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 finishDate = data.StudentsMarks.Last().LessonDate?.ToString("dd.MM.yyyy");
             }
 
-            return $"Student {student} results {startDate}{HtmlGenerator.NonBreakingSpace}{finishDate}";
+            return $"Student {student} results {startDate}{HtmlConstants.NonBreakingSpace}{finishDate}";
         }
 
         private byte[] ConvertLineToArray(string line)
@@ -129,7 +135,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             for (int i = 0; i < line.Length; i++)
             {
-                array[i] = (byte)line[i];
+                array[i] = (byte) line[i];
             }
 
             return array;
