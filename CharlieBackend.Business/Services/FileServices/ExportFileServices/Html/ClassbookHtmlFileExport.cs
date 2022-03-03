@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Dashboard;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Dashboard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    class ClassbookHtmlFileExport : HtmlFileExport<StudentsClassbookResultDto>
+    class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
         private void FillFile(StudentsClassbookResultDto data)
         {
@@ -60,7 +61,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
 
-                byte[] byteLine = ConvertLineToArray(html.ToString());
+                byte[] byteLine = html.ToString().ConvertLineToArray();
 
                 _memoryStream.Write(byteLine);
             }
@@ -116,7 +117,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
 
-                byte[] byteLine = ConvertLineToArray(html.ToString());
+                byte[] byteLine = html.ToString().ConvertLineToArray();
 
                 _memoryStream.Write(byteLine);
             }

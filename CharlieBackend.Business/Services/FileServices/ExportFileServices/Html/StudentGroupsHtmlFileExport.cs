@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class StudentGroupsHtmlFileExport : HtmlFileExport<IEnumerable<Student>>
+    public class StudentGroupsHtmlFileExport : FileExport<IEnumerable<Student>>
     {
+        #region private
         private string _fileGroupName;
         private const int _FirstNameColumnNumber = 0;
         private const int _LastNameColumnNumber = 1;
         private const int _EmailColumnNumber = 2;
+        #endregion
 
         public StudentGroupsHtmlFileExport(string fileGroupName)
         {
@@ -38,7 +41,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             StringBuilder html = HtmlGenerator.GenerateHtml(_fileGroupName, table);
 
-            byte[] byteLine = ConvertLineToArray(html.ToString());
+            byte[] byteLine = html.ToString().ConvertLineToArray();
 
             _memoryStream.Write(byteLine);
         }

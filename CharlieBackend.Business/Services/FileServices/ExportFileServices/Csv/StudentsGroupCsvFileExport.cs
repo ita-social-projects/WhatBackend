@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices.Csv;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
 {
-    public class StudentsGroupCsvFileExport : CsvFileExport<IEnumerable<Student>>
+    class StudentsGroupCsvFileExport : FileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
 
@@ -26,7 +27,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
                 line.Append(s.Account.Email + ';' + '\n');
             }
 
-            byte[] byteLine = ConvertLineToArray(line.ToString());
+            byte[] byteLine = line.ToString().ConvertLineToArray();
 
             _memoryStream.Write(byteLine);
         }
