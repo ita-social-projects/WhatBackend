@@ -11,11 +11,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
     {
         #region private constants
 
-        private const int _CourseColumnNumber = 0;
-        private const int _StudentGroupColumnNumber = 1;
-        private const int _DateColumnNumber = 2;
-        private const int _FourthColumn = 3;
-        private const int _FifthColumn = 4;
+        private const int CourseColumnNumber = 0;
+        private const int StudentGroupColumnNumber = 1;
+        private const int DateColumnNumber = 2;
+        private const int FourthColumn = 3;
+        private const int FifthColumn = 4;
 
         #endregion
 
@@ -46,12 +46,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][_CourseColumnNumber] = studentMarks.ElementAt(i).Course;
-                    rows[i][_StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
-                    rows[i][_DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
+                    rows[i][CourseColumnNumber] = studentMarks.ElementAt(i).Course;
+                    rows[i][StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
+                    rows[i][DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
+                    rows[i][FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
                         studentVisits.ElementAt(i).Presence == true ? $"{HtmlConstants.CheckMark}" : " ";
-                    rows[i][_FifthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
+                    rows[i][FifthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
                         studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
                 }
 
@@ -69,10 +69,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][_CourseColumnNumber] = studentVisits.ElementAt(i).Course;
-                    rows[i][_StudentGroupColumnNumber] = studentVisits.ElementAt(i).StudentGroup;
-                    rows[i][_DateColumnNumber] = studentVisits.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
+                    rows[i][CourseColumnNumber] = studentVisits.ElementAt(i).Course;
+                    rows[i][StudentGroupColumnNumber] = studentVisits.ElementAt(i).StudentGroup;
+                    rows[i][DateColumnNumber] = studentVisits.ElementAt(i).LessonDate.ToString();
+                    rows[i][FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
                         studentVisits.ElementAt(i).Presence == true ? $"{HtmlConstants.CheckMark}" : " ";
                 }
 
@@ -90,10 +90,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][_CourseColumnNumber] = studentMarks.ElementAt(i).Course;
-                    rows[i][_StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
-                    rows[i][_DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
-                    rows[i][_FourthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
+                    rows[i][CourseColumnNumber] = studentMarks.ElementAt(i).Course;
+                    rows[i][StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
+                    rows[i][DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
+                    rows[i][FourthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
                         studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
                 }
 
