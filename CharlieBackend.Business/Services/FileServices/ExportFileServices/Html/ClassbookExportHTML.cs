@@ -11,7 +11,7 @@ using CharlieBackend.Core.DTO.Dashboard;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    internal class ClassbookExportHTML : BaseFileExportHTML
+    public class ClassbookExportHTML : BaseFileExportHTML
     {
         public void FillFile(StudentsClassbookResultDto data)
         {

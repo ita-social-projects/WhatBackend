@@ -7,7 +7,7 @@ using CharlieBackend.Core.DTO.Dashboard;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    internal class StudentClassbookExportHTML : BaseFileExportHTML
+    public class StudentClassbookExportHTML : BaseFileExportHTML
     {
         #region private constants
 
