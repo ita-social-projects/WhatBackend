@@ -13,9 +13,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
     {
         #region private
         private string _fileGroupName;
-        private const int _FirstNameColumnNumber = 0;
-        private const int _LastNameColumnNumber = 1;
-        private const int _EmailColumnNumber = 2;
+        private const int FirstNameColumnNumber = 0;
+        private const int LastNameColumnNumber = 1;
+        private const int EmailColumnNumber = 2;
         #endregion
 
         public StudentGroupsHtmlFileExport(string fileGroupName)
@@ -32,9 +32,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             for (int i = 0; i < rows.Length; i++)
             {
                 rows[i] = new string[headers.Length];
-                rows[i][_FirstNameColumnNumber] = students.ElementAt(i).Account.FirstName;
-                rows[i][_LastNameColumnNumber] = students.ElementAt(i).Account.LastName;
-                rows[i][_EmailColumnNumber] = students.ElementAt(i).Account.Email;
+                rows[i][FirstNameColumnNumber] = students.ElementAt(i).Account.FirstName;
+                rows[i][LastNameColumnNumber] = students.ElementAt(i).Account.LastName;
+                rows[i][EmailColumnNumber] = students.ElementAt(i).Account.Email;
             }
 
             StringBuilder table = HtmlGenerator.GenerateTable(headers, rows);
