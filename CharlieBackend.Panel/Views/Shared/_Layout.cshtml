@@ -50,7 +50,7 @@
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
                 {
                     <a class="nav-link collapsed" asp-action="AllStudents" asp-controller="Students">
                         <i class="fas fa-users"></i>
