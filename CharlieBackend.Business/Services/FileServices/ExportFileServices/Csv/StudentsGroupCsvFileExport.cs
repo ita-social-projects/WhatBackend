@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Business.Services.FileServices.ExportFileServices.Csv;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Services.FileServices.ExportFileServices;
 using CharlieBackend.Core.Entities;
 using System.Collections.Generic;
 using System.Text;
@@ -6,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
 {
-    public class StudentGroupCSVExporter : BaseFileExportCSV
+    class StudentsGroupCsvFileExport : FileExport<IEnumerable<Student>>
     {
         private string _fileGroupName;
 
-        public StudentGroupCSVExporter(string fileGroupName)
+        public StudentsGroupCsvFileExport(string fileGroupName)
         {
             _fileGroupName = fileGroupName;
         }
 
-        public Task FillFile(IList<Student> students)
+        private void FillFile(IEnumerable<Student> students)
         {
             StringBuilder line = new StringBuilder();
 
@@ -26,23 +27,14 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
                 line.Append(s.Account.Email + ';' + '\n');
             }
 
-            byte[] byteLine = ConvertLineToArray(line.ToString());
+            byte[] byteLine = line.ToString().ConvertLineToArray();
 
             _memoryStream.Write(byteLine);
-
-            return Task.CompletedTask;
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(IEnumerable<Student> data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte)line[i];
-            }
-
-            return array;
+            await Task.Run(() => FillFile(data));
         }
 
         public override string GetFileName()

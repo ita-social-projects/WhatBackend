@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.DTO.Dashboard;
+using System.Threading.Tasks;
 
 #endregion
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class ClassbookExportHTML : BaseFileExportHTML
+    public class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
-        public void FillFile(StudentsClassbookResultDto data)
+        private void FillFile(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -69,7 +70,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
 
-                byte[] byteLine = ConvertLineToArray(html.ToString());
+                byte[] byteLine = html.ToString().ConvertLineToArray();
 
                 _memoryStream.Write(byteLine);
             }
@@ -128,7 +129,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
 
-                byte[] byteLine = ConvertLineToArray(html.ToString());
+                byte[] byteLine = html.ToString().ConvertLineToArray();
 
                 _memoryStream.Write(byteLine);
             }
@@ -161,16 +162,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd") + ".html";
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte) line[i];
-            }
-
-            return array;
+            await Task.Run(()=>FillFile(data));
         }
     }
 }

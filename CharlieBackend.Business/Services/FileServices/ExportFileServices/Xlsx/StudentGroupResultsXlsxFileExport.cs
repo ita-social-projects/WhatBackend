@@ -8,19 +8,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class StudentGroupResultsXlsx : BaseFileExportXlsx
+    public class StudentGroupResultsXlsxFileExport : XlsxFileExport<StudentGroupsResultsDto>
     {
-        public StudentGroupResultsXlsx()
-        {
-            _xLWorkbook = new XLWorkbook();
-        }
-
         public override string GetFileName()
         {
             return "StudentGroupResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public async Task FillFile(StudentGroupsResultsDto data)
+        public override async Task FillFileAsync(StudentGroupsResultsDto data)
         {
             if (data == null)
             {
@@ -29,16 +24,16 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
             if (data.AverageStudentGroupsMarks != null && data.AverageStudentGroupsMarks.Any())
             {
-                await FillAverageMarks(data.AverageStudentGroupsMarks);
+                await FillAverageMarksAsync(data.AverageStudentGroupsMarks);
             }
 
             if (data.AverageStudentGroupsVisits != null && data.AverageStudentGroupsVisits.Any())
             {
-                await FillAverageVisits(data.AverageStudentGroupsVisits);
+                await FillAverageVisitsAsync(data.AverageStudentGroupsVisits);
             }
         }
 
-        public async Task FillAverageMarks(IEnumerable<AverageStudentGroupMarkDto> AverageStudentGroupsMarks)
+        public async Task FillAverageMarksAsync(IEnumerable<AverageStudentGroupMarkDto> AverageStudentGroupsMarks)
         {
             if (AverageStudentGroupsMarks != null && AverageStudentGroupsMarks.Any())
             {
@@ -80,7 +75,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public async Task FillAverageVisits(IEnumerable<AverageStudentGroupVisitDto> AverageStudentGroupsVisits)
+        public async Task FillAverageVisitsAsync(IEnumerable<AverageStudentGroupVisitDto> AverageStudentGroupsVisits)
         {
             if (AverageStudentGroupsVisits != null && AverageStudentGroupsVisits.Any())
             {

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.DTO.Dashboard;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    public class StudentClassbookExportHTML : BaseFileExportHTML
+    public class StudentClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
         #region private constants
 
@@ -19,7 +20,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         #endregion
 
-        public void FillFile(StudentsClassbookResultDto data)
+        private void FillFile(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -102,7 +103,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             StringBuilder html = HtmlGenerator.GenerateHtml(GetFileHeader(data), table);
 
-            byte[] byteLine = ConvertLineToArray(html.ToString());
+            byte[] byteLine = html.ToString().ConvertLineToArray();
 
             _memoryStream.Write(byteLine);
         }
@@ -129,16 +130,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             return $"Student {student} results {startDate}{HtmlConstants.NonBreakingSpace}{finishDate}";
         }
 
-        private byte[] ConvertLineToArray(string line)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
-            byte[] array = new byte[line.Length];
-
-            for (int i = 0; i < line.Length; i++)
-            {
-                array[i] = (byte) line[i];
-            }
-
-            return array;
+            await Task.Run(() => FillFile(data));
         }
 
         public override string GetFileName()
