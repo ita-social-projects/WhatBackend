@@ -182,10 +182,21 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Account</span>
+                                <span id="helloDiv" class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
                                 <img class="img-profile rounded-circle"
                                      src="~/img/undraw_profile.svg">
                             </a>
+                            <script>
+                                let helloDiv = document.getElementById('helloDiv');
+                                helloDiv.innerHTML = `${getCookie("currentRole")}`;
+
+                                function getCookie(name) {
+                                    let matches = document.cookie.match(new RegExp(
+                                        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+                                    ));
+                                    return matches ? decodeURIComponent(matches[1]) : undefined;
+                                }
+                            </script>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown" id="dropdownMenu">
@@ -216,11 +227,18 @@
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Admin Panel WHAT Backend 2021</span>
+                    <div id="year" class="copyright text-center my-auto">
+                        <span >Admin Panel WHAT Backend </span>
                     </div>
                 </div>
+                <script>
+                    let tag = document.createElement('span');
+                    tag.innerHTML = `${new Date().getFullYear()}`;
+                    let year = document.getElementById('year');
+                    year.appendChild(tag);
+                </script>
             </footer>
+
             <!-- End of Footer -->
 
         </div>

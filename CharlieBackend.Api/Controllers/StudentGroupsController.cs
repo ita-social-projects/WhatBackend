@@ -85,7 +85,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 422, API: 4">Error, given group data already exist</response>
         /// <response code="HTTP: 400, API: 0">Error, given group data unprocessable</response>
         [SwaggerResponse(200, type: typeof(StudentGroupDto))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpPost]
         public async Task<ActionResult<StudentGroupDto>> PostStudentGroup([FromBody]CreateStudentGroupDto studentGroup)
         {
@@ -101,7 +101,7 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="HTTP: 422, API: 4">Error, given group name already exist</response>
         /// <response code="HTTP: 400, API: 0">Error, given group data is wrong</response>
         [SwaggerResponse(200, type: typeof(UpdateStudentGroupDto))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<StudentGroupDto>> PutStudentGroup(long id, [FromBody]UpdateStudentGroupDto studentGroupDto)
         {

@@ -12,7 +12,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
     public class StudentGroupsHtmlFileExport : FileExport<IEnumerable<Student>>
     {
         #region private
-        private string _fileGroupName;
+        private readonly string _fileGroupName;
         private const int FirstNameColumnNumber = 0;
         private const int LastNameColumnNumber = 1;
         private const int EmailColumnNumber = 2;

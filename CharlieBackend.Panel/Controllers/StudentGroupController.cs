@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
 {
-    [Authorize(Roles = "Admin, Secretary, Mentor")]
     [Route("[controller]/[action]")]
     public class StudentGroupController : Controller
     {
@@ -17,6 +16,7 @@ namespace CharlieBackend.Panel.Controllers
             _studentGroupService = studentGroupService;
         }
 
+        [Authorize(Roles = "Secretary, Mentor, Admin")]
         [HttpGet]
         public async Task<IActionResult> AllStudentGroups(bool isAllGroups = true)
         {
@@ -27,6 +27,7 @@ namespace CharlieBackend.Panel.Controllers
             return View(studentGroups);
         }
 
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareStudentGroupForUpdate(long id)
         {
@@ -37,6 +38,7 @@ namespace CharlieBackend.Panel.Controllers
             return View("UpdateStudentGroup");
         }
 
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateStudentGroup(long id, StudentGroupDto data)
         {
@@ -45,6 +47,7 @@ namespace CharlieBackend.Panel.Controllers
             return RedirectToAction("AllStudentGroups", "StudentGroup");
         }
 
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpGet]
         public async Task<IActionResult> CreateStudentGroup()
         {
@@ -55,6 +58,7 @@ namespace CharlieBackend.Panel.Controllers
             return View("AddStudentGroup");
         }
 
+        [Authorize(Roles = "Secretary, Admin")]
         [HttpPost]
         public async Task<IActionResult> AddStudentGroup(long id, CreateStudentGroupDto data)
         {
@@ -63,6 +67,5 @@ namespace CharlieBackend.Panel.Controllers
             return RedirectToAction("AllStudentGroups", "StudentGroup");
         }
 
-        
     }
 }

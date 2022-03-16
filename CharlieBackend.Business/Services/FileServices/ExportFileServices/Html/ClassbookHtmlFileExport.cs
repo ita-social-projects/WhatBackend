@@ -1,14 +1,18 @@
-﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.DTO.Dashboard;
+﻿#region
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Dashboard;
 using System.Threading.Tasks;
+
+#endregion
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
-    class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
+    public class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
         private void FillFile(StudentsClassbookResultDto data)
         {
@@ -26,17 +30,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
-                var dateData = data.StudentsPresences.GroupBy(x => x.LessonId);
+                IEnumerable<IGrouping<long?, StudentVisitDto>> dateData =
+                    data.StudentsPresences.GroupBy(x => x.LessonId);
 
                 string[] headers = new string[dateData.Count() + 1];
                 headers[0] = "Students:";
 
                 for (int i = 0; i + 1 < headers.Length; i++)
                 {
-                    headers[i + 1] = ((DateTime)data.StudentsPresences.First(x => x.LessonId == dateData.ElementAt(i).Key).LessonDate).ToString("dd.MM.yyyy");
+                    headers[i + 1] =
+                        ((DateTime) data.StudentsPresences.First(x => x.LessonId == dateData.ElementAt(i).Key)
+                            .LessonDate).ToString("dd.MM.yyyy");
                 }
 
-                var students = data.StudentsPresences.Select(x => x.Student).Distinct().OrderByDescending(s => s);
+                IOrderedEnumerable<string> students =
+                    data.StudentsPresences.Select(x => x.Student).Distinct().OrderByDescending(s => s);
 
                 string[][] rows = new string[students.Count()][];
 
@@ -47,13 +55,14 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                     for (int j = 0; j + 1 < headers.Length; j++)
                     {
-                        var visits = data.StudentsPresences
+                        IEnumerable<StudentVisitDto> visits = data.StudentsPresences
                             .Where(x => x.Student == rows[i][0] && x.LessonDate?
-                            .ToString("dd.MM.yyyy") == headers[j + 1]);
+                                .ToString("dd.MM.yyyy") == headers[j + 1]);
 
-                        var studentVisit = visits.Any() ? visits.First().Presence : null;
+                        bool? studentVisit = visits.Any() ? visits.First().Presence : null;
 
-                        rows[i][j + 1] = studentVisit == null ? " " : studentVisit == true ? $"&#10003;" : " ";
+                        rows[i][j + 1] = studentVisit == null ? " " :
+                            studentVisit == true ? $"{HtmlConstants.CheckMark}" : " ";
                     }
                 }
 
@@ -71,7 +80,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
         {
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
-                var dateData = data.StudentsMarks.GroupBy(x => x.LessonId);
+                IEnumerable<IGrouping<long?, StudentMarkDto>> dateData = data.StudentsMarks.GroupBy(x => x.LessonId);
 
                 //Need 2 extra slots for columns "students" and "average mark" (besides lesson dates)
                 string[] headers = new string[dateData.Count() + 2];
@@ -80,10 +89,13 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 for (int i = 0; i + 1 < headers.Length - 1; i++)
                 {
-                    headers[i + 1] = ((DateTime)data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(i).Key).LessonDate).ToString("dd.MM.yyyy");
+                    headers[i + 1] =
+                        ((DateTime) data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(i).Key).LessonDate)
+                        .ToString("dd.MM.yyyy");
                 }
 
-                var students = data.StudentsMarks.Select(x => x.Student).Distinct().OrderByDescending(s => s);
+                IOrderedEnumerable<string> students =
+                    data.StudentsMarks.Select(x => x.Student).Distinct().OrderByDescending(s => s);
 
                 string[][] rows = new string[students.Count()][];
 
@@ -92,19 +104,19 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i] = new string[headers.Length];
                     rows[i][0] = students.ElementAt(i);
 
-                    List<int> marks = new List<int>();
+                    var marks = new List<int>();
 
                     for (int j = 0; j + 1 < headers.Length - 1; j++)
                     {
-                        var studentMarks = data.StudentsMarks
+                        IEnumerable<StudentMarkDto> studentMarks = data.StudentsMarks
                             .Where(x => x.Student == rows[i][0] && x.LessonDate?
-                            .ToString("dd.MM.yyyy") == headers[j + 1]);
+                                .ToString("dd.MM.yyyy") == headers[j + 1]);
 
-                        var studentMark = studentMarks.Any() ? studentMarks.First().StudentMark : null;
+                        sbyte? studentMark = studentMarks.Any() ? studentMarks.First().StudentMark : null;
 
                         if (studentMark != null && studentMark != 0)
                         {
-                            marks.Add((int)studentMark);
+                            marks.Add((int) studentMark);
                         }
 
                         rows[i][j + 1] = studentMark == null ? " " : studentMark == 0 ? "-" : $"{studentMark}";
@@ -125,9 +137,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         private string GetFileHeader(StudentsClassbookResultDto data)
         {
-            string group = String.Empty;
-            string startDate = String.Empty;
-            string finishDate = String.Empty;
+            string group = string.Empty;
+            string startDate = string.Empty;
+            string finishDate = string.Empty;
 
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -135,14 +147,14 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                 startDate = data.StudentsPresences.First().LessonDate?.ToString("dd.MM.yyyy");
                 finishDate = data.StudentsPresences.Last().LessonDate?.ToString("dd.MM.yyyy");
             }
-            else if(data.StudentsMarks != null && data.StudentsMarks.Any())
+            else if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 group = data.StudentsMarks.First().StudentGroup;
                 startDate = data.StudentsMarks.First().LessonDate?.ToString("dd.MM.yyyy");
                 finishDate = data.StudentsMarks.Last().LessonDate?.ToString("dd.MM.yyyy");
             }
 
-            return $"Group: {group} {startDate}{HtmlGenerator.NonBreakingSpace}{finishDate}";
+            return $"Group: {group} {startDate}{HtmlConstants.NonBreakingSpace}{finishDate}";
         }
 
         public override string GetFileName()

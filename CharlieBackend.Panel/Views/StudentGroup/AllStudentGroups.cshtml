@@ -10,7 +10,7 @@
     <div id="content">
 
         <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Mentor"))
+            @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
             {
                 <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
                     <i class="fas fa-plus"></i>
@@ -55,7 +55,10 @@
                                     <th class="col-2">Finish date</th>
                                     <th class="col">Students</th>
                                     <th class="col">Mentors</th>
-                                    <th class="col-1">Controll</th>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                                    {
+                                        <th class="col-1">Controll</th>
+                                    }
                                 </tr>
                             </thead>
 
@@ -115,24 +118,27 @@
                                             </div>
                                         </td>
 
-                                        <td class="col-1">
-                                            <div class="dropdown">
-                                                <button class="btn btn-outline-secondar dropdown-toggle"
-                                                        type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-cog"></i>
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                                        {
+                                            <td class="col-1">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-secondar dropdown-toggle"
+                                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                    <a class="dropdown-item"
-                                                       asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
-                                                        <i class="fas fa-pen"></i>
-                                                        <span>Edit</span>
-                                                    </a>
+                                                        <a class="dropdown-item"
+                                                           asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
+                                                            <i class="fas fa-pen"></i>
+                                                            <span>Edit</span>
+                                                        </a>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             </tbody>
