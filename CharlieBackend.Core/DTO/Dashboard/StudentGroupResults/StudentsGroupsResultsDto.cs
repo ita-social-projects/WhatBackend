@@ -7,5 +7,12 @@ namespace CharlieBackend.Core.DTO.Dashboard
         public IEnumerable<AverageStudentGroupVisitDto> AverageStudentGroupsVisits { get; set; }
 
         public IEnumerable<AverageStudentGroupMarkDto> AverageStudentGroupsMarks { get; set; }
+
+        public StudentGroupsResultsDto()
+		{
+            AverageStudentGroupsVisits = new List<AverageStudentGroupVisitDto>();
+            AverageStudentGroupsMarks = new List<AverageStudentGroupMarkDto>();
+        }
+
     }
 }
