@@ -113,6 +113,11 @@ namespace CharlieBackend.Business.Services
                 finishDate = lastLesson.LessonDate;
             }
 
+            if (startDate > finishDate)
+            {
+                return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "FinishDate less than StartDate");
+            }
+
             var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
 
             var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
