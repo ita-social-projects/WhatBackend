@@ -38,6 +38,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                    x => x.LessonDate >= startDate)
                   .WhereIf(finishDate != null && finishDate != default(DateTime),
                    x => x.LessonDate <= finishDate)
+                  .Include(x=> x.Visits)
                   .ToListAsync();
         }
 
