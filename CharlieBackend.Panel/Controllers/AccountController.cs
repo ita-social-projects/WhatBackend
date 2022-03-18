@@ -45,6 +45,12 @@ namespace CharlieBackend.Panel.Controllers
         {
             var responseModel = await _apiUtil.SignInAsync(_accountsApiEndpoints.SignIn, authDto);
 
+            if (responseModel == null)
+            {
+                ModelState.AddModelError(string.Empty, ValidationConstants.PasswordOrEmailNotValid);
+                return View(authDto);
+            }
+
             var token = responseModel.Token.Replace("Bearer ", "");
             
             if (token == null || !await Authenticate(token))
@@ -87,6 +93,12 @@ namespace CharlieBackend.Panel.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public ViewResult ApiError()
+        {
+            return View();
         }
 
         private async Task<bool> Authenticate(string token)

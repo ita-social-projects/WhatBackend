@@ -22,14 +22,14 @@ namespace CharlieBackend.Panel.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, authModel);
 
-            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-
-            var responseModel = JsonConvert.DeserializeObject<AuthenticationResponseDto>(stringResponse);
-
-            if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+            if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+
+            var responseModel = JsonConvert.DeserializeObject<AuthenticationResponseDto>(stringResponse);
 
             httpResponse.Headers.TryGetValues("Authorization", out IEnumerable<string> token);
 
