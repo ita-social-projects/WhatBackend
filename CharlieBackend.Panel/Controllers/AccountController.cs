@@ -95,12 +95,6 @@ namespace CharlieBackend.Panel.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        [HttpGet]
-        public ViewResult ApiError()
-        {
-            return View();
-        }
-
         private async Task<bool> Authenticate(string token)
         {
             var handler = new JwtSecurityTokenHandler();
