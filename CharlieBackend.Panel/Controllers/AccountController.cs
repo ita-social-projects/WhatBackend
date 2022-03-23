@@ -45,6 +45,12 @@ namespace CharlieBackend.Panel.Controllers
         {
             var responseModel = await _apiUtil.SignInAsync(_accountsApiEndpoints.SignIn, authDto);
 
+            if (responseModel == null)
+            {
+                ModelState.AddModelError(string.Empty, ValidationConstants.PasswordOrEmailNotValid);
+                return View(authDto);
+            }
+
             var token = responseModel.Token.Replace("Bearer ", "");
             
             if (token == null || !await Authenticate(token))
