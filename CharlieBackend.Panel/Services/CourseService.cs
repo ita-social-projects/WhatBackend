@@ -33,7 +33,6 @@ namespace CharlieBackend.Panel.Services
             return await _apiUtil.DeleteAsync<CourseDto>(disableCourseEndpoint);
         }
 
-
         public async Task<CourseDto> EnableCourseAsync(long id)
         {
             var enableCourseEndpoint =
