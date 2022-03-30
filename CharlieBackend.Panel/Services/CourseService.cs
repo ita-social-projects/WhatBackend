@@ -25,20 +25,21 @@ namespace CharlieBackend.Panel.Services
             _coursesApiEndpoints = options.Value.Urls.ApiEndpoints.Courses;
         }
 
-        public async Task<bool> DisableCourseAsync(long id)
+        public async Task<CourseDto> DisableCourseAsync(long id)
         {
             var disableCourseEndpoint = 
                 string.Format(_coursesApiEndpoints.DisableCourseEndpoint, id);
 
-            return await _apiUtil.DeleteAsync<bool>(disableCourseEndpoint);
+            return await _apiUtil.DeleteAsync<CourseDto>(disableCourseEndpoint);
         }
 
-        public async Task<bool> EnableCourseAsync(long id)
+
+        public async Task<CourseDto> EnableCourseAsync(long id)
         {
             var enableCourseEndpoint =
                 string.Format(_coursesApiEndpoints.EnableCourseEndpoint, id);
 
-            return await _apiUtil.EnableAsync<bool>(enableCourseEndpoint);
+            return await _apiUtil.EnableAsync<CourseDto>(enableCourseEndpoint);
         }
 
         public async Task UpdateCourse(long id, UpdateCourseDto UpdateDto)

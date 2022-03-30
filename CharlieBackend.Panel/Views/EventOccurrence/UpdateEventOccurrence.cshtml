@@ -121,7 +121,7 @@
                             <option value="0">
                                 Sunday
                             </option>
-                            <option value="1">
+                            <option value="1" selected>
                                 Monday
                             </option>
                             <option value="2">
@@ -145,9 +145,6 @@
                     <div class="form-group" id="pattern-index" hidden="hidden">
                         <label>Pattern index</label>
                         <select class="custom-select" asp-for="Pattern.Index" size="1">
-                            <option value="0">
-                                Undefined
-                            </option>
                             <option value="1">
                                 First
                             </option>
@@ -169,13 +166,15 @@
                     <div class="form-group dates" id="dates" hidden="hidden">
                         <label>Days of month </label>
                         <select class="custom-select" asp-for="Pattern.Dates" size="5">
-                            @for (int i = 1; i <= 31; i++)
+                            <option value="1" selected>
+                                1
+                            </option>
+                            @for (int i = 2; i <= 31; i++)
                             {
                                 <option value="@i">
                                     @i
                                 </option>
                             }
-
                         </select>
                     </div>
 
