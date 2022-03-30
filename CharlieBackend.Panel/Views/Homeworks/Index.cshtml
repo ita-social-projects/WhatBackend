@@ -42,9 +42,9 @@
                                 {
                                     <tr>
                                         <td>@item.ThemeName</td>
-                                        <td>@item.DueDate</td>
+                                        <td>@item.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
                                         <td>@item.TaskText</td>
-                                        <td>@item.PublishingDate</td>
+                                        <td>@item.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondar dropdown-toggle"
