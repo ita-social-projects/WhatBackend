@@ -36,8 +36,8 @@
                                     <td class="col-1">@item.Id</td>
                                     <td class="col-2">@item.StudentGroupId</td>
                                     <td class="col-2">@item.Storage</td>
-                                    <td class="col-3">@item.EventStart</td>
-                                    <td class="col-3">@item.EventFinish</td>
+                                    <td class="col-3">@item.EventStart.Value.ToString("yyyy.MM.dd HH:mm")</td>
+                                    <td class="col-3">@item.EventFinish.Value.ToString("yyyy.MM.dd HH:mm")</td>
                                     <td class="col-1">
                                         <div class="dropdown">
                                             <button class="btn btn-outline-secondar dropdown-toggle"

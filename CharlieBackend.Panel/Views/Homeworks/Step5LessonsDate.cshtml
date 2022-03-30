@@ -33,7 +33,7 @@
                                 <tr>
                                     <td>
                                         <a class=" dropdown-item" asp-action="CreateHomework" asp-controller="Homeworks" asp-route-lessonId="@item.Id">
-                                            <span>@Html.DisplayFor(modelItem => item.LessonDate)</span>
+                                            <span>@item.LessonDate.ToString("yyyy.MM.dd HH: mm");</span>
                                         </a>
                                     </td>
 

@@ -19,8 +19,8 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="DueDate" class="control-label"></label>
-                        <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" max="3000-12-31" class="form-control"
-                               value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")" asp-for="DueDate">
+                        <input type="datetime-local" min="@DateTime.Now.ToString("yyyy-MM-dd")" max="3000-12-31" class="form-control"
+                               value="@DateTime.Now.AddDays(7).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="DueDate">
                         <span asp-validation-for="DueDate" class="text-danger"></span>
                     </div>
                     <div class="form-group">
