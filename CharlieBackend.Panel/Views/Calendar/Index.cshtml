@@ -40,17 +40,22 @@
         var seMentor = null;
         var seTheme = null;
         var seTime = null;
-        $(document).on("click", ".btn-event", function (e) {
-            e.preventDefault();
-            var _self = $(this);
-            seGroup = _self.attr("seGroup");
-            seMentor = _self.attr("seMentor");
-            seTheme = _self.attr("seTheme");
-            seTime = _self.attr("seTime");
-            $("#seGroup").val(seGroup);
-            $("#seMentor").val(seMentor);
-            $("#seTheme").val(seTheme);
-            $("#seTime").val(seTime);
+        var seEventOccuranceId = null;
+        $(document).on("click",
+            ".btn-event",
+            function(e) {
+                e.preventDefault();
+                var _self = $(this);
+                seGroup = _self.attr("seGroup");
+                seMentor = _self.attr("seMentor");
+                seTheme = _self.attr("seTheme");
+                seTime = _self.attr("seTime");
+                seEventOccuranceId = _self.attr("seEventOccuranceId");
+                $("#seGroup").val(seGroup);
+                $("#seMentor").val(seMentor);
+                $("#seTheme").val(seTheme);
+                $("#seTime").val(seTime);
+                $("#seEventOccuranceId").attr('href',"/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccuranceId);
         });
     </script>
 }
@@ -219,9 +224,13 @@
 
                     <label for="seMentor">Mentor:</label>
                     <input id="seMentor" class="modalTextInput form-control" value="" />
+
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>
+                    <a id="seEventOccuranceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit schedule event</a>
+
+
                 </div>
             </div>
         </div>

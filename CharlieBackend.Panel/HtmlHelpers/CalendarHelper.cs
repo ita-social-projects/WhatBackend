@@ -43,6 +43,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 var studentGroup = calendar.StudentGroups.First(s => s.Id == item.StudentGroupId).Name;
                 var eventStart = item.EventStart;
                 var eventFinish = item.EventFinish;
+                var eventOccuranceId = item.EventOccuranceId;
 
                 var model = new CalendarScheduledEventModel
                 {
@@ -51,7 +52,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     MentorLastName = mentorLastName,
                     StudentGroup = studentGroup,
                     EventStart = eventStart,
-                    EventFinish = eventFinish
+                    EventFinish = eventFinish,
+                    EventOccuranceId = eventOccuranceId
                 };
                 models.Add(model);
             }
@@ -193,10 +195,12 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seGroup", model.StudentGroup);
             button.Attributes.Add("seMentor", $"{model.MentorFirstName} {model.MentorLastName}");
             button.Attributes.Add("seTheme", model.Theme);
+            button.Attributes.Add("seEventOccuranceId", $"{model.EventOccuranceId}");
             button.InnerHtml.Append($"{model.EventStart.TimeOfDay} - {model.EventFinish.TimeOfDay} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");
             button.InnerHtml.Append($"{model.MentorFirstName} {model.MentorLastName}");
+            button.InnerHtml.Append($"{model.EventOccuranceId}; ");
 
             return button;
         }
