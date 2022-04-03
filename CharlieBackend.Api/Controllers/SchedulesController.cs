@@ -40,6 +40,17 @@ namespace CharlieBackend.Api.Controllers
         /// Creates new EventOccurence instance and related ScheduledEvents
         /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
         /// </remarks>
+        /// 
+        /// <param name="scheduleDTO">
+        /// Pattern  
+        ///  type: 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly, 
+        ///  days of week: 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday 
+        ///  month index: 0 - Undefined, 1 - First, 2 - Second, 3 - Third, 4 - Fourth, 5 - Last
+        /// Range 
+        ///  range: stardDate and finishDate in DateTime type.
+        /// </param>
+        /// 
+        /// 
         /// <response code="200">Successful add of schedule</response>
         /// <response code="HTTP: 400, API: 0">Can not create schedule due to wrong request data</response>
         /// <response code="HTTP: 404, API: 3">Can not create schedule due to missing request data</response>
@@ -85,6 +96,15 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Returns the list of events depending on the filtering rules set
         /// </summary>
+        /// 
+        /// <remarks>
+        /// Return result by filtering data with parameters 
+        /// </remarks>
+        /// 
+        /// <param name="request">
+        /// Mention courseID, mentorID, groupID, themeID, etc to filter all schedules 
+        /// All params are optional 
+        /// </param>
         /// <response code="200">Successful return event list</response>
         [SwaggerResponse(200, type: typeof(IList<ScheduledEventDTO>))]
         [Authorize(Roles = "Secretary, Admin, Mentor, Student")]
@@ -102,6 +122,7 @@ namespace CharlieBackend.Api.Controllers
         /// <remarks>
         /// Event date could not changed via this method.
         /// Event start and Finish could only be used to change event start and finish time.
+        /// Choose range of events in "filter" block and change in request 
         /// </remarks>
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
