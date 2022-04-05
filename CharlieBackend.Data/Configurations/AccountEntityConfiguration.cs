@@ -14,16 +14,9 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("ID");
 
-            entity.Property(e => e.Role)
-                .HasColumnName("Role")
-                .HasComment(
-                "Roles:" +
-                "\n 0 - NotAssigned," +
-                "\n 1 - Student," +
-                "\n 2 - Mentor," +
-                "\n 4 - Admin," +
-                "\n 8 - Secretary"
-                );
+			entity.Property(e => e.Role)
+				.HasColumnName("Role")
+				.HasComment("Roles:0 - NotAssigned; 1 - Student, 2 - Mentor, 4 - Admin, 8 - Secretary");
 
             entity.Property(e => e.FirstName)
                 .IsRequired()
