@@ -28,8 +28,7 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnType("VARCHAR(8000)");
 
             entity.Property(e => e.MarkId)
-                .HasColumnName("MarkId")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("MarkId");
 
             entity.Property(e => e.PublishingDate)
                 .IsRequired()

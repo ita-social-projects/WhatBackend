@@ -32,12 +32,8 @@ namespace CharlieBackend.Data.Configurations
                 .HasComment("Use UTC time");
 
             entity.Property(e => e.Pattern)
-                .HasColumnName("Pattern")
-                .HasComment("Patterns:" +
-                "\n 0 - Daily," +
-                "\n 1 - Weekly," +
-                "\n 2 - AbsoluteMonthly," +
-                "\n 3 - RelativeMonthly");
+				.HasColumnName("Pattern")
+				.HasComment("Patterns: 0 - Daily, 1 - Weekly, 2 - AbsoluteMonthly, 3 - RelativeMonthly");
 
             entity.Property(e => e.Storage)
                 .IsRequired()
