@@ -31,35 +31,22 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
         private static IList<CalendarScheduledEventModel> GetScheduledEventModels(CalendarViewModel calendar, DateTime startDate, DateTime finishDate)
         {
-            IList<CalendarScheduledEventModel> models = new List<CalendarScheduledEventModel>();
-
-            var scheduledEvents = calendar.ScheduledEvents.Where(i => i.EventStart >= startDate && i.EventFinish <= finishDate);
-
-            foreach (var item in scheduledEvents)
-            {
-                var theme = calendar.Themes.First(t => t.Id == item.ThemeId).Name;
-                var mentorFirstName = calendar.Mentors.First(m => m.Id == item. MentorId).FirstName;
-                var mentorLastName = calendar.Mentors.First(m => m.Id == item. MentorId).LastName;
-                var studentGroup = calendar.StudentGroups.First(s => s.Id == item.StudentGroupId).Name;
-                var eventStart = item.EventStart;
-                var eventFinish = item.EventFinish;
-
-                var model = new CalendarScheduledEventModel
+            var models = calendar.ScheduledEvents.Where(i => i.EventStart >= startDate && i.EventFinish <= finishDate)
+                .Select(scheduledEvent => new CalendarScheduledEventModel
                 {
-                    Theme = theme,
-                    MentorFirstName = mentorFirstName,
-                    MentorLastName = mentorLastName,
-                    StudentGroup = studentGroup,
-                    EventStart = eventStart,
-                    EventFinish = eventFinish
-                };
-                models.Add(model);
-            }
+                    Theme = calendar.Themes.First(t => t.Id == scheduledEvent.ThemeId).Name,
+                    MentorFirstName = calendar.Mentors.First(m => m.Id == scheduledEvent.MentorId).FirstName,
+                    MentorLastName = calendar.Mentors.First(m => m.Id == scheduledEvent.MentorId).LastName,
+                    StudentGroup = calendar.StudentGroups.First(s => s.Id == scheduledEvent.StudentGroupId).Name,
+                    EventStart = scheduledEvent.EventStart,
+                    EventFinish = scheduledEvent.EventFinish,
+                    EventOccurrenceId = scheduledEvent.EventOccuranceId,
+                    SingleEventId = scheduledEvent.Id
+                }).ToList();
 
             return models;
         }
 
-             
         private static IList<TagBuilder> GetRowContainers(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate)
         {
             IList<IList<TagBuilder>> daysContainers = new List<IList<TagBuilder>>();
@@ -193,6 +180,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seGroup", model.StudentGroup);
             button.Attributes.Add("seMentor", $"{model.MentorFirstName} {model.MentorLastName}");
             button.Attributes.Add("seTheme", model.Theme);
+            button.Attributes.Add("seEventOccurrenceId", $"{model.EventOccurrenceId}");
+            button.Attributes.Add("seSingleEventId", $"{model.SingleEventId}");
             button.InnerHtml.Append($"{model.EventStart:HH:mm} - {model.EventFinish:HH:mm} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");

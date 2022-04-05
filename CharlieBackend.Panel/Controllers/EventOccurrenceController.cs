@@ -87,5 +87,24 @@ namespace CharlieBackend.Panel.Controllers
 
             return RedirectToAction("AllEventOccurrences", "EventOccurrence");
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> PrepareSingleEventForUpdate(long id)
+        {
+            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+
+            ViewBag.EventOccurrence = eventOccurrenceData;
+            ViewBag.CurrentId = id;
+
+            return View("UpdateSingleEvent");
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> UpdateSingleEvent(long id, UpdateScheduledEventDto eventDTO)
+        {
+            await _scheduleService.UpdateSingleEventByIdAsync(id, eventDTO);
+
+            return RedirectToAction("Index", "Calendar");
+        }
     }
 }
