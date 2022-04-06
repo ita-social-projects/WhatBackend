@@ -39,16 +39,14 @@ namespace CharlieBackend.Api.Controllers
         /// <remarks>
         /// Creates new EventOccurence instance and related ScheduledEvents
         /// Information on input format could be found here: https://docs.microsoft.com/en-us/graph/outlook-schedule-recurring-events
-        /// </remarks>
-        /// 
-        /// <param name="scheduleDTO">
         /// Pattern  
-        ///  type: 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly, 
-        ///  days of week: 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday 
-        ///  month index: 0 - Undefined, 1 - First, 2 - Second, 3 - Third, 4 - Fourth, 5 - Last
+        ///  type: 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly;
+        ///  days of week: 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday;
+        ///  month index: 0 - Undefined, 1 - First, 2 - Second, 3 - Third, 4 - Fourth, 5 - Last;
+        ///  dates: 1-31;
         /// Range 
-        ///  range: stardDate and finishDate in DateTime type.
-        /// </param>
+        ///  range: stardDate and finishDate in DateTime type;
+        /// </remarks>
         /// 
         /// 
         /// <response code="200">Successful add of schedule</response>
@@ -66,6 +64,17 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Get schedule by id
         /// </summary>
+        /// <remarks>
+        /// Schedules
+        ///  id: eventOccurrenceID;
+        ///  studentGroupID: student group id to wich is schedule attached to;
+        ///  pattern(type): 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly;
+        /// Events - events wich are contained in schedules.
+        ///  id: EventID
+        ///  studentGroupID: student group id to wich is event occurrences attached to;
+        ///  themID, mentorID: them and mentor ids  
+        /// </remarks>
+        ///  
         /// <response code="200">Successful return of schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
         [SwaggerResponse(200, type: typeof(EventOccurrenceDTO))]
@@ -81,6 +90,15 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Get detailed schedule by id
         /// </summary>
+        /// <remarks>
+        /// Pattern  
+        ///  type: 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly;
+        ///  days of week: 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday;
+        ///  month index: 0 - Undefined, 1 - First, 2 - Second, 3 - Third, 4 - Fourth, 5 - Last;
+        ///  dates: 1-31;
+        /// Range 
+        ///  range: stardDate and finishDate in DateTime type;
+        /// </remarks>
         /// <response code="200">Successful return of detailed schedule</response>        
         /// <response code="HTTP: 404, API: 3">No such event occurence</response>
         [SwaggerResponse(200, type: typeof(DetailedEventOccurrenceDTO))]
@@ -148,6 +166,13 @@ namespace CharlieBackend.Api.Controllers
         /// Old instance of event occurrence is replaced with the new one (id is the same). 
         /// Scheduled events are recreated accordingly. 
         /// Any events with lessons attached are not removed
+        /// Pattern  
+        ///  type: 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly;
+        ///  days of week: 0 - Sunday, 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday;
+        ///  month index: 0 - Undefined, 1 - First, 2 - Second, 3 - Third, 4 - Fourth, 5 - Last;
+        ///  dates: 1-31;
+        /// Range 
+        ///  range: stardDate and finishDate in DateTime type;
         /// </remarks>
         /// <response code="200">Successful update of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, update data is missing</response>
@@ -169,6 +194,11 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets all schedules
         /// </summary>
+        /// <remarks>
+        /// id: eventOccurrenceID;
+        /// studentGroupID: student group id to wich is event occurrences attached to;
+        /// pattern(type): 0 - daily, 1 - weekly, 2 - absolute monthly, 3 - relative monthly;
+        /// </remarks>
         /// <response code="200">Successfully returned a collection of event occurrences.</response>
         [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
         [Authorize(Roles = "Secretary, Admin")]
@@ -188,6 +218,7 @@ namespace CharlieBackend.Api.Controllers
         /// If no events are left, event occurrence is deleted completely
         /// Start and finish dates input is optional. Leave blanc to remove all related events
         /// Events with lessons attached are not deleted
+        /// id: eventOccurrenceID;
         /// </remarks>
         /// <response code = "200" > Successful delete of schedule</response>
         /// <response code="HTTP: 404, API: 3">Error, given schedule not found</response>
