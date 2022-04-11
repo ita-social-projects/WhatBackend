@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CharlieBackend.Panel.Models.GroupsRegister
+namespace CharlieBackend.Panel.Models.Classbook
 {
-    public class GroupsRegisterStudentsGroupViewModel
+    public class ClassbookStudentsGroupViewModel
     {
         public long Id { get; set; }
 
