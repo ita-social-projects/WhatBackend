@@ -7,19 +7,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class StudentClassbookXlsx : BaseFileExportXlsx
+    public class StudentClassbookXlsxFileExport : XlsxFileExport<StudentsClassbookResultDto>
     {
-        public StudentClassbookXlsx()
-        {
-            _xLWorkbook = new XLWorkbook();
-        }
-
         public override string GetFileName()
         {
             return "StudentClassbookResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public async Task FillFile(StudentsClassbookResultDto data)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -31,7 +26,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.Student);
                 foreach (var item in StudentsMarks)
                 {
-                    await FillStudentMark(item
+                    await FillStudentMarkAsync(item
                         .Select(x => new StudentMarkDto
                         {
                             StudentMark = x.StudentMark,
@@ -52,7 +47,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var StudentVisit = data.StudentsPresences.GroupBy(x => x.Student);
                 foreach (var item in StudentVisit)
                 {
-                    await FillStudentPresence(item
+                    await FillStudentPresenceAsync(item
                         .Select(x => new StudentVisitDto
                         {
                             LessonDate = x.LessonDate,
@@ -68,7 +63,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public async Task FillStudentPresence(IEnumerable<StudentVisitDto> StudentVisit)
+        public async Task FillStudentPresenceAsync(IEnumerable<StudentVisitDto> StudentVisit)
         {
             string worksheetName = "Presence (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
             _xLWorkbook.AddWorksheet(worksheetName);
@@ -109,7 +104,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             worksheet.Rows().AdjustToContents();
         }
 
-        public async Task FillStudentMark(IEnumerable<StudentMarkDto> StudentsMarks)
+        public async Task FillStudentMarkAsync(IEnumerable<StudentMarkDto> StudentsMarks)
         {
             string worksheetName = "Average mark (" + (_xLWorkbook.Worksheets.Count + 1) + ")";
             _xLWorkbook.AddWorksheet(worksheetName);

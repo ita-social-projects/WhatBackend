@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class ExportServiceXlsx : IExportService
+    public class XlsxExportService : IExportService
     {
-        public ExportServiceXlsx()
+        public XlsxExportService()
         {
         }
 
         public async Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
         {
-            using var classbook = new ClassbookExportXlsx();
+            using var classbook = new ClassbookXlsxFileExport();
 
-            await classbook.FillFile(data);
+            await classbook.FillFileAsync(data);
             classbook.AdjustContent();
 
             return Result<FileDto>.GetSuccess(new FileDto
@@ -28,9 +28,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentsResults(StudentsResultsDto data)
         {
-            using var result = new StudentsResultsExportXlsx();
+            using var result = new StudentsResultsXlsxFileExport();
 
-            await result.FillFile(data);
+            await result.FillFileAsync(data);
             result.AdjustContent();
 
             return Result<FileDto>.GetSuccess(new FileDto
@@ -43,9 +43,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
         {
-            using var result = new StudentClassbookXlsx();
+            using var result = new StudentClassbookXlsxFileExport();
 
-            await result.FillFile(data);
+            await result.FillFileAsync(data);
             result.AdjustContent();
 
             return Result<FileDto>.GetSuccess(new FileDto
@@ -58,9 +58,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
         {
-            using var result = new StudentResultXlsx();
+            using var result = new StudentResultXlsxFileExport();
 
-            await result.FillFile(data);
+            await result.FillFileAsync(data);
             result.AdjustContent();
 
             return Result<FileDto>.GetSuccess(new FileDto
@@ -73,9 +73,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
         {
-            using var result = new StudentGroupResultsXlsx();
+            using var result = new StudentGroupResultsXlsxFileExport();
 
-            await result.FillFile(data);
+            await result.FillFileAsync(data);
             result.AdjustContent();
 
             return Result<FileDto>.GetSuccess(new FileDto

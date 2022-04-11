@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class ExportServiceCsv : IExportService
+    public class CsvExportService : IExportService
     {
         IUnitOfWork _unitOfWork;
 
-        public ExportServiceCsv(IUnitOfWork unitOfWork)
+        public CsvExportService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -32,9 +32,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             "Group hasn't any students");
                 }
 
-                using var fileExporter = new StudentGroupCSVExporter(group.Name);
+                using var fileExporter = new StudentsGroupCsvFileExport(group.Name);
 
-                await fileExporter.FillFile(students);
+                await fileExporter.FillFileAsync(students);
 
                 return Result<FileDto>.GetSuccess(new FileDto()
                 {

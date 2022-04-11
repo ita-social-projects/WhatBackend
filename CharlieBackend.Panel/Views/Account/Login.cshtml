@@ -1,4 +1,4 @@
-﻿@model CharlieBackend.Core.DTO.Account.AuthenticationDto
+@model CharlieBackend.Core.DTO.Account.AuthenticationDto
 
 @{
     Layout = "_LoginLayout";
@@ -13,7 +13,10 @@
                     <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Welcome to Admin Panel!</h1>
                     </div>
+
                     <form class="user" asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
+
+                        <div style="color: red" asp-validation-summary="ModelOnly"></div>
                         <div class="form-group">
                             <input type="email" class="form-control form-control-user"
                                    id="InputEmail" asp-for="Email"
@@ -25,7 +28,6 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
-
 
                     </form>
 

@@ -8,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class ExportServiceHtml : IExportService
+    public class HtmlExportService : IExportService
     {
         IUnitOfWork _unitOfWork;
-        public ExportServiceHtml(IUnitOfWork unitOfWork)
+
+        public HtmlExportService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+
         public async Task<Result<FileDto>> GetListofStudentsByGroupId(long groupId)
         {
             var group = await _unitOfWork.StudentGroupRepository.GetByIdAsync(groupId);
@@ -30,9 +32,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             ResponseMessages.GroupHasNotStudents);
                 }
 
-                using var fileExporter = new StudentGroupsExportHTML(group.Name);
+                using var fileExporter = new StudentGroupsHtmlFileExport(group.Name);
 
-                fileExporter.FillFile(students);
+                await fileExporter.FillFileAsync(students);
 
                 return Result<FileDto>.GetSuccess(new FileDto()
                 {
@@ -50,9 +52,16 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data)
         {
-            return Result<FileDto>.GetError(
-                    ErrorCode.ValidationError,
-                    "student classbook can't be returned in html format");
+            using var classbook = new StudentClassbookHtmlFileExport();
+
+            await classbook.FillFileAsync(data);
+
+            return Result<FileDto>.GetSuccess(new FileDto()
+            {
+                ByteArray = await classbook.GetByteArrayAsync(),
+                ContentType = classbook.GetContentType(),
+                Filename = classbook.GetFileName()
+            });
         }
 
         public Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data)
@@ -71,9 +80,9 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         public async Task<Result<FileDto>> GetStudentsClassbook(StudentsClassbookResultDto data)
         {
-            using var classbook = new ClassbookExportHTML();
+            using var classbook = new ClassbookHtmlFileExport();
 
-            classbook.FillFile(data);
+            await classbook.FillFileAsync(data);
 
             return Result<FileDto>.GetSuccess(new FileDto()
             {

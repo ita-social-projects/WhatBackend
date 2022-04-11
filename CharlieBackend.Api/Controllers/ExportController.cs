@@ -42,7 +42,10 @@ namespace CharlieBackend.Api.Controllers
         ///                                                            0 - presence
         ///                                                            1 - marks
         ///                                                            0, 1 - both presence and marks</param>
-        /// <param name="extension"> Extension of file that you want to get </param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV </param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsClassbook/{extension}")]
         [HttpPost]
@@ -75,11 +78,17 @@ namespace CharlieBackend.Api.Controllers
         /// Gets results of every student
         /// </summary>
         /// <param name="request">
-        /// 1. Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
-        /// 2. In body you can mention: "startDate", "finishtDate" is optional param to filter 
+        /// Mention "courseId" or "studentGroupId" to filter all course groups or exact student group.
+        /// In body you can mention: "startDate", "finishtDate" is optional param to filter 
         /// learning period of course groups.
-        /// 3. "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return</param>
-        /// <param name="extension"> extension of file that you want to get
+        /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for result to return:
+        ///                                                            0 - presence
+        ///                                                            1 - marks
+        ///                                                            0, 1 - both presence and marks</param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV</param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentsResults/{extension}")]
         [HttpPost]
@@ -118,7 +127,10 @@ namespace CharlieBackend.Api.Controllers
         ///                                                            0 - presence
         ///                                                            1 - marks
         ///                                                            0, 1 - both presence and marks</param>
-        /// <param name="extension"> Extension of file that you want to get </param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV </param>
         [Authorize(Roles = "Mentor, Secretary, Admin")]
         [Route("studentClassbook/{studentId}/{extension}")]
         [HttpPost]
@@ -153,8 +165,14 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="studentId">Student id</param>
         /// <param name="request">In body you can mention: "startDate", "finishtDate" like optional param to filter 
         /// learning period of students group.
-        /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return</param>
-        /// <param name="extension"> extension of file that you want to get 
+        /// "includeAnalytics": ["AverageStudentMark", "AverageStudentVisits"] have to receive params for data to return:
+        ///                                                            0 - presence
+        ///                                                            1 - marks
+        ///                                                            0, 1 - both presence and marks</param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV </param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}/{extension}")]
         public async Task<IActionResult> GetStudentResults(long studentId, FileExtension extension,
@@ -189,8 +207,14 @@ namespace CharlieBackend.Api.Controllers
         /// <param name="courseId">Course id</param>
         /// <param name="request">In body you can mention: "startDate", "finishtDate" is optional param to filter       
         /// learning period of students group.
-        /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return</param>
-        /// <param name="extension"> extension of file that you want to get 
+        /// "includeAnalytics": ["AverageStudentGroupMark", "AverageStudentGroupVisitsPercentage"] have to receive params for data to return:
+        ///                                                            0 - presence
+        ///                                                            1 - marks
+        ///                                                            0, 1 - both presence and marks</param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV </param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpPost("studentGroupResults/{courseId}/{extension}")]
         public async Task<IActionResult> GetStudentGroupResults(long courseId, FileExtension extension,
@@ -224,8 +248,11 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Gets a file with a list of students by group number
         /// </summary>
-        /// <param name="groupId"> group id of students that list you want to get
-        /// <param name="extension"> extension of file that you want to get
+        /// <param name="groupId"> Group id of students that list you want to get </param>
+        /// <param name="extension"> Extension of file that you want to get:
+        ///                                                            0 - HTML
+        ///                                                            1 - XLSX
+        ///                                                            2 - CSV </param>
         [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("studentsOfGroup/{groupId}/{extension}")]
         public async Task<IActionResult> GetStudentsOfGroupList(long groupId, FileExtension extension)

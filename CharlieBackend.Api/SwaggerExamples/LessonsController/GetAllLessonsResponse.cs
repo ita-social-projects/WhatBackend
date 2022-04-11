@@ -26,13 +26,13 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                         StudentId = 45,
                         StudentMark = 5,
                         Presence = true,
-                        Comment = ""
+                        Comment = null
                     },
                     new VisitDto()
                     {
                         StudentId = 74,
                         Presence = false,
-                        Comment = ""
+                        Comment = null
                     }
                 } },
                 new LessonDto
@@ -49,14 +49,14 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                         StudentId = 45,
                         StudentMark = 4,
                         Presence = true,
-                        Comment = ""
+                        Comment = null
                     },
                     new VisitDto()
                     {
                         StudentId = 74,
                         StudentMark = 4,
                         Presence = true,
-                        Comment = ""
+                        Comment = null
                     }
                 }
             }

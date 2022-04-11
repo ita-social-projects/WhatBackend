@@ -6,19 +6,14 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 {
-    public class ClassbookExportXlsx : BaseFileExportXlsx
+    public class ClassbookXlsxFileExport : XlsxFileExport<StudentsClassbookResultDto>
     {
-        public ClassbookExportXlsx()
-        {
-            _xLWorkbook = new XLWorkbook();
-        }
-
         public override string GetFileName()
         {
             return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd.HH:mm") + ".xlsx";
         }
 
-        private async Task TryToFillPresences(StudentsClassbookResultDto data)
+        private async Task TryToFillPresencesAsync(StudentsClassbookResultDto data)
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -82,7 +77,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        private async Task TryToFillMarks(StudentsClassbookResultDto data)
+        private async Task TryToFillMarksAsync(StudentsClassbookResultDto data)
         {
             var firstStudentMark = data.StudentsMarks.First();
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
@@ -143,7 +138,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public async Task FillFile(StudentsClassbookResultDto data)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -155,7 +150,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.StudentGroup);
                 foreach (var item in StudentsMarks)
                 {
-                    await TryToFillMarks(new StudentsClassbookResultDto
+                    await TryToFillMarksAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = item
                              .Select(x => new StudentMarkDto
@@ -180,7 +175,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var StudentsPresences = data.StudentsPresences.GroupBy(x => x.StudentGroup);
                 foreach (var item in StudentsPresences)
                 {
-                    await TryToFillPresences(new StudentsClassbookResultDto
+                    await TryToFillPresencesAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = null,
                         StudentsPresences = item
