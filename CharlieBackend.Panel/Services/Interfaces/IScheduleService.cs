@@ -53,5 +53,10 @@ namespace CharlieBackend.Panel.Services.Interfaces
         /// Method for getting required lists to add new event occurrence.
         /// </summary>
         Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync();
+
+        /// <summary>
+        /// Method for updating single event by id.
+        /// </summary>
+        Task UpdateSingleEventByIdAsync(long id, UpdateScheduledEventDto updatedSchedule);
     }
 }
