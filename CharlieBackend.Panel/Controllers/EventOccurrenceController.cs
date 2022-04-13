@@ -89,7 +89,7 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> PrepareSingleEventForUpdate(long id)
+        public async Task<IActionResult> PrepareSingleEventForUpdateAsync(long id)
         {
             var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
 
@@ -100,7 +100,7 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpPost("{id}")]
-        public async Task<IActionResult> UpdateSingleEvent(long id, UpdateScheduledEventDto eventDTO)
+        public async Task<IActionResult> UpdateSingleEventAsync(long id, UpdateScheduledEventDto eventDTO)
         {
             await _scheduleService.UpdateSingleEventByIdAsync(id, eventDTO);
 
