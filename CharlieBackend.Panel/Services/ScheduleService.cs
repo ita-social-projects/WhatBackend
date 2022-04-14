@@ -1,5 +1,7 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
@@ -20,10 +22,12 @@ namespace CharlieBackend.Panel.Services
         private readonly IStudentGroupService _studentGroupService;
         private readonly IThemeService _themeService;
         private readonly IMentorService _mentorService;
+        private readonly IMapper _mapper;
 
         public ScheduleService(
             IApiUtil apiUtil, 
-            IOptions<ApplicationSettings> options, 
+            IOptions<ApplicationSettings> options,
+            IMapper mapper,
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
             IThemeService themeService)
@@ -34,6 +38,7 @@ namespace CharlieBackend.Panel.Services
             _studentGroupService = studentGroupService;
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
             _eventsApiEndpoints = options.Value.Urls.ApiEndpoints.Events;
+            _mapper = mapper;
         }
 
         public async Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences()
@@ -92,6 +97,24 @@ namespace CharlieBackend.Panel.Services
 
             await _apiUtil
                 .PutAsync<EventOccurrenceDTO, CreateScheduleDto>(eventOccurence, updateScheduleDto);
+        }
+
+        public async Task<ScheduledEventEditViewModel> PrepareSingleEventUpdateAsync(long id)
+        {
+            var eventEndpoint =
+               string.Format(_eventsApiEndpoints.EventById, id);
+
+            var singleEventTask = _apiUtil.GetAsync<ScheduledEventDTO>(eventEndpoint);
+            var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var themesTask = _themeService.GetAllThemesAsync();
+
+            var ScheduledEvent = _mapper.Map<ScheduledEventEditViewModel>(await singleEventTask);
+            ScheduledEvent.AllStudentGroups = await studentGroupsTask;
+            ScheduledEvent.AllThemes = await themesTask;
+            ScheduledEvent.AllMentors = await mentorsTask;
+
+            return ScheduledEvent;
         }
 
         public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()

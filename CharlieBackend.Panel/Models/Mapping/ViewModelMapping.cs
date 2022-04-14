@@ -68,8 +68,11 @@ namespace CharlieBackend.Panel.Models.Mapping
 
             CreateMap<CourseDto, CourseViewModel>();
 
+            #region Event ViewModelsMapping
             CreateMap<ScheduledEventViewModel, ScheduledEventDTO>();
             CreateMap<ScheduledEventDTO, ScheduledEventViewModel>();
+            CreateMap<ScheduledEventDTO, ScheduledEventEditViewModel>();
+            #endregion
 
             #region Calendar ViewModels mappings
             CreateMap<CourseDto, CalendarCourseViewModel>();
