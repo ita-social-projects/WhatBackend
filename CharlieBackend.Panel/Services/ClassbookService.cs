@@ -49,7 +49,7 @@ namespace CharlieBackend.Panel.Services
 
             var getCoursesTask = GetActiveCourseViewModelsAsync();
             var getStudentGroupsTask = GetStudentsGroupViewModelsAsync();
-            var getFilteredRegisterTask = GetFilteredRegisterViewModelAsynk(classbookFilter);
+            var getFilteredRegisterTask = GetFilteredRegisterViewModelAsync(classbookFilter);
 
             await Task.WhenAll(getCoursesTask, getStudentGroupsTask, getFilteredRegisterTask);
 
@@ -70,26 +70,29 @@ namespace CharlieBackend.Panel.Services
         private void ApplyDefaultClassbookFilter(
             StudentsRequestDto<ClassbookResultType> classbookFilter)
         {
-            if (classbookFilter.StartDate==default(DateTime))
+            if (classbookFilter.StartDate == default(DateTime))
             {
                 classbookFilter.StartDate = new DateTime(DateTime.Now.Year, 1, 1);
             }
-            if (classbookFilter.FinishDate==default(DateTime))
+            if (classbookFilter.FinishDate == default(DateTime))
             {
                 classbookFilter.FinishDate = DateTime.Now;
             }
-            if (classbookFilter.CourseId==null)
+            if (classbookFilter.CourseId == null)
             {
                 classbookFilter.CourseId = 1;
             }
-            if (classbookFilter.StudentGroupId==null)
+            if (classbookFilter.StudentGroupId == null)
             {
                 classbookFilter.StudentGroupId = 1;
             }
-            if (classbookFilter.IncludeAnalytics==null)
+            if (classbookFilter.IncludeAnalytics == null)
             {
-                classbookFilter.IncludeAnalytics = new ClassbookResultType[] {
-                ClassbookResultType.StudentPresence, ClassbookResultType.StudentMarks };
+                classbookFilter.IncludeAnalytics = new ClassbookResultType[]
+                {
+                    ClassbookResultType.StudentPresence,
+                    ClassbookResultType.StudentMarks
+                };
             }
         }
 
@@ -102,18 +105,18 @@ namespace CharlieBackend.Panel.Services
 
         private async Task<IList<ClassbookStudentsGroupViewModel>> GetStudentsGroupViewModelsAsync()
         {
-            var studentGroupDtos = 
-                await _apiUtil.GetAsync<IList<StudentGroupDto>>(_getStudentGroupsEndpoint);
+            var studentGroupDtos =
+                    await _apiUtil.GetAsync<IList<StudentGroupDto>>(_getStudentGroupsEndpoint);
 
             return _mapper.Map<IList<ClassbookStudentsGroupViewModel>>(studentGroupDtos);
         }
-        
-        private async Task<FilteredClassbookViewModel> GetFilteredRegisterViewModelAsynk(
-            StudentsRequestDto<ClassbookResultType> groupsRegisterFilter)
+
+        private async Task<FilteredClassbookViewModel> GetFilteredRegisterViewModelAsync(
+                StudentsRequestDto<ClassbookResultType> groupsRegisterFilter)
         {
-            var result = await _apiUtil.PostAsync< StudentsClassbookResultDto, StudentsRequestDto <ClassbookResultType>>(
-                url: _getStudentsClassbookEndpoint,
-                data: groupsRegisterFilter);
+            var result = await _apiUtil.PostAsync<StudentsClassbookResultDto, StudentsRequestDto<ClassbookResultType>>(
+                    url: _getStudentsClassbookEndpoint,
+                    data: groupsRegisterFilter);
 
             return _mapper.Map<FilteredClassbookViewModel>(result);
         }

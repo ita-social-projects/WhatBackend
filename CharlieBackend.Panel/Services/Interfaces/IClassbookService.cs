@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace CharlieBackend.Panel.Services.Interfaces
 {
     /// <summary>
-    /// Interface that describes methods for work with classbook and it's data.
+    /// Interface that describes methods for work with classbook and its data.
     /// </summary>
     public interface IClassbookService
     {

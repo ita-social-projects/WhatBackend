@@ -1,12 +1,9 @@
-﻿using CharlieBackend.Panel.Services.Interfaces;
+﻿using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Panel.Models.Classbook;
-using Microsoft.AspNetCore.Authorization;
-using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System;
 
 namespace CharlieBackend.Panel.Controllers
 {
@@ -20,7 +17,7 @@ namespace CharlieBackend.Panel.Controllers
             _classbookService = classbookService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexAsync()
         {
             var param = new StudentsRequestDto<ClassbookResultType>();
             ClassbookViewModel data = await _classbookService.GetClassbookAsync(param);
@@ -29,7 +26,7 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetClassbook(StudentsRequestDto<ClassbookResultType> scheduledEventFilter)
+        public async Task<IActionResult> GetClassbookAsync(StudentsRequestDto<ClassbookResultType> scheduledEventFilter)
         {
             ClassbookViewModel data = await _classbookService.GetClassbookAsync(scheduledEventFilter);
 
