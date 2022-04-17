@@ -103,8 +103,6 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
         private string GetFileHeader(StudentsResultsDto data)
         {
             string student = string.Empty;
-            string startDate = string.Empty;
-            string finishDate = string.Empty;
 
             if (data.AverageStudentVisits != null && data.AverageStudentVisits.Any())
             {
