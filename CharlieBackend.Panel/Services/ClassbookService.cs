@@ -24,9 +24,9 @@ namespace CharlieBackend.Panel.Services
         private readonly string _getStudentsClassbookEndpoint;
 
         public ClassbookService(
-            IApiUtil apiUtil,
-            IMapper mapper,
-            IOptions<ApplicationSettings> options)
+                IApiUtil apiUtil,
+                IMapper mapper,
+                IOptions<ApplicationSettings> options)
         {
             _apiUtil = apiUtil;
             _mapper = mapper;
@@ -43,7 +43,7 @@ namespace CharlieBackend.Panel.Services
         /// filters for classbook.</param>
         /// <returns>>model with data required for viewing a classbook.</returns>
         public async Task<ClassbookViewModel> GetClassbookAsync(
-            StudentsRequestDto<ClassbookResultType> classbookFilter)
+                StudentsRequestDto<ClassbookResultType> classbookFilter)
         {
             ApplyDefaultClassbookFilter(classbookFilter);
 
@@ -68,7 +68,7 @@ namespace CharlieBackend.Panel.Services
         /// <param name="classbookFilter">Object with a set of 
         /// optional filtration parameters to add default values to.</param>
         private void ApplyDefaultClassbookFilter(
-            StudentsRequestDto<ClassbookResultType> classbookFilter)
+                StudentsRequestDto<ClassbookResultType> classbookFilter)
         {
             if (classbookFilter.StartDate == default(DateTime))
             {
