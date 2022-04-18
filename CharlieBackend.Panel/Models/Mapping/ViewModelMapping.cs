@@ -17,6 +17,7 @@ using CharlieBackend.Panel.Models.Students;
 using System.Linq;
 using CharlieBackend.Core.DTO.Visit;
 using CharlieBackend.Panel.Models.ScheduledEvent;
+using CharlieBackend.Panel.Models.EventOccurrence;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -72,6 +73,7 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<ScheduledEventViewModel, ScheduledEventDTO>();
             CreateMap<ScheduledEventDTO, ScheduledEventViewModel>();
             CreateMap<ScheduledEventDTO, ScheduledEventEditViewModel>();
+            CreateMap<EventOccurrenceDTO, EventOccurrenceEditViewModel>();
             #endregion
 
             #region Calendar ViewModels mappings

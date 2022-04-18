@@ -1,4 +1,7 @@
 ﻿@model CharlieBackend.Core.DTO.Schedule.CreateScheduleDto
+@using CharlieBackend.Core.DTO.Schedule
+@using CharlieBackend.Core.Entities
+
 
 @{
     Layout = "_Layout";
@@ -21,10 +24,18 @@
 
                             @if (@ViewBag.EventOccurrence.AllStudentGroups != null)
                             {
-                                @foreach (var item in @ViewBag.EventOccurrence.AllStudentGroups)
-                                {
+                                var scheduledEvent = (@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).FirstOrDefault();
 
-                                    <option value="@item.Id">@item.Name</option>
+                                @foreach (var studentGroup in @ViewBag.EventOccurrence.AllStudentGroups)
+                                {
+                                    @if (scheduledEvent != null && scheduledEvent.StudentGroupId == studentGroup.Id)
+                                    {
+                                        <option selected value="@studentGroup.Id">@studentGroup.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@studentGroup.Id">@studentGroup.Name</option>
+                                    }
                                 }
                             }
                             else
@@ -43,10 +54,20 @@
                             {
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
-                                    <option value="@item.Id">
-                                        @item.FirstName
-                                        @item.LastName
-                                    </option>
+                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).Any(x => x.MentorId == item.Id))
+                                    {
+                                        <option selected value="@item.Id">
+                                            @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
                                 }
                             }
                             else
@@ -65,9 +86,18 @@
                             {
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
-                                    <option value="@item.Id">
-                                        @item.Name
-                                    </option>
+                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).Any(x => x.ThemeId == item.Id))
+                                    {
+                                        <option selected value="@item.Id">
+                                            @item.Name
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.Name
+                                        </option>
+                                    }
                                 }
                             }
                             else
@@ -81,18 +111,36 @@
                     <div class="form-group">
                         <label>Start date</label>
                         <input type="datetime-local" min="1900-01-01" max="2100-12-31"
-                               value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" class="form-control" asp-for="Range.StartDate">
+                               value="@ViewBag.EventOccurrence.EventStart.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" class="form-control" asp-for="Range.StartDate">
                     </div>
 
                     <div class="form-group">
                         <label>End date</label>
                         <input type="datetime-local" min="1000-01-01" max="3000-12-31" class="form-control"
-                               value="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="Range.FinishDate">
+                               value="@ViewBag.EventOccurrence.EventFinish.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="Range.FinishDate">
                     </div>
 
                     <div class="form-group">
                         <label>Pattern type</label>
-                        <select class="custom-select" onchange="UpdateForm(this.value)" asp-for="Pattern.Type" size="1">
+                        <select class="custom-select" onchange="UpdateForm(this.value)" asp-for="Pattern.Type" size="1" id="pattern">
+                            @{
+                                var patternValues = Enum.GetValues(typeof(PatternType));
+                                for (int i = 0; i < patternValues.Length; i++)
+                                {
+                                    if ((PatternType)patternValues.GetValue(i) == @ViewBag.EventOccurrence.Pattern)
+                                    {
+                                        <option value="@i" selected>
+                                            @((PatternType)patternValues.GetValue(i))
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">
+                                            @((PatternType)patternValues.GetValue(i))
+                                        </option>
+                                    }
+                                }
+                            }
                             <option value="0">
                                 Daily
                             </option>
@@ -145,6 +193,21 @@
                     <div class="form-group" id="pattern-index" hidden="hidden">
                         <label>Pattern index</label>
                         <select class="custom-select" asp-for="Pattern.Index" size="1">
+                            @foreach (var monthIndex in Enum.GetValues(typeof(MonthIndex)))
+                            {
+                                if ((MonthIndex)monthIndex == @ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.Index)
+                                {
+                                    <option value="1" selected>
+                                        @((MonthIndex)monthIndex)
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="1">
+                                        @((MonthIndex)monthIndex)
+                                    </option>
+                                }
+                            }
                             <option value="1">
                                 First
                             </option>
@@ -216,4 +279,8 @@
             }
         }
     </script>
+
+<script>
+    UpdateForm(document.getElementById("pattern").value);
+</script>
 }

@@ -57,7 +57,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareEventOccurrenceForUpdate(long id)
         {
-            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+            var eventOccurrenceData = await _scheduleService.PrepareEventOcccurrenceUpdateAsync(id);
 
             ViewBag.EventOccurrence = eventOccurrenceData;
             ViewBag.CurrentId = id;

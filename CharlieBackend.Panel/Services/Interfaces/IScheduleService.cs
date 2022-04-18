@@ -61,5 +61,7 @@ namespace CharlieBackend.Panel.Services.Interfaces
         /// Method for updating single event by id.
         /// </summary>
         Task UpdateSingleEventByIdAsync(long id, UpdateScheduledEventDto updatedSchedule);
+
+        Task<EventOccurrenceEditViewModel> PrepareEventOcccurrenceUpdateAsync(long id);
     }
 }

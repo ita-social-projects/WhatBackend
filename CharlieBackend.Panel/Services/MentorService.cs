@@ -76,15 +76,18 @@ namespace CharlieBackend.Panel.Services
         {
             var getAllCoursesEndpoint = _coursesApiEndpoints.GetAllCoursesEndpoint;
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
+            var getAllMentorStudyGroupsEndpoint = _mentorsApiEndpoints.GetAllMentorStudyGroups;
             var getMentorEndpoint = string
                 .Format(_mentorsApiEndpoints.GetMentorEndpoint, id);
 
             var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>(getAllCoursesEndpoint);
             var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>(getAllStudentGroupsEndpoint);
+            var mentorStudyGroupsTask = await _apiUtil.GetAsync<IList<MentorStudyGroupsDto>>(getAllMentorStudyGroupsEndpoint);
             var mentor = await _apiUtil.GetAsync<MentorEditViewModel>(getMentorEndpoint);
 
             mentor.AllGroups = await studentGroupTask;
             mentor.AllCourses = await coursesTask;
+            //mentor.StudentGroupIds = await mentorStudyGroupsTask;
 
             return mentor;
         }
