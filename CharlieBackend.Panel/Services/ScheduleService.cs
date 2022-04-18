@@ -16,6 +16,7 @@ namespace CharlieBackend.Panel.Services
     {
         private readonly IApiUtil _apiUtil;
         private readonly ScheduleApiEndpoints _scheduleApiEndpoints;
+        private readonly EventsApiEndpoints _eventsApiEndpoints;
         private readonly IStudentGroupService _studentGroupService;
         private readonly IThemeService _themeService;
         private readonly IMentorService _mentorService;
@@ -32,6 +33,7 @@ namespace CharlieBackend.Panel.Services
             _mentorService = mentorService;
             _studentGroupService = studentGroupService;
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
+            _eventsApiEndpoints = options.Value.Urls.ApiEndpoints.Events;
         }
 
         public async Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences()
@@ -106,6 +108,15 @@ namespace CharlieBackend.Panel.Services
             };
 
             return studentGroup;
+        }
+
+        public async Task UpdateSingleEventByIdAsync(long id, UpdateScheduledEventDto updatedSchedule)
+        {
+            var singleEvent =
+               string.Format(_eventsApiEndpoints.UpdateEventEndpoint, id);
+
+            await _apiUtil
+                .PutAsync<EventOccurrenceDTO, UpdateScheduledEventDto>(singleEvent, updatedSchedule);
         }
     }
 }
