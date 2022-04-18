@@ -30,6 +30,7 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEventsService, EventsService>();
+            services.AddScoped<IClassbookService, ClassbookService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
