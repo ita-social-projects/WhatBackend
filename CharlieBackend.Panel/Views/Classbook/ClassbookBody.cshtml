@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+
+@using System.Globalization
+
+@model CharlieBackend.Panel.Models.Classbook.ClassbookViewModel
+
+<html>
+
+<Head>
+    <link href="~/css/classbook.css" rel="stylesheet"/>
+</Head>
+
+<body class="controller-demo action-demojournal background: rgba(0,0,0,0.2)">
+
+    <div class="page-content journal journal-4">
+        <div id="ajax_interface_3_body">
+            <div class="page-main tabContentItem selected tableConnectedContainer" data-subgroupid="-1">
+                <div class="table-connected clm-35 no-padding">
+                    <div class="hlVert"></div><div class="hlHoriz"></div><table class="vertical-middle titles-table">
+                        <thead class="design-03">
+
+                            @if (Model.FilteredClassbook.StudentsPresences.Count != 0)
+                            {
+                                <tr>
+                                    <th>№</th>
+                                    <th>Student</th>
+                                </tr>
+                            }
+                        </thead>
+
+                        @{
+                            List<long?> printedStudents = new List<long?>();
+                            int numberOfRow = 0;
+
+                            for (var i = 0; i < Model.FilteredClassbook.StudentsPresences.Count; i++)
+                            {
+
+                                if (!printedStudents.Any(s => s == @Model.FilteredClassbook.StudentsPresences[i].StudentId))
+                                {
+                                    printedStudents.Add(@Model.FilteredClassbook.StudentsPresences[i].StudentId);
+                                    numberOfRow++;
+                                    <tbody class="transparent-tr">
+                                        <tr class="h-35" data-pupilid="1">
+                                            <td>@numberOfRow</td>
+                                            <td>@Model.FilteredClassbook.StudentsPresences[i].Student</td>
+                                        </tr>
+                                    </tbody>
+                                }
+                            }
+                        }
+                    </table>
+                </div>
+
+                <div class="table-connected clm-65">
+                    <div class="hlVert" style=""></div><div class="hlHoriz" style=""></div><table class="vertical-middle marks-table ">
+                        <thead>
+                            <tr class="design-03">
+                                @{
+                                    int monthes = ((Model.ClassbookFilter.FinishDate.Year - Model.ClassbookFilter.StartDate.Year) * 12) +  
+                                                    Model.ClassbookFilter.FinishDate.Month - Model.ClassbookFilter.StartDate.Month;
+
+                                    DateTime currentMonthInClassbook = new DateTime(Model.ClassbookFilter.StartDate.Year, Model.ClassbookFilter.StartDate.Month, 
+                                                                        Model.ClassbookFilter.StartDate.Day);
+
+                                    long? currentLessonId = null;
+
+                                    for (int i = 0; i < monthes; i++)
+                                    {
+                                        // amount of lessons in the current month
+                                        byte amountOfLessons = 0; 
+
+                                        for (int j = 0; j < Model.FilteredClassbook.StudentsPresences.Count; j++)
+                                        {
+                                            if (Model.FilteredClassbook.StudentsPresences[j].LessonDate.Value.Month == currentMonthInClassbook.Month
+                                                && Model.FilteredClassbook.StudentsPresences[j].LessonDate.Value.Year == currentMonthInClassbook.Year
+                                                && Model.FilteredClassbook.StudentsPresences[j].LessonId != currentLessonId)
+                                            {
+                                                amountOfLessons++;
+                                                currentLessonId = Model.FilteredClassbook.StudentsPresences[j].LessonId;
+                                            }
+                                        }
+
+                                        if (amountOfLessons != 0)
+                                        {
+                                            <th colspan="@amountOfLessons"> @currentMonthInClassbook.ToString("MMMM", CultureInfo.InvariantCulture) / 
+                                                @currentMonthInClassbook.ToString("yyyy", CultureInfo.InvariantCulture)</th>
+                                        }
+
+                                        if (currentMonthInClassbook.Month != 12)
+                                        {
+                                            currentMonthInClassbook = new DateTime(currentMonthInClassbook.Year, currentMonthInClassbook.Month + 1, 
+                                                                        currentMonthInClassbook.Day);
+                                        }
+                                        else
+                                        {
+                                            currentMonthInClassbook = new DateTime(currentMonthInClassbook.Year + 1, 1, currentMonthInClassbook.Day);
+                                        }
+                                    }
+                                }
+                            </tr>
+                            <tr class="design-03">
+                                @{
+                                    currentLessonId = null;
+
+                                    for (int j = 0; j < Model.FilteredClassbook.StudentsPresences.Count; j++)
+                                    {
+
+                                        if (@Model.FilteredClassbook.StudentsPresences[j].LessonId != currentLessonId)
+                                        {
+                                            <th>@Model.FilteredClassbook.StudentsPresences[j].LessonDate.Value.Day</th>
+                                            currentLessonId = @Model.FilteredClassbook.StudentsPresences[j].LessonId;
+                                        }
+
+                                    }
+                                }
+                            </tr>
+                            <tr class="design-03">
+                                @{
+                                    currentLessonId = null;
+
+                                    for (int j = 0; j < Model.FilteredClassbook.StudentsPresences.Count; j++)
+                                    {
+
+                                        if (@Model.FilteredClassbook.StudentsPresences[j].LessonId != currentLessonId)
+                                        {
+                                            <th>@Model.FilteredClassbook.StudentsPresences[j].LessonDate.Value.ToString("ddd",CultureInfo.InvariantCulture)</th>
+                                            currentLessonId = @Model.FilteredClassbook.StudentsPresences[j].LessonId;
+                                        }
+                                    }
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody class="transparent-tr">
+                            @{
+                                long? currentStudentId = null;
+                                printedStudents.Clear();
+
+                                for (int j = 0; j < Model.FilteredClassbook.StudentsPresences.Count; j++)
+                                {
+
+                                    if (!printedStudents.Any(s => s == @Model.FilteredClassbook.StudentsPresences[j].StudentId))
+                                    {
+                                        currentStudentId = Model.FilteredClassbook.StudentsPresences[j].StudentId;
+                                        printedStudents.Add(@Model.FilteredClassbook.StudentsPresences[j].StudentId);
+                                        <tr class="h-35" data-pupilid=@currentStudentId>
+
+                                            @for (var i = 0; i < Model.FilteredClassbook.StudentsPresences.Count; i++)
+                                            {
+
+                                                if (@Model.FilteredClassbook.StudentsPresences[i].StudentId == currentStudentId)
+                                                {
+
+                                                    if (Model.FilteredClassbook.StudentsPresences[i].Presence == true)
+                                                    {
+                                                        <td class=" ">
+                                                            @Model.FilteredClassbook.StudentsMarks[i].StudentMark.ToString()
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="presencefalse">
+                                                            @Model.FilteredClassbook.StudentsMarks[i].StudentMark.ToString()
+                                                        </td>
+                                                    }
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

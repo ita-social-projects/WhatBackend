@@ -1,0 +1,332 @@
+﻿html, body {
+    font-family: MuseoSans,sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: 150ms
+}
+
+button, input, select, textarea {
+    border-radius: 6px
+}
+
+.h-35 {
+    height: 35px
+}
+
+html, body {
+    color: #212121;
+    margin: 0;
+    padding: 0
+}
+
+header, footer {
+    font-size: 16px
+}
+
+    header, footer, header *, footer * {
+        box-sizing: border-box
+    }
+
+.page-content {
+    box-sizing: border-box;
+    margin: auto;
+    min-height: 100vh;
+    padding: 1px 0 166px;
+    position: relative
+}
+
+footer {
+    position: relative;
+    width: 100%
+}
+
+button {
+    font-family: MuseoSans,sans-serif
+}
+
+* {
+    box-sizing: border-box
+}
+
+[class*='clm-'] {
+    display: inline-block;
+    margin-bottom: 12.8px;
+    padding-right: 15px;
+    vertical-align: middle
+}
+
+    [class*='clm-']:last-child, [class*='clm-'].last, [class*='clm-'].no-padding {
+        padding-right: 0
+    }
+
+.clm-65 {
+    width: 80%
+}
+
+.clm-35 {
+    width: 20%
+}
+
+input, select, textarea {
+    border: 1px solid #128736;
+    font-family: MuseoSans,sans-serif;
+    font-size: 16px;
+    height: 31px;
+    padding-left: 5px
+}
+
+table {
+    border-bottom: 1px solid #f6f6f6;
+    border-collapse: collapse;
+    color: #000;
+    display: inline-table;
+    margin: auto;
+    width: 100%
+}
+
+    table tbody {
+        border-bottom: 1px solid #ddd
+    }
+
+        table tbody.transparent-tr tr {
+            border-bottom: 1px solid #ddd
+        }
+
+        table tbody.transparent-tr .h-35 {
+            height: 35px
+        }
+
+    table tr {
+        transition: background-color 100ms
+    }
+
+        table tr th, table tr td {
+            padding: 8px;
+            text-align: left;
+            vertical-align: top
+        }
+
+        table tr th {
+            font-weight: normal;
+            white-space: nowrap
+        }
+
+        table tr td {
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            overflow: hidden
+        }
+
+    table.vertical-middle th, table.vertical-middle td {
+        vertical-align: middle
+    }
+
+.design-03 {
+    background: #616161;
+    border-left: 1px solid #616161;
+    color: #fff
+}
+
+    .design-03 th, .design-03 td {
+        border-bottom: 1px solid #8a8a8b;
+        border-right: 1px solid #8a8a8b
+    }
+
+        .design-03 th:last-child, .design-03 td:last-child {
+            border-right-color: #616161
+        }
+
+    .design-03 tr:not(.sortRows):last-child th, tr.design-03:last-child th, .design-03 tr:not(.sortRows):last-child td, tr.design-03:last-child td {
+        border-bottom-color: #616161
+    }
+
+    .design-03 tr:not(.sortRows) th:first-child, tr.design-03 th:first-child, .design-03 tr:not(.sortRows) td:first-child, tr.design-03 td:first-child {
+        border-left: 1px solid #616161
+    }
+
+.table-connected ~ .table-connected .design-03 {
+    border-left: 1px solid #8a8a8b
+}
+
+    .table-connected ~ .table-connected .design-03 th:first-child {
+        border-left: 1px solid #8a8a8b
+    }
+
+.table-connected {
+    overflow: auto;
+    position: relative
+}
+
+    .table-connected table {
+        position: relative
+    }
+
+        .table-connected table th, .table-connected table td {
+            padding: 0
+        }
+
+.hlVert, .hlHoriz {
+    background: #f6f6f6;
+    position: absolute;
+    z-index: 0
+}
+
+.page-content {
+    max-width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    transition: 300ms;
+    width: 1200px
+}
+
+    .page-content * {
+        vertical-align: middle
+    }
+
+    .page-content .page-main {
+        font-size: 0;
+        position: relative;
+        text-align: left
+    }
+
+        .page-content .page-main > * {
+            font-size: 16px;
+            margin-top: 16px;
+            vertical-align: top
+        }
+
+        .page-content .page-main [class*='clm-'] {
+            margin-bottom: 0
+        }
+
+.journal table th, .journal table td {
+    text-align: center;
+    word-wrap: break-word
+}
+
+.journal table.titles-table {
+    border-left: 1px solid #8a8a8b
+}
+
+    .journal table.titles-table thead, .journal table.titles-table tfoot {
+        border-right: 1px solid #8a8a8b
+    }
+
+    .journal table.titles-table tbody {
+        border-right: 1px solid #ddd
+    }
+
+    .journal table.titles-table tr th:last-child, .journal table.titles-table tr td:last-child {
+        border-right: none
+    }
+
+.journal table.marks-table tr {
+    border-left: none !important
+}
+
+.journal table.marks-table th, .journal table.marks-table td {
+    width: 1%
+}
+
+    .journal table.marks-table th:first-child, .journal table.marks-table td:first-child {
+        border-left: none !important
+    }
+
+.journal table.marks-table th {
+    padding: 0 2px
+}
+
+.journal-3 thead tr, .journal-4 thead tr, .journal-3 tfoot tr, .journal-4 tfoot tr {
+    height: 30px
+}
+
+.journal-3 .titles-table thead tr:first-child th, .journal-4 .titles-table thead tr:first-child th {
+    border-bottom: none
+}
+
+.journal-3 .titles-table thead tr:first-child, .journal-4 .titles-table thead tr:first-child, .journal-3 .titles-table tfoot tr:first-child, .journal-4 .titles-table tfoot tr:first-child {
+    height: 90px
+}
+
+.journal-3 .titles-table tbody td:nth-child(1), .journal-4 .titles-table tbody td:nth-child(1) {
+    padding: 0 3px
+}
+
+.journal-3 .titles-table tbody td:nth-child(2), .journal-4 .titles-table tbody td:nth-child(2), .journal-3 .titles-table tbody td:nth-child(3), .journal-4 .titles-table tbody td:nth-child(3) {
+    padding: 0 3px;
+    text-align: left
+}
+
+@media(max-width:1200px) {
+    .journal table.titles-table tr th, .journal table.titles-table tr td {
+        border-right: none
+    }
+
+    .journal table.titles-table tr td {
+        font-size: 14px;
+        max-width: 120px;
+        min-width: 24px
+    }
+}
+
+    @media(max-width:1024px) {
+        table tr th, table tr td {
+            padding: 5px
+        }
+
+        .page-content .page-main {
+            text-align: center
+        }
+    }
+
+    @media(max-width:950px) {
+        input, select, textarea {
+            font-size: 14px;
+            padding-left: 3px
+        }
+
+        input, select {
+            max-height: 32px !important
+        }
+
+        select {
+            padding-left: 0
+        }
+
+        table tr th {
+            white-space: normal
+        }
+
+        .page-content:not(.journal-charts) .page-main {
+            overflow-x: auto
+        }
+
+            .page-content:not(.journal-charts) .page-main > * {
+                font-size: 14px
+            }
+
+        .journal .page-main {
+            white-space: nowrap
+        }
+
+            .journal .page-main td {
+                max-width: 300px;
+                white-space: normal
+            }
+
+            .journal .page-main .table-connected {
+                display: inline-block !important;
+                width: auto !important
+            }
+    }
+
+    .presencefalse {
+        background-color: #FFCACA
+    }
