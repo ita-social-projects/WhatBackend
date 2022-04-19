@@ -2,7 +2,6 @@
 @using CharlieBackend.Core.DTO.Schedule
 @using CharlieBackend.Core.Entities
 
-
 @{
     Layout = "_Layout";
 }
@@ -24,7 +23,8 @@
 
                             @if (@ViewBag.EventOccurrence.AllStudentGroups != null)
                             {
-                                var scheduledEvent = (@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).FirstOrDefault();
+                                var scheduledEvent = (@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
+                                    .FirstOrDefault();
 
                                 @foreach (var studentGroup in @ViewBag.EventOccurrence.AllStudentGroups)
                                 {
@@ -54,7 +54,8 @@
                             {
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
-                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).Any(x => x.MentorId == item.Id))
+                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
+                                        .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -86,7 +87,8 @@
                             {
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
-                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>).Any(x => x.ThemeId == item.Id))
+                                    @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
+                                        .Any(x => x.ThemeId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
@@ -160,7 +162,8 @@
                                 {
                                     for (int i = 0; i < daysofWeekValues.Length; i++)
                                     {
-                                        if ((@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.DaysOfWeek as IEnumerable<DayOfWeek>).Any(x => x == (DayOfWeek)daysofWeekValues.GetValue(i)))
+                                        if ((@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.DaysOfWeek as IEnumerable<DayOfWeek>)
+                                            .Any(x => x == (DayOfWeek)daysofWeekValues.GetValue(i)))
                                         {
                                             <option value="@i" selected>
                                                 @((DayOfWeek)daysofWeekValues.GetValue(i))
@@ -231,7 +234,9 @@
                         <select class="custom-select" asp-for="Pattern.Dates" size="5">
                             @for (int i = 1; i <= 31; i++)
                             {
-                                if (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.Dates != null && (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern as CharlieBackend.Core.DTO.Schedule.PatternForCreateScheduleDTO).Dates.Any(y => y == i))
+                                if (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.Dates != null 
+                                    && (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern as CharlieBackend.Core.DTO.Schedule.PatternForCreateScheduleDTO)
+                                    .Dates.Any(y => y == i))
                                 {
                                     <option value="@i" selected>
                                         @i
