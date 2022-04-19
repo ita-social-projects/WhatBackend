@@ -76,20 +76,37 @@ namespace CharlieBackend.Panel.Services
         {
             var getAllCoursesEndpoint = _coursesApiEndpoints.GetAllCoursesEndpoint;
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
-            var getAllMentorStudyGroupsEndpoint = _mentorsApiEndpoints.GetAllMentorStudyGroups;
             var getMentorEndpoint = string
-                .Format(_mentorsApiEndpoints.GetMentorEndpoint, id);
+                    .Format(_mentorsApiEndpoints.GetMentorEndpoint, id);
 
             var coursesTask = _apiUtil.GetAsync<IList<CourseViewModel>>(getAllCoursesEndpoint);
             var studentGroupTask = _apiUtil.GetAsync<IList<StudentGroupViewModel>>(getAllStudentGroupsEndpoint);
-            var mentorStudyGroupsTask = await _apiUtil.GetAsync<IList<MentorStudyGroupsDto>>(getAllMentorStudyGroupsEndpoint);
             var mentor = await _apiUtil.GetAsync<MentorEditViewModel>(getMentorEndpoint);
 
             mentor.AllGroups = await studentGroupTask;
             mentor.AllCourses = await coursesTask;
-            //mentor.StudentGroupIds = await mentorStudyGroupsTask;
+            mentor.MentorCourseIds = (await GetMentorCoursesAsync(id)).Select(x => x.Id).ToList();
+            mentor.MentorStudyGroupsIds = (await GetMentorStudyGroupsAsync(id)).Select(x => x.Id).ToList();
 
             return mentor;
+        }
+
+        public async Task<IList<MentorStudyGroupsDto>> GetMentorStudyGroupsAsync(long id)
+        {
+            var getAllMentorStudyGroupsEndpoint = string
+                    .Format(_mentorsApiEndpoints.GetAllMentorStudyGroups, id);
+
+            return await
+                    _apiUtil.GetAsync<IList<MentorStudyGroupsDto>>(getAllMentorStudyGroupsEndpoint);
+        }
+
+        public async Task<IList<MentorCoursesDto>> GetMentorCoursesAsync(long id)
+        {
+            var getAllMentorCoursesEndpoint = string
+                    .Format(_mentorsApiEndpoints.GetAllMentorCourses, id);
+
+            return await
+                    _apiUtil.GetAsync<IList<MentorCoursesDto>>(getAllMentorCoursesEndpoint);
         }
 
         public async Task<UpdateMentorDto> UpdateMentorAsync(long id, UpdateMentorDto UpdateDto)

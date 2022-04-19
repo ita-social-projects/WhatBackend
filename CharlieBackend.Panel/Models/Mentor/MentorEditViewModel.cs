@@ -23,13 +23,13 @@ namespace CharlieBackend.Panel.Models.Mentor
         [Required]
         [StringLength(30)]
         public string LastName { get; set; }
-
+         
         public IList<StudentGroupViewModel> AllGroups { get; set; }
 
         public IList<CourseViewModel> AllCourses { get; set; }
 
-        public IList<long> CourseIds { get; set; }
+        public IList<long> MentorCourseIds { get; set; }
 
-        public IList<MentorStudyGroupsDto> MentorStudyGroups { get; set; }
+        public IList<long> MentorStudyGroupsIds { get; set; }
     }
 }

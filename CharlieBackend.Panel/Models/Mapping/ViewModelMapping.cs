@@ -9,15 +9,14 @@ using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Panel.Models.Calendar;
 using CharlieBackend.Panel.Models.Course;
+using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Models.Homework;
 using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.Mentor;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
 using System.Linq;
-using CharlieBackend.Core.DTO.Visit;
-using CharlieBackend.Panel.Models.ScheduledEvent;
-using CharlieBackend.Panel.Models.EventOccurrence;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
