@@ -13,7 +13,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
 
         Task<Result<FileDto>> GetStudentClassbook(StudentsClassbookResultDto data);
 
-        Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data);
+        Task<Result<FileDto>> GetStudentResultsAsync(StudentsResultsDto data);
 
         Task<Result<FileDto>> GetStudentGroupResults(StudentGroupsResultsDto data);
 

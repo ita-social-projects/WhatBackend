@@ -56,7 +56,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             });
         }
 
-        public async Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
+        public async Task<Result<FileDto>> GetStudentResultsAsync(StudentsResultsDto data)
         {
             using var result = new StudentResultXlsxFileExport();
 
