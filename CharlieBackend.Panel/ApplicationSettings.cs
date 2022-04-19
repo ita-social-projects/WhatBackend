@@ -65,6 +65,7 @@ namespace CharlieBackend.Panel
         public string UpdateStudentEndpoint { get; set; }
         public string DisableStudentEndpoint { get; set; }
         public string EnableStudentEndpoint { get; set; }
+        public string GetAllStudentStudyGroup { get; set; }
     }
 
     public class MentorsApiEndpoints

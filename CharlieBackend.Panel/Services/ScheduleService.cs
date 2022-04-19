@@ -109,12 +109,12 @@ namespace CharlieBackend.Panel.Services
             var mentorsTask = _mentorService.GetAllMentorsAsync();
             var themesTask = _themeService.GetAllThemesAsync();
 
-            var ScheduledEvent = _mapper.Map<ScheduledEventEditViewModel>(await singleEventTask);
-            ScheduledEvent.AllStudentGroups = await studentGroupsTask;
-            ScheduledEvent.AllThemes = await themesTask;
-            ScheduledEvent.AllMentors = await mentorsTask;
+            var scheduledEvent = _mapper.Map<ScheduledEventEditViewModel>(await singleEventTask);
+            scheduledEvent.AllStudentGroups = await studentGroupsTask;
+            scheduledEvent.AllThemes = await themesTask;
+            scheduledEvent.AllMentors = await mentorsTask;
 
-            return ScheduledEvent;
+            return scheduledEvent;
         }
 
         public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()
