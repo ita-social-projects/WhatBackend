@@ -47,7 +47,6 @@ namespace CharlieBackend.Panel.Services
             var getStudentEndpoint = string
                 .Format(_studentsApiEndpoints.GetStudentEndpoint, id);
             var getAllStudentGroupsEndpoint = _studentGroupsApiEndpoints.GetAllStudentGroupsEndpoint;
-            //var getAllStudentStudyGroup = _studentsApiEndpoints.GetAllStudentStudyGroup;
             var getAllStudentStudyGroup = string
                 .Format(_studentsApiEndpoints.GetAllStudentStudyGroup, id);
 
