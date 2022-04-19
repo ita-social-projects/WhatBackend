@@ -40,15 +40,19 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 string[] headers = { "Course", "Student Group", "Average Mark", "Average visits percentage" };
 
-                string[][] rows = new string[studentMarks.Count()][];
+                int studentMarksCount = studentMarks.Count();
 
-                for (int i = 0; i < studentMarks.Count(); i++)
+                string[][] rows = new string[studentMarksCount][];
+
+                for (int i = 0; i < studentMarksCount; i++)
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][CourseColumnNumber] = studentMarks.ElementAt(i).Course;
-                    rows[i][StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
-                    rows[i][ThirdColumnNumber] = string.Format("{0:0.0}", studentMarks.ElementAt(i).StudentAverageMark);
+                    AverageStudentMarkDto studentMark = studentMarks.ElementAt(i);
+
+                    rows[i][CourseColumnNumber] = studentMark.Course;
+                    rows[i][StudentGroupColumnNumber] = studentMark.StudentGroup;
+                    rows[i][ThirdColumnNumber] = string.Format("{0:0.0}", studentMark.StudentAverageMark);
                     rows[i][FourthColumn] = $"{studentVisits.ElementAt(i).StudentAverageVisitsPercentage}";
                 }
 
@@ -60,15 +64,19 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 string[] headers = { "Course", "Student Group", "Average visits percentage" };
 
-                string[][] rows = new string[studentVisits.Count()][];
+                int studentVisitsCount = studentVisits.Count();
 
-                for (int i = 0; i < studentVisits.Count(); i++)
+                string[][] rows = new string[studentVisitsCount][];
+
+                for (int i = 0; i < studentVisitsCount; i++)
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][CourseColumnNumber] = studentVisits.ElementAt(i).Course;
-                    rows[i][StudentGroupColumnNumber] = studentVisits.ElementAt(i).StudentGroup;
-                    rows[i][ThirdColumnNumber] = $"{studentVisits.ElementAt(i).StudentAverageVisitsPercentage}";
+                    AverageStudentVisitsDto studentVisit = studentVisits.ElementAt(i);
+
+                    rows[i][CourseColumnNumber] = studentVisit.Course;
+                    rows[i][StudentGroupColumnNumber] = studentVisit.StudentGroup;
+                    rows[i][ThirdColumnNumber] = $"{studentVisit.StudentAverageVisitsPercentage}";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
@@ -79,15 +87,19 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 string[] headers = { "Course", "Student Group", "Average Mark" };
 
-                string[][] rows = new string[studentMarks.Count()][];
+                int studentMarksCount = studentMarks.Count();
 
-                for (int i = 0; i < studentMarks.Count(); i++)
+                string[][] rows = new string[studentMarksCount][];
+
+                for (int i = 0; i < studentMarksCount; i++)
                 {
                     rows[i] = new string[headers.Length];
 
-                    rows[i][CourseColumnNumber] = studentMarks.ElementAt(i).Course;
-                    rows[i][StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
-                    rows[i][ThirdColumnNumber] = string.Format("{0:0.0}", studentMarks.ElementAt(i).StudentAverageMark);
+                    AverageStudentMarkDto studentMark = studentMarks.ElementAt(i);
+
+                    rows[i][CourseColumnNumber] = studentMark.Course;
+                    rows[i][StudentGroupColumnNumber] = studentMark.StudentGroup;
+                    rows[i][ThirdColumnNumber] = string.Format("{0:0.0}", studentMark.StudentAverageMark);
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
