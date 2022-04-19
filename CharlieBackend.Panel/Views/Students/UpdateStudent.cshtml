@@ -37,7 +37,8 @@
                             {
                                 @foreach (var item in @ViewBag.Student.AllGroups)
                                 {
-                                    @if ((@ViewBag.Student.StudentStudyGroups as IEnumerable<CharlieBackend.Core.DTO.Student.StudentStudyGroupsDto>).Any(x => x.Id == item.Id))
+                                    @if ((@ViewBag.Student.StudentStudyGroups as IEnumerable<CharlieBackend.Core.DTO.Student.StudentStudyGroupsDto>)
+                                        .Any(x => x.Id == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
