@@ -4,8 +4,8 @@ namespace CharlieBackend.Core.DTO.Dashboard
 {
     public class StudentsResultsDto
     {
-        public IEnumerable<AverageStudentVisitsDto> AverageStudentVisits { get; set; }
+        public IEnumerable<AverageStudentVisitsDto> AverageStudentVisits { get; set; } = new List<AverageStudentVisitsDto>();
 
-        public IEnumerable<AverageStudentMarkDto> AverageStudentsMarks { get; set; }
+        public IEnumerable<AverageStudentMarkDto> AverageStudentsMarks { get; set; } = new List<AverageStudentMarkDto>();
     }
 }
