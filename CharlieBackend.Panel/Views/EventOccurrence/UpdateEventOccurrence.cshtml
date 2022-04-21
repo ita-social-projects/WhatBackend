@@ -55,7 +55,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                        .Any(x => x.MentorId == item.Id))
+                                     .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -88,7 +88,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                        .Any(x => x.ThemeId == item.Id))
+                                     .Any(x => x.ThemeId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
@@ -232,25 +232,37 @@
                     <div class="form-group dates" id="dates" hidden="hidden">
                         <label>Days of month </label>
                         <select class="custom-select" asp-for="Pattern.Dates" size="5">
-                            @for (int i = 1; i <= 31; i++)
+                            @if (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.Dates != null)
                             {
-                                if (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern.Dates != null 
-                                    && (@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern as CharlieBackend.Core.DTO.Schedule.PatternForCreateScheduleDTO)
-                                    .Dates.Any(y => y == i))
+                                @for (int i = 1; i <= 31; i++)
                                 {
-                                    <option value="@i" selected>
-                                        @i
-                                    </option>
+                                    if ((@ViewBag.EventOccurrence.DetailedEventOccurrence.Pattern as CharlieBackend.Core.DTO.Schedule.PatternForCreateScheduleDTO)
+                                        .Dates.Any(y => y == i))
+                                    {
+                                        <option value="@i" selected>
+                                            @i
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">
+                                            @i
+                                        </option>
+                                    }
                                 }
-                                else
+                            }
+                            else
+                            {
+                                <option value="1" selected>
+                                    1
+                                </option>
+                                @for (int i = 2; i <= 31; i++)
                                 {
                                     <option value="@i">
                                         @i
                                     </option>
                                 }
                             }
-
-
                         </select>
                     </div>
 
