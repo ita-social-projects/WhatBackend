@@ -130,11 +130,6 @@ namespace CharlieBackend.Business.Services
 
             var foundGroups = await _unitOfWork.StudentGroupRepository.GetStudentStudyGroups(id);
 
-            if (!foundGroups.Any())
-            {
-                return Result<IList<StudentStudyGroupsDto>>.GetError(ErrorCode.NotFound, $"Study groups for student with id {id} not found");
-            }
-
             return Result<IList<StudentStudyGroupsDto>>.GetSuccess(foundGroups);
         }
 
