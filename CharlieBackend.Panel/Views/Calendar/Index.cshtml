@@ -67,9 +67,17 @@
             $("#seTime").val(seTime);
             $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
             $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
+            $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
         });
     </script>
 }
+
+<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+    <a asp-action="CreateEventOccurrence" asp-controller="EventOccurrence" class="btn btn-lg btn-success btn-circle">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
@@ -239,6 +247,7 @@
             <div class="modal-footer">
                 <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit schedule event</a>
                 <a id="seSingleEventId" class="btn btn-primary" title="You only want to edit one event" href="">Edit only this event</a>
+                <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete</a>
             </div>
         </div>
     </div>
