@@ -1,6 +1,6 @@
 ﻿using CharlieBackend.Business.Helpers;
-using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Core.Constants;
+using CharlieBackend.Core.DTO.Dashboard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         public override string GetFileName()
         {
-            return string.Format(HtmlFileExportConstants.StudentsResultsFileNameConstant, DateTime.Now.ToString("yyyy-MM-dd"));
+            return HtmlFileExportConstants.StudentsResultsFileNameConstant(DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         private void FillFile(StudentsResultsDto data)
@@ -113,11 +113,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         private string GetFileHeader(StudentsResultsDto data)
         {
-            string student = data.AverageStudentVisits.Any()
+            string studentName = data.AverageStudentVisits.Any()
                     ? data.AverageStudentVisits.First().Student
                     : data.AverageStudentsMarks.First().Student;
 
-            return string.Format(HtmlFileExportConstants.StudentsResultsFileHeaderConstant, student);
+            return HtmlFileExportConstants.StudentsResultsFileHeaderConstant(studentName);
         }
     }
 }
