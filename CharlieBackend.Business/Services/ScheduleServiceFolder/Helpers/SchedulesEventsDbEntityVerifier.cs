@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Business.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,14 +28,16 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(ResponseMessages.NotExist("Group"));
             }
 
-            if (request.Context.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
+            if (request.Context.MentorID.HasValue && await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
+            {
+                if ((await _unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value)).IsActive == false)
+                {
+                    error.Append(" Mentor is not active");
+                }
+            }
+            else
             {
                 error.Append(ResponseMessages.NotExist("Mentor"));
-            }
-
-            if ((await _unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value)).IsActive == false)
-            {
-                error.Append(" Mentor is not active");
             }
 
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
@@ -42,9 +45,15 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(ResponseMessages.NotExist("Theme"));
             }
 
-            if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value >= MonthIndex.Last || request.Pattern.Index.Value <= MonthIndex.First))
+            if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value > MonthIndex.Last || request.Pattern.Index.Value < MonthIndex.First))
             {
                 error.Append(ResponseMessages.IndexNotValid);
+            }
+
+            if (request.Pattern.Type > PatternType.RelativeMonthly || request.Pattern.Type < PatternType.Daily)
+            {
+                //ToDo: reflection
+                error.Append(ResponseMessages.NotValid("Type"));
             }
 
             return error.Length > 0 ? error.ToString() : null;

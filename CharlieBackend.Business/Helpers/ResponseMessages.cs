@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CharlieBackend.Business.Helpers
+﻿namespace CharlieBackend.Business.Helpers
 {
     public class ResponseMessages
     {
@@ -12,6 +8,8 @@ namespace CharlieBackend.Business.Helpers
 
         public const string IndexNotValid = "Index cannot be less then 1 and greater than 5";
 
-        public static string NotExist(string entityName) => $"{entityName} does not exist\t";
+        public static string NotExist(string entityName) => $"{entityName} does not exist ";
+
+        public static string NotValid(string entityName) => $"{entityName} is not valid ";
     }
 }
