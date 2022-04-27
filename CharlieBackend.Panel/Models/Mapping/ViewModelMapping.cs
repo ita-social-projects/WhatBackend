@@ -10,15 +10,15 @@ using CharlieBackend.Core.DTO.Theme;
 using CharlieBackend.Core.DTO.Dashboard;
 using CharlieBackend.Panel.Models.Calendar;
 using CharlieBackend.Panel.Models.Course;
+using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Models.Homework;
 using CharlieBackend.Panel.Models.Lesson;
 using CharlieBackend.Panel.Models.Mentor;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
 using CharlieBackend.Panel.Models.Classbook;
 using System.Linq;
-using CharlieBackend.Core.DTO.Visit;
-using CharlieBackend.Panel.Models.ScheduledEvent;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -70,8 +70,12 @@ namespace CharlieBackend.Panel.Models.Mapping
 
             CreateMap<CourseDto, CourseViewModel>();
 
+            #region Event ViewModelsMapping
             CreateMap<ScheduledEventViewModel, ScheduledEventDTO>();
             CreateMap<ScheduledEventDTO, ScheduledEventViewModel>();
+            CreateMap<ScheduledEventDTO, ScheduledEventEditViewModel>();
+            CreateMap<EventOccurrenceDTO, EventOccurrenceEditViewModel>();
+            #endregion
 
             #region Calendar ViewModels mappings
             CreateMap<CourseDto, CalendarCourseViewModel>();

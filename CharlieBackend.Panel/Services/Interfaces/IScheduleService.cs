@@ -1,5 +1,6 @@
 ﻿using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,10 +54,20 @@ namespace CharlieBackend.Panel.Services.Interfaces
         /// Method for getting required lists to add new event occurrence.
         /// </summary>
         Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync();
+        
+        /// <summary>
+        /// Method for getting required lists to update single event.
+        /// </summary>
+        Task<ScheduledEventEditViewModel> PrepareSingleEventUpdateAsync(long id);
 
         /// <summary>
         /// Method for updating single event by id.
         /// </summary>
         Task UpdateSingleEventByIdAsync(long id, UpdateScheduledEventDto updatedSchedule);
+        
+        /// <summary>
+        /// Method for getting required lists to update event occurrence.
+        /// </summary>
+        Task<EventOccurrenceEditViewModel> PrepareEventOcccurrenceUpdateAsync(long id);
     }
 }

@@ -105,7 +105,7 @@ namespace CharlieBackend.Api.Controllers
 
             var results = await _dashboardService.GetStudentsResultAsync(request);
 
-            var studentResults = await exportService.GetStudentsResults(results.Data);
+            var studentResults = await exportService.GetStudentResultsAsync(results.Data);
 
             if (studentResults.Error == null)
             {
@@ -175,7 +175,7 @@ namespace CharlieBackend.Api.Controllers
         ///                                                            2 - CSV </param>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpPost("studentResults/{studentId}/{extension}")]
-        public async Task<IActionResult> GetStudentResults(long studentId, FileExtension extension,
+        public async Task<IActionResult> GetStudentResultsAsync(long studentId, FileExtension extension,
                 [FromBody] DashboardAnalyticsRequestDto<StudentResultType> request)
         {
             var exportService = _exportProvider.GetExportService(extension);
@@ -189,7 +189,7 @@ namespace CharlieBackend.Api.Controllers
             var results = await _dashboardService
                 .GetStudentResultAsync(studentId, request);
 
-            var studentResults = await exportService.GetStudentResults(results.Data);
+            var studentResults = await exportService.GetStudentResultsAsync(results.Data);
 
             if (studentResults.Error == null)
             {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +57,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareEventOccurrenceForUpdate(long id)
         {
-            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+            var eventOccurrenceData = await _scheduleService.PrepareEventOcccurrenceUpdateAsync(id);
 
             ViewBag.EventOccurrence = eventOccurrenceData;
             ViewBag.CurrentId = id;
@@ -69,7 +70,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpPost("{id}")]
@@ -77,7 +78,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.UpdateScheduleByIdAsync(id, scheduleDTO);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpGet("{id}")]
@@ -85,16 +86,15 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.DeleteScheduleByIdAsync(id);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> PrepareSingleEventForUpdateAsync(long id)
         {
-            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+            ScheduledEventEditViewModel eventOccurrenceData = await _scheduleService.PrepareSingleEventUpdateAsync(id);
 
-            ViewBag.EventOccurrence = eventOccurrenceData;
-            ViewBag.CurrentId = id;
+            ViewBag.Event = eventOccurrenceData;
 
             return View("UpdateSingleEvent");
         }

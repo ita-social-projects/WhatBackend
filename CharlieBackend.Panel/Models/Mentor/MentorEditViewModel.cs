@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Panel.Models.Course;
+﻿using CharlieBackend.Core.DTO.Mentor;
+using CharlieBackend.Panel.Models.Course;
 using CharlieBackend.Panel.Models.StudentGroups;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,9 +23,13 @@ namespace CharlieBackend.Panel.Models.Mentor
         [Required]
         [StringLength(30)]
         public string LastName { get; set; }
-
+         
         public IList<StudentGroupViewModel> AllGroups { get; set; }
 
         public IList<CourseViewModel> AllCourses { get; set; }
+
+        public IList<long> MentorCourseIds { get; set; }
+
+        public IList<long> MentorStudyGroupsIds { get; set; }
     }
 }

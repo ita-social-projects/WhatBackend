@@ -32,15 +32,23 @@
 
                     <div class="form-group">
                         <label>Groups</label>
-                        <select class="custom-select" asp-for="StudentGroupIds" size="3" multiple>
+                        <select class="custom-select" asp-for="StudentGroupIds" size="5" multiple>
                             @if (@ViewBag.Mentor.AllGroups != null)
                             {
-                                @foreach (var item in @ViewBag.Mentor.AllGroups)
+                                @foreach (var group in @ViewBag.Mentor.AllGroups)
                                 {
-                                    <option value="@item.Id">
-                                        @item.Name
-                                    </option>
-
+                                    if ((@ViewBag.Mentor.MentorStudyGroupsIds as IEnumerable<long>).Any(x => x == group.Id))
+                                    {
+                                        <option value="@group.Id" selected>
+                                            @group.Name
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@group.Id">
+                                            @group.Name
+                                        </option>
+                                    }
                                 }
                             }
                             else
@@ -52,14 +60,23 @@
 
                     <div class="form-group">
                         <label>Courses</label>
-                        <select class="custom-select" asp-for="CourseIds" size="3" multiple>
+                        <select class="custom-select" asp-for="CourseIds" size="5" multiple>
                             @if (@ViewBag.Mentor.AllCourses != null)
                             {
-                                @foreach (var item in @ViewBag.Mentor.AllCourses)
+                                @foreach (var course in @ViewBag.Mentor.AllCourses)
                                 {
-                                    <option value="@item.Id">
-                                        @item.Name
-                                    </option>
+                                    if ((@ViewBag.Mentor.MentorCourseIds as IEnumerable<long>).Any(x => x == course.Id))
+                                    {
+                                        <option value="@course.Id" selected>
+                                            @course.Name
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@course.Id">
+                                            @course.Name
+                                        </option>
+                                    }
 
                                 }
                             }

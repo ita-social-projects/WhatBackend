@@ -8,23 +8,29 @@
 
     <div class="container mt-3 col-5">
 
-        <h1 class="h3 mb-2 text-gray-800">Update event occurrence</h1>
+        <h1 class="h3 mb-2 text-gray-800">Update current event</h1>
 
         <div class="card shadow mb-4">
 
             <div class="modal-body">
-                <form method="post" asp-action="UpdateSingleEvent" asp-controller="EventOccurrence" asp-route-id="@ViewBag.CurrentId">
+                <form method="post" asp-action="UpdateSingleEvent" asp-controller="EventOccurrence" asp-route-id="@ViewBag.Event.Id">
 
                     <div class="form-group">
                         <label>Student Group </label>
                         <select class="custom-select" asp-for="StudentGroupId" size="1">
 
-                            @if (@ViewBag.EventOccurrence.AllStudentGroups != null)
+                            @if (@ViewBag.Event.AllStudentGroups != null)
                             {
-                                @foreach (var item in @ViewBag.EventOccurrence.AllStudentGroups)
+                                @foreach (var item in @ViewBag.Event.AllStudentGroups)
                                 {
-
-                                    <option value="@item.Id">@item.Name</option>
+                                    if (item.Id == ViewBag.Event.StudentGroupId)
+                                    {
+                                        <option value="@item.Id" selected>@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
                                 }
                             }
                             else
@@ -39,14 +45,24 @@
                         <label>Mentor </label>
                         <select class="custom-select" asp-for="MentorId" size="1">
 
-                            @if (@ViewBag.EventOccurrence.AllMentors != null)
+                            @if (@ViewBag.Event.AllMentors != null)
                             {
-                                @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
+                                @foreach (var item in @ViewBag.Event.AllMentors)
                                 {
-                                    <option value="@item.Id">
-                                        @item.FirstName
-                                        @item.LastName
-                                    </option>
+                                    if (item.Id == ViewBag.Event.MentorId)
+                                    {
+                                        <option value="@item.Id" selected>
+                                            @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.FirstName
+                                            @item.LastName
+                                        </option>
+                                    }
                                 }
                             }
                             else
@@ -61,13 +77,22 @@
                         <label>Theme </label>
                         <select class="custom-select" asp-for="ThemeId" size="1">
 
-                            @if (@ViewBag.EventOccurrence.AllThemes != null)
+                            @if (@ViewBag.Event.AllThemes != null)
                             {
-                                @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
+                                @foreach (var item in @ViewBag.Event.AllThemes)
                                 {
-                                    <option value="@item.Id">
-                                        @item.Name
-                                    </option>
+                                    if (item.Id == ViewBag.Event.ThemeId)
+                                    {
+                                        <option value="@item.Id" selected>
+                                            @item.Name
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">
+                                            @item.Name
+                                        </option>
+                                    }
                                 }
                             }
                             else
@@ -81,13 +106,13 @@
                     <div class="form-group">
                         <label>Event start</label>
                         <input type="datetime-local" min="1900-01-01" max="2100-12-31"
-                               value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" class="form-control" asp-for="EventStart">
+                               value="@ViewBag.Event.EventStart.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" class="form-control" asp-for="EventStart">
                     </div>
 
                     <div class="form-group">
                         <label>Event end</label>
                         <input type="datetime-local" min="1000-01-01" max="3000-12-31" class="form-control"
-                               value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="EventEnd">
+                               value="@ViewBag.Event.EventFinish.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="EventEnd">
                     </div>
 
                     <div class="mt-3">

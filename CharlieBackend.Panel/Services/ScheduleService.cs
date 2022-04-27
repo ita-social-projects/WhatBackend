@@ -1,5 +1,7 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
+using CharlieBackend.Panel.Models.ScheduledEvent;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.Extensions.Options;
@@ -20,10 +22,12 @@ namespace CharlieBackend.Panel.Services
         private readonly IStudentGroupService _studentGroupService;
         private readonly IThemeService _themeService;
         private readonly IMentorService _mentorService;
+        private readonly IMapper _mapper;
 
         public ScheduleService(
             IApiUtil apiUtil, 
-            IOptions<ApplicationSettings> options, 
+            IOptions<ApplicationSettings> options,
+            IMapper mapper,
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
             IThemeService themeService)
@@ -34,6 +38,7 @@ namespace CharlieBackend.Panel.Services
             _studentGroupService = studentGroupService;
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
             _eventsApiEndpoints = options.Value.Urls.ApiEndpoints.Events;
+            _mapper = mapper;
         }
 
         public async Task<IList<EventOccurrenceDTO>> GetAllEventOccurrences()
@@ -94,6 +99,24 @@ namespace CharlieBackend.Panel.Services
                 .PutAsync<EventOccurrenceDTO, CreateScheduleDto>(eventOccurence, updateScheduleDto);
         }
 
+        public async Task<ScheduledEventEditViewModel> PrepareSingleEventUpdateAsync(long id)
+        {
+            var eventEndpoint =
+               string.Format(_eventsApiEndpoints.EventById, id);
+
+            var singleEventTask = _apiUtil.GetAsync<ScheduledEventDTO>(eventEndpoint);
+            var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var themesTask = _themeService.GetAllThemesAsync();
+
+            var scheduledEvent = _mapper.Map<ScheduledEventEditViewModel>(await singleEventTask);
+            scheduledEvent.AllStudentGroups = await studentGroupsTask;
+            scheduledEvent.AllThemes = await themesTask;
+            scheduledEvent.AllMentors = await mentorsTask;
+
+            return scheduledEvent;
+        }
+
         public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()
         {
             var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
@@ -117,6 +140,28 @@ namespace CharlieBackend.Panel.Services
 
             await _apiUtil
                 .PutAsync<EventOccurrenceDTO, UpdateScheduledEventDto>(singleEvent, updatedSchedule);
+        }
+
+        public async Task<EventOccurrenceEditViewModel> PrepareEventOcccurrenceUpdateAsync(long id)
+        {
+            var eventEndpoint =
+               string.Format(_scheduleApiEndpoints.EventOccurrenceById, id);
+            var eventDetailedEndpoint =
+                string.Format(_scheduleApiEndpoints.EventOccurrenceDetailedById, id);
+
+            var eventOccurrenceTask = _apiUtil.GetAsync<EventOccurrenceDTO>(eventEndpoint);
+            var eventOccurrenceDetailedTask = _apiUtil.GetAsync<DetailedEventOccurrenceDTO>(eventDetailedEndpoint);
+            var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
+            var mentorsTask = _mentorService.GetAllMentorsAsync();
+            var themesTask = _themeService.GetAllThemesAsync();
+
+            var scheduledEvent = _mapper.Map<EventOccurrenceEditViewModel>(await eventOccurrenceTask);
+            scheduledEvent.AllStudentGroups = await studentGroupsTask;
+            scheduledEvent.AllThemes = await themesTask;
+            scheduledEvent.AllMentors = await mentorsTask;
+            scheduledEvent.DetailedEventOccurrence = await eventOccurrenceDetailedTask;
+
+            return scheduledEvent;
         }
     }
 }

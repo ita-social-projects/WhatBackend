@@ -66,6 +66,7 @@ namespace CharlieBackend.Panel
         public string UpdateStudentEndpoint { get; set; }
         public string DisableStudentEndpoint { get; set; }
         public string EnableStudentEndpoint { get; set; }
+        public string GetAllStudentStudyGroup { get; set; }
     }
 
     public class MentorsApiEndpoints
@@ -78,6 +79,8 @@ namespace CharlieBackend.Panel
         public string DisableMentorEndpoint { get; set; }
         public string EnableMentorEndpoint { get; set; }
         public string GetLessonsForMentor { get; set; }
+        public string GetAllMentorStudyGroups { get; set; }
+        public string GetAllMentorCourses { get; set; }
     }
 
     public class ThemesApiEndpoints
@@ -98,6 +101,7 @@ namespace CharlieBackend.Panel
         public string AddEventOccurrence { get; set; }
         public string DeleteScheduleEndpoint { get; set; }
         public string UpdateScheduleEndpoint { get; set; }
+        public string EventOccurrenceDetailedById { get; set; }
     }
 
     public class StudentGroupsApiEndpoints
@@ -130,6 +134,7 @@ namespace CharlieBackend.Panel
     {
         public string ConnectEventToLesson { get; set; }
         public string UpdateEventEndpoint { get; set; }
+        public string EventById { get; set; }
     }
 
     public class SecretariesApiEndpoints
