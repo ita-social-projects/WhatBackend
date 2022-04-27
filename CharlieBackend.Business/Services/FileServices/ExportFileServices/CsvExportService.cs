@@ -64,7 +64,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                    "student group results can't be returned in csv format"));
         }
 
-        public Task<Result<FileDto>> GetStudentResults(StudentsResultsDto data)
+        public Task<Result<FileDto>> GetStudentResultsAsync(StudentsResultsDto data)
         {
             return Task.FromResult(Result<FileDto>.GetError(
                    ErrorCode.ValidationError,

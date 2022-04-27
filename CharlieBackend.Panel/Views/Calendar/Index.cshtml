@@ -67,9 +67,17 @@
             $("#seTime").val(seTime);
             $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
             $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
+            $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
         });
     </script>
 }
+
+<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+    <a asp-action="CreateEventOccurrence" asp-controller="EventOccurrence" class="btn btn-lg btn-success btn-circle">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
@@ -77,12 +85,14 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
                 </div>
+
                 <div class="card-header py-3">
                     <form method="post" action="/Calendar/GetCalendar">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="submit">Update</button>
                             </div>
+
                             <select class="custom-select" name="GroupId" id="groupSelect" aria-label="Example select with button addon">
                                 @if (Model.ScheduledEventFilter.GroupID.HasValue)
                                 {
@@ -104,6 +114,7 @@
                                     }
                                 }
                             </select>
+
                             <select class="custom-select" name="ThemeID" id="themeSelect" aria-label="Example select with button addon">
                                 @if (Model.ScheduledEventFilter.ThemeID.HasValue)
                                 {
@@ -125,6 +136,7 @@
                                     }
                                 }
                             </select>
+
                             <select class="custom-select" name="CourseID" id="courseSelect" aria-label="Example select with button addon">
                                 @if (Model.ScheduledEventFilter.CourseID.HasValue)
                                 {
@@ -146,6 +158,7 @@
                                     }
                                 }
                             </select>
+
                             <select class="custom-select" name="MentorID" id="mentorSelect" aria-label="Example select with button addon">
                                 @if (Model.ScheduledEventFilter.MentorID.HasValue)
                                 {
@@ -172,6 +185,7 @@
                                     }
                                 }
                             </select>
+
                             <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
                                 @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
                                 {
@@ -198,10 +212,12 @@
                                 }
                             </select>
                         </div>
+
                         <div class="form-group row">
                             <div class="col-6">
                                 <input class="form-control" name="StartDate" type="datetime-local" value="@Model.ScheduledEventFilter.StartDate.Value.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" id="startDate">
                             </div>
+
                             <div class="col-6">
                                 <input class="form-control" name="FinishDate" type="datetime-local" value="@Model.ScheduledEventFilter.FinishDate.Value.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" id="finishDate">
                             </div>
@@ -223,6 +239,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+
             <div class="modal-body">
                 <label for="seTime">Time:</label>
                 <input id="seTime" class="modalTextInput form-control" value="" disabled />
@@ -236,9 +253,11 @@
                 <label for="seMentor">Mentor:</label>
                 <input id="seMentor" class="modalTextInput form-control" value="" disabled />
             </div>
+
             <div class="modal-footer">
                 <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit schedule event</a>
                 <a id="seSingleEventId" class="btn btn-primary" title="You only want to edit one event" href="">Edit only this event</a>
+                <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete</a>
             </div>
         </div>
     </div>

@@ -11,9 +11,9 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             item.MentorId = request.MentorId ?? item.MentorId;
             item.StudentGroupId = request.StudentGroupId ?? item.StudentGroupId;
             item.ThemeId = request.ThemeId ?? item.ThemeId;
-            item.EventStart = request.EventStart.HasValue ? new DateTime(item.EventStart.Year, item.EventStart.Month, item.EventStart.Day,
+            item.EventStart = request.EventStart.HasValue ? new DateTime(request.EventStart.Value.Year, request.EventStart.Value.Month, request.EventStart.Value.Day,
                 request.EventStart.Value.Hour, request.EventStart.Value.Minute, request.EventStart.Value.Second) : item.EventStart;
-            item.EventFinish = request.EventEnd.HasValue ? new DateTime(item.EventFinish.Year, item.EventFinish.Month, item.EventFinish.Day,
+            item.EventFinish = request.EventEnd.HasValue ? new DateTime(request.EventEnd.Value.Year, request.EventEnd.Value.Month, request.EventEnd.Value.Day,
                 request.EventEnd.Value.Hour, request.EventEnd.Value.Minute, request.EventEnd.Value.Second) : item.EventFinish;
 
             return item;

@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Panel.Models.StudentGroups;
+﻿using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Panel.Models.StudentGroups;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,5 +24,7 @@ namespace CharlieBackend.Panel.Models.Students
         public string LastName { get; set; }
 
         public IList<StudentGroupViewModel> AllGroups { get; set; }
+
+        public IList<StudentStudyGroupsDto> StudentStudyGroups { get; set; }
     }
 }
