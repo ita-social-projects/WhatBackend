@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +24,12 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.Context.GroupID))
             {
-                error.Append(" Group does not exist");
+                error.Append(ResponseMessages.NotExist("Group"));
             }
 
             if (request.Context.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.Context.MentorID.Value))
             {
-                error.Append(" Mentor does not exist");
+                error.Append(ResponseMessages.NotExist("Mentor"));
             }
 
             if ((await _unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value)).IsActive == false)
@@ -38,7 +39,12 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
-                error.Append(" Theme does not exist");
+                error.Append(ResponseMessages.NotExist("Theme"));
+            }
+
+            if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value >= MonthIndex.Last || request.Pattern.Index.Value <= MonthIndex.First))
+            {
+                error.Append(ResponseMessages.IndexNotValid);
             }
 
             return error.Length > 0 ? error.ToString() : null;
@@ -62,27 +68,27 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (request.CourseID.HasValue && !await _unitOfWork.CourseRepository.IsEntityExistAsync(request.CourseID.Value))
             {
-                error.Append(" Course does not exist");
+                error.Append(ResponseMessages.NotExist("Course"));
             }
 
             if (request.GroupID.HasValue && !await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.GroupID.Value))
             {
-                error.Append(" Group does not exist");
+                error.Append(ResponseMessages.NotExist("Group"));
             }
 
             if (request.MentorID.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorID.Value))
             {
-                error.Append(" Mentor does not exist");
+                error.Append(ResponseMessages.NotExist("Mentor"));
             }
 
             if (request.StudentAccountID.HasValue && !await _unitOfWork.StudentRepository.IsEntityExistAsync(request.StudentAccountID.Value))
             {
-                error.Append(" Student does not exist");
+                error.Append(ResponseMessages.NotExist("Student"));
             }
 
             if (request.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeID.Value))
             {
-                error.Append(" Theme does not exist");
+                error.Append(ResponseMessages.NotExist("Theme"));
             }
 
             return error.Length > 0 ? error.ToString() : null;
