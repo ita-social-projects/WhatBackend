@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
@@ -8,6 +9,7 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
@@ -85,6 +87,53 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return scheduleEntity == null ?
                 Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Scheduled event with id={eventId} does not exist") :
                 Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
+        }
+
+        public async Task<Result<CreateSingleEventDTO>> CreateSingleEvent(SingleEventRequestDto createSingleEventRequest)
+        {
+            {
+                string error = await ValidateCreateScheduleEventRequestAsync(createSingleEventRequest);
+
+                if (error != null)
+                {
+                    return Result<CreateSingleEventDTO>.GetError(ErrorCode.ValidationError, error);
+                }
+
+                var createdSingleEventEntity = _mapper.Map<ScheduledEvent>(createSingleEventRequest);
+
+                _unitOfWork.ScheduledEventRepository.Add(createdSingleEventEntity);
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<CreateSingleEventDTO>.GetSuccess(_mapper.Map<CreateSingleEventDTO>(createdSingleEventEntity));
+            }
+        }
+
+        private async Task<string> ValidateCreateScheduleEventRequestAsync(SingleEventRequestDto request)
+        {
+            if (request == null)
+            {
+                return "Request must not be null";
+            }
+
+            StringBuilder error = new StringBuilder(string.Empty);
+
+            if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId))
+            {
+                error.Append(" Group does not exist");
+            }
+
+            if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
+            {
+                error.Append(" Mentor does not exist");
+            }
+
+            if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
+            {
+                error.Append(" Theme does not exist");
+            }
+
+            return error.Length > 0 ? error.ToString() : null;
         }
     }
 }

@@ -2,6 +2,7 @@
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Course;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
@@ -186,6 +187,8 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<ScheduledEventDTO, ScheduledEvent>();
             CreateMap<ScheduledEvent, ScheduledEventDTO>()
                 .ForMember(x => x.EventOccuranceId, y => y.MapFrom(map => map.EventOccurrenceId));
+            CreateMap<SingleEventRequestDto, ScheduledEvent>();
+            CreateMap<ScheduledEvent, CreateSingleEventDTO>();
 
             #endregion
 
