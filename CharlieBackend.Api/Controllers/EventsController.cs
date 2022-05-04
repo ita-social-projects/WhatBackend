@@ -34,6 +34,9 @@ namespace CharlieBackend.Api.Controllers
         /// <summary>
         /// Add single event
         /// </summary>
+        /// <remarks>
+        /// With this endpoint you can add a single event.
+        /// </remarks>
         /// <response code="200">Successful add of schedule</response>
         /// <response code="HTTP: 400, API: 0">Can not create event due to wrong request data</response>
         /// <response code="HTTP: 404, API: 3">Can not create event due to missing request data</response>
@@ -46,7 +49,6 @@ namespace CharlieBackend.Api.Controllers
 
             return createEvent.ToActionResult();
         }
-
 
         /// <summary>
         /// Get event by id
@@ -109,7 +111,5 @@ namespace CharlieBackend.Api.Controllers
 
             return foundSchedules.ToActionResult();
         }
-
-
     }
 }
