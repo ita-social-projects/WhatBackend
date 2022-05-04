@@ -142,6 +142,8 @@ namespace CharlieBackend.Panel
         public string GetAllSecretariesEndpoint { get; set; }
         public string EnableSecretaryEndpoint { get; set; }
         public string DisableSecretaryEndpoint { get; set; }
+        public string UpdateSecretaryEndpoint { get; set; }
+        public string GetSecretaryEndpoint { get; set; }
     }
 
     public class DashboardApiEndpoints

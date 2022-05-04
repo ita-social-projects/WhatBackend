@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using CharlieBackend.Core.DTO.Secretary;
 
 namespace CharlieBackend.Panel.Controllers
 {
@@ -16,7 +17,7 @@ namespace CharlieBackend.Panel.Controllers
             _secretaryService = secretaryService;
         }
 
-        public async Task<IActionResult> GetAllSecretaries()
+        public async Task<IActionResult> AllSecretaries()
         {
             var secretaries = await _secretaryService.GetAllSecretariesAsync();
 
@@ -37,6 +38,24 @@ namespace CharlieBackend.Panel.Controllers
             var disabledSecretary = await _secretaryService.DisableSecretaryAsync(id);
 
             return RedirectToAction("GetAllSecretaries", "Secretaries");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> UpdateSecretary(long id)
+        {
+            var secretary = await _secretaryService.GetSecretaryByIdAsync(id);
+
+            ViewBag.Secretary = secretary;
+
+            return View("UpdateSecretary");
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> UpdateSecretary(long id, UpdateSecretaryDto data)
+        {            
+            var updatedStudent = await _secretaryService.UpdateSecretaryAsync(id, data);
+
+            return RedirectToAction("AllSecretaries", "Secretaries");
         }
     }
 }
