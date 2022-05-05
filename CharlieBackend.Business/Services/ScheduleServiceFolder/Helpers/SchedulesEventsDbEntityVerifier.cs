@@ -45,15 +45,14 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(ResponseMessages.NotExist("Theme"));
             }
 
-            if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value > MonthIndex.Last || request.Pattern.Index.Value < MonthIndex.First))
+            if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value > MonthIndex.Last || request.Pattern.Index.Value < MonthIndex.Undefined))
             {
                 error.Append(ResponseMessages.IndexNotValid);
             }
 
             if (request.Pattern.Type > PatternType.RelativeMonthly || request.Pattern.Type < PatternType.Daily)
             {
-                //ToDo: reflection
-                error.Append(ResponseMessages.NotValid("Type"));
+                error.Append(ResponseMessages.NotValid(typeof(PatternType).Name));
             }
 
             return error.Length > 0 ? error.ToString() : null;
