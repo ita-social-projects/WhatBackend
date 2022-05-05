@@ -32,7 +32,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             {
                 if ((await _unitOfWork.AccountRepository.GetAccountCredentialsById(request.Context.MentorID.Value)).IsActive == false)
                 {
-                    error.Append(" Mentor is not active");
+                    error.Append(ResponseMessages.NotActive("Mentor"));
                 }
             }
             else

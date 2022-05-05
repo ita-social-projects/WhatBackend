@@ -1,6 +1,6 @@
 ﻿namespace CharlieBackend.Business.Helpers
 {
-    public class ResponseMessages
+    public static class ResponseMessages
     {
         public const string GroupNotFound = "Group not found";
 
@@ -11,5 +11,7 @@
         public static string NotExist(string entityName) => $"{entityName} does not exist ";
 
         public static string NotValid(string entityName) => $"{entityName} is not valid ";
+
+        public static string NotActive(string entityName) => $"{entityName} is not active ";
     }
 }
