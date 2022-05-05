@@ -29,7 +29,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _secretaryService.EnableSecretaryAsync(id);
 
-            return RedirectToAction("GetAllSecretaries", "Secretaries");
+            return RedirectToAction("AllSecretaries", "Secretaries");
         }
 
         [HttpGet("{id}")]
@@ -37,7 +37,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             var disabledSecretary = await _secretaryService.DisableSecretaryAsync(id);
 
-            return RedirectToAction("GetAllSecretaries", "Secretaries");
+            return RedirectToAction("AllSecretaries", "Secretaries");
         }
 
         [HttpGet("{id}")]
