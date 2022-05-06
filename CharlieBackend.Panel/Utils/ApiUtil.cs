@@ -24,8 +24,10 @@ namespace CharlieBackend.Panel.Utils
         private async Task EnsureSuccessStatusCodeAsync(HttpResponseMessage httpResponse)
         {
             string message = await _httpUtil.EnsureSuccessStatusCode(httpResponse);
-            if(!string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
+            {
                 throw new HttpStatusException(httpResponse.StatusCode, message);
+            }
         }
 
         public async Task<SignInResultDto> SignInAsync(string url, AuthenticationDto authModel)
