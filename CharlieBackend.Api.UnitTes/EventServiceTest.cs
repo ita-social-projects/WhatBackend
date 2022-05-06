@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
+using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Mapping;
@@ -27,6 +28,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly int _lessonId;
         private readonly int _nonexistingId;
         public UpdateScheduledEventDto _update;
+        private readonly Mock<ISchedulesEventsDbEntityVerifier> _validator;
 
         public EventServiceTest()
         {
@@ -39,6 +41,7 @@ namespace CharlieBackend.Api.UnitTest
             _existingId = 551;
             _lessonId = 11;
             _nonexistingId = 999;
+            _validator = new Mock<ISchedulesEventsDbEntityVerifier>();
         }
 
         [Fact]
@@ -50,7 +53,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.GetAsync(_existingId);
@@ -69,7 +72,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.GetAsync(_nonexistingId);
@@ -100,7 +103,7 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.ThemeRepository).Returns(_themeRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_groupRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             
             _update = new UpdateScheduledEventDto
@@ -136,7 +139,7 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
             var expectedUpdate = new UpdateScheduledEventDto{};
 
             //Act & Assert
@@ -152,7 +155,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.DeleteAsync(_existingId);
@@ -170,7 +173,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             // Act & Assert
             Invoking(() => eventService.DeleteAsync(_existingId)).Should().Throw<Exception>();
@@ -185,7 +188,7 @@ namespace CharlieBackend.Api.UnitTest
             _eventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(_existingId, _lessonId))
                 .ReturnsAsync(_validEvent);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);
@@ -207,7 +210,7 @@ namespace CharlieBackend.Api.UnitTest
             wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
                 .ReturnsAsync(default(ScheduledEvent));
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.ConnectScheduleToLessonById(wrongScheduledEvent.Id, _lessonId);
@@ -225,7 +228,7 @@ namespace CharlieBackend.Api.UnitTest
             _eventRepositoryMock.Setup(x => x.IsLessonConnectedToSheduledEventAsync(_lessonId))
                 .ReturnsAsync(true);
 
-            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper);
+            var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);

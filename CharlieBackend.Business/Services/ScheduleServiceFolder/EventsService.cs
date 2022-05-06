@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Business.Exceptions;
 using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.Interfaces;
@@ -15,11 +16,13 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ISchedulesEventsDbEntityVerifier _validator;
 
-        public EventsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public EventsService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulesEventsDbEntityVerifier validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<Result<bool>> DeleteAsync(long id)
@@ -59,7 +62,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         {
             if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
             {
-               return ExceptionsConstants.MentorNotValid;
+                return ExceptionsConstants.MentorNotValid;
             }
             if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
             {
@@ -85,6 +88,26 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return scheduleEntity == null ?
                 Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Scheduled event with id={eventId} does not exist") :
                 Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
+        }
+
+        public async Task<Result<SingleEventDTO>> CreateSingleEventAsync(CreateSingleEventDto createSingleEvent)
+        {
+            {
+                string error = await _validator.ValidateCreateScheduleEventRequestAsync(createSingleEvent);
+
+                if (error != null)
+                {
+                    return Result<SingleEventDTO>.GetError(ErrorCode.ValidationError, error);
+                }
+
+                var createdSingleEventEntity = _mapper.Map<ScheduledEvent>(createSingleEvent);
+
+                _unitOfWork.ScheduledEventRepository.Add(createdSingleEventEntity);
+
+                await _unitOfWork.CommitAsync();
+
+                return Result<SingleEventDTO>.GetSuccess(_mapper.Map<SingleEventDTO>(createdSingleEventEntity));
+            }
         }
     }
 }
