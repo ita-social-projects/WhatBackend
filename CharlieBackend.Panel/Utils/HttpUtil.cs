@@ -1,5 +1,5 @@
 using CharlieBackend.Core.DTO.Result;
-using CharlieBackend.Panel.Exceptions;
+using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Utils.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -76,16 +76,22 @@ namespace CharlieBackend.Panel.Utils
             return responseMessage;
         }
 
-        public async Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse)
+        public async Task<string> EnsureSuccessStatusCode(HttpResponseMessage httpResponse)
         {
             if (!httpResponse.IsSuccessStatusCode)
             {
                 string apiStringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-                var apiResponseMessage = JsonConvert.DeserializeObject<ErrorDto>(apiStringResponse).Error.Message;
+                string apiResponseMessage;
+                if (apiStringResponse != "")
+                    apiResponseMessage = JsonConvert.DeserializeObject<ErrorDto>(apiStringResponse).Error.Message;
+                else
+                    apiResponseMessage = ErrorsConstants.EmptyApiStringResponse;
 
-                throw new HttpStatusException(httpResponse.StatusCode, apiResponseMessage);
+                return apiResponseMessage;
             }
+
+            return string.Empty;
         }
 
         public async Task<HttpResponseMessage> PatchAsync(string url)
