@@ -9,7 +9,6 @@ using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Threading.Tasks;
-using System.Text;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 {
@@ -17,6 +16,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ISchedulesEventsDbEntityVerifier _validator;
 
         public EventsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -61,7 +61,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         {
             if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
             {
-               return ExceptionsConstants.MentorNotValid;
+                return ExceptionsConstants.MentorNotValid;
             }
             if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
             {
@@ -89,51 +89,24 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
         }
 
-        public async Task<Result<CreateSingleEventDTO>> CreateSingleEvent(SingleEventRequestDto createSingleEventRequest)
+        public async Task<Result<SingleEventDTO>> CreateSingleEvent(CreateSingleEventDto createSingleEvent)
         {
             {
-                string error = await ValidateCreateScheduleEventRequestAsync(createSingleEventRequest);
+                string error = await _validator.ValidateCreateScheduleEventRequestAsync(createSingleEvent);
 
                 if (error != null)
                 {
-                    return Result<CreateSingleEventDTO>.GetError(ErrorCode.ValidationError, error);
+                    return Result<SingleEventDTO>.GetError(ErrorCode.ValidationError, error);
                 }
 
-                var createdSingleEventEntity = _mapper.Map<ScheduledEvent>(createSingleEventRequest);
+                var createdSingleEventEntity = _mapper.Map<ScheduledEvent>(createSingleEvent);
 
                 _unitOfWork.ScheduledEventRepository.Add(createdSingleEventEntity);
 
                 await _unitOfWork.CommitAsync();
 
-                return Result<CreateSingleEventDTO>.GetSuccess(_mapper.Map<CreateSingleEventDTO>(createdSingleEventEntity));
+                return Result<SingleEventDTO>.GetSuccess(_mapper.Map<SingleEventDTO>(createdSingleEventEntity));
             }
-        }
-
-        private async Task<string> ValidateCreateScheduleEventRequestAsync(SingleEventRequestDto request)
-        {
-            if (request == null)
-            {
-                return "Request must not be null";
-            }
-
-            StringBuilder error = new StringBuilder(string.Empty);
-
-            if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId))
-            {
-                error.Append(" Group does not exist");
-            }
-
-            if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
-            {
-                error.Append(" Mentor does not exist");
-            }
-
-            if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
-            {
-                error.Append(" Theme does not exist");
-            }
-
-            return error.Length > 0 ? error.ToString() : null;
         }
     }
 }

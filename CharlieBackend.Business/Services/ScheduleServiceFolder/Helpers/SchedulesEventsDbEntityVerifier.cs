@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Event;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,6 +99,28 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
             }
 
             return result;
+        }
+
+        public async Task<string> ValidateCreateScheduleEventRequestAsync(CreateSingleEventDto request)
+        {
+            StringBuilder error = new StringBuilder(string.Empty);
+
+            if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId))
+            {
+                error.Append(" Group does not exist");
+            }
+
+            if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
+            {
+                error.Append(" Mentor does not exist");
+            }
+
+            if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
+            {
+                error.Append(" Theme does not exist");
+            }
+
+            return error.Length > 0 ? error.ToString() : null;
         }
     }
 }

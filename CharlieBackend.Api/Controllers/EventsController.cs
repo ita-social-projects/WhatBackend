@@ -40,10 +40,10 @@ namespace CharlieBackend.Api.Controllers
         /// <response code="200">Successful add of schedule</response>
         /// <response code="HTTP: 400, API: 0">Can not create event due to wrong request data</response>
         /// <response code="HTTP: 404, API: 3">Can not create event due to missing request data</response>
-        [SwaggerResponse(200, type: typeof(CreateSingleEventDTO))]
+        [SwaggerResponse(200, type: typeof(SingleEventDTO))]
         [Authorize(Roles = "Secretary, Admin")]
         [HttpPost]
-        public async Task<ActionResult<CreateSingleEventDTO>> AddSingleEvent([FromBody] SingleEventRequestDto request)
+        public async Task<ActionResult<SingleEventDTO>> AddSingleEventAsync([FromBody] CreateSingleEventDto request)
         {
             var createEvent = await _eventsService.CreateSingleEvent(request);
 
