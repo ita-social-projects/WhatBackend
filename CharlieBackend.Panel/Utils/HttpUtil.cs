@@ -82,13 +82,9 @@ namespace CharlieBackend.Panel.Utils
             {
                 string apiStringResponse = await httpResponse.Content.ReadAsStringAsync();
 
-                string apiResponseMessage;
-                if (apiStringResponse != "")
-                    apiResponseMessage = JsonConvert.DeserializeObject<ErrorDto>(apiStringResponse).Error.Message;
-                else
-                    apiResponseMessage = ErrorsConstants.EmptyApiStringResponse;
-
-                return apiResponseMessage;
+                return !string.IsNullOrWhiteSpace(apiStringResponse)
+                    ? JsonConvert.DeserializeObject<ErrorDto>(apiStringResponse).Error.Message 
+                    : ErrorsConstants.EmptyApiStringResponse;
             }
 
             return string.Empty;
