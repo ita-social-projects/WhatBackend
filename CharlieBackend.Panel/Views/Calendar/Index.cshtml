@@ -34,11 +34,20 @@
         text-align: center;
     }
 
-    .col-1:first-child, .col-2 {
+    .col-calendar {
+        position: relative;
+        width: 100%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+        flex: 0 0 14.285714%;
+        max-width: 14.285714%;
+    }
+
+    .col-1:first-child, .col-2, .col-calendar {
         border-right: 0.5px solid;
     }
 
-    .col-2, .col-1 {
+    .col-2, .col-1, .col-calendar {
         border-bottom: 0.5px solid grey;
         min-height: 100px;
     }

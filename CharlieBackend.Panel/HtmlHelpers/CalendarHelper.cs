@@ -161,7 +161,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
         private static TagBuilder GetDayBlock(DateTime date)
         {
             TagBuilder div = new TagBuilder("div");
-            string rowClass = IsWeekend(date) ? "col-1" : "col-2";
+            //string rowClass = IsWeekend(date) ? "col-1" : "col-2";
+            string rowClass = "col-calendar";
             div.AddCssClass(rowClass);
 
             return div;
