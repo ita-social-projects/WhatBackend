@@ -103,7 +103,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
         public async Task<string> ValidateCreateScheduleEventRequestAsync(CreateSingleEventDto request)
         {
-            StringBuilder error = new StringBuilder(string.Empty);
+            StringBuilder error = new StringBuilder();
 
             if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId))
             {

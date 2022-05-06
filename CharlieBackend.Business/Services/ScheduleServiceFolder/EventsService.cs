@@ -18,10 +18,11 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         private readonly IMapper _mapper;
         private readonly ISchedulesEventsDbEntityVerifier _validator;
 
-        public EventsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public EventsService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulesEventsDbEntityVerifier validator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<Result<bool>> DeleteAsync(long id)
