@@ -45,7 +45,7 @@ namespace CharlieBackend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<SingleEventDTO>> AddSingleEventAsync([FromBody] CreateSingleEventDto request)
         {
-            var createEvent = await _eventsService.CreateSingleEvent(request);
+            var createEvent = await _eventsService.CreateSingleEventAsync(request);
 
             return createEvent.ToActionResult();
         }

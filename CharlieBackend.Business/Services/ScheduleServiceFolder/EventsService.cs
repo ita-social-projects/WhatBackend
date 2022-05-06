@@ -90,7 +90,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                 Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
         }
 
-        public async Task<Result<SingleEventDTO>> CreateSingleEvent(CreateSingleEventDto createSingleEvent)
+        public async Task<Result<SingleEventDTO>> CreateSingleEventAsync(CreateSingleEventDto createSingleEvent)
         {
             {
                 string error = await _validator.ValidateCreateScheduleEventRequestAsync(createSingleEvent);
