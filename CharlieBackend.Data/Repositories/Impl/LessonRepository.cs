@@ -1,5 +1,4 @@
 ﻿using CharlieBackend.Core;
-using CharlieBackend.Core.DTO.Lesson;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -13,14 +12,14 @@ namespace CharlieBackend.Data.Repositories.Impl
 {
     public class LessonRepository : Repository<Lesson>, ILessonRepository
     {
-        public LessonRepository(ApplicationContext applicationContext) 
-            : base(applicationContext) 
-        { 
+        public LessonRepository(ApplicationContext applicationContext)
+            : base(applicationContext)
+        {
         }
 
-        public new async Task<List<Lesson>> GetAllAsync()
+        public override Task<List<Lesson>> GetAllAsync()
         {
-            return await _applicationContext.Lessons
+            return _applicationContext.Lessons
                     .Include(lesson => lesson.Visits)
                     .Include(lesson => lesson.Theme)
                     .ToListAsync();
@@ -42,18 +41,18 @@ namespace CharlieBackend.Data.Repositories.Impl
                   .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
+        public Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
         {
-            return await _applicationContext.Lessons
+            return _applicationContext.Lessons
                 .Where(lesson => lesson.MentorId == mentorId)
                 .Select(lesson => lesson)
                 .Include(lesson => lesson.Theme)
                 .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId)
+        public Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId)
         {
-            return await _applicationContext.Lessons
+            return _applicationContext.Lessons
                 .Where(lesson => lesson.StudentGroupId == studentGroupId)
                 .ToListAsync();
         }
@@ -66,18 +65,18 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .FirstOrDefaultAsync(l => l.Id == homework.LessonId);
         }
 
-        public async Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
+        public Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId)
         {
-            return await _applicationContext.Lessons
-                .Where(x=> x.MentorId == mentorId)
+            return _applicationContext.Lessons
+                .Where(x => x.MentorId == mentorId)
                 .WhereIf(studentGroupId != default, x => x.StudentGroupId == studentGroupId)
                 .WhereIf((startDate != default) && (finishDate != default), x => (startDate < x.LessonDate) && (x.LessonDate < finishDate))
                 .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId)
+        public Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId)
         {
-            return await _applicationContext.StudentsOfStudentGroups
+            return _applicationContext.StudentsOfStudentGroups
                 .Where(
                     studentsOfGroup => studentsOfGroup.StudentId == studentId &&
                     studentsOfGroup.StudentGroupId == studentGroupId
@@ -88,49 +87,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                     l => l.StudentGroupId,
                     (students_of_student_group, lesson) => lesson
                 )
-                .Where(lesson=> (lesson.LessonDate > startDate) && (lesson.LessonDate < finishDate))
+                .Where(lesson => (lesson.LessonDate > startDate) && (lesson.LessonDate < finishDate))
                 .Include(lesson => lesson.Theme)
                 .ToListAsync();
         }
 
-        public async Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId)
+        public override Task<Lesson> GetByIdAsync(long id)
         {
-            try
-            {
-                var studentLessonDtos = new List<StudentLessonDto>();
-
-                var visits = await _applicationContext.Visits
-                        .Include(visit => visit.Lesson)
-                        .ThenInclude(lesson => lesson.Theme)
-                        .Where(visit => visit.StudentId == studentId).ToListAsync();
-
-                for (int i = 0; i < visits.Count; i++)
-                {
-                    var studentLessonDto = new StudentLessonDto
-                    {
-                        Id = visits[i].Lesson.Id,
-                        Comment = visits[i].Comment,
-                        Mark = visits[i].StudentMark,
-                        Presence = visits[i].Presence,
-                        ThemeName = visits[i].Lesson.Theme.Name,
-                        LessonDate = visits[i].Lesson.LessonDate,
-                        StudentGroupId = visits[i].Lesson.StudentGroupId
-                    };
-
-                    studentLessonDtos.Add(studentLessonDto);
-                }
-
-                return studentLessonDtos;
-            }
-            catch 
-            {
-                return null; 
-            }
-        }
-
-        public async override Task<Lesson> GetByIdAsync(long id)
-        {
-            return await _applicationContext.Lessons
+            return _applicationContext.Lessons
                 .Include(x => x.Visits)
                 .Include(x => x.Theme)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
@@ -139,6 +103,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<Visit> GetVisitByStudentHomeworkIdAsync(long studentHomeworkId)
         {
             Visit visit = null;
+
             try
             {
                 visit = await _applicationContext.Visits.
@@ -153,7 +118,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return visit;
         }
-        public async Task<bool> DoesLessonWithThemeExist(long themeId)
-            => await _applicationContext.Lessons.AnyAsync(l => l.ThemeId == themeId);
+        public Task<bool> DoesLessonWithThemeExist(long themeId)
+            => _applicationContext.Lessons.AnyAsync(l => l.ThemeId == themeId);
     }
 }

@@ -229,6 +229,13 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<Visit, VisitDto>();
             CreateMap<VisitDto, Visit>();
 
+            CreateMap<Visit, StudentLessonDto>()
+                .ForMember(x => x.Id, x => x.MapFrom(y => y.Lesson.Id))
+                .ForMember(x => x.Mark, x => x.MapFrom(y => y.StudentMark))
+                .ForMember(x => x.ThemeName, x => x.MapFrom(y => y.Lesson.Theme.Name))
+                .ForMember(x => x.LessonDate, x => x.MapFrom(y => y.Lesson.LessonDate))
+                .ForMember(x => x.StudentGroupId, x => x.MapFrom(y => y.Lesson.StudentGroupId));
+
             #endregion
         }
     }
