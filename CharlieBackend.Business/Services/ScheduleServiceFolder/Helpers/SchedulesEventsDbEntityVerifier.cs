@@ -52,7 +52,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (request.Pattern.Type > PatternType.RelativeMonthly || request.Pattern.Type < PatternType.Daily)
             {
-                error.Append(ResponseMessages.NotValid(typeof(PatternType).Name));
+                error.Append(ResponseMessages.NotValid(nameof(PatternType)));
             }
 
             return error.Length > 0 ? error.ToString() : null;
