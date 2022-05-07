@@ -1,28 +1,15 @@
-﻿using CharlieBackend.Api.Validators.MentorDTOValidators;
-using CharlieBackend.Core.DTO.Mentor;
-using FluentAssertions;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
+using CharlieBackend.Api.Validators.MentorDTOValidators;
+using CharlieBackend.Core.DTO.Mentor;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
 {
     public class UpdateMentorDtoValidatorTests : TestBase
     {
-        private UpdateMentorDtoValidator _validator;
-
-        private readonly string validEmail = "ValidEmail@gmail.com";
-        private readonly string validFirstName = "Validfirstname";
-        private readonly string validLastName = "Validlastname";
-        private readonly List<long> validCourseIDs = new List<long> {1, 21, 30, 42, 54, 73 };
-        private readonly List<long> validStudentGroupIDs = new List<long> { 1, 21, 30, 42, 54, 73 };
-
-        private readonly string notValidEmail = "NOTValidEmail";
-        private readonly string notValidFirstName = "TooLooooooooooooooooooooongName";
-        private readonly string notValidLastName = "TooLooooooooooooooooooooongName";
-        private readonly List<long> notValidCourseIDs = new List<long> { 0, 21, 30, 42, 54, 70 };
-        private readonly List<long> notValidStudentGroupIDs = new List<long> { 0, 21, 30, 42, 54, 73 };
+        private readonly UpdateMentorDtoValidator _validator;
 
         public UpdateMentorDtoValidatorTests()
         {
@@ -50,12 +37,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName,
-                    validCourseIDs,
-                    validStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs(),
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -85,12 +71,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidEmail,
-                    notValidFirstName,
-                    notValidLastName,
-                    notValidCourseIDs,
-                    notValidStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.NotValidLastName,
+                TestValidationConstants.GetNotValidIDs(),
+                TestValidationConstants.GetNotValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -105,12 +90,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidEmail,
-                    validFirstName,
-                    validLastName,
-                    validCourseIDs,
-                    validStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs(),
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -125,12 +109,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidFirstName_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    notValidFirstName,
-                    validLastName,
-                    validCourseIDs,
-                    validStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs(),
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -145,12 +128,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidLastName_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validFirstName,
-                    notValidLastName,
-                    validCourseIDs,
-                    validStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.NotValidLastName,
+                TestValidationConstants.GetValidIDs(),
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -165,12 +147,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidCourseIDs_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName,
-                    notValidCourseIDs,
-                    validStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetNotValidIDs(),
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -185,12 +166,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateMentorDTOAsync_NotValidStudentGroupsIDs_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName,
-                    validCourseIDs,
-                    notValidStudentGroupIDs);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs(),
+                TestValidationConstants.GetNotValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(dto);

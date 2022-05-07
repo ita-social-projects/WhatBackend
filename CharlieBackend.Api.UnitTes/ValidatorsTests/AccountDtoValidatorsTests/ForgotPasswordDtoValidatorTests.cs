@@ -30,8 +30,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ForgotPasswordDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.ValidFormURL);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -61,8 +61,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ForgotPasswordDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.NotValidEmail,
-                TestAccountValidationConstants.ValidFormURL);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -77,8 +77,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ForgotPasswordDTOAsync_NotValidFormURL_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.NotValidFormURL);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

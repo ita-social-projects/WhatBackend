@@ -30,8 +30,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail, 
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail, 
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -61,8 +61,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.NotValidEmail,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -77,8 +77,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_TooShortPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.TooShortPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.TooShortPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -93,8 +93,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_TooLongPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail, 
-                TestAccountValidationConstants.TooLongPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail, 
+                TestValidationConstants.TooLongPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -108,8 +108,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_NoNumbersPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.NoNumbersPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NoNumbersPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -124,8 +124,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_NoUppercasePassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail, 
-                TestAccountValidationConstants.NoUpperCasePassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail, 
+                TestValidationConstants.NoUpperCasePassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -140,7 +140,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task AuthenticationDTOAsync_NoSpecialSymbolsPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail, TestAccountValidationConstants.NoSpecialSymbolsPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail, TestValidationConstants.NoSpecialSymbolsPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

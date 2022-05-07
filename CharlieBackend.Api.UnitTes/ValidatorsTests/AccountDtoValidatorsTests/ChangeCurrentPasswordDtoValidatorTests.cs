@@ -32,9 +32,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ChangeCurrentPasswordDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -64,9 +64,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ChangeCurrentPasswordDTOAsync_NotValidCurrentPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.NotValidPassword,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.NotValidPassword,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -81,9 +81,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ChangeCurrentPasswordDTOAsync_NotValidNewPasswords_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.NotValidPassword,
-                TestAccountValidationConstants.NotValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidPassword,
+                TestValidationConstants.NotValidPassword,
+                TestValidationConstants.NotValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -98,9 +98,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task ChangeCurrentPasswordDTOAsync_NotEqualConfirmPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.NotValidConfirmPassword);
+            var dto = GetDTO(TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.NotValidConfirmPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

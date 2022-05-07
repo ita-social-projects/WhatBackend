@@ -36,11 +36,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -70,11 +70,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.NotValidEmail,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -89,11 +89,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_NotValidFirstName_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.NotValidName,
-                TestAccountValidationConstants.ValidName, 
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidName,
+                TestValidationConstants.ValidName, 
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -108,11 +108,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_NotValidLastName_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.ValidName, 
-                TestAccountValidationConstants.NotValidName,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.ValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidName, 
+                TestValidationConstants.NotValidName,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -127,11 +127,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_NotValidPasswords_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.NotValidPassword,
-                TestAccountValidationConstants.NotValidPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.NotValidPassword,
+                TestValidationConstants.NotValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -146,11 +146,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
         public async Task CreateAccountDTOAsync_NotEqualConfirmPassword_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidName,
-                TestAccountValidationConstants.ValidPassword,
-                TestAccountValidationConstants.NotValidConfirmPassword);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidName,
+                TestValidationConstants.ValidPassword,
+                TestValidationConstants.NotValidConfirmPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
