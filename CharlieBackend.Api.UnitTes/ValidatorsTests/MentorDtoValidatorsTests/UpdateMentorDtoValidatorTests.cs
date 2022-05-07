@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Xunit;
-using CharlieBackend.Api.Validators.MentorDTOValidators;
+﻿using CharlieBackend.Api.Validators.MentorDTOValidators;
 using CharlieBackend.Core.DTO.Mentor;
+using FluentAssertions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
 {

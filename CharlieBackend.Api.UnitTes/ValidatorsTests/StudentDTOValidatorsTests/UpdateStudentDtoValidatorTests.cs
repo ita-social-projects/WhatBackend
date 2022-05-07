@@ -5,19 +5,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
 {
     public class UpdateStudentDtoValidatorTests: TestBase
     {
-        private UpdateStudentDtoValidator _validator;
-        private readonly string validEmail = "ValidEmail@gmail.com";
-        private readonly string validFirstName = "Validfirstname";
-        private readonly string validLastName = "Validlastname";
-        private readonly List<long> validStudentGroupIds = new List<long>() { 1, 2, 36};
-        private readonly string notValidEmail = "NotValidEmail";
-        private readonly string notValidFirstName = "TooLoooooooooooooooongFirstName";
-        private readonly string notValidLastName = "TooLooooooooooooooooongLastName";
-        private readonly List<long> notValidStudentGroupIds = new List<long>() { 0, 2, 36 };
+        private readonly UpdateStudentDtoValidator _validator;
 
         public UpdateStudentDtoValidatorTests()
         {
@@ -43,11 +35,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName,
-                    validStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -77,11 +68,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    notValidEmail,
-                    notValidFirstName,
-                    notValidLastName,
-                    notValidStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.NotValidLastName,
+                TestValidationConstants.GetNotValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -96,11 +86,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    notValidEmail,
-                    validFirstName,
-                    validLastName,
-                    validStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -115,11 +104,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_NotValidFirstName_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    validEmail,
-                    notValidFirstName,
-                    validLastName,
-                    validStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -134,11 +122,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_NotValidLastName_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    validEmail,
-                    validFirstName,
-                    notValidLastName,
-                    validStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.NotValidLastName,
+                TestValidationConstants.GetValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -153,11 +140,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateStudentDTOAsync_NotValidStudentGroupIds_ShouldReturnFalse()
         {
             // Arrange
-            var student = Get_UpdateStudentDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName,
-                    notValidStudentGroupIds);
+            var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName,
+                TestValidationConstants.GetNotValidIDs());
 
             // Act
             var result = await _validator.ValidateAsync(student);
