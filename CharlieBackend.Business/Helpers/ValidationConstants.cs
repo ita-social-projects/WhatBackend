@@ -16,6 +16,5 @@
         public const string DatesNotValid = "StartDate can not be greater than FinishDate";
         public const string EmailRegexCheck = @"^([a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-z]{2,6}$";
         public const string NameRegexCheck = @"^[a-zA-Z '.-]*$";
-
     }
 }

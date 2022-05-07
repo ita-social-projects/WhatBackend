@@ -21,7 +21,8 @@ namespace CharlieBackend.Api.Validators.Schedule
                 .When(x => x.LessonEnd != null)
                 .WithMessage(ValidationConstants.DatesNotValid);
             RuleFor(x => x.RepeatRate)
-                .NotEmpty();
+                .NotEmpty()
+                .IsInEnum();
             RuleFor(x => x.DayNumber)
                 .GreaterThanOrEqualTo((uint)1)
                 .LessThanOrEqualTo((uint)31);
