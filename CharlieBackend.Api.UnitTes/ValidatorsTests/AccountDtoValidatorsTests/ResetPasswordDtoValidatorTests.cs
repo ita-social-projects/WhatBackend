@@ -4,16 +4,11 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
 {
     public class ResetPasswordDtoValidatorTests : TestBase
     {
-        private ResetPasswordDtoValidator _validator;
-        private readonly string validEmail = "ValidEmail@gmail.com";
-        private readonly string validPassword = "validPassword_12";
-        private readonly string notValidEmail = "@ValidEmailgmail.com";
-        private readonly string notValidPassword = "VP_12";
-        private readonly string notValidConfirmPassword = "notEqualPassword";
+        private readonly ResetPasswordDtoValidator _validator;
 
         public ResetPasswordDtoValidatorTests()
         {
@@ -37,10 +32,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ResetPasswordDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validPassword,
-                    validPassword);
+            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
+                TestAccountValidationConstants.ValidPassword,
+                TestAccountValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -70,10 +64,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ResetPasswordDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidEmail,
-                    validPassword,
-                    validPassword);
+            var dto = GetDTO(TestAccountValidationConstants.NotValidEmail,
+                TestAccountValidationConstants.ValidPassword,
+                TestAccountValidationConstants.ValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -88,10 +81,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ResetPasswordDTOAsync_NotValidPasswords_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    notValidPassword,
-                    notValidPassword);
+            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
+                TestAccountValidationConstants.NotValidPassword,
+                TestAccountValidationConstants.NotValidPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -106,10 +98,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ResetPasswordDTOAsync_NotEqualPasswords_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validPassword,
-                    notValidConfirmPassword);
+            var dto = GetDTO(TestAccountValidationConstants.ValidEmail,
+                TestAccountValidationConstants.ValidPassword,
+                TestAccountValidationConstants.NotValidConfirmPassword);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
