@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -71,7 +71,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.NotValidEmail,
                 TestValidationConstants.NotValidFirstName,
                 TestValidationConstants.NotValidLastName,
-                TestValidationConstants.GetNotValidIDs());
+                TestValidationConstants.NotValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -89,7 +89,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.NotValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -107,7 +107,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.NotValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -125,7 +125,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.NotValidLastName,
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);
@@ -143,7 +143,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.StudentDTOValidatorsTests
             var student = Get_UpdateStudentDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetNotValidIDs());
+                TestValidationConstants.NotValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(student);

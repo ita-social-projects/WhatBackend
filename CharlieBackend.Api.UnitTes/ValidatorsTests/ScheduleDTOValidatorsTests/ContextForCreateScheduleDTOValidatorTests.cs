@@ -4,17 +4,11 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 {
     public class ContextForCreateScheduleDTOValidatorTests : TestBase
     {
-        private ContextForCreateScheduleDTOValidator _validator;
-        private readonly long validGroupId = 1;
-        private readonly long validThemeId = 1;
-        private readonly long validMentorId = 1;
-        private readonly long notValidGroupId = 0;
-        private readonly long notValidThemeId = 0;
-        private readonly long notValidMentorId = 0;
+        private readonly ContextForCreateScheduleDTOValidator _validator;
 
         public ContextForCreateScheduleDTOValidatorTests()
         {
@@ -38,10 +32,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validGroupId,
-                    validThemeId,
-                    validMentorId);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -71,7 +64,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_EmptyDataExceptGroupId_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(validGroupId);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -86,10 +79,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidGroupId,
-                    notValidThemeId,
-                    notValidMentorId);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidEntityID,
+                ScheduleTestValidationConstants.NotValidEntityID,
+                ScheduleTestValidationConstants.NotValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -104,10 +96,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_NotValidGroupID_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidGroupId,
-                    validThemeId,
-                    validMentorId);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -122,10 +113,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_NotValidThemeID_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validGroupId,
-                    notValidThemeId,
-                    validMentorId);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.NotValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -140,10 +130,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_NotValidMentorID_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validGroupId,
-                    validThemeId,
-                    notValidMentorId);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.ValidEntityID,
+                ScheduleTestValidationConstants.NotValidEntityID);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

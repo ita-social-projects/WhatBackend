@@ -44,15 +44,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 
         #region IDs
 
-        public static List<long> GetValidIDs()
-        {
-            return new List<long> { 1, 21, 30, 42, 54, 73 };
-        }
-
-        public static List<long> GetNotValidIDs()
-        {
-            return new List<long> { 0, 21, 30, 42, 54, 70 };
-        }
+        public static readonly List<long> ValidEntityIDs = new List<long> { 1, 21, 30, 42, 54, 73 };
+        public static readonly List<long> NotValidEntityIDs = new List<long> { 0, 21, 30, 42, 54, 70 };
 
         #endregion
     }

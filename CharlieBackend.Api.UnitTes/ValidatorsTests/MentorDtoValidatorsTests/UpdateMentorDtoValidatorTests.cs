@@ -40,8 +40,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs(),
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs,
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -74,8 +74,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.NotValidEmail,
                 TestValidationConstants.NotValidFirstName,
                 TestValidationConstants.NotValidLastName,
-                TestValidationConstants.GetNotValidIDs(),
-                TestValidationConstants.GetNotValidIDs());
+                TestValidationConstants.NotValidEntityIDs,
+                TestValidationConstants.NotValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -93,8 +93,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.NotValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs(),
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs,
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -112,8 +112,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.NotValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs(),
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs,
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -131,8 +131,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.NotValidLastName,
-                TestValidationConstants.GetValidIDs(),
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.ValidEntityIDs,
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -150,8 +150,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetNotValidIDs(),
-                TestValidationConstants.GetValidIDs());
+                TestValidationConstants.NotValidEntityIDs,
+                TestValidationConstants.ValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -169,8 +169,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.MentorDtoValidatorsTests
             var dto = GetDTO(TestValidationConstants.ValidEmail,
                 TestValidationConstants.ValidFirstName,
                 TestValidationConstants.ValidLastName,
-                TestValidationConstants.GetValidIDs(),
-                TestValidationConstants.GetNotValidIDs());
+                TestValidationConstants.ValidEntityIDs,
+                TestValidationConstants.NotValidEntityIDs);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

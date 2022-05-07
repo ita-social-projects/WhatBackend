@@ -5,15 +5,11 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 {
     public class OccurenceRangeValidatorTests : TestBase
     {
-        private OccurenceRangeValidator _validator;
-        private readonly DateTime validStartDate = new DateTime(2020, 01, 01);
-        private readonly DateTime validFinishDate = new DateTime(2020, 01, 01);
-        private readonly DateTime notValidStartDate = new DateTime(2020, 01, 01);
-        private readonly DateTime notValidFinishDate = new DateTime(2019, 01, 01);
+        private readonly OccurenceRangeValidator _validator;
 
         public OccurenceRangeValidatorTests()
         {
@@ -21,7 +17,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         public OccurenceRange GetDTO(
-            DateTime startDate = default(DateTime),
+            DateTime startDate = default,
             DateTime? finishDate = null)
         {
             return new OccurenceRange
@@ -35,9 +31,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task OccurenceRangeAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validStartDate,
-                    validFinishDate);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidStartDate,
+                ScheduleTestValidationConstants.ValidFinishDate);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -67,7 +62,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task OccurenceRangeAsync_EmptyFinishDate_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(validStartDate);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidStartDate);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -79,12 +74,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         }
 
         [Fact]
-        public async Task OccurenceRangeAsync_NotValidData_ShouldReturnFalse()
+        public async Task OccurenceRangeAsync_NotValidFinishDate_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidStartDate,
-                    notValidFinishDate);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidStartDate,
+                ScheduleTestValidationConstants.NotValidFinishDate);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
