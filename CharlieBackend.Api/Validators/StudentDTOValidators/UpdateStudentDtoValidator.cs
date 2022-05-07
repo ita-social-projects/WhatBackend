@@ -4,17 +4,28 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.StudentDTOValidators
 {
+    /// <summary>
+    /// UpdateStudentDto fluent validator
+    /// </summary>
     public class UpdateStudentDtoValidator : AbstractValidator<UpdateStudentDto>
     {
+        /// <summary>
+        /// Fluent validation rules for UpdateStudentDto
+        /// </summary>
         public UpdateStudentDtoValidator()
         {
             RuleFor(x => x.Email)
                 .EmailAddress()
+                .Matches(ValidationConstants.EmailRegexCheck)
                 .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.FirstName)
-                .MaximumLength(ValidationConstants.MaxLengthName);
+                .MinimumLength(ValidationConstants.MinLengthName)
+                .MaximumLength(ValidationConstants.MaxLengthName)
+                .Matches(ValidationConstants.NameRegexCheck);
             RuleFor(x => x.LastName)
-                .MaximumLength(ValidationConstants.MaxLengthName);
+                .MinimumLength(ValidationConstants.MinLengthName)
+                .MaximumLength(ValidationConstants.MaxLengthName)
+                .Matches(ValidationConstants.NameRegexCheck);
             RuleForEach(x => x.StudentGroupIds)
                 .NotEmpty()
                 .GreaterThan(0);
