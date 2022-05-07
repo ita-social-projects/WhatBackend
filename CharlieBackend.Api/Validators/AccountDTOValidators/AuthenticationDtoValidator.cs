@@ -4,8 +4,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
+    /// <summary>
+    /// AuthenticationDtoValidator fluent validator
+    /// </summary>
     public class AuthenticationDtoValidator : AbstractValidator<AuthenticationDto>
     {
+        /// <summary>
+        /// Fluent validation rules for AuthenticationDto
+        /// </summary>
         public AuthenticationDtoValidator()
         {
             RuleFor(x => x.Email)

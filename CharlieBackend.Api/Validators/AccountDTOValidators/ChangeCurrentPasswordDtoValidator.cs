@@ -4,8 +4,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
+    /// <summary>
+    /// ChangeCurrentPasswordDtoValidator fluent validator
+    /// </summary>
     public class ChangeCurrentPasswordDtoValidator : AbstractValidator<ChangeCurrentPasswordDto>
     {
+        /// <summary>
+        /// Fluent validation rules for ChangeCurrentPasswordDto
+        /// </summary>
         public ChangeCurrentPasswordDtoValidator()
         {
             RuleFor(x => x.CurrentPassword)
