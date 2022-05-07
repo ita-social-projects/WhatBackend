@@ -5,7 +5,7 @@ using FluentValidation;
 namespace CharlieBackend.Api.Validators.StudentDTOValidators
 {
     /// <summary>
-    /// UpdateStudentDto fluent validator
+    /// UpdateStudentDtoValidator fluent validator
     /// </summary>
     public class UpdateStudentDtoValidator : AbstractValidator<UpdateStudentDto>
     {
