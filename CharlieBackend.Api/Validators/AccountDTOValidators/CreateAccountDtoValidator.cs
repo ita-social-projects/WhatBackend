@@ -16,13 +16,18 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
         {
             RuleFor(x => x.FirstName)
                  .NotEmpty()
+                 .Matches(ValidationConstants.NameRegexCheck)
+                 .MinimumLength(ValidationConstants.MinLengthName)
                  .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.LastName)
                 .NotEmpty()
+                .Matches(ValidationConstants.NameRegexCheck)
+                .MinimumLength(ValidationConstants.MinLengthName)
                 .MaximumLength(ValidationConstants.MaxLengthName);
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress()
+                .Matches(ValidationConstants.EmailRegexCheck)
                 .MaximumLength(ValidationConstants.MaxLengthEmail);
             RuleFor(x => x.Password)
                 .NotEmpty()

@@ -17,6 +17,7 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .EmailAddress()
+                .Matches(ValidationConstants.EmailRegexCheck)
                 .MaximumLength(ValidationConstants.MaxLengthEmail);              
         }
     }
