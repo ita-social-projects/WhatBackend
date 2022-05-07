@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Api.UnitTest.AutoData.CustomAutoDataAttribute;
+﻿using CharlieBackend.Api.UnitTest.AutoData.CustomAutoDataAttributes;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Exceptions;
