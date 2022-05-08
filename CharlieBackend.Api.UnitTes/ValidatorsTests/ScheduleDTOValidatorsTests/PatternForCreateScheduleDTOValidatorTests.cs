@@ -19,9 +19,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         }
 
         public PatternForCreateScheduleDTO GetDTO(int interval = 0,
-            List<int> dates = null,
-            PatternType type = PatternType.Daily,
+            IList<int> dates = null,
             IList<DayOfWeek> daysOfWeek = null,
+            PatternType type = PatternType.Daily,
             MonthIndex index = MonthIndex.First)
         {
             return new PatternForCreateScheduleDTO
@@ -29,7 +29,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
                 Interval = interval,
                 Dates = dates,
                 Type = type,
-                DaysOfWeek = daysOfWeek ?? ScheduleTestValidationConstants.ValidDaysOfWeek,
+                DaysOfWeek = daysOfWeek,
                 Index = index
             };
         }
@@ -39,7 +39,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         {
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
-                ScheduleTestValidationConstants.ValidDates);
+                ScheduleTestValidationConstants.ValidDates,
+                ScheduleTestValidationConstants.ValidDaysOfWeek);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -55,7 +56,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         {
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.NotValidInterval,
-                ScheduleTestValidationConstants.ValidDates);
+                ScheduleTestValidationConstants.ValidDates,
+                ScheduleTestValidationConstants.ValidDaysOfWeek);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -71,7 +73,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         {
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
-                ScheduleTestValidationConstants.NotValidDatesBelowOne);
+                ScheduleTestValidationConstants.NotValidDatesBelowOne,
+                ScheduleTestValidationConstants.ValidDaysOfWeek);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -87,7 +90,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         {
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
-                ScheduleTestValidationConstants.NotValidDatesAboveThirtyOne);
+                ScheduleTestValidationConstants.NotValidDatesAboveThirtyOne,
+                ScheduleTestValidationConstants.ValidDaysOfWeek);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -98,7 +102,74 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
                 .BeFalse();
         }
 
+        [Fact]
+        public async Task ContextForCreateScheduleDTOAsync_EmptyDaysOfWeek_ShouldReturnFalse()
+        {
+            // Arrange
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
+                ScheduleTestValidationConstants.ValidDates);
 
-        // TODO: Add unit tests according new validation rules
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            result.IsValid
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public async Task ContextForCreateScheduleDTOAsync_NotValidDaysOfWeek_ShouldReturnFalse()
+        {
+            // Arrange
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
+                ScheduleTestValidationConstants.ValidDates,
+                ScheduleTestValidationConstants.NotValidDaysOfWeek);
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            result.IsValid
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public async Task ContextForCreateScheduleDTOAsync_NotValidPatternType_ShouldReturnFalse()
+        {
+            // Arrange
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
+                ScheduleTestValidationConstants.ValidDates,
+                ScheduleTestValidationConstants.ValidDaysOfWeek,
+                ScheduleTestValidationConstants.NotValidPatternType);
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            result.IsValid
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public async Task ContextForCreateScheduleDTOAsync_NotValidMonthlyIndex_ShouldReturnFalse()
+        {
+            // Arrange
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidInterval,
+                ScheduleTestValidationConstants.ValidDates,
+                ScheduleTestValidationConstants.ValidDaysOfWeek,
+                ScheduleTestValidationConstants.WeeklyPatternType,
+                ScheduleTestValidationConstants.NotValidMonthIndex);
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            result.IsValid
+                .Should()
+                .BeFalse();
+        }
     }
 }

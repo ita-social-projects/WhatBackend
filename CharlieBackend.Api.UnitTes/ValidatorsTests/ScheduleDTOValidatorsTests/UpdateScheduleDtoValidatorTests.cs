@@ -38,7 +38,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
                 ScheduleTestValidationConstants.ValidLessonEnd,
                 ScheduleTestValidationConstants.ValidDayNumber,
-                ScheduleTestValidationConstants.WeeklyType);
+                ScheduleTestValidationConstants.WeeklyPatternType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -70,7 +70,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
                 ScheduleTestValidationConstants.ValidLessonEnd,
-                repeatRate : ScheduleTestValidationConstants.WeeklyType);
+                repeatRate : ScheduleTestValidationConstants.WeeklyPatternType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -88,7 +88,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             var dto = GetDTO(ScheduleTestValidationConstants.NotValidLessonStart,
                 ScheduleTestValidationConstants.NotValidLessonEnd,
                 ScheduleTestValidationConstants.NotValidDayNumber,
-                ScheduleTestValidationConstants.WeeklyType);
+                ScheduleTestValidationConstants.WeeklyPatternType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -106,7 +106,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             var dto = GetDTO(ScheduleTestValidationConstants.NotValidLessonStart,
                 ScheduleTestValidationConstants.NotValidLessonEnd,
                 ScheduleTestValidationConstants.ValidDayNumber,
-                ScheduleTestValidationConstants.WeeklyType);
+                ScheduleTestValidationConstants.WeeklyPatternType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -124,7 +124,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
                 ScheduleTestValidationConstants.ValidLessonEnd,
                 ScheduleTestValidationConstants.NotValidDayNumber,
-                ScheduleTestValidationConstants.WeeklyType);
+                ScheduleTestValidationConstants.WeeklyPatternType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

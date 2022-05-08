@@ -21,8 +21,13 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         #region Enums
 
         public const MonthIndex SecondMonthIndex = MonthIndex.Second;
-        public const PatternType WeeklyType = PatternType.Weekly;
+        public const MonthIndex NotValidMonthIndex = (MonthIndex)8;
+
+        public const PatternType WeeklyPatternType = PatternType.Weekly;
+        public const PatternType NotValidPatternType = (PatternType)10;
+
         public static readonly List<DayOfWeek> ValidDaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Friday };
+        public static readonly List<DayOfWeek> NotValidDaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Friday, (DayOfWeek)10 };
 
         #endregion
 
@@ -46,7 +51,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 
         public static readonly PatternForCreateScheduleDTO ValidPattern = new PatternForCreateScheduleDTO
             {
-                Type = WeeklyType,
+                Type = WeeklyPatternType,
                 Interval = ValidInterval,
                 DaysOfWeek = ValidDaysOfWeek,
                 Index = SecondMonthIndex,
@@ -68,7 +73,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 
         public static readonly PatternForCreateScheduleDTO NotValidPattern = new PatternForCreateScheduleDTO
         {
-            Type = WeeklyType,
+            Type = WeeklyPatternType,
             Index = SecondMonthIndex,
             Interval = ValidInterval,
             DaysOfWeek = ValidDaysOfWeek,
