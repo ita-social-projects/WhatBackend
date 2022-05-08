@@ -6,31 +6,21 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 {
     public class UpdateScheduleDtoValidatorTests : TestBase
     {
-        private UpdateScheduleDtoValidator _validator;
-
-        private readonly PatternType repeatRate = PatternType.Weekly;
-
-        private readonly TimeSpan validLessonStart = new TimeSpan(12,0,0);
-        private readonly TimeSpan validLessonEnd = new TimeSpan(14,0,0);
-        private readonly uint? validDayNumber = 31;
-
-        private readonly TimeSpan notValidLessonStart = new TimeSpan(14, 30, 0);
-        private readonly TimeSpan notValidLessonEnd = new TimeSpan(14, 0, 0);
-        private readonly uint? notValidDayNumber = 33;
+        private readonly UpdateScheduleDtoValidator _validator;
 
         public UpdateScheduleDtoValidatorTests()
         {
             _validator = new UpdateScheduleDtoValidator();
         }
 
-        public UpdateScheduleDto GetDTO(
-            TimeSpan lessonStart = default(TimeSpan),
-            TimeSpan lessonEnd = default(TimeSpan),
-            uint? dayNumber = null)
+        public UpdateScheduleDto GetDTO(TimeSpan lessonStart = default,
+            TimeSpan lessonEnd = default,
+            uint? dayNumber = null,
+            PatternType repeatRate = PatternType.Daily)
         {
             return new UpdateScheduleDto
             {
@@ -45,10 +35,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduleDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validLessonStart,
-                    validLessonEnd,
-                    validDayNumber);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
+                ScheduleTestValidationConstants.ValidLessonEnd,
+                ScheduleTestValidationConstants.ValidDayNumber,
+                ScheduleTestValidationConstants.WeeklyType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -78,9 +68,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduleDTOAsync_ValidDataWithEmptyDayNumber_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validLessonStart,
-                    validLessonEnd);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
+                ScheduleTestValidationConstants.ValidLessonEnd,
+                repeatRate : ScheduleTestValidationConstants.WeeklyType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -95,10 +85,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduleDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidLessonStart,
-                    notValidLessonEnd,
-                    notValidDayNumber);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidLessonStart,
+                ScheduleTestValidationConstants.NotValidLessonEnd,
+                ScheduleTestValidationConstants.NotValidDayNumber,
+                ScheduleTestValidationConstants.WeeklyType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -113,10 +103,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduleDTOAsync_NotValidTimespan_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidLessonStart,
-                    notValidLessonEnd,
-                    validDayNumber);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidLessonStart,
+                ScheduleTestValidationConstants.NotValidLessonEnd,
+                ScheduleTestValidationConstants.ValidDayNumber,
+                ScheduleTestValidationConstants.WeeklyType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -131,10 +121,10 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateScheduleDTOAsync_NotValidDayNumber_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validLessonStart,
-                    validLessonEnd,
-                    notValidDayNumber);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidLessonStart,
+                ScheduleTestValidationConstants.ValidLessonEnd,
+                ScheduleTestValidationConstants.NotValidDayNumber,
+                ScheduleTestValidationConstants.WeeklyType);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

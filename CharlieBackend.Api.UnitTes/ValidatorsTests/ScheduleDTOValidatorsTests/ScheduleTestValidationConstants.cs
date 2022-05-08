@@ -26,15 +26,23 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 
         #endregion
 
-        public const int ValidInterval = 2;
-        public const int NotValidInterval = 0;
-
         #region IDs
 
         public const long ValidEntityID = 1;
         public const long NotValidEntityID = 0;
 
         #endregion
+
+        public const int ValidInterval = 2;
+        public const int NotValidInterval = 0;
+
+        public static readonly TimeSpan ValidLessonStart = new TimeSpan(12, 0, 0);
+        public static readonly TimeSpan ValidLessonEnd = new TimeSpan(14, 0, 0);
+        public static readonly TimeSpan NotValidLessonStart = new TimeSpan(14, 30, 0);
+        public static readonly TimeSpan NotValidLessonEnd = new TimeSpan(14, 0, 0);
+
+        public static readonly uint? ValidDayNumber = 31;
+        public static readonly uint? NotValidDayNumber = 33;
 
         public static readonly PatternForCreateScheduleDTO ValidPattern = new PatternForCreateScheduleDTO
             {
@@ -78,6 +86,48 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             GroupID = NotValidEntityID,
             ThemeID = ValidEntityID,
             MentorID = ValidEntityID
+        };
+
+        public static readonly ScheduledEventFilterRequestDTO ValidFilter = new ScheduledEventFilterRequestDTO
+        {
+            CourseID = ValidEntityID,
+            MentorID = ValidEntityID,
+            GroupID = ValidEntityID,
+            ThemeID = ValidEntityID,
+            StudentAccountID = ValidEntityID,
+            EventOccurrenceID = ValidEntityID,
+            StartDate = ValidStartDate,
+            FinishDate = ValidFinishDate
+        };
+
+        public static readonly UpdateScheduledEventDto ValidRequest = new UpdateScheduledEventDto
+        {
+            StudentGroupId = ValidEntityID,
+            ThemeId = ValidEntityID,
+            MentorId = ValidEntityID,
+            EventStart = ValidStartDate,
+            EventEnd = ValidFinishDate
+        };
+
+        public static readonly ScheduledEventFilterRequestDTO NotValidFilter = new ScheduledEventFilterRequestDTO
+        {
+            CourseID = ValidEntityID,
+            MentorID = ValidEntityID,
+            GroupID = ValidEntityID,
+            ThemeID = NotValidEntityID,
+            StudentAccountID = ValidEntityID,
+            EventOccurrenceID = ValidEntityID,
+            StartDate = ValidStartDate,
+            FinishDate = ValidFinishDate
+        };
+
+        public static readonly UpdateScheduledEventDto NotValidRequest = new UpdateScheduledEventDto
+        {
+            StudentGroupId = ValidEntityID,
+            ThemeId = ValidEntityID,
+            MentorId = ValidEntityID,
+            EventStart = ValidStartDate,
+            EventEnd = NotValidFinishDate
         };
     }
 }
