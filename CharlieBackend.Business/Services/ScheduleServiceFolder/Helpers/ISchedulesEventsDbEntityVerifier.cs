@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO.Event;
+using CharlieBackend.Core.DTO.Schedule;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
@@ -11,5 +12,6 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
         Task<string> ValidateCreateScheduleRequestAsync(CreateScheduleDto createScheduleRequest);
         Task<string> ValidateEventOccuranceId(long id);
         Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request);
+        Task<string> ValidateCreateScheduleEventRequestAsync(CreateSingleEventDto request);
     }
 }
