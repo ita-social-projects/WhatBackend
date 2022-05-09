@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -120,17 +121,17 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (!await _unitOfWork.StudentGroupRepository.IsEntityExistAsync(request.StudentGroupId))
             {
-                error.Append(" Group does not exist");
+                error.Append(ResponseMessages.NotExist("Group"));
             }
 
             if (request.MentorId.HasValue && !await _unitOfWork.MentorRepository.IsEntityExistAsync(request.MentorId.Value))
             {
-                error.Append(" Mentor does not exist");
+                error.Append(ResponseMessages.NotExist("Mentor"));
             }
 
             if (request.ThemeId.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.ThemeId.Value))
             {
-                error.Append(" Theme does not exist");
+                error.Append(ResponseMessages.NotExist("Theme"));
             }
 
             return error.Length > 0 ? error.ToString() : null;
