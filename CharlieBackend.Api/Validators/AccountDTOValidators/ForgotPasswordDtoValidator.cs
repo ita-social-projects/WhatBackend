@@ -5,8 +5,14 @@ using System;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
+    /// <summary>
+    /// ForgotPasswordDtoValidator fluent validator
+    /// </summary>
     public class ForgotPasswordDtoValidator : AbstractValidator<ForgotPasswordDto>
     {
+        /// <summary>
+        /// Fluent validation rules for ForgotPasswordDto
+        /// </summary>
         public ForgotPasswordDtoValidator()
         {
             RuleFor(x => x.Email)
@@ -16,13 +22,17 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
             RuleFor(x => x.FormUrl)
                 .NotEmpty()
                 .MaximumLength(ValidationConstants.MaxLengthURL)
-                .Must(BeValidURL);
+                .Must(IsValidURL);
         }
 
-        protected bool BeValidURL(string URL)
+        /// <summary>
+        /// Checks if is url valid
+        /// </summary>
+        /// <param name="URL"></param>
+        /// <returns>true if valid, false otherwise </returns>
+        protected bool IsValidURL(string URL)
         {
-            Uri uriResult;
-            return Uri.TryCreate(URL, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
+            return Uri.TryCreate(URL, UriKind.Absolute, out Uri uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
         }
     }
 }

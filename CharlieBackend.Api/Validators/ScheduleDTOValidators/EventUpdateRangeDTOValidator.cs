@@ -3,8 +3,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule
 {
+    /// <summary>
+    /// EventUpdateRangeDTOValidator fluent validator
+    /// </summary>
     public class EventUpdateRangeDTOValidator : AbstractValidator<EventUpdateRangeDTO>
     {
+        /// <summary>
+        /// Fluent validation rules for EventUpdateRangeDTO
+        /// </summary>
         public EventUpdateRangeDTOValidator()
         {
             RuleFor(x => x.Filter)

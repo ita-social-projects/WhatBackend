@@ -4,8 +4,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule
 {
+    /// <summary>
+    /// UpdateScheduledEventDtoValidator fluent validator
+    /// </summary>
     public class UpdateScheduledEventDtoValidator : AbstractValidator<UpdateScheduledEventDto>
     {
+        /// <summary>
+        /// Fluent validation rules for UpdateScheduledEventDto
+        /// </summary>
         public UpdateScheduledEventDtoValidator()
         {
             RuleFor(x => x.StudentGroupId)

@@ -70,7 +70,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.CreateScheduleAsync(scheduleDTO);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpPost("{id}")]
@@ -78,7 +78,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.UpdateScheduleByIdAsync(id, scheduleDTO);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpGet("{id}")]
@@ -86,7 +86,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             await _scheduleService.DeleteScheduleByIdAsync(id);
 
-            return RedirectToAction("AllEventOccurrences", "EventOccurrence");
+            return RedirectToAction("Index", "Calendar");
         }
 
         [HttpGet("{id}")]

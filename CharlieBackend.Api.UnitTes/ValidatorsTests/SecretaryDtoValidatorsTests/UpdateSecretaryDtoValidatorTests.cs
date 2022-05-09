@@ -4,17 +4,11 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.SecretaryDtoValidatorsTests
 {
     public class UpdateSecretaryDtoValidatorTests : TestBase
     {
-        private UpdateSecretaryDtoValidator _validator;
-        private readonly string validEmail = "ValidEmail@gmail.com";
-        private readonly string validFirstName = "Validfirstname";
-        private readonly string validLastName = "Validlastname";
-        private readonly string notValidEmail = "NotValidEmail";
-        private readonly string notValidFirstName = "TooLoooooooooooooooongFirstName";
-        private readonly string notValidLastName = "TooLooooooooooooooooongLastName";
+        private readonly UpdateSecretaryDtoValidator _validator;
 
         public UpdateSecretaryDtoValidatorTests()
         {
@@ -38,10 +32,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateSecretaryDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var secretary = Get_UpdateSecretaryEventDTO(
-                    validEmail,
-                    validFirstName,
-                    validLastName);
+            var secretary = Get_UpdateSecretaryEventDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName);
 
             // Act
             var result = await _validator.ValidateAsync(secretary);
@@ -71,10 +64,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateSecretaryDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var secretary = Get_UpdateSecretaryEventDTO(
-                    notValidEmail,
-                    notValidFirstName,
-                    notValidLastName);
+            var secretary = Get_UpdateSecretaryEventDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.NotValidLastName);
 
             // Act
             var result = await _validator.ValidateAsync(secretary);
@@ -89,10 +81,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateSecretaryEventDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var secretary = Get_UpdateSecretaryEventDTO(
-                    notValidEmail,
-                    validFirstName,
-                    validLastName);
+            var secretary = Get_UpdateSecretaryEventDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.ValidLastName);
 
             // Act
             var result = await _validator.ValidateAsync(secretary);
@@ -107,10 +98,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateSecretaryEventDTOAsync_NotValidFirstName_ShouldReturnFalse()
         {
             // Arrange
-            var secretary = Get_UpdateSecretaryEventDTO(
-                    validEmail,
-                    notValidFirstName,
-                    validLastName);
+            var secretary = Get_UpdateSecretaryEventDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidFirstName,
+                TestValidationConstants.ValidLastName);
 
             // Act
             var result = await _validator.ValidateAsync(secretary);
@@ -125,10 +115,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task UpdateSecretaryEventDTOAsync_NotValidLastName_ShouldReturnFalse()
         {
             // Arrange
-            var secretary = Get_UpdateSecretaryEventDTO(
-                    validEmail,
-                    validFirstName,
-                    notValidLastName);
+            var secretary = Get_UpdateSecretaryEventDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFirstName,
+                TestValidationConstants.NotValidLastName);
 
             // Act
             var result = await _validator.ValidateAsync(secretary);

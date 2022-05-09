@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+
+@model CharlieBackend.Panel.Models.Classbook.ClassbookViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+@section Scripts{
+<script type="text/javascript">
+    var seGroup = null;
+    var seMentor = null;
+    var seTheme = null;
+    var seTime = null;
+    $(document).on("click", ".btn-event", function (e) {
+        e.preventDefault();
+        var _self = $(this);
+        seGroup = _self.attr("seGroup");
+        seMentor = _self.attr("seMentor");
+        seTheme = _self.attr("seTheme");
+        seTime = _self.attr("seTime");
+        $("#seGroup").val(seGroup);
+        $("#seMentor").val(seMentor);
+        $("#seTheme").val(seTheme);
+        $("#seTime").val(seTime);
+    });
+</script>
+}
+
+<div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Classbook</h6>
+                </div>
+
+                <div class="card-header py-3">
+
+                    <form method="post" action="/Classbook/GetClassbook">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="submit">Update</button>
+                            </div>
+                            <select class="custom-select" name="StudentGroupId" id="groupSelect" aria-label="Example select with button
+                                    addon">
+
+                                @if (Model.ClassbookFilter.StudentGroupId.HasValue)
+                                {
+                                    <option value="null">-Group-</option>
+                                    <option value="@Model.ClassbookFilter.StudentGroupId.Value" selected>Group @Model.StudentGroups.First(x => x.Id ==    
+                                        Model.ClassbookFilter.StudentGroupId.Value).Name.ToString()</option>
+
+                                    @foreach (var group in Model.StudentGroups.Where(x => x.Id !=Model.ClassbookFilter.StudentGroupId.Value))
+                                    {
+                                        <option value="@group.Id">Group @group.Name.ToString()</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="null" selected>-Group-</option>
+
+                                    @foreach (var group in Model.StudentGroups)
+                                    {
+                                        <option value="@group.Id">Group @group.Name.ToString()</option>
+                                    }
+                                }
+                            </select>
+
+                            <select class="custom-select" name="CourseID" id="courseSelect" aria-label="Example select with button addon">
+
+                                @if (Model.ClassbookFilter.CourseId.HasValue)
+                                {
+                                    <option value="null">-Course-</option>
+                                    <option value="@Model.ClassbookFilter.CourseId.Value" selected>Course @Model.Courses.First(x => x.Id ==   
+                                        Model.ClassbookFilter.CourseId.Value).Name</option>
+
+                                    @foreach (var course in Model.Courses.Where(x => x.Id != Model.ClassbookFilter.CourseId.Value))
+                                    {
+                                        <option value="@course.Id">Course @course.Name</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="null" selected>-Course-</option>
+
+                                    @foreach (var course in Model.Courses)
+                                    {
+                                        <option value="@course.Id">Course @course.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <input class="form-control" name="StartDate" type="date" value="@Model.ClassbookFilter.StartDate.ToString("yyyy-MM-dd")"     
+                                    id="startDate">
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" name="FinishDate" type="date" value="@Model.ClassbookFilter.FinishDate.ToString("yyyy-MM-dd")"  
+                                    id="finishDate">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    await Html.RenderPartialAsync("ClassbookBody", Model);
+}
+
+<div class="modal fade" id="seeSchedulEvent" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="seTime">Time:</label>
+                <input id="seTime" class="modalTextInput form-control" value="" />
+
+                <label for="seTheme">Theme:</label>
+                <input id="seTheme" class="modalTextInput form-control" value="" />
+
+                <label for="seGroup">Group:</label>
+                <input id="seGroup" class="modalTextInput form-control" value="" />
+
+                <label for="seMentor">Mentor:</label>
+                <input id="seMentor" class="modalTextInput form-control" value="" />
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>
+            </div>
+        </div>
+    </div>
+</div>
