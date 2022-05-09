@@ -8,8 +8,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface IEventColorRepository: IRepository<EventColor>
     {
-        public new Task<List<EventColor>> GetAll();
+        public new Task<List<EventColor>> GetAllAsync();
 
-        public new Task<EventColor> GetById(long id);
+        public new Task<EventColor> GetByIdAsync(long id);
     }
 }
