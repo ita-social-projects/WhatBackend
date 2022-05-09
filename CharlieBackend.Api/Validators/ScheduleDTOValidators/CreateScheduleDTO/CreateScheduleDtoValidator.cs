@@ -3,8 +3,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
 {
+    /// <summary>
+    /// CreateScheduleDtoValidator fluent validator
+    /// </summary>
     public class CreateScheduleDtoValidator : AbstractValidator<CreateScheduleDto>
     {
+        /// <summary>
+        /// Fluent validation rules for CreateScheduleDto
+        /// </summary>
         public CreateScheduleDtoValidator()
         {
             RuleFor(x => x.Pattern)
