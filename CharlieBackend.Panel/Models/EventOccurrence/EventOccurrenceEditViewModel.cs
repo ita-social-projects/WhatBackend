@@ -1,4 +1,5 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Models.StudentGroups;
@@ -31,5 +32,7 @@ namespace CharlieBackend.Panel.Models.EventOccurrence
         public PatternType Pattern { get; set; }
 
         public DetailedEventOccurrenceDTO DetailedEventOccurrence { get; set; }
+
+        public IList<EventColor.EventColorViewModel> AllEventColors { get; set; }
     }
 }

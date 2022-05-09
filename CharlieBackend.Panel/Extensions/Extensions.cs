@@ -31,10 +31,11 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IClassbookService, ClassbookService>();
+            services.AddScoped<IEventColorService, EventColorService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
-                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
+                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Http").Value);
             })
                 .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         }

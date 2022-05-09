@@ -41,6 +41,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         public IMarkRepository MarkRepository { get; }
 
+        public IEventColorRepository EventColorRepository { get; }
+
         Task CommitAsync();
 
         void Rollback();

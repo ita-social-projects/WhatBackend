@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO;
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Attachment;
 using CharlieBackend.Core.DTO.Course;
@@ -190,6 +191,12 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CreateSingleEventDto, ScheduledEvent>();
             CreateMap<ScheduledEvent, SingleEventDTO>();
 
+            #endregion
+
+            #region EventColors mapping
+
+            CreateMap<EventColorDTO, EventColor>();
+            CreateMap<EventColor, EventColorDTO>();
             #endregion
 
             #region Attachments mapping

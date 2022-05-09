@@ -1,5 +1,8 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Core.DTO;
+using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace CharlieBackend.Panel.Models.EventOccurrence
 {
@@ -27,5 +30,7 @@ namespace CharlieBackend.Panel.Models.EventOccurrence
         public DateTime? EventFinish { get; set; }
 
         public long Storage { get; set; }
+
+        public IList<EventColorDTO> EventColors { get; set; }
     }
 }

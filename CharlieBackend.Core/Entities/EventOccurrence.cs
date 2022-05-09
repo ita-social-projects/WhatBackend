@@ -26,6 +26,12 @@ namespace CharlieBackend.Core.Entities
         public long Storage { get; set; }
 
         public virtual ICollection<ScheduledEvent> ScheduledEvents { get; set; }
+
+        public long EventColorId { get; set; }
+
+        public virtual EventColor EventColor { get; set; }
+
+        public virtual ICollection<EventColor> EventColors { get; set; }
     }
 
     public enum PatternType

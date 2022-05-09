@@ -19,6 +19,10 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("StudentGroupID");
 
+            entity.Property(e => e.EventColorId)
+                .IsRequired()
+                .HasColumnName("EventColorId");
+
             entity.Property(e => e.EventStart)
                 .IsRequired()
                 .HasColumnName("EventStart")
@@ -50,6 +54,11 @@ namespace CharlieBackend.Data.Configurations
                 .WithMany(p => p.EventOccurances)
                 .HasForeignKey(d => d.StudentGroupId)
                 .HasConstraintName("FK_StudentGroupEventOccurrences");
+
+            entity.HasOne(d => d.EventColor)
+               .WithMany(p => p.EventOccurances)
+               .HasForeignKey(d => d.EventColorId)
+               .HasConstraintName("FK_EventColorEventOccurrences");
         }
     }
 }

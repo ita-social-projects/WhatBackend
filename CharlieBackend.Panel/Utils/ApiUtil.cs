@@ -52,7 +52,6 @@ namespace CharlieBackend.Panel.Utils
 
             TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
 
-
             return responseModel;
         }
 

@@ -27,6 +27,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private IHomeworkStudentRepository _homeworkStudentRepository;
         private IHomeworkStudentHistoryRepository _homeworkStudentHistoryRepository;
         private IMarkRepository _markRepository;
+        private IEventColorRepository _eventColorRepository;
 
         #endregion 
 
@@ -183,6 +184,15 @@ namespace CharlieBackend.Data.Repositories.Impl
             {
                 return _markRepository = _markRepository
                         ?? new MarkRepository(_applicationContext);
+            }
+        }
+
+        public IEventColorRepository EventColorRepository 
+        { 
+            get
+            {
+                return _eventColorRepository = _eventColorRepository 
+                    ?? new EventColorRepository(_applicationContext);
             }
         }
 

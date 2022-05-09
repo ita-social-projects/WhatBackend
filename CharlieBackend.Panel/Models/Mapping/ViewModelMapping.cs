@@ -19,6 +19,8 @@ using CharlieBackend.Panel.Models.StudentGroups;
 using CharlieBackend.Panel.Models.Students;
 using CharlieBackend.Panel.Models.Classbook;
 using System.Linq;
+using CharlieBackend.Core.DTO;
+using CharlieBackend.Panel.Models.EventColor;
 
 namespace CharlieBackend.Panel.Models.Mapping
 {
@@ -69,6 +71,12 @@ namespace CharlieBackend.Panel.Models.Mapping
             CreateMap<MentorViewModel, MentorViewModel>();
 
             CreateMap<CourseDto, CourseViewModel>();
+
+            #region Event Colors ViewModelsMapping
+            CreateMap<EventColorViewModel, EventColorDTO>();
+            CreateMap<EventColorDTO, EventColorViewModel>();
+            #endregion
+
 
             #region Event ViewModelsMapping
             CreateMap<ScheduledEventViewModel, ScheduledEventDTO>();

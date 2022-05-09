@@ -272,18 +272,27 @@ CREATE TABLE IF NOT EXISTS `AttachmentsOfHomeworksFromStudents` (
 
 -- Table `EventOccurrences`
 
+DROP TABLE IF EXISTS `EventColors`;
+
+CREATE TABLE `EventColors` (
+  `ID` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `Color` varchar(30) NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
 DROP TABLE IF EXISTS `EventOccurrences`;
 
 CREATE TABLE `EventOccurrences` (
     `ID`                BIGINT UNSIGNED     NOT NULL        AUTO_INCREMENT,
     `StudentGroupID`    BIGINT UNSIGNED     NOT NULL,
+    `EventColorId`      BIGINT UNSIGNED     NOT NULL,
     `EventStart`        DATETIME            NOT NULL        COMMENT 'Use UTC time',
     `EventFinish`       DATETIME            NOT NULL        COMMENT 'Use UTC time',
     `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n0 - Daily,\n1 - Weekly,\n2 - AbsoluteMonthly,\n3 - RelativeMonthly',
     `Storage`           BIGINT UNSIGNED     NOT NULL,
-
     CONSTRAINT    `PK_EventOccurrence`                 PRIMARY KEY (`ID`),
-    CONSTRAINT    `FK_StudentGroupEventOccurrences`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`)
+    CONSTRAINT    `FK_StudentGroupEventOccurrences`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`),
+	CONSTRAINT    `FK_EventColorEventOccurrences`      FOREIGN KEY (`EventColorId`)    REFERENCES `eventcolors` (`ID`)
 );
 
 -- Table `ScheduledEvents`
@@ -308,3 +317,5 @@ CREATE TABLE `ScheduledEvents` (
     CONSTRAINT    `FK_ThemeScheduledEvents`              FOREIGN KEY (`ThemeID`)              REFERENCES `Themes` (`ID`),
     CONSTRAINT    `UQ_LessonScheduledEvents`             UNIQUE (`LessonID`)
 );
+
+

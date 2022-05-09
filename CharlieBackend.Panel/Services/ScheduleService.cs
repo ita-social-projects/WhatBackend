@@ -22,6 +22,7 @@ namespace CharlieBackend.Panel.Services
         private readonly IStudentGroupService _studentGroupService;
         private readonly IThemeService _themeService;
         private readonly IMentorService _mentorService;
+        private readonly IEventColorService _colorService;
         private readonly IMapper _mapper;
 
         public ScheduleService(
@@ -30,7 +31,7 @@ namespace CharlieBackend.Panel.Services
             IMapper mapper,
             IMentorService mentorService,
             IStudentGroupService studentGroupService,
-            IThemeService themeService)
+            IThemeService themeService, IEventColorService colorService)
         {
             _apiUtil = apiUtil;
             _themeService = themeService;
@@ -38,6 +39,7 @@ namespace CharlieBackend.Panel.Services
             _studentGroupService = studentGroupService;
             _scheduleApiEndpoints = options.Value.Urls.ApiEndpoints.Schedule;
             _eventsApiEndpoints = options.Value.Urls.ApiEndpoints.Events;
+            _colorService = colorService;
             _mapper = mapper;
         }
 
@@ -122,12 +124,14 @@ namespace CharlieBackend.Panel.Services
             var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
             var themesTask = _themeService.GetAllThemesAsync();
+            var eventColors = _colorService.GetAllEventColorsAsync();
 
             var studentGroup = new EventOccurrenceEditViewModel
             {
                 AllStudentGroups = await studentGroupsTask,
                 AllThemes = await themesTask,
-                AllMentors = await mentorsTask
+                AllMentors = await mentorsTask,
+               AllEventColors = await eventColors
             };
 
             return studentGroup;
@@ -154,12 +158,14 @@ namespace CharlieBackend.Panel.Services
             var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
             var themesTask = _themeService.GetAllThemesAsync();
+            var colorsTask = _colorService.GetAllEventColorsAsync();
 
             var scheduledEvent = _mapper.Map<EventOccurrenceEditViewModel>(await eventOccurrenceTask);
             scheduledEvent.AllStudentGroups = await studentGroupsTask;
             scheduledEvent.AllThemes = await themesTask;
             scheduledEvent.AllMentors = await mentorsTask;
             scheduledEvent.DetailedEventOccurrence = await eventOccurrenceDetailedTask;
+            scheduledEvent.AllEventColors = await colorsTask;
 
             return scheduledEvent;
         }
