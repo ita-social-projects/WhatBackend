@@ -53,7 +53,7 @@
                                     <th class="col">Mentors</th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                     {
-                                        <th class="col-1">Controll</th>
+                                        <th class="col">Controll</th>
                                     }
                                 </tr>
                             </thead>
@@ -68,7 +68,7 @@
                                         <td class="col">
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                    Show students
+                                                    <i class="fas fa-eye"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     @if (@item.Students.Any())
@@ -88,7 +88,7 @@
                                         <td class="col">
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
-                                                    Show mentors
+                                                    <i class="fas fa-eye"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     @if (@item.Mentors.Any())
@@ -112,7 +112,7 @@
                                         </td>
                                         @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                         {
-                                            <td class="col-1">
+                                            <td class="col">
                                                 <div class="dropdown">
                                                     <button class="btn btn-outline-secondar dropdown-toggle"
                                                             type="button" id="dropdownMenuButton" data-toggle="dropdown"
