@@ -13,7 +13,7 @@ namespace CharlieBackend.Panel.Utils.Interfaces
 
         Task<HttpResponseMessage> DeleteAsync(string url);
 
-        Task EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
+        Task<string> EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
 
         public Task<HttpResponseMessage> PatchAsync(string url);
     }
