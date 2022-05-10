@@ -175,11 +175,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     break;
 
                 default:
-                    rowClass = IsWeekend(date) ? "d-none weekend" : "col-calendar-working-week";
-                    break;
+                    goto case CalendarDisplayType.WorkingWeek;
             }
-
-            rowClass = IsWeekend(date) ? "d-none weekend" : "col-calendar-working-week";
 
             div.AddCssClass(rowClass);
 

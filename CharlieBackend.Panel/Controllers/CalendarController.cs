@@ -24,14 +24,6 @@ namespace CharlieBackend.Panel.Controllers
             return View(data);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter)
-        //{
-        //    var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
-
-        //    return View("Index", data);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter, CalendarDisplayType calendarType)
         {
@@ -40,14 +32,6 @@ namespace CharlieBackend.Panel.Controllers
             data.DisplayType = calendarType;
 
             return View("Index", data);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> WorkingWeek(int calendarType, ScheduledEventFilterRequestDTO scheduledEventFilter)
-        {
-            var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
-
-            return View("WorkingWeek", calendarType);
         }
     }
 }
