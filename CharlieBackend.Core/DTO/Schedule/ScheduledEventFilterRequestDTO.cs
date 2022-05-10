@@ -12,6 +12,8 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public long? ThemeID { get; set; }
 
+        public long ColorID { get; set; }
+
         public long? StudentAccountID { get; set; }
 
         public long? EventOccurrenceID { get; set; }

@@ -18,14 +18,12 @@ namespace CharlieBackend.Panel.Services
 
             _colorsApiEndpoints = options.Value.Urls.ApiEndpoints.Colors;
         }
-        
+
         public async Task<IList<EventColorViewModel>> GetAllEventColorsAsync()
         {
             var getAllEventColorsEndpoint = _colorsApiEndpoints.GetAllColorsEndpoint;
 
-            var allColors = await _apiUtil.GetAsync<IList<EventColorViewModel>>(getAllEventColorsEndpoint);
-
-            return allColors;
+            return await _apiUtil.GetAsync<IList<EventColorViewModel>>(getAllEventColorsEndpoint);
         }
     }
 }

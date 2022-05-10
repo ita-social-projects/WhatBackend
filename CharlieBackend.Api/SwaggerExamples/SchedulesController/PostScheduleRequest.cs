@@ -37,7 +37,8 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                 {
                     GroupID = 1,
                     MentorID = 5,
-                    ThemeID = 6
+                    ThemeID = 6,
+                    ColorID = 2
                 }
             };
         }

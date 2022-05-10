@@ -30,8 +30,6 @@ namespace CharlieBackend.Core.Entities
         public long EventColorId { get; set; }
 
         public virtual EventColor EventColor { get; set; }
-
-        public virtual ICollection<EventColor> EventColors { get; set; }
     }
 
     public enum PatternType

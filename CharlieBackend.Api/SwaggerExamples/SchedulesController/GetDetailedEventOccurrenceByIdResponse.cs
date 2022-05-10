@@ -22,7 +22,8 @@ namespace CharlieBackend.Api.SwaggerExamples.SchedulesController
                 {
                     GroupID = 5,
                     MentorID = null,
-                    ThemeID = null
+                    ThemeID = null,
+                    ColorID = null
                 },
                 Pattern = new PatternForCreateScheduleDTO
                 {

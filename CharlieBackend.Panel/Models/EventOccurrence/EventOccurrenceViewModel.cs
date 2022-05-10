@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Panel.Models.EventOccurrence
 {
-    public class EventOccurrenceViewModel
+    public class EventOccurrenceViewModel: EventOccurrenceDTO
     {
         public static  EventOccurrenceViewModel FromEventOccurrenceDTO(
                 EventOccurrenceDTO eventOccurrenceDTO)
@@ -20,16 +20,6 @@ namespace CharlieBackend.Panel.Models.EventOccurrence
                 EventFinish = eventOccurrenceDTO.EventFinish
             };
         }
-
-        public long? Id { get; set; }
-
-        public long StudentGroupId { get; set; }
-
-        public DateTime? EventStart { get; set; }
-
-        public DateTime? EventFinish { get; set; }
-
-        public long Storage { get; set; }
 
         public IList<EventColorDTO> EventColors { get; set; }
     }

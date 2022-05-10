@@ -131,7 +131,7 @@ namespace CharlieBackend.Panel.Services
                 AllStudentGroups = await studentGroupsTask,
                 AllThemes = await themesTask,
                 AllMentors = await mentorsTask,
-               AllEventColors = await eventColors
+                AllEventColors = await eventColors
             };
 
             return studentGroup;

@@ -20,6 +20,8 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
                 .GreaterThan(0);
             RuleFor(x => x.MentorID)
                 .GreaterThan(0);
+            RuleFor(x => x.ColorID).
+                GreaterThan(0);
         }
     }
 }

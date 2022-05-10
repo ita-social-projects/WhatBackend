@@ -41,6 +41,11 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(ResponseMessages.NotExist("Mentor"));
             }
 
+            if (!await _unitOfWork.EventColorRepository.IsEntityExistAsync(request.Context.ColorID.Value))
+            {
+                error.Append(ResponseMessages.NotExist("Color"));
+            }
+
             if (request.Context.ThemeID.HasValue && !await _unitOfWork.ThemeRepository.IsEntityExistAsync(request.Context.ThemeID.Value))
             {
                 error.Append(ResponseMessages.NotExist("Theme"));
