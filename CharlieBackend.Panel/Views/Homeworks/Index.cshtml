@@ -5,47 +5,43 @@
 }
 
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-        @if(User.IsInRole("Mentor") || User.IsInRole("Admin"))
-        {
-            <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-                <a asp-action="SelectCourses" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
-                    <i class="fas fa-plus"></i>
-                </a>
-            </div>
-        }
-            <div class="container-fluid">
-
-
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <div class="row">
-                            <h6 class="m-2 font-weight-bold text-primary">Homeworks</h6>
-                        </div>
+        <div class="container-fluid">
+            @if (User.IsInRole("Mentor") || User.IsInRole("Admin"))
+            {
+                <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+                    <a asp-action="SelectCourses" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </div>
+            }
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <h6 class="m-2 font-weight-bold text-primary">Homeworks</h6>
                     </div>
-
-                    <div>
-                        <table class="table text-center table-hover" width="100%">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:unset">
+                        <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead>
-                                <tr>
-                                    <th width="10%">Theme</th>
-                                    <th width="10%">Due Date</th>
-                                    <th width="60%">Task Text</th>
-                                    <th width="10%">Publishing Date</th>
-                                    <th width="10%">Control</th>
+                                <tr class="thead-dark row">
+                                    <th class="col">Theme</th>
+                                    <th class="col">Due Date</th>
+                                    <th class="col">Task Text</th>
+                                    <th class="col">Publishing Date</th>
+                                    <th class="col">Control</th>
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach (var item in Model)
                                 {
-                                    <tr>
-                                        <td>@item.ThemeName</td>
-                                        <td>@item.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td>@item.TaskText</td>
-                                        <td>@item.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td>
+                                    <tr class="row" id="activeCoursesRow">
+                                        <td class="col">@item.ThemeName</td>
+                                        <td class="col">@item.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td class="col">@item.TaskText</td>
+                                        <td class="col">@item.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td class="col">
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondar dropdown-toggle"
                                                         type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -75,4 +71,5 @@
                 </div>
             </div>
         </div>
+    </div>
 </div>

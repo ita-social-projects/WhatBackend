@@ -4,6 +4,7 @@
 @{
     Layout = "_Layout";
 }
+
 @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
 {
     <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
@@ -20,26 +21,21 @@
                 </form>
             </div>
         </div>
-
     </div>
 }
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-
-
         <div class="container-fluid">
-
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Themes</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
-                        <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead class="thead-dark">
                                 <tr class="thead-dark row">
-                                    <th class="col-10">Name</th>
+                                    <th class="col">Name</th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                                     {
                                         <th class="col">Controll</th>
@@ -54,7 +50,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr class="row">
-                                        <td class="col-10 text-truncate">@item.Name</td>
+                                        <td class="col">@item.Name</td>
                                         <td class="col">
                                             @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                                             {
@@ -70,12 +66,10 @@
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit </span>
                                                         </a>
-
                                                         <a class="dropdown-item text-dark js-delete-theme" data-toggle="modal" data-target="#deleteThemeModalWindow" data-item-id="@item.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Delete</span>
                                                         </a>
-
                                                     </div>
                                                 </div>
                                             }
@@ -87,9 +81,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 
     <!-- Delete theme modal window-->
@@ -127,7 +119,6 @@
                 <div class="modal-footer">
                     <a class="btn btn-primary" id="confirmEditTheme" href="">Save changes</a>
                 </div>
-
             </div>
         </div>
     </div>

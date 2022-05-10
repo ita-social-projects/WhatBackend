@@ -6,20 +6,16 @@
 }
 
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-
-        <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-            @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
-            {
-                <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
-                    <i class="fas fa-plus"></i>
-                </a>
-            }
-        </div>
-
         <div class="container-fluid">
-
+            <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                {
+                    <a asp-action="CreateStudentGroup" asp-controller="StudentGroup" class="btn btn-lg btn-success btn-circle">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                }
+            </div>
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <div class="row">
@@ -46,13 +42,13 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
-                        <table class="table text-center table-striped container-fluid" id="groupsDataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-hover" id="groupsDataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-2">Course name</th>
-                                    <th class="col-2">Group name</th>
-                                    <th class="col-2">Start date</th>
-                                    <th class="col-2">Finish date</th>
+                                    <th class="col">Course name</th>
+                                    <th class="col">Group name</th>
+                                    <th class="col">Start date</th>
+                                    <th class="col">Finish date</th>
                                     <th class="col">Students</th>
                                     <th class="col">Mentors</th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
@@ -61,16 +57,14 @@
                                     }
                                 </tr>
                             </thead>
-
                             <tbody>
                                 @foreach (var item in @Model)
                                 {
                                     <tr class="row">
-                                        <td class="col-2 text-truncate">@item.Course.Name</td>
-                                        <td class="col-2 text-truncate">@item.Name</td>
-                                        <td class="col-2">@item.StartDate.ToString("yyyy.MM.dd")</td>
-                                        <td class="col-2">@item.FinishDate.ToString("yyyy.MM.dd")</td>
-
+                                        <td class="col text-truncate">@item.Course.Name</td>
+                                        <td class="col text-truncate">@item.Name</td>
+                                        <td class="col">@item.StartDate.ToString("yyyy.MM.dd")</td>
+                                        <td class="col">@item.FinishDate.ToString("yyyy.MM.dd")</td>
                                         <td class="col">
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
@@ -91,7 +85,6 @@
                                                 </div>
                                             </div>
                                         </td>
-
                                         <td class="col">
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
@@ -117,7 +110,6 @@
                                                 </div>
                                             </div>
                                         </td>
-
                                         @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                         {
                                             <td class="col-1">
@@ -128,13 +120,11 @@
                                                         <i class="fas fa-cog"></i>
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
                                                         <a class="dropdown-item"
                                                            asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit</span>
                                                         </a>
-
                                                     </div>
                                                 </div>
                                             </td>

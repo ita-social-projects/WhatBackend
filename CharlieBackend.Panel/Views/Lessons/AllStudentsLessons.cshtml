@@ -6,11 +6,8 @@
 
 
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-
         <div class="container-fluid">
-
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Lessons</h6>
@@ -21,33 +18,30 @@
                             <thead>
                                 <tr class="thead-dark row">
                                     <th class="col">Date</th>
-                                    <th class="col-3">Theme</th>
-                                    <th class="col-2">Presence</th>
-                                    <th class="col-1">Mark</th>
-                                    <th class="col-3">Comment</th>
+                                    <th class="col">Theme</th>
+                                    <th class="col">Presence</th>
+                                    <th class="col">Mark</th>
+                                    <th class="col">Comment</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 @foreach (var item in @Model)
                                 {
                                     <tr class="row">
                                         <td class="col text-truncate">@item.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td class="col-3 text-truncate">@item.ThemeName</td>
+                                        <td class="col text-truncate">@item.ThemeName</td>
                                         @if (@item.Presence)
                                         {
-                                            <td class="col-2 text-truncate">+</td>
+                                            <td class="col text-truncate">+</td>
 
                                         }
                                         @if (!@item.Presence)
                                         {
-                                            <td class="col-2 text-truncate">-</td>
+                                            <td class="col text-truncate">-</td>
 
                                         }
-
-                                        <td class="col-1 text-truncate">@item.Mark</td>
-                                        <td class="col-3 text-truncate">@item.Comment</td>
-
+                                        <td class="col text-truncate">@item.Mark</td>
+                                        <td class="col text-truncate">@item.Comment</td>
                                     </tr>
                                 }
                             </tbody>

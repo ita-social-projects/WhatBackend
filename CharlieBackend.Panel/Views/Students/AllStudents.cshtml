@@ -3,8 +3,6 @@
     Layout = "_Layout";
 }
 
-
-
 @if (User.IsInRole("Secretary") || User.IsInRole("Admin"))
 {
 <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
@@ -23,14 +21,9 @@
     </div>
 </div>
 }
-
-
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-
         <div class="container-fluid">
-
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <div class="row">
@@ -47,32 +40,27 @@
                             <span> Inactive students</span>
                         </a>
                     </div>
-
                 </div>
-
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
                         <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark row">
-                                    <th class="col-4">Email</th>
-                                    <th class="col-3">First Name</th>
-                                    <th class="col-3">Last Name</th>
+                                    <th class="col">Email</th>
+                                    <th class="col">First Name</th>
+                                    <th class="col">Last Name</th>
                                     <th class="col">Controll</th>
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach (var item in Model)
                                 {
-
                                     if (item.IsActive)
-                                    {
-                                        
+                                    {                                        
                                         <tr class="row" id="activeStudentsRow">
-                                            <td class="col-4 text-truncate">@item.Email</td>
-                                            <td class="col-3 text-truncate">@item.FirstName</td>
-                                            <td class="col-3 text-truncate">@item.LastName</td>
+                                            <td class="col text-truncate">@item.Email</td>
+                                            <td class="col text-truncate">@item.FirstName</td>
+                                            <td class="col text-truncate">@item.LastName</td>
                                             <td class="col">
                                                 <div class="dropdown">
                                                     <button class="btn btn-outline-secondar dropdown-toggle"
@@ -147,7 +135,6 @@
                     </button>
                 </div>
                 <div class="modal-footer">
-
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-primary" id="confirmDisableStudent" href="">Confirm</a>
                 </div>
@@ -167,14 +154,12 @@
                     </button>
                 </div>
                 <div class="modal-footer">
-
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-primary" id="confirmEnableStudent" href="">Confirm</a>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 @section Scripts{

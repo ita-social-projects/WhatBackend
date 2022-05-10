@@ -5,8 +5,6 @@
     Layout = "_Layout";
 }
 
-
-
 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
 {
     <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
@@ -23,38 +21,29 @@
                 </form>
             </div>
         </div>
-
     </div>
 }
 
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-
         <div class="container-fluid">
-
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <div class="row">
-
                         <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
-
                         @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                         {
                             <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
                                 <i class="far fa-eye"></i>
                                 <span> Active Mentors </span>
                             </a>
-
                             <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
                                 <i class="far fa-eye-slash"></i>
                                 <span> Inactive Mentors</span>
                             </a>
                         }
                     </div>
-
                 </div>
-
                 <div class="card-body">
                     <div class="table-responsive p-3" style="overflow-x:unset">
                         <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
@@ -70,10 +59,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach (var item in Model)
                                 {
-
                                     if (item.IsActive)
                                     {
                                         <tr class="row" id="activeMentorsRow">

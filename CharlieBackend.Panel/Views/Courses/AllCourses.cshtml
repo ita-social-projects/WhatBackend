@@ -49,7 +49,8 @@
                             <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr class="thead-dark row">
-                                        <th class="col-4">Name</th>
+                                        <th class="col">Name</th>
+                                        <th class="col">Controll</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,7 +59,7 @@
                                         if (item.IsActive)
                                         {
                                     <tr class="row" id="activeCoursesRow">
-                                        <td class="col-4 text-truncate">@item.Name</td>
+                                        <td class="col text-truncate">@item.Name</td>
                             @if (User.IsInRole("Secretary") || User.IsInRole("Admin"))
                                  {
                                     <td class="col">
@@ -87,7 +88,7 @@
                                         else
                                             {
                                                 <tr class="row d-none" id="inactiveCoursesRow">
-                                                    <td class="col-4 text-truncate">@item.Name</td>
+                                                    <td class="col text-truncate">@item.Name</td>
                                                     <td class="col">
                                                         <div class="dropdown">
                                                             <button class="btn btn-outline-secondar dropdown-toggle"
