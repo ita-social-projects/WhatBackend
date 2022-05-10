@@ -94,13 +94,13 @@
         function ChangeWeekFormat() {
             var x = document.getElementById("weekFormat").value;
 
-            if (x == "FullWeek") {
-                $(".col-calendar-working-week").removeClass("col-calendar-working-week").addClass("col-calendar-full-week");
-                $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
-            }
-            else if (x == "WorkingWeek") {
+            if (x == 1) {
                 $(".weekend").removeClass("col-calendar-full-week").addClass("d-none");
                 $(".col-calendar-full-week").removeClass("col-calendar-full-week").addClass("col-calendar-working-week");
+            }
+            else if (x == 2) {
+                $(".col-calendar-working-week").removeClass("col-calendar-working-week").addClass("col-calendar-full-week");
+                $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
             }
         }
     </script>
@@ -121,26 +121,7 @@
                         <div class="row">
                             <h6 class="m-0 font-weight-bold text-primary col-10">Calendar</h6>
 
-                            <select id="weekFormat" class="custom-select col" name="calendarType" onchange="ChangeWeekFormat()">
-                                @if (Model.DisplayType != 0)
-                                {
-                                    foreach (var displayTypeValue in Enum.GetValues(typeof(CalendarDisplayType)))
-                                    {
-                                        if (Model.DisplayType == (CalendarDisplayType)displayTypeValue)
-                                        {
-                                            <option value="@Model.DisplayType" selected>@Model.DisplayType</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@displayTypeValue">@displayTypeValue</option>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    <option value="FullWeek">Full week</option>
-                                    <option value="WorkingWeek" selected>Working week</option>
-                                }
+                            <select id="weekFormat" class="custom-select col" onchange="ChangeWeekFormat()" name="calendarType" asp-for="DisplayType" asp-items="@Html.GetEnumSelectList(typeof(CalendarDisplayType))">
                             </select>
                         </div>
                     </div>

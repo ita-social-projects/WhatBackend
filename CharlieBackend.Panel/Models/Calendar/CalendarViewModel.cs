@@ -1,12 +1,16 @@
 ﻿using CharlieBackend.Core.DTO.Schedule;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CharlieBackend.Panel.Models.Calendar
 {
     public enum CalendarDisplayType
     {
-        FullWeek = 1,
-        WorkingWeek = 2
+        [Display(Name = "Working week")]
+        WorkingWeek = 1,
+
+        [Display(Name = "Full week")]
+        FullWeek = 2
     }
 
     public class CalendarViewModel
