@@ -1,4 +1,5 @@
-﻿@model CharlieBackend.Panel.Models.Calendar.CalendarViewModel
+﻿@using CharlieBackend.Panel.Models.Calendar
+@model CalendarViewModel
 
 @{
     Layout = "_Layout";
@@ -34,20 +35,29 @@
         text-align: center;
     }
 
-    .col-calendar {
-        position: relative;
+    .col-calendar-full-week {
         width: 100%;
         padding-right: 0.75rem;
         padding-left: 0.75rem;
         flex: 0 0 14.285714%;
         max-width: 14.285714%;
+        min-width: 100px;
     }
 
-    .col-1:first-child, .col-2, .col-calendar {
+    .col-calendar-working-week {
+        width: 100%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+        flex: 0 0 20%;
+        max-width: 20%;
+        min-width: 100px;
+    }
+
+    .col-1:first-child, .col-2, .col-calendar-full-week, .col-calendar-working-week {
         border-right: 0.5px solid;
     }
 
-    .col-2, .col-1, .col-calendar {
+    .col-2, .col-1, .col-calendar-full-week, .col-calendar-working-week {
         border-bottom: 0.5px solid grey;
         min-height: 100px;
     }
@@ -79,6 +89,21 @@
             $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
         });
     </script>
+
+    <script type="text/javascript">
+        function ChangeWeekFormat() {
+            var x = document.getElementById("weekFormat").value;
+
+            if (x == "FullWeek") {
+                $(".col-calendar-working-week").removeClass("col-calendar-working-week").addClass("col-calendar-full-week");
+                $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
+            }
+            else if (x == "WorkingWeek") {
+                $(".weekend").removeClass("col-calendar-full-week").addClass("d-none");
+                $(".col-calendar-full-week").removeClass("col-calendar-full-week").addClass("col-calendar-working-week");
+            }
+        }
+    </script>
 }
 
 <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
@@ -90,13 +115,37 @@
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
-                </div>
+            <form class="col" method="post" action="/Calendar/GetCalendar">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <h6 class="m-0 font-weight-bold text-primary col-10">Calendar</h6>
 
-                <div class="card-header py-3">
-                    <form method="post" action="/Calendar/GetCalendar">
+                            <select id="weekFormat" class="custom-select col" name="calendarType" onchange="ChangeWeekFormat()">
+                                @if (Model.DisplayType != 0)
+                                {
+                                    foreach (var displayTypeValue in Enum.GetValues(typeof(CalendarDisplayType)))
+                                    {
+                                        if (Model.DisplayType == (CalendarDisplayType)displayTypeValue)
+                                        {
+                                            <option value="@Model.DisplayType" selected>@Model.DisplayType</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@displayTypeValue">@displayTypeValue</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="FullWeek">Full week</option>
+                                    <option value="WorkingWeek" selected>Working week</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-header py-3">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="submit">Update</button>
@@ -231,12 +280,12 @@
                                 <input class="form-control" name="FinishDate" type="datetime-local" value="@Model.ScheduledEventFilter.FinishDate.Value.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" id="finishDate">
                             </div>
                         </div>
-                    </form>
+                    </div>
+
+                    @{await Html.RenderPartialAsync("CalendarBody");}
+
                 </div>
-
-                @{await Html.RenderPartialAsync("CalendarBody");}
-
-            </div>
+            </form>
         </div>
     </div>
 </div>

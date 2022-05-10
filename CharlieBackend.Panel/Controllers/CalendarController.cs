@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Panel.Models.Calendar;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,30 @@ namespace CharlieBackend.Panel.Controllers
             return View(data);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter)
+        //{
+        //    var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
+
+        //    return View("Index", data);
+        //}
+
         [HttpPost]
-        public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter)
+        public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter, CalendarDisplayType calendarType)
         {
             var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
 
+            data.DisplayType = calendarType;
+
             return View("Index", data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> WorkingWeek(int calendarType, ScheduledEventFilterRequestDTO scheduledEventFilter)
+        {
+            var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
+
+            return View("WorkingWeek", calendarType);
         }
     }
 }

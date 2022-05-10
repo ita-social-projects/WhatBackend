@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Panel.Models.Calendar
 {
+    public enum CalendarDisplayType
+    {
+        FullWeek = 1,
+        WorkingWeek = 2
+    }
+
     public class CalendarViewModel
     {
         public IList<CalendarCourseViewModel> Courses { get; set; }
@@ -20,5 +26,7 @@ namespace CharlieBackend.Panel.Models.Calendar
         public IList<CalendarScheduledEventViewModel> ScheduledEvents { get; set; }
 
         public ScheduledEventFilterRequestDTO ScheduledEventFilter { get; set; }
+
+        public CalendarDisplayType DisplayType { get; set; }
     }
 }
