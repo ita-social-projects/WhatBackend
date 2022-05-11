@@ -36,7 +36,7 @@ namespace CharlieBackend.Panel.Extensions
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
-                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
+                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Http").Value);
             })
                 .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
         }

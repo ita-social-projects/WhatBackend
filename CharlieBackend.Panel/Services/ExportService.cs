@@ -20,9 +20,12 @@ namespace CharlieBackend.Panel.Services
             _exportApiEndpoints = options.Value.Urls.ApiEndpoints.Export;
         }
 
-        public Task<byte[]> GetExportedStudentsClassbooksAsync(ExportFileFormat format)
+        public Task<byte[]> GetExportedStudentsClassbooksAsync(ExportFileFormat format
+            , ExportByCourseAndStudentGroupModel exportModel)
         {
-            throw new System.NotImplementedException();
+            var url = string.Format(_exportApiEndpoints.GetExportedStudentsResultsEndpoint, (int)format);
+
+            return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
         public Task<byte[]> GetExportedStudentClassbookAsync(ExportFileFormat format)
