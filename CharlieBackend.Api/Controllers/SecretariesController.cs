@@ -92,6 +92,21 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
+        /// Get secretary information by secretary id
+        /// </summary>
+        /// <response code="200">Successful return of secretary</response>
+        /// <response code="404">Error, can not find secretary</response>
+        [SwaggerResponse(200, type: typeof(SecretaryDto))]
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SecretaryDto>> GetSecretaryById(long id)
+        {
+            var secretaryModelResult = await _secretaryService.GetSecretaryByIdAsync(id);
+
+            return secretaryModelResult.ToActionResult();
+        }
+
+        /// <summary>
         /// Disable account by secretary id
         /// </summary>
         /// <response code="200">Secretary's account successfully disabled</response>

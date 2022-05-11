@@ -3,8 +3,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
 {
+    /// <summary>
+    /// OccurenceRangeValidator fluent validator
+    /// </summary>
     public class OccurenceRangeValidator : AbstractValidator<OccurenceRange>
     {
+        /// <summary>
+        /// Fluent validation rules for OccurenceRange
+        /// </summary>
         public OccurenceRangeValidator()
         {
             RuleFor(x => x.StartDate)

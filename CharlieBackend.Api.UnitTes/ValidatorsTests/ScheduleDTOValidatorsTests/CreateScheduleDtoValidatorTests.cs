@@ -7,50 +7,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 {
     public class CreateScheduleDtoValidatorTests : TestBase
     {
-        private CreateScheduleDtoValidator _validator;
-
-        private readonly PatternForCreateScheduleDTO validPattern = new PatternForCreateScheduleDTO 
-        {
-            Type = PatternType.Weekly,
-            Interval = 2,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday },
-            Index = MonthIndex.Fourth,
-            Dates = new List<int> {1, 2, 3}
-        };
-        private readonly OccurenceRange validOccurenceRange = new OccurenceRange
-        {
-            StartDate = new DateTime(2020, 01, 01),
-            FinishDate = new DateTime(2020, 01, 02)
-        };
-        private readonly ContextForCreateScheduleDTO validContext = new ContextForCreateScheduleDTO
-        {
-            GroupID = 21,
-            ThemeID = 48,
-            MentorID = 21
-        };
-        private readonly PatternForCreateScheduleDTO notValidPattern = new PatternForCreateScheduleDTO
-        {
-            Type = PatternType.Weekly,
-            Index = MonthIndex.Fourth,
-            Interval = 2,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday },
-            Dates = new List<int> { 0, 2, 3 }
-        };
-        private readonly OccurenceRange notValidOccurenceRange = new OccurenceRange
-        {
-            StartDate = new DateTime(2020, 01, 01),
-            FinishDate = new DateTime(2019, 01, 02)
-        };
-        private readonly ContextForCreateScheduleDTO notValidContext = new ContextForCreateScheduleDTO
-        {
-            GroupID = 0,
-            ThemeID = 48,
-            MentorID = 21
-        };
+        private readonly CreateScheduleDtoValidator _validator;
 
         public CreateScheduleDtoValidatorTests()
         {
@@ -74,10 +35,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task CreateScheduleDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validPattern,
-                    validOccurenceRange,
-                    validContext);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidPattern,
+                ScheduleTestValidationConstants.ValidOccurenceRange,
+                ScheduleTestValidationConstants.ValidContext);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -107,10 +67,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task CreateScheduleDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidPattern,
-                    notValidOccurenceRange,
-                    notValidContext);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidPattern,
+                ScheduleTestValidationConstants.NotValidOccurenceRange,
+                ScheduleTestValidationConstants.NotValidContext);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -125,10 +84,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task CreateScheduleDTOAsync_NotValidPattern_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidPattern,
-                    validOccurenceRange,
-                    validContext);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidPattern,
+                ScheduleTestValidationConstants.ValidOccurenceRange,
+                ScheduleTestValidationConstants.ValidContext);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -143,10 +101,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task CreateScheduleDTOAsync_NotValidRange_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validPattern,
-                    notValidOccurenceRange,
-                    validContext);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidPattern,
+                ScheduleTestValidationConstants.NotValidOccurenceRange,
+                ScheduleTestValidationConstants.ValidContext);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -161,10 +118,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task CreateScheduleDTOAsync_NotValidContext_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validPattern,
-                    validOccurenceRange,
-                    notValidContext);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidPattern,
+                ScheduleTestValidationConstants.ValidOccurenceRange,
+                ScheduleTestValidationConstants.NotValidContext);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

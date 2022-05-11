@@ -4,8 +4,14 @@ using FluentValidation;
 
 namespace CharlieBackend.Api.Validators.AccountDTOValidators
 {
+    /// <summary>
+    /// ResetPasswordDtoValidator fluent validator
+    /// </summary>
     public class ResetPasswordDtoValidator : AbstractValidator<ResetPasswordDto>
     {
+        /// <summary>
+        /// Fluent validation rules for ResetPasswordDto
+        /// </summary>
         public ResetPasswordDtoValidator()
         {
             RuleFor(x => x.Email)

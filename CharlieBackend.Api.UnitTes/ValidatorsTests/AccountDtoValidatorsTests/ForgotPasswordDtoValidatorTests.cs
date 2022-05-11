@@ -4,15 +4,11 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.AccountDtoValidatorsTests
 {
     public class ForgotPasswordDtoValidatorTests : TestBase
     {
-        private ForgotPasswordDtoValidator _validator;
-        private readonly string validEmail = "ValidEmail@gmail.com";
-        private readonly string validFormURL = "http://example.org/foo/bar.html";
-        private readonly string notValidEmail = "@ValidEmailgmail.com";
-        private readonly string notValidFormURL = "http:\\example.org/foo/bar.html";
+        private readonly ForgotPasswordDtoValidator _validator;
 
         public ForgotPasswordDtoValidatorTests()
         {
@@ -34,9 +30,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ForgotPasswordDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    validFormURL);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.ValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -66,9 +61,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ForgotPasswordDTOAsync_NotValidEmail_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    notValidEmail,
-                    validFormURL);
+            var dto = GetDTO(TestValidationConstants.NotValidEmail,
+                TestValidationConstants.ValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -83,9 +77,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task ForgotPasswordDTOAsync_NotValidFormURL_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                    validEmail,
-                    notValidFormURL);
+            var dto = GetDTO(TestValidationConstants.ValidEmail,
+                TestValidationConstants.NotValidFormURL);
 
             // Act
             var result = await _validator.ValidateAsync(dto);

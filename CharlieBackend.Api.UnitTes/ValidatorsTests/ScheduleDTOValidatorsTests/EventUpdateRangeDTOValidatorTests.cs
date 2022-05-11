@@ -5,52 +5,11 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CharlieBackend.Api.UnitTest.ValidatorsTests
+namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 {
     public class EventUpdateRangeDTOValidatorTests : TestBase
     {
-        private EventUpdateRangeDTOValidator _validator;
-
-        private readonly ScheduledEventFilterRequestDTO validFilter = new ScheduledEventFilterRequestDTO
-        {
-            CourseID = 21,
-            MentorID = 21,
-            GroupID = 21,
-            ThemeID = 21,
-            StudentAccountID = 21,
-            EventOccurrenceID = 21,
-            StartDate = new DateTime(2020, 1, 1),
-            FinishDate = new DateTime(2020, 1, 2)
-        };
-        private readonly UpdateScheduledEventDto validRequest = new UpdateScheduledEventDto
-        {
-            StudentGroupId = 21,
-            ThemeId = 21,
-            MentorId = 21,
-            EventStart = new DateTime(2012, 1, 1),
-            EventEnd = new DateTime(2020, 1, 1)
-        };
-
-        private readonly ScheduledEventFilterRequestDTO notValidFilter = new ScheduledEventFilterRequestDTO
-        {
-            CourseID = 21,
-            MentorID = 21,
-            GroupID = 21,
-            ThemeID = 0,
-            StudentAccountID = 21,
-            EventOccurrenceID = 21,
-            StartDate = new DateTime(2020, 1, 1),
-            FinishDate = new DateTime(2020, 1, 2)
-        };
-        private readonly UpdateScheduledEventDto notValidRequest = new UpdateScheduledEventDto
-        {
-            StudentGroupId = 21,
-            ThemeId = 21,
-            MentorId = 21,
-            EventStart = new DateTime(2021, 1, 1),
-            EventEnd = new DateTime(2020, 1, 1)
-        };
-
+        private readonly EventUpdateRangeDTOValidator _validator;
 
         public EventUpdateRangeDTOValidatorTests()
         {
@@ -72,9 +31,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task EventUpdateRangeDTOAsync_ValidData_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(
-                validFilter,
-                validRequest);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidFilter,
+                ScheduleTestValidationConstants.ValidRequest);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -104,9 +62,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task EventUpdateRangeDTOAsync_NotValidData_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                notValidFilter,
-                notValidRequest);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidFilter,
+                ScheduleTestValidationConstants.NotValidRequest);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -121,9 +78,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task EventUpdateRangeDTOAsync_NotValidFilter_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                notValidFilter,
-                validRequest);
+            var dto = GetDTO(ScheduleTestValidationConstants.NotValidFilter,
+                ScheduleTestValidationConstants.ValidRequest);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -138,9 +94,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         public async Task EventUpdateRangeDTOAsync_NotValidRequest_ShouldReturnFalse()
         {
             // Arrange
-            var dto = GetDTO(
-                validFilter,
-                notValidRequest);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidFilter,
+                ScheduleTestValidationConstants.NotValidRequest);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
