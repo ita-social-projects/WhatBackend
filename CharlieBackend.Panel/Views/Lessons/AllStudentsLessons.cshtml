@@ -4,7 +4,6 @@
     Layout = "_Layout";
 }
 
-
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
@@ -13,35 +12,34 @@
                     <h6 class="m-0 font-weight-bold text-primary">Lessons</h6>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive p-3" style="overflow-x:unset">
+                    <div class="table-responsive p-3" style="overflow-x:auto">
                         <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
                             <thead>
-                                <tr class="thead-dark row">
-                                    <th class="col">Date</th>
-                                    <th class="col">Theme</th>
-                                    <th class="col">Presence</th>
-                                    <th class="col">Mark</th>
-                                    <th class="col">Comment</th>
+                                <tr class="thead-dark">
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Theme</th>
+                                    <th scope="col">Presence</th>
+                                    <th scope="col">Mark</th>
+                                    <th scope="col">Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in @Model)
+                                @foreach (var studentsLesson in @Model)
                                 {
-                                    <tr class="row">
-                                        <td class="col text-truncate">@item.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td class="col text-truncate">@item.ThemeName</td>
-                                        @if (@item.Presence)
+                                    <tr>
+                                        <td>@studentsLesson.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td>@studentsLesson.ThemeName</td>
+                                        @if (studentsLesson.Presence)
                                         {
-                                            <td class="col text-truncate">+</td>
+                                            <td>+</td>
 
                                         }
-                                        @if (!@item.Presence)
+                                        @if (!studentsLesson.Presence)
                                         {
-                                            <td class="col text-truncate">-</td>
-
+                                            <td>-</td>
                                         }
-                                        <td class="col text-truncate">@item.Mark</td>
-                                        <td class="col text-truncate">@item.Comment</td>
+                                        <td>@studentsLesson.Mark</td>
+                                        <td>@studentsLesson.Comment</td>
                                     </tr>
                                 }
                             </tbody>

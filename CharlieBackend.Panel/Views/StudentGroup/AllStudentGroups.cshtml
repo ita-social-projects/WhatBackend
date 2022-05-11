@@ -60,8 +60,8 @@
                                 @foreach (var studentGroup in @Model)
                                 {
                                     <tr>
-                                        <td><p class="text-center text-justify">@studentGroup.Course.Name</p></td>
-                                        <td><p class="text-center text-justify">@studentGroup.Name</p></td>
+                                        <td>@studentGroup.Course.Name</td>
+                                        <td>@studentGroup.Name</td>
                                         <td>@studentGroup.StartDate.ToString("yyyy.MM.dd")</td>
                                         <td>@studentGroup.FinishDate.ToString("yyyy.MM.dd")</td>
                                         <td>

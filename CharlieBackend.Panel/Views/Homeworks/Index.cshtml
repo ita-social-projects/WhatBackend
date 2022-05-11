@@ -37,9 +37,9 @@
                                 @foreach (var homework in Model)
                                 {
                                     <tr id="activeCoursesRow">
-                                        <td><p class="text-center text-justify">@homework.ThemeName</p></td>
+                                        <td>@homework.ThemeName</td>
                                         <td>@homework.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td><p class="text-center text-justify">@homework.TaskText</p></td>
+                                        <td>@homework.TaskText</td>
                                         <td>@homework.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
                                         <td>
                                             <div class="dropdown">
