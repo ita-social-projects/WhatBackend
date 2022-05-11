@@ -25,11 +25,11 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter, CalendarDisplayType calendarType)
+        public async Task<IActionResult> GetCalendar(ScheduledEventFilterRequestDTO scheduledEventFilter, CalendarDisplayType displayType)
         {
             var data = await _calendarService.GetCalendarDataAsync(scheduledEventFilter);
 
-            data.DisplayType = calendarType;
+            data.DisplayType = displayType;
 
             return View("Index", data);
         }

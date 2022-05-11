@@ -121,7 +121,7 @@
                         <div class="row">
                             <h6 class="m-0 font-weight-bold text-primary col-10">Calendar</h6>
 
-                            <select id="weekFormat" class="custom-select col" onchange="ChangeWeekFormat()" name="calendarType" asp-for="DisplayType" asp-items="@Html.GetEnumSelectList(typeof(CalendarDisplayType))">
+                            <select id="weekFormat" class="custom-select col" onchange="ChangeWeekFormat()" name="displayType" asp-for="DisplayType" asp-items="@Html.GetEnumSelectList(typeof(CalendarDisplayType))">
                             </select>
                         </div>
                     </div>
