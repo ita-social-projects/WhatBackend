@@ -11,6 +11,24 @@ namespace CharlieBackend.Panel.HtmlHelpers
 {
     public static class CalendarHelper
     {
+        public static HtmlString CalendarHeaderHtml(this IHtmlHelper html, CalendarDisplayType displayType)
+        {
+            string result = string.Empty;
+
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                TagBuilder div = GetDayBlock(day, displayType);
+
+                div.InnerHtml.Append(day.ToString());
+
+                using var writer = new System.IO.StringWriter();
+                div.WriteTo(writer, HtmlEncoder.Default);
+                result += writer.ToString();
+            }
+
+            return new HtmlString(result);
+        }
+
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
         {
             var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
@@ -158,25 +176,22 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return dayBlock;
         }
 
+        private static TagBuilder GetDayBlock(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
+        {
+            TagBuilder div = new TagBuilder("div");
+
+            string divClass = GetDayOfWeekClass(dayOfWeek, displayType);
+
+            div.AddCssClass(divClass);
+
+            return div;
+        }
+
         private static TagBuilder GetDayBlock(DateTime date, CalendarDisplayType displayType)
         {
             TagBuilder div = new TagBuilder("div");
 
-            string rowClass = string.Empty;
-
-            switch (displayType)
-            {
-                case CalendarDisplayType.FullWeek:
-                    rowClass = IsWeekend(date) ? "col-calendar-full-week weekend" : "col-calendar-full-week";
-                    break;
-
-                case CalendarDisplayType.WorkingWeek:
-                    rowClass = IsWeekend(date) ? "d-none weekend" : "col-calendar-working-week";
-                    break;
-
-                default:
-                    goto case CalendarDisplayType.WorkingWeek;
-            }
+            string rowClass = GetDayOfWeekClass(date.DayOfWeek, displayType);
 
             div.AddCssClass(rowClass);
 
@@ -206,6 +221,27 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return button;
         }
 
+        private static string GetDayOfWeekClass(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
+        {
+            string dayOfWeekClass = string.Empty;
+
+            switch (displayType)
+            {
+                case CalendarDisplayType.FullWeek:
+                    dayOfWeekClass = IsWeekend(dayOfWeek) ? "col-calendar-full-week weekend" : "col-calendar-full-week";
+                    break;
+
+                case CalendarDisplayType.WorkingWeek:
+                    dayOfWeekClass = IsWeekend(dayOfWeek) ? "d-none weekend" : "col-calendar-working-week";
+                    break;
+
+                default:
+                    goto case CalendarDisplayType.WorkingWeek;
+            }
+
+            return dayOfWeekClass;
+        }
+
         private static DateTime GetFinishDate(IList<CalendarEventOccurrenceViewModel> models)
         {
             DateTime latestFinish = models.Max(x => x.EventFinish);
@@ -222,9 +258,9 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return earliestFinish > earliestStart ? earliestStart : earliestFinish;
         }
 
-        private static bool IsWeekend(DateTime date)
+        private static bool IsWeekend(DayOfWeek dayOfWeek)
         {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+            return dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday;
         }
     }
 }

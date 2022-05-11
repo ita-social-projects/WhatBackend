@@ -3,35 +3,9 @@
 @model CalendarViewModel
 
 <div class="card-body">
-    @switch (Model.DisplayType)
-    {
-        case CalendarDisplayType.FullWeek:
-            <div class="row head">
-                <div class="col-calendar-full-week weekend">Sunday</div>
-                <div class="col-calendar-full-week">Monday</div>
-                <div class="col-calendar-full-week">Tuesday</div>
-                <div class="col-calendar-full-week">Wednesday</div>
-                <div class="col-calendar-full-week">Thursday</div>
-                <div class="col-calendar-full-week">Friday</div>
-                <div class="col-calendar-full-week weekend">Saturday</div>
-            </div>
-            break;
-
-        case CalendarDisplayType.WorkingWeek:
-            <div class="row head">
-                <div class="d-none weekend">Sunday</div>
-                <div class="col-calendar-working-week">Monday</div>
-                <div class="col-calendar-working-week">Tuesday</div>
-                <div class="col-calendar-working-week">Wednesday</div>
-                <div class="col-calendar-working-week">Thursday</div>
-                <div class="col-calendar-working-week">Friday</div>
-                <div class="d-none weekend">Saturday</div>
-            </div>
-            break;
-
-        default:
-            goto case CalendarDisplayType.WorkingWeek;
-    }
+    <div class="row head">
+        @Html.CalendarHeaderHtml(Model.DisplayType)
+    </div>
 
     @Html.CalendarBodyHtml(Model)
 </div>
