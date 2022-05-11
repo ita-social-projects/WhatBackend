@@ -31,26 +31,26 @@
                     <h6 class="m-0 font-weight-bold text-primary">Lessons</h6>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive p-3" style="overflow-x:unset">
+                    <div class="table-responsive p-3" style="overflow-x:auto">
                         <table class="table text-center table-striped container-fluid" id="dataTable" width="100%" cellspacing="0">
                             <thead>
-                                <tr class="thead-dark row">
-                                    <th class="col">Date</th>
-                                    <th class="col">Mentor</th>
-                                    <th class="col">StudentGroup</th>
-                                    <th class="col">Theme</th>
-                                    <th class="col">Controll</th>
+                                <tr class="thead-dark">
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Mentor</th>
+                                    <th scope="col">StudentGroup</th>
+                                    <th scope="col">Theme</th>
+                                    <th scope="col"><i class="fas fa-pen" data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in @Model)
+                                @foreach (var lesson in @Model)
                                 {
-                                    <tr class="row">
-                                        <td class="col text-truncate">@item.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td class="col text-truncate">@item.Mentor.FirstName @item.Mentor.LastName</td>
-                                        <td class="col text-truncate">@item.StudentGroup.Name</td>
-                                        <td class="col text-truncate">@item.ThemeName</td>
-                                        <td class="col">
+                                    <tr>
+                                        <td>@lesson.LessonDate.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td>@lesson.Mentor.FirstName @lesson.Mentor.LastName</td>
+                                        <td><p class="text-center text-justify">@lesson.StudentGroup.Name</p></td>
+                                        <td><p class="text-center text-justify">@lesson.ThemeName</p></td>
+                                        <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondar dropdown-toggle"
                                                         type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -61,13 +61,13 @@
                                                     @if (!User.IsInRole("Secretary"))
                                                     {
                                                         <a class="dropdown-item"
-                                                           asp-action="PrepareLessonForUpdate" asp-controller="Lessons" asp-route-id="@item.Id">
+                                                           asp-action="PrepareLessonForUpdate" asp-controller="Lessons" asp-route-id="@lesson.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit</span>
                                                         </a>
                                                     }
                                                     <a class="dropdown-item"
-                                                       asp-action="Attendance" asp-controller="Lessons" asp-route-id="@item.Id">
+                                                       asp-action="Attendance" asp-controller="Lessons" asp-route-id="@lesson.Id">
                                                         <i class="fas fa-cog"></i>
                                                         <span>Show Attendance</span>
                                                     </a>

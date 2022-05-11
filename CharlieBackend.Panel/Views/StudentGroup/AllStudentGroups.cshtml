@@ -1,5 +1,4 @@
-﻿
-@model IList<CharlieBackend.Panel.Models.StudentGroups.StudentGroupViewModel>
+﻿@model IList<CharlieBackend.Panel.Models.StudentGroups.StudentGroupViewModel>
 
 @{
     Layout = "_Layout";
@@ -41,39 +40,39 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive p-3" style="overflow-x:unset">
+                    <div class="table-responsive p-3" style="overflow-x:auto">
                         <table class="table text-center table-hover" id="groupsDataTable" width="100%" cellspacing="0">
                             <thead>
-                                <tr class="thead-dark row">
-                                    <th class="col">Course name</th>
-                                    <th class="col">Group name</th>
-                                    <th class="col">Start date</th>
-                                    <th class="col">Finish date</th>
-                                    <th class="col">Students</th>
-                                    <th class="col">Mentors</th>
+                                <tr class="thead-dark">
+                                    <th scope="col">Course name</th>
+                                    <th scope="col">Group name</th>
+                                    <th scope="col">Start date</th>
+                                    <th scope="col">Finish date</th>
+                                    <th scope="col"><i class="fas fa-users" data-toggle="tooltip" data-placement="top" title="Students"></i></th>
+                                    <th scope="col"><i class="fas fa-address-book"  data-toggle="tooltip" data-placement="top" title="Mentors"></i></th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                     {
-                                        <th class="col">Controll</th>
+                                        <th scope="col"><i class="fas fa-pen"  data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
                                     }
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in @Model)
+                                @foreach (var studentGroup in @Model)
                                 {
-                                    <tr class="row">
-                                        <td class="col text-truncate">@item.Course.Name</td>
-                                        <td class="col text-truncate">@item.Name</td>
-                                        <td class="col">@item.StartDate.ToString("yyyy.MM.dd")</td>
-                                        <td class="col">@item.FinishDate.ToString("yyyy.MM.dd")</td>
-                                        <td class="col">
+                                    <tr>
+                                        <td><p class="text-center text-justify">@studentGroup.Course.Name</p></td>
+                                        <td><p class="text-center text-justify">@studentGroup.Name</p></td>
+                                        <td>@studentGroup.StartDate.ToString("yyyy.MM.dd")</td>
+                                        <td>@studentGroup.FinishDate.ToString("yyyy.MM.dd")</td>
+                                        <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    @if (@item.Students.Any())
+                                                    @if (studentGroup.Students.Any())
                                                     {
-                                                        @foreach (var student in @item.Students)
+                                                        @foreach (var student in studentGroup.Students)
                                                         {
                                                             <label class="dropdown-item" href="#">@student.FirstName @student.LastName   </label>
                                                         }
@@ -85,15 +84,15 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="col">
+                                        <td>
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-outline-secondar dropdown-toggle" data-toggle="dropdown">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    @if (@item.Mentors.Any())
+                                                    @if (studentGroup.Mentors.Any())
                                                     {
-                                                        @foreach (var mentor in @item.Mentors)
+                                                        @foreach (var mentor in studentGroup.Mentors)
                                                         {
                                                             if (mentor.IsActive)
                                                             {
@@ -112,7 +111,7 @@
                                         </td>
                                         @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                         {
-                                            <td class="col">
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-outline-secondar dropdown-toggle"
                                                             type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -121,7 +120,7 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                         <a class="dropdown-item"
-                                                           asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@item.Id">
+                                                           asp-action="PrepareStudentGroupForUpdate" asp-controller="StudentGroup" asp-route-id="@studentGroup.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit</span>
                                                         </a>
