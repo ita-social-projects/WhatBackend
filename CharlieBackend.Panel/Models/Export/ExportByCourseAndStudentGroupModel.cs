@@ -1,6 +1,6 @@
 ﻿namespace CharlieBackend.Panel.Models.Export
 {
-    public class ExportByCourseAndStudentGroupModel : ExportByDataRangeModel
+    public class ExportByCourseAndStudentGroupModel : ExportByDateRangeModel
     {
         public int CourseId { get; set; }
 

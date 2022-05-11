@@ -25,30 +25,48 @@
         $("#seTime").val(seTime);
     });
 
-    async function downloadExport(format)
-    {
-        let postData = {
-            CourseId: $('#courseSelect').val(),
-            StudentGroupId: $('#groupSelect').val(),
-            StartDate: $('#startDate').val(),
-            FinishDate: $('#finishDate').val(),
-            IncludeAnalytics: [0]
-        }
+    $(document).ready(()=>{
+    
+        let selectFormat = $('#selectFormat');
 
-    }
+        selectFormat.on('change',()=>{
+            $('#exportForm').attr('action', '/Export/studentsClassbooks/' + selectFormat.val());
+        });
+
+        $('#exportForm').submit(function() {
+            
+            $('#exportCourseId').val($('#courseSelect').val());
+            $('#exportStudentGroupId').val($('#groupSelect').val());
+            $('#exportStart').val($('#startDate').val());
+            $('#exportFinish').val($('#finishDate').val());
+
+            return true;
+        });
+
+    });
 </script>
 }
+<style>
+    .btn-export {
+        padding: 1px 3px 1px 3px;
+        font-size: 13px;
+        float: right;
+    }
+    #exportForm input {
+        height: fit-content;
+    }
+</style>
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
             <div class="card shadow mb-4">
 
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary b-inline">Classbook</h6>
-                    <button data-toggle="modal" data-target="#export">Export</button>
+                    <h6 class="m-0 font-weight-bold text-primary d-inline">Classbook</h6>
+                    <button class="btn btn-export btn-info" data-toggle="modal" data-target="#export">Export</button>
                 </div>
 
-                <div class="card-header py-3">
+                <div class="card-body py-3">
 
                     <form method="post" action="/Classbook/GetClassbook">
                         <div class="input-group mb-3">
@@ -154,29 +172,36 @@
 </div>
 
 <div class="modal fade" id="export" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Export</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-footer">
-                    <div class="export-options">
-                        <span>Export:</span>
-                        <i class="far fa-file-code" id="html"></i>
-                        <i class="far fa-file-excel" id="excel"></i>
-                        <i class="fa fa-file-csv" id="csv"></i>
-                    </div> 
-                    <form method="POST">
-                        <input type="hidden" id="exportCourseId" name="CourseId"/>
-                        <input type="hidden" id="exportStudentGroupId" name="StudentGroupId"/>
-                        <input type="hidden" id="exportStart" name="StartDate"/>
-                        <input type="hidden" id="exportFinish" name="FinishDate"/>
-                        <button class="btn" data-dismiss="modal">Confirm</button>
-                    </form>
-                </div>
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Export</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select class="mb-3" id="selectFormat">
+                    <option value="0">HTML</option>
+                    <option value="1">XLSX</option>
+                    <option value="2">CSV</option>
+                </select> 
+                <form method="POST" action="/Export/studentsClassbooks/0" id="exportForm">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check1" name="IncludeAnalytics[]" value="0" checked>
+                        <label class="form-check-label" for="check1">Student presence</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check2" name="IncludeAnalytics[]" value="1">
+                        <label class="form-check-label" for="check2">Student marks</label>
+                    </div>
+                    <input type="hidden" id="exportCourseId" name="CourseId"/>
+                    <input type="hidden" id="exportStudentGroupId" name="StudentGroupId"/>
+                    <input type="hidden" id="exportStart" name="StartDate"/>
+                    <input type="hidden" id="exportFinish" name="FinishDate"/>
+                    <button class="btn btn-success m-auto mt-3 d-block" type="submit">Confirm</button>
+                </form>
             </div>
         </div>
     </div>
+</div>

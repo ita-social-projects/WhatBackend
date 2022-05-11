@@ -2,7 +2,7 @@
 
 namespace CharlieBackend.Panel.Models.Export
 {
-    public class ExportByDataRangeModel
+    public class ExportByDateRangeModel
     {
         public DateTime StartDate { get; set; }
 

@@ -20,38 +20,47 @@ namespace CharlieBackend.Panel.Services
             _exportApiEndpoints = options.Value.Urls.ApiEndpoints.Export;
         }
 
-        public Task<byte[]> GetExportedStudentsClassbooksAsync(ExportFileFormat format
-            , ExportByCourseAndStudentGroupModel exportModel)
+        public Task<byte[]> ExportStudentClassbook(ExportFileFormat format, long studentId, ExportByDateRangeModel exportModel)
         {
-            var url = string.Format(_exportApiEndpoints.GetExportedStudentsResultsEndpoint, (int)format);
+            var url = string.Format(_exportApiEndpoints.ExportStudentClassbookEndpoint
+                , studentId, (int)format);
 
             return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
-        public Task<byte[]> GetExportedStudentClassbookAsync(ExportFileFormat format)
+        public Task<byte[]> ExportStudentGroupResults(ExportFileFormat format, long courseId, ExportByDateRangeModel exportModel)
         {
-            throw new System.NotImplementedException();
+            var url = string.Format(_exportApiEndpoints.ExportStudentGroupResultsEndpoint
+                , courseId, (int)format);
+
+            return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
-        public Task<byte[]> GetExportedStudentGroupsResultsstudentGroupResultsAsync(ExportFileFormat format)
+        public Task<byte[]> ExportStudentResults(ExportFileFormat format, long studentId, ExportByDateRangeModel exportModel)
         {
-            throw new System.NotImplementedException();
+            var url = string.Format(_exportApiEndpoints.ExportStudentResultsEndpoint
+                , studentId, (int)format);
+
+            return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
-        public Task<byte[]> GetExportedStudentResultsAsync(ExportFileFormat format)
+        public Task<byte[]> ExportStudentsClassbook(ExportFileFormat format, ExportByCourseAndStudentGroupModel exportModel)
         {
-            throw new System.NotImplementedException();
+            var url = string.Format(_exportApiEndpoints.ExportStudentsClassbookEndpoint, (int)format);
+
+            return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
-        public Task<byte[]> GetExportedStudentsOfGroupstudentsOfGroupAsync(ExportFileFormat format)
+        public Task<byte[]> ExportStudentsOfGroup(ExportFileFormat format, long groupId)
         {
-            throw new System.NotImplementedException();
+            var url = string.Format(_exportApiEndpoints.ExportStudentsOfGroupEndpoint, (int)format);
+
+            return _apiBinaryResultUtil.GetAsync(url);
         }
 
-        public Task<byte[]> GetExportedStudentsResultsAsync(ExportFileFormat format
-            , ExportByCourseAndStudentGroupModel exportModel)
+        public Task<byte[]> ExportStudentsResults(ExportFileFormat format, ExportByCourseAndStudentGroupModel exportModel)
         {
-            var url = string.Format(_exportApiEndpoints.GetExportedStudentsResultsEndpoint, (int)format);
+            var url = string.Format(_exportApiEndpoints.ExportStudentsResultsEndpoint, (int)format);
 
             return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }

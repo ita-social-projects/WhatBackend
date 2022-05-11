@@ -152,11 +152,12 @@ namespace CharlieBackend.Panel
 
     public class ExportApiEndpoints
     {
-        public string GetExportedStudentsResultsEndpoint { get; set; }
-        public string GetExportedStudentClassbooksEndpoint { get; set; }
-        public string GetExportedStudentResultsEndpoint { get; set; }
-        public string GetExportedStudentGroupsResultsstudentGroupResultsEndpoint { get; set; }
-        public string GetExportedStudentsOfGroupstudentsOfGroupEndpoint { get; set; }
+        public string ExportStudentsClassbookEndpoint { get; set; }
+        public string ExportStudentsResultsEndpoint { get; set; }
+        public string ExportStudentClassbookEndpoint { get; set; }
+        public string ExportStudentResultsEndpoint { get; set; }
+        public string ExportStudentGroupResultsEndpoint { get; set; }
+        public string ExportStudentsOfGroupEndpoint { get; set; }
     }
 
     #endregion 
