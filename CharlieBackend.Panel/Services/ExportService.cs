@@ -22,16 +22,16 @@ namespace CharlieBackend.Panel.Services
 
         public Task<byte[]> ExportStudentClassbook(ExportFileFormat format, long studentId, ExportByDateRangeModel exportModel)
         {
-            var url = string.Format(_exportApiEndpoints.ExportStudentClassbookEndpoint
-                , studentId, (int)format);
+            var url = string.Format(_exportApiEndpoints.ExportStudentClassbookEndpoint,
+                studentId, (int)format);
 
             return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
 
         public Task<byte[]> ExportStudentGroupResults(ExportFileFormat format, long courseId, ExportByDateRangeModel exportModel)
         {
-            var url = string.Format(_exportApiEndpoints.ExportStudentGroupResultsEndpoint
-                , courseId, (int)format);
+            var url = string.Format(_exportApiEndpoints.ExportStudentGroupResultsEndpoint,
+                courseId, (int)format);
 
             return _apiBinaryResultUtil.PostAsync(url, exportModel);
         }
