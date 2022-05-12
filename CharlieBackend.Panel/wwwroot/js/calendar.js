@@ -1,18 +1,12 @@
-﻿var seGroup = null;
-var seMentor = null;
-var seTheme = null;
-var seTime = null;
-var seEventOccurrenceId = null;
-var seSingleEventId = null;
-$(document).on("click", ".btn-event", function (e) {
+﻿$(document).on("click", ".btn-event", function (e) {
     e.preventDefault();
     var _self = $(this);
-    seGroup = _self.attr("seGroup");
-    seMentor = _self.attr("seMentor");
-    seTheme = _self.attr("seTheme");
-    seTime = _self.attr("seTime");
-    seEventOccurrenceId = _self.attr("seEventOccurrenceId");
-    seSingleEventId = _self.attr("seSingleEventId");
+    var seGroup = _self.attr("seGroup");
+    var seMentor = _self.attr("seMentor");
+    var seTheme = _self.attr("seTheme");
+    var seTime = _self.attr("seTime");
+    var seEventOccurrenceId = _self.attr("seEventOccurrenceId");
+    var seSingleEventId = _self.attr("seSingleEventId");
     $("#seGroup").val(seGroup);
     $("#seMentor").val(seMentor);
     $("#seTheme").val(seTheme);
