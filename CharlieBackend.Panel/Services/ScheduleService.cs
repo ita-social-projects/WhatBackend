@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Models.ScheduledEvent;
@@ -117,7 +118,7 @@ namespace CharlieBackend.Panel.Services
             return scheduledEvent;
         }
 
-        public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()
+        public async Task<EventOccurrenceEditViewModel> PrepareEventAddAsync()
         {
             var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
@@ -162,6 +163,12 @@ namespace CharlieBackend.Panel.Services
             scheduledEvent.DetailedEventOccurrence = await eventOccurrenceDetailedTask;
 
             return scheduledEvent;
+        }
+
+        public async Task CreateSingleEventAsync(CreateSingleEventDto singleEventDTO)
+        {
+            await _apiUtil
+              .CreateAsync<SingleEventDTO, CreateSingleEventDto>(_eventsApiEndpoints.AddSingleEvent, singleEventDTO);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
     {
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
         {
-            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
+            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.FirstOrDefault(y => y.Id == x.EventOccuranceId)).ToList();
 
             DateTime startDate = calendar.ScheduledEventFilter.StartDate ?? GetStartDate(eventOccurencesFiltered);
             DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishDate(eventOccurencesFiltered);
@@ -42,7 +42,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
                     SingleEventId = scheduledEvent.Id
-                }).ToList();
+                }).OrderBy(i => i.EventStart)
+                .ToList();
 
             return models;
         }
