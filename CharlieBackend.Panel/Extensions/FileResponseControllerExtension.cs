@@ -5,6 +5,13 @@ namespace CharlieBackend.Panel.Extensions
 {
     public static class FileResponseControllerExtension
     {
+        private const string _csvContentType = "text/csv";
+        private const string _htmlContentType = "text/html";
+        private const string _excelContentType = "application/vnd.ms-excel";
+        private const string _csvFileFormat = ".csv";
+        private const string _htmlFileFormat = ".html";
+        private const string _xlsxFileFormat = ".xlsx";
+
         public static IActionResult ExportFile(this Controller controller, byte[] fileBytes, ExportFileFormat format)
         {
             string contentType = string.Empty;
@@ -13,16 +20,16 @@ namespace CharlieBackend.Panel.Extensions
             switch(format)
             {
                 case ExportFileFormat.Csv:
-                    contentType = "text/csv";
-                    filename += ".csv";
+                    contentType = _csvContentType;
+                    filename += _csvFileFormat;
                     break;
                 case ExportFileFormat.Html:
-                    contentType = "text/html";
-                    filename += ".html";
+                    contentType = _htmlContentType;
+                    filename += _htmlFileFormat;
                     break;
                 case ExportFileFormat.Xlsx:
-                    contentType = "application/vnd.ms-excel";
-                    filename += ".xlsx";
+                    contentType = _excelContentType;
+                    filename += _xlsxFileFormat;
                     break;
             }
 

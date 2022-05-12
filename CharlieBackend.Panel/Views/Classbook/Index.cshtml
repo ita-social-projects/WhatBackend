@@ -8,54 +8,10 @@
 
 @section Scripts{
 <script type="text/javascript">
-    var seGroup = null;
-    var seMentor = null;
-    var seTheme = null;
-    var seTime = null;
-    $(document).on("click", ".btn-event", function (e) {
-        e.preventDefault();
-        var _self = $(this);
-        seGroup = _self.attr("seGroup");
-        seMentor = _self.attr("seMentor");
-        seTheme = _self.attr("seTheme");
-        seTime = _self.attr("seTime");
-        $("#seGroup").val(seGroup);
-        $("#seMentor").val(seMentor);
-        $("#seTheme").val(seTheme);
-        $("#seTime").val(seTime);
-    });
-
-    $(document).ready(()=>{
-    
-        let selectFormat = $('#selectFormat');
-
-        selectFormat.on('change',()=>{
-            $('#exportForm').attr('action', '/Export/studentsClassbooks/' + selectFormat.val());
-        });
-
-        $('#exportForm').submit(function() {
-            
-            $('#exportCourseId').val($('#courseSelect').val());
-            $('#exportStudentGroupId').val($('#groupSelect').val());
-            $('#exportStart').val($('#startDate').val());
-            $('#exportFinish').val($('#finishDate').val());
-
-            return true;
-        });
-
-    });
+    $(document).ready(ConfigureExporting);
 </script>
 }
-<style>
-    .btn-export {
-        padding: 1px 3px 1px 3px;
-        font-size: 13px;
-        float: right;
-    }
-    #exportForm input {
-        height: fit-content;
-    }
-</style>
+
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
@@ -142,34 +98,6 @@
 @{
     await Html.RenderPartialAsync("ClassbookBody", Model);
 }
-
-<div class="modal fade" id="seeSchedulEvent" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <label for="seTime">Time:</label>
-                <input id="seTime" class="modalTextInput form-control" value="" />
-
-                <label for="seTheme">Theme:</label>
-                <input id="seTheme" class="modalTextInput form-control" value="" />
-
-                <label for="seGroup">Group:</label>
-                <input id="seGroup" class="modalTextInput form-control" value="" />
-
-                <label for="seMentor">Mentor:</label>
-                <input id="seMentor" class="modalTextInput form-control" value="" />
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="export" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
