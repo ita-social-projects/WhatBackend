@@ -1,0 +1,55 @@
+﻿.out-of-range {
+    background: #edeff1;
+}
+
+.auto-scroll {
+    white-space: normal;
+    width: 200px;
+}
+
+.events button {
+    margin-top: 2px;
+    width: 100%;
+}
+
+.events {
+    margin-bottom: 3px;
+}
+
+.badge {
+    display: block;
+    width: fit-content;
+    margin-bottom: 2px;
+    margin-top: 12px;
+}
+
+div.head div {
+    text-align: center;
+}
+
+.col-calendar-full-week {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    flex: 0 0 14.285714%;
+    max-width: 14.285714%;
+    min-width: 100px;
+}
+
+.col-calendar-working-week {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    flex: 0 0 20%;
+    max-width: 20%;
+    min-width: 100px;
+}
+
+.col-1:first-child, .col-2, .col-calendar-full-week, .col-calendar-working-week {
+    border-right: 0.5px solid;
+}
+
+.col-2, .col-1, .col-calendar-full-week, .col-calendar-working-week {
+    border-bottom: 0.5px solid grey;
+    min-height: 100px;
+}

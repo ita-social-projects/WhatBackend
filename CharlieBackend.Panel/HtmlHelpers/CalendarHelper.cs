@@ -6,14 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using CharlieBackend.Core.Extensions;
+using System.Text;
 
 namespace CharlieBackend.Panel.HtmlHelpers
 {
     public static class CalendarHelper
     {
+        #region constants
+
+        private const string WorkingDayOfFullWeekClass = "col-calendar-full-week";
+        private const string WeekendDayOfFullWeekClass = "col-calendar-full-week weekend";
+        private const string WorkingDayOfWorkingWeekClass = "col-calendar-working-week";
+        private const string WeekendDayOfWorkingWeekClass = "d-none weekend";
+
+        #endregion
         public static HtmlString CalendarHeaderHtml(this IHtmlHelper html, CalendarDisplayType displayType)
         {
-            string result = string.Empty;
+            StringBuilder result = new StringBuilder();
 
             foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
             {
@@ -23,10 +32,10 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
                 using var writer = new System.IO.StringWriter();
                 div.WriteTo(writer, HtmlEncoder.Default);
-                result += writer.ToString();
+                result.Append(writer.ToString());
             }
 
-            return new HtmlString(result);
+            return new HtmlString(result.ToString());
         }
 
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
@@ -36,15 +45,16 @@ namespace CharlieBackend.Panel.HtmlHelpers
             DateTime startDate = calendar.ScheduledEventFilter.StartDate ?? GetStartDate(eventOccurencesFiltered);
             DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishDate(eventOccurencesFiltered);
 
-            string result = string.Empty;
+            StringBuilder result = new StringBuilder();
+
             foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate, calendar.DisplayType))
             {
                 using var writer = new System.IO.StringWriter();
                 item.WriteTo(writer, HtmlEncoder.Default);
-                result += writer.ToString();
+                result.Append(writer.ToString());
             }
 
-            return new HtmlString(result);
+            return new HtmlString(result.ToString());
         }
 
         private static IList<CalendarScheduledEventModel> GetScheduledEventModels(CalendarViewModel calendar, DateTime startDate, DateTime finishDate)
@@ -228,18 +238,29 @@ namespace CharlieBackend.Panel.HtmlHelpers
             switch (displayType)
             {
                 case CalendarDisplayType.FullWeek:
-                    dayOfWeekClass = IsWeekend(dayOfWeek) ? "col-calendar-full-week weekend" : "col-calendar-full-week";
+                    dayOfWeekClass = GetDayOFullWeekClass(dayOfWeek);
                     break;
 
                 case CalendarDisplayType.WorkingWeek:
-                    dayOfWeekClass = IsWeekend(dayOfWeek) ? "d-none weekend" : "col-calendar-working-week";
+                    dayOfWeekClass = GetDayOfWorkingWeekClass(dayOfWeek);
                     break;
 
                 default:
-                    goto case CalendarDisplayType.WorkingWeek;
+                    dayOfWeekClass = GetDayOfWorkingWeekClass(dayOfWeek);
+                    break;
             }
 
             return dayOfWeekClass;
+        }
+
+        private static string GetDayOFullWeekClass(DayOfWeek dayOfWeek)
+        {
+            return IsWeekend(dayOfWeek) ? WeekendDayOfFullWeekClass : WorkingDayOfFullWeekClass;
+        }
+
+        private static string GetDayOfWorkingWeekClass(DayOfWeek dayOfWeek)
+        {
+            return IsWeekend(dayOfWeek) ? WeekendDayOfWorkingWeekClass : WorkingDayOfWorkingWeekClass;
         }
 
         private static DateTime GetFinishDate(IList<CalendarEventOccurrenceViewModel> models)

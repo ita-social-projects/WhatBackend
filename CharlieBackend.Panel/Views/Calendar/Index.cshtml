@@ -5,105 +5,12 @@
     Layout = "_Layout";
 }
 
-<style type="text/css">
-    .out-of-range {
-        background: #edeff1;
-    }
-
-    .auto-scroll {
-        white-space: normal;
-        width: 200px;
-    }
-
-    .events button {
-        margin-top: 2px;
-        width: 100%;
-    }
-
-    .events {
-        margin-bottom: 3px;
-    }
-
-    .badge {
-        display: block;
-        width: fit-content;
-        margin-bottom: 2px;
-        margin-top: 12px;
-    }
-
-    div.head div {
-        text-align: center;
-    }
-
-    .col-calendar-full-week {
-        width: 100%;
-        padding-right: 0.75rem;
-        padding-left: 0.75rem;
-        flex: 0 0 14.285714%;
-        max-width: 14.285714%;
-        min-width: 100px;
-    }
-
-    .col-calendar-working-week {
-        width: 100%;
-        padding-right: 0.75rem;
-        padding-left: 0.75rem;
-        flex: 0 0 20%;
-        max-width: 20%;
-        min-width: 100px;
-    }
-
-    .col-1:first-child, .col-2, .col-calendar-full-week, .col-calendar-working-week {
-        border-right: 0.5px solid;
-    }
-
-    .col-2, .col-1, .col-calendar-full-week, .col-calendar-working-week {
-        border-bottom: 0.5px solid grey;
-        min-height: 100px;
-    }
-</style>
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+}
 
 @section Scripts{
-    <script type="text/javascript">
-        var seGroup = null;
-        var seMentor = null;
-        var seTheme = null;
-        var seTime = null;
-        var seEventOccurrenceId = null;
-        var seSingleEventId = null;
-        $(document).on("click", ".btn-event", function (e) {
-            e.preventDefault();
-            var _self = $(this);
-            seGroup = _self.attr("seGroup");
-            seMentor = _self.attr("seMentor");
-            seTheme = _self.attr("seTheme");
-            seTime = _self.attr("seTime");
-            seEventOccurrenceId = _self.attr("seEventOccurrenceId");
-            seSingleEventId = _self.attr("seSingleEventId");
-            $("#seGroup").val(seGroup);
-            $("#seMentor").val(seMentor);
-            $("#seTheme").val(seTheme);
-            $("#seTime").val(seTime);
-            $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
-            $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
-            $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
-        });
-    </script>
-
-    <script type="text/javascript">
-        function ChangeWeekFormat() {
-            var x = document.getElementById("weekFormat").value;
-
-            if (x == 1) {
-                $(".weekend").removeClass("col-calendar-full-week").addClass("d-none");
-                $(".col-calendar-full-week").removeClass("col-calendar-full-week").addClass("col-calendar-working-week");
-            }
-            else if (x == 2) {
-                $(".col-calendar-working-week").removeClass("col-calendar-working-week").addClass("col-calendar-full-week");
-                $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
-            }
-        }
-    </script>
+    <script src="~/js/calendar.js"></script>
 }
 
 <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
