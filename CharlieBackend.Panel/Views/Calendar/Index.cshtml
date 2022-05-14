@@ -73,9 +73,23 @@
 }
 
 <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-    <a asp-action="CreateEventOccurrence" asp-controller="EventOccurrence" class="btn btn-lg btn-success btn-circle">
-        <i class="fas fa-plus"></i>
-    </a>
+    <div class="dropleft">
+        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item"
+               asp-action="CreateEventOccurrence" asp-controller="EventOccurrence">
+                <i class="fas fa-plus"></i>
+                <span>Create event occurrence</span>
+            </a>
+            <a class="dropdown-item"
+               asp-action="CreateSingleEvent" asp-controller="EventOccurrence">
+                <i class="fas fa-plus"></i>
+                <span>Create single event</span>
+            </a>
+        </div>
+    </div>
 </div>
 
 <div id="content-wrapper" class="d-flex flex-column">

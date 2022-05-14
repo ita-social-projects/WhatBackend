@@ -16,7 +16,6 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("ID");
 
             entity.Property(e => e.EventOccurrenceId)
-                .IsRequired()
                 .HasColumnName("EventOccurrenceID");
 
             entity.Property(e => e.StudentGroupId)

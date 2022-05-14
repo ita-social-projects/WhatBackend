@@ -6,7 +6,7 @@ namespace CharlieBackend.Core.DTO.Schedule
     {
         public long Id { get; set; }
 
-        public long EventOccuranceId { get; set; }
+        public long? EventOccuranceId { get; set; }
 
         public long StudentGroupId { get; set; }
 

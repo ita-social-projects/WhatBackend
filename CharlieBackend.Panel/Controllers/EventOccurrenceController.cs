@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Models.ScheduledEvent;
@@ -47,7 +48,7 @@ namespace CharlieBackend.Panel.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateEventOccurrence()
         {
-            var eventOccurrenceData = await _scheduleService.PrepareStudentGroupAddAsync();
+            var eventOccurrenceData = await _scheduleService.PrepareEventAddAsync();
 
             ViewBag.EventOccurrence = eventOccurrenceData;
 
@@ -103,6 +104,24 @@ namespace CharlieBackend.Panel.Controllers
         public async Task<IActionResult> UpdateSingleEventAsync(long id, UpdateScheduledEventDto eventDTO)
         {
             await _scheduleService.UpdateSingleEventByIdAsync(id, eventDTO);
+
+            return RedirectToAction("Index", "Calendar");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateSingleEvent()
+        {
+            var eventOccurrenceData = await _scheduleService.PrepareEventAddAsync();
+
+            ViewBag.EventOccurrence = eventOccurrenceData;
+
+            return View("AddSingleEvent");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSingleEvent(CreateSingleEventDto singleEventDTO)
+        {
+            await _scheduleService.CreateSingleEventAsync(singleEventDTO);
 
             return RedirectToAction("Index", "Calendar");
         }

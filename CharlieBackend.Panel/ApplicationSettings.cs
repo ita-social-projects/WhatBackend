@@ -132,6 +132,7 @@ namespace CharlieBackend.Panel
 
     public class EventsApiEndpoints
     {
+        public string AddSingleEvent { get; set; }
         public string ConnectEventToLesson { get; set; }
         public string UpdateEventEndpoint { get; set; }
         public string EventById { get; set; }
