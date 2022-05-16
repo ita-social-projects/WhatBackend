@@ -340,7 +340,7 @@ namespace CharlieBackend.Api.UnitTest
                 MentorId = existentMentorId,
                 EventStart = startDate,
                 EventFinish = finishDate,
-                EventOccuranceId = nonExistentEventOccuranceId,
+                EventOccuranceId = null,
                 Id = id
             }
             };

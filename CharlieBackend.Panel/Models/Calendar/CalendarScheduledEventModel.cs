@@ -16,7 +16,7 @@ namespace CharlieBackend.Panel.Models.Calendar
 
         public DateTime EventFinish { get; set; }
 
-        public long EventOccurrenceId { get; set; }
+        public long? EventOccurrenceId { get; set; }
 
         public long SingleEventId { get; set; }
         public int Color { get;  set; }
