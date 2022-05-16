@@ -8,22 +8,7 @@
 
 @section Scripts{
 <script type="text/javascript">
-    var seGroup = null;
-    var seMentor = null;
-    var seTheme = null;
-    var seTime = null;
-    $(document).on("click", ".btn-event", function (e) {
-        e.preventDefault();
-        var _self = $(this);
-        seGroup = _self.attr("seGroup");
-        seMentor = _self.attr("seMentor");
-        seTheme = _self.attr("seTheme");
-        seTime = _self.attr("seTime");
-        $("#seGroup").val(seGroup);
-        $("#seMentor").val(seMentor);
-        $("#seTheme").val(seTheme);
-        $("#seTime").val(seTime);
-    });
+    $(document).ready(ConfigureExporting);
 </script>
 }
 
@@ -33,10 +18,11 @@
             <div class="card shadow mb-4">
 
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Classbook</h6>
+                    <h6 class="m-0 font-weight-bold text-primary d-inline">Classbook</h6>
+                    <button class="btn btn-export btn-info" data-toggle="modal" data-target="#export">Export</button>
                 </div>
 
-                <div class="card-header py-3">
+                <div class="card-body py-3">
 
                     <form method="post" action="/Classbook/GetClassbook">
                         <div class="input-group mb-3">
@@ -113,29 +99,36 @@
     await Html.RenderPartialAsync("ClassbookBody", Model);
 }
 
-<div class="modal fade" id="seeSchedulEvent" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="export" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h5 class="modal-title" id="exampleModalLabel">Export</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
-                <label for="seTime">Time:</label>
-                <input id="seTime" class="modalTextInput form-control" value="" />
-
-                <label for="seTheme">Theme:</label>
-                <input id="seTheme" class="modalTextInput form-control" value="" />
-
-                <label for="seGroup">Group:</label>
-                <input id="seGroup" class="modalTextInput form-control" value="" />
-
-                <label for="seMentor">Mentor:</label>
-                <input id="seMentor" class="modalTextInput form-control" value="" />
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-primary" id="editSe" href="">Edit schedule event</a>
+                <select class="mb-3" id="selectFormat">
+                    <option value="0">HTML</option>
+                    <option value="1">XLSX</option>
+                    <option value="2">CSV</option>
+                </select> 
+                <form method="POST" action="/Export/studentsClassbooks/0" id="exportForm">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check1" name="IncludeAnalytics[]" value="0" checked>
+                        <label class="form-check-label" for="check1">Student presence</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check2" name="IncludeAnalytics[]" value="1">
+                        <label class="form-check-label" for="check2">Student marks</label>
+                    </div>
+                    <input type="hidden" id="exportCourseId" name="CourseId"/>
+                    <input type="hidden" id="exportStudentGroupId" name="StudentGroupId"/>
+                    <input type="hidden" id="exportStart" name="StartDate"/>
+                    <input type="hidden" id="exportFinish" name="FinishDate"/>
+                    <button class="btn btn-success m-auto mt-3 d-block" type="submit">Confirm</button>
+                </form>
             </div>
         </div>
     </div>
