@@ -259,7 +259,7 @@ namespace CharlieBackend.Business.Services
 
                 foreach (var x in scheduledEvents.Data)
                 {
-                    await _scheduleService.DeleteScheduleByIdAsync(x.Id, null, null);
+                    await _scheduleService.DeleteScheduleByIdAsync(x.Id.Value, null, null);
                 }
             }
 
