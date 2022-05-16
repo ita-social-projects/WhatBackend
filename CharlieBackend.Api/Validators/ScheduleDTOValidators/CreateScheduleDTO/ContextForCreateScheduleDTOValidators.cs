@@ -16,8 +16,6 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
             RuleFor(x => x.GroupID)
                 .NotEmpty()
                 .GreaterThan(0);
-            RuleFor(x => x.Color)
-                .NotNull();
             RuleFor(x => x.ThemeID)
                 .GreaterThan(0);
             RuleFor(x => x.MentorID)
