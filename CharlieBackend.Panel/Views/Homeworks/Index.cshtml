@@ -5,46 +5,42 @@
 }
 
 <div id="content-wrapper" class="d-flex flex-column">
-
     <div id="content">
-        @if(User.IsInRole("Mentor") || User.IsInRole("Admin"))
-        {
-            <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-                <a asp-action="SelectCourses" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
-                    <i class="fas fa-plus"></i>
-                </a>
-            </div>
-        }
-            <div class="container-fluid">
-
-
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <div class="row">
-                            <h6 class="m-2 font-weight-bold text-primary">Homeworks</h6>
-                        </div>
+        <div class="container-fluid">
+            @if (User.IsInRole("Mentor") || User.IsInRole("Admin"))
+            {
+                <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+                    <a asp-action="SelectCourses" asp-controller="Homeworks" class="btn btn-lg btn-success btn-circle">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </div>
+            }
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <h6 class="m-2 font-weight-bold text-primary">Homeworks</h6>
                     </div>
-
-                    <div>
-                        <table class="table text-center table-hover" width="100%">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive p-3" style="overflow-x:auto">
+                        <table class="table text-center table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                             <thead>
-                                <tr>
-                                    <th width="10%">Theme</th>
-                                    <th width="10%">Due Date</th>
-                                    <th width="60%">Task Text</th>
-                                    <th width="10%">Publishing Date</th>
-                                    <th width="10%">Control</th>
+                                <tr class="thead-dark">
+                                    <th scope="col">Theme</th>
+                                    <th scope="col">Due Date</th>
+                                    <th scope="col">Task Text</th>
+                                    <th scope="col">Publishing Date</th>
+                                    <th scope="col"><i class="fas fa-pen" data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
                                 </tr>
                             </thead>
                             <tbody>
-
-                                @foreach (var item in Model)
+                                @foreach (var homework in Model)
                                 {
-                                    <tr>
-                                        <td>@item.ThemeName</td>
-                                        <td>@item.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
-                                        <td>@item.TaskText</td>
-                                        <td>@item.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
+                                    <tr id="activeCoursesRow">
+                                        <td>@homework.ThemeName</td>
+                                        <td>@homework.DueDate.Value.ToString("yyyy.MM.dd HH:mm")</td>
+                                        <td>@homework.TaskText</td>
+                                        <td>@homework.PublishingDate.ToString("yyyy.MM.dd HH:mm")</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-outline-secondar dropdown-toggle"
@@ -55,12 +51,12 @@
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                     @if (User.IsInRole("Mentor") || User.IsInRole("Admin"))
                                                     {
-                                                        <a class=" dropdown-item" asp-action="PrepareHomeworkForUpdate" asp-controller="Homeworks" asp-route-id="@item.Id">
+                                                        <a class=" dropdown-item" asp-action="PrepareHomeworkForUpdate" asp-controller="Homeworks" asp-route-id="@homework.Id">
                                                             <i class="fas fa-pen"></i>
                                                             <span>Edit</span>
                                                         </a>
                                                     }
-                                                    <a class=" dropdown-item" asp-action="HomeworkHistory" asp-controller="Homeworks" asp-route-id="@item.Id">
+                                                    <a class=" dropdown-item" asp-action="HomeworkHistory" asp-controller="Homeworks" asp-route-id="@homework.Id">
                                                         <i class="fas fa-book-open"></i>
                                                         <span>History</span>
                                                     </a>
@@ -75,4 +71,5 @@
                 </div>
             </div>
         </div>
+    </div>
 </div>
