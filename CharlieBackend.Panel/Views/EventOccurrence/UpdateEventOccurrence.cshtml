@@ -55,7 +55,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                     .Any(x => x.MentorId == item.Id))
+                                   .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -88,7 +88,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                     .Any(x => x.ThemeId == item.Id))
+                                   .Any(x => x.ThemeId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
@@ -145,6 +145,9 @@
                             }
                         </select>
                     </div>
+
+                    <div class="picker" id="picker1"></div>
+                    <input type="color" style="display: none;" class="colorValue" id="inputColor" asp-for="Context.Color" />
 
                     <div class="form-group">
                         <label>Interval</label>
@@ -303,6 +306,19 @@
                 document.getElementById("pattern-index").hidden = false;
             }
         }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.js"></script>
+    <script>
+        $("#picker1").colorPick({
+            'initialColor': '#8e44ad',
+            'palette': ["#1abc9c", "#16a085", "#2ecc71", "#27ae60", "#3498db", "#2980b9", "#9b59b6", "#8e44ad", "#34495e", "#2c3e50", "#f1c40f", "#f39c12", "#e67e22", "#d35400", "#e74c3c", "#c0392b", "#ecf0f1"],
+            'onColorSelected': function () {
+                this.element.css({ 'backgroundColor': this.color, 'color': this.color });
+                $("#inputColor").val(this.color);
+            }
+        });
     </script>
 
     <script>

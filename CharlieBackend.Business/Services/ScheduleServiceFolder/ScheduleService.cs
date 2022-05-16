@@ -46,7 +46,8 @@ namespace CharlieBackend.Business.Services
                 StudentGroupId = createScheduleRequest.Context.GroupID,
                 EventStart = createScheduleRequest.Range.StartDate,
                 EventFinish = createScheduleRequest.Range.FinishDate.Value,
-                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern)
+                Storage = EventOccuranceStorageParser.GetPatternStorageValue(createScheduleRequest.Pattern),
+                Color = createScheduleRequest.Context.Color
             };
 
             _unitOfWork.EventOccurrenceRepository.Add(result);
@@ -215,6 +216,7 @@ namespace CharlieBackend.Business.Services
             eventOccurrenceResult.EventStart = request.Range.StartDate;
             eventOccurrenceResult.EventFinish = request.Range.FinishDate.Value;
             eventOccurrenceResult.Storage = EventOccuranceStorageParser.GetPatternStorageValue(request.Pattern);
+            eventOccurrenceResult.Color = request.Context.Color;
 
             _unitOfWork.ScheduledEventRepository.RemoveRange(eventOccurrenceResult.ScheduledEvents.Where(x => x.LessonId is null));
             _unitOfWork.ScheduledEventRepository.AddRange(_scheduledEventFactory.Get(request.Pattern).GetEvents(eventOccurrenceResult, request.Context));

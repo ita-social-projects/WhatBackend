@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using CharlieBackend.Core.Extensions;
+using System.IO;
 
 namespace CharlieBackend.Panel.HtmlHelpers
 {
@@ -19,13 +20,15 @@ namespace CharlieBackend.Panel.HtmlHelpers
             DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishDate(eventOccurencesFiltered);
 
             string result = string.Empty;
-            foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
+            using (var writer = new StringWriter())
             {
-                using var writer = new System.IO.StringWriter();
-                item.WriteTo(writer, HtmlEncoder.Default);
-                result += writer.ToString();
-            }
+                foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
+                {
 
+                    item.WriteTo(writer, HtmlEncoder.Default);
+                    result += writer.ToString();
+                }
+            }
             return new HtmlString(result);
         }
 
@@ -41,7 +44,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventStart = scheduledEvent.EventStart,
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
-                    SingleEventId = scheduledEvent.Id
+                    SingleEventId = scheduledEvent.Id,
+                    Color = calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent.EventOccuranceId)).Color
                 }).ToList();
 
             return models;
@@ -110,6 +114,20 @@ namespace CharlieBackend.Panel.HtmlHelpers
             TagBuilder divEvents = new TagBuilder("div");
             divEvents.AddCssClass("events");
 
+            foreach (var e in models)
+            {
+                TagBuilder button = GetButtonContainerHtml(e, GetButtonCssClass(day));
+
+                divEvents.InnerHtml.AppendHtml(button);
+            }
+
+            div.InnerHtml.AppendHtml(divEvents);
+
+            return div;
+        }
+
+        private static string GetButtonCssClass(DateTime day)
+        {
             string btnClass = string.Empty;
 
             if (day.Date == DateTime.Now.Date)
@@ -124,17 +142,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             {
                 btnClass = "btn btn-outline-dark btn-event";
             }
-
-            foreach (var e in models)
-            {
-                TagBuilder button = GetButtonContainerHtml(e, btnClass);
-
-                divEvents.InnerHtml.AppendHtml(button);
-            }
-
-            div.InnerHtml.AppendHtml(divEvents);
-
-            return div;
+            return btnClass;
         }
 
         private static TagBuilder GetDayBlockWithDateWithOutOfRange(DateTime day)
@@ -170,7 +178,6 @@ namespace CharlieBackend.Panel.HtmlHelpers
         private static TagBuilder GetButtonContainerHtml(CalendarScheduledEventModel model, string cssClass)
         {
             TagBuilder button = new TagBuilder("button");
-
             button.AddCssClass(cssClass);
             button.AddCssClass("auto-scroll");
             button.Attributes.Add("type", "button");
@@ -182,6 +189,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seTheme", model.Theme);
             button.Attributes.Add("seEventOccurrenceId", $"{model.EventOccurrenceId}");
             button.Attributes.Add("seSingleEventId", $"{model.SingleEventId}");
+            button.Attributes.Add($"style = \"border-color: #{ model.Color.ToString("X")}; color: #{model.Color.ToString("X")} \"", "");
             button.InnerHtml.Append($"{model.EventStart:HH:mm} - {model.EventFinish:HH:mm} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");
