@@ -24,7 +24,6 @@ namespace CharlieBackend.Panel.HtmlHelpers
             {
                 foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
                 {
-
                     item.WriteTo(writer, HtmlEncoder.Default);
                     result += writer.ToString();
                 }
@@ -113,10 +112,10 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             TagBuilder divEvents = new TagBuilder("div");
             divEvents.AddCssClass("events");
-
+            var cssClass = GetButtonCssClass(day);
             foreach (var e in models)
             {
-                TagBuilder button = GetButtonContainerHtml(e, GetButtonCssClass(day));
+                TagBuilder button = GetButtonContainerHtml(e, cssClass);
 
                 divEvents.InnerHtml.AppendHtml(button);
             }

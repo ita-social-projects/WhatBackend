@@ -19,6 +19,8 @@ namespace CharlieBackend.Core.DTO.Schedule
         public IList<ScheduledEventDTO> Events { get; set; }
 
         public long Storage { get; set; }
+
+        public int Color { get; set; }
     }
 }
 
