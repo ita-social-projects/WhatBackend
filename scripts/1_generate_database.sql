@@ -297,6 +297,7 @@ CREATE TABLE `ScheduledEvents` (
     `ThemeID`              BIGINT UNSIGNED    NOT NULL,
     `MentorID`             BIGINT UNSIGNED    NOT NULL,
     `LessonID`             BIGINT UNSIGNED    DEFAULT NULL,
+    `Color`                INT                NOT NULL,
     `EventStart`           DATETIME           NOT NULL         COMMENT 'Use UTC time',
     `EventFinish`          DATETIME           NOT NULL         COMMENT 'Use UTC time',
 

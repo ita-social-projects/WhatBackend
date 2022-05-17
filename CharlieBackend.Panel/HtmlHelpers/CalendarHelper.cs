@@ -71,7 +71,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
                     SingleEventId = scheduledEvent.Id,
-                    Color = calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent.EventOccuranceId)).Color
+                    Color = calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)) != null ?
+                    calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)).Color : scheduledEvent.Color
                 }).OrderBy(i => i.EventStart)
                 .ToList();
 

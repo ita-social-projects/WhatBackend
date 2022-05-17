@@ -28,3 +28,12 @@ function ChangeWeekFormat() {
         $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
     }
 }
+
+$(".btn-event").mouseover(function () {
+    $(this).css("background-color", $(this).css("color"));
+    $(this).css("color", "White");
+});
+$(".btn-event").mouseleave(function () {
+    $(this).css("background-color", "White");
+    $(this).css("color", $(this).css("border-color"));
+});

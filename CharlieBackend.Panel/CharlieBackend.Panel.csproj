@@ -12,8 +12,6 @@
   <ItemGroup>
     <None Include="wwwroot\css\colorPick.css" />
     <None Include="wwwroot\css\colorPick.min.css" />
-    <None Include="wwwroot\js\colorPick.js" />
-    <None Include="wwwroot\js\colorPick.min.js" />
   </ItemGroup>
 
   <ItemGroup>
