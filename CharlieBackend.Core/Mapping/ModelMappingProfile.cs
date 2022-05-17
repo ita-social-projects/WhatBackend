@@ -190,8 +190,8 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CreateSingleEventDto, ScheduledEvent>();
             CreateMap<ScheduledEvent, SingleEventDTO>();
 
-            CreateMap<UpdateScheduledEventDto, ScheduledEvent>();
-            CreateMap<ScheduledEvent, UpdateScheduledEventDto>();
+            CreateMap<UpdateScheduledEventDto, CreateSingleEventDto>();
+            CreateMap<CreateSingleEventDto, UpdateScheduledEventDto>();
 
             CreateMap<EventOccurrence, ScheduledEventDTO>();
             CreateMap<ScheduledEventDTO, EventOccurrence>();
