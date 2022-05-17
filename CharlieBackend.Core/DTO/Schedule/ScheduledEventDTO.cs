@@ -3,7 +3,7 @@ using System;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public class ScheduledEventDTO 
+    public class ScheduledEventDTO
     {
         public long Id { get; set; }
 
