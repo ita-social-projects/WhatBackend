@@ -60,6 +60,9 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryUpdatedFirstName = "Secretary First Name";
 
             InitializeArrangeObjects();
+
+            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
+                .Returns(_secretaryRepositoryMock.Object);
         }
 
         private void InitializeArrangeObjects()
@@ -113,10 +116,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(successExistingAccount);
 
             _secretaryRepositoryMock.Setup(x => x.Add(It.IsAny<Secretary>()))
-                .Callback<Secretary>(x => x.Id = _secretaryExpectedId);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);            
+                .Callback<Secretary>(x => x.Id = _secretaryExpectedId);            
 
             //Act
             var successResult = await _secretaryService.CreateSecretaryAsync(_accountExpectedId);
@@ -179,8 +179,6 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateSecretaryAsync_NotExistingSecretaryId_ShouldReturnErrorCodeNotFound()
         {
             //Arrange
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             //Act
             var nonExistingIdResult = await _secretaryService.UpdateSecretaryAsync(_notExistingId, null);
@@ -201,9 +199,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x
                 .GetByIdAsync(_secretaryExpectedId))
                 .ReturnsAsync(successExistingSecretary);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             _accountServiceMock.Setup(x => x.IsEmailChangableToAsync(_accountExpectedId, _secretaryExpectedEmail))
                 .ReturnsAsync(false);
@@ -245,9 +240,6 @@ namespace CharlieBackend.Api.UnitTest
                 .GetByIdAsync(_secretaryExpectedId))
                 .ReturnsAsync(successExistingSecretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             _accountServiceMock.Setup(x => x.IsEmailChangableToAsync(_accountExpectedId, _secretaryExpectedEmail))
                 .ReturnsAsync(true);
 
@@ -271,9 +263,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x.GetSecretaryByAccountIdAsync(secretary.Account.Id))
                 .ReturnsAsync(secretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             //Act
             var existingResult = await _secretaryService.GetSecretaryByAccountIdAsync(_accountExpectedId);
 
@@ -294,9 +283,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x.GetByIdAsync(secretary.Id))
                 .ReturnsAsync(secretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             //Act
             var existingResult = await _secretaryService.GetSecretaryByIdAsync(_secretaryExpectedId);
 
@@ -316,9 +302,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _secretaryRepositoryMock.Setup(x => x.GetByIdAsync(secretary.Id))
                 .ReturnsAsync(secretary);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             //Act
             var existingResult = await _secretaryService.GetAccountId(_secretaryExpectedId);
@@ -341,9 +324,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(allSecretaries));
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             //Act
             var successResultOfSecretaries = await _secretaryService.GetAllSecretariesAsync();
 
@@ -364,9 +344,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _secretaryRepositoryMock.Setup(x => x.GetActiveAsync())
                 .Returns(Task.FromResult(allActiveSecretaries));
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             //Act
             var successResultOfSecretaries = await _secretaryService.GetActiveSecretariesAsync();
@@ -395,9 +372,6 @@ namespace CharlieBackend.Api.UnitTest
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             //Act
             var nonExistingIdResult = await _secretaryService.DisableSecretaryAsync(_notExistingId);
 
@@ -417,9 +391,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             _accountServiceMock.Setup(x => x.DisableAccountAsync(_accountExpectedId))
                 .ReturnsAsync(false);
@@ -444,9 +415,6 @@ namespace CharlieBackend.Api.UnitTest
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             _accountServiceMock.Setup(x => x.DisableAccountAsync(_accountExpectedId))
                 .ReturnsAsync(true);
 
@@ -470,9 +438,6 @@ namespace CharlieBackend.Api.UnitTest
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
 
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
-
             //Act
             var nonExistingIdResult = await _secretaryService.EnableSecretaryAsync(_notExistingId);
 
@@ -492,9 +457,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             _accountServiceMock.Setup(x => x.EnableAccountAsync(_accountExpectedId))
                 .ReturnsAsync(false);
@@ -518,9 +480,6 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
                  .ReturnsAsync(successExistingSecretary);
-
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Returns(_secretaryRepositoryMock.Object);
 
             _accountServiceMock.Setup(x => x.EnableAccountAsync(_accountExpectedId))
                 .ReturnsAsync(true);
