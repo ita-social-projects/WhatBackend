@@ -52,15 +52,10 @@ namespace CharlieBackend.Core.Entities
                 BinaryFormatter binFormatter = new BinaryFormatter(null,
                     new StreamingContext(StreamingContextStates.Clone));
 
-                try
-                {
-                    binFormatter.Serialize(tempStream, this);
-                    tempStream.Seek(0, SeekOrigin.Begin);
+                binFormatter.Serialize(tempStream, this);
+                tempStream.Seek(0, SeekOrigin.Begin);
 
-                    account = binFormatter.Deserialize(tempStream) as Account;
-                }
-                catch(Exception ex)
-                { }
+                account = binFormatter.Deserialize(tempStream) as Account;
             }
             return account;
         }
