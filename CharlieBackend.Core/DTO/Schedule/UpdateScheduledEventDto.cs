@@ -2,7 +2,7 @@
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public class UpdateScheduledEventDto 
+    public class UpdateScheduledEventDto
     {
         public long? StudentGroupId { get; set; }
 
