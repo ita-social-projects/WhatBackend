@@ -124,10 +124,8 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             successResult.Data
                 .Should()
-                .NotBeNull();
-
-            successResult.Data
-                .Should()
+                .NotBeNull()
+                .And
                 .BeEquivalentTo(secretaryDto);
         }
 
@@ -223,7 +221,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateSecretaryAsync_ExceptionDuringUpdatingSecretary_ShouldReturnErrorCodeInternalServerError()
         {
             //Arrange
-            _unitOfWorkMock.Setup(x => x.SecretaryRepository).Throws(new Exception());
+            _unitOfWorkMock.Setup(x => x.SecretaryRepository)
+                .Throws(new Exception());
 
             //Act
             var internalServerErrorResult = await _secretaryService.UpdateSecretaryAsync(_notExistingId, null);
@@ -258,10 +257,8 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             successResult.Data
                 .Should()
-                .NotBeNull();
-
-            successResult.Data
-                .Should()
+                .NotBeNull()
+                .And
                 .BeEquivalentTo(secretaryDto);
         }
 
@@ -283,10 +280,8 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             existingResult.Data
                 .Should()
-                .NotBeNull();
-
-            existingResult.Data
-                .Should()
+                .NotBeNull()
+                .And
                 .BeEquivalentTo(_mapper.Map<SecretaryDto>(secretary));
         }
 
@@ -308,10 +303,8 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             existingResult.Data
                 .Should()
-                .NotBeNull();
-
-            existingResult.Data
-                .Should()
+                .NotBeNull()
+                .And
                 .BeEquivalentTo(_mapper.Map<SecretaryDto>(secretary));
         }
 
