@@ -109,7 +109,7 @@ namespace CharlieBackend.Business.Services
                 _unitOfWork.Rollback();
 
                 return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
-                      "Cannot update mentor.");
+                      "Cannot update secretary.");
             }
         }
 

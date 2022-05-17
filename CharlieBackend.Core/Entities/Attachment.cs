@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Core.Entities
 {
+    [Serializable]
     public partial class Attachment : BaseEntity
     {
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
