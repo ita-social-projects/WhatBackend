@@ -16,7 +16,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
             _fileGroupName = fileGroupName;
         }
 
-        private void FillFile(IEnumerable<Student> students)
+        public override async Task FillFileAsync(IEnumerable<Student> students)
         {
             StringBuilder line = new StringBuilder();
 
@@ -29,12 +29,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportCSVFilesService
 
             byte[] byteLine = line.ToString().ConvertLineToArray();
 
-            _memoryStream.Write(byteLine);
-        }
-
-        public override async Task FillFileAsync(IEnumerable<Student> data)
-        {
-            await Task.Run(() => FillFile(data));
+            await _memoryStream.WriteAsync(byteLine);
         }
 
         public override string GetFileName()

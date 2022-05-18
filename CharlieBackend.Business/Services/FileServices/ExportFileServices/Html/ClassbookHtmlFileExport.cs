@@ -14,19 +14,19 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
     public class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
-        private void FillFile(StudentsClassbookResultDto data)
+        public override async Task FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
                 return;
             }
 
-            FillPresences(data);
+            await FillPresences(data);
 
-            FillMarks(data);
+            await FillMarks(data);
         }
 
-        private void FillPresences(StudentsClassbookResultDto data)
+        private async Task FillPresences(StudentsClassbookResultDto data)
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -72,11 +72,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 byte[] byteLine = html.ToString().ConvertLineToArray();
 
-                _memoryStream.Write(byteLine);
+                await _memoryStream.WriteAsync(byteLine);
             }
         }
 
-        private void FillMarks(StudentsClassbookResultDto data)
+        private async Task FillMarks(StudentsClassbookResultDto data)
         {
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
@@ -131,7 +131,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 byte[] byteLine = html.ToString().ConvertLineToArray();
 
-                _memoryStream.Write(byteLine);
+                await _memoryStream.WriteAsync(byteLine);
             }
         }
 
@@ -160,11 +160,6 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
         public override string GetFileName()
         {
             return "Classbook_" + DateTime.Now.ToString("yyyy-MM-dd") + ".html";
-        }
-
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
-        {
-            await Task.Run(()=>FillFile(data));
         }
     }
 }

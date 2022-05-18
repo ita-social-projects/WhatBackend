@@ -20,17 +20,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         #endregion
 
-        public override async Task FillFileAsync(StudentsResultsDto data)
-        {
-            await Task.Run(() => FillFile(data));
-        }
-
         public override string GetFileName()
         {
             return HtmlFileExportConstants.StudentsResultsFileNameConstant(DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
-        private void FillFile(StudentsResultsDto data)
+        public override async Task FillFileAsync(StudentsResultsDto data)
         {
             if (data == null)
             {
@@ -108,7 +103,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             byte[] byteLine = html.ToString().ConvertLineToArray();
 
-            _memoryStream.Write(byteLine);
+            await _memoryStream.WriteAsync(byteLine);
         }
 
         private string GetFileHeader(StudentsResultsDto data)
