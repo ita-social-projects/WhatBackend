@@ -97,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
         /// Get only active students
         /// </summary>
         /// <response code="200">Successful return of students list</response>
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("active")]
         public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {

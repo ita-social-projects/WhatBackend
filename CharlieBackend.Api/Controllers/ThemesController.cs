@@ -34,7 +34,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successful return of themes list</response>
         [SwaggerResponse(200, type: typeof(IList<ThemeDto>))]
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
         public async Task<ActionResult<IList<ThemeDto>>> GetAllThemes()
         {

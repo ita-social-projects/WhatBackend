@@ -5,6 +5,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Panel.Models.Calendar;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
@@ -23,11 +24,13 @@ namespace CharlieBackend.Panel.Services
         private readonly IScheduleService _scheduleService;
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         private readonly string _getActiveCoursesEndpoint;
         private readonly string _getActiveMetorsEndpoint;
         private readonly string _getStudentGroupsEndpoint;
         private readonly string _getActiveStudentsEndpoint;
         private readonly string _getThemesEndpoint;
+
 
         private const int defaultDateFilterOffset = 7;
 
@@ -35,11 +38,13 @@ namespace CharlieBackend.Panel.Services
             IScheduleService scheduleService,
             IApiUtil apiUtil,
             IMapper mapper, 
-            IOptions<ApplicationSettings> options)
+            IOptions<ApplicationSettings> options,
+            ICurrentUserService currentUserService)
         {
             _scheduleService = scheduleService;
             _apiUtil = apiUtil;
             _mapper = mapper;
+            _currentUserService = currentUserService;
             _getActiveCoursesEndpoint = options.Value.Urls.ApiEndpoints.Courses.GetAllCoursesEndpoint;
             _getActiveMetorsEndpoint = options.Value.Urls.ApiEndpoints.Mentors.ActiveMentorEndpoint;
             _getStudentGroupsEndpoint = options.Value.Urls.ApiEndpoints.StudentGroups.GetAllStudentGroupsEndpoint;
@@ -103,6 +108,11 @@ namespace CharlieBackend.Panel.Services
             {
                 scheduledEventFilter.FinishDate = DateTime.Now.AddDays(defaultDateFilterOffset);
             }
+
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                scheduledEventFilter.StudentAccountID = _currentUserService.EntityId;
+            } 
         }
 
         private async Task<IList<CalendarCourseViewModel>> GetActiveCourseViewModelsAsync()

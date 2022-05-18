@@ -154,7 +154,7 @@ namespace CharlieBackend.Business.Services
 
             if (_currentUserService.Role == UserRole.Student)
             {
-                if (_currentUserService.AccountId != request.StudentAccountID)
+                if (_currentUserService.EntityId != request.StudentAccountID)
                 {
                     return Result<IList<ScheduledEventDTO>>.GetError(ErrorCode.Unauthorized, "Student can see only own events");
                 }
