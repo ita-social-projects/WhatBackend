@@ -41,6 +41,7 @@ namespace CharlieBackend.Panel
         public EventsApiEndpoints Events { get; set; }
         public SecretariesApiEndpoints Secretaries { get; set; }
         public DashboardApiEndpoints Dashboard{ get; set; }
+        public ExportApiEndpoints Export { get; set; }
     }
 
     public class AccountsApiEndpoints 
@@ -132,6 +133,7 @@ namespace CharlieBackend.Panel
 
     public class EventsApiEndpoints
     {
+        public string AddSingleEvent { get; set; }
         public string ConnectEventToLesson { get; set; }
         public string UpdateEventEndpoint { get; set; }
         public string EventById { get; set; }
@@ -142,11 +144,23 @@ namespace CharlieBackend.Panel
         public string GetAllSecretariesEndpoint { get; set; }
         public string EnableSecretaryEndpoint { get; set; }
         public string DisableSecretaryEndpoint { get; set; }
+        public string UpdateSecretaryEndpoint { get; set; }
+        public string GetSecretaryEndpoint { get; set; }
     }
 
     public class DashboardApiEndpoints
     {
         public string GetStudentsClassbookEndpoint { get; set; }
+    }
+
+    public class ExportApiEndpoints
+    {
+        public string ExportStudentsClassbookEndpoint { get; set; }
+        public string ExportStudentsResultsEndpoint { get; set; }
+        public string ExportStudentClassbookEndpoint { get; set; }
+        public string ExportStudentResultsEndpoint { get; set; }
+        public string ExportStudentGroupResultsEndpoint { get; set; }
+        public string ExportStudentsOfGroupEndpoint { get; set; }
     }
 
     #endregion 

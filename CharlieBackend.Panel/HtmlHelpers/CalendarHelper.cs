@@ -6,27 +6,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using CharlieBackend.Core.Extensions;
+using System.Text;
 
 namespace CharlieBackend.Panel.HtmlHelpers
 {
     public static class CalendarHelper
     {
+        #region constants
+
+        private const string WorkingDayOfFullWeekClass = "col-calendar-full-week";
+        private const string WeekendDayOfFullWeekClass = "col-calendar-full-week weekend";
+        private const string WorkingDayOfWorkingWeekClass = "col-calendar-working-week";
+        private const string WeekendDayOfWorkingWeekClass = "d-none weekend";
+
+        #endregion
+        public static HtmlString CalendarHeaderHtml(this IHtmlHelper html, CalendarDisplayType displayType)
+        {
+            StringBuilder result = new StringBuilder();
+
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                TagBuilder div = GetDayBlock(day, displayType);
+
+                div.InnerHtml.Append(day.ToString());
+
+                using var writer = new System.IO.StringWriter();
+                div.WriteTo(writer, HtmlEncoder.Default);
+                result.Append(writer.ToString());
+            }
+
+            return new HtmlString(result.ToString());
+        }
+
         public static HtmlString CalendarBodyHtml(this IHtmlHelper html, CalendarViewModel calendar)
         {
-            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.First(y => y.Id == x.EventOccuranceId)).ToList();
+            var eventOccurencesFiltered = calendar.ScheduledEvents.Select(x => calendar.EventOccurences.FirstOrDefault(y => y.Id == x.EventOccuranceId)).ToList();
 
             DateTime startDate = calendar.ScheduledEventFilter.StartDate ?? GetStartDate(eventOccurencesFiltered);
             DateTime finishDate = calendar.ScheduledEventFilter.FinishDate ?? GetFinishDate(eventOccurencesFiltered);
 
-            string result = string.Empty;
-            foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate))
+            StringBuilder result = new StringBuilder();
+
+            foreach (var item in GetRowContainers(GetScheduledEventModels(calendar, startDate, finishDate), startDate, finishDate, calendar.DisplayType))
             {
                 using var writer = new System.IO.StringWriter();
                 item.WriteTo(writer, HtmlEncoder.Default);
-                result += writer.ToString();
+                result.Append(writer.ToString());
             }
 
-            return new HtmlString(result);
+            return new HtmlString(result.ToString());
         }
 
         private static IList<CalendarScheduledEventModel> GetScheduledEventModels(CalendarViewModel calendar, DateTime startDate, DateTime finishDate)
@@ -42,15 +70,16 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
                     SingleEventId = scheduledEvent.Id
-                }).ToList();
+                }).OrderBy(i => i.EventStart)
+                .ToList();
 
             return models;
         }
 
-        private static IList<TagBuilder> GetRowContainers(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate)
+        private static IList<TagBuilder> GetRowContainers(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate, CalendarDisplayType displayType)
         {
             IList<IList<TagBuilder>> daysContainers = new List<IList<TagBuilder>>();
-            var list = GetDaysContainer(models, startDate, finishDate);
+            var list = GetDaysContainer(models, startDate, finishDate, displayType);
 
             while(list.Count != 0)
             {
@@ -79,33 +108,33 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return rowsBlock;
         }
 
-        private static IList<TagBuilder> GetDaysContainer(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate)
+        private static IList<TagBuilder> GetDaysContainer(IList<CalendarScheduledEventModel> models, DateTime startDate, DateTime finishDate, CalendarDisplayType displayType)
         {
             IList<TagBuilder> dayContainers = new List<TagBuilder>();
 
             var startOfWeek = startDate.StartOfWeek(DayOfWeek.Sunday);
             for (DateTime date = startOfWeek; date.Date < startDate.Date; date = date.AddDays(1))
             {
-                dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date));
+                dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }
 
             for (DateTime date = startDate; date.Date < finishDate.Date; date = date.AddDays(1))
             {
-                dayContainers.Add(GetDayBlockWithEvents(models.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date));
+                dayContainers.Add(GetDayBlockWithEvents(models.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date, displayType));
             }
 
             var endOfWeek = finishDate.EndOfWeek(DayOfWeek.Saturday);
             for (DateTime date = finishDate; date.Date <= endOfWeek.Date; date = date.AddDays(1))
             {
-                dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date));
+                dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }
 
             return dayContainers;
         }
 
-        private static TagBuilder GetDayBlockWithEvents(IEnumerable<CalendarScheduledEventModel> models, DateTime day)
+        private static TagBuilder GetDayBlockWithEvents(IEnumerable<CalendarScheduledEventModel> models, DateTime day, CalendarDisplayType displayType)
         {
-            TagBuilder div = GetDayBlockWithDate(day);
+            TagBuilder div = GetDayBlockWithDate(day, displayType);
 
             TagBuilder divEvents = new TagBuilder("div");
             divEvents.AddCssClass("events");
@@ -137,31 +166,44 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return div;
         }
 
-        private static TagBuilder GetDayBlockWithDateWithOutOfRange(DateTime day)
+        private static TagBuilder GetDayBlockWithDateWithOutOfRange(DateTime day, CalendarDisplayType displayType)
         {
-            TagBuilder dayBlock = GetDayBlockWithDate(day);
+            TagBuilder dayBlock = GetDayBlockWithDate(day, displayType);
 
             dayBlock.AddCssClass("out-of-range");
 
             return dayBlock;
         }
 
-        private static TagBuilder GetDayBlockWithDate(DateTime date)
+        private static TagBuilder GetDayBlockWithDate(DateTime date, CalendarDisplayType displayType)
         {
             TagBuilder span = new TagBuilder("span");
             span.AddCssClass("badge badge-info");
             span.InnerHtml.Append(date.Day.ToString());
 
-            var dayBlock = GetDayBlock(date);
+            var dayBlock = GetDayBlock(date, displayType);
             dayBlock.InnerHtml.AppendHtml(span);
 
             return dayBlock;
         }
 
-        private static TagBuilder GetDayBlock(DateTime date)
+        private static TagBuilder GetDayBlock(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
         {
             TagBuilder div = new TagBuilder("div");
-            string rowClass = IsWeekend(date) ? "col-1" : "col-2";
+
+            string divClass = GetDayOfWeekClass(dayOfWeek, displayType);
+
+            div.AddCssClass(divClass);
+
+            return div;
+        }
+
+        private static TagBuilder GetDayBlock(DateTime date, CalendarDisplayType displayType)
+        {
+            TagBuilder div = new TagBuilder("div");
+
+            string rowClass = GetDayOfWeekClass(date.DayOfWeek, displayType);
+
             div.AddCssClass(rowClass);
 
             return div;
@@ -190,6 +232,38 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return button;
         }
 
+        private static string GetDayOfWeekClass(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
+        {
+            string dayOfWeekClass = string.Empty;
+
+            switch (displayType)
+            {
+                case CalendarDisplayType.FullWeek:
+                    dayOfWeekClass = GetDayOFullWeekClass(dayOfWeek);
+                    break;
+
+                case CalendarDisplayType.WorkingWeek:
+                    dayOfWeekClass = GetDayOfWorkingWeekClass(dayOfWeek);
+                    break;
+
+                default:
+                    dayOfWeekClass = GetDayOfWorkingWeekClass(dayOfWeek);
+                    break;
+            }
+
+            return dayOfWeekClass;
+        }
+
+        private static string GetDayOFullWeekClass(DayOfWeek dayOfWeek)
+        {
+            return IsWeekend(dayOfWeek) ? WeekendDayOfFullWeekClass : WorkingDayOfFullWeekClass;
+        }
+
+        private static string GetDayOfWorkingWeekClass(DayOfWeek dayOfWeek)
+        {
+            return IsWeekend(dayOfWeek) ? WeekendDayOfWorkingWeekClass : WorkingDayOfWorkingWeekClass;
+        }
+
         private static DateTime GetFinishDate(IList<CalendarEventOccurrenceViewModel> models)
         {
             DateTime latestFinish = models.Max(x => x.EventFinish);
@@ -206,9 +280,9 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return earliestFinish > earliestStart ? earliestStart : earliestFinish;
         }
 
-        private static bool IsWeekend(DateTime date)
+        private static bool IsWeekend(DayOfWeek dayOfWeek)
         {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+            return dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday;
         }
     }
 }
