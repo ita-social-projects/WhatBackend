@@ -241,7 +241,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> DeleteStudentGroupAsync(long StudentGroupId)
         {
-            var lessonsOfStudentGroup = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(StudentGroupId);
+            var lessonsOfStudentGroup = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroupAsync(StudentGroupId);
 
             bool result;
 

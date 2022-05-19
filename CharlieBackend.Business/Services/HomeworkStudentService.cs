@@ -397,7 +397,7 @@ namespace CharlieBackend.Business.Services
                 yield break;
             }
 
-            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkId(homeworkStudent.HomeworkId);
+            var lesson = await _unitOfWork.LessonRepository.GetLessonByHomeworkIdAsync(homeworkStudent.HomeworkId);
 
             if (lesson == default)
             {

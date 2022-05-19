@@ -70,8 +70,8 @@ namespace CharlieBackend.Panel.Controllers
                 return View("Step3ThemeNames", lessonThemes);
             }
 
-            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId)
-                .Where(z => z.ThemeName == themeN).Select(x => x.MentorId).Distinct().ToList();
+            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId && x.ThemeName == themeN)
+                .Select(x => x.MentorId).Distinct().ToList();
 
             if (mentorId == null)
             {
@@ -87,8 +87,8 @@ namespace CharlieBackend.Panel.Controllers
                 return View("Step4Mentors", mentors);
             }
 
-            IEnumerable<LessonViewModel> lessons = allLessons.Where(x => x.StudentGroupId == stGroupId)
-                .Where(z => z.ThemeName == themeN).Where(d => d.MentorId == mentorId).ToList();
+            IEnumerable<LessonViewModel> lessons = allLessons
+                .Where(x => x.StudentGroupId == stGroupId && x.ThemeName == themeN && x.MentorId == mentorId).ToList();
 
             return View("Step5LessonsDate", lessons);
         }
