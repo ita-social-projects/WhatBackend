@@ -14,6 +14,7 @@
     $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
     $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
     $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
+    $("#deleteSingleEvent").attr('href', "/EventOccurrence/DeleteSingleEvent/" + seSingleEventId);
 });
 
 function ChangeWeekFormat() {
