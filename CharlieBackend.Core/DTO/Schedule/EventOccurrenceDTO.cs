@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
-    public class EventOccurrenceDTO 
+    public class EventOccurrenceDTO
     {
         public long? Id { get; set; }
 
