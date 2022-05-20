@@ -6,6 +6,26 @@
     Layout = "_Layout";
 }
 
+
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+
+}
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.js"></script>
+    <script src="~/js/EventOccurrance.js"></script>
+
+<script>
+    $(document).ready(() => { PassColor('#@ViewBag.EventOccurrence.Color.ToString("X")') });
+</script>
+
+    <script>
+        UpdateForm(document.getElementById("pattern").value);
+    </script>
+}
+
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
 
     <div class="container mt-3 col-5">
@@ -55,7 +75,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                   .Any(x => x.MentorId == item.Id))
+                             .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -88,7 +108,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                   .Any(x => x.ThemeId == item.Id))
+                             .Any(x => x.ThemeId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
@@ -147,7 +167,7 @@
                     </div>
 
                     <div class="picker" id="picker1"></div>
-                    <input type="color" style="display: none;" class="colorValue" id="inputColor" asp-for="Context.Color" />
+                    <input type="text" style="display: none;" class="colorValue" id="inputColor" asp-for="Context.Color" />
 
                     <div class="form-group">
                         <label>Interval</label>
@@ -281,47 +301,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <script type="text/javascript">
-        function UpdateForm(value) {
-            if (value == 0) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = true;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 1) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = false;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 2) {
-                document.getElementById("dates").hidden = false;
-                document.getElementById("days-of-week").hidden = true;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 3) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = false;
-                document.getElementById("pattern-index").hidden = false;
-            }
-        }
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/colorPick.js"></script>
-    <script>
-        $("#picker1").colorPick({
-            'initialColor': "#" + "@ViewBag.EventOccurrence.Color.ToString("X")",
-        'palette': ["#1abc9c", "#16a085", "#2ecc71", "#27ae60", "#3498db", "#2980b9", "#9b59b6", "#8e44ad", "#34495e", "#2c3e50", "#f1c40f", "#f39c12", "#e67e22", "#d35400", "#e74c3c", "#c0392b", "#ecf0f1"],
-        'onColorSelected': function () {
-            this.element.css({ 'backgroundColor': this.color, 'color': this.color });
-            $("#inputColor").val(this.color);
-        }
-    });
-    </script>
-
-    <script>
-        UpdateForm(document.getElementById("pattern").value);
-    </script>
-}

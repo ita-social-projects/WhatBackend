@@ -5,6 +5,21 @@
     Layout = "_Layout";
 }
 
+
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.js"></script>
+    <script src="~/js/EventOccurrance.js"></script>
+
+    <script>
+            $(document).ready(() => { PassColor('#3498db') });
+    </script>
+}
+
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
 
     <div class="container mt-3 col-5">
@@ -104,16 +119,3 @@
         </div>
     </div>
 </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/colorPick.js"></script>
-    <script>
-        $("#picker1").colorPick({
-            'initialColor': '#3498db',
-            'palette': ["#1abc9c", "#16a085", "#2ecc71", "#27ae60", "#3498db", "#2980b9", "#9b59b6", "#8e44ad", "#34495e", "#2c3e50", "#f1c40f", "#f39c12", "#e67e22", "#d35400", "#e74c3c", "#c0392b", "#ecf0f1"],
-            'onColorSelected': function () {
-                this.element.css({ 'backgroundColor': this.color, 'color': this.color });
-                $("#inputColor").val(this.color);
-            }
-        });
-    </script>
