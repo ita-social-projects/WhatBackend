@@ -308,7 +308,7 @@ UNLOCK TABLES;
 LOCK TABLES `EventOccurrences` WRITE;
 
 INSERT INTO `EventOccurrences`
-(`StudentGroupID`, `EventStart`, `EventFinish`, `Pattern`, `Storage`, )
+(`StudentGroupID`, `EventStart`, `EventFinish`, `Pattern`, `Storage`)
 VALUES
 (1, '2021-07-05 10:00:00', '2021-12-24 11:00:00', 1, 70368744178180),
 (2, '2021-07-05 12:00:00', '2021-12-24 13:00:00', 1, 35184372089354),
@@ -817,7 +817,7 @@ VALUES
 ;
 
 INSERT INTO `ScheduledEvents`
-(`EventOccurrenceID`, `StudentGroupID`, `ThemeID`, `MentorID`, `Color`, `EventStart`, `EventFinish`)
+(`EventOccurrenceID`, `StudentGroupID`, `ThemeID`, `MentorID`, `EventStart`, `EventFinish`)
 VALUES
 (6, 5, 39, 7, '2021-07-01 10:00:00', '2021-07-01 11:00:00'),
 (6, 5, 39, 7, '2021-06-17 10:00:00', '2021-06-17 11:00:00'),
