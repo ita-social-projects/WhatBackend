@@ -96,12 +96,13 @@ namespace CharlieBackend.Panel.Services
         {
             if (!scheduledEventFilter.StartDate.HasValue)
             {
-                scheduledEventFilter.StartDate = DateTime.Now;
+                scheduledEventFilter.StartDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
             }
 
             if (!scheduledEventFilter.FinishDate.HasValue)
             {
-                scheduledEventFilter.FinishDate = DateTime.Now.AddDays(defaultDateFilterOffset);
+                scheduledEventFilter.FinishDate = scheduledEventFilter.StartDate.Value
+                        .AddDays(defaultDateFilterOffset).AddMinutes(-1);
             }
         }
 
