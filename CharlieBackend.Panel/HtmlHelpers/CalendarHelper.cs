@@ -141,7 +141,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             TagBuilder divEvents = new TagBuilder("div");
             divEvents.AddCssClass("events");
-            var cssClass = "btn btn-event";
+            var cssClass = GetButtonCssClass(day);
              foreach (var e in models)
             {
                 TagBuilder button = GetButtonContainerHtml(e, cssClass);
@@ -154,6 +154,24 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return div;
         }
 
+        private static string GetButtonCssClass(DateTime day)
+        {
+            string btnClass = string.Empty;
+
+            if (day.Date == DateTime.Now.Date)
+            {
+                btnClass = "btn btn-outline-success btn-event";
+            }
+            if (day.Date > DateTime.Now.Date)
+            {
+                btnClass = "btn btn-outline-primary btn-event";
+            }
+            if (day.Date < DateTime.Now.Date)
+            {
+                btnClass = "btn btn-outline-dark btn-event";
+            }
+            return btnClass;
+        }
 
         private static TagBuilder GetDayBlockWithDateWithOutOfRange(DateTime day, CalendarDisplayType displayType)
         {

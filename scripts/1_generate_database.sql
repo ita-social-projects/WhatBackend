@@ -281,7 +281,6 @@ CREATE TABLE `EventOccurrences` (
     `EventFinish`       DATETIME            NOT NULL        COMMENT 'Use UTC time',
     `Pattern`           TINYINT UNSIGNED    DEFAULT NULL    COMMENT 'Patterns:\n0 - Daily,\n1 - Weekly,\n2 - AbsoluteMonthly,\n3 - RelativeMonthly',
     `Storage`           BIGINT UNSIGNED     NOT NULL,
-	`Color`				INT 				NOT NULL,
     CONSTRAINT    `PK_EventOccurrence`                 PRIMARY KEY (`ID`),
     CONSTRAINT    `FK_StudentGroupEventOccurrences`    FOREIGN KEY (`StudentGroupID`)    REFERENCES `StudentGroups` (`ID`)
 );
@@ -297,7 +296,6 @@ CREATE TABLE `ScheduledEvents` (
     `ThemeID`              BIGINT UNSIGNED    NOT NULL,
     `MentorID`             BIGINT UNSIGNED    NOT NULL,
     `LessonID`             BIGINT UNSIGNED    DEFAULT NULL,
-    `Color`                INT                NOT NULL,
     `EventStart`           DATETIME           NOT NULL         COMMENT 'Use UTC time',
     `EventFinish`          DATETIME           NOT NULL         COMMENT 'Use UTC time',
 
