@@ -7,6 +7,16 @@
     var seTime = _self.attr("seTime");
     var seEventOccurrenceId = _self.attr("seEventOccurrenceId");
     var seSingleEventId = _self.attr("seSingleEventId");
+
+    if (seEventOccurrenceId == 0) {
+        document.getElementById("seEventOccurrenceId").hidden = true;
+        document.getElementById("deleteEventOccurrence").hidden = true;
+    }
+    else {
+        document.getElementById("seEventOccurrenceId").hidden = false;
+        document.getElementById("deleteEventOccurrence").hidden = false;
+    }
+
     $("#seGroup").val(seGroup);
     $("#seMentor").val(seMentor);
     $("#seTheme").val(seTheme);
