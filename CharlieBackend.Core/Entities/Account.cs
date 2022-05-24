@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace CharlieBackend.Core.Entities
 {
-    [Serializable]
-    public partial class Account : BaseEntity, CharlieBackend.Core.Interfaces.ICloneable<Account>
+    public partial class Account : BaseEntity
     {
         public UserRole Role { get; set; } = UserRole.NotAssigned;
 
@@ -43,21 +39,5 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<Student> Students { get; set; }
 
         public virtual ICollection<Secretary> Secretaries { get; set; }
-
-        public Account Clone()
-        {
-            Account account = null;
-            using (MemoryStream tempStream = new MemoryStream())
-            {
-                BinaryFormatter binFormatter = new BinaryFormatter(null,
-                    new StreamingContext(StreamingContextStates.Clone));
-
-                binFormatter.Serialize(tempStream, this);
-                tempStream.Seek(0, SeekOrigin.Begin);
-
-                account = binFormatter.Deserialize(tempStream) as Account;
-            }
-            return account;
-        }
     }
 }

@@ -29,15 +29,37 @@ namespace CharlieBackend.Api.UnitTest
         private readonly string _secretaryExpectedEmail;
         private readonly string _secretaryUpdatedFirstName;
 
-        private Secretary _secretaryWithIdAndAccountId;
-        private Secretary _secretaryWithIdAndAccountIdAndAccount;
-        private Secretary _secretaryWithIdAndAccountIdAndAccountAndIsActive;
-        private Account _accountWithId;
-        private Account _accountWithIdAndRole;
-        private SecretaryDto _secretaryDtoWithId;
-        private SecretaryDto _secretaryDtoWithIdAndEmailAndFirstName;
-        private UpdateSecretaryDto _updateSecretaryDtoWithEmail;
-        private UpdateSecretaryDto _updateSecretaryDtoWithEmailAndFirstName;
+        private Account GetAccountWithId()
+        {
+            return new Account()
+            {
+                Id = _accountExpectedId
+            };
+        }
+
+        private Secretary GetSecretaryWithIdAndAccountId()
+        {
+            return new Secretary()
+            {
+                Id = _secretaryExpectedId,
+                AccountId = _accountExpectedId
+            };
+        }
+        private Secretary GetSecretaryWithIdAndAccountIdAndAccount()
+        {
+            var secretary = GetSecretaryWithIdAndAccountId();
+            secretary.Account = GetAccountWithId();
+
+            return secretary;
+        }
+
+        private UpdateSecretaryDto GetUpdateSecretaryDtoWithEmail()
+        {
+            return new UpdateSecretaryDto()
+            {
+                Email = _secretaryExpectedEmail
+            };
+        }
 
         public SecretaryServiceTests()
         {
@@ -59,58 +81,20 @@ namespace CharlieBackend.Api.UnitTest
             _secretaryExpectedEmail = "secretary@gmail.com";
             _secretaryUpdatedFirstName = "Secretary First Name";
 
-            InitializeArrangeObjects();
-
             _unitOfWorkMock.Setup(x => x.SecretaryRepository)
                 .Returns(_secretaryRepositoryMock.Object);
-        }
-
-        private void InitializeArrangeObjects()
-        {
-            _accountWithId = new Account()
-            {
-                Id = _accountExpectedId
-            };
-
-            _accountWithIdAndRole = _accountWithId.Clone();
-            _accountWithIdAndRole.Role = UserRole.Mentor;
-
-            _secretaryWithIdAndAccountId = new Secretary()
-            {
-                Id = _secretaryExpectedId,
-                AccountId = _accountExpectedId
-            };
-
-            _secretaryWithIdAndAccountIdAndAccount = _secretaryWithIdAndAccountId.Clone();
-            _secretaryWithIdAndAccountIdAndAccount.Account = _accountWithId.Clone();
-
-            _secretaryWithIdAndAccountIdAndAccountAndIsActive = _secretaryWithIdAndAccountIdAndAccount.Clone();
-            _secretaryWithIdAndAccountIdAndAccountAndIsActive.Account.IsActive = true;
-
-            _secretaryDtoWithId = new SecretaryDto()
-            {
-                Id = _secretaryExpectedId
-            };
-
-            _secretaryDtoWithIdAndEmailAndFirstName = _secretaryDtoWithId.Clone();
-            _secretaryDtoWithIdAndEmailAndFirstName.Email = _secretaryExpectedEmail;
-            _secretaryDtoWithIdAndEmailAndFirstName.FirstName = _secretaryUpdatedFirstName;
-
-            _updateSecretaryDtoWithEmail = new UpdateSecretaryDto()
-            {
-                Email = _secretaryExpectedEmail
-            };
-
-            _updateSecretaryDtoWithEmailAndFirstName = _updateSecretaryDtoWithEmail.Clone();
-            _updateSecretaryDtoWithEmailAndFirstName.FirstName = _secretaryUpdatedFirstName;
         }
 
         [Fact]
         public async Task CreateSecretaryAsync_ValidSecretary_ShouldReturnSecretaryDTO()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var secretaryDto = _secretaryDtoWithId.Clone();
+            var successExistingAccount = GetAccountWithId();
+
+            var secretaryDto = new SecretaryDto()
+            {
+                Id = _secretaryExpectedId
+            };
 
             _accountServiceMock.Setup(x => x.GetAccountCredentialsByIdAsync(_accountExpectedId))
                 .ReturnsAsync(successExistingAccount);
@@ -145,7 +129,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateSecretaryAsync_AlreadyAssignedAccount_ShouldReturnErrorCodeValidationError()
         {
             //Arrange
-            var assignedExistingAccount = _accountWithIdAndRole.Clone();
+            var assignedExistingAccount = GetAccountWithId();
+            assignedExistingAccount.Role = UserRole.Mentor;
 
             _accountServiceMock.Setup(x => x.GetAccountCredentialsByIdAsync(_accountExpectedId))
                 .ReturnsAsync(assignedExistingAccount);
@@ -193,8 +178,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateSecretaryAsync_NotChangableEmail_ShouldReturnErrorCodeConflict()
         {
             //Arrange
-            var notChangableEmailSecretary = _updateSecretaryDtoWithEmail.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var notChangableEmailSecretary = GetUpdateSecretaryDtoWithEmail();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                 .GetByIdAsync(_secretaryExpectedId))
@@ -232,9 +217,17 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateSecretaryAsync_ValidSecretary_ShouldReturnUpdatedSecretaryDTO()
         {
             //Arrange
-            var updatedSecretaryDto = _updateSecretaryDtoWithEmailAndFirstName.Clone();
-            var secretaryDto = _secretaryDtoWithIdAndEmailAndFirstName.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountIdAndAccount.Clone();
+            var updatedSecretaryDto = GetUpdateSecretaryDtoWithEmail();
+            updatedSecretaryDto.FirstName = _secretaryUpdatedFirstName;
+
+            var secretaryDto = new SecretaryDto() 
+            {
+                Id = _secretaryExpectedId,
+                Email = _secretaryExpectedEmail,
+                FirstName = _secretaryUpdatedFirstName
+            };
+
+            var successExistingSecretary = GetSecretaryWithIdAndAccountIdAndAccount();
 
             _secretaryRepositoryMock.Setup(x => x
                 .GetByIdAsync(_secretaryExpectedId))
@@ -258,7 +251,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetSecretaryByAccountIdAsync_ValidAccountId_ShouldReturnSecretaryDto()
         {
             //Arrange
-            var secretary = _secretaryWithIdAndAccountIdAndAccount.Clone();
+            var secretary = GetSecretaryWithIdAndAccountIdAndAccount();
 
             _secretaryRepositoryMock.Setup(x => x.GetSecretaryByAccountIdAsync(secretary.Account.Id))
                 .ReturnsAsync(secretary);
@@ -278,7 +271,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetSecretaryByIdAsync_ValidSecretaryId_ShouldReturnSecretaryDto()
         {
             //Arrange
-            var secretary = _secretaryWithIdAndAccountIdAndAccount.Clone();
+            var secretary = GetSecretaryWithIdAndAccountIdAndAccount();
 
             _secretaryRepositoryMock.Setup(x => x.GetByIdAsync(secretary.Id))
                 .ReturnsAsync(secretary);
@@ -298,7 +291,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetAccountId_ValidSecretaryId_ShouldReturnAccountId()
         {
             //Arrange
-            var secretary = _secretaryWithIdAndAccountIdAndAccount.Clone();
+            var secretary = GetSecretaryWithIdAndAccountIdAndAccount();
 
             _secretaryRepositoryMock.Setup(x => x.GetByIdAsync(secretary.Id))
                 .ReturnsAsync(secretary);
@@ -318,7 +311,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             var allSecretaries = new List<Secretary>
             {
-                _secretaryWithIdAndAccountIdAndAccount.Clone()
+                GetSecretaryWithIdAndAccountIdAndAccount()
             };
 
             _secretaryRepositoryMock.Setup(x => x.GetAllAsync())
@@ -337,9 +330,11 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetActiveSecretariesAsync_ValidData_ShouldReturnSecretariesListWithIsActiveTrue()
         {
             //Arrange
+            var activeSecretary = GetSecretaryWithIdAndAccountIdAndAccount();
+            activeSecretary.Account.IsActive = true;
             var allActiveSecretaries = new List<Secretary>
             {
-                _secretaryWithIdAndAccountIdAndAccountAndIsActive.Clone()
+                activeSecretary
             };
 
             _secretaryRepositoryMock.Setup(x => x.GetActiveAsync())
@@ -353,9 +348,9 @@ namespace CharlieBackend.Api.UnitTest
                 .Should()
                 .BeEquivalentTo(_mapper.Map<List<SecretaryDetailsDto>>(allActiveSecretaries));
 
-            foreach (var activeSecretary in successResultOfSecretaries.Data)
+            foreach (var secretary in successResultOfSecretaries.Data)
             {
-                activeSecretary.IsActive
+                secretary.IsActive
                     .Should()
                     .BeTrue();
             }
@@ -365,8 +360,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DisableSecretaryAsync_NotExistingSecretaryId_ShouldReturnErrorCodeNotFound()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
@@ -385,8 +380,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DisableSecretaryAsync_NotChangedToDisabled_ShouldReturnErrorCodeConflict()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
@@ -408,8 +403,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DisableSecretaryAsyn_ValidData_ShouldReturnTrue()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
@@ -431,8 +426,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task EnableSecretaryAsync_NotExistingSecretaryId_ShouldReturnErrorCodeNotFound()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
@@ -451,8 +446,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task EnableSecretaryAsync_NotChangedToEnabled_ShouldReturnErrorCodeConflict()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
@@ -474,8 +469,8 @@ namespace CharlieBackend.Api.UnitTest
         public async Task EnableSecretaryAsync_ValidData_ShouldReturnTrue()
         {
             //Arrange
-            var successExistingAccount = _accountWithId.Clone();
-            var successExistingSecretary = _secretaryWithIdAndAccountId.Clone();
+            var successExistingAccount = GetAccountWithId();
+            var successExistingSecretary = GetSecretaryWithIdAndAccountId();
 
             _secretaryRepositoryMock.Setup(x => x
                  .GetByIdAsync(_secretaryExpectedId))
