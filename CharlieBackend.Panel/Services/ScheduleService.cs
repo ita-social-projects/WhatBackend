@@ -173,11 +173,9 @@ namespace CharlieBackend.Panel.Services
 
         public async Task DeleteSingleEventByIdAsync(long eventID)
         {
-            var singleEvent =
-               string.Format(_eventsApiEndpoints.DeleteEventById, eventID);
+            var singleEvent = string.Format(_eventsApiEndpoints.DeleteEventById, eventID);
 
-            await _apiUtil
-                .DeleteAsync<bool>(singleEvent);
+            await _apiUtil.DeleteAsync<bool>(singleEvent);
         }
     }
 }
