@@ -69,7 +69,10 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventStart = scheduledEvent.EventStart,
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
-                    SingleEventId = scheduledEvent.Id
+                    SingleEventId = scheduledEvent.Id,
+                    Description = scheduledEvent.Description,
+                    Link = scheduledEvent.Link
+
                 }).OrderBy(i => i.EventStart)
                 .ToList();
 
@@ -224,6 +227,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seTheme", model.Theme);
             button.Attributes.Add("seEventOccurrenceId", $"{model.EventOccurrenceId}");
             button.Attributes.Add("seSingleEventId", $"{model.SingleEventId}");
+            button.Attributes.Add("seDescription", $"{model.Description}");
+            button.Attributes.Add("seLink", $"{model.Link}");
             button.InnerHtml.Append($"{model.EventStart:HH:mm} - {model.EventFinish:HH:mm} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");

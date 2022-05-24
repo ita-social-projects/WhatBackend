@@ -5,6 +5,8 @@
     var seMentor = _self.attr("seMentor");
     var seTheme = _self.attr("seTheme");
     var seTime = _self.attr("seTime");
+    var seDescription = _self.attr("seDescription");
+    var seLink = _self.attr("seLink");
     var seEventOccurrenceId = _self.attr("seEventOccurrenceId");
     var seSingleEventId = _self.attr("seSingleEventId");
     $("#seGroup").val(seGroup);
@@ -14,6 +16,9 @@
     $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
     $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
     $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
+    $("#seDescription").val(seDescription);
+    $("#seLink").val(seLink);
+    $("#seLink1").attr('href', seLink);
 });
 
 function ChangeWeekFormat() {

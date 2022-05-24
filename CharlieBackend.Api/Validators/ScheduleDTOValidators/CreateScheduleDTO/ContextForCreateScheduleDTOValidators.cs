@@ -1,5 +1,7 @@
-﻿using CharlieBackend.Core.DTO.Schedule;
+﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
+using System;
 
 namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
 {
@@ -20,6 +22,8 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
                 .GreaterThan(0);
             RuleFor(x => x.MentorID)
                 .GreaterThan(0);
+            RuleFor(x => x.Description)
+                .MaximumLength(ValidationConstants.MaxLengthText);
         }
     }
 }
