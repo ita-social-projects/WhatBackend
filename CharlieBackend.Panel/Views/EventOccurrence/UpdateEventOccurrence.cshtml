@@ -14,7 +14,7 @@
 
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/colorPick.js"></script>
+    <script src="~/js/colorPick.min.js"></script>
     <script src="~/js/EventOccurrance.js"></script>
 
 <script>
@@ -75,7 +75,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                             .Any(x => x.MentorId == item.Id))
+                                        .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -89,12 +89,12 @@
                                             @item.LastName
                                         </option>
                                     }
-                                }
-                            }
-                            else
-                            {
+                                 }
+                             }
+                             else
+                             {
                                 <option value="@null">null</option>
-                            }
+                             }
 
                         </select>
                     </div>

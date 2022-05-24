@@ -5,12 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\css\colorPick.css" />
     <Content Remove="wwwroot\css\colorPick.min.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\colorPick.css" />
     <None Include="wwwroot\css\colorPick.min.css" />
   </ItemGroup>
 
