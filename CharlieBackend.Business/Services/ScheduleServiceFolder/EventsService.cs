@@ -46,7 +46,12 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
             ScheduledEvent schedule = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
 
+            if(schedule.EventOccurrenceId != null)
+            {
+                schedule.EventOccurrenceId = null;
+            }
             schedule = SchedulesUpdater.UpdateFields(schedule, updatedSchedule);
+            
             _unitOfWork.ScheduledEventRepository.Update(schedule);
             await _unitOfWork.CommitAsync();
 
