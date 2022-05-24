@@ -17,11 +17,11 @@ namespace CharlieBackend.Api.UnitTest
 {
     public class SecretaryServiceTests : TestBase
     {
-        private readonly Mock<IAccountService> _accountServiceMock;
         private readonly IMapper _mapper;
-        private readonly Mock<INotificationService> _notificationServiceMock;
         private readonly SecretaryService _secretaryService;
-        Mock<ISecretaryRepository> _secretaryRepositoryMock;
+        private readonly Mock<IAccountService> _accountServiceMock;
+        private readonly Mock<INotificationService> _notificationServiceMock;
+        private readonly Mock<ISecretaryRepository> _secretaryRepositoryMock;
 
         private readonly long _secretaryExpectedId;
         private readonly long _accountExpectedId;
