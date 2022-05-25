@@ -7,6 +7,11 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Data.Common;
+using Microsoft.Extensions.Logging;
+using System;
+using MySql.Data.MySqlClient;
+using System.Runtime.InteropServices;
 
 namespace CharlieBackend.Business.Services
 {
@@ -17,15 +22,18 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly IBlobService _blobService;
+        private readonly ILogger<StudentGroupService> _logger;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
-                                IMapper mapper, INotificationService notification, IBlobService blobService)
+                                IMapper mapper, INotificationService notification, IBlobService blobService, 
+                                ILogger<StudentGroupService> logger)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notification = notification;
             _blobService = blobService;
+            _logger = logger;
         }
 
         public async Task<Result<SecretaryDto>> CreateSecretaryAsync(long accountId)
@@ -66,8 +74,10 @@ namespace CharlieBackend.Business.Services
                        "This account already assigned.");
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
+                
                 _unitOfWork.Rollback();
 
                 return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError, "Error while creating secretary");
@@ -104,8 +114,10 @@ namespace CharlieBackend.Business.Services
                 return Result<SecretaryDto>.GetSuccess(_mapper.Map<SecretaryDto>(foundSecretary));
 
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return Result<SecretaryDto>.GetError(ErrorCode.InternalServerError,
