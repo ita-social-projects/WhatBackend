@@ -45,6 +45,7 @@ namespace CharlieBackend.Api.UnitTest
                 AccountId = _accountExpectedId
             };
         }
+
         private Secretary GetSecretaryWithIdAndAccountIdAndAccount()
         {
             var secretary = GetSecretaryWithIdAndAccountId();
