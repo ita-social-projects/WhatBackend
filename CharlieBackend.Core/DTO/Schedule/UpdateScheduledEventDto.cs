@@ -16,6 +16,4 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public int Color { get; set; }
     }
-
 }
-
