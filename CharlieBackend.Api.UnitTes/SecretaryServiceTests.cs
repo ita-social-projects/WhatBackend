@@ -7,6 +7,7 @@ using CharlieBackend.Core.Mapping;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IAccountService> _accountServiceMock;
         private readonly Mock<INotificationService> _notificationServiceMock;
         private readonly Mock<ISecretaryRepository> _secretaryRepositoryMock;
+        private readonly Mock<ILogger<SecretaryService>> _loggerMock;
 
         private readonly long _secretaryExpectedId;
         private readonly long _accountExpectedId;
@@ -68,13 +70,15 @@ namespace CharlieBackend.Api.UnitTest
             _notificationServiceMock = new Mock<INotificationService>();
             _mapper = GetMapper(new ModelMappingProfile());
             _secretaryRepositoryMock = new Mock<ISecretaryRepository>();
+            _loggerMock = new Mock<ILogger<SecretaryService>>();
 
             _secretaryService = new SecretaryService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
                 _mapper,
                 _notificationServiceMock.Object,
-                null);
+                null,
+                _loggerMock.Object);
 
             _secretaryExpectedId = 20;
             _accountExpectedId = 10;

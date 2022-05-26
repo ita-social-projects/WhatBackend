@@ -22,11 +22,11 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly IBlobService _blobService;
-        private readonly ILogger<StudentGroupService> _logger;
+        private readonly ILogger<SecretaryService> _logger;
 
         public SecretaryService(IAccountService accountService, IUnitOfWork unitOfWork,
                                 IMapper mapper, INotificationService notification, IBlobService blobService, 
-                                ILogger<StudentGroupService> logger)
+                                ILogger<SecretaryService> logger)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
