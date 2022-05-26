@@ -154,7 +154,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             _accountServiceMock.Setup(x => x.GetAccountCredentialsByIdAsync(_notExistingId))
-               .Throws(new Exception());
+               .Throws(new InvalidOperationException());
 
             //Act
             var internalServerErrorResult = await _secretaryService.CreateSecretaryAsync(_notExistingId);
@@ -207,7 +207,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             _unitOfWorkMock.Setup(x => x.SecretaryRepository)
-                .Throws(new Exception());
+                .Throws(new InvalidOperationException());
 
             //Act
             var internalServerErrorResult = await _secretaryService.UpdateSecretaryAsync(_notExistingId, null);
