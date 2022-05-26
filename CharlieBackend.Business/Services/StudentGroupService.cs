@@ -121,8 +121,10 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentGroupDto>.GetSuccess(
                             _mapper.Map<StudentGroupDto>(studentGroup));
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return Result<StudentGroupDto>.GetError(

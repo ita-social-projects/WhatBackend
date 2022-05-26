@@ -28,7 +28,9 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private readonly Mock<IEventOccurrenceRepository> _eventOccurrenceRepositoryMock;
         private readonly IMapper _mapper;
-        
+        private readonly StudentGroupService _studentGroupService;
+
+
         private readonly int _wrongId = -1;
         private readonly List<long> _ids = new List<long>() { 1, 2 };
         private readonly List<long> _dublicatedIds = new List<long>() { 1, 1 };
@@ -46,17 +48,7 @@ namespace CharlieBackend.Api.UnitTest
         private const string _stringStartDate = "01.01.2000";
         private const string _stringFinishDate = "01.01.2020";
 
-        #region Generate Arrage data
-
-        private StudentGroupService StudentGroupServiceMock()
-        {
-            return new StudentGroupService(
-               _unitOfWorkMock.Object,
-               _mapper,
-               _loggerMock.Object,
-               _scheduleServiceMock.Object
-               );
-        }
+        #region Generate Arrange data
 
         private CreateStudentGroupDto GetCreateStudentGroupWithNameAndCourseIdAndStartDateAndEndDate()
         {
@@ -196,6 +188,12 @@ namespace CharlieBackend.Api.UnitTest
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _eventOccurrenceRepositoryMock = new Mock<IEventOccurrenceRepository>();
 
+            _studentGroupService = new StudentGroupService(
+                _unitOfWorkMock.Object,
+               _mapper,
+               _loggerMock.Object,
+               _scheduleServiceMock.Object);
+
             MockEntities();
         }
 
@@ -251,7 +249,7 @@ namespace CharlieBackend.Api.UnitTest
                     .ReturnsAsync(true);
 
             //Act
-            var result = await StudentGroupServiceMock()
+            var result = await _studentGroupService
                     .CreateStudentGroupAsync(newStudentGroup);
 
             //Accert
@@ -295,7 +293,7 @@ namespace CharlieBackend.Api.UnitTest
                                   .ReturnsAsync(new List<long>());
 
             //Act
-            var successResult = await StudentGroupServiceMock().CreateStudentGroupAsync(newStudentGroup);
+            var successResult = await _studentGroupService.CreateStudentGroupAsync(newStudentGroup);
 
             //Assert
             successResult.Data
@@ -316,7 +314,7 @@ namespace CharlieBackend.Api.UnitTest
                    .ReturnsAsync(true);
 
             //Act
-            var groupNameExistResult = await StudentGroupServiceMock().CreateStudentGroupAsync(existingStudentGroup);
+            var groupNameExistResult = await _studentGroupService.CreateStudentGroupAsync(existingStudentGroup);
 
             //Assert
             groupNameExistResult.Error.Code
@@ -328,7 +326,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateStudentGroupAsync_NullStudentGroup_ShouldReturnValidationError()
         {
             //Act
-            var nullGroupResult = await StudentGroupServiceMock()
+            var nullGroupResult = await _studentGroupService
                 .CreateStudentGroupAsync(null);
 
             //Assert
@@ -345,7 +343,7 @@ namespace CharlieBackend.Api.UnitTest
                 GetCreateStudentGroupWithNameAndCourseIdAndStartDateAndEndDateAndStudentsIdsAndMentorIds();
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock()
+            var withNotExistCoursIdResult = await _studentGroupService
                 .CreateStudentGroupAsync(studentGroupWithoutCourseID);
 
             //Assert
@@ -366,7 +364,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock()
+            var withNotExistCoursIdResult = await _studentGroupService
                 .CreateStudentGroupAsync(studentGroupWithWrongDates);
 
             //Assert
@@ -386,7 +384,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock()
+            var withNotExistCoursIdResult = await _studentGroupService
                 .CreateStudentGroupAsync(studentGroupWithWrongDates);
 
             //Assert
@@ -405,7 +403,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock()
+            var withNotExistCoursIdResult = await _studentGroupService
                 .CreateStudentGroupAsync(studentGroupWithWrongDates);
 
             //Assert
@@ -422,10 +420,10 @@ namespace CharlieBackend.Api.UnitTest
                 GetCreateStudentGroupWithNameAndCourseIdAndStartDateAndEndDateAndStudentsIdsAndMentorIds();
 
             _studentGroupRepositoryMock.Setup(x => x.IsGroupNameExistAsync(studentGroup.Name))
-                .Throws(new Exception());
+                .Throws(new InvalidOperationException());
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock().CreateStudentGroupAsync(studentGroup);
+            var withNotExistCoursIdResult = await _studentGroupService.CreateStudentGroupAsync(studentGroup);
 
             //Assert
             withNotExistCoursIdResult.Error.Code
@@ -447,7 +445,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var withNotExistStrudentIdResult = await StudentGroupServiceMock().CreateStudentGroupAsync(studentGroupWithoutValidStudentIDs);
+            var withNotExistStrudentIdResult = await _studentGroupService.CreateStudentGroupAsync(studentGroupWithoutValidStudentIDs);
 
             //Assert
             withNotExistStrudentIdResult.Error.Code
@@ -472,7 +470,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var withNotExistStrudentIdResult = await StudentGroupServiceMock().CreateStudentGroupAsync(studentGroupWithoutMentorValidIds);
+            var withNotExistStrudentIdResult = await _studentGroupService.CreateStudentGroupAsync(studentGroupWithoutMentorValidIds);
 
             //Assert
             withNotExistStrudentIdResult.Error.Code
@@ -496,7 +494,7 @@ namespace CharlieBackend.Api.UnitTest
                                 .ReturnsAsync(true);
 
             //Act
-            var withoutMentorsAndStudentsGroupResult = await StudentGroupServiceMock().CreateStudentGroupAsync(withoutMentorsAndStudentsStudentGroup);
+            var withoutMentorsAndStudentsGroupResult = await _studentGroupService.CreateStudentGroupAsync(withoutMentorsAndStudentsStudentGroup);
 
             //Assert
             (withoutMentorsAndStudentsGroupResult.Data.StudentIds.Count == 0)
@@ -530,7 +528,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-            var successResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, updateStudentGroupDto);
+            var successResult = await _studentGroupService.UpdateStudentGroupAsync(_id, updateStudentGroupDto);
 
             //Assert
             successResult.Data
@@ -555,7 +553,7 @@ namespace CharlieBackend.Api.UnitTest
                                 .ReturnsAsync(true);
 
             //Act
-            var groupNotExistResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(notExistingGroupId, updateStudentGroupDto);
+            var groupNotExistResult = await _studentGroupService.UpdateStudentGroupAsync(notExistingGroupId, updateStudentGroupDto);
 
             //Assert
             groupNotExistResult.Error.Code
@@ -567,7 +565,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task UpdateStudentGroupAsync_NullGroup_ShouldReturnValidationError()
         {
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, null);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, null);
 
             //Assert
             nullGroupResult.Error.Code
@@ -589,7 +587,7 @@ namespace CharlieBackend.Api.UnitTest
                .ReturnsAsync(existingStudentGroup);
 
             //Act
-            var withNotExistCoursIdResult = await StudentGroupServiceMock()
+            var withNotExistCoursIdResult = await _studentGroupService
                 .UpdateStudentGroupAsync(_id, studentGroupWithoutCourseID);
 
             //Assert
@@ -625,7 +623,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(_ids);
 
             //Act
-            var withNotExistStrudentIdResult = await StudentGroupServiceMock()
+            var withNotExistStrudentIdResult = await _studentGroupService
                 .UpdateStudentGroupAsync(existingStudentGroup.Id, studentGroupWithoutValidStudentIDs);
 
             //Assert
@@ -645,7 +643,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(existingStudentGroup);
 
             //Act
-            var groupNameIsNullResult = await StudentGroupServiceMock()
+            var groupNameIsNullResult = await _studentGroupService
                 .UpdateStudentGroupAsync(_id, new UpdateStudentGroupDto() { Name = null });
 
             //Assert
@@ -665,7 +663,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(existingStudentGroup);
 
             //Act
-            var groupNameIsEmptyResult = await StudentGroupServiceMock()
+            var groupNameIsEmptyResult = await _studentGroupService
                 .UpdateStudentGroupAsync(_id, new UpdateStudentGroupDto() { Name = string.Empty });
 
             //Assert
@@ -705,7 +703,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(_ids);
 
             //Act
-            var withNotExistStrudentIdResult = await StudentGroupServiceMock()
+            var withNotExistStrudentIdResult = await _studentGroupService
                 .UpdateStudentGroupAsync(existingStudentGroup.Id, studentGroupWithoutValidStudentIDs);
 
             //Assert
@@ -724,10 +722,10 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(_id))
-                                     .Throws(new Exception());
+                                     .Throws(new InvalidOperationException());
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, anyUpdateGroup);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, anyUpdateGroup);
 
             //Assert
             nullGroupResult.Error.Code
@@ -751,7 +749,7 @@ namespace CharlieBackend.Api.UnitTest
 
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, validUpdateGroup);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, validUpdateGroup);
 
             //Assert
             nullGroupResult.Error.Code
@@ -776,7 +774,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(false);
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, validUpdateGroup);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, validUpdateGroup);
 
             //Assert
             nullGroupResult.Error.Code
@@ -800,7 +798,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(false);
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, validUpdateGroup);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, validUpdateGroup);
 
             //Assert
             nullGroupResult.Error.Code
@@ -825,7 +823,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(false);
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().UpdateStudentGroupAsync(_id, validUpdateGroup);
+            var nullGroupResult = await _studentGroupService.UpdateStudentGroupAsync(_id, validUpdateGroup);
 
             //Assert
             nullGroupResult.Error.Code
@@ -840,7 +838,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task IsGroupNameExistAsync_WrongNameString_ShouldReturnValidationError(string name)
         {
             //Act
-            var wrongStringResult = await StudentGroupServiceMock().IsGroupNameExistAsync(name);
+            var wrongStringResult = await _studentGroupService.IsGroupNameExistAsync(name);
 
             //Assert
             wrongStringResult.Error.Code
@@ -858,7 +856,7 @@ namespace CharlieBackend.Api.UnitTest
                                      .ReturnsAsync(true);
 
             //Act
-            var nullGroupResult = await StudentGroupServiceMock().IsGroupNameExistAsync(name);
+            var nullGroupResult = await _studentGroupService.IsGroupNameExistAsync(name);
 
             //Assert
             nullGroupResult.Data
@@ -870,7 +868,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task GetStudentGroupsByDateAsync_StartDateBiggerFinishDate_ShouldReturnValidationError()
         {
             //Act
-            var wrongDatesResult = await StudentGroupServiceMock()
+            var wrongDatesResult = await _studentGroupService
                 .GetStudentGroupsByDateAsync(_finishDate, _startDate);
 
             //Assert
@@ -889,7 +887,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(studentGroupList);
 
             //Act
-            var validResult = await StudentGroupServiceMock()
+            var validResult = await _studentGroupService
                 .GetStudentGroupsByDateAsync(_startDate, _finishDate);
 
             //Assert
@@ -915,7 +913,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(studentGroupList);
 
             //Act
-            var validResult = await StudentGroupServiceMock().GetAllStudentGroupsAsync(startDate, finishDate);
+            var validResult = await _studentGroupService.GetAllStudentGroupsAsync(startDate, finishDate);
 
             //Assert
             validResult.Data
@@ -931,7 +929,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(new List<Lesson>() { });
 
             //Act
-            var validResult = await StudentGroupServiceMock().DeleteStudentGroupAsync(_id);
+            var validResult = await _studentGroupService.DeleteStudentGroupAsync(_id);
 
             //Assert
             validResult
@@ -968,7 +966,7 @@ namespace CharlieBackend.Api.UnitTest
                 .Returns(Task.FromResult(eventOccurrenceResult));
 
             //Act
-            var validResult = await StudentGroupServiceMock().DeleteStudentGroupAsync(_id);
+            var validResult = await _studentGroupService.DeleteStudentGroupAsync(_id);
 
             //Assert
             validResult
@@ -984,7 +982,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(() => null);
 
             //Act
-            var validResult = await StudentGroupServiceMock().GetStudentGroupByIdAsync(_wrongId);
+            var validResult = await _studentGroupService.GetStudentGroupByIdAsync(_wrongId);
 
             //Assert
             validResult.Error.Code
@@ -1003,7 +1001,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(validStudentGroup);
 
             //Act
-            var validResult = await StudentGroupServiceMock().GetStudentGroupByIdAsync(_id);
+            var validResult = await _studentGroupService.GetStudentGroupByIdAsync(_id);
 
             //Assert
             validResult.Data
@@ -1021,7 +1019,7 @@ namespace CharlieBackend.Api.UnitTest
                .ReturnsAsync(() => null);
 
             //Act
-            var validResult = await StudentGroupServiceMock().MergeStudentGroupsAsync(studentGroupWithNotExistingGroupId);
+            var validResult = await _studentGroupService.MergeStudentGroupsAsync(studentGroupWithNotExistingGroupId);
 
             //Assert
             validResult.Error.Code
@@ -1042,7 +1040,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(validStudentGroup);
 
             //Act
-            var validResult = await StudentGroupServiceMock().MergeStudentGroupsAsync(studentGroupWithNotExistingMergeGroupId);
+            var validResult = await _studentGroupService.MergeStudentGroupsAsync(studentGroupWithNotExistingMergeGroupId);
 
             //Assert
             validResult.Error.Code
@@ -1075,7 +1073,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(true);
 
             //Act
-           var validResult = await StudentGroupServiceMock().MergeStudentGroupsAsync(studentGroupWithMergeGroupId);
+           var validResult = await _studentGroupService.MergeStudentGroupsAsync(studentGroupWithMergeGroupId);
 
             //Assert
             validResult.Data
