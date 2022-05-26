@@ -170,6 +170,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             {
                 btnClass = "btn btn-outline-dark btn-event";
             }
+            
             return btnClass;
         }
 
