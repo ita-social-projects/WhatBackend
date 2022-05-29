@@ -252,9 +252,8 @@ namespace CharlieBackend.Business.Services
                         {
                             Lesson = foundLesson,
                             StudentId = lessonModel.LessonVisits[i].StudentId,
-                            Comment = lessonModel.LessonVisits[i].Comment,
                             Presence = lessonModel.LessonVisits[i].Presence,
-                            StudentMark = lessonModel.LessonVisits[i].StudentMark
+                            MarkId = lessonModel.LessonVisits[i].MarkId
                         };
 
                         _unitOfWork.VisitRepository.Add(visit);

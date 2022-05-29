@@ -112,7 +112,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                             .Where(x => x.Student == rows[i][0] && x.LessonDate?
                                 .ToString("dd.MM.yyyy") == headers[j + 1]);
 
-                        sbyte? studentMark = studentMarks.Any() ? studentMarks.First().StudentMark : null;
+                        int? studentMark = studentMarks.Any() ? studentMarks.First().Mark : null;
 
                         if (studentMark != null && studentMark != 0)
                         {

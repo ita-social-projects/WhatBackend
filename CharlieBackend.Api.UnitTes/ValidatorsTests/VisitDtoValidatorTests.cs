@@ -27,14 +27,16 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
             long studentId = 0,
             sbyte? studentMark = null,
             bool presence = false,
-            string comment = null)
+            string comment = null,
+            long markId = 0)
         {
             return new VisitDto
             {
                 StudentId = studentId,
-                StudentMark = studentMark,
+                Mark = studentMark,
                 Presence = presence,
-                Comment = comment
+                Comment = comment,
+                MarkId = markId
             };
         }
 

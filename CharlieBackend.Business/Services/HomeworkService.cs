@@ -287,7 +287,7 @@ namespace CharlieBackend.Business.Services
                 throw new NotFoundException($"Visit related to student howework with id {request.StudentHomeworkId} not found");
             }
 
-            visit.StudentMark = (sbyte)request.StudentMark;
+            visit.Mark.Value = (sbyte)request.StudentMark;
 
             _unitOfWork.VisitRepository.Update(visit);
             await _unitOfWork.CommitAsync();

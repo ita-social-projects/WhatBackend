@@ -567,10 +567,9 @@ namespace CharlieBackend.Api.UnitTest
                .Callback<Visit>(x => {
                    x.Student = new Student();
                    x.StudentId = 1;
-                   x.StudentMark = 5;
+                   x.MarkId = 5;
                    x.LessonId = 1;
                    x.Presence = true;
-                   x.Comment = "some comment";
                });
             visitRepositoryMock.Setup(x => x.DeleteWhereLessonIdAsync(It.IsAny<long>()));
 

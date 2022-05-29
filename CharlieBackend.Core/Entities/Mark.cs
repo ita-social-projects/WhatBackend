@@ -7,7 +7,7 @@ namespace CharlieBackend.Core.Entities
         /// <summary>
         /// This property contains the value of the mark
         /// </summary>
-        public int Value { get; set; }
+        public sbyte Value { get; set; }
 
         /// <summary>
         /// This property contains the comment for the mark

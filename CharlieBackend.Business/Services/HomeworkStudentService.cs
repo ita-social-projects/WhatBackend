@@ -320,7 +320,7 @@ namespace CharlieBackend.Business.Services
 
             if (homeworkStudent.IsSent == false && homeworkStudentHistory != null)
             {
-                homeworkStudentHistory.Last().Mark.Value = request.StudentMark;
+                homeworkStudentHistory.Last().Mark.Value = (sbyte)request.StudentMark;
                 homeworkStudentHistory.Last().Mark.Comment = request.MentorComment;
                 homeworkStudentHistory.Last().Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudentHistory.Last().Mark.Type = request.MarkType;
@@ -334,7 +334,7 @@ namespace CharlieBackend.Business.Services
                 {
                     homeworkStudent.Mark = new Mark();
                 }
-                homeworkStudent.Mark.Value = request.StudentMark;
+                homeworkStudent.Mark.Value = (sbyte)request.StudentMark;
                 homeworkStudent.Mark.Comment = request.MentorComment;
                 homeworkStudent.Mark.EvaluationDate = DateTime.UtcNow;
                 homeworkStudent.Mark.Type = request.MarkType;

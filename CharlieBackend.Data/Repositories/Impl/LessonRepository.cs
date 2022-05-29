@@ -109,8 +109,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                     var studentLessonDto = new StudentLessonDto
                     {
                         Id = visits[i].Lesson.Id,
-                        Comment = visits[i].Comment,
-                        Mark = visits[i].StudentMark,
+                        Comment = visits[i].Mark.Comment,
+                        Mark = visits[i].Mark.Value,
                         Presence = visits[i].Presence,
                         ThemeName = visits[i].Lesson.Theme.Name,
                         LessonDate = visits[i].Lesson.LessonDate,

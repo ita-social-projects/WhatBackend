@@ -29,7 +29,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                     await FillStudentMarkAsync(item
                         .Select(x => new StudentMarkDto
                         {
-                            StudentMark = x.StudentMark,
+                            Mark = x.Mark,
+                            MarkId = x.MarkId,
                             Course = x.Course,
                             Student = x.Student,
                             StudentGroup = x.StudentGroup,
@@ -126,7 +127,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 var student = orderedList.ElementAt(studentId);
 
                 FillRow(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN - 1,
-                    student.Course, student.StudentGroup, student.LessonDate.ToString(), student.StudentMark.ToString());
+                    student.Course, student.StudentGroup, student.LessonDate.ToString(), student.Mark.ToString());
 
                 FillRowWithComments(worksheet, studentId + _STUDENT_STARTING_ROW, _STUDENT_STARTING_COLUMN + 3,
                     student.Comment);

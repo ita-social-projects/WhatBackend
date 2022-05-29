@@ -18,9 +18,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         private readonly long validStudentGroupId = 21;
         private readonly List<VisitDto> validLessonVisits = new List<VisitDto>
         {
-            new VisitDto { StudentId = 1, StudentMark = 100, Presence = true, Comment = "Some comment" },
-            new VisitDto { StudentId = 21, StudentMark = 100, Presence = false, Comment = "Some comment"},
-            new VisitDto { StudentId = 22, StudentMark = 11, Presence = true, Comment = "Some comment" }
+            new VisitDto { StudentId = 1, Mark = 100, Presence = true, Comment = "Some comment" },
+            new VisitDto { StudentId = 21, Mark = 100, Presence = false, Comment = "Some comment"},
+            new VisitDto { StudentId = 22, Mark = 11, Presence = true, Comment = "Some comment" }
         };
         private readonly DateTime validLessonDate = new DateTime(2020, 01, 01);
 
@@ -29,9 +29,9 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
         private readonly long notValidStudentGroupId = 0;
         private readonly List<VisitDto> notValidLessonVisits = new List<VisitDto>
         {
-            new VisitDto { StudentId = 0, StudentMark = 0, Presence = true, Comment = "Some comment" },
-            new VisitDto { StudentId = 21, StudentMark = 101, Presence = false, Comment = "Some comment"},
-            new VisitDto { StudentId = 22, StudentMark = 11, Presence = true, Comment = "Some comment" },
+            new VisitDto { StudentId = 0, Mark = 0, Presence = true, Comment = "Some comment" },
+            new VisitDto { StudentId = 21, Mark = 101, Presence = false, Comment = "Some comment"},
+            new VisitDto { StudentId = 22, Mark = 11, Presence = true, Comment = "Some comment" },
             null
         };
         private readonly DateTime notValidLessonDate = default(DateTime);
