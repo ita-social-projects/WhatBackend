@@ -135,7 +135,7 @@
 
                                     @foreach (var mentor in Model.Mentors.Where(x => x.Id != Model.ScheduledEventFilter.MentorID.Value))
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+ mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                                 else
@@ -144,7 +144,7 @@
 
                                     @foreach (var mentor in Model.Mentors)
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                             </select>
@@ -159,7 +159,7 @@
                                             @{
                                                 var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
                                             }
-                                            Student @(studentFiltered.FirstName + " " + studentFiltered.LastName)
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
                                         </option>
                                     }
                                 </select>
@@ -174,12 +174,12 @@
                                             @{
                                                 var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
                                             }
-                                            Student @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
                                         </option>
 
                                         @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
                                         {
-                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
+                                            <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
                                         }
                                     }
                                     else
@@ -187,7 +187,7 @@
                                         <option value="null" selected>-Student-</option>
                                         @foreach (var student in Model.Students)
                                         {
-                                            <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
+                                <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
                                         }
                                     }
                                 </select>

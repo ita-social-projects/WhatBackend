@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var studentModelResult = await _studentService.GetStudentByIdAsync(id);
 
-            return studentModelResult.ToActionResult(); 
+            return studentModelResult.ToActionResult();
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace CharlieBackend.Api.Controllers
         /// Get only active students
         /// </summary>
         /// <response code="200">Successful return of students list</response>
-        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
+        [Authorize(Roles = "Admin, Mentor, Secretary")]
         [HttpGet("active")]
         public async Task<ActionResult<IList<StudentDetailsDto>>> GetAllActiveStudents()
         {

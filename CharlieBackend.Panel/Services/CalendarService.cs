@@ -37,7 +37,7 @@ namespace CharlieBackend.Panel.Services
         public CalendarService(
             IScheduleService scheduleService,
             IApiUtil apiUtil,
-            IMapper mapper, 
+            IMapper mapper,
             IOptions<ApplicationSettings> options,
             ICurrentUserService currentUserService)
         {
@@ -67,13 +67,30 @@ namespace CharlieBackend.Panel.Services
             var getCoursesTask = GetActiveCourseViewModelsAsync();
             var getMentorsTask = GetActiveMetorViewModelsAsync();
             var getStudentGroupsTask = GetStudentGroupViewModelsAsync();
-            var getStudentsTask = GetActiveStudentViewModelsAsync();
+            IList<CalendarStudentViewModel> getStudentsTask = null;
+            if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
+            {
+                getStudentsTask = await GetActiveStudentViewModelsAsync();
+            }
+            else if (_currentUserService.Role == UserRole.Student)
+            {
+                getStudentsTask = new List<CalendarStudentViewModel>()
+                {
+                    new CalendarStudentViewModel()
+                    {
+                        Id = _currentUserService.EntityId,
+                        Email = _currentUserService.Email,
+                        FirstName = _currentUserService.FirstName,
+                        LastName = _currentUserService.LastName
+                    }
+                };
+            }
             var getThemesTask = GetThemeViewModelsAsync();
             var getEventOccurrencesTask = GetEventOccurrenceViewModelsAsync();
             var getScheduledEventsTask = GetScheduledEventViewModelsAsync(scheduledEventFilter);
 
             await Task.WhenAll(
-                getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
+                getCoursesTask, getMentorsTask, getStudentGroupsTask,
                     getThemesTask, getEventOccurrencesTask, getScheduledEventsTask
                 );
 
@@ -82,7 +99,7 @@ namespace CharlieBackend.Panel.Services
                 Courses = getCoursesTask.Result,
                 Mentors = getMentorsTask.Result,
                 StudentGroups = getStudentGroupsTask.Result,
-                Students = getStudentsTask.Result,
+                Students = getStudentsTask,
                 Themes = getThemesTask.Result,
                 EventOccurences = getEventOccurrencesTask.Result,
                 ScheduledEvents = getScheduledEventsTask.Result,
@@ -112,7 +129,7 @@ namespace CharlieBackend.Panel.Services
             if (_currentUserService.Role == UserRole.Student)
             {
                 scheduledEventFilter.StudentAccountID = _currentUserService.EntityId;
-            } 
+            }
         }
 
         private async Task<IList<CalendarCourseViewModel>> GetActiveCourseViewModelsAsync()
