@@ -39,5 +39,8 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<Student> Students { get; set; }
 
         public virtual ICollection<Secretary> Secretaries { get; set; }
+        public virtual string TelegramId { get; set; }
+        public string TelegramToken { get; set; }
+        public DateTime? TelegramTokenGenDate { get; set; }
     }
 }
