@@ -40,12 +40,18 @@ namespace CharlieBackend.Core.Entities
                     && EventStart.Equals(item.EventStart)
                     && EventFinish.Equals(item.EventEnd);
             }
-            return base.Equals(obj);
+            else if(obj is ScheduledEvent)
+            {
+                var item = (obj as ScheduledEvent);
+                return Id == item.Id;
+                   
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return Id.GetHashCode();
         }
     }
 }
