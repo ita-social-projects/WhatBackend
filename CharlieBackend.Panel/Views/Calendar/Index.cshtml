@@ -13,25 +13,28 @@
     <script src="~/js/calendar.js"></script>
 }
 
-<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-    <div class="dropleft">
-        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="dropdown-menu ">
-            <a class="dropdown-item"
-               asp-action="CreateEventOccurrence" asp-controller="EventOccurrence">
+@if (!User.IsInRole("Student"))
+{
+    <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+        <div class="dropleft">
+            <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
                 <i class="fas fa-plus"></i>
-                <span>Create event occurrence</span>
-            </a>
-            <a class="dropdown-item"
-               asp-action="CreateSingleEvent" asp-controller="EventOccurrence">
-                <i class="fas fa-plus"></i>
-                <span>Create single event</span>
-            </a>
+            </button>
+            <div class="dropdown-menu ">
+                <a class="dropdown-item"
+                   asp-action="CreateEventOccurrence" asp-controller="EventOccurrence">
+                    <i class="fas fa-plus"></i>
+                    <span>Create event occurrence</span>
+                </a>
+                <a class="dropdown-item"
+                   asp-action="CreateSingleEvent" asp-controller="EventOccurrence">
+                    <i class="fas fa-plus"></i>
+                    <span>Create single event</span>
+                </a>
+            </div>
         </div>
     </div>
-</div>
+}
 
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
@@ -132,7 +135,7 @@
 
                                     @foreach (var mentor in Model.Mentors.Where(x => x.Id != Model.ScheduledEventFilter.MentorID.Value))
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+ mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                                 else
@@ -141,36 +144,54 @@
 
                                     @foreach (var mentor in Model.Mentors)
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                             </select>
 
-                            <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
-                                @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
-                                {
-                                    <option value="null">-Student-</option>
-                                    <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
-                                        @{
-                                            var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                            @if (User.IsInRole("Student"))
+                            {
+                                <select disabled class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
+                                    @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
+                                    {
+                                        <option value="null">-Student-</option>
+                                        <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
+                                            @{
+                                                var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                                            }
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
+                                        </option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
+                                    @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
+                                    {
+                                        <option value="null">-Student-</option>
+                                        <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
+                                            @{
+                                                var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                                            }
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
+                                        </option>
+
+                                        @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
+                                        {
+                                            <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
                                         }
-                                        Student @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
-                                    </option>
-
-                                    @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
-                                    {
-                                        <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                     }
-                                }
-                                else
-                                {
-                                    <option value="null" selected>-Student-</option>
-                                    @foreach (var student in Model.Students)
+                                    else
                                     {
-                                        <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
+                                        <option value="null" selected>-Student-</option>
+                                        @foreach (var student in Model.Students)
+                                        {
+                                            <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
+                                        }
                                     }
-                                }
-                            </select>
+                                </select>
+                            }
                         </div>
 
                         <div class="form-group row">
@@ -214,15 +235,18 @@
                 <input id="seMentor" class="modalTextInput form-control" value="" disabled />
             </div>
 
-            <div class="modal-footer">
-                <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit events</a>
-                <a id="seSingleEventId" class="btn btn-primary" title="You want to edit only this event" href="">Edit single event</a>
-            </div>
+            @if (!User.IsInRole("Student"))
+            {
+                <div class="modal-footer">
+                    <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit events</a>
+                    <a id="seSingleEventId" class="btn btn-primary" title="You want to edit only this event" href="">Edit single event</a>
+                </div>
 
-            <div class="modal-footer">
-                <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete events</a>
-                <a id="deleteSingleEvent" class="btn btn-primary" title="You want to delete only this event" href="">Delete single event</a>
-            </div>
+                <div class="modal-footer">
+                    <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete events</a>
+                    <a id="deleteSingleEvent" class="btn btn-primary" title="You want to delete only this event" href="">Delete single event</a>
+                </div>
+            }
         </div>
     </div>
 </div>
