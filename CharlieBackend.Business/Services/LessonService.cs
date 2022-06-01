@@ -20,13 +20,13 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
-        private readonly ILogger<HomeworkService> _logger;
+        private readonly ILogger<LessonService> _logger;
 
         public LessonService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ICurrentUserService currentUserService,
-            ILogger<HomeworkService> logger)
+            ILogger<LessonService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

@@ -54,10 +54,7 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-            #region Lessons mapping
-
-            CreateMap<LessonDto, Lesson>();
-            CreateMap<Lesson, LessonDto>();
+            #region Lessons mapping           
 
             CreateMap<Lesson, CreateLessonDto>();
             CreateMap<CreateLessonDto, Lesson>()
@@ -77,12 +74,15 @@ namespace CharlieBackend.Core.Mapping
                                  }
                              }).ToList()));
 
+            CreateMap<LessonDto, Lesson>();
             CreateMap<Lesson, LessonDto>().ForMember(destination => destination.LessonVisits,
                                                      conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto
                                                      {
                                                          StudentId = y.StudentId,
                                                          MarkId = y.MarkId,
                                                          Presence = y.Presence,
+                                                         Comment = y.Mark.Comment,
+                                                         Mark = y.Mark.Value
                                                      }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();

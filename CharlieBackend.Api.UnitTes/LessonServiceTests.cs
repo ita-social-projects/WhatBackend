@@ -8,6 +8,7 @@ using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,14 @@ namespace CharlieBackend.Api.UnitTest
     public class LessonServiceTests : TestBase
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<LessonService>> _loggerMock;
 
         private readonly Mock<ILessonRepository> _lessonRepositoryMock;
         private readonly Mock<IThemeRepository> _themeRepositoryMock;
         private readonly Mock<IMentorRepository> _mentorRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<IVisitRepository> _visitRepositoryMock;
+        private readonly Mock<IMarkRepository> _markRepositoryMock;
 
         private static long visitStudentIdPresenceTrue = 11;
         private static long visitStudentIdPresenceFalse = 14;
@@ -39,11 +42,13 @@ namespace CharlieBackend.Api.UnitTest
         public LessonServiceTests()
         {
             _mapper = GetMapper(new ModelMappingProfile());
+            _loggerMock = new Mock<ILogger<LessonService>>();
             _lessonRepositoryMock = new Mock<ILessonRepository>();
             _themeRepositoryMock = new Mock<IThemeRepository>();
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _visitRepositoryMock = new Mock<IVisitRepository>();
+            _markRepositoryMock = new Mock<IMarkRepository>();
 
             MockEntities();
         }
@@ -111,6 +116,7 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.VisitRepository).Returns(_visitRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.MarkRepository).Returns(_markRepositoryMock.Object);
 
 
             _currentUserServiceMock = GetCurrentUserAsExistingStudent();
@@ -133,7 +139,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object, 
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             var result = await lessonService.CreateLessonAsync(createLessonDTO);
@@ -162,6 +169,7 @@ namespace CharlieBackend.Api.UnitTest
             #endregion
 
             #region MOCK
+
             var mentorReposutoryMockWrong = new Mock<IMentorRepository>();
             _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentor.Id)).ReturnsAsync(mentor);
             mentorReposutoryMockWrong.Setup(x => x.GetMentorByIdAsync(mentorWrong.Id)).ReturnsAsync(default(Mentor));
@@ -169,7 +177,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                unitOfWork: _unitOfWorkMock.Object,
                mapper: _mapper,
-               currentUserService: _currentUserServiceMock.Object);
+               currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             #endregion
             //Act 
@@ -207,7 +216,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             #endregion
             //Act 
@@ -252,7 +262,9 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
+
             #endregion
 
             //Act 
@@ -303,7 +315,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             #endregion
             //Act 
@@ -338,7 +351,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             #endregion
             //Act 
@@ -365,7 +379,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             #endregion
             //Act 
@@ -398,7 +413,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             var nonExistingResult = await lessonService.AssignMentorToLessonAsync(nonExistentMentor);
@@ -425,7 +441,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             var nonExistingResult = await lessonService.AssignMentorToLessonAsync(nonExistentLesson);
@@ -465,7 +482,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             var expectedResult = await lessonService.AssignMentorToLessonAsync(expectedData);
@@ -495,7 +513,26 @@ namespace CharlieBackend.Api.UnitTest
                 Id = 3
             };
 
-            List<VisitDto> visitsDto = new List<VisitDto>() { };
+            List<VisitDto> visitsDtoList = new List<VisitDto>()
+            {
+                new VisitDto()
+                {
+                    StudentId = 11,
+                    Presence = true,
+                    MarkId = 5,
+                    Mark = 99,
+                    Comment = "comm"
+                },
+
+                new VisitDto()
+                {
+                    StudentId = 14,
+                    Presence = false,
+                    MarkId = 6,
+                    Mark = 99,
+                    Comment = "comm"
+                }
+            };
 
             var foundLesson = new Lesson()
             {
@@ -506,27 +543,43 @@ namespace CharlieBackend.Api.UnitTest
                 Mentor = mentor,
                 StudentGroup = studentGroup,
                 Theme = theme,
-                Visits = { }
+                Visits = new List<Visit>
+                {
+                    new Visit()
+                    {
+                        Id = 4,
+                        StudentId = 11,
+                        Presence = true,
+                        MarkId = 5,
+                        Mark = new Mark()
+                        {
+                            Id = 5,
+                            Value = 99,
+                            Comment = "comm"
+                        }
+                    },
+
+                    new Visit()
+                    {
+                        Id = 3,
+                        StudentId = 14,
+                        Presence = false,
+                        MarkId = 6,
+                        Mark = new Mark()
+                        {
+                            Id = 6,
+                            Value = 99,
+                            Comment = "comm"
+                        }
+                    }
+                }
             };
 
             var updateLessonDto = new UpdateLessonDto
             {
                 ThemeName = "new theme",
                 LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
-                LessonVisits = new List<VisitDto> 
-                {
-                    new VisitDto()
-                    {
-                        StudentId = 11,
-                        Presence = true
-                    },
-
-                    new VisitDto()
-                    {
-                        StudentId = 14,
-                        Presence = false
-                    }
-                }
+                LessonVisits = visitsDtoList
             };
 
             var updateLessonDtoWithWrongDate = new UpdateLessonDto
@@ -553,7 +606,7 @@ namespace CharlieBackend.Api.UnitTest
                 MentorId = 2,
                 StudentGroupId = 3,
                 LessonDate = DateTime.Parse("2020-11-18T15:30:00.384Z"),
-                LessonVisits = visitsDto
+                LessonVisits = visitsDtoList
             };
 
             var themerepositoryMock = new Mock<IThemeRepository>();
@@ -584,12 +637,12 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             var result = (await lessonService.UpdateLessonAsync(7, updateLessonDto)).Data;
             var resultWithWrongDate = await lessonService.UpdateLessonAsync(7, updateLessonDtoWithWrongDate);
-
 
             //Assert
             Assert.Equal(ErrorCode.ValidationError, resultWithWrongDate.Error.Code);
@@ -622,7 +675,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
             //Act
@@ -651,7 +705,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
             //Act
@@ -672,7 +727,8 @@ namespace CharlieBackend.Api.UnitTest
             var lessonService = new LessonService(
                 unitOfWork: _unitOfWorkMock.Object,
                 mapper: _mapper,
-                currentUserService: _currentUserServiceMock.Object);
+                currentUserService: _currentUserServiceMock.Object,
+                logger: _loggerMock.Object);
 
             //Act
             Func<Task> isDoneMethod = async () => await lessonService.IsLessonDoneAsync(lessonId);

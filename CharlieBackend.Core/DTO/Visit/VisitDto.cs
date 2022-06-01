@@ -1,4 +1,6 @@
-﻿namespace CharlieBackend.Core.DTO.Visit
+﻿using System;
+
+namespace CharlieBackend.Core.DTO.Visit
 {
     public class VisitDto
     {
@@ -15,5 +17,20 @@
         public string? Comment { get; set; }
 
         #nullable disable
+
+        public override bool Equals(Object obj)
+        {
+            if (obj is VisitDto)
+            {
+                var that = obj as VisitDto;
+                return this.StudentId == that.StudentId &&
+                    this.MarkId == that.MarkId &&
+                    this.Presence == that.Presence && 
+                    this.Mark == that.Mark &&
+                    this.Comment == that.Comment;
+            }
+
+            return false;
+        }
     }
 }

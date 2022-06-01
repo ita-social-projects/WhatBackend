@@ -55,7 +55,7 @@
                                     {
                                         <tr class="row">
 
-                                            <td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId">Model.Students[i].FirstName Model.Students[i].LastName</td>
+                                            <td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
 
                                             <td><input type="hidden" asp-for="@Model.LessonVisits[i].StudentId" /></td>
                                             <td><input type="hidden" asp-for="@Model.LessonVisits[i].MarkId" /></td>
