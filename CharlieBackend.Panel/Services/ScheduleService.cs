@@ -172,5 +172,12 @@ namespace CharlieBackend.Panel.Services
             await _apiUtil
               .CreateAsync<SingleEventDTO, CreateSingleEventDto>(_eventsApiEndpoints.AddSingleEvent, singleEventDTO);
         }
+
+        public async Task DeleteSingleEventByIdAsync(long eventID)
+        {
+            var singleEvent = string.Format(_eventsApiEndpoints.DeleteEventById, eventID);
+
+            await _apiUtil.DeleteAsync<bool>(singleEvent);
+        }
     }
 }

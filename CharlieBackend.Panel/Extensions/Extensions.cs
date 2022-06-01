@@ -17,6 +17,7 @@ namespace CharlieBackend.Panel.Extensions
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IApiUtil, ApiUtil>();
+            services.AddScoped<IBinaryResultApiUtil, ApiUtil>();
 
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();
@@ -31,6 +32,7 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IClassbookService, ClassbookService>();
+            services.AddScoped<IExportService, ExportService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {
