@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<CharlieBackend.Panel.Models.Course.CourseViewModel>
+
 @{
     Layout = "_Layout";
 }
@@ -45,50 +46,51 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive p-3" style="overflow-x:unset">
-                            <table class="table text-center table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <div class="table-responsive p-3" style="overflow-x:auto">
+                            <table class="table text-center table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
-                                    <tr class="thead-dark row">
-                                        <th class="col-4">Name</th>
+                                    <tr class="thead-dark">
+                                        <th scope="col">Name</th>
+                                        <th scope="col"><i class="fas fa-pen" data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
+                                    @foreach (var course in Model)
                                     {
-                                        if (item.IsActive)
+                                        if (course.IsActive)
                                         {
-                                    <tr class="row" id="activeCoursesRow">
-                                        <td class="col-4 text-truncate">@item.Name</td>
-                            @if (User.IsInRole("Secretary") || User.IsInRole("Admin"))
-                                 {
-                                    <td class="col">
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondar dropdown-toggle"
-                                                    type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@item.Name" data-item-id="@item.Id.Value">
-                                                    <i class="fas fa-pen"></i>
-                                                    <span>Edit </span>
-                                                </a>
-                                                <a class="dropdown-item text-dark js-disable-Course" data-toggle="modal" data-target="#disableCourseModalWindow" data-item-id="@item.Id.Value">
-                                                    <i class="fas fa-trash"></i>
-                                                    <span>Disable </span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                   }
+                                    <tr id="activeCoursesRow">
+                                        <td>@course.Name</td>
+                                        @if (User.IsInRole("Secretary") || User.IsInRole("Admin"))
+                                             {
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-outline-secondar dropdown-toggle"
+                                                                type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-cog"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@course.Name" data-item-id="@course.Id.Value">
+                                                                <i class="fas fa-pen"></i>
+                                                                <span>Edit </span>
+                                                            </a>
+                                                            <a class="dropdown-item text-dark js-disable-Course" data-toggle="modal" data-target="#disableCourseModalWindow" data-item-id="@course.Id.Value">
+                                                                <i class="fas fa-trash"></i>
+                                                                <span>Disable </span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                              }
                                             
                                     </tr>
                                         }
                                         else
                                             {
-                                                <tr class="row d-none" id="inactiveCoursesRow">
-                                                    <td class="col-4 text-truncate">@item.Name</td>
-                                                    <td class="col">
+                                                <tr class="d-none" id="inactiveCoursesRow">
+                                                    <td>@course.Name</td>
+                                                    <td>
                                                         <div class="dropdown">
                                                             <button class="btn btn-outline-secondar dropdown-toggle"
                                                                     type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -96,11 +98,11 @@
                                                                 <i class="fas fa-cog"></i>
                                                             </button>
                                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                                <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@item.Name" data-item-id="@item.Id.Value">
+                                                                <a class="dropdown-item text-dark js-edit-course" data-toggle="modal" data-target="#editCourseModal" data-item-name="@course.Name" data-item-id="@course.Id.Value">
                                                                     <i class="fas fa-pen"></i>
                                                                     <span>Edit </span>
                                                                 </a>
-                                                                <a class="dropdown-item text-dark js-enable-Course" data-toggle="modal" data-target="#enableCourseModalWindow" data-item-id="@item.Id.Value">
+                                                                <a class="dropdown-item text-dark js-enable-Course" data-toggle="modal" data-target="#enableCourseModalWindow" data-item-id="@course.Id.Value">
                                                                     <i class="fas fa-trash"></i>
                                                                     <span>Enable </span>
                                                                 </a>

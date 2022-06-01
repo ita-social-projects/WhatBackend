@@ -121,13 +121,13 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }
 
-            for (DateTime date = startDate; date.Date < finishDate.Date; date = date.AddDays(1))
+            for (DateTime date = startDate; date <= finishDate; date = date.AddDays(1))
             {
                 dayContainers.Add(GetDayBlockWithEvents(models.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date, displayType));
             }
 
             var endOfWeek = finishDate.EndOfWeek(DayOfWeek.Saturday);
-            for (DateTime date = finishDate; date.Date <= endOfWeek.Date; date = date.AddDays(1))
+            for (DateTime date = finishDate.Date.AddDays(1); date <= endOfWeek; date = date.AddDays(1))
             {
                 dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }

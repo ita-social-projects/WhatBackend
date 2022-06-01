@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Utils
 {
-    public class ApiUtil : IApiUtil
+    public class ApiUtil : IApiUtil, IBinaryResultApiUtil
     {
         private IHttpUtil _httpUtil;
 
@@ -158,6 +158,28 @@ namespace CharlieBackend.Panel.Utils
             TResponse responseModel = JsonConvert.DeserializeObject<TResponse>(stringResponse);
             
             return responseModel;
+        }
+
+        public async Task<byte[]> PostAsync<TPostData>(string url, TPostData postData)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync(url, postData);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            var binaryResult = await httpResponse.Content.ReadAsByteArrayAsync();
+
+            return binaryResult;
+        }
+
+        public async Task<byte[]> GetAsync(string url)
+        {
+            var httpResponse = await _httpUtil.GetAsync(url);
+
+            await _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            var binaryResult = await httpResponse.Content.ReadAsByteArrayAsync();
+
+            return binaryResult;
         }
     }
 }

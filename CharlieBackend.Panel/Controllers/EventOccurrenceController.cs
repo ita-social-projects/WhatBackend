@@ -125,5 +125,13 @@ namespace CharlieBackend.Panel.Controllers
 
             return RedirectToAction("Index", "Calendar");
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DeleteSingleEvent(long id)
+        {
+            await _scheduleService.DeleteSingleEventByIdAsync(id);
+
+            return RedirectToAction("Index", "Calendar");
+        }
     }
 }
