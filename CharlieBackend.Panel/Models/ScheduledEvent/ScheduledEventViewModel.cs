@@ -19,5 +19,7 @@ namespace CharlieBackend.Panel.Models.ScheduledEvent
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public int Color { get; set; }
     }
 }

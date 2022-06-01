@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
+using System;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
@@ -19,5 +20,7 @@ namespace CharlieBackend.Core.DTO.Schedule
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public int Color { get; set; }
     }
 }

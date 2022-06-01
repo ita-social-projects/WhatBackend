@@ -27,5 +27,7 @@ namespace CharlieBackend.Core.Entities
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public int Color { get; set; }
     }
 }
