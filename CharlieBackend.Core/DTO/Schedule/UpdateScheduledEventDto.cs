@@ -13,6 +13,7 @@ namespace CharlieBackend.Core.DTO.Schedule
         public DateTime? EventStart { get; set; }
 
         public DateTime? EventEnd { get; set; }
+
+        public int Color { get; set; }
     }
 }
-

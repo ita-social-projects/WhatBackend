@@ -29,6 +29,8 @@ namespace CharlieBackend.Core.Entities
 
         public DateTime EventFinish { get; set; }
 
+        public int Color { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj is UpdateScheduledEventDto)

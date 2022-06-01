@@ -21,8 +21,6 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<Result<StudentGroupDto>> GetStudentGroupByIdAsync(long id);
 
-        void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items);
-
         Task<Result<IList<StudentGroupDto>>> GetStudentGroupsByDateAsync(DateTime? startDate, DateTime? finishDate);
 
         Task<Result<StudentGroupDto>> MergeStudentGroupsAsync(MergeStudentGroupsDto groupsToMerge);
