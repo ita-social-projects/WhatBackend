@@ -7,6 +7,7 @@ using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,18 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ILogger<HomeworkService> _logger;
 
         public LessonService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            ILogger<HomeworkService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _currentUserService = currentUserService;
+            _logger = logger;
         }
 
         public async Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonDto)
@@ -80,12 +84,16 @@ namespace CharlieBackend.Business.Services
 
                 _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
+                var curDate = DateTime.Now;
+
                 if (lessonDto.LessonVisits != null)
                 {
                     for (int i = 0; i < createdLessonEntity.Visits.Count; i++)
                     {
-                        createdLessonEntity.Visits[i].Lesson = createdLessonEntity;
-
+                        createdLessonEntity.Visits[i].Mark.Type = MarkType.Visit;
+                        createdLessonEntity.Visits[i].Mark.EvaluationDate = curDate;
+                        createdLessonEntity.Visits[i].Mark.EvaluatedBy = _currentUserService.AccountId;
+                        _unitOfWork.MarkRepository.Add(createdLessonEntity.Visits[i].Mark);
                         _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
                     }
                 }
@@ -244,28 +252,37 @@ namespace CharlieBackend.Business.Services
                     {
                         return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudensId)} not included in this group({foundLesson.StudentGroupId})");
                     }
-                    await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
                     for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
                     {
-                        var visit = new Visit
-                        {
-                            Lesson = foundLesson,
-                            StudentId = lessonModel.LessonVisits[i].StudentId,
-                            Presence = lessonModel.LessonVisits[i].Presence,
-                            MarkId = lessonModel.LessonVisits[i].MarkId
-                        };
+                        var visit = foundLesson.Visits.SingleOrDefault(x => x.StudentId == lessonModel.LessonVisits[i].StudentId);
+                        if(visit != null)
+                        {                            
+                            visit.Presence = lessonModel.LessonVisits[i].Presence;
 
-                        _unitOfWork.VisitRepository.Add(visit);
+                            //update marks
+                            var mark = foundLesson.Visits.SingleOrDefault(x => x.MarkId == lessonModel.LessonVisits[i].MarkId).Mark;
+                            if(mark != null)
+                            {
+                                mark.Value = lessonModel.LessonVisits[i].Mark.GetValueOrDefault();
+                                mark.Comment = lessonModel.LessonVisits[i].Comment;
+
+                                _unitOfWork.MarkRepository.Update(mark);
+                            }
+
+                            _unitOfWork.VisitRepository.Update(visit);
+                        }
                     }
                 }
+
                 await _unitOfWork.CommitAsync();
 
                 return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(foundLesson));
-
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return null;

@@ -25,6 +25,7 @@ namespace CharlieBackend.Panel.Services
         private readonly IStudentService _studentService;
         private readonly IScheduleService _scheduleService;
         private readonly IEventsService _eventsService;
+        private readonly IMarkService _marksService;
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
@@ -37,7 +38,8 @@ namespace CharlieBackend.Panel.Services
             IStudentService studentService,
             IScheduleService scheduleService,
             IEventsService eventsService,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IMarkService marksService)
         {
             _lessonsApiEndpoints = options.Value.Urls.ApiEndpoints.Lessons;
             _apiUtil = apiUtil;
@@ -49,6 +51,7 @@ namespace CharlieBackend.Panel.Services
             _scheduleService = scheduleService;
             _eventsService = eventsService;
             _currentUserService = currentUserService;
+            _marksService = marksService;
         }
 
         public async Task AddLessonEndpointAsync(LessonCreateViewModel createLesson)
@@ -217,6 +220,19 @@ namespace CharlieBackend.Panel.Services
             var lessonToUpdate = _mapper.Map<LessonUpdateViewModel>(lessonDto);
             lessonToUpdate.Themes = await _themeService.GetAllThemesAsync();
             lessonToUpdate.Students = studentGroups.Where(x => x.Id == lessonDto.StudentGroupId).FirstOrDefault().Students;
+
+            Parallel.ForEach(lessonToUpdate.LessonVisits, i =>
+            {
+                if (i.MarkId != null)
+                {
+                    var mark = _marksService.GetMarkByIdAsync(i.MarkId.GetValueOrDefault());
+                    if (mark != null)
+                    {
+                        i.Mark = mark.Result.Value;
+                        i.Comment = mark.Result.Comment;
+                    }
+                }
+            });
 
             return lessonToUpdate;
         }

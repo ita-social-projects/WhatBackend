@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.DTO.Mark;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Secretary;
@@ -67,7 +68,13 @@ namespace CharlieBackend.Core.Mapping
                              {
                                  StudentId = y.StudentId,
                                  MarkId = y.MarkId,
-                                 Presence = y.Presence
+                                 Presence = y.Presence,
+                                 Mark = new Mark 
+                                 { 
+                                     Id = y.MarkId.GetValueOrDefault(), 
+                                     Value = y.Mark.GetValueOrDefault(), 
+                                     Comment = y.Comment
+                                 }
                              }).ToList()));
 
             CreateMap<Lesson, LessonDto>().ForMember(destination => destination.LessonVisits,
@@ -76,8 +83,6 @@ namespace CharlieBackend.Core.Mapping
                                                          StudentId = y.StudentId,
                                                          MarkId = y.MarkId,
                                                          Presence = y.Presence,
-                                                         Mark = y.Mark.Value,
-                                                         Comment = y.Mark.Comment
                                                      }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();
@@ -85,6 +90,7 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<LessonDto, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, LessonDto>();
+
             #endregion
 
             #region Mentors mapping
@@ -231,6 +237,13 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<Visit, VisitDto>();
             CreateMap<VisitDto, Visit>();
+
+            #endregion
+
+            #region Mark mappping
+
+            CreateMap<Mark, MarkDto>();
+            CreateMap<MarkDto, Mark>();
 
             #endregion
         }
