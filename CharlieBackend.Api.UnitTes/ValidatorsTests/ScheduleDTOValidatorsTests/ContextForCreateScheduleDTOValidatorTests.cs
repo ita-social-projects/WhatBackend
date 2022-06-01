@@ -18,13 +18,14 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         public ContextForCreateScheduleDTO GetDTO(
             long groupId = 0,
             long? themeId = null,
-            long? mentorId = null)
+            long? mentorId = null, int color = 0)
         {
             return new ContextForCreateScheduleDTO
             {
                 GroupID = groupId,
                 ThemeID = themeId,
-                MentorID = mentorId
+                MentorID = mentorId,
+                Color = color
             };
         }
 
@@ -34,7 +35,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
             // Arrange
             var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID,
                 ScheduleTestValidationConstants.ValidEntityID,
-                ScheduleTestValidationConstants.ValidEntityID);
+                ScheduleTestValidationConstants.ValidEntityID, ScheduleTestValidationConstants.ValidColorValue);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -64,7 +65,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         public async Task ContextForCreateScheduleDTOAsync_EmptyDataExceptGroupId_ShouldReturnTrue()
         {
             // Arrange
-            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID);
+            var dto = GetDTO(ScheduleTestValidationConstants.ValidEntityID, null, null, ScheduleTestValidationConstants.ValidColorValue);
 
             // Act
             var result = await _validator.ValidateAsync(dto);
