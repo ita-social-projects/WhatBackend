@@ -102,6 +102,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                 var visits = await _applicationContext.Visits
                         .Include(visit => visit.Lesson)
                         .ThenInclude(lesson => lesson.Theme)
+                        .Include(visit => visit.Mark)
+                        .ThenInclude(mark => mark.Comment)
+                        .Include(visit => visit.Mark)
+                        .ThenInclude(mark => mark.Value)
                         .Where(visit => visit.StudentId == studentId).ToListAsync();
 
                 for (int i = 0; i < visits.Count; i++)
