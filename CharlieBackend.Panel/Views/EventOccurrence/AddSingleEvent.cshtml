@@ -106,7 +106,7 @@
                     <div class="form-group">
                         <label>End date</label>
                         <input type="datetime-local" min="1000-01-01" max="3000-12-31" class="form-control"
-                               value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="EventFinish">
+                               value="@DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="EventFinish">
                     </div>
 
                     <div class="mt-3">
