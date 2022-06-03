@@ -64,12 +64,10 @@ namespace CharlieBackend.Core.Mapping
                              conf => conf.MapFrom(x => x.LessonVisits.Select(y => new Visit
                              {
                                  StudentId = y.StudentId,
-                                 MarkId = y.MarkId,
                                  Presence = y.Presence,
                                  Mark = new Mark 
                                  { 
-                                     Id = y.MarkId.GetValueOrDefault(), 
-                                     Value = y.Mark.GetValueOrDefault(), 
+                                     Value = y.StudentMark.GetValueOrDefault(), 
                                      Comment = y.Comment
                                  }
                              }).ToList()));
@@ -79,10 +77,9 @@ namespace CharlieBackend.Core.Mapping
                                                      conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto
                                                      {
                                                          StudentId = y.StudentId,
-                                                         MarkId = y.MarkId,
                                                          Presence = y.Presence,
                                                          Comment = y.Mark.Comment,
-                                                         Mark = y.Mark.Value
+                                                         StudentMark = y.Mark.Value
                                                      }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();

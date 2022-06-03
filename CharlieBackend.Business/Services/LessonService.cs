@@ -90,11 +90,14 @@ namespace CharlieBackend.Business.Services
                 {
                     for (int i = 0; i < createdLessonEntity.Visits.Count; i++)
                     {
-                        createdLessonEntity.Visits[i].Mark.Type = MarkType.Visit;
-                        createdLessonEntity.Visits[i].Mark.EvaluationDate = curDate;
-                        createdLessonEntity.Visits[i].Mark.EvaluatedBy = _currentUserService.AccountId;
-                        _unitOfWork.MarkRepository.Add(createdLessonEntity.Visits[i].Mark);
-                        _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
+                        if (createdLessonEntity.Visits[i].Mark.Value != 0)
+                        {
+                            createdLessonEntity.Visits[i].Mark.Type = MarkType.Visit;
+                            createdLessonEntity.Visits[i].Mark.EvaluationDate = curDate;
+                            createdLessonEntity.Visits[i].Mark.EvaluatedBy = _currentUserService.AccountId;
+                            _unitOfWork.MarkRepository.Add(createdLessonEntity.Visits[i].Mark);
+                            _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
+                        }
                     }
                 }
 
@@ -259,15 +262,17 @@ namespace CharlieBackend.Business.Services
                         if(visit != null)
                         {                            
                             visit.Presence = lessonModel.LessonVisits[i].Presence;
-
-                            //update marks
-                            var mark = foundLesson.Visits.SingleOrDefault(x => x.MarkId == lessonModel.LessonVisits[i].MarkId).Mark;
-                            if(mark != null)
+                            if (lessonModel.LessonVisits[i].StudentMark != null && lessonModel.LessonVisits[i].StudentMark != 0)
                             {
-                                mark.Value = lessonModel.LessonVisits[i].Mark.GetValueOrDefault();
-                                mark.Comment = lessonModel.LessonVisits[i].Comment;
+                                //update marks
+                                var mark = foundLesson.Visits.SingleOrDefault(x => x.StudentId == lessonModel.LessonVisits[i].StudentId).Mark;
+                                if (mark != null)
+                                {
+                                    mark.Value = lessonModel.LessonVisits[i].StudentMark.GetValueOrDefault();
+                                    mark.Comment = lessonModel.LessonVisits[i].Comment;
 
-                                _unitOfWork.MarkRepository.Update(mark);
+                                    _unitOfWork.MarkRepository.Update(mark);
+                                }
                             }
 
                             _unitOfWork.VisitRepository.Update(visit);

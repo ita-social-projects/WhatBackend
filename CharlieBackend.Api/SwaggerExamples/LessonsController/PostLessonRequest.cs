@@ -21,7 +21,7 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     new VisitDto()
                     {
                         StudentId = 44,
-                        MarkId = 5,
+                        StudentMark = 5,
                         Presence = true
                     },
                     new VisitDto()

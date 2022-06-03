@@ -519,8 +519,7 @@ namespace CharlieBackend.Api.UnitTest
                 {
                     StudentId = 11,
                     Presence = true,
-                    MarkId = 5,
-                    Mark = 99,
+                    StudentMark = 99,
                     Comment = "comm"
                 },
 
@@ -528,8 +527,7 @@ namespace CharlieBackend.Api.UnitTest
                 {
                     StudentId = 14,
                     Presence = false,
-                    MarkId = 6,
-                    Mark = 99,
+                    StudentMark = 99,
                     Comment = "comm"
                 }
             };
