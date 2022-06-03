@@ -208,7 +208,7 @@ namespace CharlieBackend.Api.UnitTest
             var wrongEventRepositoryMock = new Mock<IScheduledEventRepository>();
 
             wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
-                .ReturnsAsync(default(ScheduledEvent));
+                .ReturnsAsync(_validEvent);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
@@ -216,7 +216,7 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await eventService.ConnectScheduleToLessonById(wrongScheduledEvent.Id, _lessonId);
 
             //Assert
-            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
 
         }
         [Fact]
@@ -234,7 +234,7 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);
 
             //Assert
-            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.Conflict);
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
 
         }
     }

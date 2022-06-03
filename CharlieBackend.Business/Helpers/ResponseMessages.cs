@@ -8,6 +8,8 @@
 
         public const string IndexNotValid = "Index cannot be less then 1 and greater than 5. ";
 
+        public const string NullRequest = "Value can't be null";
+
         public static string NotExist(string entityName) => $"{entityName} does not exist. ";
 
         public static string NotValid(string entityName) => $"{entityName} is not valid. ";

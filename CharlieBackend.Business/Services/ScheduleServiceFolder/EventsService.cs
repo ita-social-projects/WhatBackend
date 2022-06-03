@@ -64,7 +64,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
             if (!string.IsNullOrEmpty(errorMsg))
             {
-                throw new EntityValidationException(errorMsg);
+                return Result<ScheduledEventDTO>.GetError(ErrorCode.ValidationError, errorMsg);
             }
 
             var scheduleEntity = await _unitOfWork.ScheduledEventRepository.ConnectEventToLessonByIdAsync(eventId, lessonId);
