@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharlieBackend.Core.DTO.Schedule;
+using System;
 
 namespace CharlieBackend.Core.Entities
 {
@@ -29,5 +30,30 @@ namespace CharlieBackend.Core.Entities
         public DateTime EventFinish { get; set; }
 
         public int Color { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UpdateScheduledEventDto)
+            {
+                var item = (obj as UpdateScheduledEventDto);
+                return MentorId.Equals(item.MentorId)
+                    && StudentGroupId.Equals(item.StudentGroupId)
+                    && ThemeId.Equals(item.ThemeId)
+                    && EventStart.Equals(item.EventStart)
+                    && EventFinish.Equals(item.EventEnd);
+            }
+            else if(obj is ScheduledEvent)
+            {
+                var item = (obj as ScheduledEvent);
+                return Id == item.Id;
+                   
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

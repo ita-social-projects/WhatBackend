@@ -194,7 +194,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             return dayBlock;
         }
-
+        
         private static TagBuilder GetDayBlock(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
         {
             TagBuilder div = new TagBuilder("div");
