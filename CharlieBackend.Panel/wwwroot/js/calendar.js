@@ -7,6 +7,7 @@
     var seTime = _self.attr("seTime");
     var seEventOccurrenceId = _self.attr("seEventOccurrenceId");
     var seSingleEventId = _self.attr("seSingleEventId");
+    var seColor = _self.css("background-color");
 
     if (seEventOccurrenceId == 0) {
         document.getElementById("seEventOccurrenceId").hidden = true;
@@ -21,6 +22,7 @@
     $("#seMentor").val(seMentor);
     $("#seTheme").val(seTheme);
     $("#seTime").val(seTime);
+    $('#seColor').css("background-color", seColor);
     $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
     $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
     $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);

@@ -158,15 +158,15 @@ namespace CharlieBackend.Panel.HtmlHelpers
         {
             string btnClass = string.Empty;
 
-            if (day.Date == DateTime.Now.Date)
+            if (day.Date == DateTime.Now)
             {
                 btnClass = "btn btn-outline-success btn-event";
             }
-            if (day.Date > DateTime.Now.Date)
+            if (day.Date > DateTime.Now)
             {
                 btnClass = "btn btn-outline-primary btn-event";
             }
-            if (day.Date < DateTime.Now.Date)
+            if (day.Date < DateTime.Now)
             {
                 btnClass = "btn btn-outline-dark btn-event";
             }
@@ -195,24 +195,6 @@ namespace CharlieBackend.Panel.HtmlHelpers
             return dayBlock;
         }
 
-        private static string GetButtonCssClass(DateTime day)
-        {
-            string btnClass = string.Empty;
-
-            if (day.Date == DateTime.Now.Date)
-            {
-                btnClass = "btn btn-outline-success btn-event";
-            }
-            if (day.Date > DateTime.Now.Date)
-            {
-                btnClass = "btn btn-outline-primary btn-event";
-            }
-            if (day.Date < DateTime.Now.Date)
-            {
-                btnClass = "btn btn-outline-dark btn-event";
-            }
-            return btnClass;
-        }
         private static TagBuilder GetDayBlock(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
         {
             TagBuilder div = new TagBuilder("div");
