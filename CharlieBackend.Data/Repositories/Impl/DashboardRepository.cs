@@ -191,6 +191,22 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
+        public async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
+            IEnumerable<long> studentGroupsIds)
+        {
+            List<AverageStudentMarkDto> result;
+            if (!studentGroupsIds.Any())
+            {
+                result = new List<AverageStudentMarkDto>();
+            }
+            else
+            {
+                result = await GetStudentHomeworkAverageMarks(studentIds, studentGroupsIds);
+            }
+
+            return result;
+        }
+
         public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
@@ -204,6 +220,37 @@ namespace CharlieBackend.Data.Repositories.Impl
 
                 return studentAverageMarskList;
             }
+        }
+
+        private async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarks(IEnumerable<long> studentIds,
+    IEnumerable<long> studentGroupsIds)
+        {
+            return await _applicationContext.HomeworkStudents
+                  .AsNoTracking()
+                  .Where(x => studentGroupsIds.Contains(x.Homework.Lesson.StudentGroupId.Value))
+                  .Where(x => studentIds.Contains((long)x.StudentId))
+                  .Where(x => x.Mark != null)
+                  .Select(x => new
+                  {
+                      Course = x.Homework.Lesson.StudentGroup.Course.Name,
+                      StudentGroup = x.Homework.Lesson.StudentGroup.Name,
+                      StudentMark = (decimal)x.Mark.Value,
+                      Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName
+                  })
+                  .GroupBy(x => new
+                  {
+                      Group = x.StudentGroup,
+                      Course = x.Course,
+                      Student = x.Student
+                  })
+                  .Select(x => new AverageStudentMarkDto
+                  {
+                      Course = x.Key.Course,
+                      StudentGroup = x.Key.Group,
+                      Student = x.Key.Student,
+                      StudentAverageMark = x.Average(s => s.StudentMark)
+                  }
+                  ).ToListAsync();
         }
 
         private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds,

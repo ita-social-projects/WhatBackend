@@ -38,5 +38,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<AverageStudentGroupMarkDto>> GetStudentGroupsAverageMarks(List<long> studentGroupIds);
 
         Task<List<AverageStudentGroupVisitDto>> GetStudentGroupsAverageVisits(List<long> studentGroupIds);
+
+        Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
+            IEnumerable<long> studentGroupsIds);
     }
 }
