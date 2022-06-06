@@ -1,0 +1,9 @@
+USE Soft;
+
+LOCK TABLES Homeworks WRITE;
+
+ALTER TABLE Homeworks
+
+ADD UpdatedByAccountId BIGINT UNSIGNED    NOT NULL    DEFAULT 1;
+
+UNLOCK TABLES;

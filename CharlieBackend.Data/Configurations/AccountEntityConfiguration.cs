@@ -52,6 +52,11 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnType("VARCHAR(32)")
                 .HasComment("Standard salt size is 128 bits or 32 characters");
 
+            entity.Property(e => e.UpdatedByAccountId)
+               .IsRequired()
+               .HasColumnName("UpdatedByAccountId")
+               .HasDefaultValueSql("1");
+
             entity.Property(e => e.IsActive)
                 .IsRequired()
                 .HasColumnName("IsActive")

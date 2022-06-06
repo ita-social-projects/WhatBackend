@@ -17,5 +17,7 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<MentorOfCourse> MentorsOfCourses { get; set; }
         
         public virtual ICollection<StudentGroup> StudentGroup { get; set; }
+
+        public long UpdatedByAccountId { get; set; }
     }
 }

@@ -39,5 +39,7 @@ namespace CharlieBackend.Core.Entities
         public virtual ICollection<Student> Students { get; set; }
 
         public virtual ICollection<Secretary> Secretaries { get; set; }
+
+        public long UpdatedByAccountId { get; set; }
     }
 }
