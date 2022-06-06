@@ -24,6 +24,8 @@
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="~/css/site.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="~/css/colorPick.css">
+
     @RenderSection("Styles", false)
 
 </head>
@@ -135,7 +137,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Student"))
                 {
                     <a class="nav-link collapsed" asp-action="Index" asp-controller="Calendar">
                         <i class="fab fa-cuttlefish"></i>
@@ -345,7 +347,6 @@
             ));
             return matches ? decodeURIComponent(matches[1]) : undefined;
         }
-
     </script>
 
     @RenderSection("Scripts", required: false)

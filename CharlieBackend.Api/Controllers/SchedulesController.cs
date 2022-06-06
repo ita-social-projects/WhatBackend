@@ -150,7 +150,7 @@ namespace CharlieBackend.Api.Controllers
         /// </summary>
         /// <response code="200">Successfully returned a collection of event occurrences.</response>
         [SwaggerResponse(200, type: typeof(IList<EventOccurrenceDTO>))]
-        [Authorize(Roles = "Secretary, Admin")]
+        [Authorize(Roles = "Secretary, Admin, Student")]
         [HttpGet("event-occurrences")]
         public async Task<ActionResult<IList<EventOccurrenceDTO>>> GetAllEventOccurrences()
         {

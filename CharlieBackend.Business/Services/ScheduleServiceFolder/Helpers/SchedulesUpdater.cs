@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 request.EventStart.Value.Hour, request.EventStart.Value.Minute, request.EventStart.Value.Second) : item.EventStart;
             item.EventFinish = request.EventEnd.HasValue ? new DateTime(request.EventEnd.Value.Year, request.EventEnd.Value.Month, request.EventEnd.Value.Day,
                 request.EventEnd.Value.Hour, request.EventEnd.Value.Minute, request.EventEnd.Value.Second) : item.EventFinish;
-
+            item.Color = request.Color;
             return item;
         }
     }

@@ -33,6 +33,9 @@ namespace CharlieBackend.Data.Configurations
             entity.Property(e => e.LessonId)
                 .HasColumnName("LessonID");
 
+            entity.Property(e => e.Color).
+                IsRequired().HasColumnName("Color");
+
             entity.Property(e => e.EventStart)
                 .IsRequired()
                 .HasColumnName("EventStart")

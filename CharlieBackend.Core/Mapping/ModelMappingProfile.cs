@@ -193,6 +193,11 @@ namespace CharlieBackend.Core.Mapping
             CreateMap<CreateSingleEventDto, ScheduledEvent>();
             CreateMap<ScheduledEvent, SingleEventDTO>();
 
+            CreateMap<UpdateScheduledEventDto, CreateSingleEventDto>();
+            CreateMap<CreateSingleEventDto, UpdateScheduledEventDto>();
+
+            CreateMap<EventOccurrence, ScheduledEventDTO>();
+            CreateMap<ScheduledEventDTO, EventOccurrence>();
             #endregion
 
             #region Attachments mapping
