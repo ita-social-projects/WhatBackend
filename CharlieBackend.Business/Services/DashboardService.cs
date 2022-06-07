@@ -83,6 +83,11 @@ namespace CharlieBackend.Business.Services
                     .GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(studentsIds, studentGroupsIds);
             }
 
+            if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentHomeworkMark))
+            {
+                result.AverageStudentHomeworkMarks = await _unitOfWork.DashboardRepository.GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(studentsIds, studentGroupsIds);
+            }
+
             return Result<StudentsResultsDto>.GetSuccess(result);
         }
 
@@ -140,6 +145,11 @@ namespace CharlieBackend.Business.Services
             {
                 result.AverageStudentVisits = await _unitOfWork.DashboardRepository
                     .GetStudentAverageVisitsPercentageByStudentIdsAsync(studentId, studentGroupsIds);
+            }
+
+            if(request.IncludeAnalytics.Contains(StudentResultType.AverageStudentHomeworkMark))
+            {
+                result.AverageStudentHomeworkMarks = await _unitOfWork.DashboardRepository.GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentId }, studentGroupsIds);
             }
 
             return Result<StudentsResultsDto>.GetSuccess(result);
