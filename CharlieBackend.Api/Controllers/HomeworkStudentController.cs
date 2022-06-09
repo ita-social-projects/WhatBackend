@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Adds homework from student
+        /// Add homework solution from student
         /// </summary>
         /// <param name="request">
         /// 1.HomeworkId -  it is id homework which one student done 
@@ -49,7 +49,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets student homework by student id
+        /// Get homework solutions by student id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
@@ -62,7 +62,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets the student's completed homework in the group
+        /// Get the completed homework solutions of a student in a group
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Student")]
@@ -75,7 +75,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets student homework for Mentor by homework id
+        /// Get student homework solution for Mentor by homework task id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor")]
@@ -88,7 +88,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets student homework history for Mentor by homework student id
+        ///Get student homework solution history for Mentor by student homework solution id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkStudentDto))]
         [Authorize(Roles = "Mentor, Admin, Secretary")]
@@ -102,7 +102,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Update student homework
+        /// Update student homework solution
         /// </summary>
         /// <param name="id">
         ///  Id - it is Student homework id </param>
@@ -121,7 +121,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Update student mark
+        /// Update student mark for homework solution
         /// </summary>
         /// <response code="200">Successful updating of the mark</response>
         /// <response code="HTTP: 404">Student homework not found</response>
