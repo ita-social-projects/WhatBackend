@@ -19,7 +19,9 @@ namespace CharlieBackend.Api.UnitTest.AutoData.Core
             var propInfo = request as PropertyInfo;
 
             if (propInfo != null && _typeToOmmit.IsAssignableFrom(propInfo.PropertyType))
+            {
                 return new OmitSpecimen();
+            }
 
             return new NoSpecimen();
         }
