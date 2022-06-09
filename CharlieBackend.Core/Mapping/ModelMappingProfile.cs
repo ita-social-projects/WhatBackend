@@ -78,8 +78,8 @@ namespace CharlieBackend.Core.Mapping
                                                      {
                                                          StudentId = y.StudentId,
                                                          Presence = y.Presence,
-                                                         Comment = y.Mark.Comment,
-                                                         StudentMark = y.Mark.Value
+                                                         Comment = y.Mark != null ? y.Mark.Comment : string.Empty,
+                                                         StudentMark = y.Mark != null ? y.Mark.Value : new sbyte?() { }
                                                      }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();

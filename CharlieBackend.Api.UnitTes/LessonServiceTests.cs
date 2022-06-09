@@ -140,7 +140,8 @@ namespace CharlieBackend.Api.UnitTest
                 unitOfWork: _unitOfWorkMock.Object, 
                 mapper: _mapper,
                 currentUserService: _currentUserServiceMock.Object,
-                logger: _loggerMock.Object);
+                logger: _loggerMock.Object
+                );
 
             //Act
             var result = await lessonService.CreateLessonAsync(createLessonDTO);

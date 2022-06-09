@@ -82,8 +82,6 @@ namespace CharlieBackend.Business.Services
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
 
-                _unitOfWork.LessonRepository.Add(createdLessonEntity);
-
                 var curDate = DateTime.Now;
 
                 if (lessonDto.LessonVisits != null)
@@ -94,19 +92,25 @@ namespace CharlieBackend.Business.Services
                         {
                             createdLessonEntity.Visits[i].Mark.Type = MarkType.Visit;
                             createdLessonEntity.Visits[i].Mark.EvaluationDate = curDate;
-                            createdLessonEntity.Visits[i].Mark.EvaluatedBy = _currentUserService.AccountId;
-                            _unitOfWork.MarkRepository.Add(createdLessonEntity.Visits[i].Mark);
-                            _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
+                            createdLessonEntity.Visits[i].Mark.EvaluatedBy = foundMentor.AccountId.Value;                        
                         }
+                        else
+                        {
+                            createdLessonEntity.Visits[i].Mark = null;
+                        }    
                     }
                 }
+
+                _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
                 await _unitOfWork.CommitAsync();
 
                 return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(createdLessonEntity));
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return null;
@@ -270,15 +274,13 @@ namespace CharlieBackend.Business.Services
                                 {
                                     mark.Value = lessonModel.LessonVisits[i].StudentMark.GetValueOrDefault();
                                     mark.Comment = lessonModel.LessonVisits[i].Comment;
-
-                                    _unitOfWork.MarkRepository.Update(mark);
                                 }
                             }
-
-                            _unitOfWork.VisitRepository.Update(visit);
                         }
-                    }
+                    }                    
                 }
+
+                _unitOfWork.LessonRepository.Update(foundLesson);
 
                 await _unitOfWork.CommitAsync();
 
