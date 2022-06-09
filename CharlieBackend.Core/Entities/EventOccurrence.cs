@@ -25,6 +25,8 @@ namespace CharlieBackend.Core.Entities
         [Required]
         public long Storage { get; set; }
 
+        public int Color { get; set; }
+
         public virtual ICollection<ScheduledEvent> ScheduledEvents { get; set; }
     }
 

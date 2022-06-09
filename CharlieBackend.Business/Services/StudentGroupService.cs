@@ -121,8 +121,10 @@ namespace CharlieBackend.Business.Services
                 return Result<StudentGroupDto>.GetSuccess(
                             _mapper.Map<StudentGroupDto>(studentGroup));
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return Result<StudentGroupDto>.GetError(
@@ -217,7 +219,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<bool>> IsGroupNameExistAsync(string name)
         {
-            if (name == null)
+            if (string.IsNullOrWhiteSpace(name))
             {
                 return Result<bool>.GetError(ErrorCode.ValidationError, "Name is null");
             }
@@ -411,11 +413,6 @@ namespace CharlieBackend.Business.Services
             var studentGroups = await _unitOfWork.StudentGroupRepository.GetAllActiveAsync(startDate, finishDate);
 
             return Result<IList<StudentGroupDto>>.GetSuccess(_mapper.Map<List<StudentGroupDto>>(studentGroups));
-        }
-
-        public void AddStudentOfStudentGroups(IEnumerable<StudentOfStudentGroup> items)
-        {
-            _unitOfWork.StudentGroupRepository.AddStudentOfStudentGroups(items);
         }
 
         private string GenerateErrorMessage(string EntityName, IEnumerable<long> ids)

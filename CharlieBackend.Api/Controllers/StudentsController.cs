@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         {
             var studentModelResult = await _studentService.GetStudentByIdAsync(id);
 
-            return studentModelResult.ToActionResult(); 
+            return studentModelResult.ToActionResult();
         }
 
         /// <summary>
