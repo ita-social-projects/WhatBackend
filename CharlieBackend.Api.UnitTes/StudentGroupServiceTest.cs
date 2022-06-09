@@ -925,7 +925,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DeleteStudentGroupAsync_ValidData_ShouldReturnFalse()
         {
             //Arrange
-            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroup(_id))
+            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroupAsync(_id))
                 .ReturnsAsync(new List<Lesson>() { });
 
             //Act
@@ -941,7 +941,7 @@ namespace CharlieBackend.Api.UnitTest
         public async Task DeleteStudentGroupAsync_ValidData_ShouldReturnTrue()
         {
             //Arrange
-            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroup(_id))
+            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroupAsync(_id))
                 .ReturnsAsync(new List<Lesson>() { 
                     new Lesson() { 
                         Id = _id                        
@@ -1057,7 +1057,7 @@ namespace CharlieBackend.Api.UnitTest
             var studentGroupWithMergeGroupId = GetMergeStudentGroupsDto();
             var studentGroup = GetStudentGroupWithNameAndCourseIdAndStartDateAndEndDateAndStudentsIdsAndMentorIds();
 
-            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroup(_id))
+            _lessonRepositoryMock.Setup(x => x.GetAllLessonsForStudentGroupAsync(_id))
                 .ReturnsAsync(new List<Lesson>() { });
 
             _studentGroupRepositoryMock.Setup(x => x.GetActiveStudentGroupByIdAsync(_id))
