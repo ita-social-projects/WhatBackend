@@ -64,7 +64,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.HomeworkDtoValidatorsTests
 
         [Theory]
         [MemberData(nameof(GetHomeworkRequestDtoAsync_InvalidData))]
-        public async Task GetHomeworkRequestDtoAsync_InvalidData_ShouldReturnTrue
+        public async Task GetHomeworkRequestDtoAsync_InvalidData_ShouldReturnFalse
             (int? courseId, int? groupId, int? themeId, DateTime start, DateTime finish)
         {
             // Arrange
