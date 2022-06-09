@@ -11,7 +11,7 @@ namespace CharlieBackend.Data.Repositories.Impl
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly ApplicationContext _applicationContext;
-        private DbSet<T> _entities;
+        private readonly DbSet<T> _entities;
 
         public Repository(ApplicationContext applicationContext)
         {
@@ -24,29 +24,24 @@ namespace CharlieBackend.Data.Repositories.Impl
             return _entities.AsNoTracking();
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public virtual Task<List<T>> GetAllAsync()
         {
-            return await _entities.ToListAsync();
+            return _entities.ToListAsync();
         }
 
-        public async virtual Task<T> GetByIdAsync(long id)
+        public virtual Task<T> GetByIdAsync(long id)
         {
-            return await _entities.FirstOrDefaultAsync(entity => entity.Id == id);
+            return _entities.FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
         public void Add(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException();
-            }
-
             _entities.Add(entity);
         }
 
-        public void Update(T updatedEntity)
+        public void Update(T entity)
         {
-            _entities.Update(updatedEntity);
+            _entities.Update(entity);
         }
 
         public async Task DeleteAsync(long id)
@@ -59,9 +54,9 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
         }
 
-        public async Task<bool> IsEntityExistAsync(long id)
+        public Task<bool> IsEntityExistAsync(long id)
         {
-            return await _entities.AnyAsync(x => x.Id == id);
+            return _entities.AnyAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<long>> GetNotExistEntitiesIdsAsync(IEnumerable<long> ids)

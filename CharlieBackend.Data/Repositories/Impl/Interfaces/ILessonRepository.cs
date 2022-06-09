@@ -1,5 +1,4 @@
-﻿using CharlieBackend.Core.DTO.Lesson;
-using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,8 +7,6 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 {
     public interface ILessonRepository : IRepository<Lesson>
     {
-        Task<IList<StudentLessonDto>> GetStudentInfoAsync(long studentId);
-
         Task<List<Lesson>> GetLessonsForMentorAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long mentorId);
 
         Task<List<Lesson>> GetAllLessonsForMentor(long mentorId);
@@ -17,6 +14,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate);
 
         Task<Lesson> GetLastLesson();
+
         Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId);
 
         Task<List<Lesson>> GetLessonsForStudentAsync(long? studentGroupId, DateTime? startDate, DateTime? finishDate, long studentId);

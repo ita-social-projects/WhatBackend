@@ -1,11 +1,11 @@
-﻿using CharlieBackend.Core.Entities;
+﻿using CharlieBackend.Api.UnitTest.AutoData.CustomAutoDataAttributes;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Data;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,74 +13,33 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 {
     public class LessonRepositoryTests
     {
-        [Fact]
-        public async Task UpdateMarkAsyncTest_ValidDataPassed_ShouldReturnVisit()
+        [Theory, LessonsRepositoryAutoData]
+        public async Task UpdateMarkAsyncTest_ValidDataPassed_ShouldReturnVisit(
+            Lesson lesson, Homework homework, 
+            Visit visit1, Visit visit2, 
+            HomeworkStudent homeworkStudent1, HomeworkStudent homeworkStudent2
+            )
         {
-            // Arrange
-            long lessonId = 1;
-            sbyte mark = 5;
-            long visitId_one = 1;
-            long visitId_two = 2;
-            long studentId_one = 1;
-            long studentId_two = 2;
-            long homeworkId = 1;
-            long homeworkStudentId_one = 1;
-            long homeworkStudentId_two = 2;
+            visit1.Presence = true;
+            visit2.Presence = false;
 
-            var visitTrue = new Visit
-            {
-                Id = visitId_one,
-                StudentMark = mark,
-                Presence = true,
-                StudentId = studentId_one
-            };
-            var visitFalse = new Visit
-            {
-                Id = visitId_two,
-                StudentMark = mark,
-                Presence = false,
-                StudentId = studentId_two
-            };
+            lesson.Visits.Add(visit1);
+            lesson.Visits.Add(visit2);
 
-            Lesson lesson = new Lesson()
-            {
-                Id = lessonId,
-                Visits = new List<Visit>()
-                {
-                   visitTrue,
-                   visitFalse
-                }
-            };
+            homeworkStudent1.HomeworkId = homework.Id;
+            homeworkStudent2.HomeworkId = homework.Id;
 
-            var homeworkStudent_one = new HomeworkStudent
-            {
-                Id = homeworkStudentId_one,
-                HomeworkId = homeworkId,
-                StudentId = studentId_one
-            };
+            homeworkStudent1.StudentId = visit1.StudentId;
+            homeworkStudent2.StudentId = visit2.StudentId;
 
-            var homeworkStudent_two = new HomeworkStudent
-            {
-                Id = homeworkStudentId_two,
-                HomeworkId = homeworkId,
-                StudentId = studentId_two,
-            };
+            homework.LessonId = lesson.Id;
+            homework.Lesson = lesson;
 
-            var homework = new Homework
-            {
-                LessonId = lessonId,
-                Lesson = lesson,
-                Id = homeworkId,
-                HomeworkStudents = new List<HomeworkStudent>
-                {
-                    homeworkStudent_one,
-                    homeworkStudent_two
-                },
-                PublishingDate = DateTime.UtcNow
-            };
+            homework.HomeworkStudents.Add(homeworkStudent1);
+            homework.HomeworkStudents.Add(homeworkStudent2);
 
-            homeworkStudent_one.Homework = homework;
-            visitTrue.Lesson = lesson;
+            homeworkStudent1.Homework = homework;
+            visit1.Lesson = lesson;
 
             var options = new DbContextOptionsBuilder<ApplicationContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase").Options;
@@ -90,10 +49,10 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 context.Database.EnsureCreated();
                 context.Lessons.Add(lesson);
                 context.Homeworks.Add(homework);
-                context.HomeworkStudents.Add(homeworkStudent_one);
-                context.HomeworkStudents.Add(homeworkStudent_two);
-                context.Visits.Add(visitFalse);
-                context.Visits.Add(visitTrue);
+                context.HomeworkStudents.Add(homeworkStudent1);
+                context.HomeworkStudents.Add(homeworkStudent2);
+                context.Visits.Add(visit1);
+                context.Visits.Add(visit2);
                 context.SaveChanges();
             }
 
@@ -102,12 +61,12 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 var lessonRepository = new LessonRepository(context);
 
                 // Act
-                var foundVisitTrue = await lessonRepository.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_one);
-                var foundVisitFalse = await lessonRepository.GetVisitByStudentHomeworkIdAsync(homeworkStudentId_two);
+                var foundVisitTrue = await lessonRepository.GetVisitByStudentHomeworkIdAsync(homeworkStudent1.Id);
+                var foundVisitFalse = await lessonRepository.GetVisitByStudentHomeworkIdAsync(homeworkStudent2.Id);
 
                 // Assert
-                foundVisitTrue.Id.Should().Equals(visitId_one);
-                foundVisitFalse.Id.Should().Equals(visitId_two);
+                foundVisitTrue.Id.Should().Equals(visit1.Id);
+                foundVisitFalse.Id.Should().Equals(visit2.Id);
             }
         }
 

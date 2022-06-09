@@ -206,7 +206,7 @@ namespace CharlieBackend.Business.Services
                     return null;
                 }
 
-                if (!String.IsNullOrEmpty(lessonModel.ThemeName))
+                if (!string.IsNullOrEmpty(lessonModel.ThemeName))
                 {
                     var foundTheme = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(lessonModel.ThemeName);
 
@@ -277,6 +277,7 @@ namespace CharlieBackend.Business.Services
                 long studentId)
         {
             Result<IList<StudentLessonDto>> result;
+
             if ((_currentUserService.Role.Is(UserRole.Student))
                     && (_currentUserService.EntityId != studentId))
             {
@@ -286,19 +287,10 @@ namespace CharlieBackend.Business.Services
             }
             else
             {
-                var studentLessonModels = await _unitOfWork.LessonRepository
-                        .GetStudentInfoAsync(studentId);
+                var studentVisits = await _unitOfWork.VisitRepository.GetStudentVisits(studentId);
 
-                if (studentLessonModels == null)
-                {
-                    result = Result<IList<StudentLessonDto>>.GetError(
-                            ErrorCode.NotFound, "Not found");
-                }
-                else
-                {
-                    result = Result<IList<StudentLessonDto>>.GetSuccess(
-                            _mapper.Map<IList<StudentLessonDto>>(studentLessonModels));
-                }
+                result = Result<IList<StudentLessonDto>>.GetSuccess(
+                            _mapper.Map<IList<StudentLessonDto>>(studentVisits));
             }
 
             return result;
