@@ -17,7 +17,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             _memoryStream = new MemoryStream();
         }
 
-        public abstract Task FillFileAsync(T data);
+        public abstract ValueTask FillFileAsync(T data);
 
         /// <summary>
         /// Method for filename

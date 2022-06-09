@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 {
     public class ClassbookHtmlFileExport : FileExport<StudentsClassbookResultDto>
     {
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
+        public override async ValueTask FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -26,7 +26,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             await FillMarks(data);
         }
 
-        private async Task FillPresences(StudentsClassbookResultDto data)
+        private ValueTask FillPresences(StudentsClassbookResultDto data)
         {
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
@@ -72,11 +72,13 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 byte[] byteLine = html.ToString().ConvertLineToArray();
 
-                await _memoryStream.WriteAsync(byteLine);
+               return  _memoryStream.WriteAsync(byteLine);
             }
+
+            return new ValueTask(Task.CompletedTask);
         }
 
-        private async Task FillMarks(StudentsClassbookResultDto data)
+        private ValueTask FillMarks(StudentsClassbookResultDto data)
         {
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
@@ -131,8 +133,10 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
                 byte[] byteLine = html.ToString().ConvertLineToArray();
 
-                await _memoryStream.WriteAsync(byteLine);
+                return _memoryStream.WriteAsync(byteLine);
             }
+
+            return new ValueTask(Task.CompletedTask);
         }
 
         private string GetFileHeader(StudentsClassbookResultDto data)

@@ -25,11 +25,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             return HtmlFileExportConstants.StudentsResultsFileNameConstant(DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
-        public override async Task FillFileAsync(StudentsResultsDto data)
+        public override ValueTask FillFileAsync(StudentsResultsDto data)
         {
             if (data == null)
             {
-                return;
+                return new ValueTask(Task.CompletedTask);
             }
 
             var table = new StringBuilder();
@@ -103,7 +103,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             byte[] byteLine = html.ToString().ConvertLineToArray();
 
-            await _memoryStream.WriteAsync(byteLine);
+            return _memoryStream.WriteAsync(byteLine);
         }
 
         private string GetFileHeader(StudentsResultsDto data)

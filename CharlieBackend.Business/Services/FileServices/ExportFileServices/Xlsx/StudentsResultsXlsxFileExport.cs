@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             return "StudentsResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public override async Task FillFileAsync(StudentsResultsDto data)
+        public override async ValueTask FillFileAsync(StudentsResultsDto data)
         {
             if (data == null)
             {
@@ -25,9 +25,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.AverageStudentsMarks != null && data.AverageStudentsMarks.Any())
             {
                 var StudentsAverageMarks = data.AverageStudentsMarks.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsAverageMarks)
                 {
-                    await FillAverageMarksAsync(item
+                    listTasks.Add(
+                    FillAverageMarksAsync(item
                         .Select(x => new AverageStudentMarkDto
                         {
                             StudentAverageMark = x.StudentAverageMark,
@@ -35,16 +37,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             Student = x.Student,
                             StudentGroup = x.StudentGroup
                         }
-                        ));
+                        ))
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
 
             if (data.AverageStudentVisits != null && data.AverageStudentVisits.Any())
             {
                 var StudentsPresences = data.AverageStudentVisits.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsPresences)
                 {
-                    await FillAverageVisitsAsync(item
+                    listTasks.Add(
+                    FillAverageVisitsAsync(item
                         .Select(x => new AverageStudentVisitsDto
                         {
                             StudentAverageVisitsPercentage = x.StudentAverageVisitsPercentage,
@@ -52,8 +59,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             Student = x.Student,
                             StudentGroup = x.StudentGroup
                         }
-                        ));
+                        ))
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
         }
 
