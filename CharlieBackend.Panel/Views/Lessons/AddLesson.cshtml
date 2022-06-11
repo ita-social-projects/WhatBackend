@@ -82,7 +82,7 @@
                                         <th class="col">Student's Name</th>
                                         <th class="col-2">Mark</th>
                                         <th class="col-2">Presence</th>
-                                        <th class="col-3">Comment</th>
+                                        <th class="col-4">Comment</th>
                                     </tr>
                                 </thead>
 
@@ -96,9 +96,9 @@
 
                                             <td><input type="hidden" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id" /></td>
 
-                                            <td class="col-2 text-truncate "><input class="form-control form-control-sm" type="text" asp-for="@Model.LessonVisits[i].StudentMark" /></td>
-                                            <td class="col-2 text-truncate"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" /></td>
-                                            <td class="col-3 text-truncate"><input class="form-control form-control-sm" type="text" asp-for="LessonVisits[i].Comment" /></td>
+                                            <td class="col-2">@Html.EditorFor(m => Model.LessonVisits[i].StudentMark, new { htmlAttributes = new { min = 1, max = 100, @class = "form-control form-control-sm" } })</td>
+                                            <td class="col-2"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" onchange="SetActivityToMarkField(@i)" /></td>
+                                            <td class="col-4"><input class="form-control form-control-sm" type="text" asp-for="LessonVisits[i].Comment" /></td>
 
                                         </tr>
                                     }
@@ -120,5 +120,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script src="~/js/lessons.js"></script>
+}
 
 

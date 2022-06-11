@@ -39,6 +39,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                   .WhereIf(finishDate != null && finishDate != default(DateTime),
                    x => x.LessonDate <= finishDate)
                   .Include(x => x.Visits)
+                  .ThenInclude(mark => mark.Mark)
                   .ToListAsync();
         }
 
@@ -102,6 +103,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                 var visits = await _applicationContext.Visits
                         .Include(visit => visit.Lesson)
                         .ThenInclude(lesson => lesson.Theme)
+                        .Include(visit => visit.Mark)
+                        .ThenInclude(mark => mark.Comment)
+                        .Include(visit => visit.Mark)
+                        .ThenInclude(mark => mark.Value)
                         .Where(visit => visit.StudentId == studentId).ToListAsync();
 
                 for (int i = 0; i < visits.Count; i++)
@@ -109,8 +114,8 @@ namespace CharlieBackend.Data.Repositories.Impl
                     var studentLessonDto = new StudentLessonDto
                     {
                         Id = visits[i].Lesson.Id,
-                        Comment = visits[i].Comment,
-                        Mark = visits[i].StudentMark,
+                        Comment = visits[i].Mark.Comment,
+                        Mark = visits[i].Mark.Value,
                         Presence = visits[i].Presence,
                         ThemeName = visits[i].Lesson.Theme.Name,
                         LessonDate = visits[i].Lesson.LessonDate,
@@ -132,6 +137,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         {
             return await _applicationContext.Lessons
                 .Include(x => x.Visits)
+                .ThenInclude(y => y.Mark)
                 .Include(x => x.Theme)
                 .FirstOrDefaultAsync(entity => entity.Id == id);
         }

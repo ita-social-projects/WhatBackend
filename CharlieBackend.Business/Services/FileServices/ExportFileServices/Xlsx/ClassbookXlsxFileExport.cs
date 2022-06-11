@@ -115,12 +115,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                        .Cell(dateColumn)
                        .Value = ((DateTime)data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(dateColumn - _DEFAULT_STARTING_COLUMN).Key).LessonDate).ToString("dd-MM-yyyy");
 
-                    foreach (var mark in date)
+                    foreach (var markDto in date)
                     {
                         FillRow(worksheet,
-                            _STUDENT_STARTING_ROW + studentList.IndexOf(mark.Student),
+                            _STUDENT_STARTING_ROW + studentList.IndexOf(markDto.Student),
                             dateColumn,
-                            mark.StudentMark == null ? " " : mark.StudentMark.ToString());
+                            markDto.Mark == null ? " " : markDto.Mark.ToString());
                     }
 
                     dateColumn++;
@@ -158,11 +158,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                                  LessonDate = x.LessonDate,
                                  LessonId = x.LessonId,
                                  Course = x.Course,
-                                 StudentMark = x.StudentMark,
+                                 Mark = x.Mark,
                                  Student = x.Student,
                                  StudentGroup = x.StudentGroup,
                                  StudentId = x.StudentId,
-                                 Comment = x.Comment
+                                 Comment = x.Comment,
+                                 MarkId = x.MarkId
                              })
                             .ToList(),
                         StudentsPresences = null

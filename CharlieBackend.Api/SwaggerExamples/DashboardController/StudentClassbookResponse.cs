@@ -30,7 +30,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         StudentGroup = "PZ-19-1",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
-                        StudentMark = 5,
+                        Mark = 5,
                     },
                     new StudentMarkDto
                     {
@@ -40,7 +40,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         StudentGroup = "PZ-12-1",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
-                        StudentMark = 11,
+                        Mark = 11,
                     },
                     new StudentMarkDto
                     {
@@ -50,7 +50,7 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         StudentGroup = "PZ-33-4",
                         LessonId = 345,
                         LessonDate = new DateTime(2017, 5, 21),
-                        StudentMark = 8,
+                        Mark = 8,
                     },
                 },
                 StudentsPresences = new List<StudentVisitDto>

@@ -33,6 +33,7 @@ namespace CharlieBackend.Panel.Extensions
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IClassbookService, ClassbookService>();
             services.AddScoped<IExportService, ExportService>();
+            services.AddScoped<IMarkService, MarkService>();
 
             services.AddHttpClient<IHttpUtil, HttpUtil>(client =>
             {

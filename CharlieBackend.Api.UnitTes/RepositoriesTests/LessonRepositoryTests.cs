@@ -18,7 +18,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
         {
             // Arrange
             long lessonId = 1;
-            sbyte mark = 5;
+            sbyte markId = 5;
             long visitId_one = 1;
             long visitId_two = 2;
             long studentId_one = 1;
@@ -30,14 +30,14 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
             var visitTrue = new Visit
             {
                 Id = visitId_one,
-                StudentMark = mark,
+                MarkId = markId,
                 Presence = true,
                 StudentId = studentId_one
             };
             var visitFalse = new Visit
             {
                 Id = visitId_two,
-                StudentMark = mark,
+                MarkId = markId,
                 Presence = false,
                 StudentId = studentId_two
             };

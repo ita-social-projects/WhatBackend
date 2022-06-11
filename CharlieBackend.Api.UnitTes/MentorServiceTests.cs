@@ -404,7 +404,7 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             long notExistingMentorId = 0;
 
-            _mentorServiceMock.Setup(x => x.GetAccountId(notExistingMentorId));
+            _mentorServiceMock.Setup(x => x.GetAccountIdAsync(notExistingMentorId));
 
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
 
@@ -433,7 +433,7 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _mentorServiceMock.Setup(x => x.GetAccountId(existingMentorId))
+            _mentorServiceMock.Setup(x => x.GetAccountIdAsync(existingMentorId))
                 .ReturnsAsync(mentor.AccountId);
 
             _accountServiceMock.Setup(x => x.DisableAccountAsync(mentor.AccountId.Value))
