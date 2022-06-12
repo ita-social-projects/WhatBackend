@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Core.DTO.Dashboard;
 using ClosedXML.Excel;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -138,7 +139,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
+        public async override ValueTask FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -148,9 +149,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsMarks)
                 {
-                    await TryToFillMarksAsync(new StudentsClassbookResultDto
+                    listTasks.Add(
+                    TryToFillMarksAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = item
                              .Select(x => new StudentMarkDto
@@ -167,16 +170,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                              })
                             .ToList(),
                         StudentsPresences = null
-                    });
+                    })
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
 
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
                 var StudentsPresences = data.StudentsPresences.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsPresences)
                 {
-                    await TryToFillPresencesAsync(new StudentsClassbookResultDto
+                    listTasks.Add(
+                    TryToFillPresencesAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = null,
                         StudentsPresences = item
@@ -191,8 +199,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                                 StudentId = x.StudentId
                             })
                             .ToList()
-                    });
+                    })
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
         }
     }

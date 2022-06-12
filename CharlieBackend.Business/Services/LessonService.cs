@@ -119,7 +119,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
-            var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
+            var lastLesson = await _unitOfWork.LessonRepository.GetLastLessonAsync();
             const long daysWeek = -30;
 
             if (startDate == null && finishDate == null)
@@ -133,7 +133,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "FinishDate less than StartDate");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
+            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDateAsync(startDate, finishDate);
 
             var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
@@ -151,7 +151,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Mentor with id {mentorId} is not Found");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentorId);
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentorAsync(mentorId);
 
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
@@ -168,7 +168,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Student Group with id {studentGroupId} is not Found");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(studentGroupId);
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroupAsync(studentGroupId);
 
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
@@ -180,7 +180,7 @@ namespace CharlieBackend.Business.Services
                       
             if (filterModel == default)
             {
-                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentor.Id));
+                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentorAsync(mentor.Id));
             }
 
             var lessonsForMentro = await _unitOfWork.LessonRepository.GetLessonsForMentorAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, mentor.Id);

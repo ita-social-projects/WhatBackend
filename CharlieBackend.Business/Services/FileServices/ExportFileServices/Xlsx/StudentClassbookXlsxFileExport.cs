@@ -14,7 +14,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             return "StudentClassbookResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
+        public override async ValueTask FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -24,9 +24,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.Student);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsMarks)
                 {
-                    await FillStudentMarkAsync(item
+                    listTasks.Add(
+                    FillStudentMarkAsync(item
                         .Select(x => new StudentMarkDto
                         {
                             Mark = x.Mark,
@@ -39,16 +41,21 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             LessonDate = x.LessonDate,
                             LessonId = x.LessonId
                         }
-                        ));
+                        ))
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
 
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
                 var StudentVisit = data.StudentsPresences.GroupBy(x => x.Student);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentVisit)
                 {
-                    await FillStudentPresenceAsync(item
+                    listTasks.Add(
+                    FillStudentPresenceAsync(item
                         .Select(x => new StudentVisitDto
                         {
                             LessonDate = x.LessonDate,
@@ -59,8 +66,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                             Presence = x.Presence,
                             StudentId = x.StudentId
                         }
-                        ));
+                        ))
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
         }
 

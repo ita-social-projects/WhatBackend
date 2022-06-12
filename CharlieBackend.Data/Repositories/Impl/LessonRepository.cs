@@ -26,12 +26,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .ToListAsync();
         }
 
-        public Task<Lesson> GetLastLesson()
+        public Task<Lesson> GetLastLessonAsync()
         {
             return _applicationContext.Lessons.OrderByDescending(l => l.LessonDate).FirstOrDefaultAsync();
         }
 
-        public Task<List<Lesson>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
+        public Task<List<Lesson>> GetLessonsByDateAsync(DateTime? startDate, DateTime? finishDate)
         {
             return _applicationContext.Lessons.Include(lesson => lesson.Theme)
                   .WhereIf(startDate != null && startDate != default(DateTime),
@@ -43,7 +43,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                   .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetAllLessonsForMentor(long mentorId)
+        public async Task<List<Lesson>> GetAllLessonsForMentorAsync(long mentorId)
         {
             return await _applicationContext.Lessons
                 .Where(lesson => lesson.MentorId == mentorId)
@@ -52,14 +52,14 @@ namespace CharlieBackend.Data.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task<List<Lesson>> GetAllLessonsForStudentGroup(long studentGroupId)
+        public async Task<List<Lesson>> GetAllLessonsForStudentGroupAsync(long studentGroupId)
         {
             return await _applicationContext.Lessons
                 .Where(lesson => lesson.StudentGroupId == studentGroupId)
                 .ToListAsync();
         }
 
-        public async Task<Lesson> GetLessonByHomeworkId(long homeworkId)
+        public async Task<Lesson> GetLessonByHomeworkIdAsync(long homeworkId)
         {
             var homework = await _applicationContext.Homeworks.FirstOrDefaultAsync(x => x.Id == homeworkId);
 
@@ -159,7 +159,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             return visit;
         }
-        public async Task<bool> DoesLessonWithThemeExist(long themeId)
+        public async Task<bool> DoesLessonWithThemeExistAsync(long themeId)
             => await _applicationContext.Lessons.AnyAsync(l => l.ThemeId == themeId);
     }
 }
