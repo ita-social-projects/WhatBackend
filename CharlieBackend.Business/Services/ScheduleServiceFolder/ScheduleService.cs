@@ -112,6 +112,11 @@ namespace CharlieBackend.Business.Services
             else
             {
                 await _unitOfWork.EventOccurrenceRepository.DeleteAsync(id);
+                await _unitOfWork.CommitAsync();
+
+                var res = eventOccurrenceResult.ScheduledEvents.Where(x => x.EventOccurrenceId == null
+                && x.EventStart >= DateTime.Now);
+                _unitOfWork.ScheduledEventRepository.RemoveRange(res);
             }
 
             await _unitOfWork.CommitAsync();

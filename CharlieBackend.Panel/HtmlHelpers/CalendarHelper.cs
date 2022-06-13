@@ -158,15 +158,15 @@ namespace CharlieBackend.Panel.HtmlHelpers
         {
             string btnClass = string.Empty;
 
-            if (day.Date == DateTime.Now.Date)
+            if (day.Date == DateTime.Now)
             {
                 btnClass = "btn btn-outline-success btn-event";
             }
-            if (day.Date > DateTime.Now.Date)
+            if (day.Date > DateTime.Now)
             {
                 btnClass = "btn btn-outline-primary btn-event";
             }
-            if (day.Date < DateTime.Now.Date)
+            if (day.Date < DateTime.Now)
             {
                 btnClass = "btn btn-outline-dark btn-event";
             }
