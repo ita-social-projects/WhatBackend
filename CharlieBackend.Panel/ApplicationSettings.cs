@@ -42,6 +42,7 @@ namespace CharlieBackend.Panel
         public SecretariesApiEndpoints Secretaries { get; set; }
         public DashboardApiEndpoints Dashboard{ get; set; }
         public ExportApiEndpoints Export { get; set; }
+        public MarksApiEndpoints Marks { get; set; }
     }
 
     public class AccountsApiEndpoints 
@@ -68,6 +69,11 @@ namespace CharlieBackend.Panel
         public string DisableStudentEndpoint { get; set; }
         public string EnableStudentEndpoint { get; set; }
         public string GetAllStudentStudyGroup { get; set; }
+    }
+
+    public class MarksApiEndpoints
+    {
+        public string GetMarkEndpoint { get; set; }
     }
 
     public class MentorsApiEndpoints
@@ -137,6 +143,7 @@ namespace CharlieBackend.Panel
         public string ConnectEventToLesson { get; set; }
         public string UpdateEventEndpoint { get; set; }
         public string EventById { get; set; }
+        public string DeleteEventById { get; set; }
     }
 
     public class SecretariesApiEndpoints

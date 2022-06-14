@@ -22,9 +22,8 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     {
                         Id = 11,
                         StudentId = 45,
-                        StudentMark = 5,
+                        MarkId = 5,
                         Presence = true,
-                        Comment = "",
                         LessonId = 42
                     }
                 }

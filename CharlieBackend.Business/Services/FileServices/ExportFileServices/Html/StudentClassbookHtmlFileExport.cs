@@ -20,11 +20,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
         #endregion
 
-        private void FillFile(StudentsClassbookResultDto data)
+        public override ValueTask FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
-                return;
+                return new ValueTask(Task.CompletedTask);
             }
 
             var table = new StringBuilder();
@@ -52,8 +52,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i][DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
                     rows[i][FourthColumn] = studentVisits.ElementAt(i).Presence == null ? " " :
                         studentVisits.ElementAt(i).Presence == true ? $"{HtmlConstants.CheckMark}" : " ";
-                    rows[i][FifthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
-                        studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
+                    rows[i][FifthColumn] = studentMarks.ElementAt(i).Mark == null ? " " :
+                        studentMarks.ElementAt(i).Mark == 0 ? "-" : $"{studentMarks.ElementAt(i).Mark}";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
@@ -94,8 +94,8 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
                     rows[i][CourseColumnNumber] = studentMarks.ElementAt(i).Course;
                     rows[i][StudentGroupColumnNumber] = studentMarks.ElementAt(i).StudentGroup;
                     rows[i][DateColumnNumber] = studentMarks.ElementAt(i).LessonDate.ToString();
-                    rows[i][FourthColumn] = studentMarks.ElementAt(i).StudentMark == null ? " " :
-                        studentMarks.ElementAt(i).StudentMark == 0 ? "-" : $"{studentMarks.ElementAt(i).StudentMark}";
+                    rows[i][FourthColumn] = studentMarks.ElementAt(i).Mark == null ? " " :
+                        studentMarks.ElementAt(i).Mark == 0 ? "-" : $"{studentMarks.ElementAt(i).Mark}";
                 }
 
                 table = HtmlGenerator.GenerateTable(headers, rows);
@@ -105,7 +105,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             byte[] byteLine = html.ToString().ConvertLineToArray();
 
-            _memoryStream.Write(byteLine);
+            return _memoryStream.WriteAsync(byteLine);
         }
 
         private string GetFileHeader(StudentsClassbookResultDto data)
@@ -128,11 +128,6 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             }
 
             return $"Student {student} results {startDate}{HtmlConstants.NonBreakingSpace}{finishDate}";
-        }
-
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
-        {
-            await Task.Run(() => FillFile(data));
         }
 
         public override string GetFileName()

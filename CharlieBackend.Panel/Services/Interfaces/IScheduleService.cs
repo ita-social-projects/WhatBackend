@@ -75,5 +75,10 @@ namespace CharlieBackend.Panel.Services.Interfaces
         ///  Method for adding new single event.
         /// </summary>
         Task CreateSingleEventAsync(CreateSingleEventDto singleEventDTO);
+
+        /// <summary>
+        /// Method for deleting single event by id.
+        /// </summary>
+        Task DeleteSingleEventByIdAsync(long eventID);
     }
 }

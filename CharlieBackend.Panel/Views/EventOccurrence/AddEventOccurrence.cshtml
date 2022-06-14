@@ -1,7 +1,21 @@
 ﻿@model CharlieBackend.Core.DTO.Schedule.CreateScheduleDto
-
 @{
     Layout = "_Layout";
+}
+
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+
+}
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.min.js"></script>
+    <script src="~/js/EventOccurrance.js"></script>
+
+    <script>
+        $(document).ready(() => { PassColor('#3498db') });
+    </script>
 }
 
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
@@ -87,7 +101,7 @@
                     <div class="form-group">
                         <label>End date</label>
                         <input type="datetime-local" min="1000-01-01" max="3000-12-31" class="form-control"
-                               value="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="Range.FinishDate">
+                               value="@DateTime.Now.AddMonths(3).AddHours(1).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="Range.FinishDate">
                     </div>
 
                     <div class="form-group">
@@ -107,6 +121,9 @@
                             </option>
                         </select>
                     </div>
+
+                    <div class="picker" id="picker1"></div>
+                    <input type="text" style="display: none;" class="colorValue" id="inputColor" asp-for="Context.Color" />
 
                     <div class="form-group">
                         <label>Interval</label>
@@ -200,30 +217,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <script type="text/javascript">
-        function UpdateForm(value) {
-            if (value == 0) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = true;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 1) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = false;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 2) {
-                document.getElementById("dates").hidden = false;
-                document.getElementById("days-of-week").hidden = true;
-                document.getElementById("pattern-index").hidden = true;
-            }
-            else if (value == 3) {
-                document.getElementById("dates").hidden = true;
-                document.getElementById("days-of-week").hidden = false;
-                document.getElementById("pattern-index").hidden = false;
-            }
-        }
-    </script>
-}

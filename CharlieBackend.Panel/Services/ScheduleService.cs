@@ -114,6 +114,7 @@ namespace CharlieBackend.Panel.Services
             scheduledEvent.AllStudentGroups = await studentGroupsTask;
             scheduledEvent.AllThemes = await themesTask;
             scheduledEvent.AllMentors = await mentorsTask;
+            scheduledEvent.Color = singleEventTask.Result.Color;
 
             return scheduledEvent;
         }
@@ -161,6 +162,7 @@ namespace CharlieBackend.Panel.Services
             scheduledEvent.AllThemes = await themesTask;
             scheduledEvent.AllMentors = await mentorsTask;
             scheduledEvent.DetailedEventOccurrence = await eventOccurrenceDetailedTask;
+            scheduledEvent.Color = eventOccurrenceTask.Result.Color;
 
             return scheduledEvent;
         }
@@ -169,6 +171,13 @@ namespace CharlieBackend.Panel.Services
         {
             await _apiUtil
               .CreateAsync<SingleEventDTO, CreateSingleEventDto>(_eventsApiEndpoints.AddSingleEvent, singleEventDTO);
+        }
+
+        public async Task DeleteSingleEventByIdAsync(long eventID)
+        {
+            var singleEvent = string.Format(_eventsApiEndpoints.DeleteEventById, eventID);
+
+            await _apiUtil.DeleteAsync<bool>(singleEvent);
         }
     }
 }

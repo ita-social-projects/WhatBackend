@@ -19,5 +19,7 @@ namespace CharlieBackend.Core.DTO.Event
         public string Description { get; set; }
 
         public string Link { get; set; }
+
+        public int Color { get; set; }
     }
 }

@@ -9,6 +9,16 @@
     var seLink = _self.attr("seLink");
     var seEventOccurrenceId = _self.attr("seEventOccurrenceId");
     var seSingleEventId = _self.attr("seSingleEventId");
+
+    if (seEventOccurrenceId == 0) {
+        document.getElementById("seEventOccurrenceId").hidden = true;
+        document.getElementById("deleteEventOccurrence").hidden = true;
+    }
+    else {
+        document.getElementById("seEventOccurrenceId").hidden = false;
+        document.getElementById("deleteEventOccurrence").hidden = false;
+    }
+
     $("#seGroup").val(seGroup);
     $("#seMentor").val(seMentor);
     $("#seTheme").val(seTheme);
@@ -19,6 +29,7 @@
     $("#seDescription").val(seDescription);
     $("#seLink").val(seLink);
     $("#openLink").attr('href', seLink);
+    $("#deleteSingleEvent").attr('href', "/EventOccurrence/DeleteSingleEvent/" + seSingleEventId);
 });
 
 function ChangeWeekFormat() {
@@ -33,3 +44,13 @@ function ChangeWeekFormat() {
         $(".weekend").removeClass("d-none").addClass("col-calendar-full-week");
     }
 }
+
+$(".btn-event").mouseover(function () {
+    $(this).css("background-color", $(this).css("color"));
+    $(this).css("color", "White");
+});
+
+$(".btn-event").mouseleave(function () {
+    $(this).css("background-color", "White");
+    $(this).css("color", $(this).css("border-color"));
+});

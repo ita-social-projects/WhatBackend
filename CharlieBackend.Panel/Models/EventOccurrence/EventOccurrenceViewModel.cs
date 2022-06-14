@@ -14,7 +14,8 @@ namespace CharlieBackend.Panel.Models.EventOccurrence
                 Storage = eventOccurrenceDTO.Storage,
                 StudentGroupId = eventOccurrenceDTO.StudentGroupId,
                 EventStart = eventOccurrenceDTO.EventStart,
-                EventFinish = eventOccurrenceDTO.EventFinish
+                EventFinish = eventOccurrenceDTO.EventFinish,
+                Color = eventOccurrenceDTO.Color
             };
         }
 
@@ -27,5 +28,7 @@ namespace CharlieBackend.Panel.Models.EventOccurrence
         public DateTime? EventFinish { get; set; }
 
         public long Storage { get; set; }
+
+        public int Color { get; set; }
     }
 }

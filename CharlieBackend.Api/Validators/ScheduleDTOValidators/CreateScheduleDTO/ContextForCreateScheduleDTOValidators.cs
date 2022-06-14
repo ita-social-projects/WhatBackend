@@ -24,6 +24,9 @@ namespace CharlieBackend.Api.Validators.Schedule.CreateScheduleDTO
                 .GreaterThan(0);
             RuleFor(x => x.Description)
                 .MaximumLength(ValidationConstants.MaxLengthText);
+            RuleFor(x => x.Color)
+                .NotNull()
+                .GreaterThan(0);
         }
     }
 }

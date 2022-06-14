@@ -67,7 +67,7 @@ namespace CharlieBackend.Api.Controllers
         /// Get only active mentors
         /// </summary>
         /// <response code="200">Successful return of mentors list</response>
-        [Authorize(Roles = "Admin, Mentor, Secretary")]
+        [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet("active")]
         public async Task<IList<MentorDetailsDto>> GetAllActiveMentors()
         {

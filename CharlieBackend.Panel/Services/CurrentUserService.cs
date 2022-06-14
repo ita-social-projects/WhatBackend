@@ -13,6 +13,8 @@ namespace CharlieBackend.Panel.Services
         private long _accountId;
         private long _entityId;
         private string _email;
+        private string _firstName;
+        private string _lastName;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
@@ -64,6 +66,38 @@ namespace CharlieBackend.Panel.Services
                     }
                 }
                 return _email;
+            }
+        }
+
+        public string FirstName
+        {
+            get
+            {
+                if (_firstName is null)
+                {
+                    _firstName = GetClaimValue(ClaimsConstants.FirstName);
+                    if (_firstName is null)
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
+                }
+                return _firstName;
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                if (_lastName is null)
+                {
+                    _lastName = GetClaimValue(ClaimsConstants.LastName);
+                    if (_lastName is null)
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
+                }
+                return _lastName;
             }
         }
 

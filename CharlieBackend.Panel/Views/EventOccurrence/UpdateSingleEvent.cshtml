@@ -4,6 +4,21 @@
     Layout = "_Layout";
 }
 
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.min.js"></script>
+    <script src="~/js/EventOccurrance.js"></script>
+
+    <script>
+        $(document).ready(() => { PassColor('#@ViewBag.Event.Color.ToString("X")') });
+    </script>
+}
+
 <div id="content-wrapper" class="d-flex flex-row  justify-content-center">
 
     <div class="container mt-3 col-5">
@@ -102,6 +117,9 @@
 
                         </select>
                     </div>
+
+                    <div class="picker" id="picker1"></div>
+                    <input type="color" style="display: none;" class="colorValue" id="inputColor" asp-for="Color"/>
 
                     <div class="form-group">
                         <label>Event start</label>

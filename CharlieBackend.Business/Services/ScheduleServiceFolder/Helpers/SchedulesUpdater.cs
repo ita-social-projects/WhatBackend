@@ -17,6 +17,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 request.EventEnd.Value.Hour, request.EventEnd.Value.Minute, request.EventEnd.Value.Second) : item.EventFinish;
             item.Description = request.Description ?? item.Description;
             item.Link = request.Link ?? item.Link;
+            item.Color = request.Color;
 
             return item;
         }

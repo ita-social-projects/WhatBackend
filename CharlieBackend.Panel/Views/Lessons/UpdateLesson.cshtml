@@ -13,15 +13,15 @@
         <div class="card shadow mb-4">
 
             <div class="modal-body">
-                <form method="post" asp-action="UpdateLesson" asp-controller="Lessons" asp-route-id="@ViewBag.Lesson.Id">
+                <form method="post" asp-action="UpdateLesson" asp-controller="Lessons" asp-route-id="@Model.Id">
 
                     <div class="form-group">
                         <label>Theme Name</label>
                         <select class="custom-select" asp-for="ThemeName" size="1">
 
-                            @if (@ViewBag.Lesson.Themes != null)
+                            @if (Model.Themes != null)
                             {
-                                @foreach (var item in @ViewBag.Lesson.Themes)
+                                @foreach (var item in Model.Themes)
                                 {
                                     <option value="@item.Name">@item.Name</option>
                                 }
@@ -45,7 +45,7 @@
                                         <th class="col">Student's Name</th>
                                         <th class="col-2">Mark</th>
                                         <th class="col-2">Presence</th>
-                                        <th class="col-3">Comment</th>
+                                        <th class="col-4">Comment</th>
                                     </tr>
                                 </thead>
 
@@ -55,13 +55,13 @@
                                     {
                                         <tr class="row">
 
-                                            <td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
+                                            <td class="col text-truncate" asp-for="@Model.LessonVisits[i].StudentId">@Model.Students[i].FirstName @Model.Students[i].LastName</td>
 
-                                            <td><input type="hidden" asp-for="@Model.LessonVisits[i].StudentId" value="@Model.Students[i].Id" /></td>
+                                            <td><input type="hidden" asp-for="@Model.LessonVisits[i].StudentId" /></td>
 
-                                            <td class="col-2 text-truncate "><input class="form-control form-control-sm" type="text" asp-for="@Model.LessonVisits[i].StudentMark" /></td>
-                                            <td class="col-2 text-truncate"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" /></td>
-                                            <td class="col-3 text-truncate"><input class="form-control form-control-sm" type="text" asp-for="LessonVisits[i].Comment" /></td>
+                                            <td class="col-2">@Html.EditorFor(m => Model.LessonVisits[i].StudentMark, new { htmlAttributes = new { min = 1, max = 100, @class = "form-control form-control-sm" } })</td>
+                                            <td class="col-2"><input type="checkbox" asp-for="@Model.LessonVisits[i].Presence" onchange="SetActivityToMarkField(@i)" /></td>
+                                            <td class="col-4"><input class="form-control form-control-sm" type="text" asp-for="@Model.LessonVisits[i].Comment" /></td>
 
                                         </tr>
                                     }
@@ -83,3 +83,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script src="~/js/lessons.js"></script>
+}

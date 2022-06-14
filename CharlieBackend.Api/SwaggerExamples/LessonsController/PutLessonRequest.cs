@@ -20,15 +20,13 @@ namespace CharlieBackend.Api.SwaggerExamples.LessonsController
                     {
                           StudentId = 43,
                           StudentMark = 5,
-                          Presence = true,
-                          Comment = ""
+                          Presence = true
                     },
                     new VisitDto
                     {
                           StudentId = 45,
                           StudentMark = 4,
-                          Presence = true,
-                          Comment = ""
+                          Presence = true
                     }
                  }
             };

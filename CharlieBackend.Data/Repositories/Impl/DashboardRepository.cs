@@ -82,7 +82,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     Presence = x.Presence,
                 }).ToListAsync();
 
@@ -115,7 +115,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -137,7 +137,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
@@ -160,12 +160,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
-                        Comment = x.Comment,
-                        StudentMark = x.StudentMark
+                        MarkId = x.Mark.Id,
+                        Comment = x.Mark.Comment,
+                        Mark = x.Mark.Value
                     })
                     .ToListAsync();
 
@@ -182,10 +183,11 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
-                        StudentMark = x.StudentMark,
+                        MarkId = x.MarkId,
+                        Mark = x.Mark.Value
                     }).ToListAsync();
 
             return studentsMarksList;
@@ -213,13 +215,13 @@ namespace CharlieBackend.Data.Repositories.Impl
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
                     .Where(x => studentIds.Contains((long)x.StudentId))
-                    .Where(x => x.StudentMark != null)
+                    .Where(x => x.MarkId != null)
                     .Select(x => new
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        StudentLessonMark = (decimal)x.StudentMark,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName
+                        StudentLessonMark = (decimal)x.Mark.Value,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
                     })
                     .GroupBy(x => new
                     {
@@ -247,7 +249,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     Presence = x.Presence,
                 }).ToListAsync();
 
@@ -281,7 +283,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -295,15 +297,16 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentsMarksList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.StudentId == studentId && x.StudentMark != null)
+                .Where(x => x.StudentId == studentId && x.MarkId != null)
                 .Select(x => new StudentMarkDto
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     LessonId = x.LessonId,
                     LessonDate = x.Lesson.LessonDate,
-                    StudentMark = x.StudentMark,
+                    MarkId = x.MarkId,
+                    Mark = x.Mark.Value
                 }).ToListAsync();
 
             return studentsMarksList;
@@ -314,12 +317,12 @@ namespace CharlieBackend.Data.Repositories.Impl
             var studentGroupMarskList = await _applicationContext.Visits
                 .AsNoTracking()
                 .Where(x => studentGroupIds.Contains(x.Lesson.StudentGroupId.Value))
-                .Where(x => x.StudentMark != null)
+                .Where(x => x.MarkId != null)
                 .Select(x => new
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    StudentMark = (decimal)x.StudentMark
+                    StudentMark = (decimal)x.Mark.Value
                 })
                 .GroupBy(x => new
                 {

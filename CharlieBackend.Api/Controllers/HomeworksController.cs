@@ -32,10 +32,10 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Get all homeworks with ThemeName
+        /// Get all homework tasks with ThemeName
         /// </summary>
         /// <returns>
-        /// All Homewrok's entities
+        /// All Homework's entities
         /// </returns>
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
         [HttpGet]
@@ -47,7 +47,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets homework by id
+        /// Get homework task by id
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor, Student")]
@@ -61,7 +61,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets homework not done
+        /// Get homework tasks not done
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor, Secretary, Student")]
@@ -75,7 +75,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Add homework
+        /// Add new homework task
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor")]
@@ -90,7 +90,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Gets homeworks' tasks
+        /// Get homework tasks by group id, theme id or course id
         /// </summary>
         /// <param name="request">
         /// 1. Mention "groupId" or "courseId" or "themeId" to get homeworks of a specific group, course, theme.
@@ -108,7 +108,7 @@ namespace CharlieBackend.Api.Controllers
         }
 
         /// <summary>
-        /// Update homework
+        /// Update homework task
         /// </summary>
         [SwaggerResponse(200, type: typeof(HomeworkDto))]
         [Authorize(Roles = "Admin, Mentor")]

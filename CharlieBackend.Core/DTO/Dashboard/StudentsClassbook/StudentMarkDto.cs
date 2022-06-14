@@ -16,8 +16,10 @@ namespace CharlieBackend.Core.DTO.Dashboard
 
         public DateTime? LessonDate { get; set; }
 
-        public sbyte? StudentMark { get; set; }
+        public long? MarkId { get; set; }
 
         public string Comment { get; set; }
+
+        public sbyte? Mark { get; set; }
     }
 }

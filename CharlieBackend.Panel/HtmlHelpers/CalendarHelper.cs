@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using CharlieBackend.Core.Extensions;
 using System.Text;
+using System.IO;
 
 namespace CharlieBackend.Panel.HtmlHelpers
 {
@@ -72,7 +73,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     SingleEventId = scheduledEvent.Id,
                     Description = scheduledEvent.Description,
                     Link = scheduledEvent.Link
-
+                    Color = calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)) != null ?
+                    calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)).Color : scheduledEvent.Color
                 }).OrderBy(i => i.EventStart)
                 .ToList();
 
@@ -121,13 +123,13 @@ namespace CharlieBackend.Panel.HtmlHelpers
                 dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }
 
-            for (DateTime date = startDate; date.Date < finishDate.Date; date = date.AddDays(1))
+            for (DateTime date = startDate; date <= finishDate; date = date.AddDays(1))
             {
                 dayContainers.Add(GetDayBlockWithEvents(models.Where(x => x.EventFinish.Date >= date.Date && x.EventStart.Date <= date.Date), date, displayType));
             }
 
             var endOfWeek = finishDate.EndOfWeek(DayOfWeek.Saturday);
-            for (DateTime date = finishDate; date.Date <= endOfWeek.Date; date = date.AddDays(1))
+            for (DateTime date = finishDate.Date.AddDays(1); date <= endOfWeek; date = date.AddDays(1))
             {
                 dayContainers.Add(GetDayBlockWithDateWithOutOfRange(date, displayType));
             }
@@ -141,7 +143,21 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             TagBuilder divEvents = new TagBuilder("div");
             divEvents.AddCssClass("events");
+            var cssClass = GetButtonCssClass(day);
+             foreach (var e in models)
+            {
+                TagBuilder button = GetButtonContainerHtml(e, cssClass);
 
+                divEvents.InnerHtml.AppendHtml(button);
+            }
+
+            div.InnerHtml.AppendHtml(divEvents);
+
+            return div;
+        }
+
+        private static string GetButtonCssClass(DateTime day)
+        {
             string btnClass = string.Empty;
 
             if (day.Date == DateTime.Now.Date)
@@ -156,17 +172,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
             {
                 btnClass = "btn btn-outline-dark btn-event";
             }
-
-            foreach (var e in models)
-            {
-                TagBuilder button = GetButtonContainerHtml(e, btnClass);
-
-                divEvents.InnerHtml.AppendHtml(button);
-            }
-
-            div.InnerHtml.AppendHtml(divEvents);
-
-            return div;
+            
+            return btnClass;
         }
 
         private static TagBuilder GetDayBlockWithDateWithOutOfRange(DateTime day, CalendarDisplayType displayType)
@@ -189,7 +196,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
 
             return dayBlock;
         }
-
+        
         private static TagBuilder GetDayBlock(DayOfWeek dayOfWeek, CalendarDisplayType displayType)
         {
             TagBuilder div = new TagBuilder("div");
@@ -215,7 +222,6 @@ namespace CharlieBackend.Panel.HtmlHelpers
         private static TagBuilder GetButtonContainerHtml(CalendarScheduledEventModel model, string cssClass)
         {
             TagBuilder button = new TagBuilder("button");
-
             button.AddCssClass(cssClass);
             button.AddCssClass("auto-scroll");
             button.Attributes.Add("type", "button");
@@ -229,6 +235,7 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seSingleEventId", $"{model.SingleEventId}");
             button.Attributes.Add("seDescription", $"{model.Description}");
             button.Attributes.Add("seLink", $"{model.Link}");
+            button.Attributes.Add($"style = \"border-color: #{ model.Color.ToString("X")}; color: #{model.Color.ToString("X")} \"", "");
             button.InnerHtml.Append($"{model.EventStart:HH:mm} - {model.EventFinish:HH:mm} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
             button.InnerHtml.Append($"{model.StudentGroup}; ");
