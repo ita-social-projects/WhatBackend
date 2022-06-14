@@ -55,7 +55,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                     .Any(x => x.MentorId == item.Id))
+                                    .Any(x => x.MentorId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.FirstName
@@ -88,7 +88,7 @@
                                 @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
                                 {
                                     @if ((@ViewBag.EventOccurrence.Events as IEnumerable<CharlieBackend.Core.DTO.Schedule.ScheduledEventDTO>)
-                                     .Any(x => x.ThemeId == item.Id))
+                                    .Any(x => x.ThemeId == item.Id))
                                     {
                                         <option selected value="@item.Id">
                                             @item.Name
@@ -264,6 +264,17 @@
                                 }
                             }
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Context.Description" class="control-label"></label>
+                        <input asp-for="Context.Description" class="form-control" />
+                        <span asp-validation-for="Context.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Context.Link" class="control-label"></label>
+                        <input asp-for="Context.Link" value="@ViewBag.EventOccurrence.DetailedEventOccurrence.Context.Link" class="form-control" />
                     </div>
 
 

@@ -18,7 +18,7 @@
     $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
     $("#seDescription").val(seDescription);
     $("#seLink").val(seLink);
-    $("#seLink1").attr('href', seLink);
+    $("#openLink").attr('href', seLink);
 });
 
 function ChangeWeekFormat() {

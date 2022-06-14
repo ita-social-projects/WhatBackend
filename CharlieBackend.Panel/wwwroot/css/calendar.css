@@ -53,3 +53,8 @@ div.head div {
     border-bottom: 0.5px solid grey;
     min-height: 100px;
 }
+
+.element-grid__delite-button {
+    float: right;
+}
+

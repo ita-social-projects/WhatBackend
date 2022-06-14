@@ -42,7 +42,9 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
                         EventStart = targetStartDate,
                         EventFinish = targetFinishDate,
                         MentorId = _context.MentorID,
-                        ThemeId = _context.ThemeID
+                        ThemeId = _context.ThemeID,
+                        Description = _context.Description,
+                        Link = _context.Link
                     };
 
                     UpdateTime(ref targetStartDate, ref targetFinishDate);
