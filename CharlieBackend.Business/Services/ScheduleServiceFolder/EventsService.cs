@@ -71,15 +71,15 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
         {
             if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
             {
-                return ExceptionsConstants.MentorNotValid;
+                return Resources.SharedResources.MentorNotValidExceptionMessage;
             }
             if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
             {
-                return ExceptionsConstants.ThemeNotValid;
+                return Resources.SharedResources.ThemeNotValidExceptionMessage;
             }
             if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(updatedSchedule.StudentGroupId.GetValueOrDefault()) is null)
             {
-                return ExceptionsConstants.StudentGroupNotValid;
+                return Resources.SharedResources.StudentGroupNotValidExceptionMessage;
             }
 
             return string.Empty;
