@@ -10,6 +10,7 @@
         Conflict,
         ForgotPasswordExpired,
         Forbidden,
+        AccessDenied
     }
 }
 
