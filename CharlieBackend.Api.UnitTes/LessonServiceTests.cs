@@ -163,7 +163,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            result.Should().BeNull();
+            result
+                .Should()
+                .BeNull();
         }
 
         [Fact]
@@ -189,7 +191,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDTO);
 
             //Assert
-            result.Should().NotBeNull();
+            result
+                .Should()
+                .NotBeNull();
         }
 
         [Fact]
@@ -210,7 +214,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDTO);
 
             //Assert
-            result.Should().NotBeNull();
+            result
+                .Should()
+                .NotBeNull();
         }
 
         [Fact]
@@ -243,7 +249,9 @@ namespace CharlieBackend.Api.UnitTest
             var resultWihtWrongMentor = await _lessonService.CreateLessonAsync(createLessonDtoWrongMentor);
 
             //Assert
-            resultWihtWrongMentor.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            resultWihtWrongMentor.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -308,12 +316,24 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            createdLesson.LessonDate.Should().Equals(result.Data.LessonDate);
-            createdLesson.Id.Should().Equals(result.Data.Id);
-            createdLesson.LessonVisits.Count.Should().Equals(result.Data.LessonVisits.Count);
-            createdLesson.MentorId.Should().Equals(result.Data.MentorId);
-            createdLesson.StudentGroupId.Should().Equals(result.Data.StudentGroupId);
-            createdLesson.ThemeName.Should().Equals(result.Data.ThemeName);
+            createdLesson.LessonDate
+                .Should()
+                .Equals(result.Data.LessonDate);
+            createdLesson.Id
+                .Should()
+                .Equals(result.Data.Id);
+            createdLesson.LessonVisits.Count
+                .Should()
+                .Equals(result.Data.LessonVisits.Count);
+            createdLesson.MentorId
+                .Should()
+                .Equals(result.Data.MentorId);
+            createdLesson.StudentGroupId
+                .Should()
+                .Equals(result.Data.StudentGroupId);
+            createdLesson.ThemeName
+                .Should()
+                .Equals(result.Data.ThemeName);
         }
 
         [Fact]
@@ -346,7 +366,9 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithWrongLessonDate = await _lessonService.CreateLessonAsync(createLessonDtoWrongLessonDate);
 
             //Assert
-            resultWithWrongLessonDate.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            resultWithWrongLessonDate.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -386,7 +408,9 @@ namespace CharlieBackend.Api.UnitTest
             //Act 
             var resultWithWrongLessonVisitStudent = await _lessonService.CreateLessonAsync(createLessonDtoWrongLessonVisitsWithoutStudent);
             //Assert
-            resultWithWrongLessonVisitStudent.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            resultWithWrongLessonVisitStudent.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -433,7 +457,9 @@ namespace CharlieBackend.Api.UnitTest
             var resultWithWrongLessonVisit = await _lessonService.CreateLessonAsync(createLessonDtoWrongLessonVisitsStudent);
 
             //Assert
-            resultWithWrongLessonVisit.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            resultWithWrongLessonVisit.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -462,7 +488,9 @@ namespace CharlieBackend.Api.UnitTest
             //Act 
             var resultWithEmptyLessonVisit = await _lessonService.CreateLessonAsync(createLessonDtoEmptyLessonVisit);
             //Assert
-            resultWithEmptyLessonVisit.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            resultWithEmptyLessonVisit.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -485,12 +513,24 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            createdLesson.LessonDate.Should().Equals(result.Data.LessonDate);
-            createdLesson.Id.Should().Equals(result.Data.Id);
-            createdLesson.LessonVisits.Count.Should().Equals(result.Data.LessonVisits.Count);
-            createdLesson.MentorId.Should().Equals(result.Data.MentorId);
-            createdLesson.StudentGroupId.Should().Equals(result.Data.StudentGroupId);
-            createdLesson.ThemeName.Should().Equals(result.Data.ThemeName);
+            createdLesson.LessonDate
+                .Should()
+                .Equals(result.Data.LessonDate);
+            createdLesson.Id
+                .Should()
+                .Equals(result.Data.Id);
+            createdLesson.LessonVisits.Count
+                .Should()
+                .Equals(result.Data.LessonVisits.Count);
+            createdLesson.MentorId
+                .Should()
+                .Equals(result.Data.MentorId);
+            createdLesson.StudentGroupId
+                .Should()
+                .Equals(result.Data.StudentGroupId);
+            createdLesson.ThemeName
+                .Should()
+                .Equals(result.Data.ThemeName);
         }
 
         [Fact]
@@ -512,7 +552,9 @@ namespace CharlieBackend.Api.UnitTest
             var nonExistingResult = await _lessonService.AssignMentorToLessonAsync(nonExistentMentor);
 
             //Assert
-            nonExistingResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            nonExistingResult.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -534,7 +576,9 @@ namespace CharlieBackend.Api.UnitTest
             var nonExistingResult = await _lessonService.AssignMentorToLessonAsync(nonExistentLesson);
 
             //Assert
-            nonExistingResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            nonExistingResult.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -569,8 +613,12 @@ namespace CharlieBackend.Api.UnitTest
             var expectedResult = await _lessonService.AssignMentorToLessonAsync(expectedData);
 
             //Assert
-            expectedResult.Data.Should().NotBeNull();
-            expectedResult.Data.Should().BeEquivalentTo(expectedLesson);
+            expectedResult.Data
+                .Should()
+                .NotBeNull();
+            expectedResult.Data
+                .Should()
+                .BeEquivalentTo(expectedLesson);
         }
 
         [Fact]
@@ -742,7 +790,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.UpdateLessonAsync(_id, anyUpdateLesson);
 
             //Assert
-            result.Should().BeNull();
+            result
+                .Should()
+                .BeNull();
         }
 
         [Fact]
@@ -757,7 +807,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.UpdateLessonAsync(_id, anyUpdateLesson);
 
             //Assert
-            result.Should().BeNull();
+            result
+                .Should()
+                .BeNull();
         }
 
         [Fact]
@@ -776,7 +828,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.UpdateLessonAsync(_id, anyUpdateLesson);
 
             //Assert
-            result.Data.Should().BeEquivalentTo(updatedLessonDto);
+            result.Data
+                .Should()
+                .BeEquivalentTo(updatedLessonDto);
         }
 
         [Fact]
@@ -806,7 +860,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.UpdateLessonAsync(_id, anyUpdateLesson);
 
             //Assert
-            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+            result.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
         }
 
         [Fact]
@@ -830,7 +886,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            result.Data.Should().BeTrue();
+            result.Data
+                .Should()
+                .BeTrue();
         }
 
         [Fact]
@@ -850,7 +908,9 @@ namespace CharlieBackend.Api.UnitTest
             Func<Task> isDoneMethod = async () => await _lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            await isDoneMethod.Should().ThrowAsync<ArgumentNullException>();
+            await isDoneMethod
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
@@ -863,7 +923,9 @@ namespace CharlieBackend.Api.UnitTest
             Func<Task> isDoneMethod = async () => await _lessonService.IsLessonDoneAsync(lessonId);
 
             //Assert
-            await isDoneMethod.Should().ThrowAsync<NotFoundException>();
+            await isDoneMethod
+                .Should()
+                .ThrowAsync<NotFoundException>();
         }
 
         [Fact]
@@ -1059,7 +1121,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.GetLessonsForMentorAsync(filter);
 
             //Assert
-            result.Should().BeEquivalentTo(_mapper.Map<List<LessonDto>>(lessons));
+            result
+                .Should()
+                .BeEquivalentTo(_mapper.Map<List<LessonDto>>(lessons));
         }
 
         [Fact]
@@ -1074,7 +1138,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.GetLessonsForMentorAsync(null);
 
             //Assert
-            result.Should().BeEmpty();
+            result
+                .Should()
+                .BeEmpty();
         }
 
         [Fact]
@@ -1093,7 +1159,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.GetLessonsForStudentAsync(filter);
 
             //Assert
-            result.Data.Should().BeEquivalentTo(_mapper.Map<List<LessonDto>>(lessons));
+            result.Data
+                .Should()
+                .BeEquivalentTo(_mapper.Map<List<LessonDto>>(lessons));
         }
 
         [Fact]
