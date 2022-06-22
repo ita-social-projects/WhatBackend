@@ -200,10 +200,17 @@ namespace CharlieBackend.Api.UnitTest
         public async Task CreateLesson_ValidDataWithMark_ShouldReturnLessonDto()
         {
             //Arrange
-            var createLessonDTO = AddCreateLessonDto();
+            var createLessonDto = AddCreateLessonDto();
 
-            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDTO.MentorId)).
-                ReturnsAsync(new Mentor { Id = createLessonDTO.MentorId });
+            foreach (var visit in createLessonDto.LessonVisits)
+            {
+                visit.StudentMark = 10;
+            }
+
+            var resultLesson = _mapper.Map<Lesson>(createLessonDto);
+
+            _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(createLessonDto.MentorId)).
+                ReturnsAsync(new Mentor { Id = createLessonDto.MentorId, AccountId = _id });
 
             _studentGroupRepositoryMock.Setup(x => x.GetByIdAsync(CreateStudentGroup().Id)).ReturnsAsync(CreateStudentGroup());
 
@@ -211,12 +218,12 @@ namespace CharlieBackend.Api.UnitTest
                 ReturnsAsync(new List<long?> { visitStudentIdPresenceTrue, visitStudentIdPresenceFalse });
 
             //Act
-            var result = await _lessonService.CreateLessonAsync(createLessonDTO);
+            var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            result
+            result.Data
                 .Should()
-                .NotBeNull();
+                .BeEquivalentTo(_mapper.Map<LessonDto>(resultLesson));
         }
 
         [Fact]
@@ -255,7 +262,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateLessonAsync_NonExistingStudentGroupId_ShouldReturnNotFound()
+        public async Task CreateLessonAsync_NonExistingStudentGroupId_ShouldReturnNotFoundError()
         {
             //Arrange
             #region DATA
@@ -882,6 +889,7 @@ namespace CharlieBackend.Api.UnitTest
             };
 
             _lessonRepositoryMock.Setup(x => x.GetByIdAsync(lessonId)).ReturnsAsync(lesson);
+
             //Act
             var result = await _lessonService.IsLessonDoneAsync(lessonId);
 
