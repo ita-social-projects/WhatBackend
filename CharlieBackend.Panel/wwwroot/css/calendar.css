@@ -54,10 +54,6 @@ div.head div {
     min-height: 100px;
 }
 
-.element-grid__delite-button {
-    float: right;
-}
-
 .picker {
     border-radius: 50%;
     width: 36px;
@@ -73,4 +69,10 @@ div.head div {
 
 .picker:hover {
     transform: scale(1.1);
+}
+
+.linkdiv {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
 }

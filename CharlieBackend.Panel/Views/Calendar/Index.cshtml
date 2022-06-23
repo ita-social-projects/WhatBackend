@@ -238,8 +238,11 @@
                 <input id="seDescription" class="modalTextInput form-control" value="" disabled />
 
                 <label for="seLink">Link:</label>
-                <input id="seLink" class="modalTextInput form-control" value="" disabled />
-                <a id="openLink" class="btn-circle element-grid__delite-button" href="">Open</a>
+                <div class="linkdiv">
+                    <input id="seLink" class="modalTextInput form-control" value="" disabled />
+                    <a id="openLink" class="btn btn-primary" href="">Open</a>
+                </div>
+
             </div>
 
             @if (!User.IsInRole("Student"))

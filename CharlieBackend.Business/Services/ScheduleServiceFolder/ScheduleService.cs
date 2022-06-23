@@ -242,7 +242,7 @@ namespace CharlieBackend.Business.Services
                 },
                 Context = new ContextForCreateScheduleDTO
                 {
-                    GroupID = eventOccurrence.StudentGroupId,
+                    GroupID = eventOccurrence.StudentGroupId
                 }
             };
 
