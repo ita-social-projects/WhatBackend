@@ -15,11 +15,11 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests
 
         private readonly DateTime dueDateValue = new DateTime();
 
-        private readonly string validTaskText =  new string('*', ValidationConstants.MaxLengthTaskText);
+        private readonly string validTaskText =  new string('*', ValidationConstants.MaxLengthText);
         private readonly long validLessonID = 1;
         private readonly List<long> validAttachmentIDs = new List<long> { 1, 2, 3, 4, 5 };
 
-        private readonly string notValidTaskText = new string('*', ValidationConstants.MaxLengthTaskText + 1);
+        private readonly string notValidTaskText = new string('*', ValidationConstants.MaxLengthText + 1);
         private readonly long notValidLessonID = 0;
         private readonly List<long> notValidAttachmentIDs = new List<long> { 0, 2, 3, 4, 5 };
 

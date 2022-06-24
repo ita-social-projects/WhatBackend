@@ -13,7 +13,7 @@ namespace CharlieBackend.Api.Validators.HomeworkStudentDTOValidators
                 .GreaterThan(0);
             RuleFor(x => x.HomeworkText)
                 .NotEmpty()
-                .MaximumLength(ValidationConstants.MaxLengthTaskText);
+                .MaximumLength(ValidationConstants.MaxLengthText);
             RuleFor(x => x.IsSent)
                 .Must(x => x == true || x == false);
             RuleForEach(x => x.AttachmentIds)

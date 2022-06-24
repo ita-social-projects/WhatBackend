@@ -71,6 +71,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
                     EventFinish = scheduledEvent.EventFinish,
                     EventOccurrenceId = scheduledEvent.EventOccuranceId,
                     SingleEventId = scheduledEvent.Id,
+                    Description = scheduledEvent.Description,
+                    Link = scheduledEvent.Link,
                     Color = calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)) != null ?
                     calendar.EventOccurences.FirstOrDefault(x => x.Id.Equals(scheduledEvent?.EventOccuranceId)).Color : scheduledEvent.Color
                 }).OrderBy(i => i.EventStart)
@@ -231,6 +233,8 @@ namespace CharlieBackend.Panel.HtmlHelpers
             button.Attributes.Add("seTheme", model.Theme);
             button.Attributes.Add("seEventOccurrenceId", $"{model.EventOccurrenceId}");
             button.Attributes.Add("seSingleEventId", $"{model.SingleEventId}");
+            button.Attributes.Add("seDescription", $"{model.Description}");
+            button.Attributes.Add("seLink", $"{model.Link}");
             button.Attributes.Add($"style = \"border-color: #{ model.Color.ToString("X")}; color: #{model.Color.ToString("X")} \"", "");
             button.InnerHtml.Append($"{model.EventStart:HH:mm} - {model.EventFinish:HH:mm} \n");
             button.InnerHtml.Append($"{model.Theme}; ");
