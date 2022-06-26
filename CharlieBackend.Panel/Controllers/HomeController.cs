@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using System.Web;
 
 namespace CharlieBackend.Panel.Controllers
@@ -10,13 +9,11 @@ namespace CharlieBackend.Panel.Controllers
     [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IStringLocalizer<HomeController> _stringLocalizer;
 
-        public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> stringLocalizer)
+        public HomeController(IStringLocalizer<HomeController> stringLocalizer)
         {
             _stringLocalizer = stringLocalizer;
-            _logger = logger;
         }
 
         public IActionResult Index()
@@ -27,11 +24,14 @@ namespace CharlieBackend.Panel.Controllers
                 Languages.language = Language.UA;
 
 
-            ViewData["Wellcome"] = _stringLocalizer["Wellcome"].Value;
-            ViewData["Greeting"] = _stringLocalizer["Greeting"].Value;
-            ViewData["Description"] = _stringLocalizer["Description"].Value;
+            //ViewData["Welcome"] = _stringLocalizer["Welcome"].Value;
+            //ViewData["Greeting"] = _stringLocalizer["Greeting"].Value;
+            //ViewData["About"] = _stringLocalizer["About"].Value;
+            //ViewData["DescriptionFirstParagraph"] = _stringLocalizer["DescriptionFirstParagraph"].Value;
+            //ViewData["DescriptionSecondParagraph"] = _stringLocalizer["DescriptionSecondParagraph"].Value;
+            //ViewData["DescriptionThirdParagraph"] = _stringLocalizer["DescriptionThirdParagraph"].Value;
 
-            return View();
+            return View(_stringLocalizer);
         }
 
         [Route("Home/ApiError/{statusCode}/{message}")]
