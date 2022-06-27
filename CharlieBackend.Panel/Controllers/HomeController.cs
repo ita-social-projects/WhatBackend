@@ -23,14 +23,6 @@ namespace CharlieBackend.Panel.Controllers
             else
                 Languages.language = Language.UA;
 
-
-            //ViewData["Welcome"] = _stringLocalizer["Welcome"].Value;
-            //ViewData["Greeting"] = _stringLocalizer["Greeting"].Value;
-            //ViewData["About"] = _stringLocalizer["About"].Value;
-            //ViewData["DescriptionFirstParagraph"] = _stringLocalizer["DescriptionFirstParagraph"].Value;
-            //ViewData["DescriptionSecondParagraph"] = _stringLocalizer["DescriptionSecondParagraph"].Value;
-            //ViewData["DescriptionThirdParagraph"] = _stringLocalizer["DescriptionThirdParagraph"].Value;
-
             return View(_stringLocalizer);
         }
 
