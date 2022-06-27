@@ -302,7 +302,14 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             #region DATA
-            LessonDto createdLesson = AddLessonDto();
+            LessonDto createdLessonDto = AddLessonDto();
+
+            foreach (var lessonVisit in createdLessonDto.LessonVisits)
+            {
+                lessonVisit.Comment = "";
+                lessonVisit.StudentMark = null;
+            }
+
             CreateLessonDto createLessonDto = AddCreateLessonDto();
 
             Mentor mentor = new Mentor() { Id = mentorId };
@@ -323,24 +330,9 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            createdLesson.LessonDate
+            result.Data
                 .Should()
-                .Equals(result.Data.LessonDate);
-            createdLesson.Id
-                .Should()
-                .Equals(result.Data.Id);
-            createdLesson.LessonVisits.Count
-                .Should()
-                .Equals(result.Data.LessonVisits.Count);
-            createdLesson.MentorId
-                .Should()
-                .Equals(result.Data.MentorId);
-            createdLesson.StudentGroupId
-                .Should()
-                .Equals(result.Data.StudentGroupId);
-            createdLesson.ThemeName
-                .Should()
-                .Equals(result.Data.ThemeName);
+                .BeEquivalentTo(createdLessonDto);
         }
 
         [Fact]
@@ -506,6 +498,13 @@ namespace CharlieBackend.Api.UnitTest
             //Arrange
             #region DATA
             LessonDto createdLesson = AddLessonDto();
+
+            foreach (var lessonVisit in createdLesson.LessonVisits)
+            {
+                lessonVisit.Comment = "";
+                lessonVisit.StudentMark = null;
+            }
+
             CreateLessonDto createLessonDto = AddCreateLessonDto();
 
             Mentor mentor = new Mentor() { Id = mentorId };
@@ -520,24 +519,10 @@ namespace CharlieBackend.Api.UnitTest
             var result = await _lessonService.CreateLessonAsync(createLessonDto);
 
             //Assert
-            createdLesson.LessonDate
-                .Should()
-                .Equals(result.Data.LessonDate);
-            createdLesson.Id
-                .Should()
-                .Equals(result.Data.Id);
-            createdLesson.LessonVisits.Count
-                .Should()
-                .Equals(result.Data.LessonVisits.Count);
-            createdLesson.MentorId
-                .Should()
-                .Equals(result.Data.MentorId);
-            createdLesson.StudentGroupId
-                .Should()
-                .Equals(result.Data.StudentGroupId);
-            createdLesson.ThemeName
-                .Should()
-                .Equals(result.Data.ThemeName);
+
+            result.Data
+               .Should()
+               .BeEquivalentTo(createdLesson);
         }
 
         [Fact]
