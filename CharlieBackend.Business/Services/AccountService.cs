@@ -165,7 +165,8 @@ namespace CharlieBackend.Business.Services
                 {
                     Email = accountModel.Email,
                     FirstName = accountModel.FirstName,
-                    LastName = accountModel.LastName
+                    LastName = accountModel.LastName,
+                    Localization = string.IsNullOrEmpty(accountModel.Localization) ? "en-US" : accountModel.Localization
                 };
 
                 account.Salt = PasswordHelper.GenerateSalt();

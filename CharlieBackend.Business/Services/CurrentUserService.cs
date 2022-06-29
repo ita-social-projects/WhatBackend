@@ -16,6 +16,7 @@ namespace CharlieBackend.Business.Services
         private long _accountId;
         private long _entityId;
         private string _email;
+        private string _localization;
 
         readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -84,6 +85,24 @@ namespace CharlieBackend.Business.Services
                 }
 
                 return _email;
+            }
+        }
+
+        public string Localization
+        {
+            get
+            {
+                if (_localization is null)
+                {
+                    _localization = GetClaimValue(claimType: ClaimConstants.Localization);
+
+                    if (_localization is null)
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
+                }
+
+                return _localization;
             }
         }
 

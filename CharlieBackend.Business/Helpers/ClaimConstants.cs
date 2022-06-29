@@ -7,5 +7,6 @@
         public const string AccountClaim = "AccountId";
         public const string FirstName = "FirstName";
         public const string LastName = "LastName";
+        public const string Localization = "Localization";
     }
 }
