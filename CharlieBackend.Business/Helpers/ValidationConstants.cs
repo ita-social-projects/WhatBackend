@@ -9,7 +9,7 @@
         public const int MaxLengthName = 30;
         public const int MaxLengthHeader = 100;
         public const int MaxLengthURL = 200;
-        public const int MaxLengthTaskText = 65535; // Length of TEXT type
+        public const int MaxLengthText = 65535; // Length of TEXT type
         public const int MaxLengthCommentText = 1024;
         public const string EmailRegexCheck = @"^([a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-z]{2,6}$";
         public const string NameRegexCheck = @"^[a-zA-Z '.-]*$";

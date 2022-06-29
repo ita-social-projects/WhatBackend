@@ -48,6 +48,12 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnType("DATETIME")
                 .HasComment("Use UTC time");
 
+            entity.Property(e => e.Description)
+                .HasColumnName("Description");
+
+            entity.Property(e => e.Link)
+                .HasColumnName("Link");
+
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
 

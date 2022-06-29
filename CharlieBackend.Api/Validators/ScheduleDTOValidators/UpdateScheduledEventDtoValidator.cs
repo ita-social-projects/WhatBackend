@@ -24,7 +24,6 @@ namespace CharlieBackend.Api.Validators.Schedule
                 .Must((x, cancellation) => (x.EventEnd > x.EventStart || x.EventEnd.Equals(x.EventStart)))
                 .When(x => x.EventEnd != null)
                 .WithMessage(SharedResources.DatesNotValidMessage);
-
         }
     }
 }

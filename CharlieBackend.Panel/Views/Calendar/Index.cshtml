@@ -233,6 +233,15 @@
 
                 <label for="seMentor">Mentor:</label>
                 <input id="seMentor" class="modalTextInput form-control" value="" disabled />
+
+                <label for="seDescription">Description:</label>
+                <input id="seDescription" class="modalTextInput form-control" value="" disabled />
+
+                <label for="seLink">Link:</label>
+                <div class="linkdiv">
+                    <input id="seLink" class="modalTextInput form-control" value="" disabled />
+                    <a id="openLink" class="btn btn-primary" href="">Open</a>
+                </div>
             </div>
 
             @if (!User.IsInRole("Student"))

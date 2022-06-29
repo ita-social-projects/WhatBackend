@@ -10,7 +10,7 @@ namespace CharlieBackend.Api.Validators.HomeworkDTOValidators
         {
             RuleFor(x => x.TaskText)
                 .NotEmpty()
-                .MaximumLength(ValidationConstants.MaxLengthTaskText);
+                .MaximumLength(ValidationConstants.MaxLengthText);
             RuleFor(x => x.LessonId)
                 .NotEmpty()
                 .GreaterThan(0);
