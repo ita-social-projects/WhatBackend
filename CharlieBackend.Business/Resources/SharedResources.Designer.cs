@@ -70,6 +70,15 @@ namespace CharlieBackend.Business.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} does not exist.
+        /// </summary>
+        public static string DoesNotExist {
+            get {
+                return ResourceManager.GetString("DoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Group hasn&apos;t any students.
         /// </summary>
         public static string GroupHasNotStudentsResponseMessage {
@@ -93,6 +102,24 @@ namespace CharlieBackend.Business.Resources {
         public static string IndexNotValidResponseMessage {
             get {
                 return ResourceManager.GetString("IndexNotValidResponseMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is not active.
+        /// </summary>
+        public static string IsNotActive {
+            get {
+                return ResourceManager.GetString("IsNotActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is not valid.
+        /// </summary>
+        public static string IsNotValid {
+            get {
+                return ResourceManager.GetString("IsNotValid", resourceCulture);
             }
         }
         

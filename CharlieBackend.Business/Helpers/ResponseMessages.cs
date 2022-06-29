@@ -2,10 +2,10 @@
 {
     public static class ResponseMessages
     {
-        public static string NotExist(string entityName) => $"{entityName} does not exist ";
+        public static string NotExist(string entityName) => $"{entityName} {Resources.SharedResources.DoesNotExist}";
 
-        public static string NotValid(string entityName) => $"{entityName} is not valid ";
+        public static string NotValid(string entityName) => $"{entityName} {Resources.SharedResources.IsNotValid}";
 
-        public static string NotActive(string entityName) => $"{entityName} is not active ";
+        public static string NotActive(string entityName) => $"{entityName} {Resources.SharedResources.IsNotActive}";
     }
 }
