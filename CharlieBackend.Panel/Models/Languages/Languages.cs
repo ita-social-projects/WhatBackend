@@ -9,14 +9,14 @@ namespace CharlieBackend.Panel.Models.Languages
     public enum Language
     {
         [Description("en-US")]
-        EN,
+        En,
         [Description("uk-UA")]
-        UA
+        Uk
     }
 
     public static class Languages
     {
-        public static Language language = Language.UA;
+        public static Language language = Language.En;
     }
 
     public static class LanguageExtensions
