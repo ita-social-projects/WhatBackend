@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
+﻿using CharlieBackend.Business.Resources;
 using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
 
@@ -23,7 +23,7 @@ namespace CharlieBackend.Api.Validators.Schedule
             RuleFor(x => x.EventEnd)
                 .Must((x, cancellation) => (x.EventEnd > x.EventStart || x.EventEnd.Equals(x.EventStart)))
                 .When(x => x.EventEnd != null)
-                .WithMessage(ValidationConstants.DatesNotValid);
+                .WithMessage(SharedResources.DatesNotValidMessage);
         }
     }
 }
