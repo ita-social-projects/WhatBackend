@@ -29,10 +29,10 @@ namespace CharlieBackend.Panel.Controllers
         public async Task<IActionResult> AllMentors()
         {
 
-            if (Languages.language == Language.UA)
-                Languages.language = Language.EN;
+            if (Languages.language == Language.Uk)
+                Languages.language = Language.En;
             else
-                Languages.language = Language.UA;
+                Languages.language = Language.Uk;
 
             MentorLocalizationViewModel mentorLocalizationViewModel = new MentorLocalizationViewModel
             {
