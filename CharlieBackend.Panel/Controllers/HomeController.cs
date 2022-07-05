@@ -18,11 +18,6 @@ namespace CharlieBackend.Panel.Controllers
 
         public IActionResult Index()
         {
-            if (Languages.language == Language.UA)
-                Languages.language = Language.EN;
-            else
-                Languages.language = Language.UA;
-
             return View(_stringLocalizer);
         }
 
@@ -35,6 +30,13 @@ namespace CharlieBackend.Panel.Controllers
             ViewBag.message = decodedMessage;
 
             return View();
+        }
+
+        public IActionResult ChangeLanguage(Language lang)
+        {
+            Languages.language = lang;
+
+            return RedirectToAction("Index");
         }
     }
 }

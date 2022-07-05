@@ -182,6 +182,39 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
+                        @*<li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="Language" class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <img class="img-profile" src="~/img/En.png">
+                                    En
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="languageDropdown" id="dropdownMenu">
+                                @foreach (var language in Enum.GetValues(typeof(CharlieBackend.Panel.Models.Languages.Language)))
+                                {
+                                    string imgFilePath = $"{language}.png";
+
+                                    <a class="dropdown-item" asp-action="ChangeLanguage" asp-controller="Home" asp-route-lang="@language">
+                                        @language&nbsp;
+                                        <img src="~/img/@imgFilePath" style="width: 2rem;">
+                                    </a>
+                                }
+                            </div>
+                        </li>*@
+
+                        @foreach (var language in Enum.GetValues(typeof(CharlieBackend.Panel.Models.Languages.Language)))
+                        {
+                            string imgFilePath = $"{language}.png";
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="ChangeLanguage" asp-controller="Home" asp-route-lang="@language">
+                                    @language&nbsp;
+                                    <img class="img-profile" src="~/img/@imgFilePath">
+                                </a>
+                            </li>
+                        }
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -330,7 +363,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                                    Sign in as ${role} </a>`;
+                                                                                                Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 
