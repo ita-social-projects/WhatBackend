@@ -10,7 +10,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
     {
         Task<bool> IsCourseNameTakenAsync(string courseName);
 
-        Task<List<MentorCoursesDto>> GetMentorCourses(long id);
+        Task<List<MentorCoursesDto>> GetMentorCoursesAsync(long id);
 
         Task<List<Course>> GetCoursesByIdsAsync(List<long> courseIds);
         

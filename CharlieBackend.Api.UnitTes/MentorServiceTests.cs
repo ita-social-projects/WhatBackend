@@ -32,7 +32,7 @@ namespace CharlieBackend.Api.UnitTest
             _mapper = GetMapper(new ModelMappingProfile());
             _mentorRepositoryMock = new Mock<IMentorRepository>();
             _mentorServiceMock = new Mock<IMentorService>();
-            _blobServiceMock= new Mock<IBlobService>();
+            _blobServiceMock = new Mock<IBlobService>();
             _currentUserMock = new Mock<ICurrentUserService>();
 
             _mentorService = new MentorService(
@@ -78,7 +78,7 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public void CheckRoleAndIdMentor_CheckCurentMentorId_ReturnUnauthorized() 
+        public void CheckRoleAndIdMentor_CheckCurentMentorId_ReturnUnauthorized()
         {
             //Arrange
             long currentId = 1;
@@ -399,6 +399,79 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
+        public async Task GetAllMentorsAsync_NoDataPassed_ShouldReturnEmptyListOfMentors()
+        {
+            //Arrange
+            var mentors = new List<Mentor>();
+
+            _mentorRepositoryMock.Setup(x => x.GetAllAsync())
+                                 .ReturnsAsync(mentors);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+
+            //Act
+            var emptyListOfMentors = await _mentorService.GetAllMentorsAsync();
+
+            //Assert
+            emptyListOfMentors.Should().BeEquivalentTo(_mapper.Map<List<MentorDto>>(mentors));
+            emptyListOfMentors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetAllActiveMentorsAsync_ValidDataPassed_ShouldReturnAllActiveMentors()
+        {
+            //Arrange
+            var allActiveMentors = new List<Mentor>()
+            {
+                new Mentor()
+                {
+                    Id = 1,
+                    AccountId = 2,
+                    Account = new Account()
+                    {
+                        Id = 2,
+                        Email = "existingemail@example.com"
+                    }
+                }
+            };
+
+            _mentorRepositoryMock.Setup(x => x.GetAllActiveAsync())
+                                 .ReturnsAsync(allActiveMentors);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+
+            //Act
+            var emptyListOfMentors = await _mentorService.GetAllActiveMentorsAsync();
+
+            //Assert
+            emptyListOfMentors.Should().BeEquivalentTo(_mapper.Map<List<MentorDto>>(allActiveMentors));
+        }
+
+        [Fact]
+        public async Task GetAccountIdAsync_ValidDataPassed_ShouldReturnMentorAccountById()
+        {
+            //Arrange
+            long existingMentorId = 1;
+            var mentor = new Mentor()
+            {
+                Id = 1,
+                AccountId = 2
+            };
+
+            _mentorRepositoryMock.Setup(x => x.GetByIdAsync(existingMentorId))
+                                 .ReturnsAsync(mentor);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+
+            //Act
+            var successResult = await _mentorService.GetAccountIdAsync(existingMentorId);
+
+            //Assert
+            successResult.Should().NotBeNull();
+            successResult.Value.Should().Be(mentor.AccountId);
+        }
+
+        [Fact]
         public async Task DisableMentorAsync_NotExistingMentorId_ShouldReturnNotFound()
         {
             //Arrange
@@ -446,6 +519,39 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             notExistingIdResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        [Fact]
+        public async Task DisableMentorAsync_ValidDataPassed_ShouldReturnSuccess()
+        {
+            //Arrange
+            long existingMentorId = 5;
+            bool isSucceed = true;
+
+            var mentor = new Mentor()
+            {
+                Id = 5,
+                AccountId = 1,
+                Account = new Account()
+                {
+                    Id = 1,
+                    Email = "mentoremail@example.com"
+                }
+            };
+
+            _mentorServiceMock.Setup(x => x.GetAccountIdAsync(existingMentorId))
+                .ReturnsAsync(mentor.AccountId);
+
+            _accountServiceMock.Setup(x => x.DisableAccountAsync(mentor.AccountId.Value))
+                .ReturnsAsync(isSucceed);
+
+            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+
+            //Act
+            var successResult = await _mentorService.DisableMentorAsync(existingMentorId);
+
+            //Assert
+            successResult.Data.Should().Equals(true);
         }
     }
 }
