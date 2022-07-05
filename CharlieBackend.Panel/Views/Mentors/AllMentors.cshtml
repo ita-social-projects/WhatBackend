@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CharlieBackend.Panel.Models.Mentor.MentorViewModel>
+﻿@model CharlieBackend.Panel.Models.Mentor.MentorLocalizationViewModel
 
 @{
     Layout = "_Layout";
@@ -29,16 +29,16 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <div class="row">
-                        <h6 class="m-2 font-weight-bold text-primary">Mentors</h6>
+                        <h6 class="m-2 font-weight-bold text-primary">@Model.StringLocalizer["Mentors"].Value</h6>
                         @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                         {
                             <a class=" btn btn-light js-Mentor-list-button" id="activeMentors">
                                 <i class="far fa-eye"></i>
-                                <span> Active Mentors </span>
+                                <span>@Model.StringLocalizer["Active"].Value</span>
                             </a>
                             <a class="btn btn-light js-Mentor-list-button d-none" id="inactiveMentors">
                                 <i class="far fa-eye-slash"></i>
-                                <span> Inactive Mentors</span>
+                                <span>@Model.StringLocalizer["Inactive"].Value</span>
                             </a>
                         }
                     </div>
@@ -48,9 +48,9 @@
                         <table class="table text-center table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark">
-                                    <th scope="col">Email</th>
-                                    <th scope="col">First Name</th>
-                                    <th scope="col">Last Name</th>
+                                    <th scope="col">@Model.StringLocalizer["Email"].Value</th>
+                                    <th scope="col">@Model.StringLocalizer["FirstName"].Value</th>
+                                    <th scope="col">@Model.StringLocalizer["LastName"].Value</th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                                     {
                                         <th scope="col"><i class="fas fa-pen" data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
@@ -58,7 +58,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var mentor in Model)
+                                @foreach (var mentor in Model.MentorViews)
                                 {
                                     if (mentor.IsActive)
                                     {
@@ -79,12 +79,12 @@
 
                                                             <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@mentor.Id">
                                                                 <i class="fas fa-pen"></i>
-                                                                <span>Edit </span>
+                                                                <span>@Model.StringLocalizer["Edit"].Value</span>
                                                             </a>
 
                                                             <a class="dropdown-item text-dark js-disable-Mentor" data-toggle="modal" data-target="#disableMentorModalWindow" data-item-id="@mentor.Id">
                                                                 <i class="fas fa-trash"></i>
-                                                                <span>Disable </span>
+                                                                <span>@Model.StringLocalizer["Disable"].Value</span>
                                                             </a>
                                                         </div>
                                                     </div>
@@ -109,11 +109,11 @@
 
                                                         <a class=" dropdown-item" asp-action="UpdateMentor" asp-controller="Mentors" asp-route-id="@mentor.Id">
                                                             <i class="fas fa-pen"></i>
-                                                            <span>Edit </span>
+                                                            <span>@Model.StringLocalizer["Edit"].Value</span>
                                                         </a>
                                                         <a class="dropdown-item text-dark js-enable-Mentor" data-toggle="modal" data-target="#enableMentorModalWindow" data-item-id="@mentor.Id">
                                                             <i class="fas fa-trash"></i>
-                                                            <span>Enable </span>
+                                                            <span>@Model.StringLocalizer["Enable"].Value</span>
                                                         </a>
                                                     </div>
                                                 </div>

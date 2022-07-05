@@ -1,7 +1,10 @@
 ﻿using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Panel.Models.Languages;
+using CharlieBackend.Panel.Models.Students;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Controllers
@@ -11,17 +14,28 @@ namespace CharlieBackend.Panel.Controllers
     public class StudentsController : Controller
     {
         private readonly IStudentService _studentService;
+        private readonly IStringLocalizer<StudentsController> _stringLocalizer;
 
-        public StudentsController(IStudentService studentService)
+        public StudentsController(IStudentService studentService, IStringLocalizer<StudentsController> stringLocalizer)
         {
             _studentService = studentService;
+            _stringLocalizer = stringLocalizer;
         }
 
         public async Task<IActionResult> AllStudents()
         {
-            var students = await _studentService.GetAllStudentsAsync();
+            if (Languages.language == Language.UA)
+                Languages.language = Language.EN;
+            else
+                Languages.language = Language.UA;
 
-            return View(students);
+            StudentLocalizationViewModel studentLocalizationViewModel = new StudentLocalizationViewModel
+            {
+                StudentViews = await _studentService.GetAllStudentsAsync(),
+                StringLocalizer = _stringLocalizer
+            };
+
+            return View(studentLocalizationViewModel);
         }
 
         [HttpGet("{id}")]

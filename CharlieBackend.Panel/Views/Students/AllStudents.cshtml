@@ -1,25 +1,25 @@
-﻿@model IEnumerable<CharlieBackend.Panel.Models.Students.StudentViewModel>
+﻿@model CharlieBackend.Panel.Models.Students.StudentLocalizationViewModel
 @{
     Layout = "_Layout";
 }
 
 @if (User.IsInRole("Secretary") || User.IsInRole("Admin"))
 {
-<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-    <div class="dropleft">
-        <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="dropdown-menu ">
-            <form method="post" class="input-group" asp-action="AddStudent" asp-controller="Students">
-                <input type="text" class="form-control" name="id" placeholder="Account id" />
-                <button type="submit" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </form>
+    <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+        <div class="dropleft">
+            <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                <i class="fas fa-plus"></i>
+            </button>
+            <div class="dropdown-menu ">
+                <form method="post" class="input-group" asp-action="AddStudent" asp-controller="Students">
+                    <input type="text" class="form-control" name="id" placeholder="Account id" />
+                    <button type="submit" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 }
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
@@ -28,16 +28,16 @@
                 <div class="card-header py-3">
                     <div class="row">
 
-                        <h6 class="m-2 font-weight-bold text-primary">Students</h6>
+                        <h6 class="m-2 font-weight-bold text-primary">@Model.StringLocalizer["Students"].Value</h6>
 
                         <a class=" btn btn-light js-student-list-button" id="activeStudents">
                             <i class="far fa-eye"></i>
-                            <span> Active students </span>
+                            <span> @Model.StringLocalizer["Active"].Value </span>
                         </a>
 
                         <a class="btn btn-light js-student-list-button d-none" id="inactiveStudents">
                             <i class="far fa-eye-slash"></i>
-                            <span> Inactive students</span>
+                            <span> @Model.StringLocalizer["Inactive"].Value</span>
                         </a>
                     </div>
                 </div>
@@ -46,17 +46,17 @@
                         <table class="table text-center table-hover table-striped" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="thead-dark">
-                                    <th scope="col">Email</th>
-                                    <th scope="col">First Name</th>
-                                    <th scope="col">Last Name</th>
+                                    <th scope="col">@Model.StringLocalizer["Email"].Value</th>
+                                    <th scope="col">@Model.StringLocalizer["FirstName"].Value</th>
+                                    <th scope="col">@Model.StringLocalizer["LastName"].Value</th>
                                     <th scope="col"><i class="fas fa-pen" data-toggle="tooltip" data-placement="top" title="Controll"></i></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var student in Model)
+                                @foreach (var student in Model.StudentViews)
                                 {
                                     if (student.IsActive)
-                                    {                                        
+                                    {
                                         <tr id="activeStudentsRow">
                                             <td>@student.Email</td>
                                             <td>@student.FirstName</td>
@@ -73,12 +73,12 @@
                                                         {
                                                             <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@student.Id">
                                                                 <i class="fas fa-pen"></i>
-                                                                <span>Edit </span>
+                                                                <span>@Model.StringLocalizer["Edit"].Value </span>
                                                             </a>
                                                         }
                                                         <a class="dropdown-item text-dark js-disable-student" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@student.Id">
                                                             <i class="fas fa-trash"></i>
-                                                            <span>Disable </span>
+                                                            <span>@Model.StringLocalizer["Disable"].Value </span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -103,14 +103,14 @@
                                                         {
                                                             <a class=" dropdown-item" asp-action="UpdateStudent" asp-controller="Students" asp-route-id="@student.Id">
                                                                 <i class="fas fa-pen"></i>
-                                                                <span>Edit </span>
+                                                                <span>@Model.StringLocalizer["Edit"].Value </span>
                                                             </a>
                                                         }
-                                                            <a class="dropdown-item text-dark js-enable-Student" data-toggle="modal" data-target="#enableStudentModalWindow" data-item-id="@student.Id">
-                                                                <i class="fas fa-trash"></i>
-                                                                <span>Enable </span>
-                                                            </a>
-                                                        </div>
+                                                        <a class="dropdown-item text-dark js-enable-Student" data-toggle="modal" data-target="#enableStudentModalWindow" data-item-id="@student.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>@Model.StringLocalizer["Enable"].Value </span>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -163,7 +163,8 @@
 </div>
 
 @section Scripts{
-    <script type="text/javascript">var isOnlyActiveStudents = false;
+    <script type="text/javascript">
+        var isOnlyActiveStudents = false;
 
         var switchButtons = document.querySelectorAll(".js-student-list-button");
 
@@ -207,7 +208,8 @@
             }, true)
         });</script>
 
-    <script type="text/javascript">var routeForDisableStudent = "/Students/DisableStudent/";
+    <script type="text/javascript">
+        var routeForDisableStudent = "/Students/DisableStudent/";
 
         var disableStudentId = null;
 
@@ -223,7 +225,8 @@
 
         });</script>
 
-    <script type="text/javascript">var routeForEnableStudent = "/Students/EnableStudent/";
+    <script type="text/javascript">
+        var routeForEnableStudent = "/Students/EnableStudent/";
 
         var enableStudentId = null;
 

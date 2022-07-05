@@ -1,9 +1,11 @@
 ﻿using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.Entities;
+using CharlieBackend.Panel.Models.Languages;
 using CharlieBackend.Panel.Models.Mentor;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,29 +17,40 @@ namespace CharlieBackend.Panel.Controllers
     {
         private readonly IMentorService _mentorService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IStringLocalizer<MentorsController> _stringLocalizer;
 
-        public MentorsController(IMentorService mentorService, ICurrentUserService currentUserService)
+        public MentorsController(IMentorService mentorService, ICurrentUserService currentUserService, IStringLocalizer<MentorsController> stringLocalizer)
         {
             _mentorService = mentorService;
             _currentUserService = currentUserService;
+            _stringLocalizer = stringLocalizer;
         }
 
         public async Task<IActionResult> AllMentors()
         {
-            IEnumerable<MentorViewModel> mentor = new List<MentorViewModel>();
+
+            if (Languages.language == Language.UA)
+                Languages.language = Language.EN;
+            else
+                Languages.language = Language.UA;
+
+            MentorLocalizationViewModel mentorLocalizationViewModel = new MentorLocalizationViewModel
+            {
+                StringLocalizer = _stringLocalizer
+            };
 
             if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
             {
-                mentor = await _mentorService.GetAllMentorsAsync();
+                mentorLocalizationViewModel.MentorViews = await _mentorService.GetAllMentorsAsync();
             }
-            else if(_currentUserService.Role == UserRole.Mentor)
+            else if (_currentUserService.Role == UserRole.Mentor)
             {
-                mentor = await _mentorService.GetAllActiveMentorsAsync();
+                mentorLocalizationViewModel.MentorViews = await _mentorService.GetAllActiveMentorsAsync();
             }
 
-            return View(mentor);
+            return View(mentorLocalizationViewModel);
         }
-        
+
         [HttpGet("{id}")]
         public async Task<IActionResult> UpdateMentor(long id)
         {
