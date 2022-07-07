@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Localization;
 using System.Threading.Tasks;
 using CharlieBackend.Panel.Models.Languages;
+using System.Linq;
 
 namespace CharlieBackend.Panel.Helpers
 {
@@ -10,7 +11,13 @@ namespace CharlieBackend.Panel.Helpers
         public override async Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
         {
             await Task.Yield();
-            return new ProviderCultureResult(Languages.language.ToDescriptionString());
+
+            if (!httpContext.User.Identity.IsAuthenticated)
+            {
+                return new ProviderCultureResult(Languages.language.ToDescriptionString());
+            }
+
+            return new ProviderCultureResult(httpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimsConstants.Localization).Value);
         }
     }
 }
