@@ -26,12 +26,23 @@ namespace CharlieBackend.Business.Services
             {
                 var createdThemeEntity = _mapper.Map<Theme>(themeDto);
 
-                _unitOfWork.ThemeRepository.Add(createdThemeEntity);
+                var Check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdThemeEntity.Name).Result;
 
-                await _unitOfWork.CommitAsync();
 
-                return Result<ThemeDto>
-                    .GetSuccess(_mapper.Map<ThemeDto>(createdThemeEntity));
+                if (Check == null)
+                {
+                    _unitOfWork.ThemeRepository.Add(createdThemeEntity);
+
+                    await _unitOfWork.CommitAsync();
+
+                    return Result<ThemeDto>
+                        .GetSuccess(_mapper.Map<ThemeDto>(createdThemeEntity));
+                }
+                else
+                {
+                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error");
+                }
+
             }
             catch
             {
