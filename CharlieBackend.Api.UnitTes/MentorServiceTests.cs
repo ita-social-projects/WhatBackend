@@ -24,6 +24,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IMentorService> _mentorServiceMock;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<ICurrentUserService> _currentUserMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
 
         public MentorServiceTests()
         {
@@ -34,6 +35,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorServiceMock = new Mock<IMentorService>();
             _blobServiceMock = new Mock<IBlobService>();
             _currentUserMock = new Mock<ICurrentUserService>();
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
 
             _mentorService = new MentorService(
                 _accountServiceMock.Object,
@@ -635,6 +637,49 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             successResult.Data.Should().Equals(true);
+        }
+
+        [Fact]
+        public async Task GetMentorStudyGroupsByMentorIdAsync_NotExistingMentorId_ShouldReturnEmptyListOfGroups()
+        {
+            //Arrange
+            var notExistingMentorId = 0;
+
+            _studentGroupRepositoryMock.Setup(x => x.GetMentorStudyGroups(notExistingMentorId));
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var notExistingIdResult = await _mentorService.GetMentorStudyGroupsByMentorIdAsync(notExistingMentorId);
+
+            //Assert
+            notExistingIdResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetMentorStudyGroupsByMentorIdAsync_ValidDataPassed_ShouldReturnMentorsStudeGroups()
+        {
+            //Arrange
+            var ExistingMentorId = 2;
+
+            var mentorStudyGroups = new List<MentorStudyGroupsDto>()
+            {
+                new MentorStudyGroupsDto()
+                {
+                    Id = 2,
+                    Name = "John"
+                }
+            };
+
+            _studentGroupRepositoryMock.Setup(x => x.GetMentorStudyGroups(ExistingMentorId)).Returns(Task.FromResult(mentorStudyGroups));
+
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var successResult = await _mentorService.GetMentorStudyGroupsByMentorIdAsync(ExistingMentorId);
+
+            //Assert
+            successResult.Should().BeEquivalentTo(mentorStudyGroups);
         }
     }
 }
