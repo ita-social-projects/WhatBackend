@@ -25,6 +25,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<ICurrentUserService> _currentUserMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
+        private readonly Mock<ICourseRepository> _courseRepositoryMock;
 
         public MentorServiceTests()
         {
@@ -36,6 +37,7 @@ namespace CharlieBackend.Api.UnitTest
             _blobServiceMock = new Mock<IBlobService>();
             _currentUserMock = new Mock<ICurrentUserService>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
+            _courseRepositoryMock = new Mock <ICourseRepository>();  
 
             _mentorService = new MentorService(
                 _accountServiceMock.Object,
@@ -680,6 +682,22 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             successResult.Should().BeEquivalentTo(mentorStudyGroups);
+        }
+
+        public async Task GetMentorCoursesByMentorIdAsync_NotExistingMentorId_ShouldReturnEmptyListOfCourses()
+        {
+            //Arrange
+            var notExistingMentorId = 0;
+
+            _courseRepositoryMock.Setup(x => x.GetMentorCoursesAsync(notExistingMentorId));
+
+            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(_courseRepositoryMock.Object);
+
+            //Act
+            var notExistingIdResult = await _mentorService.GetMentorCoursesByMentorIdAsync(notExistingMentorId);
+
+            //Assert
+            notExistingIdResult.Should().BeEmpty();
         }
     }
 }
