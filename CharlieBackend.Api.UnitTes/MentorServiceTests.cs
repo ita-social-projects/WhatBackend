@@ -52,6 +52,11 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.Add(It.IsAny<Mentor>()))
                 .Callback<Mentor>(x => x.Id = mentorExpectedId);
 
+            
+        }
+
+        private void InitializeMentorRepository()
+        {
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
         }
 
@@ -120,6 +125,7 @@ namespace CharlieBackend.Api.UnitTest
         {
             //Arrange
             InitializeCreateMentorAsync();
+            InitializeMentorRepository();
 
             //Act
             var nonExistingIdResult = await _mentorService.CreateMentorAsync(0);
@@ -143,6 +149,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(successExistingAccount);
 
             InitializeCreateMentorAsync();
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.CreateMentorAsync(1);
@@ -166,6 +173,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(assignedExistingAccount);
 
             InitializeCreateMentorAsync();
+            InitializeMentorRepository();
 
             //Act
             var alreadyAssignedResult = await _mentorService.CreateMentorAsync(2);
@@ -182,7 +190,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(0));
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var nonExistingIdResult = await _mentorService.UpdateMentorAsync(0, nonExistingUpdateMentorDto);
@@ -223,7 +231,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(2))
                     .ReturnsAsync(alreadyExistingEmailMentor);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var alreadyExistingEmailResult = await _mentorService
@@ -270,7 +278,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(1))
                     .ReturnsAsync(successMentor);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService
@@ -301,7 +309,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetMentorByAccountIdAsync(accountExpectedId))
                         .ReturnsAsync(mentor);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.GetMentorByAccountIdAsync(accountExpectedId);
@@ -320,7 +328,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.GetMentorByAccountIdAsync(accountExpectedId));
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var nonExistingIdResult = await _mentorService.GetMentorByAccountIdAsync(notExisingId);
@@ -344,7 +352,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(mentorExpectedId))
                         .ReturnsAsync(mentor);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.GetMentorByIdAsync(mentorExpectedId);
@@ -363,7 +371,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorRepositoryMock.Setup(x => x.GetMentorByIdAsync(mentorExpectedId));
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var nonExistingIdResult = await _mentorService.GetMentorByAccountIdAsync(notExisingId);
@@ -393,7 +401,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetAllAsync())
                         .ReturnsAsync(allMentors);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResultOfMentors = await _mentorService.GetAllMentorsAsync();
@@ -411,7 +419,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetAllAsync())
                                  .ReturnsAsync(mentors);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var emptyListOfMentors = await _mentorService.GetAllMentorsAsync();
@@ -442,7 +450,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetAllActiveAsync())
                                  .ReturnsAsync(allActiveMentors);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var emptyListOfMentors = await _mentorService.GetAllActiveMentorsAsync();
@@ -465,7 +473,7 @@ namespace CharlieBackend.Api.UnitTest
             _mentorRepositoryMock.Setup(x => x.GetByIdAsync(existingMentorId))
                                  .ReturnsAsync(mentor);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.GetAccountIdAsync(existingMentorId);
@@ -483,7 +491,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorServiceMock.Setup(x => x.GetAccountIdAsync(notExistingMentorId));
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var notExistingIdResult = await _mentorService.DisableMentorAsync(notExistingMentorId);
@@ -516,7 +524,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Setup(x => x.DisableAccountAsync(mentor.AccountId.Value))
                 .ReturnsAsync(isSucceed);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var notExistingIdResult = await _mentorService.DisableMentorAsync(existingMentorId);
@@ -549,7 +557,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Setup(x => x.DisableAccountAsync(mentor.AccountId.Value))
                 .ReturnsAsync(isSucceed);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.DisableMentorAsync(existingMentorId);
@@ -582,7 +590,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Setup(x => x.EnableAccountAsync(mentor.AccountId.Value))
                 .ReturnsAsync(isSucceed);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var notExistingIdResult = await _mentorService.EnableMentorAsync(existingMentorId);
@@ -599,7 +607,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _mentorServiceMock.Setup(x => x.GetAccountIdAsync(notExistingMentorId));
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var notExistingIdResult = await _mentorService.EnableMentorAsync(notExistingMentorId);
@@ -632,7 +640,7 @@ namespace CharlieBackend.Api.UnitTest
             _accountServiceMock.Setup(x => x.EnableAccountAsync(mentor.AccountId.Value))
                 .ReturnsAsync(isSucceed);
 
-            _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            InitializeMentorRepository();
 
             //Act
             var successResult = await _mentorService.EnableMentorAsync(existingMentorId);
