@@ -659,10 +659,10 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task GetMentorStudyGroupsByMentorIdAsync_ValidDataPassed_ShouldReturnMentorsStudeGroups()
+        public async Task GetMentorStudyGroupsByMentorIdAsync_ValidDataPassed_ShouldReturnMentorsStudentGroups()
         {
             //Arrange
-            var ExistingMentorId = 2;
+            var existingMentorId = 2;
 
             var mentorStudyGroups = new List<MentorStudyGroupsDto>()
             {
@@ -673,17 +673,18 @@ namespace CharlieBackend.Api.UnitTest
                 }
             };
 
-            _studentGroupRepositoryMock.Setup(x => x.GetMentorStudyGroups(ExistingMentorId)).Returns(Task.FromResult(mentorStudyGroups));
+            _studentGroupRepositoryMock.Setup(x => x.GetMentorStudyGroups(existingMentorId)).Returns(Task.FromResult(mentorStudyGroups));
 
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
 
             //Act
-            var successResult = await _mentorService.GetMentorStudyGroupsByMentorIdAsync(ExistingMentorId);
+            var successResult = await _mentorService.GetMentorStudyGroupsByMentorIdAsync(existingMentorId);
 
             //Assert
             successResult.Should().BeEquivalentTo(mentorStudyGroups);
         }
 
+        [Fact]
         public async Task GetMentorCoursesByMentorIdAsync_NotExistingMentorId_ShouldReturnEmptyListOfCourses()
         {
             //Arrange
@@ -698,6 +699,32 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             notExistingIdResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetMentorCoursesByMentorIdAsync_ValidDataPassed_ShouldReturnMentorCourses()
+        {
+            //Arrange
+            var existingMentorId = 2;
+
+            var mentorCourses = new List<MentorCoursesDto>()
+            {
+                new MentorCoursesDto()
+                {
+                    Id = 2,
+                    Name = "Mentor name"
+                }
+            };
+
+            _courseRepositoryMock.Setup(x => x.GetMentorCoursesAsync(existingMentorId)).Returns(Task.FromResult(mentorCourses));
+
+            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(_courseRepositoryMock.Object);
+
+            //Act
+            var successResult = await _mentorService.GetMentorCoursesByMentorIdAsync(existingMentorId);
+
+            //Assert
+            successResult.Should().BeEquivalentTo(mentorCourses);
         }
     }
 }
