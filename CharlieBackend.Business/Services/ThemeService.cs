@@ -40,7 +40,7 @@ namespace CharlieBackend.Business.Services
                 }
                 else
                 {
-                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error");
+                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error: theme with such name already exists.");
                 }
 
             }
