@@ -40,7 +40,7 @@ namespace CharlieBackend.Business.Services
                 }
                 else
                 {
-                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error");
+                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error: theme with such name already exists.");
                 }
 
             }
@@ -112,11 +112,19 @@ namespace CharlieBackend.Business.Services
                     return Result<ThemeDto>.GetError(ErrorCode.NotFound,
                         $"Theme with id={themeId} does not exist");
                 }
-                foundTheme.Name = themeDto.Name;
+                var check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(themeDto.Name).Result;
+                if (check == null)
+                {
+                    foundTheme.Name = themeDto.Name;
 
-                await _unitOfWork.CommitAsync();
+                    await _unitOfWork.CommitAsync();
 
-                return Result<ThemeDto>.GetSuccess(_mapper.Map<ThemeDto>(foundTheme));
+                    return Result<ThemeDto>.GetSuccess(_mapper.Map<ThemeDto>(foundTheme));
+                }
+                else
+                {
+                    return Result<ThemeDto>.GetError(ErrorCode.ValidationError, "Validation error: theme with such name already exists.");
+                }
             }
             catch
             {
