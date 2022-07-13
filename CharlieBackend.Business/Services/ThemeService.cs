@@ -26,10 +26,10 @@ namespace CharlieBackend.Business.Services
             {
                 var createdThemeEntity = _mapper.Map<Theme>(themeDto);
 
-                var Check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdThemeEntity.Name).Result;
+                var check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdThemeEntity.Name).Result;
 
 
-                if (Check == null)
+                if (check == null)
                 {
                     _unitOfWork.ThemeRepository.Add(createdThemeEntity);
 
