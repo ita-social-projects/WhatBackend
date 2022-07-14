@@ -26,7 +26,7 @@ namespace CharlieBackend.Business.Services
             {
                 var createdThemeEntity = _mapper.Map<Theme>(themeDto);
 
-                var check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdThemeEntity.Name).Result;
+                var check = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(createdThemeEntity.Name);
 
 
                 if (check == null)
@@ -112,7 +112,7 @@ namespace CharlieBackend.Business.Services
                     return Result<ThemeDto>.GetError(ErrorCode.NotFound,
                         $"Theme with id={themeId} does not exist");
                 }
-                var check = _unitOfWork.ThemeRepository.GetThemeByNameAsync(themeDto.Name).Result;
+                var check = await _unitOfWork.ThemeRepository.GetThemeByNameAsync(themeDto.Name);
                 if (check == null)
                 {
                     foundTheme.Name = themeDto.Name;
