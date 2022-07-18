@@ -301,8 +301,8 @@ namespace CharlieBackend.Api.UnitTest
                     AccountId = 6,
                     Account= new Account()
                     {
-                        Id=1,
-                        Email="student@mail.com"
+                        Id = 1,
+                        Email = "student@mail.com"
                     }
                 }
             };
