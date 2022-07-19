@@ -31,7 +31,7 @@ namespace CharlieBackend.Business.Services
 
                 if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseDto.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Course name \"{courseDto.Name}\" is already taken");
+                    return Result<CourseDto>.GetError(ErrorCode.Conflict, $"Сourse name \"{courseDto.Name}\" is already exist") ;
                 }
 
                 var createdCourseEntity = _mapper.Map<Course>(courseDto);
