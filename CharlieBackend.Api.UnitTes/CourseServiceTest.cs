@@ -68,7 +68,7 @@ namespace CharlieBackend.Api.UnitTest
             Assert.NotNull(successResult.Data);
             Assert.Equal(newCourse.Name, successResult.Data.Name);
 
-            Assert.Equal(ErrorCode.UnprocessableEntity, courseNameExistResult.Error.Code);
+            Assert.Equal(ErrorCode.Conflict, courseNameExistResult.Error.Code);
 
             Assert.Equal(ErrorCode.ValidationError, nullCourseResult.Error.Code);
         }
