@@ -565,5 +565,34 @@ namespace CharlieBackend.Api.UnitTest
             //Assert
             existingResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
         }
+
+        [Fact]
+        public async Task GetStudentStudyGroupsByStudentIdAsync_StudentIdDoesNotMatchStudentGroupId_ShouldReturnUathorized()
+        {
+            //Arrange
+            long notMatchableStudentId = 0;
+
+            //Act
+            var result = await _studentService.GetStudentStudyGroupsByStudentIdAsync(notMatchableStudentId);
+
+            //Assert
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task GetStudentStudyGroupsByStudentIdAsync_NotExistingStudentId_ShouldReturnNotFound()
+        {
+            //Arrange
+            long notExistingStudentId = 1;
+
+            _studentRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingStudentId));
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+
+            //Act
+            var result = await _studentService.GetStudentStudyGroupsByStudentIdAsync(notExistingStudentId);
+
+            //Assert
+            result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
     }
 }
