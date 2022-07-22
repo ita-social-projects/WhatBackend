@@ -8,20 +8,47 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace CharlieBackend.Api.UnitTest
 {
     public class CourseServiceTest : TestBase
     {
+        private readonly Mock<ICourseRepository> _courseRepositoryMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
         private readonly Mock<ILogger<CourseService>> _loggerMock;
         private readonly IMapper _mapper;
+        private CourseService _courseService;
 
 
         public CourseServiceTest()
         {
+            _courseRepositoryMock = new Mock<ICourseRepository>();
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _loggerMock = new Mock<ILogger<CourseService>>();
             _mapper = GetMapper(new ModelMappingProfile());
+            _courseService = new CourseService(
+                _unitOfWorkMock.Object,
+                _mapper
+            );
+
+            _unitOfWorkMock.Setup(x => x.CourseRepository)
+                .Returns(_courseRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository)
+                .Returns(_studentGroupRepositoryMock.Object);
+        }
+
+        [Fact]
+        public async Task CreateCourseAsync_CourseDtoIsNull_ReturnValidationError()
+        {
+            //Act
+            var result = await _courseService.CreateCourseAsync(null);
+            
+            //Assert
+            result.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
         }
 
         [Fact]
@@ -52,16 +79,16 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(courseRepositoryMock.Object);
 
-            var courseService = new CourseService(
+            _courseService = new CourseService(
                 _unitOfWorkMock.Object,
                 _mapper
-                );
+            );
 
             //Act
 
-            var successResult = await courseService.CreateCourseAsync(newCourse);
-            var courseNameExistResult = await courseService.CreateCourseAsync(existingCourse);
-            var nullCourseResult = await courseService.CreateCourseAsync(null);
+            var successResult = await _courseService.CreateCourseAsync(newCourse);
+            var courseNameExistResult = await _courseService.CreateCourseAsync(existingCourse);
+            var nullCourseResult = await _courseService.CreateCourseAsync(null);
 
             //Assert
 
