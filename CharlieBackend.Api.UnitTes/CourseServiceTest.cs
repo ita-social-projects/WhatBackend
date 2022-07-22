@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Course;
 using CharlieBackend.Core.Entities;
@@ -38,9 +40,26 @@ namespace CharlieBackend.Api.UnitTest
             _unitOfWorkMock.Setup(x => x.StudentGroupRepository)
                 .Returns(_studentGroupRepositoryMock.Object);
         }
+        
+        private List<Course> GetCourses() =>
+            new List<Course>()
+            {
+                new Course()
+                {
+                    Id = 0,
+                    Name = "Test_course1",
+                    IsActive = true
+                },
+                new Course()
+                {
+                    Id = 1,
+                    Name = "Test_course2",
+                    IsActive = false
+                }
+            };
 
         [Fact]
-        public async Task CreateCourseAsync_CourseDtoIsNull_ReturnValidationError()
+        public async Task CreateCourseAsync_CourseDtoIsNull_ShouldReturnValidationError()
         {
             //Act
             var result = await _courseService.CreateCourseAsync(null);
@@ -52,119 +71,323 @@ namespace CharlieBackend.Api.UnitTest
         }
 
         [Fact]
-        public async Task CreateCourse()
+        public async Task CreateCourseAsync_SameCourseNameExists_ShouldReturnConflictError()
         {
             //Arrange
-
-            var newCourse = new CreateCourseDto()
+            var course = new CreateCourseDto()
             {
-                Name = "New_test_name"
+                Name = "Test_name"
             };
-
-            var existingCourse = new CreateCourseDto()
-            {
-                Name = "Exists_test_name"
-            };
-
-
-            var courseRepositoryMock = new Mock<ICourseRepository>();
-
-            courseRepositoryMock.Setup(x => x.Add(It.IsAny<Course>()));
-
-            courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(newCourse.Name))
-                    .ReturnsAsync(false);
-
-            courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(existingCourse.Name))
-                    .ReturnsAsync(true);
-
-            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(courseRepositoryMock.Object);
-
-            _courseService = new CourseService(
-                _unitOfWorkMock.Object,
-                _mapper
-            );
-
+            
+            _courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(course.Name))
+                .ReturnsAsync(true);
+            
             //Act
-
-            var successResult = await _courseService.CreateCourseAsync(newCourse);
-            var courseNameExistResult = await _courseService.CreateCourseAsync(existingCourse);
-            var nullCourseResult = await _courseService.CreateCourseAsync(null);
-
+            var result = await _courseService.CreateCourseAsync(course);
+            
             //Assert
-
-            Assert.NotNull(successResult.Data);
-            Assert.Equal(newCourse.Name, successResult.Data.Name);
-
-            Assert.Equal(ErrorCode.Conflict, courseNameExistResult.Error.Code);
-
-            Assert.Equal(ErrorCode.ValidationError, nullCourseResult.Error.Code);
+            result.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.Conflict);
         }
 
         [Fact]
-        public async Task UpdateCourse()
+        public async Task CreateCourseAsync_CourseNameIsUnique_ShouldReturnCreatedCourse()
         {
             //Arrange
-
-            long notExistingCourseId = -10;
-
-            var updateCourseDto = new UpdateCourseDto()
-            {
-                Name = "new_test_name"
-            };
-
-            var existingCourseDto = new UpdateCourseDto()
+            var course = new CreateCourseDto()
             {
                 Name = "Test_name"
             };
-
-            var existingCourse = new Course()
-            {
-                Id = 10,
-                Name = "Test_name"
-            };
-
-            var courseRepositoryMock = new Mock<ICourseRepository>();
-
-
-            courseRepositoryMock.Setup(x => x.IsEntityExistAsync(notExistingCourseId))
+            
+            _courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(course.Name))
                 .ReturnsAsync(false);
-
-            courseRepositoryMock.Setup(x => x.IsEntityExistAsync(existingCourse.Id))
-               .ReturnsAsync(true);
-
-            courseRepositoryMock.Setup(x => x.IsCourseActive(existingCourse.Id))
-              .ReturnsAsync(true);
-
-            courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(updateCourseDto.Name))
-                  .ReturnsAsync(false);
-
-            courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(existingCourse.Name))
-                    .ReturnsAsync(true);
-
-            _unitOfWorkMock.Setup(x => x.CourseRepository).Returns(courseRepositoryMock.Object);
-
-            var courseService = new CourseService(
-                _unitOfWorkMock.Object,
-                _mapper
-                );
-
+            
             //Act
-
-            var successResult = await courseService.UpdateCourseAsync(existingCourse.Id, updateCourseDto);
-            var courseNameExistResult = await courseService.UpdateCourseAsync(existingCourse.Id, existingCourseDto);
-            var courseNotExistResult = await courseService.UpdateCourseAsync(notExistingCourseId, updateCourseDto);
-            var nullCourseResult = await courseService.UpdateCourseAsync(existingCourse.Id, null);
-
+            var result = await _courseService.CreateCourseAsync(course);
+            
             //Assert
+            result.Data.Name
+                .Should()
+                .BeEquivalentTo(course.Name);
+        }       
+        
+        [Fact]
+        public async Task CreateCourseAsync_ServerException_ShouldReturnInternalServerError()
+        {
+            //Arrange
+            var course = new CreateCourseDto()
+            {
+                Name = "Test_name"
+            };
+            
+            _courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(course.Name))
+                .Throws<InvalidOperationException>();
+            
+            //Act
+            var result = await _courseService.CreateCourseAsync(course);
+            
+            //Assert
+            result.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.InternalServerError);
+        }
 
-            Assert.NotNull(successResult.Data);
-            Assert.Equal(successResult.Data.Name, successResult.Data.Name);
+        [Fact]
+        public async Task GetCoursesAsync_IsActiveNull_ShouldReturnAllCourses()
+        {
+            //Arrange
+            var courses = GetCourses();
+            
+            _courseRepositoryMock.Setup(x => x.GetCoursesAsync(null))
+                .ReturnsAsync(courses);
+            
+            //Act
+            var result = await _courseService.GetCoursesAsync(null);
+            
+            //Assert
+            result.Should()
+                .BeEquivalentTo(_mapper.Map<List<CourseDto>>(courses));
+        }
 
-            Assert.Equal(ErrorCode.UnprocessableEntity, courseNameExistResult.Error.Code);
+        [Fact]
+        public async Task UpdateCourseAsync_CourseDtoIsNull_ShouldReturnValidationError()
+        {
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, null);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
+        }
 
-            Assert.Equal(ErrorCode.NotFound, courseNotExistResult.Error.Code);
+        [Fact]
+        public async Task UpdateCourseAsync_InvalidId_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(-1))
+                .ReturnsAsync(false);
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(-1, new UpdateCourseDto());
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
+        }
 
-            Assert.Equal(ErrorCode.ValidationError, nullCourseResult.Error.Code);
+        [Fact]
+        public async Task UpdateCourseAsync_CourseHasGroup_ShouldReturnValidationError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseHasGroupAsync(0))
+                .ReturnsAsync(true);
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, new UpdateCourseDto());
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
+        }
+
+        [Fact]
+        public async Task UpdateCourseAsync_CourseIsActive_ShouldReturnConflictError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseHasGroupAsync(0))
+                .ReturnsAsync(false);
+            _courseRepositoryMock.Setup(x => x.IsCourseActive(0))
+                .ReturnsAsync(false);
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, new UpdateCourseDto());
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.Conflict);
+        }
+        
+        [Fact]
+        public async Task UpdateCourseAsync_SameCourseNameExists_ShouldReturnConflictError()
+        {
+            //Arrange
+            var course = new UpdateCourseDto()
+            {
+                Name = "Test_name"
+            };
+            
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseHasGroupAsync(0))
+                .ReturnsAsync(false);
+            _courseRepositoryMock.Setup(x => x.IsCourseActive(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(course.Name))
+                .ReturnsAsync(true);
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, course);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.Conflict);
+        }
+        
+        [Fact]
+        public async Task UpdateCourseAsync_ValidData_ShouldReturnUpdatedCourse()
+        {
+            //Arrange
+            var course = new UpdateCourseDto()
+            {
+                Name = "Test_name"
+            };
+            
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseHasGroupAsync(0))
+                .ReturnsAsync(false);
+            _courseRepositoryMock.Setup(x => x.IsCourseActive(0))
+                .ReturnsAsync(true);
+            _courseRepositoryMock.Setup(x => x.IsCourseNameTakenAsync(course.Name))
+                .ReturnsAsync(false);
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, course);
+            
+            //Assert
+            result.Data.Name.Should()
+                .BeEquivalentTo(course.Name);
+        }
+        
+        [Fact]
+        public async Task UpdateCourseAsync_ServerException_ShouldReturnInternalServerError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.IsEntityExistAsync(0))
+                .Throws<InvalidOperationException>();
+            
+            //Act
+            var result = await _courseService.UpdateCourseAsync(0, new UpdateCourseDto());
+            
+            //Assert
+            result.Error.Code
+                .Should()
+                .BeEquivalentTo(ErrorCode.InternalServerError);
+        }
+
+        [Fact]
+        public async Task DisableCourseAsync_CourseHasActiveStudentGroup_ShouldReturnValidationError()
+        {
+            //Arrange
+            _studentGroupRepositoryMock.Setup(x => x.IsGroupOnCourseAsync(0))
+                .ReturnsAsync(true);
+            
+            //Act
+            var result = await _courseService.DisableCourseAsync(0);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.ValidationError);
+        }
+        
+        [Fact]
+        public async Task DisableCourseAsync_ActiveCourseIsNotFound_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            _studentGroupRepositoryMock.Setup(x => x.IsGroupOnCourseAsync(0))
+                .ReturnsAsync(false);
+            _courseRepositoryMock.Setup(x => x.DisableCourseByIdAsync(0))
+                .ReturnsAsync(new Result<Course>()
+                {
+                    Error = new ErrorData()
+                    {
+                        Code = ErrorCode.NotFound
+                    }
+                });
+            
+            //Act
+            var result = await _courseService.DisableCourseAsync(0);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
+        }
+        
+        [Fact]
+        public async Task DisableCourseAsync_DataIsValid_ShouldReturnDisabledCourse()
+        {
+            //Arrange
+            var courseName = "Test_name";
+            _studentGroupRepositoryMock.Setup(x => x.IsGroupOnCourseAsync(0))
+                .ReturnsAsync(false);
+            _courseRepositoryMock.Setup(x => x.DisableCourseByIdAsync(0))
+                .ReturnsAsync(new Result<Course>()
+                {
+                    Data = new Course()
+                    {
+                        Name = courseName,
+                        IsActive = false
+                    }
+                });
+            
+            //Act
+            var result = await _courseService.DisableCourseAsync(0);
+            
+            //Assert
+            result.Data.Name.Should()
+                .BeEquivalentTo(courseName);
+            result.Data.IsActive.Should()
+                .BeFalse();
+        }
+        
+        [Fact]
+        public async Task EnableCourseAsync_InactiveCourseIsNotFound_ShouldReturnNotFoundError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.EnableCourseByIdAsync(0))
+                .ReturnsAsync(new Result<Course>()
+                {
+                    Error = new ErrorData()
+                    {
+                        Code = ErrorCode.NotFound
+                    }
+                });
+            
+            //Act
+            var result = await _courseService.EnableCourseAsync(0);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        [Fact] public async Task EnableCourseAsync_DataIsValid_ShouldReturnEnabledCourse()
+        {
+            //Arrange
+            var courseName = "Test_name";
+            _courseRepositoryMock.Setup(x => x.EnableCourseByIdAsync(0))
+                .ReturnsAsync(new Result<Course>()
+                {
+                    Data = new Course()
+                    {
+                        Name = courseName,
+                        IsActive = true
+                    }
+                });
+            
+            //Act
+            var result = await _courseService.EnableCourseAsync(0);
+            
+            //Assert
+            result.Data.Name.Should()
+                .BeEquivalentTo(courseName);
+            result.Data.IsActive.Should()
+                .BeTrue();
         }
     }
 }
