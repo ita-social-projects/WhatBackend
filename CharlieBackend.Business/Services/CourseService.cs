@@ -128,6 +128,11 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<CourseDto>> EnableCourseAsync(long id)
         {
+            if (await _unitOfWork.CourseRepository.IsCourseActive(id))
+            {
+                return Result<CourseDto>.GetError(ErrorCode.Conflict, "Course is already active.");
+            }
+            
             var course = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);  
             
             if (course.Data == null)

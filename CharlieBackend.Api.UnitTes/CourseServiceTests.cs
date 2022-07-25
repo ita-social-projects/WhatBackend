@@ -15,7 +15,7 @@ using Xunit;
 
 namespace CharlieBackend.Api.UnitTest
 {
-    public class CourseServiceTest : TestBase
+    public class CourseServiceTests : TestBase
     {
         private readonly Mock<ICourseRepository> _courseRepositoryMock;
         private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
@@ -24,7 +24,7 @@ namespace CharlieBackend.Api.UnitTest
         private CourseService _courseService;
 
 
-        public CourseServiceTest()
+        public CourseServiceTests()
         {
             _courseRepositoryMock = new Mock<ICourseRepository>();
             _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
@@ -365,8 +365,24 @@ namespace CharlieBackend.Api.UnitTest
             result.Error.Code.Should()
                 .BeEquivalentTo(ErrorCode.NotFound);
         }
+        
+        [Fact]
+        public async Task EnableCourseAsync_CourseIsAlreadyActive_ShouldReturnConflictError()
+        {
+            //Arrange
+            _courseRepositoryMock.Setup(x => x.IsCourseActive(0))
+                .ReturnsAsync(true);
+            
+            //Act
+            var result = await _courseService.EnableCourseAsync(0);
+            
+            //Assert
+            result.Error.Code.Should()
+                .BeEquivalentTo(ErrorCode.Conflict);
+        }
 
-        [Fact] public async Task EnableCourseAsync_DataIsValid_ShouldReturnEnabledCourse()
+        [Fact]
+        public async Task EnableCourseAsync_DataIsValid_ShouldReturnEnabledCourse()
         {
             //Arrange
             var courseName = "Test_name";
