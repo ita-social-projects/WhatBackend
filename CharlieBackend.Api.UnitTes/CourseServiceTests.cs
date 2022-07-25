@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using CharlieBackend.Business.Services;
 using CharlieBackend.Core.DTO.Course;
@@ -55,6 +56,12 @@ namespace CharlieBackend.Api.UnitTest
                     Id = 1,
                     Name = "Test_course2",
                     IsActive = false
+                },
+                new Course()
+                {
+                    Id = 2,
+                    Name = "Test_course3",
+                    IsActive = true
                 }
             };
 
@@ -144,6 +151,44 @@ namespace CharlieBackend.Api.UnitTest
             
             //Act
             var result = await _courseService.GetCoursesAsync(null);
+            
+            //Assert
+            result.Should()
+                .BeEquivalentTo(_mapper.Map<List<CourseDto>>(courses));
+        }
+        
+        [Fact]
+        public async Task GetCoursesAsync_IsActiveTrue_ShouldReturnActiveCourses()
+        {
+            //Arrange
+            var courses = GetCourses()
+                .Where(x => x.IsActive)
+                .ToList();
+            
+            _courseRepositoryMock.Setup(x => x.GetCoursesAsync(true))
+                .ReturnsAsync(courses);
+            
+            //Act
+            var result = await _courseService.GetCoursesAsync(null);
+            
+            //Assert
+            result.Should()
+                .BeEquivalentTo(_mapper.Map<List<CourseDto>>(courses));
+        }
+        
+        [Fact]
+        public async Task GetCoursesAsync_IsActiveFalse_ShouldReturnInactiveCourses()
+        {
+            //Arrange
+            var courses = GetCourses()
+                .Where(x => !x.IsActive)
+                .ToList();
+            
+            _courseRepositoryMock.Setup(x => x.GetCoursesAsync(false))
+                .ReturnsAsync(courses);
+            
+            //Act
+            var result = await _courseService.GetCoursesAsync(false);
             
             //Assert
             result.Should()
