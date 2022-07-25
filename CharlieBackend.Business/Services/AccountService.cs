@@ -270,7 +270,21 @@ namespace CharlieBackend.Business.Services
 
             return isSucceeded;
         }
+        public async Task<Result<AccountDto>> ChangeLocalizationAsync(ChangeLocalizationDto changeLocalization)
+        {
+            var email = _currentUserService.Email;
+            var user = await _unitOfWork.AccountRepository.GetAccountCredentialsByEmailAsync(email);
+            
+            if (user == null)
+            {
+                return Result<AccountDto>.GetError(ErrorCode.NotFound, "Account does not exist.");
+            }
 
+            user.Localization = changeLocalization.Localization;
+            await _unitOfWork.CommitAsync();
+
+            return Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
+        }
         public async Task<Result<AccountDto>> ChangePasswordAsync(ChangeCurrentPasswordDto changePassword)
         {
             var email = _currentUserService.Email;

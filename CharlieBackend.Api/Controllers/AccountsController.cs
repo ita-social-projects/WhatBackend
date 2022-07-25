@@ -230,7 +230,8 @@ namespace CharlieBackend.Api.Controllers
                 first_name = foundAccount.FirstName,
                 last_name = foundAccount.LastName,
                 role = foundAccount.Role,
-                id = entityId
+                id = entityId,
+                localization = foundAccount.Localization
             };
 
             GetHeaders(userRoleToJwtToken);
@@ -328,6 +329,20 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult> ChangePassword(ChangeCurrentPasswordDto changePassword)
         {
             var updatedAccount = await _accountService.ChangePasswordAsync(changePassword);
+
+            return updatedAccount.ToActionResult();
+        }
+
+        /// <summary>
+        /// Returns an updated account
+        /// </summary>
+        /// <response code="200">Successful return an updated account entity</response>
+        [Route("localization")]
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public async Task<ActionResult> ChangeLocalization(ChangeLocalizationDto changeLocalization)
+        {
+            var updatedAccount = await _accountService.ChangeLocalizationAsync(changeLocalization);
 
             return updatedAccount.ToActionResult();
         }

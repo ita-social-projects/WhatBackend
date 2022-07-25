@@ -15,6 +15,7 @@ namespace CharlieBackend.Panel.Services
         private string _email;
         private string _firstName;
         private string _lastName;
+        private string _localization;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
@@ -114,7 +115,27 @@ namespace CharlieBackend.Panel.Services
                 return userRole;
             }
         }
-
+   
+        public string Localization
+        {
+            get
+            {
+                if (_localization is null)
+                {
+                    _localization = GetClaimValue(ClaimsConstants.Localization);
+                    if (_localization is null)
+                    {
+                        throw new UnauthorizedAccessException("Not authorized!");
+                    }
+                }
+                return _localization;
+            }
+            set
+            {
+                _localization = value;
+                ChangeClaimValue(ClaimsConstants.Localization, _localization);
+            }
+        }
         private string GetClaimValue(string claimType)
         {
             return _httpContextAccessor.HttpContext
@@ -122,6 +143,13 @@ namespace CharlieBackend.Panel.Services
                 .Claims?
                 .SingleOrDefault(claim => claim.Type == claimType)?
                 .Value;
+        }
+
+        private void ChangeClaimValue(string claimType, string updatedValue)
+        {
+            var Identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            Identity.RemoveClaim(Identity.FindFirst(claimType));
+            Identity.AddClaim(new Claim(claimType, updatedValue));
         }
     }
 }

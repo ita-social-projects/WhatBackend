@@ -104,6 +104,10 @@ namespace CharlieBackend.Business.Services
 
                 return _localization;
             }
+            set
+            {
+                SetClaimValue(ClaimConstants.Localization, value); 
+            }
         }
 
         public UserRole Role
@@ -135,6 +139,14 @@ namespace CharlieBackend.Business.Services
                 ?.Claims
                 ?.SingleOrDefault(claim => claim.Type == claimType)
                 ?.Value;
+        }
+
+        private void SetClaimValue(string claimType, string value)
+        {
+            var identity = new ClaimsIdentity(claimType);
+
+            identity.RemoveClaim(identity.FindFirst(claimType));
+            identity.AddClaim(new Claim(claimType, value));
         }
     }
 }
