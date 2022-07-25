@@ -169,7 +169,7 @@ namespace CharlieBackend.Api.UnitTest
                 .ReturnsAsync(courses);
             
             //Act
-            var result = await _courseService.GetCoursesAsync(null);
+            var result = await _courseService.GetCoursesAsync(true);
             
             //Assert
             result.Should()
