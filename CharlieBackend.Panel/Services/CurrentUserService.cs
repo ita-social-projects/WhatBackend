@@ -2,9 +2,11 @@
 using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services
 {
@@ -120,20 +122,25 @@ namespace CharlieBackend.Panel.Services
         {
             get
             {
+                var defaultLocalization = GetClaimValue(ClaimsConstants.Localization);
+                if(string.IsNullOrEmpty(defaultLocalization))
+                {
+                    throw new UnauthorizedAccessException("Not authorized!");
+                }
+
+                _localization = _httpContextAccessor.HttpContext.Request.Cookies[ClaimsConstants.Localization];
                 if (_localization is null)
                 {
-                    _localization = GetClaimValue(ClaimsConstants.Localization);
-                    if (_localization is null)
-                    {
-                        throw new UnauthorizedAccessException("Not authorized!");
-                    }
+                    _localization = defaultLocalization;
                 }
                 return _localization;
             }
             set
             {
                 _localization = value;
-                ChangeClaimValue(ClaimsConstants.Localization, _localization);
+                if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(ClaimsConstants.Localization))
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete(ClaimsConstants.Localization);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append(ClaimsConstants.Localization, _localization);
             }
         }
         private string GetClaimValue(string claimType)
@@ -143,13 +150,6 @@ namespace CharlieBackend.Panel.Services
                 .Claims?
                 .SingleOrDefault(claim => claim.Type == claimType)?
                 .Value;
-        }
-
-        private void ChangeClaimValue(string claimType, string updatedValue)
-        {
-            var Identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-            Identity.RemoveClaim(Identity.FindFirst(claimType));
-            Identity.AddClaim(new Claim(claimType, updatedValue));
         }
     }
 }

@@ -89,24 +89,26 @@ namespace CharlieBackend.Business.Services
         }
 
         public string Localization
-        {
+        {            
             get
             {
-                if (_localization is null)
+                var defaultLocalization = GetClaimValue(claimType: ClaimConstants.Localization);
+                if (defaultLocalization is null)
                 {
-                    _localization = GetClaimValue(claimType: ClaimConstants.Localization);
-
-                    if (_localization is null)
-                    {
-                        throw new UnauthorizedAccessException("Not authorized!");
-                    }
+                    throw new UnauthorizedAccessException("Not authorized!");
                 }
-
+                var currentCookieLocalization = _httpContextAccessor.HttpContext.Request.Cookies[ClaimConstants.Localization];
+                _localization = string.IsNullOrEmpty(currentCookieLocalization)
+                    ? defaultLocalization
+                    : currentCookieLocalization;
                 return _localization;
             }
             set
             {
-                SetClaimValue(ClaimConstants.Localization, value); 
+                _localization = value;
+                if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(ClaimConstants.Localization))
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete(ClaimConstants.Localization);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append(ClaimConstants.Localization, _localization);
             }
         }
 
@@ -139,14 +141,6 @@ namespace CharlieBackend.Business.Services
                 ?.Claims
                 ?.SingleOrDefault(claim => claim.Type == claimType)
                 ?.Value;
-        }
-
-        private void SetClaimValue(string claimType, string value)
-        {
-            var identity = new ClaimsIdentity(claimType);
-
-            identity.RemoveClaim(identity.FindFirst(claimType));
-            identity.AddClaim(new Claim(claimType, value));
         }
     }
 }

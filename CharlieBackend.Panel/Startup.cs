@@ -2,6 +2,7 @@ using AutoMapper;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Panel.Extensions;
 using CharlieBackend.Panel.Helpers;
+using CharlieBackend.Panel.Models.Languages;
 using CharlieBackend.Panel.Middlewares;
 using CharlieBackend.Panel.Models.Mapping;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,7 +35,7 @@ namespace CharlieBackend.Panel
             services.Configure<ApplicationSettings>(Configuration);
 
             services.AddHttpContextAccessor();
-
+            
             services.AddServices(Configuration);
 
             // AutoMapper Configurations
@@ -69,16 +70,14 @@ namespace CharlieBackend.Panel
                 .AddJsonSerializer();
 
             services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
-
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 List<CultureInfo> supportedCultures = new List<CultureInfo>
                 {
-                    new CultureInfo("en-US"),
-                    new CultureInfo("uk-UA"),
+                    new CultureInfo(Language.En.ToDescriptionString()),
+                    new CultureInfo(Language.Uk.ToDescriptionString())
                 };
-
-                options.DefaultRequestCulture = new RequestCulture(culture: "uk-UA", uiCulture: "uk-UA");
+                options.DefaultRequestCulture = new RequestCulture(culture: Language.En.ToDescriptionString(), uiCulture: Language.En.ToDescriptionString());
 
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;

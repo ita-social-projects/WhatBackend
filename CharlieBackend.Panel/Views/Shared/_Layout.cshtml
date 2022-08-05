@@ -183,6 +183,18 @@
                     <ul class="navbar-nav ml-auto">
 
 
+                        @foreach (var language in Enum.GetValues(typeof(CharlieBackend.Panel.Models.Languages.Language)))
+                        {
+                            string imgFilePath = $"{language}.png";
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="ChangeLanguage" asp-controller="Home" asp-route-lang="@language">
+                                    @language&nbsp;
+                                    <img class="img-profile" src="~/img/@imgFilePath">
+                                </a>
+                            </li>
+                        }
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
@@ -330,7 +342,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                                    Sign in as ${role} </a>`;
+                                                                                                Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 

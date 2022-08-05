@@ -1,7 +1,9 @@
 ﻿using CharlieBackend.Panel.Models.Languages;
+using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using System.Linq;
 using System.Web;
 
 namespace CharlieBackend.Panel.Controllers
@@ -10,19 +12,16 @@ namespace CharlieBackend.Panel.Controllers
     public class HomeController : Controller
     {
         private readonly IStringLocalizer<HomeController> _stringLocalizer;
+        private readonly ICurrentUserService _currentUserService;
 
-        public HomeController(IStringLocalizer<HomeController> stringLocalizer)
+        public HomeController(IStringLocalizer<HomeController> stringLocalizer, ICurrentUserService currentUserService)
         {
             _stringLocalizer = stringLocalizer;
+            _currentUserService = currentUserService;
         }
 
         public IActionResult Index()
         {
-            if (Languages.language == Language.UA)
-                Languages.language = Language.EN;
-            else
-                Languages.language = Language.UA;
-
             return View(_stringLocalizer);
         }
 
@@ -35,6 +34,14 @@ namespace CharlieBackend.Panel.Controllers
             ViewBag.message = decodedMessage;
 
             return View();
+        }
+
+        public IActionResult ChangeLanguage(Language lang)
+        {
+            if (!_currentUserService.Localization.Equals(lang.ToDescriptionString()))
+                _currentUserService.Localization = lang.ToDescriptionString();
+
+            return RedirectToAction("Index");
         }
     }
 }
