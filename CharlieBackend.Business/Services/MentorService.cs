@@ -292,7 +292,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<IList<MentorCoursesDto>> GetMentorCoursesByMentorIdAsync(long id)
         {
-            var foundCourses = await _unitOfWork.CourseRepository.GetMentorCourses(id);
+            var foundCourses = await _unitOfWork.CourseRepository.GetMentorCoursesAsync(id);
 
             if (foundCourses == null)
             {

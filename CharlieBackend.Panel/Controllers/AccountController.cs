@@ -47,7 +47,7 @@ namespace CharlieBackend.Panel.Controllers
 
             if (responseModel == null)
             {
-                ModelState.AddModelError(string.Empty, ValidationConstants.PasswordOrEmailNotValid);
+                ModelState.AddModelError(string.Empty, Resources.Resource.PasswordOrEmailNotValidErrorMessage);
                 return View(authDto);
             }
 

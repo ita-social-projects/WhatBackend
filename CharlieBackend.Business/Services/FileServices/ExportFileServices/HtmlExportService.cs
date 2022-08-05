@@ -29,7 +29,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                 if (students.Count == 0)
                 {
                     return Result<FileDto>.GetError(ErrorCode.NotFound,
-                            ResponseMessages.GroupHasNotStudents);
+                            Resources.SharedResources.GroupHasNotStudentsResponseMessage);
                 }
 
                 using var fileExporter = new StudentGroupsHtmlFileExport(group.Name);
@@ -46,7 +46,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             else
             {
                 return Result<FileDto>.GetError(ErrorCode.NotFound,
-                        ResponseMessages.GroupNotFound);
+                        Resources.SharedResources.GroupNotFoundResponseMessage);
             }
         }
 

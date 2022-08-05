@@ -48,7 +48,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             if (request.Pattern.Index.HasValue && (request.Pattern.Index.Value > MonthIndex.Last || request.Pattern.Index.Value < MonthIndex.Undefined))
             {
-                error.Append(ResponseMessages.IndexNotValid);
+                error.Append(Resources.SharedResources.IndexNotValidResponseMessage);
             }
 
             if (request.Pattern.Type > PatternType.RelativeMonthly || request.Pattern.Type < PatternType.Daily)

@@ -1,4 +1,4 @@
-﻿using CharlieBackend.Business.Helpers;
+﻿using CharlieBackend.Business.Resources;
 using CharlieBackend.Core.DTO.Schedule;
 using FluentValidation;
 
@@ -19,7 +19,7 @@ namespace CharlieBackend.Api.Validators.Schedule
             RuleFor(x => x.LessonEnd)
                 .Must((x, cancellation) => (x.LessonEnd > x.LessonStart || x.LessonEnd.Equals(x.LessonStart)))
                 .When(x => x.LessonEnd != null)
-                .WithMessage(ValidationConstants.DatesNotValid);
+                .WithMessage(SharedResources.DatesNotValidMessage);
             RuleFor(x => x.RepeatRate)
                 .NotEmpty()
                 .IsInEnum();
