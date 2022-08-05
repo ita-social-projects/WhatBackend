@@ -72,7 +72,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return Result<Course>.GetSuccess(course);
         }
 
-        public async Task<List<MentorCoursesDto>> GetMentorCourses(long id)
+        public async Task<List<MentorCoursesDto>> GetMentorCoursesAsync(long id)
         {
             return await _applicationContext.Courses
                     .Where(x =>x.MentorsOfCourses.Any(x => x.MentorId == id))
