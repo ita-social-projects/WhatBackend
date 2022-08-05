@@ -22,7 +22,7 @@ namespace CharlieBackend.Panel.Helpers
                 return new ProviderCultureResult(Language.En.ToDescriptionString());
             }
             return new ProviderCultureResult(_currentUserService.Localization);
-            
+
         }
     }
 }

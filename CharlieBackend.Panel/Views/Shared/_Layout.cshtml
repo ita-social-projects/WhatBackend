@@ -195,6 +195,18 @@
                             </li>
                         }
 
+                        @foreach (var language in Enum.GetValues(typeof(CharlieBackend.Panel.Models.Languages.Language)))
+                        {
+                            string imgFilePath = $"{language}.png";
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="ChangeLanguage" asp-controller="Home" asp-route-lang="@language">
+                                    @language&nbsp;
+                                    <img class="img-profile" src="~/img/@imgFilePath">
+                                </a>
+                            </li>
+                        }
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
