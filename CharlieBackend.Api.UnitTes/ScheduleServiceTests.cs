@@ -539,5 +539,35 @@ namespace CharlieBackend.Api.UnitTest
             result.Should().NotBeNull();
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
         }
+
+        [Fact]
+        public async Task GetEventOccurrencesAsync_ExistingEventOccurences_ShouldReturnSuccessResult()
+        {
+            //Arrange
+            Initialize(validScheduleDTO);
+
+            var validEventOccurence = new List<EventOccurrence>()
+            {
+                validEventOccurrence
+            };
+
+            _eventOccuranceRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(validEventOccurence);
+
+            var scheduleService = new ScheduleService(_unitOfWorkMock.Object, _mapper, _scheduledEventFactory, _validator, GetCurrentUserAsExistingStudent().Object);
+            //Act
+            var successResult = await scheduleService.GetEventOccurrencesAsync();
+            //Assert
+            successResult.Should().NotBeNull();
+            successResult.Data.Should().BeEquivalentTo(_mapper.Map<IList<EventOccurrenceDTO>>(validEventOccurence));
+        }
+
+        [Fact]
+        public async Task GetDetailedEventOccurrenceById_NotExistingEventOccurenceId_ShouldReturnNull()
+        {
+            //Arrange
+            //Act
+            //Assert
+        }
+
     }
 }
