@@ -28,7 +28,7 @@ namespace CharlieBackend.Panel.Controllers
         }
 
         [HttpPost]
-        [Route("studentClassbook/{format}")]
+        [Route("studentClassbook/{studentId}")]
         public async Task<IActionResult> ExportStudentResults(ExportFileFormat format, long studentId, ExportByDateRangeModel exportModel)
         {
             var fileBytes = await _exportService.ExportStudentClassbook(format, studentId, exportModel);
