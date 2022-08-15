@@ -194,10 +194,15 @@
                         <input type="checkbox" class="form-check-input" id="check2" name="IncludeAnalytics[]" value="1">
                         <label class="form-check-label" for="check2">Student marks</label>
                     </div>
-                    @*<input type="hidden" id="exportCourseId" name="CourseId" />*@
-                    <input type="text" id="exportStudentId" name="StudentId"/>
-                    <input type="date" id="exportStart" name="StartDate" />
-                    <input type="date" id="exportFinish" name="FinishDate" />
+                    <input type="hidden" id="exportStudentId" name="StudentId" />
+                    <div class="form-check" style="margin-top: 8px; margin-bottom: 8px;">
+                        <input type="date" id="exportStart" name="StartDate" />
+                        <label class="form-check-label" for="exportStart">Start date</label>
+                    </div>
+                    <div class="form-check" style="margin-top: 8px; margin-bottom: 8px;">
+                        <input type="date" id="exportFinish" name="FinishDate" />
+                        <label class="form-check-label" for="exportFinish">Finish date</label>
+                    </div>
                     <button class="btn btn-success m-auto mt-3 d-block" type="submit">Confirm</button>
                 </form>
             </div>

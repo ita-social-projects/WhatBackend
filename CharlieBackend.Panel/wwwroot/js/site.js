@@ -32,7 +32,6 @@ function ConfigureExportingStudent() {
 
     $('#exportForm').submit(function () {
 
-        //$('#exportCourseId').val($('#courseSelect').val());
         $('#exportStudentId').val($('#exportStudentId').val());
         $('#exportStart').val($('#exportStart').val());
         $('#exportFinish').val($('#exportFinish').val());
