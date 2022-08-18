@@ -75,6 +75,10 @@
                                                                 <i class="fas fa-pen"></i>
                                                                 <span>Edit </span>
                                                             </a>
+                                                            <a onclick="ParseID(@student.Id)" class=" dropdown-item" data-toggle="modal" data-target="#export" asp-controller="Students" asp-route-id="@student.Id">
+                                                                <i class="fas fa-pen"></i>
+                                                                <span>Export </span>
+                                                            </a>
                                                         }
                                                         <a class="dropdown-item text-dark js-disable-student" data-toggle="modal" data-target="#disableStudentModalWindow" data-item-id="@student.Id">
                                                             <i class="fas fa-trash"></i>
@@ -105,12 +109,16 @@
                                                                 <i class="fas fa-pen"></i>
                                                                 <span>Edit </span>
                                                             </a>
-                                                        }
-                                                            <a class="dropdown-item text-dark js-enable-Student" data-toggle="modal" data-target="#enableStudentModalWindow" data-item-id="@student.Id">
-                                                                <i class="fas fa-trash"></i>
-                                                                <span>Enable </span>
+                                                            <a class=" dropdown-item" data-toggle="modal" data-target="#export" asp-controller="Students" asp-route-id="@student.Id">
+                                                                <i class="fas fa-pen"></i>
+                                                                <span>Export </span>
                                                             </a>
-                                                        </div>
+                                                        }
+                                                        <a class="dropdown-item text-dark js-enable-Student" data-toggle="modal" data-target="#enableStudentModalWindow" data-item-id="@student.Id">
+                                                            <i class="fas fa-trash"></i>
+                                                            <span>Enable </span>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -162,7 +170,51 @@
     </div>
 </div>
 
+<div class="modal fade" id="export" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Export</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select class="mb-3" id="selectFormat">
+                    <option value="0">HTML</option>
+                    <option value="1">XLSX</option>
+                    <option value="2">CSV</option>
+                </select>
+                <form method="POST" action="/Export/studentClassbook/0" id="exportForm">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check1" name="IncludeAnalytics[]" value="0" checked>
+                        <label class="form-check-label" for="check1">Student presence</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="check2" name="IncludeAnalytics[]" value="1">
+                        <label class="form-check-label" for="check2">Student marks</label>
+                    </div>
+                    <input type="hidden" id="exportStudentId" name="StudentId" />
+                    <div class="form-check" style="margin-top: 8px; margin-bottom: 8px;">
+                        <input type="date" id="exportStart" name="StartDate" />
+                        <label class="form-check-label" for="exportStart">Start date</label>
+                    </div>
+                    <div class="form-check" style="margin-top: 8px; margin-bottom: 8px;">
+                        <input type="date" id="exportFinish" name="FinishDate" />
+                        <label class="form-check-label" for="exportFinish">Finish date</label>
+                    </div>
+                    <button class="btn btn-success m-auto mt-3 d-block" type="submit">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
+    <script type="text/javascript">
+        $(document).ready(ConfigureExportingStudent);
+    </script>
+
     <script type="text/javascript">var isOnlyActiveStudents = false;
 
         var switchButtons = document.querySelectorAll(".js-student-list-button");
@@ -238,5 +290,14 @@
             $("#confirmEnableStudent").attr("href", routeForEnableStudent + enableStudentId);
 
         });</script>
+
+    <script type="text/javascript">
+        function ParseID(id) {
+            document.getElementById("exportStudentId").value = id;
+            var date = new Date();
+            var currentDate = date.toISOString().slice(0, 10);
+            document.getElementById("exportFinish").value = currentDate;
+        }
+    </script>
 
 }
