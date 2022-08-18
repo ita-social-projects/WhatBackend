@@ -47,7 +47,7 @@ namespace CharlieBackend.Panel.Controllers
 
             if (responseModel == null)
             {
-                ModelState.AddModelError(string.Empty, Resources.Resource.PasswordOrEmailNotValidErrorMessage);
+                ModelState.AddModelError(string.Empty, "Incorrect Email and/or Password");
                 return View(authDto);
             }
 
