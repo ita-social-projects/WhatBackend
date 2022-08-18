@@ -348,7 +348,7 @@ namespace CharlieBackend.Business.Services
         {
             var groupsOfStudent = await _unitOfWork.StudentGroupRepository
                     .GetStudentGroupsIdsByStudentId(
-                            (long)filterModel.StudentGroupId);
+                            _currentUserService.EntityId);
 
             if (groupsOfStudent.Contains(filterModel.StudentGroupId))
             {
@@ -361,7 +361,7 @@ namespace CharlieBackend.Business.Services
                         _mapper.Map<IList<LessonDto>>(lessonsForStudent));
             }
 
-            return Result<IList<LessonDto>>.GetError(ErrorCode.Unauthorized,
+            return Result<IList<LessonDto>>.GetError(ErrorCode.AccessDenied,
                    "student can get lessons only that group what he belongs");
         }
 

@@ -63,7 +63,7 @@ namespace CharlieBackend.Api.Middlewares
             return context.Response.WriteAsync(JsonSerializer.Serialize (new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
-                Message = "Internal Server Error. " + exception.Message
+                Message = $"Internal Server Error. {exception.Message}"
             }));
         }
 
