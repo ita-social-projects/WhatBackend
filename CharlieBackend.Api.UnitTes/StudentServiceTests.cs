@@ -23,6 +23,7 @@ namespace CharlieBackend.Api.UnitTest
         private readonly StudentService _studentService;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<IStudentService> _studentServiceMock;
+        private readonly Mock<IStudentGroupRepository> _studentGroupRepositoryMock;
 
         public StudentServiceTests()
         {
@@ -32,6 +33,7 @@ namespace CharlieBackend.Api.UnitTest
             _studentRepositoryMock = new Mock<IStudentRepository>();
             _blobServiceMock = new Mock<IBlobService>();
             _studentServiceMock = new Mock<IStudentService>();
+            _studentGroupRepositoryMock = new Mock<IStudentGroupRepository>();
             _studentService = new StudentService(
                 _accountServiceMock.Object,
                 _unitOfWorkMock.Object,
@@ -593,6 +595,34 @@ namespace CharlieBackend.Api.UnitTest
 
             //Assert
             result.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
+        }
+
+        [Fact]
+        public async Task GetStudentStudyGroupsByStudentIdAsync_ValidDataPassed_ShouldReturnStudentStudyGroups()
+        {
+            //Arrange
+            long existingStudentId = 1;
+
+            var studenStudyGroup = new List<StudentStudyGroupsDto>()
+            {
+                new StudentStudyGroupsDto
+                {
+                    Id = 1,
+                    Name = "student group"
+                }
+            };
+
+            _studentRepositoryMock.Setup(x => x.IsEntityExistAsync(existingStudentId)).ReturnsAsync(true);
+            _studentGroupRepositoryMock.Setup(x => x.GetStudentStudyGroups(existingStudentId)).Returns(Task.FromResult(studenStudyGroup));
+            _unitOfWorkMock.Setup(x => x.StudentRepository).Returns(_studentRepositoryMock.Object);
+            _unitOfWorkMock.Setup(x => x.StudentGroupRepository).Returns(_studentGroupRepositoryMock.Object);
+
+            //Act
+            var successResult = await _studentService.GetStudentStudyGroupsByStudentIdAsync(existingStudentId);
+
+            //Assert
+            successResult.Data.Should().NotBeNull();
+            successResult.Data.Should().BeEquivalentTo(studenStudyGroup);
         }
     }
 }
