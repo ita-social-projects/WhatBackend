@@ -16,7 +16,7 @@ namespace CharlieBackend.Core.DTO.Schedule
 
         public long? EventOccurrenceID { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDate { get; set; } = new DateTime();
 
         public DateTime? FinishDate { get; set; }
     }
