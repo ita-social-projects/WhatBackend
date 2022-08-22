@@ -43,6 +43,23 @@ namespace CharlieBackend.Api.SwaggerExamples.DashboardController
                         Student = "Alice Evans",
                         StudentAverageVisitsPercentage = 96
                     },
+                },
+                AverageStudentHomeworkMarks = new List<AverageStudentMarkDto>
+                {
+                    new AverageStudentMarkDto
+                    {
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Teresa Flores",
+                        StudentAverageMark = 90
+                    },
+                    new AverageStudentMarkDto
+                    {
+                        Course = "Applied mathematics",
+                        StudentGroup = "AM-12",
+                        Student = "Alice Evans",
+                        StudentAverageMark = 75
+                    }
                 }
             };
         }

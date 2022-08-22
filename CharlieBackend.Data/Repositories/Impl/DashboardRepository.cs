@@ -194,12 +194,9 @@ namespace CharlieBackend.Data.Repositories.Impl
         public async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
-            List<AverageStudentMarkDto> result;
-            if (!studentGroupsIds.Any())
-            {
-                result = new List<AverageStudentMarkDto>();
-            }
-            else
+            var result = new List<AverageStudentMarkDto>();
+
+            if (studentGroupsIds.Any())
             {
                 result = await GetStudentHomeworkAverageMarks(studentIds, studentGroupsIds);
             }
