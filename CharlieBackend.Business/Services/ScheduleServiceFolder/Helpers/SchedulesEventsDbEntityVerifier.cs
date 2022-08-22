@@ -56,7 +56,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
                 error.Append(ResponseMessages.NotValid(nameof(PatternType)));
             }
 
-            if(request.Range.StartDate < System.DateTime.Now)
+            if (request.Range.StartDate < System.DateTime.Now)
             {
                 error.Append(ResponseMessages.NotValid("StartDate"));
             }
