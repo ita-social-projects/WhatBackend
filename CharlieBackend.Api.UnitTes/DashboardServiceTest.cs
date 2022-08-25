@@ -269,7 +269,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(existentGroupIds))
                 .ReturnsAsync(existentStudentIds);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgMarksAsync(
               existentStudentIds, existentGroupIds))
                .ReturnsAsync(expectedStudentsMarks);
 
@@ -330,7 +330,7 @@ namespace CharlieBackend.Api.UnitTest
             _dashboardRepositoryMock.Setup(x => x.GetStudentsIdsByGroupIdsAsync(new List<long>()))
                .ReturnsAsync(new List<long>());
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long>(), new List<long>()))
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgMarksAsync(new List<long>(), new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
             //Act
@@ -617,7 +617,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(existentGroupIds);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgMarksAsync(
                 new List<long> { studentIdWithGroup }, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentMark);
 
@@ -655,7 +655,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentIdWithoutGroup }, new List<long>()))
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgMarksAsync(new List<long> { studentIdWithoutGroup }, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentMarkDto>());
 
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);

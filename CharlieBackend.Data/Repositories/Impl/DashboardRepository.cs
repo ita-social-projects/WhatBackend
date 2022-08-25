@@ -82,7 +82,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     Presence = x.Presence,
                 }).ToListAsync();
 
@@ -115,7 +115,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -137,7 +137,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
@@ -160,7 +160,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         StudentId = x.Student.AccountId,
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
@@ -182,7 +182,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         StudentMark = x.StudentMark,
@@ -191,7 +191,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return studentsMarksList;
         }
 
-        public async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
+        public async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAvgMarksAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
             var result = new List<AverageStudentMarkDto>();
@@ -204,7 +204,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             return result;
         }
 
-        public async Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
+        public async Task<List<AverageStudentMarkDto>> GetStudentAvgMarksAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
             if (!studentGroupsIds.Any())
@@ -232,7 +232,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                       Course = x.Homework.Lesson.StudentGroup.Course.Name,
                       StudentGroup = x.Homework.Lesson.StudentGroup.Name,
                       StudentMark = (decimal)x.Mark.Value,
-                      Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName
+                      Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
                   })
                   .GroupBy(x => new
                   {
@@ -263,7 +263,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
                         StudentLessonMark = (decimal)x.StudentMark,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
                     })
                     .GroupBy(x => new
                     {
@@ -291,7 +291,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     Presence = x.Presence,
                 }).ToListAsync();
 
@@ -325,7 +325,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                     {
                         Course = x.Lesson.StudentGroup.Course.Name,
                         StudentGroup = x.Lesson.StudentGroup.Name,
-                        Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                        Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                         LessonId = x.LessonId,
                         LessonDate = x.Lesson.LessonDate,
                         Presence = x.Presence,
@@ -344,7 +344,7 @@ namespace CharlieBackend.Data.Repositories.Impl
                 {
                     Course = x.Lesson.StudentGroup.Course.Name,
                     StudentGroup = x.Lesson.StudentGroup.Name,
-                    Student = x.Student.Account.FirstName + " " + x.Student.Account.LastName,
+                    Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}",
                     LessonId = x.LessonId,
                     LessonDate = x.Lesson.LessonDate,
                     StudentMark = x.StudentMark,

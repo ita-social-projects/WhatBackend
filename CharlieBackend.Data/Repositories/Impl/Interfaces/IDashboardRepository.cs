@@ -19,7 +19,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> studentGroupId);
 
-        Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupsIds);
+        Task<List<AverageStudentMarkDto>> GetStudentAvgMarksAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupsIds);
 
         Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupIds);
 
@@ -39,7 +39,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<AverageStudentGroupVisitDto>> GetStudentGroupsAverageVisits(List<long> studentGroupIds);
 
-        Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds,
+        Task<List<AverageStudentMarkDto>> GetStudentHomeworkAvgMarksAsync(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds);
     }
 }
