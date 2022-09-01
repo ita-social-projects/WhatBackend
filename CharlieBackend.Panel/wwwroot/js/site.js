@@ -21,3 +21,22 @@ function ConfigureExporting() {
     });
 
 }
+
+function ConfigureExportingStudent() {
+
+    let selectFormat = $('#selectFormat');
+
+    selectFormat.on('change', () => {
+        $('#exportForm').attr('action', '/Export/studentClassbook/' + selectFormat.val());
+    });
+
+    $('#exportForm').submit(function () {
+
+        $('#exportStudentId').val($('#exportStudentId').val());
+        $('#exportStart').val($('#exportStart').val());
+        $('#exportFinish').val($('#exportFinish').val());
+
+        return true;
+    });
+
+}

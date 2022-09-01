@@ -1,6 +1,7 @@
 ﻿using CharlieBackend.Core.DTO.Dashboard;
 using ClosedXML.Excel;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -115,12 +116,12 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                        .Cell(dateColumn)
                        .Value = ((DateTime)data.StudentsMarks.First(x => x.LessonId == dateData.ElementAt(dateColumn - _DEFAULT_STARTING_COLUMN).Key).LessonDate).ToString("dd-MM-yyyy");
 
-                    foreach (var mark in date)
+                    foreach (var markDto in date)
                     {
                         FillRow(worksheet,
-                            _STUDENT_STARTING_ROW + studentList.IndexOf(mark.Student),
+                            _STUDENT_STARTING_ROW + studentList.IndexOf(markDto.Student),
                             dateColumn,
-                            mark.StudentMark == null ? " " : mark.StudentMark.ToString());
+                            markDto.Mark == null ? " " : markDto.Mark.ToString());
                     }
 
                     dateColumn++;
@@ -138,7 +139,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             }
         }
 
-        public override async Task FillFileAsync(StudentsClassbookResultDto data)
+        public async override ValueTask FillFileAsync(StudentsClassbookResultDto data)
         {
             if (data == null)
             {
@@ -148,9 +149,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             if (data.StudentsMarks != null && data.StudentsMarks.Any())
             {
                 var StudentsMarks = data.StudentsMarks.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsMarks)
                 {
-                    await TryToFillMarksAsync(new StudentsClassbookResultDto
+                    listTasks.Add(
+                    TryToFillMarksAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = item
                              .Select(x => new StudentMarkDto
@@ -158,24 +161,30 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                                  LessonDate = x.LessonDate,
                                  LessonId = x.LessonId,
                                  Course = x.Course,
-                                 StudentMark = x.StudentMark,
+                                 Mark = x.Mark,
                                  Student = x.Student,
                                  StudentGroup = x.StudentGroup,
                                  StudentId = x.StudentId,
-                                 Comment = x.Comment
+                                 Comment = x.Comment,
+                                 MarkId = x.MarkId
                              })
                             .ToList(),
                         StudentsPresences = null
-                    });
+                    })
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
 
             if (data.StudentsPresences != null && data.StudentsPresences.Any())
             {
                 var StudentsPresences = data.StudentsPresences.GroupBy(x => x.StudentGroup);
+                var listTasks = new List<Task>();
                 foreach (var item in StudentsPresences)
                 {
-                    await TryToFillPresencesAsync(new StudentsClassbookResultDto
+                    listTasks.Add(
+                    TryToFillPresencesAsync(new StudentsClassbookResultDto
                     {
                         StudentsMarks = null,
                         StudentsPresences = item
@@ -190,8 +199,11 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
                                 StudentId = x.StudentId
                             })
                             .ToList()
-                    });
+                    })
+                    );
                 }
+
+                await Task.WhenAll(listTasks);
             }
         }
     }

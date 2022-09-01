@@ -1,4 +1,5 @@
 ﻿using CharlieBackend.Business.Helpers;
+using CharlieBackend.Business.Resources;
 using CharlieBackend.Core.DTO.Account;
 using FluentValidation;
 
@@ -23,7 +24,7 @@ namespace CharlieBackend.Api.Validators.AccountDTOValidators
                 .NotEmpty()
                 .MinimumLength(ValidationConstants.MinLength)
                 .MaximumLength(ValidationConstants.MaxLengthPassword)
-                .Must(PasswordHelper.PasswordValidation).WithMessage(ValidationConstants.PasswordRule);
+                .Must(PasswordHelper.PasswordValidation).WithMessage(SharedResources.PasswordRuleWarningMessage);
         }
     }
 }

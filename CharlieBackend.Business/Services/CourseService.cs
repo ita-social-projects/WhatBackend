@@ -31,7 +31,7 @@ namespace CharlieBackend.Business.Services
 
                 if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseDto.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Course name \"{courseDto.Name}\" is already taken");
+                    return Result<CourseDto>.GetError(ErrorCode.Conflict, $"Сourse name \"{courseDto.Name}\" is already exist") ;
                 }
 
                 var createdCourseEntity = _mapper.Map<Course>(courseDto);
@@ -87,7 +87,7 @@ namespace CharlieBackend.Business.Services
 
                 if (await _unitOfWork.CourseRepository.IsCourseNameTakenAsync(updatedEntity.Name))
                 {
-                    return Result<CourseDto>.GetError(ErrorCode.UnprocessableEntity, $"Сourse name \"{updatedEntity.Name}\"is already taken");
+                    return Result<CourseDto>.GetError(ErrorCode.Conflict, $"Сourse name \"{updatedEntity.Name}\"is already taken");
                 }
 
                 updatedEntity.IsActive = true;
@@ -106,11 +106,6 @@ namespace CharlieBackend.Business.Services
             }
         }
 
-        public Task<bool> IsCourseNameTakenAsync(string courseName)
-        {
-            return _unitOfWork.CourseRepository.IsCourseNameTakenAsync(courseName);
-        }
-
         public async Task<Result<CourseDto>> DisableCourseAsync(long id)
         {
             if (await _unitOfWork.StudentGroupRepository.IsGroupOnCourseAsync(id))
@@ -120,13 +115,14 @@ namespace CharlieBackend.Business.Services
 
             var courseDisabled = await _unitOfWork.CourseRepository.DisableCourseByIdAsync(id);
 
-            if (courseDisabled.Data == null && courseDisabled.Error != null)
+            if (courseDisabled.Data == null)
             {
                 return Result<CourseDto>.GetError(courseDisabled.Error.Code, courseDisabled.Error.Message);
             }
 
             await _unitOfWork.CommitAsync();      
-            var courseDto = _mapper.Map<Course, CourseDto>(courseDisabled.Data);            
+            var courseDto = _mapper.Map<Course, CourseDto>(courseDisabled.Data);        
+            
             return  Result<CourseDto>.GetSuccess(courseDto);
         }
 
@@ -136,22 +132,18 @@ namespace CharlieBackend.Business.Services
             {
                 return Result<CourseDto>.GetError(ErrorCode.Conflict, "Course is already active.");
             }
-
-            var course= await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);  
             
-            if (course.Data == null && course.Error != null)
+            var course = await _unitOfWork.CourseRepository.EnableCourseByIdAsync(id);  
+            
+            if (course.Data == null)
             {
                 return Result<CourseDto>.GetError(course.Error.Code, course.Error.Message);
             }
 
             await _unitOfWork.CommitAsync();          
-            var courseDto = _mapper.Map<Course,CourseDto>(course.Data);               
+            var courseDto = _mapper.Map<Course, CourseDto>(course.Data);  
+            
             return Result<CourseDto>.GetSuccess(courseDto); 
-        }
-
-        public async Task<bool> IsCourseActive(long id)
-        {
-            return await _unitOfWork.CourseRepository.IsCourseActive(id);
         }
     }
 }

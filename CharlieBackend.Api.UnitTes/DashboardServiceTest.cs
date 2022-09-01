@@ -80,7 +80,7 @@ namespace CharlieBackend.Api.UnitTest
                             StudentId = expectedStudentId,
                             LessonId = expectedLessonId,
                             LessonDate = DateTime.Now,
-                            StudentMark = mark
+                            Mark = mark
                         }
             };
 
@@ -407,7 +407,7 @@ namespace CharlieBackend.Api.UnitTest
                         StudentId = expectedStudentId,
                         LessonId = expectedLessonId,
                         LessonDate = DateTime.Now,
-                        StudentMark = mark
+                        Mark = mark
                     }
             };
 

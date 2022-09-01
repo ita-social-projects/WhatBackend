@@ -35,9 +35,11 @@ namespace CharlieBackend.Root
             services.Configure<AuthOptions>(configuration.GetSection("AuthOptions"));
 
             #region
+
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IMarkService, MarkService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddScoped<ICourseService, CourseService>();

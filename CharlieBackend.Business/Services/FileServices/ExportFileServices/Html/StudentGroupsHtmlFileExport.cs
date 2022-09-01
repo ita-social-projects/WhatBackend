@@ -23,7 +23,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
             _fileGroupName = fileGroupName;
         }
 
-        private void FillFile(IEnumerable<Student> students)
+        public override ValueTask FillFileAsync(IEnumerable<Student> students)
         {
             string[] headers = new string[] { "FirstName", "Lastname", "Email" };
 
@@ -43,12 +43,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices.Html
 
             byte[] byteLine = html.ToString().ConvertLineToArray();
 
-            _memoryStream.Write(byteLine);
-        }
-
-        public override async Task FillFileAsync(IEnumerable<Student> data)
-        {
-            await Task.Run(() => FillFile(data));
+            return _memoryStream.WriteAsync(byteLine);
         }
 
         public override string GetFileName()

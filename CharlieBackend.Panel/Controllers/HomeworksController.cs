@@ -60,29 +60,36 @@ namespace CharlieBackend.Panel.Controllers
 
         [HttpGet("{stGroupId}/{themeN?}/{mentorId?}")]
         public async Task<IActionResult> SelectLessonId(long stGroupId, string themeN, long? mentorId)
-        {
-            List<MentorEditViewModel> mentors = new List<MentorEditViewModel>();
-            
+        {            
             IEnumerable<LessonViewModel> allLessons = await _lessonService.GetLessonsByDateAsync();
+
             if (themeN == null && mentorId == null)
             {
                 IEnumerable<string> lessonThemes = allLessons.Where(x => x.StudentGroupId == stGroupId)
                     .Select(x => x.ThemeName).Distinct().ToList();
                 return View("Step3ThemeNames", lessonThemes);
             }
-            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId)
-                .Where(z => z.ThemeName == themeN).Select(x => x.MentorId).Distinct().ToList();
+
+            IEnumerable<long> mentorsId = allLessons.Where(x => x.StudentGroupId == stGroupId && x.ThemeName == themeN)
+                .Select(x => x.MentorId).Distinct().ToList();
+
             if (mentorId == null)
             {
+                IList<Task<MentorEditViewModel>> listTasks = new List<Task<MentorEditViewModel>>();
+
                 foreach (var id in mentorsId)
                 {
-                    MentorEditViewModel mentor = await _mentorService.GetMentorByIdAsync(id);
-                    mentors.Add(mentor);
+                    listTasks.Add(_mentorService.GetMentorByIdAsync(id));
                 }
+
+                IList<MentorEditViewModel> mentors = await Task.WhenAll(listTasks);
+
                 return View("Step4Mentors", mentors);
             }
-            IEnumerable<LessonViewModel> lessons = allLessons.Where(x => x.StudentGroupId == stGroupId)
-                .Where(z => z.ThemeName == themeN).Where(d => d.MentorId == mentorId).ToList();
+
+            IEnumerable<LessonViewModel> lessons = allLessons
+                .Where(x => x.StudentGroupId == stGroupId && x.ThemeName == themeN && x.MentorId == mentorId).ToList();
+
             return View("Step5LessonsDate", lessons);
         }
 

@@ -15,7 +15,7 @@ namespace CharlieBackend.Business.Services.FileServices.ExportFileServices
             return "StudentGroupResult_" + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
         }
 
-        public override async Task FillFileAsync(StudentGroupsResultsDto data)
+        public override async ValueTask FillFileAsync(StudentGroupsResultsDto data)
         {
             if (data == null)
             {

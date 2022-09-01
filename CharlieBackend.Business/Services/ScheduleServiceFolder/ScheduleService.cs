@@ -2,8 +2,8 @@
 using CharlieBackend.Business.Services.Interfaces;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
-using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.DTO.Schedule;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using System;

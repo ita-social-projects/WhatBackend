@@ -71,7 +71,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             if (schedule != null)
             {
                 schedule.LessonId = lessonId;
-                _applicationContext.SaveChanges();
+                await _applicationContext.SaveChangesAsync();
             }
 
             return schedule;

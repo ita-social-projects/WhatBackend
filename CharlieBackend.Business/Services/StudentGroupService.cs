@@ -243,10 +243,11 @@ namespace CharlieBackend.Business.Services
 
         public async Task<bool> DeleteStudentGroupAsync(long StudentGroupId)
         {
-            var lessonsOfStudentGroup = _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(StudentGroupId);
+            var lessonsOfStudentGroup = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroupAsync(StudentGroupId);
+
             bool result;
 
-            if (lessonsOfStudentGroup.Result.Count == 0)
+            if (lessonsOfStudentGroup.Count == 0)
             {
                 result = await _unitOfWork.StudentGroupRepository.DeleteStudentGroupAsync(StudentGroupId);
             }
@@ -452,12 +453,16 @@ namespace CharlieBackend.Business.Services
                     }
                 }
             }
+
+            List<Task<bool>> deletingStudentGroupTasks = new List<Task<bool>>();
             
             foreach(var groupToMerge in studentGroups)
             {
                 resultingStudentGroup.Data.StudentIds = resultingStudentGroup.Data.StudentIds.Union(groupToMerge.StudentIds).ToList();
-                await DeleteStudentGroupAsync(groupToMerge.Id);
+                deletingStudentGroupTasks.Add(DeleteStudentGroupAsync(groupToMerge.Id));
             }
+
+            await Task.WhenAll(deletingStudentGroupTasks);
 
             var groupToUpdate = new UpdateStudentGroupDto {
                 Name = resultingStudentGroup.Data.Name,

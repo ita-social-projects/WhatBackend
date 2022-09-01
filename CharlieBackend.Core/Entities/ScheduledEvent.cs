@@ -29,6 +29,10 @@ namespace CharlieBackend.Core.Entities
 
         public DateTime EventFinish { get; set; }
 
+        public string Description { get; set; }
+
+        public string Link { get; set; }
+        
         public int Color { get; set; }
 
         public override bool Equals(object obj)

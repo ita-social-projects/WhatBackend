@@ -6,6 +6,7 @@ using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Homework;
 using CharlieBackend.Core.DTO.HomeworkStudent;
 using CharlieBackend.Core.DTO.Lesson;
+using CharlieBackend.Core.DTO.Mark;
 using CharlieBackend.Core.DTO.Mentor;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Secretary;
@@ -53,10 +54,7 @@ namespace CharlieBackend.Core.Mapping
 
             #endregion
 
-            #region Lessons mapping
-
-            CreateMap<LessonDto, Lesson>();
-            CreateMap<Lesson, LessonDto>();
+            #region Lessons mapping           
 
             CreateMap<Lesson, CreateLessonDto>();
             CreateMap<CreateLessonDto, Lesson>()
@@ -66,18 +64,22 @@ namespace CharlieBackend.Core.Mapping
                              conf => conf.MapFrom(x => x.LessonVisits.Select(y => new Visit
                              {
                                  StudentId = y.StudentId,
-                                 StudentMark = y.StudentMark,
                                  Presence = y.Presence,
-                                 Comment = y.Comment
+                                 Mark = new Mark 
+                                 { 
+                                     Value = y.StudentMark.GetValueOrDefault(), 
+                                     Comment = y.Comment
+                                 }
                              }).ToList()));
 
+            CreateMap<LessonDto, Lesson>();
             CreateMap<Lesson, LessonDto>().ForMember(destination => destination.LessonVisits,
                                                      conf => conf.MapFrom(x => x.Visits.Select(y => new VisitDto
                                                      {
                                                          StudentId = y.StudentId,
-                                                         StudentMark = y.StudentMark,
                                                          Presence = y.Presence,
-                                                         Comment = y.Comment
+                                                         Comment = y.Mark != null ? y.Mark.Comment : string.Empty,
+                                                         StudentMark = y.Mark != null ? y.Mark.Value : new sbyte?() { }
                                                      }).ToList()));
 
             CreateMap<Lesson, UpdateLessonDto>();
@@ -85,6 +87,7 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<LessonDto, UpdateLessonDto>();
             CreateMap<UpdateLessonDto, LessonDto>();
+
             #endregion
 
             #region Mentors mapping
@@ -236,6 +239,13 @@ namespace CharlieBackend.Core.Mapping
 
             CreateMap<Visit, VisitDto>();
             CreateMap<VisitDto, Visit>();
+
+            #endregion
+
+            #region Mark mappping
+
+            CreateMap<Mark, MarkDto>();
+            CreateMap<MarkDto, Mark>();
 
             #endregion
         }
