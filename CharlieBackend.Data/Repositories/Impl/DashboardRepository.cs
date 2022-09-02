@@ -200,7 +200,7 @@ namespace CharlieBackend.Data.Repositories.Impl
 
             if (studentGroupsIds.Any())
             {
-                result = await GetStudentHomeworkAverageMarks(studentIds, studentGroupsIds);
+                result = await GetStudentHomeworkAvgMarks(studentIds, studentGroupsIds);
             }
 
             return result;
@@ -215,13 +215,13 @@ namespace CharlieBackend.Data.Repositories.Impl
             }
             else
             {
-                var studentAverageMarskList = await GetStudentAverageMarks(studentIds, studentGroupsIds);
+                var studentAverageMarskList = await GetStudentAvgMarks(studentIds, studentGroupsIds);
 
                 return studentAverageMarskList;
             }
         }
 
-        private async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAverageMarks(IEnumerable<long> studentIds,
+        private async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAvgMarks(IEnumerable<long> studentIds,
     IEnumerable<long> studentGroupsIds)
         {
             return await _applicationContext.HomeworkStudents
@@ -252,10 +252,10 @@ namespace CharlieBackend.Data.Repositories.Impl
                   ).ToListAsync();
         }
 
-        private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds,
+        private async Task<List<AverageStudentMarkDto>> GetStudentAvgMarks(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
-              return await _applicationContext.Visits
+            var studentVisitsList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
                     .Where(x => studentIds.Contains((long)x.StudentId))
