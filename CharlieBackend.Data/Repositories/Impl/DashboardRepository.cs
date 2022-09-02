@@ -211,7 +211,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private async Task<List<AverageStudentMarkDto>> GetStudentAverageMarks(IEnumerable<long> studentIds,
             IEnumerable<long> studentGroupsIds)
         {
-              return await _applicationContext.Visits
+            var studentVisitsList = await _applicationContext.Visits
                     .AsNoTracking()
                     .Where(x => studentGroupsIds.Contains(x.Lesson.StudentGroupId.Value))
                     .Where(x => studentIds.Contains((long)x.StudentId))
@@ -222,7 +222,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentGroup = x.Lesson.StudentGroup.Name,
                         StudentLessonMark = (decimal)x.Mark.Value,
                         Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
-                    })
+                    }).ToListAsync();
+
+            var StudentAverageMark = studentVisitsList
                     .GroupBy(x => new
                     {
                         Group = x.StudentGroup,
@@ -235,8 +237,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentGroup = x.Key.Group,
                         Student = x.Key.Student,
                         StudentAverageMark = x.Average(s => s.StudentLessonMark)
-                    }
-                    ).ToListAsync();
+                    }).ToList();
+
+            return StudentAverageMark;
         }
 
         public async Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds)
