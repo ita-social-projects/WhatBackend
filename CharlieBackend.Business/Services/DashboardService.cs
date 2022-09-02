@@ -144,7 +144,7 @@ namespace CharlieBackend.Business.Services
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
                 result.AverageStudentVisits = await _unitOfWork.DashboardRepository
-                    .GetStudentAverageVisitsPercentageByStudentIdsAsync(studentId, studentGroupsIds);
+                    .GetStudentAvgVisitsPercentageAsync(studentId, studentGroupsIds);
             }
 
             if(request.IncludeAnalytics.Contains(StudentResultType.AverageStudentHomeworkMark))

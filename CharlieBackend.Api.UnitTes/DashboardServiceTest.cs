@@ -621,7 +621,7 @@ namespace CharlieBackend.Api.UnitTest
                 new List<long> { studentIdWithGroup }, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentMark);
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgVisitsPercentageAsync(
                 studentIdWithGroup, existentGroupIds))
                 .ReturnsAsync(expectedAverageStudentVisits);
 
@@ -687,7 +687,7 @@ namespace CharlieBackend.Api.UnitTest
                 studentIdWithoutGroup, dashbordAnaliticRequstWithData.StartDate, dashbordAnaliticRequstWithData.FinishDate))
                 .ReturnsAsync(new List<long>());
 
-            _dashboardRepositoryMock.Setup(x => x.GetStudentAverageVisitsPercentageByStudentIdsAsync(studentIdWithoutGroup, new List<long>()))
+            _dashboardRepositoryMock.Setup(x => x.GetStudentAvgVisitsPercentageAsync(studentIdWithoutGroup, new List<long>()))
                 .ReturnsAsync(new List<AverageStudentVisitsDto>());
 
             var currentUserServiceAsStudentWithoutGroup = GetCurrentUserAsExistingStudent(entityId: studentIdWithoutGroup);

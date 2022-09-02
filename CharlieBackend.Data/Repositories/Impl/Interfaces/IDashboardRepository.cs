@@ -29,7 +29,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime? startDate, DateTime? finishDate);
 
-        Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds);
+        Task<List<AverageStudentVisitsDto>> GetStudentAvgVisitsPercentageAsync(long studentId, List<long> studentGroupsIds);
 
         Task<List<StudentVisitDto>> GetStudentPresenceListByStudentIds(long studentId, List<long> studentGroupsIds);
 

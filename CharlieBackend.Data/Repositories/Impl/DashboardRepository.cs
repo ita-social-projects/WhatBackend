@@ -224,7 +224,7 @@ namespace CharlieBackend.Data.Repositories.Impl
         private async Task<List<AverageStudentMarkDto>> GetStudentHomeworkAvgMarks(IEnumerable<long> studentIds,
     IEnumerable<long> studentGroupsIds)
         {
-            return await _applicationContext.HomeworkStudents
+            var studentHomeworks = await _applicationContext.HomeworkStudents
                   .AsNoTracking()
                   .Where(x => studentGroupsIds.Contains(x.Homework.Lesson.StudentGroupId.Value))
                   .Where(x => studentIds.Contains((long)x.StudentId))
@@ -235,8 +235,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                       StudentGroup = x.Homework.Lesson.StudentGroup.Name,
                       StudentMark = (decimal)x.Mark.Value,
                       Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
-                  })
-                  .GroupBy(x => new
+                  }).ToListAsync();
+
+            var StudentAvgMarks = studentHomeworks.GroupBy(x => new
                   {
                       Group = x.StudentGroup,
                       Course = x.Course,
@@ -249,7 +250,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                       Student = x.Key.Student,
                       StudentAverageMark = x.Average(s => s.StudentMark)
                   }
-                  ).ToListAsync();
+                  ).ToList();
+
+            return StudentAvgMarks;
         }
 
         private async Task<List<AverageStudentMarkDto>> GetStudentAvgMarks(IEnumerable<long> studentIds,
@@ -266,7 +269,9 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentGroup = x.Lesson.StudentGroup.Name,
                         StudentLessonMark = (decimal)x.Mark.Value,
                         Student = $"{x.Student.Account.FirstName} {x.Student.Account.LastName}"
-                    })
+                    }).ToListAsync();
+
+            var StudentAverageMark = studentVisitsList
                     .GroupBy(x => new
                     {
                         Group = x.StudentGroup,
@@ -279,11 +284,12 @@ namespace CharlieBackend.Data.Repositories.Impl
                         StudentGroup = x.Key.Group,
                         Student = x.Key.Student,
                         StudentAverageMark = x.Average(s => s.StudentLessonMark)
-                    }
-                    ).ToListAsync();
+                    }).ToList();
+
+            return StudentAverageMark;
         }
 
-        public async Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds)
+        public async Task<List<AverageStudentVisitsDto>> GetStudentAvgVisitsPercentageAsync(long studentId, List<long> studentGroupsIds)
         {
             var studentVisitsList = await _applicationContext.Visits
                 .AsNoTracking()

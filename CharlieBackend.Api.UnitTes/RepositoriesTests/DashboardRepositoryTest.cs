@@ -396,7 +396,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             //Act
 
-            var result = await dashboardRepository.GetStudentAverageVisitsPercentageByStudentIdsAsync(12, new List<long> { 1 });
+            var result = await dashboardRepository.GetStudentAvgVisitsPercentageAsync(12, new List<long> { 1 });
 
             //Assert
 
