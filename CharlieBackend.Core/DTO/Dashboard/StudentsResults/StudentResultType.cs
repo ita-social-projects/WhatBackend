@@ -4,5 +4,6 @@
     {
         AverageStudentMark,
         AverageStudentVisits,
+        AverageStudentHomeworkMark
     }
 }
