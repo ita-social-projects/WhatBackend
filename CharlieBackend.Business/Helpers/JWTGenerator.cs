@@ -63,7 +63,8 @@ namespace CharlieBackend.Business.Helpers
                             new Claim(ClaimConstants.EmailClaim, account.Email),
                             new Claim(ClaimConstants.AccountClaim, account.Id.ToString()),
                             new Claim(ClaimConstants.FirstName, account.FirstName),
-                            new Claim(ClaimConstants.LastName, account.LastName)
+                            new Claim(ClaimConstants.LastName, account.LastName),
+                            new Claim(ClaimConstants.Localization, account.Localization)
                         },
                         expires: now.Add(TimeSpan.FromMinutes(_authOptions.LIFETIME)),
                         signingCredentials:

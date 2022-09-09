@@ -16,6 +16,7 @@ namespace CharlieBackend.Business.Services
         private long _accountId;
         private long _entityId;
         private string _email;
+        private string _localization;
 
         readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -84,6 +85,30 @@ namespace CharlieBackend.Business.Services
                 }
 
                 return _email;
+            }
+        }
+
+        public string Localization
+        {            
+            get
+            {
+                var defaultLocalization = GetClaimValue(claimType: ClaimConstants.Localization);
+                if (defaultLocalization is null)
+                {
+                    throw new UnauthorizedAccessException("Not authorized!");
+                }
+                var currentCookieLocalization = _httpContextAccessor.HttpContext.Request.Cookies[ClaimConstants.Localization];
+                _localization = string.IsNullOrEmpty(currentCookieLocalization)
+                    ? defaultLocalization
+                    : currentCookieLocalization;
+                return _localization;
+            }
+            set
+            {
+                _localization = value;
+                if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(ClaimConstants.Localization))
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete(ClaimConstants.Localization);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append(ClaimConstants.Localization, _localization);
             }
         }
 

@@ -117,7 +117,44 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PasswordOrEmailNotValidErrorMessage" xml:space="preserve">
-    <value>Incorrect Email and/or Password</value>
+  <data name="About" xml:space="preserve">
+    <value>About project:</value>
+  </data>
+  <data name="Access to information" xml:space="preserve">
+    <value>Access to information 24/7</value>
+  </data>
+  <data name="DescriptionFirstParagraph" xml:space="preserve">
+    <value>Platform for organization of the study process with abilities to store and view educational information.</value>
+  </data>
+  <data name="DescriptionSecondParagraph" xml:space="preserve">
+    <value>Registered users can add and view information in accordance with their rights,
+ and users that are not registered can only sign up in the service.</value>
+  </data>
+  <data name="DescriptionThirdParagraph" xml:space="preserve">
+    <value>Users access service through the website interface.</value>
+  </data>
+  <data name="Export/import" xml:space="preserve">
+    <value>Export and import</value>
+  </data>
+  <data name="Feature" xml:space="preserve">
+    <value>Project features:</value>
+  </data>
+  <data name="Greeting" xml:space="preserve">
+    <value>You are in the WHAT MVC Client</value>
+  </data>
+  <data name="Homework and grades" xml:space="preserve">
+    <value>Homework and grades</value>
+  </data>
+  <data name="Lists" xml:space="preserve">
+    <value>Lists of students, mentors and secretaries</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="Timetable of classes" xml:space="preserve">
+    <value>Timetable of classes</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome</value>
   </data>
 </root>

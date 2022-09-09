@@ -13,6 +13,8 @@ namespace CharlieBackend.Api.SwaggerExamples.AccountsController
 
         public Dictionary<string, string> role_list { get; set; }
 
+        public string localization { get; set; }
+
 
         public SignInResponse GetExamples()
         {

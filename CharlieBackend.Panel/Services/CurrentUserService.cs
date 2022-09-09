@@ -2,9 +2,11 @@
 using CharlieBackend.Panel.Helpers;
 using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CharlieBackend.Panel.Services
 {
@@ -15,6 +17,7 @@ namespace CharlieBackend.Panel.Services
         private string _email;
         private string _firstName;
         private string _lastName;
+        private string _localization;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
@@ -114,7 +117,32 @@ namespace CharlieBackend.Panel.Services
                 return userRole;
             }
         }
+   
+        public string Localization
+        {
+            get
+            {
+                var defaultLocalization = GetClaimValue(ClaimsConstants.Localization);
+                if(string.IsNullOrEmpty(defaultLocalization))
+                {
+                    throw new UnauthorizedAccessException("Not authorized!");
+                }
 
+                _localization = _httpContextAccessor.HttpContext.Request.Cookies[ClaimsConstants.Localization];
+                if (_localization is null)
+                {
+                    _localization = defaultLocalization;
+                }
+                return _localization;
+            }
+            set
+            {
+                _localization = value;
+                if (_httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(ClaimsConstants.Localization))
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete(ClaimsConstants.Localization);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append(ClaimsConstants.Localization, _localization);
+            }
+        }
         private string GetClaimValue(string claimType)
         {
             return _httpContextAccessor.HttpContext

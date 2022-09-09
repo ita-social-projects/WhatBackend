@@ -1,15 +1,21 @@
 using AutoMapper;
 using CharlieBackend.Core.Extensions;
 using CharlieBackend.Panel.Extensions;
+using CharlieBackend.Panel.Helpers;
+using CharlieBackend.Panel.Models.Languages;
 using CharlieBackend.Panel.Middlewares;
 using CharlieBackend.Panel.Models.Mapping;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace CharlieBackend.Panel
 {
@@ -29,7 +35,7 @@ namespace CharlieBackend.Panel
             services.Configure<ApplicationSettings>(Configuration);
 
             services.AddHttpContextAccessor();
-
+            
             services.AddServices(Configuration);
 
             // AutoMapper Configurations
@@ -62,6 +68,23 @@ namespace CharlieBackend.Panel
 
             services.AddControllersWithViews()
                 .AddJsonSerializer();
+
+            services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                List<CultureInfo> supportedCultures = new List<CultureInfo>
+                {
+                    new CultureInfo(Language.En.ToDescriptionString()),
+                    new CultureInfo(Language.Uk.ToDescriptionString())
+                };
+                options.DefaultRequestCulture = new RequestCulture(culture: Language.En.ToDescriptionString(), uiCulture: Language.En.ToDescriptionString());
+
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+
+                options.RequestCultureProviders.Clear();
+                options.RequestCultureProviders.Add(new CultureProvider());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -86,6 +109,9 @@ namespace CharlieBackend.Panel
 
             app.UseAuthentication(); 
             app.UseAuthorization();
+
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
 
             app.UseMiddleware<ExceptionHandleMiddleware>();
 

@@ -47,7 +47,7 @@ namespace CharlieBackend.Panel.Controllers
 
             if (responseModel == null)
             {
-                ModelState.AddModelError(string.Empty, Resources.Resource.PasswordOrEmailNotValidErrorMessage);
+                ModelState.AddModelError(string.Empty, "Incorrect Email and/or Password");
                 return View(authDto);
             }
 
@@ -107,6 +107,7 @@ namespace CharlieBackend.Panel.Controllers
             var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Email).Value;
             var firstName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.FirstName).Value;
             var lastName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.LastName).Value;
+            var localization = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Localization).Value;
 
             SetResponseCookie("currentRole", role);
             SetResponseCookie("accountId", accountId);
@@ -114,6 +115,7 @@ namespace CharlieBackend.Panel.Controllers
             SetResponseCookie("email", email);
             SetResponseCookie("firstName", firstName);
             SetResponseCookie("lastName", lastName);
+            SetResponseCookie("localization", localization);
 
             var claims = new List<Claim>
             {
@@ -122,7 +124,8 @@ namespace CharlieBackend.Panel.Controllers
                  new Claim(ClaimsConstants.EntityId, entityId),
                  new Claim(ClaimsConstants.Email, email),
                  new Claim(ClaimsConstants.FirstName, firstName),
-                 new Claim(ClaimsConstants.LastName, lastName)
+                 new Claim(ClaimsConstants.LastName, lastName),
+                 new Claim(ClaimsConstants.Localization, localization)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Microsoft.Extensions.Localization
+@using CharlieBackend.Panel.Controllers
+@model IStringLocalizer<HomeController>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -7,21 +11,20 @@
 }
 
 <div class="text-center" id="helloDiv">
-    <h1 class="display-4 container-fluid">Welcome</h1>
-    <p>You are in the WHAT MVC Client</p>
+    <h1 class="display-4 container-fluid">@Model["Welcome"].Value</h1>
+    <p>@Model["Greeting"].Value</p>
 
     <div class="container-fluid justify-content-between" id="wrapper">
         <div class="text-left" style="flex:1 1 30%">
-            <h2>About project:</h2>
+            <h2>@Model["About"].Value</h2>
             <p>
-                Platform for organization of the study process with abilities to store and view educational information.
+                @Model["DescriptionFirstParagraph"].Value
             </p>
             <p>
-                Registered users can add and view information in accordance with their rights,
-                and users that are not registered can only sign up in the service.
+                @Model["DescriptionSecondParagraph"].Value
             </p>
             <p>
-                Users access service through the website interface.
+                @Model["DescriptionThirdParagraph"].Value
             </p>
         </div>
 
@@ -30,14 +33,14 @@
         </div>
 
         <div class="text-left" style="flex: 1 1 30%">
-            <h2>Project features:</h2>
+            <h2>@Model["Feature"].Value</h2>
             <ul>
-                <li>Homework and grades</li>
-                <li>Timetable of classes</li>
-                <li>Lists of students, mentors and secretaries</li>
-                <li>Notification</li>
-                <li>Export and import</li>
-                <li>Access to information 24/7</li>
+                <li>@Model["Homework and grades"].Value</li>
+                <li>@Model["Timetable of classes"].Value</li>
+                <li>@Model["Lists"].Value</li>
+                <li>@Model["Notification"].Value</li>
+                <li>@Model["Export/import"].Value</li>
+                <li>@Model["Access to information"].Value</li>
             </ul>
         </div>
     </div>
