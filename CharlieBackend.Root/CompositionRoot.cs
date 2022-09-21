@@ -75,6 +75,7 @@ namespace CharlieBackend.Root
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<ISchedulesEventsDbEntityVerifier, SchedulesEventsDbEntityVerifier>();
+            services.AddScoped<ITelegramService, TelegramService>();
 
             #endregion
         }

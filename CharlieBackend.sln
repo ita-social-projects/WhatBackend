@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api", "CharlieBackend.Api\CharlieBackend.Api.csproj", "{C3196AF5-5076-47D4-9109-F02FEB0194AC}"
 EndProject
@@ -16,6 +16,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Api.UnitTest", "CharlieBackend.Api.UnitTes\CharlieBackend.Api.UnitTest.csproj", "{FCAE2322-45AE-4604-9D3A-D417805FB7F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CharlieBackend.Panel", "CharlieBackend.Panel\CharlieBackend.Panel.csproj", "{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBot", "TelegramBot\TelegramBot.csproj", "{6E4A1714-7A07-4D4E-B64A-BB38DF547D85}"
+	ProjectSection(ProjectDependencies) = postProject
+		{80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7} = {80EE3BB1-13AA-44E0-B1C6-6B8C82280DF7}
+		{F7E97B01-E607-47B4-961A-60559C9D46F0} = {F7E97B01-E607-47B4-961A-60559C9D46F0}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,10 @@ Global
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1F2916F-B407-47B9-AF68-CCDC8E5D847B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E4A1714-7A07-4D4E-B64A-BB38DF547D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E4A1714-7A07-4D4E-B64A-BB38DF547D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E4A1714-7A07-4D4E-B64A-BB38DF547D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E4A1714-7A07-4D4E-B64A-BB38DF547D85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

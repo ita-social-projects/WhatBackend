@@ -375,46 +375,6 @@ namespace CharlieBackend.Api.Controllers
             return updatedAccount.ToActionResult();
         }
 
-        /// <summary>
-        /// Get link for Telegram account synchronization
-        /// </summary>
-        /// <returns>URL</returns>
-        //[SwaggerResponse(200, type: typeof(SignInResponse))]
-        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [Route("telegram")]
-        [HttpGet]
-        public async Task<ActionResult<string>> GetTelegramBotLink()
-        {
-            var link = await _accountService.GetTelegramBotLink();
-            return link.ToActionResult();
-        }
-
-        //todo: ask about delete at this endpoint(maybe better to use patch)
-        /// <summary>
-        /// Deletes expired Telegram tokens from database
-        /// </summary>
-        /// <returns>true</returns>
-        [Authorize(Roles = "Admin")]
-        [Route("telegram/clear")]
-        [HttpDelete]
-        public async Task<bool> ClearOldTelegramTokens()
-        {
-            return await _accountService.ClearOldTelegramTokens();
-        }
-
-        /// <summary>
-        /// Syncronized telegram account with user account from database
-        /// </summary>
-        /// <response code="200">Successful return an updated account entity</response>
-        [Authorize(Roles = "Admin, Secretary, Mentor, Student")]
-        [Route("telegram/sync")]
-        [HttpPost]
-        public async Task<ActionResult<Account>> AccountSync(string telegramToken, string telegramId)
-        {
-            var syncronizedAccount = await _accountService.SynchronizeTelegramAccount(telegramToken, telegramId);
-            return syncronizedAccount.ToActionResult();
-        }
-
         private void GetHeaders(Dictionary<string, string> tokenDictionary)
         {
             if (tokenDictionary.ContainsKey(UserRole.Admin.ToString()))

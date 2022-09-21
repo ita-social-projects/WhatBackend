@@ -41,13 +41,5 @@ namespace CharlieBackend.Business.Services.Interfaces
         Task<Result<AccountRoleDto>> GrantRoleToAccount(AccountRoleDto accountRole);
 
         Task<Result<AccountRoleDto>> RevokeRoleFromAccount(AccountRoleDto accountRole);
-
-        Task<Result<string>> GetTelegramBotLink();
-
-        Task<Result<Account>> SynchronizeTelegramAccount(string telegramToken, string telegramId);
-
-        Task<bool> ClearOldTelegramTokens();
-
-        Task<Account> GetAccountByTelegramId(long telegramId);
     }
 }
