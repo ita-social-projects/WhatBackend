@@ -30,12 +30,12 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("Type")
                 .HasColumnType("TINYINT UNSIGNED")
-                .HasComment("Types:\n 0 - Homework,\n 1 - Visit");
+				.HasComment("Types: 0 - Homework, 1 - Visit")
+				;
 
             entity.Property(e => e.EvaluatedBy)
                 .IsRequired()
-                .HasColumnName("EvaluatedBy")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("EvaluatedBy");
 
             entity.HasOne(e => e.Account)
                 .WithMany(a => a.Marks)

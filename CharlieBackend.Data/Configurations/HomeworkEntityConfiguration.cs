@@ -37,8 +37,7 @@ namespace CharlieBackend.Data.Configurations
 
             entity.Property(e => e.CreatedBy)
                 .IsRequired()
-                .HasColumnName("CreatedBy")
-                .HasColumnType("BIGINT UNSIGNED");
+                .HasColumnName("CreatedBy");            
 
             entity.HasOne(e => e.Account)
                 .WithMany(h => h.Homeworks)
