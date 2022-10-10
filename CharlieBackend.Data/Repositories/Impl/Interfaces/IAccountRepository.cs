@@ -36,5 +36,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         public Task<List<Account>> GetAllAccountsWithTelegramTokens();
 
         public Task<Account> GetAccountByTelegramId(long telegramId);
+
+        public Task<Account> GetAccountByTelegramId(string telegramId);
     }
 }

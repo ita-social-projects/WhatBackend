@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using TelegramBot.Models.Commands;
+using System.Net.Http;
 
 namespace TelegramBot.Models
 {

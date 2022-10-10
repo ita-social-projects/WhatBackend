@@ -18,7 +18,6 @@ namespace CharlieBackend.Business.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notification;
         private readonly ICurrentUserService _currentUserService;
-        private readonly TimeSpan _telegramTokenValidTime;
 
         public AccountService(IUnitOfWork unitOfWork,
                               IMapper mapper,
@@ -29,7 +28,6 @@ namespace CharlieBackend.Business.Services
             _mapper = mapper;
             _notification = notification;
             _currentUserService = currentUserService;
-            _telegramTokenValidTime = new TimeSpan(1, 0, 0);
         }
 
         public async Task<Result<AccountRoleDto>> GrantRoleToAccount(

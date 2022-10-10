@@ -1,12 +1,12 @@
 ﻿using CharlieBackend.Core.Entities;
-using CharlieBackend.Panel.Helpers;
-using CharlieBackend.Panel.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using TelegramBot.Constants;
+using TelegramBot.Services.Interfaces;
 
-namespace CharlieBackend.Panel.Services
+namespace TelegramBot.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
@@ -24,7 +24,7 @@ namespace CharlieBackend.Panel.Services
         }
         public long AccountId
         {
-            get 
+            get
             {
                 if (_accountId == default)
                 {
@@ -32,7 +32,7 @@ namespace CharlieBackend.Panel.Services
                     if (!long.TryParse(accountId, out _accountId))
                     {
                         throw new UnauthorizedAccessException("Not authorized!");
-                    }                    
+                    }
                 }
                 return _accountId;
             }
@@ -115,13 +115,13 @@ namespace CharlieBackend.Panel.Services
                 return userRole;
             }
         }
-   
+
         public string Localization
         {
             get
             {
                 var defaultLocalization = GetClaimValue(ClaimsConstants.Localization);
-                if(string.IsNullOrEmpty(defaultLocalization))
+                if (string.IsNullOrEmpty(defaultLocalization))
                 {
                     throw new UnauthorizedAccessException("Not authorized!");
                 }

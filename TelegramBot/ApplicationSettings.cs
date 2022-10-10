@@ -64,6 +64,7 @@ namespace TelegramBot
         public StudentGroupsApiEndpoints StudentGroups { get; set; }
         public HomeworksApiEndpoints Homeworks { get; set; }
         public LessonsApiEndpoints Lessons { get; set; }
+        public TelegramApiEndpoints Telegram { get; set; }
     }
 
     public class AccountsApiEndpoints
@@ -141,6 +142,14 @@ namespace TelegramBot
     public class LessonsApiEndpoints
     {
         public string GetLessonsByDate { get; set; }
+    }
+
+    public class TelegramApiEndpoints
+    {
+        public string GetTelegramLink { get; set; }
+        public string SyncAccounts { get; set; }
+        public string ClearTelegramToken { get; set; }
+        public string SignIn { get; set; }
     }
 
     #endregion 

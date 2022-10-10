@@ -24,6 +24,8 @@ namespace CharlieBackend.Panel.Utils
 
             _client = client;
 
+            var cookies = httpContextAccessor.HttpContext.Request.Cookies;
+
             string protectedToken = httpContextAccessor.HttpContext.Request.Cookies["accessToken"];
 
             if(!string.IsNullOrEmpty(protectedToken))

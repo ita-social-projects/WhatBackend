@@ -38,6 +38,7 @@ namespace CharlieBackend.Root
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITelegramService, TelegramService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IMarkService, MarkService>();
             services.AddScoped<ILessonService, LessonService>();
@@ -75,7 +76,6 @@ namespace CharlieBackend.Root
             services.AddScoped<IEventsService, EventsService>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<ISchedulesEventsDbEntityVerifier, SchedulesEventsDbEntityVerifier>();
-            services.AddScoped<ITelegramService, TelegramService>();
 
             #endregion
         }

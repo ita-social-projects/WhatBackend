@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Services.Interfaces;
+using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.Entities;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
@@ -11,15 +12,18 @@ namespace CharlieBackend.Business.Services
     public class TelegramService : ITelegramService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrentUserService _currentUserService;
         private readonly TimeSpan _telegramTokenValidTime;
+        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
         public TelegramService(IUnitOfWork unitOfWork,
-                              ICurrentUserService currentUserService)
+                              ICurrentUserService currentUserService,
+                              IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _currentUserService = currentUserService;
             _telegramTokenValidTime = new TimeSpan(1, 0, 0);
+            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<string>> GetTelegramBotLink()
@@ -58,22 +62,22 @@ namespace CharlieBackend.Business.Services
             return result;
         }
 
-        public async Task<Result<Account>> SynchronizeTelegramAccount(string telegramToken, string telegramId)
+        public async Task<Result<AccountDto>> SynchronizeTelegramAccount(string telegramToken, string telegramId)
         {
             var user = await _unitOfWork.AccountRepository
                 .GetAccountByTelegramToken(telegramToken);
 
-            Result<Account> result;
+            Result<AccountDto> result;
 
             if (user == null)
             {
-                result = Result<Account>.GetError(ErrorCode.NotFound,
+                result = Result<AccountDto>.GetError(ErrorCode.NotFound,
                     "Account not found");
             }
             else if (DateTime.UtcNow - user.TelegramTokenGenDate
                 > _telegramTokenValidTime)
             {
-                result = Result<Account>.GetError(ErrorCode.Forbidden,
+                result = Result<AccountDto>.GetError(ErrorCode.Forbidden,
                     "Telegram token expired");
             }
             else
@@ -84,7 +88,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                result = Result<Account>.GetSuccess(user);
+                result = Result<AccountDto>.GetSuccess(_mapper.Map<AccountDto>(user));
             }
 
             return result;
@@ -110,10 +114,31 @@ namespace CharlieBackend.Business.Services
             return true;
         }
 
+        public async Task<Result<AccountDto>> GetAccountByTelegramIdAsync(string telegramId)
+        {
+            var account = await _unitOfWork.AccountRepository.GetAccountByTelegramId(telegramId);
+
+            Result<AccountDto> result;
+
+            if (account != null)
+            {
+                var foundAccount = _mapper.Map<AccountDto>(account);
+
+                result = Result<AccountDto>.GetSuccess(foundAccount);
+            }
+            else
+            {
+                result = Result<AccountDto>.GetError(ErrorCode.NotFound, "User with current telegram id not found");
+            }
+
+            return result;
+
+        }
+
+        //ToDo: Check when used
         public async Task<Account> GetAccountByTelegramId(long telegramId)
         {
-            return await _unitOfWork.AccountRepository
-                .GetAccountByTelegramId(telegramId);
+            return await _unitOfWork.AccountRepository.GetAccountByTelegramId(telegramId);
         }
     }
 }
