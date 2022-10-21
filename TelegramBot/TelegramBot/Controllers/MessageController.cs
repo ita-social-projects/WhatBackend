@@ -11,12 +11,16 @@ namespace TelegramBot
         [HttpGet]
         public string Get()
         {
+            Response.Cookies.Append("test", "testCookie");
             return "Bot is up and running";
         }
-        [HttpPost("update")]
+
+        [HttpPost]
+        [Route("update")]
         public async Task<IActionResult> Update([FromServices] HandleUpdateService handleUpdateService,
                                               [FromBody] Update update)
         {
+            Response.Cookies.Append("testFromUpdate", "lol");
             await handleUpdateService.EchoAsync(update);    
             return Ok();
         }

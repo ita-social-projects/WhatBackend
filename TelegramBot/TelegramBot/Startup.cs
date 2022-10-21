@@ -1,17 +1,18 @@
 using CharlieBackend.Core.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using Telegram.Bot;
+using TelegramBot.Services;
+using TelegramBot.Services.Interfaces;
+using TelegramBot.Utils;
 
 namespace TelegramBot
 {
@@ -26,12 +27,34 @@ namespace TelegramBot
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var botConfig = Configuration.GetSection("BotConfiguration").Get<BotConfiguration>();
+            var botConfig = Configuration.GetSection("BotConfiguration").Get<BotSettings>();
 
             services.AddHostedService<ConfigureWebhook>();
 
+            services.Configure<ApplicationSettings>(Configuration);
+
+            services.AddHttpContextAccessor();
+
             services.AddHttpClient("tgwebhook").AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(botConfig.BotToken, httpClient));
+
             services.AddScoped<HandleUpdateService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddHttpClient<IHttpUtil, HttpUtil>("HttpUtil", client =>
+            {
+#if DEBUG  
+                client.BaseAddress = new Uri(Configuration.GetSection("Urls:Api:Http").Value);
+#else
+                client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
+#endif
+            }).SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+            services.AddScoped<IApiUtil, ApiUtil>();
+
+            services.AddAuthorization();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = new PathString("/Message/Update");
+            });
 
             services.AddControllers().AddJsonSerializer();
         }
@@ -44,10 +67,12 @@ namespace TelegramBot
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

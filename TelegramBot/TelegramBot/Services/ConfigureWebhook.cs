@@ -14,7 +14,7 @@ namespace TelegramBot
     {
         private readonly ILogger<ConfigureWebhook> _logger;
         private readonly IServiceProvider _services;
-        private readonly BotConfiguration _botConfig;
+        private readonly BotSettings _botConfig;
 
         public ConfigureWebhook(ILogger<ConfigureWebhook> logger,
                                 IServiceProvider serviceProvider,
@@ -22,7 +22,7 @@ namespace TelegramBot
         {
             _logger = logger;
             _services = serviceProvider;
-            _botConfig = configuration.GetSection("BotConfiguration").Get<BotConfiguration>();
+            _botConfig = configuration.GetSection("BotConfiguration").Get<BotSettings>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
