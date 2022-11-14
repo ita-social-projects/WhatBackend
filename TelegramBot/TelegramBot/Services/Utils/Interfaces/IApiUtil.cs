@@ -5,6 +5,8 @@ namespace TelegramBot
 {
     public interface IApiUtil
     {
+        public string AccessToken { get; set; }
+
         public Task<SignInResultDto> SignInAsync(string url, string telegramId);
 
         public Task<TResponse> GetAsync<TResponse>(string url);

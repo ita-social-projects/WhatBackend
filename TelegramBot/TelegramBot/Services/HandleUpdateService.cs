@@ -1,4 +1,5 @@
 using CharlieBackend.Core.DTO.Account;
+using CharlieBackend.Core.DTO.Student;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -20,6 +22,7 @@ using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Constants;
+using TelegramBot.Models.Entities;
 using TelegramBot.Services.Interfaces;
 
 namespace TelegramBot
@@ -32,7 +35,9 @@ namespace TelegramBot
         private readonly IDataProtector _dataProtector;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUserDataService _userDataService;
         private readonly TelegramApiEndpoints _telegramApiEndpoints;
+        private readonly StudentsApiEndpoints _studentApiEndpoints;
 
         public HandleUpdateService(ITelegramBotClient botClient,
             ILogger<HandleUpdateService> logger,
@@ -40,6 +45,7 @@ namespace TelegramBot
             IDataProtectionProvider provider,
             IOptions<ApplicationSettings> options,
             ICurrentUserService currentUserService,
+            IUserDataService userDataService,
             IHttpContextAccessor contextAccessor)
         {
             _botClient = botClient;
@@ -48,11 +54,15 @@ namespace TelegramBot
             _dataProtector = provider.CreateProtector(options.Value.Cookies.SecureKey);
             _contextAccessor = contextAccessor;
             _currentUserService = currentUserService;
+            _userDataService = userDataService;
             _telegramApiEndpoints = options.Value.Urls.ApiEndpoints.Telegram;
+            _studentApiEndpoints = options.Value.Urls.ApiEndpoints.Students;
         }
 
         public async Task EchoAsync(Update update)
         {
+            _apiUtil.AccessToken = _userDataService.GetAccessTokenByTelegramId(update.Message.Chat.Id);
+
             var handler = update.Type switch
             {
                 // UpdateType.Unknown:
@@ -91,6 +101,7 @@ namespace TelegramBot
             {
                 "/start" => SendMenu(_botClient, message),
                 "/inline" => SendInlineKeyboard(_botClient, message),
+                "/allusers" => SendAllStudents(_botClient, message),
                 "/keyboard" => SendReplyKeyboard(_botClient, message),
                 "/remove" => RemoveKeyboard(_botClient, message),
                 "/photo" => SendFile(_botClient, message),
@@ -258,6 +269,27 @@ namespace TelegramBot
             return Task.CompletedTask;
         }
 
+        private async Task<Message> SendAllStudents(ITelegramBotClient bot, Message message)
+        {
+            string getAllStudentsEndpoint = _studentApiEndpoints.GetAllStudentsEndpoint;
+
+            //ToDo: add studentViewModel
+            var students = await _apiUtil.GetAsync<IList<StudentDto>>(getAllStudentsEndpoint);
+
+            StringBuilder response = new StringBuilder();
+
+            if (students.Any())
+            {
+                foreach (var student in students)
+                {
+                    response.Append($"{student.FirstName} {student.LastName} {student.Email}\t");
+                }
+            }
+
+            return (await bot.SendTextMessageAsync(message.Chat.Id,
+                response.ToString(), replyToMessageId: message.MessageId, replyMarkup: GetMainMenu()));
+        }
+
         private async Task<Message> SendMenu(ITelegramBotClient bot, Message message)
         {
             await bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
@@ -301,7 +333,7 @@ namespace TelegramBot
             {
                 var token = responseModel.Token.Replace("Bearer ", "");
 
-                if (token == null || !await Authenticate(token))
+                if (token == null || !await Authenticate(token, chatId))
                 {
                     response = "Incorrect credential";
                 }
@@ -316,8 +348,6 @@ namespace TelegramBot
 
                 SetResponseCookie("accessToken", _dataProtector.Protect(token));
 
-                var currentUser = _currentUserService;
-
                 response = $"Hello!";
             }
 
@@ -328,9 +358,11 @@ namespace TelegramBot
         private IReplyMarkup GetMainMenu() => new ReplyKeyboardMarkup(new KeyboardButton("MENU")) { ResizeKeyboard = true };
 
         //ToDo: add second parameter string phone number
-        private async Task<bool> Authenticate(string token)
+        private async Task<bool> Authenticate(string token, long chatId)
         {
             var handler = new JwtSecurityTokenHandler();
+
+            _contextAccessor.HttpContext.Request.Headers.Add("Authorization", token);
 
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
@@ -342,6 +374,7 @@ namespace TelegramBot
             var lastName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.LastName).Value;
             var localization = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Localization).Value;
 
+            //todo: add this data to Userdata dictionary instead of cookies
             SetResponseCookie("currentRole", role);
             SetResponseCookie("accountId", accountId);
             SetResponseCookie("entityId", entityId);
@@ -364,6 +397,18 @@ namespace TelegramBot
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             await _contextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(roleClaim));
+
+            _userDataService.AddUserData(chatId, new UserData()
+            {
+                AccountId = Convert.ToInt64(accountId),
+                CurrentRole = role,
+                EntityId = Convert.ToInt64(entityId),
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Localization = localization,
+                AccessToken = _dataProtector.Protect(token)
+            });
 
             return true;
         }

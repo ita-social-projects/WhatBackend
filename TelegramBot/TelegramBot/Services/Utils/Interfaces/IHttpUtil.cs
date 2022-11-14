@@ -16,5 +16,7 @@ namespace TelegramBot
         Task<string> EnsureSuccessStatusCode(HttpResponseMessage httpResponse);
 
         public Task<HttpResponseMessage> PatchAsync(string url);
+
+        public void SetAuthorizationToken(string protectedToken);
     }
 }

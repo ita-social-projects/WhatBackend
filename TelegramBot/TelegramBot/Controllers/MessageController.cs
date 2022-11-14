@@ -20,7 +20,6 @@ namespace TelegramBot
         public async Task<IActionResult> Update([FromServices] HandleUpdateService handleUpdateService,
                                               [FromBody] Update update)
         {
-            Response.Cookies.Append("testFromUpdate", "lol");
             await handleUpdateService.EchoAsync(update);    
             return Ok();
         }

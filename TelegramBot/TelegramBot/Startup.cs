@@ -37,6 +37,7 @@ namespace TelegramBot
 
             services.AddHttpClient("tgwebhook").AddTypedClient<ITelegramBotClient>(httpClient => new TelegramBotClient(botConfig.BotToken, httpClient));
 
+            services.AddSingleton<IUserDataService, UserDataService>();
             services.AddScoped<HandleUpdateService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -48,6 +49,7 @@ namespace TelegramBot
                 client.BaseAddress = new Uri(configuration.GetSection("Urls:Api:Https").Value);
 #endif
             }).SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+
             services.AddScoped<IApiUtil, ApiUtil>();
 
             services.AddAuthorization();

@@ -13,11 +13,26 @@ namespace TelegramBot.Utils
     //Todo: All Utils folder same as panel (need to extract to dll)
     public class ApiUtil : IApiUtil
     {
+        private string _accessToken;
+        public string AccessToken
+        {
+            get 
+            { 
+                return _accessToken; 
+            }
+            set
+            {
+                _accessToken = value;
+                _httpUtil.SetAuthorizationToken(value);
+            }
+        }
+
         private IHttpUtil _httpUtil;
 
         public ApiUtil(IHttpUtil httpUtil)
         {
             _httpUtil = httpUtil;
+            _httpUtil.SetAuthorizationToken(AccessToken);
         }
 
         public async Task<TResponse> CreateAsync<TResponse>(string url, TResponse data)
@@ -128,7 +143,7 @@ namespace TelegramBot.Utils
         {
             var httpResponse = await _httpUtil.PostJsonAsync(url, telegramId);
 
-            if(httpResponse.StatusCode != HttpStatusCode.OK)
+            if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }
