@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
@@ -10,6 +11,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using static FluentAssertions.FluentActions;
@@ -138,9 +140,12 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
             var expectedUpdate = new UpdateScheduledEventDto{};
+            _validator.Setup(x => x.ValidateUpdatedScheduleAsync(expectedUpdate)).ReturnsAsync(ResponseMessages.NotExist("Mentor"));
+
 
             //Act & Assert
             Invoking(() => eventService.UpdateAsync(_existingId, expectedUpdate)).Should().Throw<EntityValidationException>();
@@ -210,6 +215,8 @@ namespace CharlieBackend.Api.UnitTest
             wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
                 .ReturnsAsync(_validEvent);
 
+            _validator.Setup(x => x.ValidateConnectEventToLessonAsync(wrongScheduledEvent.Id, _lessonId)).ReturnsAsync(ResponseMessages.NotExist("EventID"));
+
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
@@ -227,6 +234,8 @@ namespace CharlieBackend.Api.UnitTest
 
             _eventRepositoryMock.Setup(x => x.IsLessonConnectedToSheduledEventAsync(_lessonId))
                 .ReturnsAsync(true);
+            _validator.Setup(x => x.ValidateConnectEventToLessonAsync(_existingId, _lessonId)).ReturnsAsync($"Lesson with id={_lessonId} is already associated with another ScheduledEvent. ");
+
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
