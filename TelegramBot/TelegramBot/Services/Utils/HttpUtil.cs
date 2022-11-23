@@ -21,28 +21,13 @@ namespace TelegramBot.Utils
         private HttpClient _client;
 
         public HttpUtil(IOptions<ApplicationSettings> config,
-                        IHttpContextAccessor httpContextAccessor,
                         IDataProtectionProvider provider,
-                        ITelegramBotClient telegramBotClient,
                         HttpClient client)
         {
 
             _client = client;
             _config = config;
             _provider = provider;
-            //string protectedToken = httpContextAccessor.HttpContext != null ? httpContextAccessor.HttpContext.Request.Cookies["accessToken"] : null;
-            //string protectedToken = provider.CreateProtector(config.Value.Cookies.SecureKey).Protect("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsIklkIjoiMSIsIkVtYWlsIjoiamFtZXMuc21pdGhAZXhhbXBsZS5jb20iLCJBY2NvdW50SWQiOiIxIiwiRmlyc3ROYW1lIjoiSmFtZXMiLCJMYXN0TmFtZSI6IlNtaXRoIiwiTG9jYWxpemF0aW9uIjoiZW4tVVMiLCJuYmYiOjE2NjY4OTMzMDgsImV4cCI6MTY2NjkzNjUwOCwiaXNzIjoiTXlBdXRoU2VydmVyIiwiYXVkIjoiTXlBdXRoQ2xpZW50In0.cl_-wuWf1t9p3UbvMsSq5EY9sJUnlVJUg3WA-Nl9sfc");
-            //string protectedToken = httpContextAccessor.HttpContext.Request.Cookies["accessToken"];
-            //var data = httpContextAccessor.HttpContext.User.Identity;
-
-            //if (!string.IsNullOrEmpty(protectedToken))
-            //{
-            //    IDataProtector protector = provider.CreateProtector(config.Value.Cookies.SecureKey);
-
-            //    string token = protector.Unprotect(protectedToken);
-
-            //    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            //}
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string url)

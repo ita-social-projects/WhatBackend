@@ -2,7 +2,6 @@
 
 namespace TelegramBot
 {
-    //Todo: Same as panel and appsettings.json...
     public class ApplicationSettings
     {
         public CorsSettings Cors { get; set; }

@@ -1,5 +1,6 @@
 using CharlieBackend.Core.DTO.Account;
 using CharlieBackend.Core.DTO.Student;
+using CharlieBackend.Core.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
@@ -33,27 +34,22 @@ namespace TelegramBot
         private readonly ILogger<HandleUpdateService> _logger;
         private readonly IApiUtil _apiUtil;
         private readonly IDataProtector _dataProtector;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ICurrentUserService _currentUserService;
         private readonly IUserDataService _userDataService;
         private readonly TelegramApiEndpoints _telegramApiEndpoints;
         private readonly StudentsApiEndpoints _studentApiEndpoints;
+        private const int _TokenLifeTime = 720;
 
         public HandleUpdateService(ITelegramBotClient botClient,
             ILogger<HandleUpdateService> logger,
             IApiUtil apiUtil,
             IDataProtectionProvider provider,
             IOptions<ApplicationSettings> options,
-            ICurrentUserService currentUserService,
-            IUserDataService userDataService,
-            IHttpContextAccessor contextAccessor)
+            IUserDataService userDataService)
         {
             _botClient = botClient;
             _logger = logger;
             _apiUtil = apiUtil;
             _dataProtector = provider.CreateProtector(options.Value.Cookies.SecureKey);
-            _contextAccessor = contextAccessor;
-            _currentUserService = currentUserService;
             _userDataService = userDataService;
             _telegramApiEndpoints = options.Value.Urls.ApiEndpoints.Telegram;
             _studentApiEndpoints = options.Value.Urls.ApiEndpoints.Students;
@@ -61,8 +57,6 @@ namespace TelegramBot
 
         public async Task EchoAsync(Update update)
         {
-            _apiUtil.AccessToken = _userDataService.GetAccessTokenByTelegramId(update.Message.Chat.Id);
-
             var handler = update.Type switch
             {
                 // UpdateType.Unknown:
@@ -83,9 +77,7 @@ namespace TelegramBot
             {
                 await handler;
             }
-#pragma warning disable CA1031
             catch (Exception exception)
-#pragma warning restore CA1031
             {
                 await HandleErrorAsync(exception);
             }
@@ -97,17 +89,31 @@ namespace TelegramBot
             if (message.Type != MessageType.Text)
                 return;
 
+            var currentUser = new UserData();
+
+            if (_userDataService.UserDataByTelegramId.TryGetValue(message.Chat.Id, out currentUser)
+                && currentUser.Created.Value.AddMinutes(_TokenLifeTime) >= DateTime.UtcNow)
+            {
+                _apiUtil.AccessToken = _userDataService.GetAccessTokenByTelegramId(message.Chat.Id);
+            }
+            else
+            {
+                if (!await SignInAsync(message))
+                    return;
+            }
+
             var action = message.Text!.Split(' ')[0] switch
             {
                 "/start" => SendMenu(_botClient, message),
                 "/inline" => SendInlineKeyboard(_botClient, message),
-                "/allusers" => SendAllStudents(_botClient, message),
+                "/students" => SendAllStudents(_botClient, message),
                 "/keyboard" => SendReplyKeyboard(_botClient, message),
                 "/remove" => RemoveKeyboard(_botClient, message),
                 "/photo" => SendFile(_botClient, message),
                 "/request" => RequestContactAndLocation(_botClient, message),
-                _ => Usage(_botClient, message)
+                _ => Usage(_botClient, message, currentUser?.CurrentRole)
             };
+
             Message sentMessage = await action;
             _logger.LogInformation("The message was sent with id: {SentMessageId}", sentMessage.MessageId);
 
@@ -193,14 +199,27 @@ namespace TelegramBot
                                                       replyMarkup: RequestReplyKeyboard);
             }
 
-            static async Task<Message> Usage(ITelegramBotClient bot, Message message)
+            static async Task<Message> Usage(ITelegramBotClient bot, Message message, UserRole? role = UserRole.NotAssigned)
             {
-                const string usage = "Usage:\n" +
+                string usage = "Usage:\n" +
                                      "/inline   - send inline keyboard\n" +
                                      "/keyboard - send custom keyboard\n" +
                                      "/remove   - remove custom keyboard\n" +
                                      "/photo    - send a photo\n" +
                                      "/request  - request location or contact";
+
+                if (role == UserRole.Student)
+                {
+                    usage = $"{usage}\n/classbook - send user classbook";
+                }
+                else if (role == UserRole.Mentor)
+                {
+                    usage = $"{usage}\n/setHomework  - set new homework";
+                }
+                else if (role == UserRole.Admin)
+                {
+                    usage = $"{usage}\n/students - send all students";
+                }
 
                 return await bot.SendTextMessageAsync(chatId: message.Chat.Id,
                                                       text: usage,
@@ -297,45 +316,47 @@ namespace TelegramBot
             string telegramSyncEndlpoint = _telegramApiEndpoints.SyncAccounts;
             var parameters = message.Text.Split(' ');
             string token;
-            var chatId = message.Chat.Id;
+            var telegramId = message.Chat.Id;
             var messageId = message.MessageId;
             AccountDto accountDto = new AccountDto();
 
             if (parameters.Length > 1)
             {
                 token = parameters[1];
-                telegramSyncEndlpoint = string.Format(telegramSyncEndlpoint, token, chatId.ToString());
+                telegramSyncEndlpoint = string.Format(telegramSyncEndlpoint, token, telegramId.ToString());
 
                 accountDto = await _apiUtil.PostAsync<AccountDto, string>(telegramSyncEndlpoint, null);
-            }
 
-            //ToDo: add authoriation after sync acc by chatid and phone number(create phone number field in db)
-            await SignInAsync(message);
+                await SignInAsync(message);
+            }
 
             string response = $"Hello {accountDto?.FirstName}! I'm a Telegram bot of WHAT. " +
               "Press the button 'MENU' below the input field to open menu and begin dealing with me:\n";
 
-            return (await bot.SendTextMessageAsync(chatId,
+            return (await bot.SendTextMessageAsync(telegramId,
                 response, replyToMessageId: messageId, replyMarkup: GetMainMenu()));
         }
 
-        private async Task SignInAsync(Message message)
+        private async Task<bool> SignInAsync(Message message)
         {
             long chatId = message.Chat.Id;
             var responseModel = await _apiUtil.SignInAsync(_telegramApiEndpoints.SignIn, chatId.ToString());
             string response;
+            bool result = true;
 
             if (responseModel == null)
             {
                 response = "Incorrect credential";
+                result = false;
             }
             else
             {
                 var token = responseModel.Token.Replace("Bearer ", "");
 
-                if (token == null || !await Authenticate(token, chatId))
+                if (token == null || !Authenticate(token, chatId))
                 {
                     response = "Incorrect credential";
+                    result = false;
                 }
 
                 Dictionary<string, string> roleList = new Dictionary<string, string>();
@@ -346,23 +367,21 @@ namespace TelegramBot
                     roleList.Add(role.Key, value);
                 }
 
-                SetResponseCookie("accessToken", _dataProtector.Protect(token));
-
                 response = $"Hello!";
             }
 
             await _botClient.SendTextMessageAsync(chatId,
                 response, replyToMessageId: message.MessageId, replyMarkup: GetMainMenu());
+
+            return result;
         }
 
         private IReplyMarkup GetMainMenu() => new ReplyKeyboardMarkup(new KeyboardButton("MENU")) { ResizeKeyboard = true };
 
         //ToDo: add second parameter string phone number
-        private async Task<bool> Authenticate(string token, long chatId)
+        private bool Authenticate(string token, long chatId)
         {
             var handler = new JwtSecurityTokenHandler();
-
-            _contextAccessor.HttpContext.Request.Headers.Add("Authorization", token);
 
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 
@@ -373,54 +392,25 @@ namespace TelegramBot
             var firstName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.FirstName).Value;
             var lastName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.LastName).Value;
             var localization = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Localization).Value;
-
-            //todo: add this data to Userdata dictionary instead of cookies
-            SetResponseCookie("currentRole", role);
-            SetResponseCookie("accountId", accountId);
-            SetResponseCookie("entityId", entityId);
-            SetResponseCookie("email", email);
-            SetResponseCookie("firstName", firstName);
-            SetResponseCookie("lastName", lastName);
-            SetResponseCookie("localization", localization);
-
-            var claims = new List<Claim>
-            {
-                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
-                 new Claim(ClaimsConstants.AccountId, accountId),
-                 new Claim(ClaimsConstants.EntityId, entityId),
-                 new Claim(ClaimsConstants.Email, email),
-                 new Claim(ClaimsConstants.FirstName, firstName),
-                 new Claim(ClaimsConstants.LastName, lastName),
-                 new Claim(ClaimsConstants.Localization, localization)
-            };
-
-            ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-
-            await _contextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(roleClaim));
+            UserRole currentRole;
+            Enum.TryParse(role, true, out currentRole);
 
             _userDataService.AddUserData(chatId, new UserData()
             {
                 AccountId = Convert.ToInt64(accountId),
-                CurrentRole = role,
+                CurrentRole = currentRole,
                 EntityId = Convert.ToInt64(entityId),
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
                 Localization = localization,
-                AccessToken = _dataProtector.Protect(token)
+                AccessToken = _dataProtector.Protect(token),
+                Created = DateTime.UtcNow
             });
+
+            _apiUtil.AccessToken = _userDataService.GetAccessTokenByTelegramId(chatId);
 
             return true;
-        }
-
-        private void SetResponseCookie(string key, string value)
-        {
-            _contextAccessor.HttpContext.Response.Cookies.Append(key, value, new CookieOptions()
-            {
-                SameSite = SameSiteMode.None,
-                Path = "/",
-                Secure = true
-            });
         }
     }
 }

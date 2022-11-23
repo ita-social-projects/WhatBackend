@@ -53,10 +53,7 @@ namespace TelegramBot
             services.AddScoped<IApiUtil, ApiUtil>();
 
             services.AddAuthorization();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
-            {
-                options.LoginPath = new PathString("/Message/Update");
-            });
+            services.AddAuthentication();
 
             services.AddControllers().AddJsonSerializer();
         }

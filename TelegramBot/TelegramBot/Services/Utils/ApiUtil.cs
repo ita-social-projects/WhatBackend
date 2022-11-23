@@ -10,16 +10,12 @@ using TelegramBot;
 
 namespace TelegramBot.Utils
 {
-    //Todo: All Utils folder same as panel (need to extract to dll)
     public class ApiUtil : IApiUtil
     {
         private string _accessToken;
         public string AccessToken
         {
-            get 
-            { 
-                return _accessToken; 
-            }
+            get => _accessToken;
             set
             {
                 _accessToken = value;

@@ -3,6 +3,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using TelegramBot.Models.Entities;
 using TelegramBot.Services.Interfaces;
+using System.Linq;
+using System;
 
 namespace TelegramBot.Services
 {
@@ -15,7 +17,7 @@ namespace TelegramBot.Services
         public UserDataService()
         {
             _binaryFormatter = new BinaryFormatter();
-            //ToDo: deserialize user data from file to dictionary or if the file not exist initialize the new one
+
             using (var fs = new FileStream("UserData.dat", FileMode.OpenOrCreate))
             {
                 if (fs.Length > 0)
@@ -27,13 +29,14 @@ namespace TelegramBot.Services
                     UserDataByTelegramId = new Dictionary<long, UserData>();
                 }
             }
+
+            ClearExpiredToken();
         }
 
         public void AddUserData(long telegramId, UserData userData)
         {
-            UserDataByTelegramId.Add(telegramId, userData);
+            UserDataByTelegramId[telegramId] = userData;
 
-            //Todo: add Serialization of UserDataByTelegramId here
             using (var fs = new FileStream("UserData.dat", FileMode.OpenOrCreate))
             {
                 _binaryFormatter.Serialize(fs, UserDataByTelegramId);
@@ -57,6 +60,20 @@ namespace TelegramBot.Services
             }
 
             return token;
+        }
+
+        private void ClearExpiredToken()
+        {
+            if(UserDataByTelegramId.Any())
+            {
+                foreach (var user in UserDataByTelegramId)
+                {
+                    if(user.Value.Created.Value.AddMinutes(720) > DateTime.UtcNow)
+                    {
+                        UserDataByTelegramId.Remove(user.Key);
+                    }
+                }
+            }
         }
     }
 }
