@@ -144,7 +144,6 @@ namespace CharlieBackend.Api.UnitTest
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
             var expectedUpdate = new UpdateScheduledEventDto{};
-            _validator.Setup(x => x.ValidateUpdatedScheduleAsync(expectedUpdate)).ReturnsAsync(ResponseMessages.NotExist("Mentor"));
 
 
             //Act & Assert
@@ -215,15 +214,13 @@ namespace CharlieBackend.Api.UnitTest
             wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
                 .ReturnsAsync(_validEvent);
 
-            _validator.Setup(x => x.ValidateConnectEventToLessonAsync(wrongScheduledEvent.Id, _lessonId)).ReturnsAsync(ResponseMessages.NotExist("EventID"));
-
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
             //Act
             var successResult = await eventService.ConnectScheduleToLessonById(wrongScheduledEvent.Id, _lessonId);
 
             //Assert
-            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.NotFound);
 
         }
         [Fact]
@@ -234,7 +231,6 @@ namespace CharlieBackend.Api.UnitTest
 
             _eventRepositoryMock.Setup(x => x.IsLessonConnectedToSheduledEventAsync(_lessonId))
                 .ReturnsAsync(true);
-            _validator.Setup(x => x.ValidateConnectEventToLessonAsync(_existingId, _lessonId)).ReturnsAsync($"Lesson with id={_lessonId} is already associated with another ScheduledEvent. ");
 
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
@@ -243,7 +239,7 @@ namespace CharlieBackend.Api.UnitTest
             var successResult = await eventService.ConnectScheduleToLessonById(_existingId, _lessonId);
 
             //Assert
-            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.ValidationError);
+            successResult.Error.Code.Should().BeEquivalentTo(ErrorCode.Conflict);
 
         }
     }
