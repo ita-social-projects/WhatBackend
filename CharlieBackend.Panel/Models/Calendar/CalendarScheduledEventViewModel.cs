@@ -6,7 +6,7 @@ namespace CharlieBackend.Panel.Models.Calendar
     {
         public long Id { get; set; }
 
-        public long EventOccuranceId { get; set; }
+        public long? EventOccuranceId { get; set; }
 
         public long StudentGroupId { get; set; }
 
@@ -19,5 +19,11 @@ namespace CharlieBackend.Panel.Models.Calendar
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public string Description { get; set; }
+
+        public string Link { get; set; }
+
+        public int Color { get; set; }
     }
 }

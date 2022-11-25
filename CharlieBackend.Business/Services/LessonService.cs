@@ -7,6 +7,7 @@ using CharlieBackend.Core.Extensions;
 using CharlieBackend.Core.Models.ResultModel;
 using CharlieBackend.Data.Exceptions;
 using CharlieBackend.Data.Repositories.Impl.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,18 @@ namespace CharlieBackend.Business.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ILogger<LessonService> _logger;
 
         public LessonService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            ILogger<LessonService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _currentUserService = currentUserService;
+            _logger = logger;
         }
 
         public async Task<Result<LessonDto>> CreateLessonAsync(CreateLessonDto lessonDto)
@@ -78,24 +82,35 @@ namespace CharlieBackend.Business.Services
                     return Result<LessonDto>.GetError(ErrorCode.ValidationError, "Lesson date is incorrect");
                 }
 
-                _unitOfWork.LessonRepository.Add(createdLessonEntity);
+                var curDate = DateTime.Now;
 
                 if (lessonDto.LessonVisits != null)
                 {
                     for (int i = 0; i < createdLessonEntity.Visits.Count; i++)
                     {
-                        createdLessonEntity.Visits[i].Lesson = createdLessonEntity;
-
-                        _unitOfWork.VisitRepository.Add(createdLessonEntity.Visits[i]);
+                        if (createdLessonEntity.Visits[i].Mark.Value != 0)
+                        {
+                            createdLessonEntity.Visits[i].Mark.Type = MarkType.Visit;
+                            createdLessonEntity.Visits[i].Mark.EvaluationDate = curDate;
+                            createdLessonEntity.Visits[i].Mark.EvaluatedBy = foundMentor.AccountId.Value;                        
+                        }
+                        else
+                        {
+                            createdLessonEntity.Visits[i].Mark = null;
+                        }    
                     }
                 }
+
+                _unitOfWork.LessonRepository.Add(createdLessonEntity);
 
                 await _unitOfWork.CommitAsync();
 
                 return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(createdLessonEntity));
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return null;
@@ -104,7 +119,7 @@ namespace CharlieBackend.Business.Services
 
         public async Task<Result<IList<LessonDto>>> GetLessonsByDate(DateTime? startDate, DateTime? finishDate)
         {
-            var lastLesson = await _unitOfWork.LessonRepository.GetLastLesson();
+            var lastLesson = await _unitOfWork.LessonRepository.GetLastLessonAsync();
             const long daysWeek = -30;
 
             if (startDate == null && finishDate == null)
@@ -118,7 +133,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, "FinishDate less than StartDate");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDate(startDate, finishDate);
+            var lessons = await _unitOfWork.LessonRepository.GetLessonsByDateAsync(startDate, finishDate);
 
             var listLessons = _mapper.Map<IList<LessonDto>>(lessons);
 
@@ -136,7 +151,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Mentor with id {mentorId} is not Found");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentorId);
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForMentorAsync(mentorId);
 
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
@@ -153,7 +168,7 @@ namespace CharlieBackend.Business.Services
                 return Result<IList<LessonDto>>.GetError(ErrorCode.ValidationError, $"Student Group with id {studentGroupId} is not Found");
             }
 
-            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroup(studentGroupId);
+            var lessons = await _unitOfWork.LessonRepository.GetAllLessonsForStudentGroupAsync(studentGroupId);
 
             return Result<IList<LessonDto>>.GetSuccess(_mapper.Map<IList<LessonDto>>(lessons));
         }
@@ -165,7 +180,7 @@ namespace CharlieBackend.Business.Services
                       
             if (filterModel == default)
             {
-                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentor(mentor.Id));
+                return _mapper.Map<IList<LessonDto>>(await _unitOfWork.LessonRepository.GetAllLessonsForMentorAsync(mentor.Id));
             }
 
             var lessonsForMentro = await _unitOfWork.LessonRepository.GetLessonsForMentorAsync(filterModel.StudentGroupId, filterModel.StartDate, filterModel.FinishDate, mentor.Id);
@@ -244,29 +259,37 @@ namespace CharlieBackend.Business.Services
                     {
                         return Result<LessonDto>.GetError(ErrorCode.NotFound, $"Student(s) with Id(s) {string.Join(" ,", checkStudensId)} not included in this group({foundLesson.StudentGroupId})");
                     }
-                    await _unitOfWork.VisitRepository.DeleteWhereLessonIdAsync(foundLesson.Id);
 
                     for (int i = 0; i < lessonModel.LessonVisits.Count; i++)
                     {
-                        var visit = new Visit
-                        {
-                            Lesson = foundLesson,
-                            StudentId = lessonModel.LessonVisits[i].StudentId,
-                            Comment = lessonModel.LessonVisits[i].Comment,
-                            Presence = lessonModel.LessonVisits[i].Presence,
-                            StudentMark = lessonModel.LessonVisits[i].StudentMark
-                        };
-
-                        _unitOfWork.VisitRepository.Add(visit);
-                    }
+                        var visit = foundLesson.Visits.SingleOrDefault(x => x.StudentId == lessonModel.LessonVisits[i].StudentId);
+                        if(visit != null)
+                        {                            
+                            visit.Presence = lessonModel.LessonVisits[i].Presence;
+                            if (lessonModel.LessonVisits[i].StudentMark != null && lessonModel.LessonVisits[i].StudentMark != 0)
+                            {
+                                //update marks
+                                var mark = foundLesson.Visits.SingleOrDefault(x => x.StudentId == lessonModel.LessonVisits[i].StudentId).Mark;
+                                if (mark != null)
+                                {
+                                    mark.Value = lessonModel.LessonVisits[i].StudentMark.GetValueOrDefault();
+                                    mark.Comment = lessonModel.LessonVisits[i].Comment;
+                                }
+                            }
+                        }
+                    }                    
                 }
+
+                _unitOfWork.LessonRepository.Update(foundLesson);
+
                 await _unitOfWork.CommitAsync();
 
                 return Result<LessonDto>.GetSuccess(_mapper.Map<LessonDto>(foundLesson));
-
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 _unitOfWork.Rollback();
 
                 return null;
@@ -325,7 +348,7 @@ namespace CharlieBackend.Business.Services
         {
             var groupsOfStudent = await _unitOfWork.StudentGroupRepository
                     .GetStudentGroupsIdsByStudentId(
-                            (long)filterModel.StudentGroupId);
+                            _currentUserService.EntityId);
 
             if (groupsOfStudent.Contains(filterModel.StudentGroupId))
             {
@@ -338,7 +361,7 @@ namespace CharlieBackend.Business.Services
                         _mapper.Map<IList<LessonDto>>(lessonsForStudent));
             }
 
-            return Result<IList<LessonDto>>.GetError(ErrorCode.Unauthorized,
+            return Result<IList<LessonDto>>.GetError(ErrorCode.AccessDenied,
                    "student can get lessons only that group what he belongs");
         }
 

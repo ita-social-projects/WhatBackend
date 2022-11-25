@@ -1,93 +1,56 @@
-﻿@model CharlieBackend.Panel.Models.Calendar.CalendarViewModel
+﻿@using CharlieBackend.Panel.Models.Calendar
+@model CalendarViewModel
 
 @{
     Layout = "_Layout";
 }
 
-<style type="text/css">
-    .out-of-range {
-        background: #edeff1;
-    }
-
-    .auto-scroll {
-        white-space: normal;
-        width: 200px;
-    }
-
-    .events button {
-        margin-top: 2px;
-        width: 100%;
-    }
-
-    .events {
-        margin-bottom: 3px;
-    }
-
-    .badge {
-        display: block;
-        width: fit-content;
-        margin-bottom: 2px;
-        margin-top: 12px;
-    }
-
-    div.head div {
-        text-align: center;
-    }
-
-    .col-1:first-child, .col-2 {
-        border-right: 0.5px solid;
-    }
-
-    .col-2, .col-1 {
-        border-bottom: 0.5px solid grey;
-        min-height: 100px;
-    }
-</style>
-
-@section Scripts{
-    <script type="text/javascript">
-        var seGroup = null;
-        var seMentor = null;
-        var seTheme = null;
-        var seTime = null;
-        var seEventOccurrenceId = null;
-        var seSingleEventId = null;
-        $(document).on("click", ".btn-event", function (e) {
-            e.preventDefault();
-            var _self = $(this);
-            seGroup = _self.attr("seGroup");
-            seMentor = _self.attr("seMentor");
-            seTheme = _self.attr("seTheme");
-            seTime = _self.attr("seTime");
-            seEventOccurrenceId = _self.attr("seEventOccurrenceId");
-            seSingleEventId = _self.attr("seSingleEventId");
-            $("#seGroup").val(seGroup);
-            $("#seMentor").val(seMentor);
-            $("#seTheme").val(seTheme);
-            $("#seTime").val(seTime);
-            $("#seEventOccurrenceId").attr('href', "/EventOccurrence/PrepareEventOccurrenceForUpdate/" + seEventOccurrenceId);
-            $("#seSingleEventId").attr('href', "/EventOccurrence/PrepareSingleEventForUpdate/" + seSingleEventId);
-            $("#deleteEventOccurrence").attr('href', "/EventOccurrence/DeleteEventOccurrence/" + seEventOccurrenceId);
-        });
-    </script>
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
 }
 
-<div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
-    <a asp-action="CreateEventOccurrence" asp-controller="EventOccurrence" class="btn btn-lg btn-success btn-circle">
-        <i class="fas fa-plus"></i>
-    </a>
-</div>
+@section Scripts{
+    <script src="~/js/calendar.js"></script>
+}
+
+@if (!User.IsInRole("Student"))
+{
+    <div class="fixed-bottom ml-4" style="left:90%; right:50%; bottom:8%;">
+        <div class="dropleft">
+            <button type="button" class="btn btn-lg btn-success btn-circle " data-toggle="dropdown">
+                <i class="fas fa-plus"></i>
+            </button>
+            <div class="dropdown-menu ">
+                <a class="dropdown-item"
+                   asp-action="CreateEventOccurrence" asp-controller="EventOccurrence">
+                    <i class="fas fa-plus"></i>
+                    <span>Create event occurrence</span>
+                </a>
+                <a class="dropdown-item"
+                   asp-action="CreateSingleEvent" asp-controller="EventOccurrence">
+                    <i class="fas fa-plus"></i>
+                    <span>Create single event</span>
+                </a>
+            </div>
+        </div>
+    </div>
+}
 
 <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
         <div class="container-fluid">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Calendar</h6>
-                </div>
+            <form class="col" method="post" action="/Calendar/GetCalendar">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <h6 class="m-0 font-weight-bold text-primary col-10">Calendar</h6>
 
-                <div class="card-header py-3">
-                    <form method="post" action="/Calendar/GetCalendar">
+                            <select id="weekFormat" class="custom-select col" onchange="ChangeWeekFormat()" name="displayType" asp-for="DisplayType" asp-items="@Html.GetEnumSelectList(typeof(CalendarDisplayType))">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-header py-3">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="submit">Update</button>
@@ -172,7 +135,7 @@
 
                                     @foreach (var mentor in Model.Mentors.Where(x => x.Id != Model.ScheduledEventFilter.MentorID.Value))
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+ mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                                 else
@@ -181,36 +144,54 @@
 
                                     @foreach (var mentor in Model.Mentors)
                                     {
-                                        <option value="@mentor.Id">Mentor @(mentor.FirstName+" "+mentor.LastName)</option>
+                                        <option value="@mentor.Id">Mentor @($"{mentor.FirstName} {mentor.LastName}")</option>
                                     }
                                 }
                             </select>
 
-                            <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
-                                @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
-                                {
-                                    <option value="null">-Student-</option>
-                                    <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
-                                        @{
-                                            var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                            @if (User.IsInRole("Student"))
+                            {
+                                <select disabled class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
+                                    @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
+                                    {
+                                        <option value="null">-Student-</option>
+                                        <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
+                                            @{
+                                                var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                                            }
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
+                                        </option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <select class="custom-select" name="StudentAccountID" id="accountSelect" aria-label="Example select with button addon">
+                                    @if (Model.ScheduledEventFilter.StudentAccountID.HasValue)
+                                    {
+                                        <option value="null">-Student-</option>
+                                        <option value="@Model.ScheduledEventFilter.StudentAccountID.Value" selected>
+                                            @{
+                                                var studentFiltered = Model.Students.First(x => x.Id == Model.ScheduledEventFilter.StudentAccountID.Value);
+                                            }
+                                            Student @($"{studentFiltered.FirstName} {studentFiltered.LastName}")
+                                        </option>
+
+                                        @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
+                                        {
+                                            <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
                                         }
-                                        Student @(studentFiltered.FirstName+" "+ studentFiltered.LastName)
-                                    </option>
-
-                                    @foreach (var student in Model.Students.Where(x => x.Id != Model.ScheduledEventFilter.StudentAccountID.Value))
-                                    {
-                                        <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
                                     }
-                                }
-                                else
-                                {
-                                    <option value="null" selected>-Student-</option>
-                                    @foreach (var student in Model.Students)
+                                    else
                                     {
-                                        <option value="@student.Id">Student @(student.FirstName+" "+ student.LastName)</option>
+                                        <option value="null" selected>-Student-</option>
+                                        @foreach (var student in Model.Students)
+                                        {
+                                            <option value="@student.Id">Student @($"{student.FirstName} {student.LastName}")</option>
+                                        }
                                     }
-                                }
-                            </select>
+                                </select>
+                            }
                         </div>
 
                         <div class="form-group row">
@@ -222,12 +203,12 @@
                                 <input class="form-control" name="FinishDate" type="datetime-local" value="@Model.ScheduledEventFilter.FinishDate.Value.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" id="finishDate">
                             </div>
                         </div>
-                    </form>
+                    </div>
+
+                    @{await Html.RenderPartialAsync("CalendarBody");}
+
                 </div>
-
-                @{await Html.RenderPartialAsync("CalendarBody");}
-
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -252,13 +233,29 @@
 
                 <label for="seMentor">Mentor:</label>
                 <input id="seMentor" class="modalTextInput form-control" value="" disabled />
+
+                <label for="seDescription">Description:</label>
+                <input id="seDescription" class="modalTextInput form-control" value="" disabled />
+
+                <label for="seLink">Link:</label>
+                <div class="linkdiv">
+                    <input id="seLink" class="modalTextInput form-control" value="" disabled />
+                    <a id="openLink" class="btn btn-primary" href="">Open</a>
+                </div>
             </div>
 
-            <div class="modal-footer">
-                <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit schedule event</a>
-                <a id="seSingleEventId" class="btn btn-primary" title="You only want to edit one event" href="">Edit only this event</a>
-                <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete</a>
-            </div>
+            @if (!User.IsInRole("Student"))
+            {
+                <div class="modal-footer">
+                    <a id="seEventOccurrenceId" class="btn btn-primary" title="You want to edit a series of events" href="">Edit events</a>
+                    <a id="seSingleEventId" class="btn btn-primary" title="You want to edit only this event" href="">Edit single event</a>
+                </div>
+
+                <div class="modal-footer">
+                    <a id="deleteEventOccurrence" class="btn btn-primary" title="You want to delete a series of eventst" href="">Delete events</a>
+                    <a id="deleteSingleEvent" class="btn btn-primary" title="You want to delete only this event" href="">Delete single event</a>
+                </div>
+            }
         </div>
     </div>
 </div>

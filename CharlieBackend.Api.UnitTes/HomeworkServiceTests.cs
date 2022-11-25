@@ -51,7 +51,7 @@ namespace CharlieBackend.Api.UnitTest
             return new Visit()
             {
                 Id = id,
-                StudentMark = mark,
+                MarkId = mark,
                 Presence = presence,
                 StudentId = studentId
             };

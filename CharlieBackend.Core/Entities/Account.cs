@@ -17,6 +17,8 @@ namespace CharlieBackend.Core.Entities
 
         public string Salt { get; set; }
 
+        public string Localization { get; set; }
+
 #nullable enable
         public bool? IsActive { get; set; }
 
@@ -26,6 +28,7 @@ namespace CharlieBackend.Core.Entities
 
         //[ForeignKey("Avatar")]
         public long? AvatarId { get; set; }
+
 #nullable disable
 
         public virtual Attachment Avatar { get; set; }

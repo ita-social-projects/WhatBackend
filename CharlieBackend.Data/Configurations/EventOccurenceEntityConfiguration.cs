@@ -43,6 +43,9 @@ namespace CharlieBackend.Data.Configurations
                 .IsRequired()
                 .HasColumnName("Storage");
 
+            entity.Property(e => e.Color).
+                IsRequired().HasColumnName("Color");
+
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");
 

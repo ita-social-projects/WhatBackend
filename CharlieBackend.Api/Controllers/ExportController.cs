@@ -100,7 +100,7 @@ namespace CharlieBackend.Api.Controllers
             if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();
+                        Resources.Resource.ValidationErrorMessage).ToActionResult();
             }
 
             var results = await _dashboardService.GetStudentsResultAsync(request);
@@ -142,7 +142,7 @@ namespace CharlieBackend.Api.Controllers
             if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();
+                        Resources.Resource.ValidationErrorMessage).ToActionResult();
             }
 
             var results = await _dashboardService.GetStudentClassbookAsync(studentId, request);
@@ -183,7 +183,7 @@ namespace CharlieBackend.Api.Controllers
             if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();
+                        Resources.Resource.ValidationErrorMessage).ToActionResult();
             }
 
             var results = await _dashboardService
@@ -225,7 +225,7 @@ namespace CharlieBackend.Api.Controllers
             if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();
+                        Resources.Resource.ValidationErrorMessage).ToActionResult();
             }
 
             var results = await _dashboardService
@@ -262,7 +262,7 @@ namespace CharlieBackend.Api.Controllers
             if (exportService == null)
             {
                 return Result<FileDto>.GetError(ErrorCode.ValidationError,
-                        "Extension wasn't chosen").ToActionResult();
+                       Resources.Resource.ValidationErrorMessage).ToActionResult();
             }
 
             var resultStudentList = await exportService.GetListofStudentsByGroupId(groupId);

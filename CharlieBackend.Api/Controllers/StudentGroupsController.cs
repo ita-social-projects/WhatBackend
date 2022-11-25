@@ -119,7 +119,7 @@ namespace CharlieBackend.Api.Controllers
         /// </remarks>
         /// <response code="200">Successful return of students of student group</response>
         [SwaggerResponse(200, type: typeof(IList<StudentGroupDto>))]
-        [Authorize(Roles = "Secretary, Mentor, Admin")]
+        [Authorize(Roles = "Secretary, Mentor, Admin, Student")]
         [HttpGet]
         public async Task<ActionResult<IList<StudentGroupDto>>> GetAllStudentGroups(DateTime? startDate, DateTime? finishDate)
         {

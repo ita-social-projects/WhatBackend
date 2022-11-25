@@ -14,5 +14,7 @@ namespace CharlieBackend.Panel.Models.Calendar
         public DateTime EventFinish { get; set; }
 
         public PatternType Pattern { get; set; }
+
+        public int Color { get; set; }
     }
 }

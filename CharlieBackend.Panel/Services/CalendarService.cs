@@ -5,6 +5,7 @@ using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Core.DTO.Student;
 using CharlieBackend.Core.DTO.StudentGroups;
 using CharlieBackend.Core.DTO.Theme;
+using CharlieBackend.Core.Entities;
 using CharlieBackend.Panel.Models.Calendar;
 using CharlieBackend.Panel.Services.Interfaces;
 using CharlieBackend.Panel.Utils.Interfaces;
@@ -23,23 +24,27 @@ namespace CharlieBackend.Panel.Services
         private readonly IScheduleService _scheduleService;
         private readonly IApiUtil _apiUtil;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         private readonly string _getActiveCoursesEndpoint;
         private readonly string _getActiveMetorsEndpoint;
         private readonly string _getStudentGroupsEndpoint;
         private readonly string _getActiveStudentsEndpoint;
         private readonly string _getThemesEndpoint;
 
+
         private const int defaultDateFilterOffset = 7;
 
         public CalendarService(
             IScheduleService scheduleService,
             IApiUtil apiUtil,
-            IMapper mapper, 
-            IOptions<ApplicationSettings> options)
+            IMapper mapper,
+            IOptions<ApplicationSettings> options,
+            ICurrentUserService currentUserService)
         {
             _scheduleService = scheduleService;
             _apiUtil = apiUtil;
             _mapper = mapper;
+            _currentUserService = currentUserService;
             _getActiveCoursesEndpoint = options.Value.Urls.ApiEndpoints.Courses.GetAllCoursesEndpoint;
             _getActiveMetorsEndpoint = options.Value.Urls.ApiEndpoints.Mentors.ActiveMentorEndpoint;
             _getStudentGroupsEndpoint = options.Value.Urls.ApiEndpoints.StudentGroups.GetAllStudentGroupsEndpoint;
@@ -62,13 +67,30 @@ namespace CharlieBackend.Panel.Services
             var getCoursesTask = GetActiveCourseViewModelsAsync();
             var getMentorsTask = GetActiveMetorViewModelsAsync();
             var getStudentGroupsTask = GetStudentGroupViewModelsAsync();
-            var getStudentsTask = GetActiveStudentViewModelsAsync();
+            IList<CalendarStudentViewModel> getStudentsTask = null;
+            if (_currentUserService.Role == UserRole.Admin || _currentUserService.Role == UserRole.Secretary)
+            {
+                getStudentsTask = await GetActiveStudentViewModelsAsync();
+            }
+            else if (_currentUserService.Role == UserRole.Student)
+            {
+                getStudentsTask = new List<CalendarStudentViewModel>()
+                {
+                    new CalendarStudentViewModel()
+                    {
+                        Id = _currentUserService.EntityId,
+                        Email = _currentUserService.Email,
+                        FirstName = _currentUserService.FirstName,
+                        LastName = _currentUserService.LastName
+                    }
+                };
+            }
             var getThemesTask = GetThemeViewModelsAsync();
             var getEventOccurrencesTask = GetEventOccurrenceViewModelsAsync();
             var getScheduledEventsTask = GetScheduledEventViewModelsAsync(scheduledEventFilter);
 
             await Task.WhenAll(
-                getCoursesTask, getMentorsTask, getStudentGroupsTask, getStudentsTask,
+                getCoursesTask, getMentorsTask, getStudentGroupsTask,
                     getThemesTask, getEventOccurrencesTask, getScheduledEventsTask
                 );
 
@@ -77,7 +99,7 @@ namespace CharlieBackend.Panel.Services
                 Courses = getCoursesTask.Result,
                 Mentors = getMentorsTask.Result,
                 StudentGroups = getStudentGroupsTask.Result,
-                Students = getStudentsTask.Result,
+                Students = getStudentsTask,
                 Themes = getThemesTask.Result,
                 EventOccurences = getEventOccurrencesTask.Result,
                 ScheduledEvents = getScheduledEventsTask.Result,
@@ -96,12 +118,18 @@ namespace CharlieBackend.Panel.Services
         {
             if (!scheduledEventFilter.StartDate.HasValue)
             {
-                scheduledEventFilter.StartDate = DateTime.Now;
+                scheduledEventFilter.StartDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
             }
 
             if (!scheduledEventFilter.FinishDate.HasValue)
             {
-                scheduledEventFilter.FinishDate = DateTime.Now.AddDays(defaultDateFilterOffset);
+                scheduledEventFilter.FinishDate = scheduledEventFilter.StartDate.Value
+                        .AddDays(defaultDateFilterOffset).AddMinutes(-1);
+            }
+
+            if (_currentUserService.Role == UserRole.Student)
+            {
+                scheduledEventFilter.StudentAccountID = _currentUserService.EntityId;
             }
         }
 

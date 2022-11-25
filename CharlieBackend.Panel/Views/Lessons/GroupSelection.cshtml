@@ -18,30 +18,32 @@
                 <form method="get" asp-action="CreateLesson" asp-controller="Lessons">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <span>Groups</span>
-                                </th>
+                    <div class="card-body">
+                        <div class="table-responsive p-3" style="overflow-x:unset">
+                            <table class="table table-striped container-fluid" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr class="thead-dark row">
+                                        <th class="col">
+                                            <span>Groups</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var studentGroup in Model)
+                                    {
+                                        <tr class="row">
+                                            <td class="col">
+                                                <a class=" dropdown-item" asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@studentGroup.Id">
+                                                    <span>@Html.DisplayFor(modelItem => studentGroup.Name)</span>
+                                                </a>
+                                            </td>
 
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var studentGroup in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        <a class=" dropdown-item" asp-action="CreateLesson" asp-controller="Lessons" asp-route-stGroupId="@studentGroup.Id">
-                                            <span>@Html.DisplayFor(modelItem => studentGroup.Name)</span>
-                                        </a>
-                                    </td>
-
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     <div class="mt-3">
                         <a class="btn btn-secondary" asp-action="AllLessons" asp-controller="Lessons">Cancel</a>

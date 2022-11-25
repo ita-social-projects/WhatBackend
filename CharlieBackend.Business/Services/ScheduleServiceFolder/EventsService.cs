@@ -37,7 +37,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
         public async Task<ScheduledEventDTO> UpdateAsync(long id, UpdateScheduledEventDto updatedSchedule)
         {
-            string errorMsg = await _validator.ValidateUpdatedScheduleAsync(updatedSchedule);
+            string errorMsg = await ValidateUpdatedScheduleAsync(updatedSchedule);
 
             if (!string.IsNullOrEmpty(errorMsg))
             {
@@ -46,7 +46,16 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
 
             ScheduledEvent schedule = await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id);
 
+            if(!schedule.Equals(updatedSchedule))
+            {
+                if (schedule.EventOccurrenceId != null)
+                {
+                    schedule.EventOccurrenceId = null;
+                }
+            }
+
             schedule = SchedulesUpdater.UpdateFields(schedule, updatedSchedule);
+            
             _unitOfWork.ScheduledEventRepository.Update(schedule);
             await _unitOfWork.CommitAsync();
 
@@ -58,18 +67,36 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder
             return _mapper.Map<ScheduledEventDTO>(await _unitOfWork.ScheduledEventRepository.GetByIdAsync(id));
         }
 
+        private async Task<string> ValidateUpdatedScheduleAsync(UpdateScheduledEventDto updatedSchedule)
+        {
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
+            {
+                return Resources.SharedResources.MentorNotValidExceptionMessage;
+            }
+            if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
+            {
+                return Resources.SharedResources.ThemeNotValidExceptionMessage;
+            }
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(updatedSchedule.StudentGroupId.GetValueOrDefault()) is null)
+            {
+                return Resources.SharedResources.StudentGroupNotValidExceptionMessage;
+            }
+
+            return string.Empty;
+        }
+
         public async Task<Result<ScheduledEventDTO>> ConnectScheduleToLessonById(long eventId, long lessonId)
         {
-            string errorMsg = await _validator.ValidateConnectEventToLessonAsync(eventId, lessonId);
-
-            if (!string.IsNullOrEmpty(errorMsg))
+            if (await _unitOfWork.ScheduledEventRepository.IsLessonConnectedToSheduledEventAsync(lessonId))
             {
-                return Result<ScheduledEventDTO>.GetError(ErrorCode.ValidationError, errorMsg);
+                return Result<ScheduledEventDTO>.GetError(ErrorCode.Conflict, $"Lesson with id={lessonId} is already associated with another ScheduledEvent");
             }
 
             var scheduleEntity = await _unitOfWork.ScheduledEventRepository.ConnectEventToLessonByIdAsync(eventId, lessonId);
 
-            return Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
+            return scheduleEntity == null ?
+                Result<ScheduledEventDTO>.GetError(ErrorCode.NotFound, $"Scheduled event with id={eventId} does not exist") :
+                Result<ScheduledEventDTO>.GetSuccess(_mapper.Map<ScheduledEventDTO>(scheduleEntity));
         }
 
         public async Task<Result<SingleEventDTO>> CreateSingleEventAsync(CreateSingleEventDto createSingleEvent)

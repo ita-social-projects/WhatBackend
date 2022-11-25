@@ -44,14 +44,14 @@ namespace CharlieBackend.Business.Services
                            "Some of files have dengerous extention");
             }
 
-            IList<Attachment> attachments = new List<Attachment>();
+            var listTasks = new List<Task<Attachment>>();
 
             foreach (var file in fileCollection)
             {
-                var attachment = await AddAttachmentFileAsync(file, isPublic);
-
-                attachments.Add(attachment);
+                listTasks.Add(AddAttachmentFileAsync(file, isPublic));
             }
+
+            IList<Attachment> attachments = await Task.WhenAll(listTasks);
 
             await _unitOfWork.CommitAsync();
 

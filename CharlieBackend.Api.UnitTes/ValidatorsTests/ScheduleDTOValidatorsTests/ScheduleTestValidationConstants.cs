@@ -35,6 +35,7 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
 
         public const long ValidEntityID = 1;
         public const long NotValidEntityID = 0;
+        public const int ValidColorValue = 3447003;
 
         #endregion
 
@@ -68,7 +69,8 @@ namespace CharlieBackend.Api.UnitTest.ValidatorsTests.ScheduleDTOValidatorsTests
         {
             GroupID = ValidEntityID,
             ThemeID = ValidEntityID,
-            MentorID = ValidEntityID
+            MentorID = ValidEntityID,
+            Color = ValidColorValue
         };
 
         public static readonly PatternForCreateScheduleDTO NotValidPattern = new PatternForCreateScheduleDTO

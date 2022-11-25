@@ -29,5 +29,11 @@ namespace CharlieBackend.Panel.Models.ScheduledEvent
         public IList<StudentGroupViewModel> AllStudentGroups { get; set; }
 
         public IList<ThemeViewModel> AllThemes { get; set; }
+
+        public string Description { get; set; }
+      
+        public string Link { get; set; }
+
+        public int Color { get; set; }
     }
 }

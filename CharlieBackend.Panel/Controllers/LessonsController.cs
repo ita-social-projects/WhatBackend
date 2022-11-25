@@ -97,7 +97,7 @@ namespace CharlieBackend.Panel.Controllers
         {
             var lesson = await _lessonService.PrepareLessonUpdateAsync(id);
 
-            ViewBag.Lesson = lesson;
+            lesson.LessonVisits = lesson.LessonVisits.OrderBy(x => x.StudentId).ToList();
 
             return View("UpdateLesson", lesson);
         }

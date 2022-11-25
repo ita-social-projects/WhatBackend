@@ -41,8 +41,8 @@ namespace CharlieBackend.Api.UnitTest
         private Mock<IEventOccurrenceRepository> _eventOccuranceRepositoryMock;
         private CreateScheduleDto validScheduleDTO;
         private EventOccurrence validEventOccurrence;
-        private readonly DateTime startDate = DateTime.Parse("Jan 1, 2021");
-        private readonly DateTime finishDate = DateTime.Parse("Feb 1, 2021");
+        private readonly DateTime startDate = DateTime.Now.AddDays(1);
+        private readonly DateTime finishDate = DateTime.Now.AddDays(30);
 
         public ScheduleServiceTests()
         {
@@ -340,7 +340,7 @@ namespace CharlieBackend.Api.UnitTest
                 MentorId = existentMentorId,
                 EventStart = startDate,
                 EventFinish = finishDate,
-                EventOccuranceId = nonExistentEventOccuranceId,
+                EventOccuranceId = null,
                 Id = id
             }
             };

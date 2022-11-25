@@ -1,0 +1,132 @@
+﻿@model CharlieBackend.Core.DTO.Event.CreateSingleEventDto
+
+
+@{
+    Layout = "_Layout";
+}
+
+
+@section Styles {
+    <link href="~/css/calendar.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/colorPick.min.js"></script>
+    <script src="~/js/EventOccurrance.js"></script>
+
+    <script>
+            $(document).ready(() => { PassColor('#3498db') });
+    </script>
+}
+
+<div id="content-wrapper" class="d-flex flex-row  justify-content-center">
+
+    <div class="container mt-3 col-5">
+
+        <h1 class="h3 mb-2 text-gray-800">Add single event</h1>
+
+        <div class="card shadow mb-4">
+
+            <div class="modal-body">
+                <form method="post" asp-action="AddSingleEvent" asp-controller="EventOccurrence">
+
+                    <div class="form-group">
+                        <label>Student Group </label>
+                        <select class="custom-select" asp-for="StudentGroupId" size="1">
+
+                            @if (@ViewBag.EventOccurrence.AllStudentGroups != null)
+                            {
+                                @foreach (var item in @ViewBag.EventOccurrence.AllStudentGroups)
+                                {
+
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mentor </label>
+                        <select class="custom-select" asp-for="MentorId" size="1">
+
+                            @if (@ViewBag.EventOccurrence.AllMentors != null)
+                            {
+                                @foreach (var item in @ViewBag.EventOccurrence.AllMentors)
+                                {
+                                    <option value="@item.Id">
+                                        @item.FirstName
+                                        @item.LastName
+                                    </option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Theme </label>
+                        <select class="custom-select" asp-for="ThemeId" size="1">
+
+                            @if (@ViewBag.EventOccurrence.AllThemes != null)
+                            {
+                                @foreach (var item in @ViewBag.EventOccurrence.AllThemes)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Name
+                                    </option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="@null">null</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="picker" id="picker1"></div>
+                    <input type="color" style="display: none;" class="colorValue" id="inputColor" asp-for="Color" />
+
+                    <div class="form-group">
+                        <label>Start date</label>
+                        <input type="datetime-local" min="1900-01-01" max="2100-12-31"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" class="form-control" asp-for="EventStart">
+                    </div>
+
+                    <div class="form-group">
+                        <label>End date</label>
+                        <input type="datetime-local" min="1000-01-01" max="3000-12-31" class="form-control"
+                               value="@DateTime.Now.AddHours(1).ToString("yyyy-MM-dd HH:mm").Replace(' ','T')" asp-for="EventFinish">
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Link" class="control-label"></label>
+                        <input asp-for="Link" class="form-control" />
+                    </div>
+
+                    <div class="mt-3">
+                        <a class="btn btn-secondary" asp-action="AllEventOccurrences" asp-controller="EventOccurrence">Close</a>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

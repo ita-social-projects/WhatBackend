@@ -602,3 +602,4 @@ dist
 /CharlieBackend.Api/Properties/ServiceDependencies/*/*.json
 /CharlieBackend.Api/.config/*.json
 /CharlieBackend.Api/env
+/CharlieBackend.Panel/CharlieBackend - Backup.Panel.csproj

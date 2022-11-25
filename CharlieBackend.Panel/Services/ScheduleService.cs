@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CharlieBackend.Core.DTO.Event;
 using CharlieBackend.Core.DTO.Schedule;
 using CharlieBackend.Panel.Models.EventOccurrence;
 using CharlieBackend.Panel.Models.ScheduledEvent;
@@ -113,11 +114,12 @@ namespace CharlieBackend.Panel.Services
             scheduledEvent.AllStudentGroups = await studentGroupsTask;
             scheduledEvent.AllThemes = await themesTask;
             scheduledEvent.AllMentors = await mentorsTask;
+            scheduledEvent.Color = singleEventTask.Result.Color;
 
             return scheduledEvent;
         }
 
-        public async Task<EventOccurrenceEditViewModel> PrepareStudentGroupAddAsync()
+        public async Task<EventOccurrenceEditViewModel> PrepareEventAddAsync()
         {
             var studentGroupsTask = _studentGroupService.GetAllStudentGroupsAsync();
             var mentorsTask = _mentorService.GetAllMentorsAsync();
@@ -160,8 +162,22 @@ namespace CharlieBackend.Panel.Services
             scheduledEvent.AllThemes = await themesTask;
             scheduledEvent.AllMentors = await mentorsTask;
             scheduledEvent.DetailedEventOccurrence = await eventOccurrenceDetailedTask;
+            scheduledEvent.Color = eventOccurrenceTask.Result.Color;
 
             return scheduledEvent;
+        }
+
+        public async Task CreateSingleEventAsync(CreateSingleEventDto singleEventDTO)
+        {
+            await _apiUtil
+              .CreateAsync<SingleEventDTO, CreateSingleEventDto>(_eventsApiEndpoints.AddSingleEvent, singleEventDTO);
+        }
+
+        public async Task DeleteSingleEventByIdAsync(long eventID)
+        {
+            var singleEvent = string.Format(_eventsApiEndpoints.DeleteEventById, eventID);
+
+            await _apiUtil.DeleteAsync<bool>(singleEvent);
         }
     }
 }

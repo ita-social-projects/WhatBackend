@@ -47,7 +47,7 @@ namespace CharlieBackend.Panel.Controllers
 
             if (responseModel == null)
             {
-                ModelState.AddModelError(string.Empty, ValidationConstants.PasswordOrEmailNotValid);
+                ModelState.AddModelError(string.Empty, "Incorrect Email and/or Password");
                 return View(authDto);
             }
 
@@ -105,18 +105,27 @@ namespace CharlieBackend.Panel.Controllers
             var accountId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.AccountId).Value;
             var entityId = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.EntityId).Value;
             var email = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Email).Value;
+            var firstName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.FirstName).Value;
+            var lastName = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.LastName).Value;
+            var localization = tokenS.Claims.FirstOrDefault(claim => claim.Type == ClaimsConstants.Localization).Value;
 
             SetResponseCookie("currentRole", role);
             SetResponseCookie("accountId", accountId);
             SetResponseCookie("entityId", entityId);
             SetResponseCookie("email", email);
+            SetResponseCookie("firstName", firstName);
+            SetResponseCookie("lastName", lastName);
+            SetResponseCookie("localization", localization);
 
             var claims = new List<Claim>
             {
                  new Claim(ClaimsIdentity.DefaultRoleClaimType, role),
                  new Claim(ClaimsConstants.AccountId, accountId),
                  new Claim(ClaimsConstants.EntityId, entityId),
-                 new Claim(ClaimsConstants.Email, email)
+                 new Claim(ClaimsConstants.Email, email),
+                 new Claim(ClaimsConstants.FirstName, firstName),
+                 new Claim(ClaimsConstants.LastName, lastName),
+                 new Claim(ClaimsConstants.Localization, localization)
             };
            
             ClaimsIdentity roleClaim = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharlieBackend.Core.Entities;
+using System;
 
 namespace CharlieBackend.Core.DTO.Schedule
 {
@@ -6,7 +7,7 @@ namespace CharlieBackend.Core.DTO.Schedule
     {
         public long Id { get; set; }
 
-        public long EventOccuranceId { get; set; }
+        public long? EventOccuranceId { get; set; }
 
         public long StudentGroupId { get; set; }
 
@@ -19,5 +20,11 @@ namespace CharlieBackend.Core.DTO.Schedule
         public DateTime EventStart { get; set; }
 
         public DateTime EventFinish { get; set; }
+
+        public string Description { get; set; }
+
+        public string Link { get; set; }
+
+        public int Color { get; set; }
     }
 }

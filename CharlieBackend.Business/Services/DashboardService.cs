@@ -74,13 +74,18 @@ namespace CharlieBackend.Business.Services
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
                 result.AverageStudentsMarks = await _unitOfWork.DashboardRepository
-                    .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(studentsIds, studentGroupsIds);
+                    .GetStudentAvgMarksAsync(studentsIds, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
                 result.AverageStudentVisits = await _unitOfWork.DashboardRepository
                     .GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(studentsIds, studentGroupsIds);
+            }
+
+            if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentHomeworkMark))
+            {
+                result.AverageStudentHomeworkMarks = await _unitOfWork.DashboardRepository.GetStudentHomeworkAvgMarksAsync(studentsIds, studentGroupsIds);
             }
 
             return Result<StudentsResultsDto>.GetSuccess(result);
@@ -133,13 +138,18 @@ namespace CharlieBackend.Business.Services
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentMark))
             {
                 result.AverageStudentsMarks = await _unitOfWork.DashboardRepository
-                    .GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { studentId }, studentGroupsIds);
+                    .GetStudentAvgMarksAsync(new List<long> { studentId }, studentGroupsIds);
             }
 
             if (request.IncludeAnalytics.Contains(StudentResultType.AverageStudentVisits))
             {
                 result.AverageStudentVisits = await _unitOfWork.DashboardRepository
-                    .GetStudentAverageVisitsPercentageByStudentIdsAsync(studentId, studentGroupsIds);
+                    .GetStudentAvgVisitsPercentageAsync(studentId, studentGroupsIds);
+            }
+
+            if(request.IncludeAnalytics.Contains(StudentResultType.AverageStudentHomeworkMark))
+            {
+                result.AverageStudentHomeworkMarks = await _unitOfWork.DashboardRepository.GetStudentHomeworkAvgMarksAsync(new List<long> { studentId }, studentGroupsIds);
             }
 
             return Result<StudentsResultsDto>.GetSuccess(result);

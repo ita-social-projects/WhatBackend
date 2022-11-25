@@ -19,7 +19,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<long>> GetStudentsIdsByGroupIdsAsync(IEnumerable<long> studentGroupId);
 
-        Task<List<AverageStudentMarkDto>> GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupsIds);
+        Task<List<AverageStudentMarkDto>> GetStudentAvgMarksAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupsIds);
 
         Task<List<AverageStudentVisitsDto>> GetStudentsAverageVisitsByStudentIdsAndGroupsIdsAsync(IEnumerable<long> studentIds, IEnumerable<long> studentGroupIds);
 
@@ -29,7 +29,7 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
 
         Task<List<long>> GetGroupsIdsByStudentIdAndPeriodAsync(long studentId, DateTime? startDate, DateTime? finishDate);
 
-        Task<List<AverageStudentVisitsDto>> GetStudentAverageVisitsPercentageByStudentIdsAsync(long studentId, List<long> studentGroupsIds);
+        Task<List<AverageStudentVisitsDto>> GetStudentAvgVisitsPercentageAsync(long studentId, List<long> studentGroupsIds);
 
         Task<List<StudentVisitDto>> GetStudentPresenceListByStudentIds(long studentId, List<long> studentGroupsIds);
 
@@ -38,5 +38,8 @@ namespace CharlieBackend.Data.Repositories.Impl.Interfaces
         Task<List<AverageStudentGroupMarkDto>> GetStudentGroupsAverageMarks(List<long> studentGroupIds);
 
         Task<List<AverageStudentGroupVisitDto>> GetStudentGroupsAverageVisits(List<long> studentGroupIds);
+
+        Task<List<AverageStudentMarkDto>> GetStudentHomeworkAvgMarksAsync(IEnumerable<long> studentIds,
+            IEnumerable<long> studentGroupsIds);
     }
 }

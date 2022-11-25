@@ -15,5 +15,7 @@ namespace CharlieBackend.Core.DTO.Account
         public UserRole Role { get; set; }
 
         public bool IsActive { get; set; }
+
+        public string Localization { get; set; }
     }
 }

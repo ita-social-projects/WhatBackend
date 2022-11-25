@@ -222,7 +222,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -274,7 +274,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -327,7 +327,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(default(Homework));
@@ -376,7 +376,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -431,7 +431,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto = default;
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -484,7 +484,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -537,7 +537,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(default(Lesson));
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(default(Lesson));
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -590,7 +590,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -643,7 +643,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -696,7 +696,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -758,7 +758,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -827,7 +827,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -897,7 +897,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(default(Homework));
@@ -963,7 +963,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1033,7 +1033,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1103,7 +1103,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(default(Lesson));
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(default(Lesson));
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1173,7 +1173,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 1 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1243,7 +1243,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1313,7 +1313,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1378,7 +1378,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()
@@ -1449,7 +1449,7 @@ namespace CharlieBackend.Api.UnitTest
 
             homeworkStudentRequestDto.AttachmentIds = new List<long>() { 1, 2 };
 
-            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkId(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
+            _lessonRepositoryMock.Setup(x => x.GetLessonByHomeworkIdAsync(It.IsAny<long>())).ReturnsAsync(new Lesson() { StudentGroupId = 0 });
 
             _homeworkRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<long>()))
                 .ReturnsAsync(new Homework()

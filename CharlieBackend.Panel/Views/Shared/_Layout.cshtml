@@ -18,8 +18,15 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
     <!-- Custom styles for this template-->
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/colorPick.css">
+
+    @RenderSection("Styles", false)
 
 </head>
 
@@ -122,7 +129,7 @@
                     </a>
                 }
 
-                 @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
                 {
                     <a class="nav-link collapsed" asp-action="Index" asp-controller="Classbook">
                         <i class="fas fa-book"></i>
@@ -130,7 +137,7 @@
                     </a>
                 }
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Secretary"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Secretary") || User.IsInRole("Student"))
                 {
                     <a class="nav-link collapsed" asp-action="Index" asp-controller="Calendar">
                         <i class="fab fa-cuttlefish"></i>
@@ -176,19 +183,37 @@
                     <ul class="navbar-nav ml-auto">
 
 
+                        @foreach (var language in Enum.GetValues(typeof(CharlieBackend.Panel.Models.Languages.Language)))
+                        {
+                            string imgFilePath = $"{language}.png";
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="ChangeLanguage" asp-controller="Home" asp-route-lang="@language">
+                                    @language&nbsp;
+                                    <img class="img-profile" src="~/img/@imgFilePath">
+                                </a>
+                            </li>
+                        }
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span id="helloDiv" class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+                                <div class="flex-column d-flex">
+                                    <span id="helloDivName" class="mr-2 d-none d-lg-inline text-gray-600 small" style="font-weight: bold";></span>
+                                    <span id="helloDiv" class="mr-2 d-none d-lg-inline text-gray-600 small" style="font-style: italic";></span>
+                                </div>
                                 <img class="img-profile rounded-circle"
                                      src="~/img/undraw_profile.svg">
                             </a>
                             <script>
                                 let helloDiv = document.getElementById('helloDiv');
                                 helloDiv.innerHTML = `${getCookie("currentRole")}`;
+                                let helloDivName = document.getElementById('helloDivName');
+                                var toName = getCookie("firstName") + ' ' + getCookie("lastName");
+                                helloDivName.innerHTML = toName;
 
                                 function getCookie(name) {
                                     let matches = document.cookie.match(new RegExp(
@@ -228,7 +253,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div id="year" class="copyright text-center my-auto">
-                        <span >Admin Panel WHAT Backend </span>
+                        <span>Admin Panel WHAT Backend </span>
                     </div>
                 </div>
                 <script>
@@ -290,14 +315,14 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
     <!-- Page level plugins -->
-    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
     <!-- Page level custom scripts -->
     <script src="~/js/demo/datatables-demo.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="~/js/sb-admin-2.min.js"></script>
+    <script src="~/js/site.js"></script>
 
     <script>
 
@@ -323,7 +348,7 @@
             let div = document.createElement('div');
 
             div.innerHTML = `<a class="dropdown-item btn btn-danger" data-toggle="modal" data-target="#ChangeRoleModal">
-                                                                Sign in as ${role} </a>`;
+                                                                                                Sign in as ${role} </a>`;
 
             let token = localStorage.getItem(role.toLowerCase() + 'Token');
 
@@ -340,7 +365,6 @@
             ));
             return matches ? decodeURIComponent(matches[1]) : undefined;
         }
-
     </script>
 
     @RenderSection("Scripts", required: false)

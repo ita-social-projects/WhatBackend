@@ -16,7 +16,6 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("ID");
 
             entity.Property(e => e.EventOccurrenceId)
-                .IsRequired()
                 .HasColumnName("EventOccurrenceID");
 
             entity.Property(e => e.StudentGroupId)
@@ -34,6 +33,9 @@ namespace CharlieBackend.Data.Configurations
             entity.Property(e => e.LessonId)
                 .HasColumnName("LessonID");
 
+            entity.Property(e => e.Color).
+                IsRequired().HasColumnName("Color");
+
             entity.Property(e => e.EventStart)
                 .IsRequired()
                 .HasColumnName("EventStart")
@@ -45,6 +47,12 @@ namespace CharlieBackend.Data.Configurations
                 .HasColumnName("EventFinish")
                 .HasColumnType("DATETIME")
                 .HasComment("Use UTC time");
+
+            entity.Property(e => e.Description)
+                .HasColumnName("Description");
+
+            entity.Property(e => e.Link)
+                .HasColumnName("Link");
 
             entity.HasKey(e => e.Id)
                 .HasName("PRIMARY");

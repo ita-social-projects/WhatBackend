@@ -283,7 +283,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentId = 10,
                     LessonId = 10,
                     LessonDate = new DateTime(),
-                    StudentMark = 100,
+                    Mark = 100,
                 },
                 new StudentMarkDto
                 {
@@ -293,7 +293,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentId = 12,
                     LessonId = 10,
                     LessonDate = new DateTime(),
-                    StudentMark = 30,
+                    Mark = 30,
                 },
                 new StudentMarkDto
                 {
@@ -303,7 +303,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     StudentId = 12,
                     LessonId = 10,
                     LessonDate = new DateTime(),
-                    StudentMark = 90,
+                    Mark = 90,
                 }
             };
 
@@ -359,7 +359,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             //Act
 
-            var result = await dashboardRepository.GetStudentAverageMarksByStudentIdsAndGropsIdsAsync(new List<long> { 11, 12 }, new List<long> { 1 });
+            var result = await dashboardRepository.GetStudentAvgMarksAsync(new List<long> { 11, 12 }, new List<long> { 1 });
 
             //Assert
 
@@ -396,7 +396,7 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
 
             //Act
 
-            var result = await dashboardRepository.GetStudentAverageVisitsPercentageByStudentIdsAsync(12, new List<long> { 1 });
+            var result = await dashboardRepository.GetStudentAvgVisitsPercentageAsync(12, new List<long> { 1 });
 
             //Assert
 
@@ -466,17 +466,17 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                 {
                     Course = "Course",
                     StudentGroup = "Group",
-                    LessonId =10,
+                    LessonId = 10,
                     StudentId = 12,
-                    StudentMark =0
+                    Mark = 0
                 },
                 new StudentMarkDto
                 {
                     Course = "Course",
                     StudentGroup = "Group",
-                    LessonId =10,
+                    LessonId = 10,
                     StudentId = 12,
-                    StudentMark =90
+                    Mark = 90
                 }
 
             };
@@ -646,7 +646,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     Lesson = lesson,
                     Presence = true,
                     StudentId =10,
-                    StudentMark = 100
+                    MarkId = 5,
+                    Mark = new Mark
+                    {
+                        Id = 5,
+                        Value = 100,
+                        Comment = "Comment"
+                    }
                 },
                 new Visit
                 {
@@ -661,8 +667,14 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     },
                     Lesson = lesson,
                     Presence = false,
-                    StudentId =11,
-                    StudentMark = 0
+                    StudentId = 11,
+                    MarkId = 6,
+                    Mark = new Mark
+                    {
+                        Id = 6,
+                        Value = 0,
+                        Comment = ""
+                    }
                 },
                 new Visit
                 {
@@ -678,7 +690,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     Lesson = lesson,
                     Presence = false,
                     StudentId =12,
-                    StudentMark = 0
+                    MarkId = 7,
+                    Mark = new Mark
+                    {
+                        Id = 7,
+                        Value = 0,
+                        Comment = "Comment"
+                    }
                 },
                 new Visit
                 {
@@ -694,7 +712,13 @@ namespace CharlieBackend.Api.UnitTest.RepositoriesTests
                     Lesson = lesson,
                     Presence = true,
                     StudentId =12,
-                    StudentMark = 90
+                    MarkId = 8,
+                    Mark = new Mark
+                    {
+                        Id = 8,
+                        Value = 90,
+                        Comment = ""
+                    }
                 }
             };
 

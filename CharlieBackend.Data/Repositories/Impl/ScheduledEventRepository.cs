@@ -47,8 +47,8 @@ namespace CharlieBackend.Data.Repositories.Impl
         public override async Task<ScheduledEvent> GetByIdAsync(long id)
         {
             var schedule = await _applicationContext.ScheduledEvents.FirstOrDefaultAsync(entity => entity.Id == id);
-            
-            if(schedule is null)
+
+            if (schedule is null)
             {
                 throw new NotFoundException("Scheduled event does not exist");
             }
@@ -71,7 +71,7 @@ namespace CharlieBackend.Data.Repositories.Impl
             if (schedule != null)
             {
                 schedule.LessonId = lessonId;
-                _applicationContext.SaveChanges();
+                await _applicationContext.SaveChangesAsync();
             }
 
             return schedule;
