@@ -141,5 +141,45 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
 
             return error.Length > 0 ? error.ToString() : null;
         }
+
+        public async Task<string> ValidateUpdatedScheduleAsync(UpdateScheduledEventDto updatedSchedule)
+        {
+            StringBuilder error = new StringBuilder();
+
+            if (await _unitOfWork.MentorRepository.GetByIdAsync(updatedSchedule.MentorId.GetValueOrDefault()) is null)
+            {
+                error.Append(ResponseMessages.NotExist("Mentor"));
+            }
+            if (await _unitOfWork.ThemeRepository.GetByIdAsync(updatedSchedule.ThemeId.GetValueOrDefault()) is null)
+            {
+                error.Append(ResponseMessages.NotExist("Theme"));
+            }
+            if (await _unitOfWork.StudentGroupRepository.GetByIdAsync(updatedSchedule.StudentGroupId.GetValueOrDefault()) is null)
+            {
+                error.Append(ResponseMessages.NotExist("Group"));
+            }
+
+            return error.Length > 0 ? error.ToString() : null;
+        }
+
+        public async Task<string> ValidateConnectEventToLessonAsync (long eventId, long lessonId)
+        {
+            StringBuilder error = new StringBuilder();
+
+            if (await _unitOfWork.ScheduledEventRepository.IsLessonConnectedToSheduledEventAsync(lessonId))
+            {
+                error.Append($"Lesson with id={lessonId} is already associated with another ScheduledEvent. ");
+            }
+            if(!await _unitOfWork.ScheduledEventRepository.IsEntityExistAsync(eventId))
+            {
+                error.Append(ResponseMessages.NotExist("EventID"));
+            }
+            if (!await _unitOfWork.LessonRepository.IsEntityExistAsync(lessonId))
+            {
+                error.Append(ResponseMessages.NotExist("LessonID"));
+            }
+
+            return error.Length > 0 ? error.ToString() : null;
+        }
     }
 }

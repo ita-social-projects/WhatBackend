@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CharlieBackend.Business.Exceptions;
+using CharlieBackend.Business.Helpers;
 using CharlieBackend.Business.Services.ScheduleServiceFolder;
 using CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers;
 using CharlieBackend.Core.DTO.Schedule;
@@ -10,6 +11,7 @@ using CharlieBackend.Data.Repositories.Impl.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using static FluentAssertions.FluentActions;
@@ -138,9 +140,11 @@ namespace CharlieBackend.Api.UnitTest
 
             _unitOfWorkMock.Setup(x => x.ScheduledEventRepository).Returns(_eventRepositoryMock.Object);
             _unitOfWorkMock.Setup(x => x.MentorRepository).Returns(_mentorRepositoryMock.Object);
+            
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
             var expectedUpdate = new UpdateScheduledEventDto{};
+
 
             //Act & Assert
             Invoking(() => eventService.UpdateAsync(_existingId, expectedUpdate)).Should().Throw<EntityValidationException>();
@@ -208,7 +212,7 @@ namespace CharlieBackend.Api.UnitTest
             var wrongEventRepositoryMock = new Mock<IScheduledEventRepository>();
 
             wrongEventRepositoryMock.Setup(x => x.ConnectEventToLessonByIdAsync(wrongScheduledEvent.Id, _lessonId))
-                .ReturnsAsync(default(ScheduledEvent));
+                .ReturnsAsync(_validEvent);
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 
@@ -227,6 +231,7 @@ namespace CharlieBackend.Api.UnitTest
 
             _eventRepositoryMock.Setup(x => x.IsLessonConnectedToSheduledEventAsync(_lessonId))
                 .ReturnsAsync(true);
+
 
             var eventService = new EventsService(_unitOfWorkMock.Object, _mapper, _validator.Object);
 

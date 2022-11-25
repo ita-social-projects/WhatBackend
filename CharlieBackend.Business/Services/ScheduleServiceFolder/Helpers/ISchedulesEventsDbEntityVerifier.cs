@@ -13,5 +13,7 @@ namespace CharlieBackend.Business.Services.ScheduleServiceFolder.Helpers
         Task<string> ValidateEventOccuranceId(long id);
         Task<string> ValidateGetEventsFilteredRequest(ScheduledEventFilterRequestDTO request);
         Task<string> ValidateCreateScheduleEventRequestAsync(CreateSingleEventDto request);
+        Task<string> ValidateUpdatedScheduleAsync(UpdateScheduledEventDto updatedSchedule);
+        Task<string> ValidateConnectEventToLessonAsync(long eventId, long lessonId);
     }
 }
