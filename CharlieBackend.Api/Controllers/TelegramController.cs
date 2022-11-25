@@ -57,6 +57,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<string>> GetTelegramBotLink()
         {
             var link = await _telegramService.GetTelegramBotLink();
+
             return link.ToActionResult();
         }
 
@@ -68,6 +69,7 @@ namespace CharlieBackend.Api.Controllers
         public async Task<ActionResult<Account>> AccountSync(string telegramToken, string telegramId)
         {
             var syncronizedAccount = await _telegramService.SynchronizeTelegramAccount(telegramToken, telegramId);
+
             return syncronizedAccount.ToActionResult();
         }
 
@@ -103,7 +105,7 @@ namespace CharlieBackend.Api.Controllers
 
             if (foundAccount.Role.IsNotAssigned())
             {
-                return StatusCode(403, foundAccount.Email + " is registered and waiting assign.");
+                return StatusCode(403, $"{foundAccount.Email}  is registered and waiting assign.");
             }
 
             if (foundAccount.Role.Is(UserRole.Student))
@@ -159,6 +161,7 @@ namespace CharlieBackend.Api.Controllers
                 RoleList = userRoleToJwtToken,
                 Localization = foundAccount.Localization
             };
+
             GetHeaders(userRoleToJwtToken);
 
             return Ok(response);
@@ -201,7 +204,9 @@ namespace CharlieBackend.Api.Controllers
                 Response.Headers.Add("Authorization", tokenDictionary[UserRole.Mentor.ToString()]);
             }
             else
+            {
                 Response.Headers.Add("Authorization", tokenDictionary[UserRole.Student.ToString()]);
+            }
 
             Response.Headers.Add("Access-Control-Expose-Headers", "x-token, Authorization");
         }

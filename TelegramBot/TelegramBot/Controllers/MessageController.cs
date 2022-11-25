@@ -12,6 +12,7 @@ namespace TelegramBot
         public string Get()
         {
             Response.Cookies.Append("test", "testCookie");
+
             return "Bot is up and running";
         }
 
@@ -20,7 +21,8 @@ namespace TelegramBot
         public async Task<IActionResult> Update([FromServices] HandleUpdateService handleUpdateService,
                                               [FromBody] Update update)
         {
-            await handleUpdateService.EchoAsync(update);    
+            await handleUpdateService.EchoAsync(update); 
+            
             return Ok();
         }
     }

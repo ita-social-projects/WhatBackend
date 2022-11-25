@@ -13,11 +13,9 @@ namespace CharlieBackend.Business.Services.Interfaces
 
         Task<bool> ClearOldTelegramTokens();
 
-        //ToDo: remove if not needed
-        //Task<Account> GetAccountByTelegramId(long telegramId);
-
         Task<Result<AccountDto>> GetAccountByTelegramIdAsync(string telegramId);
 
+        //ToDo: need to implement 
         //Task<bool> DeleteAccountSyncronizationAsync(string telegramId);
     }
 }

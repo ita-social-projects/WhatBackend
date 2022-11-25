@@ -41,7 +41,6 @@ namespace CharlieBackend.Business.Services
             else if (user.TelegramId == null || user.TelegramId == string.Empty)
             {
                 //todo: move link to appsettings
-                string link = "https://t.me/whatnotification_bot?start=";
                 string guid = Guid.NewGuid().ToString("N");
 
                 user.TelegramToken = guid;
@@ -49,7 +48,7 @@ namespace CharlieBackend.Business.Services
 
                 await _unitOfWork.CommitAsync();
 
-                link += guid;
+                string link = $"https://t.me/whatnotification_bot?start={guid}";
 
                 result = Result<string>.GetSuccess(link);
             }
@@ -135,7 +134,6 @@ namespace CharlieBackend.Business.Services
 
         }
 
-        //ToDo: Check when used
         public async Task<Account> GetAccountByTelegramId(long telegramId)
         {
             return await _unitOfWork.AccountRepository.GetAccountByTelegramId(telegramId);
