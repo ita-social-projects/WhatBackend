@@ -22,7 +22,8 @@ namespace CharlieBackend.Api.Middlewares
             ICurrentUserService currentUserService)
         {
             if (context.Request.Path.Value.Contains("accounts")
-                || context.Request.Path.Value.Contains("swagger"))
+                || context.Request.Path.Value.Contains("swagger")
+                || context.Request.Path.Value.Contains("telegram"))
             {
                 await _next.Invoke(context);
             }

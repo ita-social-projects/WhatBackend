@@ -38,6 +38,7 @@ namespace CharlieBackend.Root
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITelegramService, TelegramService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IMarkService, MarkService>();
             services.AddScoped<ILessonService, LessonService>();
